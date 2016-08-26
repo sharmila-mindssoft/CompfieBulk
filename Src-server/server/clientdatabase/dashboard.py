@@ -1942,8 +1942,8 @@ def update_notification_status(
         user_ids.append(0)
     columns = ["read_status"]
     values = [1 if has_read is True else 0]
-    condition = "notification_id = %s and user_id in %s" % (
-        notification_id, tuple(user_ids))
+    condition = "notification_id = %s and user_id in %s"
+    values.extend([notification_id, tuple(user_ids)])
     db.update(
         tblNotificationUserLog, columns, values, condition
     )

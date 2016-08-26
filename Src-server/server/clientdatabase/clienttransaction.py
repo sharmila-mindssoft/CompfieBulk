@@ -889,16 +889,17 @@ def get_level_1_statutories_for_user_with_domain(
 ):
     if not is_admin(db, session_user):
         condition = " tac.assignee = %s "
-        condition = condition % (session_user)
+        condition_val = [session_user]
     else:
         condition = "1"
+        condition_val = None
 
     query = " SELECT domain_id, statutory_mapping " + \
         " FROM tbl_compliances tc WHERE compliance_id in ( " + \
         " SELECT distinct compliance_id FROM tbl_assigned_compliances tac " + \
         " WHERE %s)"
     query = query % condition
-    rows = db.select_all(query)
+    rows = db.select_all(query, condition_val)
     columns = ["domain_id", "statutory_mapping"]
     result = convert_to_dict(rows, columns)
 
@@ -1240,19 +1241,18 @@ def get_compliance_approval_count(db, session_user):
     if (is_two_levels_of_approval(db)):
         concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
         concur_condition = concur_condition % approval_condition
-        concur_count_condition = " %s AND concurred_by = %s" % (
-            concur_condition, session_user
-        )
+        concur_count_condition = concur_condition + "  AND concurred_by = %s "
+        concur_count_condition_val = [session_user]
         concur_count = db.get_data(
-            tblComplianceHistory, columns, concur_count_condition
+            tblComplianceHistory, columns,
+            concur_count_condition, concur_count_condition_val
         )[0]["count"]
-    approval_count_condition = " %s AND  " + \
+    approval_count_condition = approval_condition + " AND " + \
         " concurrence_status = 1 AND approved_by = %s"
-    approval_count_condition = approval_count_condition % (
-        approval_condition, session_user
-    )
+    approval_count_condition_val = [session_user]
     approval_count = db.get_data(
-        tblComplianceHistory, columns, approval_count_condition
+        tblComplianceHistory, columns, approval_count_condition,
+        approval_count_condition_val
     )[0]["count"]
     return concur_count + approval_count
 
@@ -1697,10 +1697,8 @@ def reject_compliance_approval(
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status"
     ]
-    update_condition = "compliance_history_id = %s " % (
-        compliance_history_id
-    )
-    values = [0, remarks, None, None, None, None]
+    update_condition = "compliance_history_id = %s "
+    values = [0, remarks, None, None, None, None, compliance_history_id]
     db.update(
         tblComplianceHistory, update_columns, values, update_condition
     )
@@ -2197,12 +2195,8 @@ def reassign_compliance(db, request, session_user):
                 " and compliance_id = %s  and unit_id = %s "
 
             qry = update_history + where_qry
-
-            update_history = qry % (
-                assignee, approval, compliance_id,
-                unit_id
-            )
-            db.execute(update_history)
+            update_qry_val = [assignee, approval, compliance_id, unit_id]
+            db.execute(qry, update_qry_val)
 
     if new_unit_settings is not None:
         update_user_settings(db, new_unit_settings)

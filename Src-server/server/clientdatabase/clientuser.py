@@ -184,21 +184,21 @@ def get_current_compliances_list(
 
 
 def get_upcoming_count(db, session_user):
-    all_compliance_query = '''
-        SELECT ac.compliance_id, ac.unit_id FROM tbl_assigned_compliances ac
-        INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id)
-        WHERE
-        assignee = %s AND frequency_id != 4
-        AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)
-        AND ac.is_active = 1;
-    '''
+    all_compliance_query = " SELECT ac.compliance_id, ac.unit_id " + \
+        " FROM tbl_assigned_compliances ac " + \
+        " INNER JOIN tbl_compliances c " + \
+        " ON (ac.compliance_id = c.compliance_id) " + \
+        " WHERE " + \
+        " assignee = %s AND frequency_id != 4 " + \
+        " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
+        " AND ac.is_active = 1;"
     all_compliace_rows = db.select_all(all_compliance_query, [session_user])
     all_compliance_count = len(all_compliace_rows)
-    onetime_query = '''
-        SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch
-        INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
-        WHERE frequency_id = 1 and completed_by = %s ;
-    '''
+    onetime_query = " SELECT ch.compliance_id, ch.unit_id " + \
+        " FROM tbl_compliance_history ch " + \
+        " INNER JOIN tbl_compliances c " + \
+        " on (ch.compliance_id =  c.compliance_id) " + \
+        " WHERE frequency_id = 1 and completed_by = %s ;"
     onetime_rows = db.select_all(onetime_query, [session_user])
 
     combined_rows = []
@@ -517,7 +517,7 @@ def get_on_occurrence_compliances_for_user(
 
     rows = db.select_all(query, [
         ",".join(str(x) for x in user_unit_ids),
-        ",".join( str(x) for x in user_domain_ids),
+        ",".join(str(x) for x in user_domain_ids),
         session_user, int(start_count), int(to_count)
     ])
     result = convert_to_dict(rows, columns)

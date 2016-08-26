@@ -561,21 +561,16 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1, condition_val=None):
         rows = self.get_data(table, column, condition, condition_val)
-        print rows
-        print column
-        if type(column) is list :
-            currentValue = rows[0][column[0]]
-        else :
-            currentValue = rows[0][column]
+
+        currentValue = int(rows[0][column[0]]) if(
+            rows[0][column[0]] is not None) else 0
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
             newValue = value
-        if condition_val is not None :
-            values = [newValue] + condition_val
-        else :
-            values = [newValue]
-
+        values = [newValue]
+        if condition_val is not None:
+            values = values + condition_val
         return self.update(table, column, values, condition)
 
     ########################################################

@@ -76,14 +76,13 @@ def get_client_user_forms(db, form_ids, is_admin):
     tables = [tblForms, tblFormType]
     aliases = ["tf",  "tft"]
     joinConditions = ["tf.form_type_id = tft.form_type_id"]
-    whereCondition = " form_id in (%s) order by tf.form_order" % (
-        form_ids
-    )
+    whereCondition = " form_id in (%s) order by tf.form_order"
+    where_condition_val = [form_ids]
     joinType = "left join"
 
     rows = db.get_data_from_multiple_tables(
         columns, tables, aliases, joinType,
-        joinConditions, whereCondition
+        joinConditions, whereCondition, where_condition_val
     )
     return rows
 
@@ -803,8 +802,9 @@ def validate_compliance_due_date(db, request):
         c_ids.append(c.compliance_id)
         q = "SELECT compliance_id, compliance_task, " + \
             " statutory_dates, repeats_type_id from tbl_compliances " + \
-            " where compliance_id = %s" % int(c.compliance_id)
-        row = db.select_one(q)
+            " where compliance_id = %s"
+        param = [int(c.compliance_id)]
+        row = db.select_one(q, param)
         if row:
             comp_id = row[0]
             task = row[1]
@@ -961,7 +961,9 @@ def is_space_available(db, upload_size):
 def update_used_space(db, file_size):
     columns = ["total_disk_space_used"]
     condition = "1"
-    db.increment(tblClientGroups, columns, condition, value=file_size)
+    db.increment(
+        tblClientGroups, columns, condition, value=file_size
+    )
 
     total_used_space = 0
     rows = db.get_data(
@@ -1406,7 +1408,8 @@ def update_password(db, password, user_id):
     values = [encrypt(password)]
     condition = "1"
     result = False
-    condition = " user_id='%s'" % user_id
+    condition = " user_id=%s"
+    values.append(user_id)
     result = db.update(
         tblUsers, columns, values, condition
     )
@@ -1451,8 +1454,8 @@ def remove_session(db, session_token):
 
 def update_profile(db, contact_no, address, session_user):
     columns = ["contact_no", "address"]
-    values = [contact_no, address]
-    condition = "user_id= '%s'" % session_user
+    values = [contact_no, address, session_user]
+    condition = "user_id= %s"
     db.update(tblUsers, columns, values, condition)
 
 
