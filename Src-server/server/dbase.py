@@ -583,7 +583,6 @@ class Database(object):
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
         rows = self.select_one(query, condition_val)
-        # print rows
         if rows:
             if rows[0] > 0:
                 return True
