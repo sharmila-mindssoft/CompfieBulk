@@ -961,7 +961,9 @@ def is_space_available(db, upload_size):
 def update_used_space(db, file_size):
     columns = ["total_disk_space_used"]
     condition = "1"
-    db.increment(tblClientGroups, columns, condition, value=file_size)
+    db.increment(
+        tblClientGroups, columns, condition, value=file_size
+    )
 
     total_used_space = 0
     rows = db.get_data(

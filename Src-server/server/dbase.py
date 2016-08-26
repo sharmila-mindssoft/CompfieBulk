@@ -567,7 +567,9 @@ class Database(object):
             newValue = int(currentValue) + value
         else:
             newValue = value
-        values = [newValue] + condition_val
+        values = [newValue]
+        if condition_val is not None:
+            values = values + condition_val
         return self.update(table, column, values, condition)
 
     ########################################################
