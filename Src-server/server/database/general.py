@@ -223,13 +223,17 @@ def get_user_forms(db, form_ids):
         "tf.form_category_id = tfc.form_category_id",
         "tf.form_type_id = tft.form_type_id"
     ]
-    where_condition = " tf.form_id in (%s) order by tf.form_order" % (form_ids)
-
+    form_ids_list = [int(x) for x in form_ids.split(",")]
+    where_condition, where_condition_val = db.generate_tuple_condition(
+        "tf.form_id", form_ids_list
+    )
+    where_condition += " order by tf.form_order "
     join_type = "left join"
     rows = db.get_data_from_multiple_tables(
         columns, tables,
         aliases, join_type,
-        join_conditions, where_condition
+        join_conditions, where_condition,
+        [where_condition_val]
     )
     return rows
 
@@ -284,17 +288,21 @@ def get_notifications(
     tables = [tblNotifications, tblNotificationsStatus]
     aliases = ["tn", "tns"]
     join_conditions = ["tn.notification_id = tns.notification_id"]
-    where_condition = " tns.user_id =%s " % (
-        session_user
-    )
+    where_condition = " tns.user_id =%s "
+    where_condition_val = [session_user]
     if user_type == "Techno":
-        where_condition += " AND link not like '%sstatutory%s' " % ("%", "%")
+        where_condition += " AND link not like %s "
+        cond = "%sstatutory%s" % ("%", "%")
+        where_condition_val.append(cond)
     elif user_type == "Knowledge":
-        where_condition += " AND link not like '%sclient%s'" % ("%", "%")
+        where_condition += " AND link not like %s "
+        cond = "%client%s" % ("%", "%")
+        where_condition_val.append(cond)
     where_condition += "order by created_on DESC limit 30"
     rows = db.get_data_from_multiple_tables(
         columns, tables,
-        aliases, join_type, join_conditions, where_condition
+        aliases, join_type, join_conditions, where_condition,
+        where_condition_val
     )
     notifications = []
     for row in rows:
@@ -383,10 +391,14 @@ def get_approval_status(db, approval_id=None):
 #
 def return_forms(db, form_ids=None):
     columns = "form_id, form_name"
-    condition = " form_id != '26' "
+    condition = " form_id != 26 "
+    condition_val = None
     if form_ids is not None:
-        condition += " AND form_id in (%s) " % form_ids
-    forms = db.get_data(tblForms, columns, condition)
+        condition += " AND "
+        form_ids_list = [int(x) for x in form_ids.split(",")]
+        condition, condition_val = db.generate_tuple_condition(
+            "form_id", form_ids_list)
+    forms = db.get_data(tblForms, columns, condition, [condition_val])
     results = []
     for form in forms:
         results.append(
@@ -395,14 +407,14 @@ def return_forms(db, form_ids=None):
     return results
 
 
-def get_users(db, condition="1"):
+def get_users(db, condition="1", condition_val=None):
     columns = "user_id, employee_name, employee_code, is_active"
-    rows = db.get_data(tblUsers, columns, condition)
+    rows = db.get_data(tblUsers, columns, condition, condition_val)
     return rows
 
 
-def return_users(db, condition="1"):
-    user_rows = get_users(db, condition)
+def return_users(db, condition="1", condition_val=None):
+    user_rows = get_users(db, condition, condition_val)
     results = []
     for user in user_rows:
         employee_name = "%s - %s" % (
@@ -428,35 +440,36 @@ def get_audit_trails(
         form_ids = rows[0]["form_ids"]
         forms = return_forms(db, form_ids)
 
-    users = None
-    user_ids = None
-    query = '''
-    SELECT group_concat(user_id) from tbl_users where user_group_id = (
-    SELECT user_group_id from tbl_users where user_id = %s )'''
+    query = " SELECT user_id from tbl_users where user_group_id = ( " + \
+        " SELECT user_group_id from tbl_users where user_id = %s ) "
     rows = db.select_all(query, [session_user])
-    if rows:
-        user_ids = rows[0][0]
-    condition = '''user_id in (%s)''' % user_ids
-    users = return_users(db, condition)
+    result = convert_to_dict(rows, ["user_id"])
+    user_ids = []
+    for row in result:
+        user_ids.append(row["user_id"])
+    condition, condition_val = db.generate_tuple_condition("user_id", user_ids)
+    users = return_users(db, condition, [condition_val])
 
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
     where_qry = "1"
+    where_qry_val = []
     if from_date is not None and to_date is not None:
-        where_qry += " AND  date(created_on) between '%s' AND '%s' " % (
-            from_date, to_date
-
-        )
+        where_qry += " AND  date(created_on) between %s AND %s "
+        where_qry_val.extend([from_date, to_date])
     if user_id is not None:
-        where_qry += " AND user_id = '%s'" % (user_id)
+        where_qry += " AND user_id = %s "
+        where_qry_val.append(user_id)
     if form_id is not None:
-        where_qry += " AND form_id = '%s'" % (form_id)
-
+        where_qry += " AND form_id = %s "
+        where_qry_val.append(form_id)
     columns = "user_id, form_id, action, created_on"
-    where_qry += " AND user_id in (%s)" % (user_ids)
+    where_qry += " AND %s " % (condition)
+    where_qry_val.append(condition_val)
     where_qry += " ORDER BY created_on DESC"
-    where_qry += " LIMIT %s, %s" % (from_count, to_count)
-    rows = db.get_data(tblActivityLog, columns, where_qry)
+    where_qry += " LIMIT %s, %s"
+    where_qry_val.extend([from_count, to_count])
+    rows = db.get_data(tblActivityLog, columns, where_qry, where_qry_val)
     audit_trail_details = []
     for row in rows:
         user_id = row["user_id"]
@@ -474,6 +487,6 @@ def get_audit_trails(
 #
 def update_profile(db, contact_no, address, session_user):
     columns = ["contact_no", "address"]
-    values = [contact_no, address]
-    condition = "user_id= '%s'" % session_user
+    condition = "user_id= %s"
+    values = [contact_no, address, session_user]
     db.update(tblUsers, columns, values, condition)

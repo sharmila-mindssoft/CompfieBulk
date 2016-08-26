@@ -919,8 +919,8 @@ def submit_client_statutories_compliances(
     submitted_on = get_date_time()
     query = "UPDATE tbl_client_statutories SET submission_type = 1, " + \
         " updated_by=%s WHERE client_statutory_id = %s"
-    query = query % (int(user_id), client_statutory_id)
-    db.execute(query)
+    param = [int(user_id), client_statutory_id]
+    db.execute(query, param)
     value_list = save_update_client_complainces(
         db, client_statutory_id, data, user_id, submitted_on
     )

@@ -315,8 +315,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            # print query
-            # print condition_val
+            print query
+            print condition_val
             if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
@@ -337,12 +337,24 @@ class Database(object):
             result = convert_to_dict(rows, param)
         return result
 
+    def generate_tuple_condition(self, column, values_list):
+        condition = " 1 "
+        condition_val = "%"
+        if values_list not in [None, ""]:
+            if len(values_list) > 1:
+                condition = " %s in %s " % (column, "%s")
+                condition_val = tuple(values_list)
+            else:
+                condition = " %s = %s " % (column, "%s")
+                condition_val = values_list[0]
+        return condition, condition_val
+
     ########################################################
     # To form a join query
     ########################################################
     def get_data_from_multiple_tables(
         self, columns, tables, aliases, join_type,
-        join_conditions, where_condition
+        join_conditions, where_condition, where_condition_val=None
     ):
         assert type(columns) in (list, str)
         param = []
@@ -389,11 +401,16 @@ class Database(object):
             logger.logQuery(
                 self._for_client, "get_data_from_multiple_tables", query
             )
-            rows = self.select_all(query)
         else:
             logger.logQuery(
                 self._for_client, "get_data_from_multiple_tables", query
             )
+        if where_condition_val is not None:
+            print query
+            print where_condition_val
+            rows = self.select_all(query, where_condition_val)
+        else:
+            print query
             rows = self.select_all(query)
 
         result = []
@@ -517,9 +534,9 @@ class Database(object):
     # To concate the value with the existing value in the
     # specified column
     ########################################################
-    def append(self, table, column, value, condition):
+    def append(self, table, column, value, condition, condition_val):
         try:
-            rows = self.get_data(table, column, condition)
+            rows = self.get_data(table, column, condition, condition_val)
             currentValue = rows[0][column]
             if currentValue is not None:
                 newValue = currentValue+","+str(value)
@@ -527,7 +544,9 @@ class Database(object):
                 newValue = str(value)
             columns = [column]
             values = [newValue]
-            res = self.update(table, columns, values, condition)
+            values += condition_val
+            res = self.update(
+                table, columns, values, condition)
             return res
         except mysql.Error, e:
             print table, column, value
@@ -540,21 +559,14 @@ class Database(object):
     # float, double values
     ########################################################
 
-    def increment(self, table, column, condition, value=1):
-        rows = self.get_data(table, column, condition)
-        print rows
-        print type(column)
-        if type(column) is list :
-            currentValue = rows[0][column[0]]
-        else :
-            currentValue = rows[0][column]
-        print currentValue
+    def increment(self, table, column, condition, value=1, condition_val=None):
+        rows = self.get_data(table, column, condition, condition_val)
+        currentValue = int(rows[0][column[0]])
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
             newValue = value
-        values = [newValue]
-        print values
+        values = [newValue] + condition_val
         return self.update(table, column, values, condition)
 
     ########################################################
