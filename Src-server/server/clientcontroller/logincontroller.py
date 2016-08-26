@@ -161,8 +161,8 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
     session_token = add_session(
         db, user_id, session_type, ip, "Administrator", client_id
     )
-    form_ids = get_form_ids_for_admin(db)
-    menu = process_user_forms(db, form_ids, client_id, 1)
+    # form_ids = get_form_ids_for_admin(db)
+    # menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
     client_info = get_client_group(db)
     group_name = client_info["group_name"]
@@ -176,7 +176,7 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
         group_id,
         group_name,
         configuration,
-        menu
+        True, True, True
     )
 
 
@@ -212,7 +212,15 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
         form_ids = ",".join(str(x) for x in form_ids_list)
-    menu = process_user_forms(db, form_ids, client_id, 0)
+    form_ids = [int(x) for x in form_ids.split(",")]
+    dashboard = compliance_task = compliance_approve = False
+    if 1 in form_ids :
+        dashboard = True
+    elif 9 in form_ids :
+        compliance_task = True
+    elif 11 in form_ids :
+        compliance_approve = True
+    # menu = process_user_forms(db, form_ids, client_id, 0)
     return mobile.ClientUserLoginResponseSuccess(
         data["user_id"],
         data["employee_name"],
@@ -220,7 +228,9 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
         group_id,
         group_name,
         configuration,
-        menu
+        dashboard,
+        compliance_task,
+        compliance_approve
     )
 
 
