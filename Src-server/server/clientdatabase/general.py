@@ -76,16 +76,14 @@ def get_client_user_forms(db, form_ids, is_admin):
     tables = [tblForms, tblFormType]
     aliases = ["tf",  "tft"]
     joinConditions = ["tf.form_type_id = tft.form_type_id"]
-    whereCondition = " form_id in %s order by tf.form_order"
-    if len(form_ids) == 1 :
-        whereCondition = [(form_ids[0], 0)]
-    else :
-        where_condition_val = [tuple(form_ids)]
+    whereCondition, whereConditionVal = db.generate_tuple_condition(
+        "form_id", [int(x) for x in form_ids.split(",")]
+    )
+    order = " order by tf.form_order "
     joinType = "left join"
-
     rows = db.get_data_from_multiple_tables(
         columns, tables, aliases, joinType,
-        joinConditions, whereCondition, where_condition_val
+        joinConditions, whereCondition + order, [whereConditionVal]
     )
     return rows
 
