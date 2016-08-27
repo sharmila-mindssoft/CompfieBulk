@@ -430,15 +430,16 @@ def get_audit_trails(
     db, session_user, from_count, to_count,
     from_date, to_date, user_id, form_id
 ):
-    form_column = "group_concat(form_id) as form_ids"
+    form_column = ["form_id"]
     form_condition = "form_type_id != 3"
     rows = db.get_data(
         tblForms, form_column, form_condition
     )
     forms = None
-    if rows:
-        form_ids = rows[0]["form_ids"]
-        forms = return_forms(db, form_ids)
+    form_ids = [int(row[0]["form_ids"]) for row in rows]
+    forms = return_forms(
+        db, ",".join(str(x) for x in form_ids)
+    )
 
     query = " SELECT user_id from tbl_users where user_group_id = ( " + \
         " SELECT user_group_id from tbl_users where user_id = %s ) "

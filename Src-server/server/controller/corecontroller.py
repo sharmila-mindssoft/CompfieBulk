@@ -17,7 +17,7 @@ def process_user_forms(
     if client_id is not None:
         forms = get_client_user_forms(db, form_ids, is_admin)
     else:
-        if type(form_ids) is list :
+        if type(form_ids) is list:
             form_ids = ', '.join(form_ids)
         forms = get_user_forms(db, form_ids)
     form_list = []
