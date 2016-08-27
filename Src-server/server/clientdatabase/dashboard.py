@@ -1835,7 +1835,7 @@ def get_notifications(
             " OR  compliance_history_id = CAST(REPLACE( " + \
             " SUBSTRING_INDEX(extra_details, '-', 1), " + \
             " ' ','') AS UNSIGNED)) " + \
-            " ORDER BY read_status desc, nul.notification_id DESC " + \
+            " ORDER BY read_status ASC, nul.notification_id DESC " + \
             " limit %s, %s"
     rows = db.select_all(query, [
         notification_type_id,
