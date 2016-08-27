@@ -97,7 +97,7 @@ function loadComplianceApprovalDetails(data){
                 $('.delayedby', clonelist).html('');
             }
             if(val['delayed_by'] != null){
-                $('.delayedby', clonelist).html(val['delayed_by']+" days");
+                $('.delayedby', clonelist).html(val['delayed_by']);
             }
             var compliance_history_id = val['compliance_history_id'];
 

@@ -1287,7 +1287,7 @@ def get_compliance_approval_list(
         " FROM tbl_users tu " + \
         " WHERE tu.user_id = tch.completed_by), " + \
         " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) " + \
+        " WHERE td.domain_id = tc.domain_id ), duration_type_id " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1297,7 +1297,6 @@ def get_compliance_approval_list(
         " LIMIT %s, %s "
 
     param = []
-
     if is_two_levels:
         condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
             " OR IFNULL(concurrence_status, 0) = 0 ) AND " + \
@@ -1318,13 +1317,19 @@ def get_compliance_approval_list(
         "frequency_id", "frequency", "document_name",
         "concurrence_status", "statutory_dates", "validity_date",
         "approved_by", "unit_name", "completed_by", "employee_name",
-        "domain_name"
+        "domain_name", "duration_type_id"
     ]
     result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
     count = 0
     for row in result:
+        no_of_days, ageing = calculate_ageing(
+            due_date=row["due_date"],
+            frequency_type=row["frequency_id"],
+            duration_type=row["duration_type_id"]
+        )
+        print "no_of_days: {}, ageing :{}".format(no_of_days, ageing)
         download_urls = []
         file_name = []
         if row["documents"] is not None and len(row["documents"]) > 0:
@@ -1437,7 +1442,7 @@ def get_compliance_approval_list(
             clienttransactions.APPROVALCOMPLIANCE(
                 compliance_history_id, compliance_name,
                 description, domain_name,
-                start_date, due_date, delayed_by, frequency, documents,
+                start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
                 validity_date, unit_name

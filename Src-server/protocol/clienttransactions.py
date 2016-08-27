@@ -1899,16 +1899,23 @@ class APPROVALCOMPLIANCE(object):
 
     def to_structure(self):
         return {
-            "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
-            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
+            "compliance_history_id": to_structure_SignedIntegerType_8(
+                self.compliance_history_id),
+            "compliance_name": to_structure_CustomTextType_250(
+                self.compliance_name),
             "description": to_structure_Text(self.description),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
-            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
-            "delayed_by": to_structure_OptionalType_UnsignedIntegerType_32(self.delayed_by),
-            "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
-            "documents": to_structure_OptionalType_VectorType_CustomTextType_500(self.documents),
-            "file_names": to_structure_OptionalType_VectorType_CustomTextType_500(self.file_names),
+            "due_date": to_structure_OptionalType_CustomTextType_20(
+                self.due_date),
+            "delayed_by": to_structure_OptionalType_CustomTextType_500(
+                self.delayed_by),
+            "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(
+                self.compliance_frequency),
+            "documents": to_structure_OptionalType_VectorType_CustomTextType_500(
+                self.documents),
+            "file_names": to_structure_OptionalType_VectorType_CustomTextType_500(
+                self.file_names),
             "upload_date": to_structure_OptionalType_CustomTextType_20(self.upload_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
