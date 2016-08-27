@@ -963,6 +963,8 @@ $("#temp_addcompliance").click(function() {
       displayMessage(message.repeatsevery_required);
     }else if (compliance_frequency == "4" && $('#duration').val().trim() == ''){
       displayMessage(message.duration_required);
+    }else if (compliance_frequency == "4" && $('#duration').val().trim() == 0){
+      displayMessage(message.invalid_duration);
     }else if (compliance_frequency == "4" && $('#duration_type').val() == ''){
       displayMessage(message.durationtype_required);
     }else{
