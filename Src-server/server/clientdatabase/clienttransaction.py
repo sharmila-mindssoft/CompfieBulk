@@ -1251,8 +1251,14 @@ def get_compliance_approval_count(db, session_user):
             tblComplianceHistory, columns,
             concur_count_condition, concur_count_condition_val
         )[0]["count"]
+        concurrence_condition = " AND  " + \
+            " IF(IFNULL(concurred_by, 0) = 0,  1, concurrence_status = 1)"
+        approval_condition = (
+            approval_condition + concurrence_condition
+        )
+
     approval_count_condition = approval_condition + " AND " + \
-        " concurrence_status = 1 AND approved_by = %s"
+        " approved_by = %s"
     approval_count_condition_val = [session_user]
     approval_count = db.get_data(
         tblComplianceHistory, columns, approval_count_condition,
@@ -1288,7 +1294,7 @@ def get_compliance_approval_list(
         " FROM tbl_users tu " + \
         " WHERE tu.user_id = tch.completed_by), " + \
         " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) " + \
+        " WHERE td.domain_id = tc.domain_id ), duration_type_id " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1298,10 +1304,10 @@ def get_compliance_approval_list(
         " LIMIT %s, %s "
 
     param = []
-
     if is_two_levels:
         condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
-            " OR IFNULL(concurrence_status, 0) = 0 ) AND " + \
+            " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
+            " IFNULL(approve_status, 0) != 1)) AND " + \
             " (concurred_by = %s OR approved_by = %s)"
         param.append(int(session_user))
         param.append(int(session_user))
@@ -1319,13 +1325,18 @@ def get_compliance_approval_list(
         "frequency_id", "frequency", "document_name",
         "concurrence_status", "statutory_dates", "validity_date",
         "approved_by", "unit_name", "completed_by", "employee_name",
-        "domain_name"
+        "domain_name", "duration_type_id"
     ]
     result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
     count = 0
     for row in result:
+        no_of_days, ageing = calculate_ageing(
+            due_date=row["due_date"],
+            frequency_type=row["frequency_id"],
+            duration_type=row["duration_type_id"]
+        )
         download_urls = []
         file_name = []
         if row["documents"] is not None and len(row["documents"]) > 0:
@@ -1375,7 +1386,6 @@ def get_compliance_approval_list(
                 db, concurred_by_id
             )
         remarks = row["remarks"]
-        delayed_by = None if row["ageing"] < 0 else row["ageing"]
         compliance_name = row["compliance_task"]
         if row["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
@@ -1438,7 +1448,7 @@ def get_compliance_approval_list(
             clienttransactions.APPROVALCOMPLIANCE(
                 compliance_history_id, compliance_name,
                 description, domain_name,
-                start_date, due_date, delayed_by, frequency, documents,
+                start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
                 validity_date, unit_name

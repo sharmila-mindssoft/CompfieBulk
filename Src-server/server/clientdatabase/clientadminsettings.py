@@ -65,14 +65,6 @@ def get_profile(
     contract_from = datetime_to_string(contract_from)
     contract_to = datetime_to_string(contract_to)
 
-    # admin_columns = "username"
-    # admin_condition = "1"
-    # result = db.get_data(
-    #     tblAdmin, admin_columns, admin_condition
-    # )
-    # admin_email = result[0]["username"]
-    # is_admin_is_a_user = False
-
     licence_holder_rows = get_licence_holder_details(db, client_id)
     licence_holders = []
     for row in licence_holder_rows:
@@ -96,29 +88,20 @@ def get_profile(
             unit_name = "%s - %s" % (row["unit_code"], row["unit_name"])
         user_id = row["user_id"]
         email_id = row["email_id"]
-        # if email_id == admin_email:
-        #     # is_admin_is_a_user = True
-        #     employee_name = "Administrator: %s" % employee_name
         contact_no = row["contact_no"]
-        # is_admin = row[5]
         address = row["address"]
-        # is_active = row[9]
+        is_admin = False if (row["is_admin"] == 0) else True
+        is_active = False if (row["is_active"] == 0) else True
+        is_primary_admin = False if (row["is_primary_admin"] == 0) else True
         licence_holders.append(
             clientadminsettings.LICENCE_HOLDER(
                 user_id, employee_name, email_id, contact_no,
-                unit_name, address
+                unit_name, address, is_admin, is_active, is_primary_admin
             ))
     remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
-    # if not is_admin_is_a_user:
-    #     licence_holders.append(
-    #         clientadminsettings.LICENCE_HOLDER(
-    #             0, "Administrator", admin_email, None,
-    #             None, None
-    #         ))
-    #     remaining_licence -= 1
 
     used_space = round((total_disk_space_used/(1024 * 1024 * 1024)), 2)
-    total_space = total_disk_space/(1024 * 1024 * 1024)
+    total_space = round(total_disk_space/(1024 * 1024 * 1024), 2)
 
     profile_detail = clientadminsettings.PROFILE_DETAIL(
         contract_from,

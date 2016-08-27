@@ -327,11 +327,26 @@ def process_compliance_applicability_drill_down(
 
 def process_get_notifications(db, request, session_user, client_id):
     notifications = None
-    to_count = RECORD_DISPLAY_COUNT
-    notifications = get_notifications(
+    (
+        notification_count, reminder_count, escalation_count
+    ) = get_dashboard_notification_counts(
         db,
-        request.notification_type,
-        request.start_count, to_count,
+        session_user
+    )
+    to_count = RECORD_DISPLAY_COUNT
+    notification_type = request.notification_type
+    if notification_type == "Notification":
+        if notification_count == 0:
+            to_count = 30
+    elif notification_type == "Reminder":
+        if reminder_count == 0:
+            to_count = 30
+    elif notification_type == "Escalation":
+        if escalation_count == 0:
+            to_count = 30
+
+    notifications = get_notifications(
+        db, notification_type, request.start_count, to_count,
         session_user, client_id
     )
     return dashboard.GetNotificationsSuccess(notifications=notifications)

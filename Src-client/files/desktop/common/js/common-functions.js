@@ -257,15 +257,20 @@ function getUserGroupAutocomplete(e, textval, listval, callback){
 }
 
 //industry autocomplete function
-function getIndustryAutocomplete(e, textval, listval, callback){
+function getIndustryAutocomplete(e, textval, listval, callback, flag=false){
   $("#ac-industry").show();
   $("#industry").val('');
   var industries = listval;
   var suggestions = [];
   $('#ac-industry ul').empty();
   if(textval.length>0){
+
+    var isFlag = flag;
     for(var i in industries){
-      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == 1) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]);
+      if(isFlag == false){
+        isFlag = industries[i]["is_active"];
+      }
+      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && isFlag) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -273,10 +278,10 @@ function getIndustryAutocomplete(e, textval, listval, callback){
     }
     $('#ac-industry ul').append(str);
     //$("#industry").val('');
-    }else{
-      $(".ac-textbox").hide();
-    }
-    onArrowKey(e, "ac-industry", callback)
+  }else{
+    $(".ac-textbox").hide();
+  }
+  onArrowKey(e, "ac-industry", callback)
 }
 
 //statutorynature autocomplete function

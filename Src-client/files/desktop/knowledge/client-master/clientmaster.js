@@ -343,6 +343,9 @@ $("#btn-clientgroup-submit").click(function(){
                 else if(error == "ServerIsFull"){
                     displayMessage(message.server_full);
                 }
+                else if(error == 'ShortNameAlreadyExists'){
+                    displayMessage(message.shortname_exists);
+                }
                 else{
                     displayMessage(error);
                 }

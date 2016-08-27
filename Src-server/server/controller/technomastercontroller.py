@@ -267,11 +267,19 @@ def validate_duplicate_data(db, request, session_user):
 
 
 def save_client(db, request, session_user):
+    print "inside save client==================>"
     client_id = request.client_id
     business_group = request.business_group
+    print
+    print business_group
     legal_entity = request.legal_entity
+    print
+    print legal_entity
     division = request.division
+    print
+    print division
     is_valid = validate_duplicate_data(db, request, session_user)
+    print "isvalid : %s" % is_valid
     if type(is_valid) is not list:
         return is_valid
     else:
@@ -282,26 +290,41 @@ def save_client(db, request, session_user):
         leg_id = None
         div_id = None
         if business_group is not None:
+            print "inside business group is not None"
             b_group_name = business_group.business_group_name
-            b_group_id = save_business_group(
-                db, client_id, b_group_name, session_user
-            )
+            b_group_id = business_group.business_group_id
+            if b_group_id is None:
+                print "inside business group id is None"
+                b_group_id = save_business_group(
+                    db, client_id, b_group_name, session_user
+                )
+                print "b_group_id : %s" % b_group_id
             if b_group_id is False:
                 return False
 
         if legal_entity is not None:
+            print "inside legal entity is not None"
             leg_name = legal_entity.legal_entity_name
-            leg_id = save_legal_entity(
-                db, client_id, leg_name, b_group_id, session_user
-            )
+            leg_id = legal_entity.legal_entity_id
+            print "leg_id : %s " % leg_id
+            if leg_id is None:
+                print "inside legal entity id is none"
+                leg_id = save_legal_entity(
+                    db, client_id, leg_name, b_group_id, session_user
+                )
             if leg_id is False:
                 return False
 
         if division is not None:
+            print "inside division is not None"
             div_name = division.division_name
-            div_id = save_division(
-                db, client_id, div_name, b_group_id, leg_id, session_user
-            )
+            div_id = division.division_id
+            print "div_id : %s " % div_id
+            if div_id is None:
+                print "inside div id is None"
+                div_id = save_division(
+                    db, client_id, div_name, b_group_id, leg_id, session_user
+                )
             if div_id is False:
                 return False
 
