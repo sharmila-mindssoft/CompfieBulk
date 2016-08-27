@@ -605,8 +605,17 @@ def update_user(
 
     return (result1 and result2 and result3)
 
+def check_user_group_active_status(db, user_id):
+    q = "select count(ug.user_group_id) from tbl_user_groups ug \
+        inner join tbl_users u on  ug.user_group_id = u.user_group_id \
+        where u.user_id = %s and ug.is_active = 1"
+    row = db.select_one(q, [user_id])
+    if int(row[0]) == 0 :
+        raise process_error("E065")
 
 def update_user_status(db, user_id, is_active):
+    check_user_group_active_status(db, user_id)
+
     columns = ["is_active", "updated_on", "updated_by"]
     values = [is_active, get_date_time(), 0]
     condition = "user_id=%s"

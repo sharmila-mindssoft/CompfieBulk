@@ -334,5 +334,6 @@ def change_user_status(db, request, session_user):
     is_active = 0 if request.is_active is False else 1
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
+
     elif update_user_status(db, user_id, is_active):
         return admin.ChangeUserStatusSuccess()

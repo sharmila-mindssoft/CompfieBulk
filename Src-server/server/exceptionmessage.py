@@ -62,7 +62,8 @@ messages = {
     "E061": "Client info not found",
     "E062": "Client log save failed",
     "E063": "Geography used in statutory mapping",
-    "E064": "Geography have child level entries "
+    "E064": "Geography have child level entries ",
+    "E065": "User group is inactive, cannot activate user"
 }
 
 client_message = {
