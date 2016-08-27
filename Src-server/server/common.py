@@ -113,7 +113,7 @@ def convert_to_key_dict(data_list, columns):
                     result = {}
                     for i, d in enumerate(data):
                         result[columns[i]] = d
-                    result_list[data[0]] = result
+                    result_list[int(data[0])] = result
             return result_list
         else :
             result = {}

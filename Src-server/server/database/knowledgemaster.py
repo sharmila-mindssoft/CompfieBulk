@@ -3,7 +3,7 @@ from protocol import (
 )
 from server.exceptionmessage import *
 from server.common import (
-    convert_to_dict, get_date_time
+    convert_to_dict, get_date_time, convert_to_key_dict
 )
 from server.database.tables import *
 
@@ -383,8 +383,6 @@ def save_geography_levels(db, country_id, levels, user_id):
     d_l_id = None
     for n in newlist:
         if n.is_remove is True:
-            print n.level_id
-            print n.level_position
             result = delete_grography_level(db, n.level_id)
             if result :
                 d_l_id = n.level_position
@@ -397,15 +395,10 @@ def save_geography_levels(db, country_id, levels, user_id):
     for level in sorted(levels, key=lambda k: k.level_id, reverse=True):
         name = level.level_name
         position = level.level_position
-        print '*' * 5
-        print position
-        print name
-        print level.is_remove
         if level.is_remove :
             continue
 
         if level.level_id is not None:
-            print "update"
             columns = [
                 "level_position", "level_name", "updated_by",
             ]
@@ -422,7 +415,6 @@ def save_geography_levels(db, country_id, levels, user_id):
                 raise process_error("E011")
 
         else :
-            print "insert"
             columns = [
                 "level_position", "level_name", "country_id",
                 "created_by", "created_on"
@@ -614,34 +606,48 @@ def update_geography(
     if (db.update(table_name, columns, values, where_condition)):
         action = "Geography - %s updated" % name
         db.save_activity(updated_by, 6, action)
+        if len(parent_ids[:-1]) == 1 :
+            p_ids = tuple([parent_ids[:-1], geography_id])
+        else :
+            p_ids = parent_ids[:-1].split(',')
+            p_ids.append(geography_id)
+            p_ids = tuple(p_ids)
         qry = "SELECT geography_id, geography_name, parent_ids, level_id " + \
             " from tbl_geographies " + \
-            " WHERE parent_ids like %s "
-        rows = db.select_all(qry, [str("%" + str(geography_id) + ",%")])
+            " WHERE find_in_set( %s, parent_ids) or geography_id in %s"
+        rows = db.select_all(qry, [geography_id, p_ids])
         columns = ["geography_id", "geography_name", "parent_ids", "level_id"]
-        result = convert_to_dict(rows, columns)
+        result = convert_to_key_dict(rows, columns)
 
-        for row in result:
+        for key, row in result.items():
+            if int(key) == geography_id :
+                continue
             if row["parent_ids"] == "0,":
-                row["parent_ids"] = geography_id
+                row["parent_ids"] = tuple([geography_id, 0])
+                map_name = name
             else:
-                row["parent_ids"] = row["parent_ids"][:-1]
+                map_name = ""
+                x = row["parent_ids"].strip().split(',')
+                for j in x[:-1]:
+                    if int(j) == int(geography_id) :
+                        map_name += name + " >> "
+                    else :
+                        map_name += result[int(j)]["geography_name"] + " >> "
+                row["parent_ids"] = tuple(x[:-1])
+
+            map_name += row["geography_name"]
+
             q = "UPDATE tbl_geographies as A inner join ( " + \
-                " select p.geography_id, ( " + \
-                " select group_concat(p1.geography_name SEPARATOR '>>') " + \
-                " from tbl_geographies as p1 where geography_id in (%s)) " + \
-                " as names from tbl_geographies as p " + \
-                " where p.geography_id = %s " + \
-                " ) as B ON A.geography_id = B.geography_id " + \
-                " inner join (select c.country_name, g.level_id from  " + \
+                " select c.country_name, g.level_id from  " + \
                 " tbl_countries c inner join tbl_geography_levels g on " + \
                 " c.country_id = g.country_id ) as C  " + \
                 " ON A.level_id  = C.level_id " + \
                 " set A.parent_names = concat( " + \
-                " C.country_name, '>>', B.names) " + \
+                " C.country_name, '>>', %s) " + \
                 " where A.geography_id = %s AND C.level_id = %s "
+
             db.execute(q, (
-                row["parent_ids"], row["geography_id"], row["geography_id"],
+                map_name, row["geography_id"],
                 row["level_id"]
             ))
         return True
