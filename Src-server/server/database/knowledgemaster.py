@@ -312,6 +312,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
                 continue
     if result :
         return knowledgemaster.LevelShouldNotbeEmpty(s_l_id)
+
     for level in levels:
         name = level.level_name
         position = level.level_position
@@ -347,7 +348,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
                 db.save_activity(user_id, 9, action)
             else:
                 raise process_error("E008")
-    return True
+    return knowledgemaster.SaveStatutoryLevelSuccess()
 
 
 def get_geography_levels(db):
