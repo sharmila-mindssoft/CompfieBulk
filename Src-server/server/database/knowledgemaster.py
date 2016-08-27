@@ -299,7 +299,7 @@ def delete_statutory_level(db, level_id):
 def save_statutory_levels(db, country_id, domain_id, levels, user_id):
     table_name = "tbl_statutory_levels"
     created_on = get_date_time()
-    newlist = sorted(levels, key=lambda k: k.level_position, reversed=True)
+    newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
     result = False
     s_l_id = None
     for n in newlist :
