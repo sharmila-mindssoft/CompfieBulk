@@ -1615,7 +1615,8 @@ class ASSIGN_COMPLIANCE_USER(object):
         self, user_id, service_provider_id, user_name, user_level, seating_unit_id,
         unit_ids, domain_ids,
         is_assignee, is_approver,
-        is_concurrence
+        is_concurrence,
+        seating_unit_name
     ):
         self.user_id = user_id
         self.service_provider_id = service_provider_id
@@ -1627,13 +1628,14 @@ class ASSIGN_COMPLIANCE_USER(object):
         self.is_assignee = is_assignee
         self.is_approver = is_approver
         self.is_concurrence = is_concurrence
+        self.seating_unit_name = seating_unit_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "user_id", "service_provider_id", "user_name", "user_level",
             "seating_unit_id", "unit_ids", "domain_ids",
-            "is_assignee", "is_approver", "is_concurrence"
+            "is_assignee", "is_approver", "is_concurrence", "seating_unit_name"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -1655,10 +1657,12 @@ class ASSIGN_COMPLIANCE_USER(object):
         is_approver = parse_structure_Bool(is_approver)
         is_concurrence = data.get("is_concurrence")
         is_concurrence = parse_structure_Bool(is_concurrence)
+        seating_unit_name = data.get("seating_unit_name")
+        seating_unit_name = parse_structure_CustomTextType_250(seating_unit_name)
         return ASSIGN_COMPLIANCE_USER(
             user_id, service_provider_id, user_name, user_level, seating_unit_id,
             unit_ids, domain_ids,
-            is_assignee, is_concurrence, is_approver
+            is_assignee, is_concurrence, is_approver, seating_unit_name
         )
 
     def to_structure(self):
@@ -1672,7 +1676,8 @@ class ASSIGN_COMPLIANCE_USER(object):
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "is_assignee": to_structure_Bool(self.is_assignee),
             "is_concurrence": to_structure_Bool(self.is_concurrence),
-            "is_approver": to_structure_Bool(self.is_approver)
+            "is_approver": to_structure_Bool(self.is_approver),
+            "seating_unit_name": to_structure_CustomTextType_250(self.seating_unit_name)
         }
 
 #

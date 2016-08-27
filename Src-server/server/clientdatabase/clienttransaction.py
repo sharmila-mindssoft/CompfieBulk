@@ -438,7 +438,9 @@ def get_users_for_seating_units(db, session_user):
         " where service_provider_id = t1.service_provider_id) " + \
         " service_provider, " + \
         " (select form_ids from tbl_user_groups " + \
-        " where user_group_id = t1.user_group_id)form_ids " + \
+        " where user_group_id = t1.user_group_id)form_ids, " + \
+        " (select concat(unit_code,' - ',  unit_name) from tbl_units " + \
+        " where t1.seating_unit_id = unit_id ) seating_unit_name" + \
         " FROM tbl_users t1 " + \
         " INNER JOIN tbl_user_units t2 " + \
         " ON t1.user_id = t2.user_id " + \
@@ -453,7 +455,7 @@ def get_users_for_seating_units(db, session_user):
         "user_id", "service_provider_id", "employee_name", "employee_code",
         "seating_unit_id", "user_level",
         "is_service_provider", "service_provider",
-        "form_ids"
+        "form_ids", "seating_unit_name"
     ]
     result = convert_to_dict(rows, columns)
     user_list = []
@@ -474,6 +476,7 @@ def get_users_for_seating_units(db, session_user):
         unit_id = None
         if r["seating_unit_id"]:
             unit_id = int(r["seating_unit_id"])
+            unit_name = r["seating_unit_name"]
         # domain_ids = [
         #     int(x) for x in r["domain_ids"].split(',')
         # ]
@@ -505,7 +508,8 @@ def get_users_for_seating_units(db, session_user):
             domain_ids,
             is_assignee,
             is_approver,
-            is_concurrence
+            is_concurrence,
+            unit_name
         )
         # user_list = seating_unit_users.get(unit_id)
         # if user_list is None:
