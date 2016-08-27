@@ -1247,8 +1247,11 @@ def get_compliance_approval_count(db, session_user):
             tblComplianceHistory, columns,
             concur_count_condition, concur_count_condition_val
         )[0]["count"]
+        concurrence_condition = " AND  " + \
+            " IF(IFNULL(concurred_by, 0) = 0,  1, concurrence_status = 1)"
         approval_condition = (
-            approval_condition + " AND  concurrence_status = 1 ")
+            approval_condition + concurrence_condition
+        )
 
     approval_count_condition = approval_condition + " AND " + \
         " approved_by = %s"
@@ -1299,7 +1302,8 @@ def get_compliance_approval_list(
     param = []
     if is_two_levels:
         condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
-            " OR IFNULL(concurrence_status, 0) = 0 ) AND " + \
+            " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
+            " IFNULL(approve_status, 0) != 1)) AND " + \
             " (concurred_by = %s OR approved_by = %s)"
         param.append(int(session_user))
         param.append(int(session_user))
@@ -1329,7 +1333,6 @@ def get_compliance_approval_list(
             frequency_type=row["frequency_id"],
             duration_type=row["duration_type_id"]
         )
-        print "no_of_days: {}, ageing :{}".format(no_of_days, ageing)
         download_urls = []
         file_name = []
         if row["documents"] is not None and len(row["documents"]) > 0:
@@ -1379,7 +1382,6 @@ def get_compliance_approval_list(
                 db, concurred_by_id
             )
         remarks = row["remarks"]
-        delayed_by = None if row["ageing"] < 0 else row["ageing"]
         compliance_name = row["compliance_task"]
         if row["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
