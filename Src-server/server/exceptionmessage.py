@@ -96,6 +96,7 @@ client_message = {
     "E027": "Client active status validation failed",
     "E028": "Email notification got failed",
     "E029": "Saving reset token failed",
+    "E030": "User group is inactive, cannot activate user"
 }
 
 
