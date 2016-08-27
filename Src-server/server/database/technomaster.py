@@ -1161,8 +1161,19 @@ def get_unit_details_for_user(db, user_id):
 
 
 def return_unit_details(result):
-    legal_entity_wise = {}
+    unit_details = {}
+    country_unit_map = {}
+    unit_client_map = {}
     for r in result:
+        business_group_id = int(r["business_group_id"]) if(
+            r["business_group_id"] is not None) else 0
+        legal_entity_id = int(r["legal_entity_id"])
+        division_id = int(r["division_id"]) if(
+            r["division_id"] is not None) else 0
+        unit_id = int(r["unit_id"])
+        country_id = int(r["country_id"])
+        client_id = int(r["client_id"])
+
         unit = technomasters.UnitDetails(
             r["unit_id"], r["geography_id"],
             r["unit_code"], r["unit_name"],
@@ -1171,34 +1182,97 @@ def return_unit_details(result):
             [int(x) for x in r["domain_ids"].split(",")],
             bool(r["is_active"])
         )
+        if country_id not in country_unit_map:
+            country_unit_map[country_id] = []
+        country_unit_map[country_id].append(unit_id)
+        unit_client_map[unit_id] = client_id
+        if business_group_id not in unit_details:
+            unit_details[business_group_id] = {}
+        if legal_entity_id not in unit_details[business_group_id]:
+            unit_details[business_group_id][legal_entity_id] = {}
+        if division_id not in unit_details[business_group_id][legal_entity_id]:
+            unit_details[
+                business_group_id][legal_entity_id][division_id] = {}
+        if country_id not in unit_details[
+                business_group_id][legal_entity_id][division_id]:
+            unit_details[business_group_id][
+                    legal_entity_id][division_id][country_id] = {}
+        if client_id not in unit_details[
+                business_group_id][legal_entity_id][division_id][country_id]:
+            unit_details[business_group_id][
+                legal_entity_id][division_id][country_id][client_id] = []
+        unit_details[business_group_id][
+            legal_entity_id][division_id][country_id][client_id].append(unit)
 
-        legal_wise = legal_entity_wise.get(r["legal_entity_id"])
-        if legal_wise is None:
-            legal_wise = technomasters.Unit(
-                r["business_group_id"], r["legal_entity_id"],
-                r["division_id"], r["client_id"],
-                {r["country_id"]: [unit]},
-                bool(1)
-            )
-        else:
-            country_wise_units = legal_wise.units
+    final_list = []
+    for business_group_id in unit_details:
+        for legal_entity_id in unit_details[business_group_id]:
+            for division_id in unit_details[
+                    business_group_id][legal_entity_id]:
+                for country_id in unit_details[
+                        business_group_id][legal_entity_id][division_id]:
+                    for client_id in unit_details[
+                            business_group_id][
+                            legal_entity_id][division_id][country_id]:
+                        units = unit_details[
+                            business_group_id
+                        ][legal_entity_id][division_id][country_id][client_id]
+                        is_active = False
+                        for unit in units:
+                            is_active = is_active and unit.is_active
+                        final_list.append(
+                            technomasters.Unit(
+                                None if(
+                                    business_group_id == 0
+                                ) else business_group_id,
+                                legal_entity_id,
+                                None if(division_id == 0) else division_id,
+                                client_id, {country_id: units},
+                                is_active
+                            )
+                        )
+    return final_list
 
-            if country_wise_units is None:
-                country_wise_units = {}
 
-            units = country_wise_units.get(r["country_id"])
-            if units is None:
-                units = []
-            units.append(unit)
+# def return_unit_details(result):
+#     legal_entity_wise = {}
+#     for r in result:
+#         unit = technomasters.UnitDetails(
+#             r["unit_id"], r["geography_id"],
+#             r["unit_code"], r["unit_name"],
+#             r["industry_id"], r["address"],
+#             r["postal_code"],
+#             [int(x) for x in r["domain_ids"].split(",")],
+#             bool(r["is_active"])
+#         )
 
-            country_wise_units[r["country_id"]] = units
+#         legal_wise = legal_entity_wise.get(r["legal_entity_id"])
+#         if legal_wise is None:
+#             legal_wise = technomasters.Unit(
+#                 r["business_group_id"], r["legal_entity_id"],
+#                 r["division_id"], r["client_id"],
+#                 {r["country_id"]: [unit]},
+#                 bool(1)
+#             )
+#         else:
+#             country_wise_units = legal_wise.units
 
-            legal_wise.units = country_wise_units
+#             if country_wise_units is None:
+#                 country_wise_units = {}
 
-        legal_entity_wise[r["legal_entity_id"]] = legal_wise
+#             units = country_wise_units.get(r["country_id"])
+#             if units is None:
+#                 units = []
+#             units.append(unit)
 
-    data = legal_entity_wise.values()
-    return data
+#             country_wise_units[r["country_id"]] = units
+
+#             legal_wise.units = country_wise_units
+
+#         legal_entity_wise[r["legal_entity_id"]] = legal_wise
+
+#     data = legal_entity_wise.values()
+#     return data
 
 
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
