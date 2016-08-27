@@ -284,13 +284,41 @@ def return_statutory_levels(data):
     return statutory_levels
 
 
+def delete_statutory_level(db, level_id):
+    q = "select count(*) from tbl_statutories where level_id = %s"
+    row = db.select_one(q, [level_id])
+    if row[0] > 0:
+        return True
+    else:
+        res = db.execute(
+            "delete from tbl_statutory_levels where level_id = %s ", [level_id]
+        )
+        if res is False :
+            raise process_error("E009")
+
 def save_statutory_levels(db, country_id, domain_id, levels, user_id):
     table_name = "tbl_statutory_levels"
     created_on = get_date_time()
+    newlist = sorted(levels, key=lambda k: k.level_position, reversed=True)
+    result = False
+    s_l_id = None
+    for n in newlist :
+        if n.is_remove is True :
+            result = delete_statutory_level(db, n.level_id)
+            if result :
+                s_l_id = n.level_position
+                break
+            else :
+                continue
+    if result :
+        return knowledgemaster.LevelShouldNotbeEmpty(s_l_id)
     for level in levels:
         name = level.level_name
         position = level.level_position
         values = []
+        if level.is_remove :
+            continue
+
         if level.level_id is None:
             columns = [
                 "level_position", "level_name",
@@ -308,7 +336,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
                 raise process_error("E007")
         else:
             columns = ["level_position", "level_name", "updated_by"]
-            where_condition = "level_id=%s"
+            where_condition = "level_id = %s "
             values = [position, name, user_id, level.level_id]
             if (
                 db.update(

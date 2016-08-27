@@ -7,7 +7,7 @@ messages = {
     "E006": "Statutory nature status update failed",
     "E007": "Statutory levels creation failed",
     "E008": "Statutory levels updation failed",
-    "E009": "Geography levels deletion failed",
+    "E009": "Level(s) deletion failed",
     "E010": "Geography levels creation failed",
     "E011": "Geography levels updation failed",
     "E012": "Geography location creation failed",
