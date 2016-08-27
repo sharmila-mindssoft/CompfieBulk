@@ -155,7 +155,7 @@ $("#submit").click(function(){
                 );
               }
             }
-        
+
 /*            if($("#levelid"+k).val().trim().length > 0 && $("#level"+k).val().trim().length == 0){
               var msg = "Level "+ k;
               displayMessage(msg + message.shouldnot_empty)
@@ -168,7 +168,7 @@ $("#submit").click(function(){
                 passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : null});
               }
             }*/
-          }
+        }
         function onSuccess(response) {
           if(isAdd){
             displayMessage(message.record_added);
