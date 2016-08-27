@@ -1441,7 +1441,7 @@ def get_profiles(db, client_ids_list):
 
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
         total_free_space = round(file_space/ONE_GB, 2)
-        total_used_space = used_space/ONE_GB
+        total_used_space = round(used_space/ONE_GB, 2)
         profile_detail = technomasters.PROFILE_DETAIL(
             str(contract_from),
             str(contract_to), no_of_user_licence, remaining_licence,
