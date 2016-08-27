@@ -232,8 +232,6 @@ def get_compliance_status(
     param.extend(where_qry_val)
     # # print query
     q = "%s %s %s" % (query, where_qry1, order)
-    print q % tuple(param)
-    print
     rows = db.select_all(q, param)
     columns = [
         "filter_type", "country_id", "domain_id",
@@ -497,9 +495,7 @@ def get_filtered_trend_data(
                         db, country_id, domain_id, client_id,
                         filter_id, filter_type
                     )
-                    print "compliance_history_ids : {}".format(
-                        compliance_history_ids
-                    )
+
                     if(
                         compliance_history_ids[0] is not None and
                         compliance_history_ids[2] is not None
@@ -510,9 +506,6 @@ def get_filtered_trend_data(
                             compliance_history_ids[0],
                             compliance_history_ids[2]
                         ]
-                        print "columns : {}".format(columns)
-                        print "condition: {}".format(condition)
-                        print "condition_val: {}".format(condition_val)
                         rows = db.get_data(
                             tblComplianceHistory, columns,
                             condition, condition_val
@@ -883,7 +876,6 @@ def frame_compliance_details_query(
     q = "%s %s %s " % (query, where_qry, order)
     param = [tuple(domain_ids)]
     param.extend(where_qry_val)
-    print q % tuple(param)
     rows = db.select_all(q, param)
     return rows
 
