@@ -57,6 +57,7 @@ var message = {
 	"repeatstype_required" : "Repeats Type Required",
 	"repeatsevery_required" : "Repeats Every Required",
 	"duration_required" : "Duration Required",
+	"invalid_duration" : "Invalid Duration Value",
 	"durationtype_required" : "Duration Type Required",
 	"triggerbefore_exceed" : "Trigger before days should not exceed 100",
 	"triggerbefore_iszero" : "Trigger before days should be 1 to 100",
