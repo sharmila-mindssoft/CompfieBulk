@@ -100,10 +100,11 @@ function onIndustrySuccess(val){
 }
 //load industry list in autocomplete textbox
 $("#industryval").keyup(function(e){
-  var textval = $(this).val();
-  getIndustryAutocomplete(e, textval, industriesList, function(val){
+  function callback(val){
     onIndustrySuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getIndustryAutocomplete(e, textval, industriesList, callback, flag=true);
 });
 
 //retrive statutorynature autocomplete value
