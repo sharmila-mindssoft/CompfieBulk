@@ -610,9 +610,10 @@ def replicate_client_countries_and_domains(
     cursor.execute(delete_countries_query)
     cursor.execute(delete_domains_query)
     columns = "country_id, country_name, is_active"
-    condition = "country_id in %s"
-    condition_val = [tuple(country_ids)]
-    country_rows = db.get_data(tblCountries, columns, condition, condition_val)
+    condition, condition_val = db.generate_tuple_condition(
+        "country_id", country_ids)
+    country_rows = db.get_data(
+        tblCountries, columns, condition, [condition_val])
     country_values_list = [
         (
             int(country["country_id"]),
@@ -622,9 +623,9 @@ def replicate_client_countries_and_domains(
     ]
 
     columns = "domain_id, domain_name, is_active"
-    condition = "domain_id in %s"
-    condition_val = [tuple(domain_ids)]
-    domain_rows = db.get_data(tblDomains, columns, condition, condition_val)
+    condition, condition_val = db.generate_tuple_condition(
+        "domain_id", domain_ids)
+    domain_rows = db.get_data(tblDomains, columns, condition, [condition_val])
     domain_values_list = [
         (
             int(domain["domain_id"]),

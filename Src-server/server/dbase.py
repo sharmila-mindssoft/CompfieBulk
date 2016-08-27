@@ -315,8 +315,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            print query
-            print condition_val
+            # print query
+            # print condition_val
             if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
@@ -406,11 +406,11 @@ class Database(object):
                 self._for_client, "get_data_from_multiple_tables", query
             )
         if where_condition_val is not None:
-            print query
-            print where_condition_val
+            # print query
+            # print where_condition_val
             rows = self.select_all(query, where_condition_val)
         else:
-            print query
+            # print query
             rows = self.select_all(query)
 
         result = []
@@ -438,7 +438,7 @@ class Database(object):
             return n_id
         except mysql.Error, e:
             print e
-            print query, values
+            # print query, values
             logger.logKnowledgeApi("insert", query + " -- " + values)
             logger.logKnowledgeApi("insert", e)
             return False
@@ -480,7 +480,7 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
-        print query
+        # print query
         try:
             self.execute(query, values)
             return True
@@ -583,7 +583,6 @@ class Database(object):
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
         rows = self.select_one(query, condition_val)
-        # print rows
         if rows:
             if rows[0] > 0:
                 return True

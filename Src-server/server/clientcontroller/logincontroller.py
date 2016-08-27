@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     get_form_ids_for_admin, get_report_form_ids,
     verify_username, get_client_id_from_short_name,
     validate_reset_token, update_password, delete_used_token,
-    remove_session, update_profile, verify_password
+    remove_session, update_profile, verify_password, get_user_name_by_id
     )
 from server.exceptionmessage import client_process_error
 
@@ -251,17 +251,19 @@ def user_login_response(db, data, client_id, ip):
     is_promoted_admin = int(data["is_admin"])
     if is_promoted_admin == 1:
         form_ids = "%s, 3, 4, 6, 7, 8, 24" % (form_ids)
-        form_ids_list = form_ids.split(",")
+        form_ids_list = [int(x) for x in form_ids.split(",")]
         if 1 not in form_ids_list:
             form_ids_list.append(1)
         report_form_ids = get_report_form_ids(db).split(",")
         for form_id in report_form_ids:
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
-    else :
-        form_ids_list = form_ids
+    else:
+        form_ids_list = [int(x) for x in form_ids.split(",")]
         # form_ids = ",".join(str(x) for x in form_ids_list)
-    menu = process_user_forms(db, form_ids_list, client_id, 0)
+    menu = process_user_forms(
+        db, ",".join(str(x) for x in form_ids_list), client_id, 0
+    )
     return login.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, None, None,
@@ -306,8 +308,12 @@ def send_reset_link(db, user_id, username, short_name):
 
     columns = ["user_id", "verification_code"]
     values_list = [user_id, str(reset_token)]
-    if db.insert(tblEmailVerification, columns, values_list):
-        if email().send_reset_link(db, user_id, username, reset_link):
+    row_id = db.insert(tblEmailVerification, columns, values_list)
+    employee_name = get_user_name_by_id(db, user_id)
+    if(row_id >= 0):
+        if email().send_reset_link(
+            db, user_id, username, reset_link, employee_name
+        ):
             return True
         else:
             raise client_process_error("E028")

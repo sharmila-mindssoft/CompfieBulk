@@ -1,4 +1,3 @@
-
 CREATE TABLE `tbl_audit_log` (
   `audit_trail_id` int(11) DEFAULT 0,
   `domain_trail_id` int(11) DEFAULT 0
