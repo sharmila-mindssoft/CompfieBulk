@@ -342,7 +342,7 @@ def is_duplicate_user_group_name(db, user_group_name, user_group_id=None):
 
 def is_user_exists_under_user_group(db, user_group_id):
     columns = "count(0) as count"
-    condition = "user_group_id = %s"
+    condition = "user_group_id = %s and is_active = 1"
     condition_val = [user_group_id]
     rows = db.get_data(
         tblUsers, columns, condition, condition_val
