@@ -210,10 +210,10 @@ def parse_structure_VectorType_RecordType_core_ClientConfiguration(data):
 
 def parse_structure_SignedIntegerType_8(data):
     # return parse_number(data, -128, 127)
-    return parse_number(data, 0, 4294967295)
+    return parse_number(data, 0, 52949672950)
 
 def parse_structure_UnsignedIntegerType_32(data):
-    return parse_number(data, 0, 4294967295)
+    return parse_number(data, 0, 52949672950)
 
 def parse_structure_OptionalType_UnsignedIntegerType_32(data):
     if data is None: return data
@@ -728,7 +728,7 @@ def parse_structure_VectorType_RecordType_dashboard_AssigneeChartData(data):
     for item in data:
         lst.append(parse_structure_RecordType_dashboard_AssigneeChartData(item))
     return lst
-    
+
 def parse_structure_RecordType_dashboard_Level1Compliance(data):
     from protocol import dashboard
     return dashboard.Level1Compliance.parse_structure(data)

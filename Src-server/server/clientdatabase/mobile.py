@@ -145,12 +145,10 @@ def get_business_groups_for_mobile(db):
 def get_legal_entities_for_mobile(db):
     columns = "legal_entity_id, legal_entity_name, business_group_id"
     condition = " 1 ORDER BY legal_entity_name"
-    rows = db.get_data(
+    result = db.get_data(
         tblLegalEntities, columns, condition
     )
-    result = convert_to_dict(
-        rows, ["legal_entity_id", "legal_entity_name", "business_group_id"]
-    )
+
     legal_entity_list = []
     for r in result:
         legal_entity_list.append(
@@ -160,20 +158,16 @@ def get_legal_entities_for_mobile(db):
                 r["business_group_id"]
             )
         )
+    print legal_entity_list
     return legal_entity_list
 
 
 def get_divisions_for_mobile(db):
     columns = "division_id, division_name, legal_entity_id, business_group_id"
     condition = " 1 ORDER BY division_name"
-    rows = db.get_data(
+    result = db.get_data(
         tblDivisions, columns, condition
     )
-    columns = [
-        "division_id", "division_name", "legal_entity_id",
-        "business_group_id"
-    ]
-    result = convert_to_dict(rows, columns)
     division_list = []
     for r in result:
         division_list.append(core.ClientDivision(
@@ -312,7 +306,7 @@ def get_user_unit_ids(db, user_id, client_id=None):
         rows = db.get_data(
             table, columns, condition, condition_val
         )
-        result = ",".join(str(row[0]) for row in rows)
+        result = ",".join(str(row[0]["unit_id"]) for row in rows)
         return result
 
 
@@ -330,8 +324,8 @@ def get_trend_chart_for_mobile(db, session_user):
                 unit_details_condition,
                 unit_details_condition_val
             )
-            country_id = rows[0][0]
-            domain_ids = rows[0][1]
+            country_id = rows[0]["country_id"]
+            domain_ids = rows[0]["domain_ids"]
             country_ids_list = [country_id]
             domain_ids_list = [int(x) for x in domain_ids.split(",")]
             country_domain_timelines = db.get_country_domain_timelines(
@@ -359,7 +353,7 @@ def get_trend_chart_for_mobile(db, session_user):
                         history_condition, history_condition_val
                     )
                     compliance_history_ids = [
-                        int(row[0]) for row in history_rows
+                        int(row[0]["compliance_history_id"]) for row in history_rows
                     ]
 
                     if compliance_history_ids not in [None, '', "None"]:
@@ -382,9 +376,9 @@ def get_trend_chart_for_mobile(db, session_user):
                             )
                             if len(rows) > 0:
                                 row = rows[0]
-                                total_compliances = row[0]
-                                complied_compliances = row[1] if(
-                                    row[1] != None) else 0
+                                total_compliances = row["total"]
+                                complied_compliances = row["complied"] if(
+                                    row["complied"] != None) else 0
                                 year_wise_count[
                                     index][0] += int(total_compliances) if(
                                         total_compliances is not None) else 0

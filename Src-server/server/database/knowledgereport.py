@@ -68,7 +68,7 @@ def get_statutory_mapping_report(
         qry_val.append(statutory_nature_id)
     if level_1_statutory_id is not None:
         qry_where += " AND t1.statutory_mapping LIKE ( " + \
-            " select group_concat(statutory_name, %s)" + \
+            " select concat(statutory_name, %s)" + \
             " from tbl_statutories where statutory_id = %s)"
         qry_val.append(str("%"))
         qry_val.append(level_1_statutory_id)
