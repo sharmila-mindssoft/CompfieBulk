@@ -1247,8 +1247,11 @@ def get_compliance_approval_count(db, session_user):
             tblComplianceHistory, columns,
             concur_count_condition, concur_count_condition_val
         )[0]["count"]
+        approval_condition = (
+            approval_condition + " AND  concurrence_status = 1 ")
+
     approval_count_condition = approval_condition + " AND " + \
-        " concurrence_status = 1 AND approved_by = %s"
+        " approved_by = %s"
     approval_count_condition_val = [session_user]
     approval_count = db.get_data(
         tblComplianceHistory, columns, approval_count_condition,
