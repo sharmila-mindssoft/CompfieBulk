@@ -79,6 +79,19 @@ function loadClientProfileList(profiles){
           seating_unit = lists[key]['seating_unit_name'];
           address = lists[key]['address'];
         }
+        var isactive = "Inactive"
+        if(lists[key]['is_active'] == true){
+          isactive = "Active"
+        }else{
+          isactive = "Inactive"
+        }
+        var isadmin = ""
+        if(lists[key]['is_admin'] == true){
+            isadmin = "Admin"
+        }
+        if(lists[key]['is_primary_admin'] == true){
+            isadmin = "Primary Admin"
+        }
         $('.sno', clone).text(sno);
         $('.employee', clone).text(lists[key]['user_name']);
         $('.email', clone).text(lists[key]['email_id']);
@@ -95,6 +108,8 @@ function loadClientProfileList(profiles){
           $('.seating-unit abbr', clone).text('');
         }
         $('.unit-address', clone).text(address);
+        $('.status', clone).text(isactive);
+        $('.admin-status', clone).text(isadmin);
         $('.tbody-clientprofile-list').append(clone);
     });
 

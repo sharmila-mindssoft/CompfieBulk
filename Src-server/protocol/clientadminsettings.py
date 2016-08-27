@@ -257,22 +257,35 @@ class PROFILE_DETAIL(object):
             "used_space": to_structure_Float(self.used_space)
         }
 
+
 #
 # LICENCE_HOLDER
 #
 
 class LICENCE_HOLDER(object):
-    def __init__(self, user_id, user_name, email_id, contact_no, seating_unit_name, address):
+    def __init__(
+        self, user_id, user_name, email_id, contact_no,
+        seating_unit_name, address, is_admin, is_active, is_primary_admin
+    ):
         self.user_id = user_id
         self.user_name = user_name
         self.email_id = email_id
         self.contact_no = contact_no
         self.seating_unit_name = seating_unit_name
         self.address = address
+        self.is_admin = is_admin
+        self.is_active = is_active
+        self.is_primary_admin = is_primary_admin
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "email_id", "contact_no", "seating_unit_name", "address"])
+        data = parse_dictionary(
+            data, [
+                "user_id", "user_name", "email_id", "contact_no",
+                "seating_unit_name", "address", "is_active", "is_admin",
+                "is_primary_admin"
+            ]
+        )
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
@@ -282,18 +295,33 @@ class LICENCE_HOLDER(object):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_OptionalType_CustomTextType_20(contact_no)
         seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_OptionalType_CustomTextType_100(seating_unit_name)
+        seating_unit_name = parse_structure_OptionalType_CustomTextType_100(
+            seating_unit_name)
         address = data.get("address")
         address = parse_structure_OptionalType_CustomTextType_250(address)
-        return LICENCE_HOLDER(user_id, user_name, email_id, contact_no, seating_unit_name, address)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        is_admin = data.get("is_admin")
+        is_admin = parse_structure_Bool(is_admin)
+        is_primary_admin = data.get("is_primary_admin")
+        is_primary_admin = parse_structure_Bool(is_primary_admin)
+        return LICENCE_HOLDER(
+            user_id, user_name, email_id, contact_no,
+            seating_unit_name, address, is_admin, is_active, is_primary_admin
+        )
 
     def to_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "user_name": to_structure_CustomTextType_250(self.user_name),
             "email_id": to_structure_CustomTextType_100(self.email_id),
-            "contact_no": to_structure_OptionalType_CustomTextType_20(self.contact_no),
-            "seating_unit_name": to_structure_OptionalType_CustomTextType_100(self.seating_unit_name),
-            "address": to_structure_OptionalType_CustomTextType_250(self.address)
+            "contact_no": to_structure_OptionalType_CustomTextType_20(
+                self.contact_no),
+            "seating_unit_name": to_structure_OptionalType_CustomTextType_100(
+                self.seating_unit_name),
+            "address": to_structure_OptionalType_CustomTextType_250(
+                self.address),
+            "is_active": to_structure_Bool(self.is_active),
+            "is_admin": to_structure_Bool(self.is_admin),
+            "is_primary_admin": to_structure_Bool(self.is_primary_admin)
         }
-

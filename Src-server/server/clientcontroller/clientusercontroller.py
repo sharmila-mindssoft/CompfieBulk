@@ -126,13 +126,13 @@ def is_unsupported_file(documents):
     if documents is None:
         return False
     for doc in documents:
-        # file_name_parts = doc.file_name.split('.')
-        # name = doc.file_name.split('.')[0]
-        exten = doc.file_name.split('.')[1]
-        if exten in ["exe", "htm", "html", "xhtml"]:
-            return True
-        else:
-            continue
+        file_name_parts = doc.file_name.split('.')
+        if len(file_name_parts) > 1:
+            exten = file_name_parts[1]
+            if exten in ["exe", "htm", "html", "xhtml"]:
+                return True
+            else:
+                continue
 
 
 def validate_file_size(db, documents):
@@ -140,9 +140,6 @@ def validate_file_size(db, documents):
         return False
     for doc in documents:
         file_size = doc.file_size
-        print "file_size : {}".format(file_size)
-        print "FILE_MAX_LIMIT : {}".format(FILE_MAX_LIMIT)
-        print "is_space_available : {}".format(is_space_available(db, file_size))
         if(
             file_size > FILE_MAX_LIMIT or
             not is_space_available(db, file_size)

@@ -10,7 +10,6 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_core_ClientConfiguration,
-    parse_structure_RecordType_core_Menu,
     parse_structure_VectorType_RecordType_mobile_GetUsersList,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_core_Domain,
@@ -38,7 +37,6 @@ from protocol.to_structure import (
     to_structure_CustomTextType_100,
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_core_ClientConfiguration,
-    to_structure_RecordType_core_Menu,
     to_structure_VectorType_RecordType_mobile_GetUsersList,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_core_Domain,
@@ -82,6 +80,7 @@ class Request(object):
     @staticmethod
     def parse_inner_structure(data):
         raise NotImplementedError
+
 
 class GetVersions(Request):
     def __init__(self):
@@ -138,6 +137,7 @@ class GetComplianceApplicabilityStatus(Request):
         return {
         }
 
+
 class GetComplianceHistory(Request):
     def __init__(self, compliance_history_id):
         self.compliance_history_id = compliance_history_id
@@ -150,15 +150,18 @@ class GetComplianceHistory(Request):
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(
+            compliance_history_id)
         return GetComplianceHistory(
             compliance_history_id
         )
 
     def to_inner_structure(self):
         return {
-            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id)
+            "compliance_history_id": to_structure_UnsignedIntegerType_32(
+                self.compliance_history_id)
         }
+
 
 class GetReassignedComplianceHistory(Request):
     def __init__(
@@ -188,6 +191,7 @@ class GetReassignedComplianceHistory(Request):
             "version": to_structure_UnsignedIntegerType_32(self.version),
         }
 
+
 class GetPastFourYearEscalations(Request):
     def __init__(
         self, user_id, version
@@ -216,6 +220,7 @@ class GetPastFourYearEscalations(Request):
             "version": to_structure_UnsignedIntegerType_32(self.version),
         }
 
+
 class CheckDiskSpace(Request):
     def __init__(self):
         pass
@@ -228,6 +233,7 @@ class CheckDiskSpace(Request):
     def to_inner_structure(self):
         return {
         }
+
 
 class SaveCompliance(Request):
     def __init__(
@@ -245,38 +251,50 @@ class SaveCompliance(Request):
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(
+            compliance_history_id)
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         documents = data.get("documents")
-        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
+        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(
+            documents)
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
         validity_date = data.get("validity_date")
-        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
+        validity_date = parse_structure_OptionalType_CustomTextType_20(
+            validity_date)
         next_due_date = data.get("next_due_date")
-        next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
+        next_due_date = parse_structure_OptionalType_CustomTextType_20(
+            next_due_date)
         remarks = data.get("remarks")
         remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         return SaveCompliance(
-            compliance_history_id, user_id, documents, completion_date, validity_date,
-            next_due_date, remarks
+            compliance_history_id, user_id, documents, completion_date,
+            validity_date, next_due_date, remarks
         )
 
     def to_inner_structure(self):
         return {
-            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id),
+            "compliance_history_id": to_structure_UnsignedIntegerType_32(
+                self.compliance_history_id),
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
-            "completion_date": to_structure_CustomTextType_20(self.completion_date),
-            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
-            "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
+            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(
+                self.documents),
+            "completion_date": to_structure_CustomTextType_20(
+                self.completion_date),
+            "validity_date": to_structure_OptionalType_CustomTextType_20(
+                self.validity_date),
+            "next_due_date": to_structure_OptionalType_CustomTextType_20(
+                self.next_due_date),
+            "remarks": to_structure_OptionalType_CustomTextType_500(
+                self.remarks)
         }
+
 
 class ApproveCompliance(object):
     def __init__(
-        self, compliance_history_id, approval_status, concurrence_status, approved_on, concurred_on, remarks
+        self, compliance_history_id, approval_status, concurrence_status,
+        approved_on, concurred_on, remarks
     ):
         self.compliance_history_id = compliance_history_id
         self.approval_status = approval_status
@@ -289,12 +307,13 @@ class ApproveCompliance(object):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "compliance_history_id", "approval_status", "concurrence_status",
-                "approved_on", "concurred_on", "remarks"
+                "compliance_history_id", "approval_status",
+                "concurrence_status", "approved_on", "concurred_on", "remarks"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(
+            compliance_history_id)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_Bool(approval_status)
         concurrence_status = data.get("concurrence_status")
@@ -302,22 +321,28 @@ class ApproveCompliance(object):
         approved_on = data.get("approved_on")
         approved_on = parse_structure_CustomTextType_20(approved_on)
         concurred_on = data.get("concurred_on")
-        concurred_on = parse_structure_OptionalType_CustomTextType_20(concurred_on)
+        concurred_on = parse_structure_OptionalType_CustomTextType_20(
+            concurred_on)
         remarks = data.get("remarks")
         remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         return ApproveCompliance(
-            compliance_history_id, approval_status, concurrence_status, approved_on, concurred_on, remarks
+            compliance_history_id, approval_status, concurrence_status,
+            approved_on, concurred_on, remarks
         )
 
     def to_inner_structure(self):
         return {
-            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id),
+            "compliance_history_id": to_structure_UnsignedIntegerType_32(
+                self.compliance_history_id),
             "approval_status": to_structure_Bool(self.approval_status),
             "concurrence_status": to_structure_Bool(self.concurrence_status),
             "approved_on": to_structure_CustomTextType_20(self.approved_on),
-            "concurred_on": to_structure_OptionalType_CustomTextType_20(self.concurred_on),
-            "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks)
+            "concurred_on": to_structure_OptionalType_CustomTextType_20(
+                self.concurred_on),
+            "remarks": to_structure_OptionalType_CustomTextType_500(
+                self.remarks)
         }
+
 
 class ApproveComplianceList(object):
     def __init__(
@@ -333,15 +358,18 @@ class ApproveComplianceList(object):
             ]
         )
         compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_mobile_ApproveCompliance(compliances)
+        compliances = parse_structure_VectorType_RecordType_mobile_ApproveCompliance(
+            compliances)
         return ApproveCompliance(
             compliances
         )
 
     def to_inner_structure(self):
         return {
-            "compliances": to_structure_VectorType_RecordType_mobile_ApproveCompliance(self.compliances)
+            "compliances": to_structure_VectorType_RecordType_mobile_ApproveCompliance(
+                self.compliances)
         }
+
 
 class GetTrendChartData(Request):
     def __init__(
@@ -367,6 +395,7 @@ class GetTrendChartData(Request):
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id)
         }
 
+
 class SaveRegistrationKey(Request):
     def __init__(self, session_type, reg_key):
         self.session_type = session_type
@@ -383,7 +412,8 @@ class SaveRegistrationKey(Request):
 
     def to_inner_structure(self):
         return {
-            "session_type": to_structure_EnumType_core_SESSION_TYPE(self.session_type),
+            "session_type": to_structure_EnumType_core_SESSION_TYPE(
+                self.session_type),
             "reg_key": to_structure_Text(self.reg_key)
         }
 
@@ -406,10 +436,10 @@ def _init_Request_class_map():
 
 _Request_class_map = _init_Request_class_map()
 
+
 #
 # Response
 #
-
 class Response(object):
     def to_structure(self):
         name = type(self).__name__
@@ -431,6 +461,7 @@ class Response(object):
     @staticmethod
     def parse_inner_structure(data):
         raise NotImplementedError
+
 
 class UserLoginResponseSuccess(Response):
     def __init__(
@@ -457,6 +488,7 @@ class UserLoginResponseSuccess(Response):
             "name": to_structure_CustomTextType_100(self.name),
             "session_token": to_structure_CustomTextType_50(self.session_token)
         }
+
 
 class ClientUserLoginResponseSuccess(Response):
     def __init__(
@@ -494,7 +526,8 @@ class ClientUserLoginResponseSuccess(Response):
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_100(group_name)
         configuration = data.get("configuration")
-        configuration = parse_structure_VectorType_RecordType_core_ClientConfiguration(configuration)
+        configuration = parse_structure_VectorType_RecordType_core_ClientConfiguration(
+            configuration)
         dashboard = data.get("dashboard")
         dashboard = parse_structure_Bool(dashboard)
         compliance_task_list = data.get("compliance_task_list")
@@ -511,14 +544,19 @@ class ClientUserLoginResponseSuccess(Response):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "name": to_structure_CustomTextType_100(self.name),
-            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "session_token": to_structure_CustomTextType_50(
+                self.session_token),
             "group_id": to_structure_UnsignedIntegerType_32(self.group_id),
             "group_name": to_structure_CustomTextType_100(self.group_name),
-            "configuration": to_structure_VectorType_RecordType_core_ClientConfiguration(self.configuration),
+            "configuration": to_structure_VectorType_RecordType_core_ClientConfiguration(
+                self.configuration),
             "dashboard": to_structure_Bool(self.dashboard),
-            "compliance_task_list": to_structure_Bool(self.compliance_task_list),
-            "compliance_approvals": to_structure_Bool(self.compliance_approvals)
+            "compliance_task_list": to_structure_Bool(
+                self.compliance_task_list),
+            "compliance_approvals": to_structure_Bool(
+                self.compliance_approvals)
         }
+
 
 class GetVersionsSuccess(Response):
     def __init__(
@@ -537,20 +575,27 @@ class GetVersionsSuccess(Response):
         data = parse_dictionary(
             data, [
                 "unit_details_version", "user_details_version",
-                "compliance_applicability_version", "compliance_history_version",
+                "compliance_applicability_version",
+                "compliance_history_version",
                 "reassign_history_version"
             ]
         )
         unit_details_version = data.get("unit_details_version")
-        unit_details_version = parse_structure_UnsignedIntegerType_32(unit_details_version)
+        unit_details_version = parse_structure_UnsignedIntegerType_32(
+            unit_details_version)
         user_details_version = data.get("user_details_version")
-        user_details_version = parse_structure_UnsignedIntegerType_32(user_details_version)
-        compliance_applicability_version = data.get("compliance_applicability_version")
-        compliance_applicability_version = parse_structure_UnsignedIntegerType_32(compliance_applicability_version)
+        user_details_version = parse_structure_UnsignedIntegerType_32(
+            user_details_version)
+        compliance_applicability_version = data.get(
+            "compliance_applicability_version")
+        compliance_applicability_version = parse_structure_UnsignedIntegerType_32(
+            compliance_applicability_version)
         compliance_history_version = data.get("compliance_history_version")
-        compliance_history_version = parse_structure_UnsignedIntegerType_32(compliance_history_version)
+        compliance_history_version = parse_structure_UnsignedIntegerType_32(
+            compliance_history_version)
         reassign_history_version = data.get("reassign_history_version")
-        reassign_history_version = parse_structure_UnsignedIntegerType_32(reassign_history_version)
+        reassign_history_version = parse_structure_UnsignedIntegerType_32(
+            reassign_history_version)
         return GetVersionsSuccess(
             unit_details_version, user_details_version,
             compliance_applicability_version, compliance_history_version,
@@ -559,12 +604,18 @@ class GetVersionsSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "unit_details_version": to_structure_UnsignedIntegerType_32(self.unit_details_version),
-            "user_details_version": to_structure_UnsignedIntegerType_32(self.user_details_version),
-            "compliance_applicability_version": to_structure_UnsignedIntegerType_32(self.compliance_applicability_version),
-            "compliance_history_version": to_structure_UnsignedIntegerType_32(self.compliance_history_version),
-            "reassign_history_version": to_structure_UnsignedIntegerType_32(self.reassign_history_version)
+            "unit_details_version": to_structure_UnsignedIntegerType_32(
+                self.unit_details_version),
+            "user_details_version": to_structure_UnsignedIntegerType_32(
+                self.user_details_version),
+            "compliance_applicability_version": to_structure_UnsignedIntegerType_32(
+                self.compliance_applicability_version),
+            "compliance_history_version": to_structure_UnsignedIntegerType_32(
+                self.compliance_history_version),
+            "reassign_history_version": to_structure_UnsignedIntegerType_32(
+                self.reassign_history_version)
         }
+
 
 class GetUsersList(object):
     def __init__(
@@ -594,6 +645,7 @@ class GetUsersList(object):
             "user_name": to_structure_CustomTextType_50(self.user_name)
         }
 
+
 class GetUsersSuccess(Response):
     def __init__(self, user_list):
         self.user_list = user_list
@@ -602,14 +654,18 @@ class GetUsersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_list"])
         user_list = data.get("user_list")
-        user_list = parse_structure_VectorType_RecordType_mobile_GetUsersList(user_list)
+        user_list = parse_structure_VectorType_RecordType_mobile_GetUsersList(
+            user_list)
         return GetUsersSuccess(user_list)
 
     def to_inner_structure(self):
-        return to_structure_VectorType_RecordType_mobile_GetUsersList(self.user_list)
+        return to_structure_VectorType_RecordType_mobile_GetUsersList(
+            self.user_list)
+
 
 class GetUnitDetailsSuccess(Response):
-    def __init__(self, countries, domains, business_groups, legal_entities, divisions, units):
+    def __init__(self, countries, domains, business_groups,
+        legal_entities, divisions, units):
         self.countries = countries
         self.domains = domains
         self.business_groups = business_groups

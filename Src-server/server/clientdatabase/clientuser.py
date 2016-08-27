@@ -10,7 +10,7 @@ from server.common import (
 )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
-    save_compliance_activity, save_compliance_notification,
+    save_compliance_activity, save_compliance_notification, is_primary_admin,
     get_user_email_name, convert_base64_to_file, update_used_space
 )
 from server.exceptionmessage import client_process_error
@@ -306,7 +306,6 @@ def update_compliances(
                 file_size += doc.file_size
 
             if is_space_available(db, file_size):
-                # is_uploading_file = True
                 for doc in documents:
                     file_name_parts = doc.file_name.split('.')
                     name = None
@@ -370,11 +369,22 @@ def update_compliances(
         completion_date=completion_date,
         duration_type=None
     )
-    if assignee_id == approver_id:
-        history_columns.append("approve_status")
-        history_columns.append("approved_on")
-        history_values.append(1)
-        history_values.append(current_time_stamp)
+    if(
+        assignee_id == approver_id or
+        is_primary_admin(db, assignee_id)
+    ):
+        history_columns.extend(
+            [
+                "approve_status", "approved_on"
+            ]
+        )
+        history_values.extend([1, current_time_stamp])
+        if concurrence_id not in [None, 0, ""]:
+            history_columns.extend(
+                ["concurrence_status", "concurred_on"]
+            )
+            history_values.extend([1, current_time_stamp])
+
         query = "SELECT frequency_id " + \
             " FROM tbl_compliances tc WHERE tc.compliance_id = %s "
 
