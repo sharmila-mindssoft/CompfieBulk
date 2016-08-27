@@ -798,7 +798,7 @@ class GeographyWithMapping(object):
         level_id = data.get("level_id")
         level_id = parse_structure_UnsignedIntegerType_32(level_id)
         mapping = data.get("mapping")
-        mapping = parse_structure_CustomTextType_250(mapping)
+        mapping = parse_structure_Text(mapping)
         parent_id = data.get("parent_id")
         parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
         is_active = data.get("is_active")
@@ -810,7 +810,7 @@ class GeographyWithMapping(object):
             "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
             "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
-            "mapping": to_structure_CustomTextType_250(self.mapping),
+            "mapping": to_structure_Text(self.mapping),
             "parent_id": to_structure_UnsignedIntegerType_32(self.parent_id),
             "is_active": to_structure_Bool(self.is_active),
         }

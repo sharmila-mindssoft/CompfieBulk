@@ -1311,6 +1311,9 @@ function loadAutoUsers () {
     $('#selectboxview-users ul').empty();
     var str = '';
     for(var i in users){
+        if (users[i]["is_active"] == false) {
+            continue;
+        }
         if(checkuser(users[i]["user_id"], users[i]["countries"], users[i]["domains"]) == 1){
             var selectUserStatus = '';
             for(var j = 0; j<editusersval.length; j++){
@@ -1351,7 +1354,7 @@ function activateUsers(element){
   else{
     $(element).addClass("active_selectbox_users");
   }
-  activateUsers_user();  
+  activateUsers_user();
 }
 
 function gototop(){

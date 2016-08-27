@@ -190,7 +190,7 @@ def get_compliance_status(
 
     where_qry += filter_type_ids
 
-    if is_primary_admin(db, user_id) is True:
+    if is_primary_admin(db, user_id):
         user_qry = ""
     else:
         user_qry = " AND (T1.completed_by LIKE %s " + \
@@ -495,9 +495,7 @@ def get_filtered_trend_data(
                         db, country_id, domain_id, client_id,
                         filter_id, filter_type
                     )
-                    print "compliance_history_ids : {}".format(
-                        compliance_history_ids
-                    )
+
                     if(
                         compliance_history_ids[0] is not None and
                         compliance_history_ids[2] is not None
@@ -508,9 +506,6 @@ def get_filtered_trend_data(
                             compliance_history_ids[0],
                             compliance_history_ids[2]
                         ]
-                        print "columns : {}".format(columns)
-                        print "condition: {}".format(condition)
-                        print "condition_val: {}".format(condition_val)
                         rows = db.get_data(
                             tblComplianceHistory, columns,
                             condition, condition_val
@@ -834,7 +829,7 @@ def frame_compliance_details_query(
         where_qry += " AND T1.due_date >= %s AND T1.due_date <= %s "
         where_qry_val.extend([from_date, to_date])
 
-    if user_id > 0:
+    if is_primary_admin(db, user_id) is False:
         where_qry += " AND (T1.completed_by LIKE %s " + \
             " OR T1.concurred_by LIKE %s " + \
             " OR T1.approved_by LIKE %s)"
