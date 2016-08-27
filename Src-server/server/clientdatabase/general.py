@@ -420,10 +420,10 @@ def get_domains(db):
 
 def is_primary_admin(db, user_id):
     column = "count(1) as result"
-    condition = "user_id = %s and is_primary_admin = 1"
+    condition = "user_id = %s and is_primary_admin = 1 and is_active = 1"
     condition_val = [user_id]
     rows = db.get_data(tblUsers, column, condition, condition_val)
-    if rows[0]["result"] > 0 or user_id == 0:
+    if rows[0]["result"] > 0 or user_id == 1:
         return True
     else:
         return False

@@ -190,7 +190,7 @@ def get_compliance_status(
 
     where_qry += filter_type_ids
 
-    if is_primary_admin(db, user_id) is True:
+    if is_primary_admin(db, user_id):
         user_qry = ""
     else:
         user_qry = " AND (T1.completed_by LIKE %s " + \
@@ -232,6 +232,8 @@ def get_compliance_status(
     param.extend(where_qry_val)
     # # print query
     q = "%s %s %s" % (query, where_qry1, order)
+    print q % tuple(param)
+    print
     rows = db.select_all(q, param)
     columns = [
         "filter_type", "country_id", "domain_id",
@@ -834,7 +836,7 @@ def frame_compliance_details_query(
         where_qry += " AND T1.due_date >= %s AND T1.due_date <= %s "
         where_qry_val.extend([from_date, to_date])
 
-    if user_id > 0:
+    if is_primary_admin(db, user_id) is False:
         where_qry += " AND (T1.completed_by LIKE %s " + \
             " OR T1.concurred_by LIKE %s " + \
             " OR T1.approved_by LIKE %s)"
@@ -881,6 +883,7 @@ def frame_compliance_details_query(
     q = "%s %s %s " % (query, where_qry, order)
     param = [tuple(domain_ids)]
     param.extend(where_qry_val)
+    print q % tuple(param)
     rows = db.select_all(q, param)
     return rows
 
