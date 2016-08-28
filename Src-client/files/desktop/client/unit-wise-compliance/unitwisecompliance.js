@@ -98,7 +98,10 @@ function unitList(data){
       uAddress = compliancelists[compliancelist][0]["unit_address"]*/
     var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
     var clone2=tableRow2.clone();
-    $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;"> <abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+data+'</div>');
+    
+    $('.uaddress', clone2).attr('title', uAddress);
+    $('.uname', clone2).text(data);
+
     $('.tbody-unit').append(clone2);
     lastUnit = data;
   }
@@ -145,7 +148,8 @@ function complianceListArray(data){
   var clone3=tableRow3.clone();
   var cDescription = data["description"];
   $('.tbl_sno', clone3).text(sno+1);
-  $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+data["compliance_name"]);
+  $('.tbl_desc', clone3).attr('title', cDescription);
+  $('.tbl_compliance', clone3).text(data["compliance_name"]);
   $('.tbl_frequency', clone3).text(data["compliance_frequency"]);
   $('.tbl_statutorydate', clone3).text(statutorydate);
   $('.tbl_triggerbefore', clone3).text(triggerdate);

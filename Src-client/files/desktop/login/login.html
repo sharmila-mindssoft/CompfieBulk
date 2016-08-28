@@ -35,6 +35,20 @@
               <div class="input-container">
                 <input type="password" id="txt-password" name="username" placeholder="Password" class="login-password-textbox">
               </div>
+              <div class="input-container default-display-none" style="text-align:left" id="captcha-view">
+                <table style="width:100%;">
+                <tr>
+                <td style="width:50%;vertical-align:middle">
+                  <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff"></canvas>
+                </td>
+
+                <td style="width:50%;vertical-align:middle;text-align:right">
+                  <input type="text" id="txt-captcha" placeholder="Captcha code" maxlength="6" style="width: 90%;">
+                </td>
+                </tr>
+                </table>
+              </div>
+              
               <div class="input-container">
                 <span class="text-forgot-password"><a href="/forgot-password">Forgot Password?</a></span>
                 <span><button id="btn-login" class="btn-login">Login</button></span>

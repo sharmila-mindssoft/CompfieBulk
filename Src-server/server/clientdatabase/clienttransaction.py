@@ -1017,7 +1017,6 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id,
                 country_id=country_id
             )
-        
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )

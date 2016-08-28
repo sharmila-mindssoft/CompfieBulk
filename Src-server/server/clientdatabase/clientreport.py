@@ -2486,7 +2486,8 @@ def get_client_details_count(
     )
     query = "SELECT count(*) " + \
             " FROM %s u " + \
-            " WHERE " % (tblUnits)
+            " WHERE "
+    query = query % (tblUnits)
     query += condition
     rows = db.select_all(query, condition_val)
     count = 0

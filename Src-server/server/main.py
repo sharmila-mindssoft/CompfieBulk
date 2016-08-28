@@ -114,7 +114,7 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
-            # return None
+            return None
 
     def handle_api_request(
         self, unbound_method, request, response,
@@ -148,8 +148,7 @@ class API(object):
                 self._db.commit()
             else:
                 self._db.rollback()
-            print "-------------"
-            print response_data
+            # print response_data
             respond(response_data)
         except Exception, e:
             # print "handle_api_request"
@@ -162,9 +161,9 @@ class API(object):
 
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
-            if str(e).find("expected a") is False :
-                print "------- rollbacked"
-                self._db.rollback()
+            # if str(e).find("expected a") is False :
+            #     print "------- rollbacked"
+            self._db.rollback()
             response.set_status(400)
             response.send(str(e))
 
@@ -348,14 +347,28 @@ class TemplateHandler(tornado.web.RequestHandler) :
         template = template_env.get_template(path)
         output = template.render(**self.__parameters)
         output = self.update_static_urls(output)
+        token = str(time.time())
+        print token
+        self.set_secure_cookie("_xsrf", token)
+        # self.set_cookie("_test", to)
+        # if not self.get_cookie("_xsrf"):
+        #     token = self.xsrf_token
+        #     self.set_cookie("_xsrf", token)
         self.write(output)
 
-    def options(self) :
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "Content-Type")
-        self.set_header("Access-Control-Allow-Methods", "GET, POST")
-        self.set_status(204)
-        self.write("")
+class TokenHandler(tornado.web.RedirectHandler):
+    def initialize(self):
+        pass
+
+    def get(self):
+        print "token handler called"
+        if not self.get_cookie("_xsrf") :
+            print "not cookie"
+            token = self.xsrf_token
+            self.set_cookie("_xsrf", token)
+            self.write(dict(xsrf=token))
+        else :
+            self.write(dict(xsrf=self.get_cookie('_xsrf')))
 
 #
 # run_server
@@ -385,8 +398,10 @@ def run_server(port):
             }
             web_server.low_level_url(url, TemplateHandler, args)
 
+        web_server.low_level_url("/knowledge/token", TokenHandler)
         api = API(io_loop, db)
 
+        # post urls
         api_urls_and_handlers = [
             ("/knowledge/server-list", api.handle_server_list),
             ("/knowledge/client-list", api.handle_client_list),

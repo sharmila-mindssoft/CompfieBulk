@@ -709,8 +709,8 @@ def process_get_task_applicability_report_data(
 
 
 def get_client_details_report_filters(db, request, session_user, client_id):
-    countries = get_countries_for_user(db, session_user, client_id)
-    domains = get_domains_for_user(db, session_user, client_id)
+    countries = get_countries_for_user(db, session_user)
+    domains = get_domains_for_user(db, session_user)
     user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]

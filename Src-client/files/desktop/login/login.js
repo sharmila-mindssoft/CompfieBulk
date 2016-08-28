@@ -1,4 +1,6 @@
 var landingPage = null;
+var captchaStatus = false;
+var captchaText = null;
 function clearLoginMessage() {
     $(".login-error-message").hide();
     $(".login-error-message span").text("");
@@ -49,7 +51,7 @@ function getShortName(){
 // isLoginValidated, resetLoginUI, performLogin
 //
 
-function isLoginValidated (e_email, e_password) {
+function isLoginValidated (e_email, e_password, e_captcha) {
     if (e_email.val() == "") {
         displayLoginMessage(message.username_password_required);
         e_email.focus();
@@ -60,7 +62,16 @@ function isLoginValidated (e_email, e_password) {
         e_password.focus();
         return false;
     }
-    
+    if (e_captcha.val() == "" && captchaStatus == true) {
+        displayLoginMessage(message.captcha_required);
+        e_captcha.focus();
+        return false;
+    }
+    if (e_captcha.val() != "" && captchaText != e_captcha.val()) {
+        displayLoginMessage(message.invalid_captcha);
+        e_captcha.focus();
+        return false;
+    }
     return true;
 }
 
@@ -92,10 +103,45 @@ function processLogin(username, password, shortName, callback) {
         ];
         BASE_URL = "/api/"
     }
-    jQuery.post(
-        BASE_URL + "login",
-        JSON.stringify(requestFrame, null, " "),
-        function (data) {
+    function getCookie(name) {
+            var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+            return r ? r[1] : undefined;
+    }
+    // console.log(getCookie('_xsrf'));
+    // url = BASE_URL + "login";
+
+
+    // jQuery.postJSON = function(url, args, callback) {
+    //     alert("called");
+    //     args._xsrf = getCookie("_xsrf");
+    //     $.ajax({url: url, data: $.param(args), type: "POST",
+    //         success: function(response) {
+    //             alert(response);
+    //             if (callback) callback(eval("(" + response + ")"));
+    //         },
+    //         error: function(response) {
+    //             console.log("ERROR:", response)
+    //         }
+    //     });
+    // };
+    // $.postJSON(url, requestFrame, function(data) {
+    //     var data = parseJSON(data);
+    //     alert(data);
+    // });
+
+
+
+    // x_request = {
+    //     "_xsrf": getCookie('_xsrf'),
+    //     "data": requestFrame
+    // }
+    $.ajax({
+        url : BASE_URL + "login",
+        headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+        type: "POST",
+        contentType: "application/json",
+        data : JSON.stringify(requestFrame, null, " "),
+        success:function(data, textStatus, jqXHR){
             var data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
@@ -107,16 +153,36 @@ function processLogin(username, password, shortName, callback) {
             else {
                 callback(status, null);
             }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            //if fails
         }
-    )
-    .fail(
-        function (jqXHR, textStatus, errorThrown) {
-            callback(jqXHR["responseText"], errorThrown)
-        }
-    );
+    });
+    // jQuery.post(
+    //     BASE_URL + "login",
+    //     JSON.stringify(requestFrame, null, " "),
+    //     function (data) {
+    //         var data = JSON.parse(data);
+    //         var status = data[0];
+    //         var response = data[1];
+    //         matchString = 'success';
+    //         if (status.toLowerCase().indexOf(matchString) != -1){
+    //             initSession(response, shortName)
+    //             callback(null, response);
+    //         }
+    //         else {
+    //             callback(status, null);
+    //         }
+    //     }
+    // )
+    // .fail(
+    //     function (jqXHR, textStatus, errorThrown) {
+    //         callback(jqXHR["responseText"], errorThrown)
+    //     }
+    // );
 }
-function performLogin(e_button, e_email, e_password) {
-    if (!isLoginValidated(e_email, e_password))
+function performLogin(e_button, e_email, e_password, e_captcha) {
+    if (!isLoginValidated(e_email, e_password, e_captcha))
         return;
 
     displayLoginLoader();
@@ -142,6 +208,17 @@ function performLogin(e_button, e_email, e_password) {
         displayLoginMessage(disp_message);
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
+
+        captchaStatus = true;
+        if(captchaStatus){
+            captchaText = "AzK9oE";
+            $("#captcha-view").show();
+            var tCtx = document.getElementById('captchaCanvas').getContext('2d');
+            tCtx.font = "18px Arial";
+            tCtx.strokeText(captchaText, 10, 20);
+        }else{
+            $("#captcha-view").hide();
+        }
     }
 
     if (getShortName() === null){
@@ -154,6 +231,7 @@ function performLogin(e_button, e_email, e_password) {
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
                     window.location.href = "/knowledge/home";
+                    $("#captcha-view").hide();
                 }
                 else {
                     onFailure(error)
@@ -170,6 +248,7 @@ function performLogin(e_button, e_email, e_password) {
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
                     window.location.href = landingPage;
+                    $("#captcha-view").hide();
                 }
                 else {
                     onFailure(error)
@@ -177,7 +256,6 @@ function performLogin(e_button, e_email, e_password) {
             }
         );
     }
-
 }
 
 function initializeUI () {
@@ -198,11 +276,13 @@ function initializeLogin () {
 
     $("#txt-password").keydown(function (e) {
         if (e.keyCode == 13 && $(this).val() != "")
-            performLogin($(this), $("#txt-username"), $("#txt-password"));
+            //performLogin($(this), $("#txt-username"), $("#txt-password"));
+            performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));
     });
 
     $("#btn-login").on("click", function () {
-        performLogin($(this), $("#txt-username"), $("#txt-password"));
+        //performLogin($(this), $("#txt-username"), $("#txt-password"));
+        performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));
     });
 }
 

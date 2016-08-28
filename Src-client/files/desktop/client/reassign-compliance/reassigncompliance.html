@@ -51,7 +51,6 @@
         </div>
     </div>
 </div>
-
 <div id="templates">
   <table class="table-compliances">
     <tr class="table-row">
@@ -59,7 +58,9 @@
       <td class="assigneename"></td>
       <td class="seatingunit"></td>
       <td class="noofcompliance" align="center"></td>
-      <td style="padding-top:0.3em; padding-bottom:0.3em;" class="action"></td>
+      <td style="padding-top:0.3em; padding-bottom:0.3em;" class="action">
+        <input type="submit" value="Reassign" class="btn-save" style="width:auto;">
+      </td>
       <!-- <td class="action" align="center"><input type="button" class="btn-submit" value="Start"/></td> -->
     </tr>
   </table>
@@ -208,8 +209,17 @@
   <tbody class="accordion-toggle tbody-heading">
     <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
       <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="95%" class="actname" colspan="8">
-</div>
-</th>
+
+      <div style="float:left; width:97%;">
+        <input class="actname-ckbox" type="checkbox" onclick="actstatus(this)"> 
+        <label class="actname-label"> </label> 
+      </div>
+
+      <div style="float:right; width:3%;padding-top:5px;">
+        <img src="/images/chevron_black_down.png">
+      </div>
+
+      </th>
     </tr>
     </tbody>
   </table>
@@ -241,9 +251,17 @@
  <div id="statutory-values" class="default-display-none">
   <table class="table-statutory-values">
     <tr class="compliance-details">
-      <td class="ckbox"></td>
+      <input type="hidden" class="combineid-class" />
+      <td>
+        <input class="ckbox" type="checkbox" onclick="compliancestatus(this)">
+      </td>
       <td class="snoo"></td>
-      <td class="compliancetask"></td>
+      <td>
+        <abbr class="page-load tipso_style" >
+        <img src="/images/icon-info.png" style="margin-right:10px">
+        </abbr>
+        <span class="compliancetask"> </span>
+      </td>
       <td class="compliancefrequency"></td>
       <td class="statutorydate"></td>
       <td class="triggerbefore"></td>

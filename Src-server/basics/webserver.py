@@ -23,6 +23,7 @@ METHODS = set([
 
 class RequestHandler(tornado.web.RequestHandler) :
     __default_headers = {}
+
     def initialize(self, handler_map) :
         self.__handler_map = handler_map
         self.__close_callback = None
@@ -215,9 +216,14 @@ class WebServer(object) :
             for entry in lower_level_handlers :
                 self.low_level_url(*entry)
 
+        settings = {
+            # "xsrf_cookies": True,
+            "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
+            "gzip": True
+        }
         self._application = tornado.web.Application(
             self._application_urls,
-            gzip=True
+            **settings
         )
         self._http_server = tornado.httpserver.HTTPServer(
             self._application,

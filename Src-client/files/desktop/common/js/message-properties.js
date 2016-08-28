@@ -5,6 +5,8 @@ var message = {
 	"contract_notstart" : "Contract not yet started",
 	"connection_timeout" : "Connection Timeout",
 	"username_password_required" : "Enter username / password",
+	"captcha_required" : "Enter Captcha",
+	"invalid_captcha" : "Invalid Captcha",
 
 	"domainname_required" : "Domain Name Required",
 	"domainname_exists" : "Domain Name Already Exists",

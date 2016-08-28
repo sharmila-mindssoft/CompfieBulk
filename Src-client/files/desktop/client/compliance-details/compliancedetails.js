@@ -98,7 +98,7 @@ function unitList(data){
   if(lastUnit != data["unit_name"]){
     var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
     var clone2=tableRow2.clone();
-    $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;">' + data["unit_name"] + '</div>');
+    $('.heading', clone2).html(data["unit_name"]);
     $('.tbody-unit').append(clone2);
     lastUnit = data["unit_name"];
   }
@@ -125,19 +125,14 @@ function complianceListArray(data){
   $('.tbl_remarks', clone3).text(data["remarks"]);
   if(data["documents"] != null && data["documents"] != ''){
     var documentsList = data["documents"];
-    var url = '';
     for(var i=0; i<documentsList.length; i++){
-      url = url + '<a href="'+documentsList[i]+'" target="_new" download> Download '+ (i+1) +' </a> ';
+      $('.doc_link', clone3).attr('href', documentsList[i]);
+      $('.doc_link', clone3).html('Download '+ (i+1));
     }
-    $('.tbl_document', clone3).html(url);
   }
   $('.tbody-unit').append(clone3);
   sno++;
 }
-
-
-
-
 
 
 //create array for pagination and call display function

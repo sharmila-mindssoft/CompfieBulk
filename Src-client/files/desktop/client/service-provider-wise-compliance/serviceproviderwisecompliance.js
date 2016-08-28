@@ -51,12 +51,15 @@ function loadresult(filterList){
         var tableRow1=$('#serviceprovider-head-templates .table-serviceprovider-head .table-row-serviceprovider-headvalue');
         var clone1=tableRow1.clone();
         service_sno = service_sno + 1;
+
+        var spAddress = '';
+        if(filterList[entity]["address"] != null) spAddress = filterList[entity]["address"];
         $('.tbl_sp_count', clone1).text(service_sno);
         $('.tbl_sp_name', clone1).text(sp_name);
         $('.tbl_sp_contactperson', clone1).text(filterList[entity]["contact_person"]);
         $('.tbl_sp_email', clone1).text("main");
         $('.tbl_sp_contactno', clone1).text(filterList[entity]["contact_no"]);
-        $('.tbl_sp_address', clone1).text(filterList[entity]["address"]);
+        $('.tbl_sp_address', clone1).text(spAddress);
         $('.tbl_sp_period', clone1).text(filterList[entity]["contract_from"] +' to '+ filterList[entity]["contract_to"]);
         $('.tbody-serviceprovider').append(clone1);
 
@@ -77,11 +80,11 @@ function loadresult(filterList){
         if(lastUnit != compliancelist){
           var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
           var clone2=tableRow2.clone();
-          $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;"> <abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliancelist+'</div>');
+          $('.tipso_style', clone2).attr('title', uAddress);
+          $('.tbl_unitheading', clone2).text(compliancelist);
           $('.tbody-serviceprovider').append(clone2);
           lastUnit = compliancelist
         }
-      
         
         for(i=0; i<compliancelists[compliancelist].length; i++){
           var triggerdate = '';

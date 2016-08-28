@@ -233,7 +233,6 @@ class Database(object):
             return res
         except mysql.Error, e:
             print e
-            print '@@@@@@@@@@2222'
             # print query
             # print param
             logger.logClientApi("select_all", query)

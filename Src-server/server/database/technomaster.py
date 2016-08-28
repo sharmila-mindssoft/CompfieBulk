@@ -6,7 +6,7 @@ from server.constants import (CLIENT_LOGO_PATH, LOGO_URL)
 from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, remove_uploaded_file,
-    convert_base64_to_file, new_uuid
+    convert_base64_to_file, new_uuid, convert_to_dict
 )
 from server.database.tables import *
 from server.database.admin import (
@@ -172,24 +172,32 @@ def return_domains(data):
 
 
 def get_techno_users(db):
-    country_domain_condition = " user_id in ( " + \
-        " select user_id from tbl_users where user_group_id in ( " + \
-        " select user_group_id from tbl_user_groups " + \
-        " where form_category_id = 3))"
-
     # Getting techno user countries
-    country_columns = ["country_id", "user_id"]
-    countries = db.get_data(
-        tblUserCountries, country_columns, country_domain_condition
-    )
+    query = "SELECT t1.country_id, t1.user_id FROM tbl_user_countries t1 \
+            INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id \
+            INNER JOIN tbl_user_groups t3 ON t2.user_group_id = t3.user_group_id AND t3.form_category_id = 3"
+    rows = db.select_all(query)
 
-    # Getting techno user countries
-    domain_columns = ["domain_id", "user_id"]
-    domains = db.get_data(
-        tblUserDomains, domain_columns, country_domain_condition
-    )
+    countries = []
+    if rows:
+        country_columns = [
+            "country_id", "user_id"
+        ]
+        countries = convert_to_dict(rows, country_columns)
 
-    user_country_map = {}
+    # Getting techno user domains
+    query = "SELECT t1.domain_id, t1.user_id FROM tbl_user_domains t1 \
+            INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id \
+            INNER JOIN tbl_user_groups t3 ON t2.user_group_id = t3.user_group_id AND t3.form_category_id = 3"
+    rows = db.select_all(query)
+
+    domains = []
+    if rows:
+        domain_columns = [
+            "domain_id", "user_id"
+        ]
+        domains = convert_to_dict(rows, domain_columns)
+
     for country in countries:
         user_id = int(country["user_id"])
         if user_id not in user_country_map:
@@ -258,7 +266,7 @@ def return_group_company_details(db, result):
         contract_from = datetime_to_string(client_row["contract_from"])
         contract_to = datetime_to_string(client_row["contract_to"])
         no_of_user_licence = client_row["no_of_user_licence"]
-        total_disk_space = client_row["total_disk_space"] / 1000000000
+        total_disk_space = round(client_row["total_disk_space"] / (1024 * 1024 * 1024))
         is_sms_subscribed = True if client_row[
             "is_sms_subscribed"
         ] == 1 else False
@@ -300,7 +308,7 @@ def save_client_group_data(db, client_group, session_user):
     values = [
         client_group.group_name, client_group.email_id,
         client_group.logo.file_size, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 1000000000,
+        client_group.no_of_user_licence, client_group.file_space * (1024 * 1024 * 1024),
         is_sms_subscribed, client_group.short_name,
         ','.join(str(x) for x in client_group.incharge_persons),
         1, session_user,
@@ -531,7 +539,7 @@ def update_client_group_record(db, client_group, session_user):
     ]
     values = [
         client_group.group_name, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 1000000000,
+        client_group.no_of_user_licence, client_group.file_space * (1024 * 1024 * 1024),
         is_sms_subscribed,
         ','.join(str(x) for x in client_group.incharge_persons), session_user,
         current_time_stamp
@@ -1353,7 +1361,7 @@ def get_next_unit_auto_gen_no(db, client_id):
 
 
 def get_profiles(db, client_ids):
-    ONE_GB = 1024 * 1024 * 1000
+    ONE_GB = 1024 * 1024 * 1024
     client_ids_list = [int(x) for x in client_ids.split(",")]
     profiles = []
     for client_id in client_ids_list:
