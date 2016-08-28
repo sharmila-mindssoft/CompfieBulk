@@ -151,7 +151,7 @@ function processLogin(username, password, shortName, callback) {
                 callback(null, response);
             }
             else {
-                callback(status, null);
+                callback(data, null);
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -190,8 +190,10 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
     // e_email.attr("disabled", "disabled");
     // e_password.attr("disabled", "disabled");
 
-    function onFailure(status) {
+    function onFailure(data) {
         //console.log("status"+status);
+        status = data[0]
+        captcha_data = data[1]
         var disp_message = message.invalid_username_password;
         if(status == "ContractExpired"){
             disp_message = message.contract_expired;
@@ -208,10 +210,15 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         displayLoginMessage(disp_message);
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
-
-        captchaStatus = true;
+        console.log("captcha_text: " + captcha_data.captcha_text);
+        if(captcha_data.captcha_text == null){
+            captchaStatus = false;    
+        }else{
+            captchaStatus = true;    
+        }
+        console.log("captcha_status:  "+ captchaStatus);
         if(captchaStatus){
-            captchaText = "AzK9oE";
+            captchaText = captcha_data.captcha_text;
             $("#captcha-view").show();
             var tCtx = document.getElementById('captchaCanvas').getContext('2d');
             tCtx.font = "18px Arial";
@@ -227,6 +234,8 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
             e_password.val(),
             null,
             function (error, response) {
+                console.log("error: "+error);
+                console.log("response: "+response);
                 if (error == null){
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
@@ -244,6 +253,8 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
             e_password.val(),
             getShortName(),
             function (error, response) {
+                console.log("error: "+error);
+                console.log("response: "+response);
                 if (error == null){
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);

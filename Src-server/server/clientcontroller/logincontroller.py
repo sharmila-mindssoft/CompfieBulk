@@ -3,13 +3,13 @@ from server.controller.corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
-    CLIENT_URL
+    CLIENT_URL, CAPTCHA_LENGHT
 )
 from server import logger
 from server.clientdatabase.login import *
 
 from server.common import (
-    encrypt, new_uuid
+    encrypt, new_uuid, generate_random
 )
 
 from server.clientdatabase.general import (
@@ -69,6 +69,16 @@ def process_login_request(
     return result
 
 
+def invalid_credentials(db, session_user_ip):
+    save_login_failure(db, session_user_ip)
+    no_of_attempts = get_login_attempt(db, session_user_ip)
+    if no_of_attempts >= 3:
+        captcha_text = generate_random(CAPTCHA_LENGHT)
+    else:
+        captcha_text = None
+    return login.InvalidCredentials(captcha_text)
+
+
 def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
     username = request.username
@@ -77,7 +87,6 @@ def process_login(db, request, client_id, session_user_ip):
     user_ip = session_user_ip
     logger.logLogin("info", user_ip, username, "Login process begin")
     if is_contract_not_started(db):
-        print "inside contract not startd"
         return login.ContractNotYetStarted()
     elif not is_configured(db):
         logger.logLogin("info", user_ip, username, "NotConfigured")
@@ -87,12 +96,13 @@ def process_login(db, request, client_id, session_user_ip):
         return login.ContractExpired()
     elif not is_client_active(client_id):
         logger.logLogin("info", user_ip, username, "InvalidCredentials")
-        return login.InvalidCredentials()
+        return invalid_credentials(db, session_user_ip)
     else:
         response = verify_login(db, username, encrypt_password)
     if login_type.lower() == "web":
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
+            delete_login_failure_history(db, session_user_ip)
             return admin_login_response(db, client_id, user_ip)
         else:
             if response is "ContractExpired":
@@ -100,14 +110,16 @@ def process_login(db, request, client_id, session_user_ip):
                 return login.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
-                return login.InvalidCredentials()
+                return invalid_credentials(db, session_user_ip)
             else:
                 logger.logLogin("info", user_ip, username, "Login process end")
+                delete_login_failure_history(db, session_user_ip)
                 return user_login_response(db, response, client_id, user_ip)
 
     else:
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
+            delete_login_failure_history(db, session_user_ip)
             return mobile_user_admin_response(
                 db, login_type, client_id, user_ip
             )
@@ -117,9 +129,10 @@ def process_login(db, request, client_id, session_user_ip):
                 return login.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
-                return login.InvalidCredentials()
+                return invalid_credentials(db, session_user_ip)
             else:
                 logger.logLogin("info", user_ip, username, "Login process end")
+                delete_login_failure_history(db, session_user_ip)
                 return mobile_user_login_respone(
                     db, response, login_type, client_id, user_ip
                 )

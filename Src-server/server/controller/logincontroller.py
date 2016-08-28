@@ -2,11 +2,13 @@ from corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
-    KNOWLEDGE_URL
+    KNOWLEDGE_URL, CAPTCHA_LENGHT
 )
 
 from server import logger
-from server.common import (encrypt, new_uuid)
+from server.common import (
+    encrypt, new_uuid, generate_random
+)
 from server.database.tables import *
 from server.database.login import *
 
@@ -61,17 +63,26 @@ def process_login(db, request, session_user_ip):
     encrypt_password = encrypt(password)
     response = verify_login(db, username, encrypt_password)
     if response is True:
+        delete_login_failure_history(db, session_user_ip)
         return admin_login_response(db, session_user_ip)
     else:
         if bool(response):
             if login_type.lower() == "web":
+                delete_login_failure_history(db, session_user_ip)
                 return user_login_response(db, response, session_user_ip)
             else:
+                delete_login_failure_history(db, session_user_ip)
                 return mobile_user_login_respone(
                     db, response, request, session_user_ip
                 )
         else:
-            return login.InvalidCredentials()
+            save_login_failure(db, session_user_ip)
+            no_of_attempts = get_login_attempt(db, session_user_ip)
+            if no_of_attempts >= 3:
+                captcha_text = generate_random(CAPTCHA_LENGHT)
+            else:
+                captcha_text = None
+            return login.InvalidCredentials(captcha_text)
 
 
 def mobile_user_login_respone(db, data, request, ip):

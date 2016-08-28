@@ -1,616 +1,166 @@
-2016-07-29 10:34:50,026 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 10:34:50,027 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 137, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 10:35:24,201 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 10:35:24,201 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 137, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 10:37:15,916 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 10:37:15,916 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 10:38:28,382 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 10:38:28,382 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 10:57:49,784 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 10:57:49,784 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 10:59:03,783 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 10:59:03,784 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 11:01:16,041 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 11:01:16,041 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 11:01:53,048 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 11:01:53,048 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 11:02:05,854 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 11:02:05,855 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 11:04:24,508 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 11:04:24,509 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 11:04:38,724 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 4294967295, but received: -3
-2016-07-29 11:04:38,724 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 48, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number between 0 and 4294967295, but received: -3
-
-2016-07-29 11:05:45,052 - knowledge_logger - main.py-handle-api- : expected a number greater than 0, but received: -3
-2016-07-29 11:05:45,053 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 49, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number greater than 0, but received: -3
-
-2016-07-29 11:06:59,491 - knowledge_logger - main.py-handle-api- : expected a number greater than 0, but received: -3
-2016-07-29 11:06:59,491 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 49, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number greater than 0, but received: -3
-
-2016-07-29 11:07:25,744 - knowledge_logger - main.py-handle-api- : expected a number greater than 0, but received: -3
-2016-07-29 11:07:25,744 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 49, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number greater than 0, but received: -3
-
-2016-07-29 11:07:37,436 - knowledge_logger - main.py-handle-api- : expected a number greater than 0, but received: -3
-2016-07-29 11:07:37,436 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 150, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 649, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1353, in to_inner_structure
-    "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 1422, in to_structure_VectorType_RecordType_technomasters_PROFILES
-    lst.append(to_structure_RecordType_technomasters_PROFILES(item))
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 501, in to_structure_RecordType_technomasters_PROFILES
-    return technomasters.PROFILES.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1566, in to_structure
-    "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 476, in to_structure_RecordType_technomasters_PROFILE_DETAIL
-    return technomasters.PROFILE_DETAIL.to_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1539, in to_structure
-    "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/to_structure.py", line 251, in to_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 49, in parse_number
-    raise expectation_error(msg, x)
-ValueError: expected a number greater than 0, but received: -3
-
-2016-07-29 11:13:43,444 - knowledge_logger - main.py-handle-api- : create_new_admin() takes exactly 3 arguments (4 given)
-2016-07-29 11:13:43,445 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
+2016-08-28 19:40:02,339 - knowledge_logger - main.py-handle-api- : global name 'save_login_failure' is not defined
+2016-08-28 19:40:02,340 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 240, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 110, in process_techno_request
-    result = create_new_admin(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 406, in create_new_admin
-    result = create_new_admin(db, new_admin_id, client_id, session_user)
-TypeError: create_new_admin() takes exactly 3 arguments (4 given)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 74, in process_login
+    save_login_failure(db, session_user_ip)
+NameError: global name 'save_login_failure' is not defined
 
-2016-07-29 11:13:55,364 - knowledge_logger - main.py-handle-api- : 
-2016-07-29 11:13:55,364 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 107, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-07-29 11:14:12,356 - knowledge_logger - main.py-handle-api- : 
-2016-07-29 11:14:12,357 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 107, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-07-29 11:15:52,571 - knowledge_logger - main.py-handle-api- : create_new_admin() takes exactly 4 arguments (3 given)
-2016-07-29 11:15:52,572 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
+2016-08-28 19:42:00,932 - knowledge_logger - main.py-handle-api- : global name 'updateColumnsList' is not defined
+2016-08-28 19:42:00,932 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 240, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 110, in process_techno_request
-    result = create_new_admin(db, request_frame, session_user)
-TypeError: create_new_admin() takes exactly 4 arguments (3 given)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 74, in process_login
+    save_login_failure(db, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 212, in save_login_failure
+    tblUserLoginHistory, columns, value_list, updateColumnsList
+NameError: global name 'updateColumnsList' is not defined
 
-2016-08-05 15:43:26,863 - knowledge_logger - main.py-handle-api- : get_trail_log_for_domain() takes exactly 5 arguments (4 given)
-2016-08-05 15:43:26,864 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
+2016-08-28 19:52:55,174 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data.
+2016-08-28 19:52:55,175 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_domain_replication
-    actual_replica_count
-TypeError: get_trail_log_for_domain() takes exactly 5 arguments (4 given)
-
-2016-08-05 15:43:26,867 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:43:26,868 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:43:26,870 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:43:26,871 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:43:26,874 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:43:26,874 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:43:26,878 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:43:26,878 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:43:26,881 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:43:26,882 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:44:23,909 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:44:23,909 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:52:20,159 - knowledge_logger - main.py-handle-api- : not all arguments converted during string formatting
-2016-08-05 15:52:20,160 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 197, in handle_replication
-    gen.get_trail_log(db, client_id, received_count)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 55, in get_trail_log
-    update_client_replication_status(db, client_id, received_count)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 185, in update_client_replication_status
-    db.execute(q, [client_id])
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 147, in execute
-    logger.logQuery(self._for_client, "execute", query % param[0])
-TypeError: not all arguments converted during string formatting
-
-2016-08-05 15:52:20,244 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:52:20,244 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:52:20,311 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:52:20,312 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:52:23,104 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:52:23,104 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:52:23,160 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:52:23,161 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:53:13,917 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:53:13,918 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 15:53:13,926 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 15:53:13,926 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
-
-2016-08-05 16:26:56,583 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data.
-2016-08-05 16:26:56,583 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 244, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 68, in process_techno_request
-    result = get_clients(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 342, in get_clients
-    group_company_list = get_group_companies_for_user_with_max_unit_count(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1010, in get_group_companies_for_user_with_max_unit_count
-    result = db.get_data(tblClientGroups, columns, condition)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 294, in get_data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 74, in process_login
+    save_login_failure(db, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 217, in save_login_failure
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 545, in increment
+    rows = self.get_data(table, column, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 323, in get_data
     rows = self.select_all(query)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 220, in select_all
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 240, in select_all
     raise fetch_error()
 RuntimeError: Transaction failed while processing data.
 
-2016-08-05 16:27:04,182 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 16:27:04,183 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
+2016-08-28 19:57:31,273 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data.
+2016-08-28 19:57:31,274 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 74, in process_login
+    save_login_failure(db, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 217, in save_login_failure
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 544, in increment
+    rows = self.get_data(table, column, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 323, in get_data
+    rows = self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 240, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
 
-2016-08-05 16:27:10,967 - knowledge_logger - main.py-handle-api- : 
-2016-08-05 16:27:10,967 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    self._db.begin()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
-    assert self._cursor is None
-AssertionError
+2016-08-28 19:58:17,654 - knowledge_logger - main.py-handle-api- : unhashable type: 'list'
+2016-08-28 19:58:17,654 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 74, in process_login
+    save_login_failure(db, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 217, in save_login_failure
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 546, in increment
+    currentValue = rows[0][column]
+TypeError: unhashable type: 'list'
 
-2016-08-05 16:30:05,738 - knowledge_logger - create : save user
-2016-08-05 16:32:29,397 - knowledge_logger - create : save user
-2016-08-05 16:33:49,865 - knowledge_logger - create : save user
-2016-08-05 16:35:56,926 - knowledge_logger - create : save user
-2016-08-05 16:36:57,844 - knowledge_logger - create : save user
-2016-08-05 17:13:08,845 - knowledge_logger - create : save user
+2016-08-28 19:59:11,522 - knowledge_logger - main.py-handle-api- : can only concatenate list (not "str") to list
+2016-08-28 19:59:11,522 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 74, in process_login
+    save_login_failure(db, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 217, in save_login_failure
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 554, in increment
+    return self.update(table, columns, values, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 463, in update
+    query += column+" = %s "
+TypeError: can only concatenate list (not "str") to list
+
+2016-08-28 20:00:40,791 - knowledge_logger - main.py-handle-api- : can only concatenate list (not "str") to list
+2016-08-28 20:00:40,791 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 74, in process_login
+    save_login_failure(db, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 217, in save_login_failure
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 555, in increment
+    return self.update(table, columns, values, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 463, in update
+    query += column+" = %s "
+TypeError: can only concatenate list (not "str") to list
+
+2016-08-28 20:07:31,559 - knowledge_logger - main.py-handle-api- : 'Database' object has no attribute 'delete_login_failure_history'
+2016-08-28 20:07:31,560 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 69, in process_login
+    db.delete_login_failure_history(session_user_ip)
+AttributeError: 'Database' object has no attribute 'delete_login_failure_history'
+
+2016-08-28 20:08:45,481 - knowledge_logger - main.py-handle-api- : 'Database' object has no attribute 'delete_login_failure_history'
+2016-08-28 20:08:45,481 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 69, in process_login
+    db.delete_login_failure_history(session_user_ip)
+AttributeError: 'Database' object has no attribute 'delete_login_failure_history'
+
+2016-08-28 20:09:29,972 - knowledge_logger - main.py-handle-api- : 'Database' object has no attribute 'delete_login_failure_history'
+2016-08-28 20:09:29,973 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 26, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 69, in process_login
+    db.delete_login_failure_history(session_user_ip)
+AttributeError: 'Database' object has no attribute 'delete_login_failure_history'
+
+2016-08-28 20:27:37,798 - knowledge_logger - main.py-handle-api- : global name 'get_login_attempt' is not defined
+2016-08-28 20:27:37,798 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 80, in process_login
+    no_of_attempts = get_login_attempt(db, session_user_ip)
+NameError: global name 'get_login_attempt' is not defined
+
