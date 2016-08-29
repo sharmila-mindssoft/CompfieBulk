@@ -1513,7 +1513,7 @@ def get_not_opted_compliances_where_qry(
         where_qry += " AND c.domain_id in " + \
             " (select us.domain_id from tbl_user_domains us where " + \
             " us.user_id = %s)"
-        where_qry.append(session_user)
+        where_qry_val.append(session_user)
 
     if business_group_id is not None:
         where_qry += " AND u.business_group_id = %s "
