@@ -731,7 +731,10 @@ def calculate_ageing(
     # due_date = self.localize(due_date)
     if frequency_type == "On Occurrence":
         if completion_date is not None:  # Completed compliances
-            r = relativedelta.relativedelta(due_date, completion_date)
+            r = relativedelta.relativedelta(
+                convert_datetime_to_date(due_date),
+                convert_datetime_to_date(completion_date)
+            )
             diff = abs(due_date-completion_date)
             if r.days < 0 and r.hours < 0 and r.minutes < 0:
                 compliance_status = "On Time"
@@ -751,7 +754,10 @@ def calculate_ageing(
                     )
                 return r.days, compliance_status
         else:
-            r = relativedelta.relativedelta(due_date, current_time_stamp)
+            r = relativedelta.relativedelta(
+                convert_datetime_to_date(due_date),
+                convert_datetime_to_date(current_time_stamp)
+            )
             diff = abs(due_date-current_time_stamp)
             summary_text = ""
             if duration_type in ["2", 2]:
@@ -777,7 +783,9 @@ def calculate_ageing(
             due_date = convert_datetime_to_date(due_date)
             completion_date = convert_datetime_to_date(completion_date)
             if due_date not in [None, "None", 0]:
-                r = relativedelta.relativedelta(due_date, completion_date)
+                r = relativedelta.relativedelta(
+                    due_date, completion_date
+                )
                 diff = abs(due_date-completion_date)
                 compliance_status = (
                     "Delayed by " + create_datetime_summary_text(

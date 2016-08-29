@@ -4,6 +4,9 @@ from server.clientdatabase.tables import *
 from server.common import (
     string_to_datetime
 )
+from server.clientdatabase.general import (
+    convert_datetime_to_date
+)
 
 
 def get_last_7_years():
@@ -51,7 +54,10 @@ def get_country_domain_timelines(
                         end_year
                     )
                     end_date = string_to_datetime(end_date_string)
-                    r = relativedelta.relativedelta(end_date, start_date)
+                    r = relativedelta.relativedelta(
+                        convert_datetime_to_date(end_date),
+                        convert_datetime_to_date(start_date)
+                    )
                     if r.years > 0:
                         end_date = (
                             end_date - relativedelta.relativedelta(years=1)
