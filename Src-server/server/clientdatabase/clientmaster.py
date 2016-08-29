@@ -452,7 +452,8 @@ def return_user_details(
 
 def get_service_providers(db):
     columns = ["service_provider_id", "service_provider_name", "is_active"]
-    condition = "1"
+    condition = " now() between DATE_SUB(contract_from, INTERVAL 1 DAY) " + \
+        " and DATE_ADD(contract_to, INTERVAL 1 DAY)"
     rows = db.get_data(
         tblServiceProviders, columns, condition
     )
