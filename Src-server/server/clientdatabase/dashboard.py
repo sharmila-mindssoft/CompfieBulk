@@ -1955,8 +1955,11 @@ def update_notification_status(
         user_ids.append(0)
     columns = ["read_status"]
     values = [1 if has_read is True else 0]
-    condition = "notification_id = %s and user_id in %s"
-    values.extend([notification_id, tuple(user_ids)])
+    condition = " notification_id = %s AND "
+    user_condition, user_condition_val = db.generate_tuple_condition(
+        "user_id", user_ids)
+    condition = condition + user_condition
+    values.extend([notification_id, user_condition_val])
     db.update(
         tblNotificationUserLog, columns, values, condition
     )
@@ -2728,15 +2731,15 @@ def get_dashboard_notification_counts(
     reminder_count = len(reminder_rows)
     escalation_count = len(escalation_rows)
 
-    statutory_column = "count(*) as result"
-    statutory_condition = "user_id = %s and read_status = 0 ORDER BY " + \
-        " statutory_notification_id DESC"
-    statutory_condition_val = [session_user]
-    statutory_notification_rows = db.get_data(
-        tblStatutoryNotificationStatus, statutory_column,
-        statutory_condition, statutory_condition_val
-    )
-    statutory_notification_count = statutory_notification_rows[0]["result"]
-    notification_count += statutory_notification_count
+    # statutory_column = "count(*) as result"
+    # statutory_condition = "user_id = %s and read_status = 0 ORDER BY " + \
+    #     " statutory_notification_id DESC"
+    # statutory_condition_val = [session_user]
+    # statutory_notification_rows = db.get_data(
+    #     tblStatutoryNotificationStatus, statutory_column,
+    #     statutory_condition, statutory_condition_val
+    # )
+    # statutory_notification_count = statutory_notification_rows[0]["result"]
+    # notification_count += statutory_notification_count
 
     return notification_count, reminder_count, escalation_count

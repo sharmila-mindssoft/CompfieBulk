@@ -391,7 +391,8 @@ def update_compliances(
         rows = db.select_one(query, [compliance_id])
         columns = ["frequency_id"]
         rows = convert_to_dict(rows, columns)
-        frequency_id = int(rows["frequency_id"])
+        frequency_id = int(rows["frequency_id"]) if(
+            rows["frequency_id"] is not None) else None
         as_columns = []
         as_values = []
         if next_due_date is not None:

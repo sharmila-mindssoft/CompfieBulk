@@ -693,6 +693,35 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
     return due_date, due_date_list, date_list
 
 
+def convert_datetime_to_date(val):
+    if type(val) == datetime.datetime:
+        return val.date()
+    else:
+        return val
+
+
+def create_datetime_summary_text(r, diff, only_hours=False):
+    summary_text = ""
+    if(only_hours):
+        if abs(r.hours) > 0:
+            hours = abs(r.hours)
+            if abs(r.months) > 0:
+                hours = (diff.days * 24) + hours
+            elif abs(r.days) > 0:
+                hours = (abs(r.days) * 24) + hours
+            summary_text += " %s.%s hour(s) " % (hours, abs(r.minutes))
+        elif r.minutes > 0:
+            summary_text += " %s minute(s) " % r.minutes
+    else:
+        if abs(r.years) > 0:
+            summary_text += " %s year(s) " % abs(r.years)
+        if abs(r.months) > 0:
+            summary_text += " %s month(s) " % abs(r.months)
+        if abs(r.days) > 0:
+            summary_text += " %s day(s) " % abs(r.days)
+    return summary_text
+
+
 def calculate_ageing(
     due_date, frequency_type=None, completion_date=None, duration_type=None
 ):
@@ -700,86 +729,75 @@ def calculate_ageing(
     compliance_status = "-"
     # due_date = self.localize(due_date)
     if frequency_type == "On Occurrence":
-        r = relativedelta.relativedelta(due_date, current_time_stamp)
-        if completion_date is not None:
+        if completion_date is not None:  # Completed compliances
             r = relativedelta.relativedelta(due_date, completion_date)
+            diff = abs(due_date-completion_date)
             if r.days < 0 and r.hours < 0 and r.minutes < 0:
                 compliance_status = "On Time"
             else:
-                if r.days == 0:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Delayed by %s.%s hour(s) " % (
-                            abs(r.hours), abs(r.minutes)
+                summary_text = "Delayed by "
+                if duration_type in ["2", 2]:
+                    compliance_status = (
+                            summary_text + create_datetime_summary_text(
+                                r, diff, only_hours=True
+                            )
                         )
-                    else:
-                        compliance_status = "Delayed by 1 day "
                 else:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Delayed by %s.%s hour(s)" % (
-                           (abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
+                    compliance_status = (
+                        summary_text + create_datetime_summary_text(
+                            r, diff, only_hours=False
                         )
-                    else:
-                        compliance_status = "Delayed by %s day(s)" % (
-                            abs(r.days)
-                        )
+                    )
                 return r.days, compliance_status
         else:
-            if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
-                if r.days == 0:
-                    if duration_type in ["2", 2]:
-                        compliance_status = " %s.%s hour(s) left" % (
-                            abs(r.hours), abs(r.minutes)
+            r = relativedelta.relativedelta(due_date, current_time_stamp)
+            diff = abs(due_date-current_time_stamp)
+            summary_text = ""
+            if duration_type in ["2", 2]:
+                compliance_status = (
+                        summary_text + create_datetime_summary_text(
+                            r, diff, only_hours=True
                         )
-                    else:
-                        compliance_status = "1 Day left"
-                else:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "%s.%s hour(s) left" % (
-                           (abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = " %s day(s) left" % (
-                            abs(r.days)
-                        )
+                    )
             else:
-                if r.days == 0:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Overdue by %s.%s hour(s) " % (
-                            abs(r.hours), abs(r.minutes)
+                compliance_status = (
+                        summary_text + create_datetime_summary_text(
+                            r, diff, only_hours=False
                         )
-                    else:
-                        compliance_status = "Overdue by 1 day "
-                else:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Overdue by %s.%s hours" % (
-                           (abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = "Overdue by %s day(s)" % (
-                            abs(r.days)
-                        )
+                    )
+            if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                compliance_status += " left"
+            else:
+                compliance_status = " Overdue by " + compliance_status
             return r.days, compliance_status
     else:
-        if completion_date is not None:
+        if completion_date is not None:  # Completed compliances
             compliance_status = "On Time"
+            due_date = convert_datetime_to_date(due_date),
+            completion_date = convert_datetime_to_date(completion_date)
             if due_date not in [None, "None", 0]:
-                if type(due_date) == datetime.datetime:
-                    due_date = due_date.date()
-                if type(completion_date) == datetime.datetime:
-                    completion_date = completion_date.date()
                 r = relativedelta.relativedelta(due_date, completion_date)
-                if r.days < 0:
-                    compliance_status = "Delayed by %s day(s)" % abs(r.days)
+                diff = abs(due_date-completion_date)
+                compliance_status = (
+                    "Delayed by " + create_datetime_summary_text(
+                        r, diff, only_hours=False)
+                )
                 return r.days, compliance_status
         else:
             if due_date not in [None, "None", 0]:
-                r = relativedelta.relativedelta(
-                    due_date.date(), current_time_stamp.date()
+                due_date = convert_datetime_to_date(due_date),
+                current_time_stamp = convert_datetime_to_date(
+                    current_time_stamp)
+                r = relativedelta.relativedelta(due_date, current_time_stamp)
+                diff = abs(due_date-completion_date)
+                compliance_status = create_datetime_summary_text(
+                    r, diff, only_hours=False
                 )
-                compliance_status = " %s days left" % abs(r.days+1)
                 if r.days < 0:
-                    compliance_status = "Overdue by %s day(s)" % abs(r.days)
-                    return r.days, compliance_status
+                    compliance_status = "Overdue by " + compliance_status
+                else:
+                    compliance_status = compliance_status + " left"
+                return r.days, compliance_status
     return 0, compliance_status
 
 
