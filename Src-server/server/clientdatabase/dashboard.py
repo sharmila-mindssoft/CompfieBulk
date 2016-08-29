@@ -2718,15 +2718,15 @@ def get_dashboard_notification_counts(
     reminder_count = len(reminder_rows)
     escalation_count = len(escalation_rows)
 
-    statutory_column = "count(*) as result"
-    statutory_condition = "user_id = %s and read_status = 0 ORDER BY " + \
-        " statutory_notification_id DESC"
-    statutory_condition_val = [session_user]
-    statutory_notification_rows = db.get_data(
-        tblStatutoryNotificationStatus, statutory_column,
-        statutory_condition, statutory_condition_val
-    )
-    statutory_notification_count = statutory_notification_rows[0]["result"]
-    notification_count += statutory_notification_count
+    # statutory_column = "count(*) as result"
+    # statutory_condition = "user_id = %s and read_status = 0 ORDER BY " + \
+    #     " statutory_notification_id DESC"
+    # statutory_condition_val = [session_user]
+    # statutory_notification_rows = db.get_data(
+    #     tblStatutoryNotificationStatus, statutory_column,
+    #     statutory_condition, statutory_condition_val
+    # )
+    # statutory_notification_count = statutory_notification_rows[0]["result"]
+    # notification_count += statutory_notification_count
 
     return notification_count, reminder_count, escalation_count
