@@ -1196,7 +1196,10 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     current_year = to_date.year
     previous_year = current_year-1
     from_date = datetime.date(previous_year, period_from, 1)
-    r = relativedelta.relativedelta(to_date, from_date)
+    r = relativedelta.relativedelta(
+        convert_datetime_to_date(to_date),
+        convert_datetime_to_date(from_date)
+    )
     no_of_years = r.years
     no_of_months = r.months
     if no_of_years is not 0 or no_of_months >= 12:
