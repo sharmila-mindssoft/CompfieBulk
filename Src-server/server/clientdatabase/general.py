@@ -773,7 +773,7 @@ def calculate_ageing(
     else:
         if completion_date is not None:  # Completed compliances
             compliance_status = "On Time"
-            due_date = convert_datetime_to_date(due_date),
+            due_date = convert_datetime_to_date(due_date)
             completion_date = convert_datetime_to_date(completion_date)
             if due_date not in [None, "None", 0]:
                 r = relativedelta.relativedelta(due_date, completion_date)
@@ -785,11 +785,11 @@ def calculate_ageing(
                 return r.days, compliance_status
         else:
             if due_date not in [None, "None", 0]:
-                due_date = convert_datetime_to_date(due_date),
+                due_date = convert_datetime_to_date(due_date)
                 current_time_stamp = convert_datetime_to_date(
                     current_time_stamp)
                 r = relativedelta.relativedelta(due_date, current_time_stamp)
-                diff = abs(due_date-completion_date)
+                diff = abs(due_date-current_time_stamp)
                 compliance_status = create_datetime_summary_text(
                     r, diff, only_hours=False
                 )
