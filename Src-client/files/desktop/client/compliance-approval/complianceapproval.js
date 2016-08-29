@@ -113,7 +113,8 @@ function loadComplianceApprovalDetails(data){
         });
     });
 
-    if(totalRecord == 0){
+    // if(totalRecord == 0){
+    if(data.length == 0){
         var norecordtableRow=$('#no-record-templates .table-no-content .table-row-no-content');
         var noclone=norecordtableRow.clone();
         $('.no_records', noclone).text('No Compliance Available');
