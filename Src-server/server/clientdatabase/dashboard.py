@@ -1977,11 +1977,11 @@ def get_user_company_details(db, user_id, client_id=None):
     condition = " 1 "
     condition_val = None
     if user_id != admin_id:
-        columns = ["unit_id"]
+        u_columns = ["unit_id"]
         condition = "  user_id = %s"
         condition_val = [user_id]
         rows = db.get_data(
-            tblUserUnits, columns, condition, condition_val
+            tblUserUnits, u_columns, condition, condition_val
         )
         unit_ids = [
             int(row["unit_id"]) for row in rows
