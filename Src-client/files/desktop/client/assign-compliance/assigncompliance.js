@@ -191,6 +191,10 @@ function load_secondwizard(){
         var elementDuedate = '';
         var due_date_length = 0;
 
+        var repeats_type =  value["repeats_by"];
+        var repeats_every=  value["repeats_every"];
+
+
         if(due_date != '' || due_date != null){
           if(due_date.length > 1){
           for(var k = 0; k < due_date.length; k++){
@@ -222,7 +226,7 @@ function load_secondwizard(){
           }
         }
 
-        var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length;
+        var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length + '#' + repeats_type + '#' + repeats_every;
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
@@ -572,6 +576,10 @@ function submitcompliance(){
           var compliance_name = combineidVal[1];
           var due_date =  parseInt(combineidVal[3]);
           var frequency =  combineidVal[2];
+
+          var repeats_type = combineidVal[4];
+          var repeats_every = combineidVal[5];
+
           var appl_units =  $('#appl_unit'+totalCompliance).val();
           if(appl_units != '') appl_units = appl_units.replace(/,\s*$/, "").split(',');
           var applicable_units = [];
@@ -657,6 +665,20 @@ function submitcompliance(){
               trigger_before_days = sort_elements[dDates][1];
 
               if(trigger_before_days != '') {
+
+                var max_triggerbefore = 0;
+
+                if(repeats_type != null){
+                  if(repeats_type == 1){
+                    max_triggerbefore = repeats_every;
+                  }else if(repeats_type == 2){
+                    max_triggerbefore = repeats_every * 30;
+                  }else{
+                    max_triggerbefore = repeats_every * 365;
+                  }
+                }
+                
+
                 trigger_before_days = parseInt(trigger_before_days);
                 if(trigger_before_days > 100){
                   displayMessage(message.triggerbefore_exceed);
@@ -665,6 +687,11 @@ function submitcompliance(){
                 }
                 if(trigger_before_days == 0){
                   displayMessage(message.triggerbefore_iszero);
+                  hideLoader();
+                  return false;
+                }
+                if(max_triggerbefore > 0 && trigger_before_days > max_triggerbefore){
+                  displayMessage(message.triggerdays_exceeding_repeatsevery)
                   hideLoader();
                   return false;
                 }
@@ -1308,6 +1335,7 @@ function loadUser(userType){
   }
 
   var str='';
+  var str1='';
   if(userType != 'concurrence' && selectedUnit != ''){
     if((assigneeUserId == null || assigneeUserId != client_admin)
     && (approvalUserId == null || approvalUserId != client_admin)
@@ -1317,7 +1345,7 @@ function loadUser(userType){
       }else{
         str='<li id="'+client_admin+'" class="'+userClass+'" > Admin </li>';
       }*/
-      str='<li id="'+client_admin+'-0'+'" class="'+userClass+'" > Client Admin </li>';
+      str1='<li id="'+client_admin+'-0'+'" class="'+userClass+'" > Client Admin </li>';
     }
   }
   for(var user in usersList){
@@ -1333,7 +1361,7 @@ function loadUser(userType){
 
       if(userId == client_admin){
         userName = userName + " (Client Admin)";
-        str = '';
+        str1 = '';
       }
 
       var combine = userId + '-' + serviceProviderId;
@@ -1343,11 +1371,15 @@ function loadUser(userType){
       var isApprover = usersList[user]["is_approver"];
 
       var userPermission;
+      var promotedAdminFlag = true;
       if(userType == 'assignee'){
         userPermission = isAssignee;
       }
       else if(userType == 'concurrence'){
         userPermission = isConcurrence;
+        if(userId == client_admin){
+          promotedAdminFlag = false;
+        }
       }
       else if(userType == 'approval'){
        userPermission = isApprover;
@@ -1372,12 +1404,12 @@ function loadUser(userType){
       if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId)
         && (concurrenceUserId == null || concurrenceUserId != userId)
-        && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0 )){
+        && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0 ) && promotedAdminFlag){
           str += '<li id="'+combine+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
   }
-  $('#'+userType).append(str);
+  $('#'+userType).append(str1 + str);
 }
 
 $("#assignee").click(function(event){

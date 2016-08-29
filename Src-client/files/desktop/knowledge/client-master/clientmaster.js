@@ -94,6 +94,7 @@ function initialize(){
        if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
     }
     hideLoader();
+    $('#btn-clientgroup-submit').prop('disabled', false);
     function onSuccess(data){
         clientdata = data['client_list'];
         loadClientGroupList(data['client_list']);
@@ -322,12 +323,14 @@ $("#btn-clientgroup-submit").click(function(){
 
             function onSuccess(data){
                 hideLoader();
+                $('#btn-clientgroup-submit').prop('disabled', false);
                 $("#clientgroup-add").hide();
                 $("#clientgroup-view").show();
                 initialize();
             }
             function onFailure(error){
                 hideLoader();
+                $('#btn-clientgroup-submit').prop('disabled', false);
                 if(error == 'GroupNameAlreadyExists'){
                     displayMessage(message.groupname_exists);
                 }
@@ -358,6 +361,7 @@ $("#btn-clientgroup-submit").click(function(){
                 parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
                 usernameVal, dateConfigurations, shortname);
             displayLoader();
+            $('#btn-clientgroup-submit').prop('disabled', true);
             mirror.saveClientGroup(clientGroupDetails,
                 function (error, response) {
                     if (error == null){

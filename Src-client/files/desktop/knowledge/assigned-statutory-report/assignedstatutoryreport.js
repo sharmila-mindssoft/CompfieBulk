@@ -452,10 +452,11 @@ function onDomainSuccess(val){
 }
 //load domain list in autocomplete textbox  
 $("#domainval").keyup(function(e){
-  var textval = $(this).val();
-  getDomainAutocomplete(e, textval, domainsList, function(val){
+  function callback(val){
     onDomainSuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getDomainAutocomplete(e, textval, domainsList, callback, flag=true)
 });
 
 //retrive group form autocomplete value

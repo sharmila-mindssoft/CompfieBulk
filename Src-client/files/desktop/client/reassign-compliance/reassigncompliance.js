@@ -947,11 +947,12 @@ function loadUser(userType){
   }
 
   var str='';
+  var str1='';
   if(userType != 'concurrence' && selectedUnit != ''){
     if((assigneeUserId == null || assigneeUserId != client_admin)
     && (approvalUserId == null || approvalUserId != client_admin)
     && (concurrenceUserId == null || concurrenceUserId != client_admin)){
-      str='<li id="'+client_admin+'-0'+'" class="'+userClass+'" > Client Admin </li>';
+      str1='<li id="'+client_admin+'-0'+'" class="'+userClass+'" > Client Admin </li>';
     }
   }
   for(var user in usersList){
@@ -966,7 +967,7 @@ function loadUser(userType){
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
       if(userId == client_admin){
         userName = userName + " (Client Admin)";
-        str = '';
+        str1 = '';
       }
       var isAssignee = usersList[user]["is_assignee"];
       var isConcurrence = usersList[user]["is_concurrence"];
@@ -974,11 +975,16 @@ function loadUser(userType){
       var combine = userId + '-' + serviceProviderId;
 
       var userPermission;
+      var promotedAdminFlag = true;
+
       if(userType == 'assignee'){
         userPermission = isAssignee;
       }
       else if(userType == 'concurrence'){
         userPermission = isConcurrence;
+        if(userId == client_admin){
+          promotedAdminFlag = false;
+        }
       }
       else if(userType == 'approval'){
        userPermission = isApprover;
@@ -1002,13 +1008,13 @@ function loadUser(userType){
       if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId)
         && (concurrenceUserId == null || concurrenceUserId != userId)
-        && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0 )){
+        && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0 ) && promotedAdminFlag){
         //&& (currentUser != userId || userType != 'assignee') - for same assignee not loaded in assignee list
         str += '<li id="'+combine+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
   }
-  $('#'+userType).append(str);
+  $('#'+userType).append(str1 + str);
 }
 
 $("#assignee").click(function(event){
