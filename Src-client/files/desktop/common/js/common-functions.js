@@ -188,15 +188,19 @@ function onArrowKey(e, ac_item, callback){
 
 //country autocomplete function
 var chosen = "";
-function getCountryAutocomplete(e, textval, listval, callback){
+function getCountryAutocomplete(e, textval, listval, callback, flag=false){
   $("#country").val('');
   $("#ac-country").show();
   var countries = listval;
   var suggestions = [];
   $('#ac-country ul').empty();
   if(textval.length>0){
+    var isFlag = flag;
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
+      if(isFlag == false){
+        isFlag = countries[i]["is_active"];
+      }
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && isFlag) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -211,15 +215,19 @@ function getCountryAutocomplete(e, textval, listval, callback){
 }
 
 //domain autocomplete function
-function getDomainAutocomplete(e, textval, listval, callback){
+function getDomainAutocomplete(e, textval, listval, callback, flag=false){
   $("#domain").val('');
   $("#ac-domain").show();
   var domains = listval;
   var suggestions = [];
   $('#ac-domain ul').empty();
   if(textval.length>0){
+    var isFlag = flag;
     for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
+      if(isFlag == false){
+        isFlag = domains[i]["is_active"];
+      }
+      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) &&  isFlag) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -285,15 +293,19 @@ function getIndustryAutocomplete(e, textval, listval, callback, flag=false){
 }
 
 //statutorynature autocomplete function
-function getStatutoryNatureAutocomplete(e, textval, listval, callback){
+function getStatutoryNatureAutocomplete(e, textval, listval, callback, flag=false){
   $("#ac-statutorynature").show();
   $("#statutorynature").val('');
   var statutorynatures = statutoryNaturesList;
   var suggestions = [];
   $('#ac-statutorynature ul').empty();
   if(textval.length>0){
+    var isFlag = flag;
     for(var i in statutorynatures){
-      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == 1) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]);
+      if(isFlag == false){
+        isFlag = statutorynatures[i]["is_active"];
+      }
+      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && isFlag) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -308,15 +320,19 @@ function getStatutoryNatureAutocomplete(e, textval, listval, callback){
 }
 
 //geography autocomplete function
-function getGeographyAutocomplete(e, textval, listval, callback){
+function getGeographyAutocomplete(e, textval, listval, callback, flag=false){
   $("#ac-geography").show();
   $("#geography").val('');
   var geographies = listval;
   var suggestions = [];
   $('#ac-geography ul').empty();
   if(textval.length>0){
+    var isFlag = flag;
     for(var i in geographies){
-      if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geographies[i]["is_active"] == true) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]);
+      if(isFlag == false){
+        isFlag = geographies[i]["is_active"];
+      }
+      if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && isFlag) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]);
     }
     var str='';
     for(var i in suggestions){

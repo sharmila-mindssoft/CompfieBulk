@@ -433,10 +433,11 @@ function onCountrySuccess(val){
 
 //load country list in autocomplete text box
 $("#countryval").keyup(function(e){
-  var textval = $(this).val();
-  getCountryAutocomplete(e, textval, countriesList, function(val){
+  function callback(val){
     onCountrySuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getCountryAutocomplete(e, textval, countriesList, callback, flag=true)
 });
 
 //retrive domain autocomplete value
@@ -446,10 +447,11 @@ function onDomainSuccess(val){
 }
 //load domain list in autocomplete textbox
 $("#domainval").keyup(function(e){
-  var textval = $(this).val();
-  getDomainAutocomplete(e, textval, domainsList, function(val){
+  function callback(val){
     onDomainSuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getDomainAutocomplete(e, textval, domainsList, callback, flag=true)
 });
 
 //retrive businessgroup form autocomplete value
