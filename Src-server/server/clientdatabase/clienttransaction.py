@@ -678,10 +678,14 @@ def return_assign_compliance_data(result, applicable_units, total):
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
 
+        repeats_evey = repeats_by = None
         if r["frequency_id"] in (2, 3):
             summary = "Repeats every %s - %s" % (
                 r["repeats_every"], r["repeat_type"]
             )
+            repeats_evey = int(r["repeats_every"])
+            repeats_by = r["repeats_type_id"]
+
         elif r["frequency_id"] == 4:
             summary = "To complete within %s - %s" % (
                 r["duration"], r["duration_type"]
@@ -701,7 +705,9 @@ def return_assign_compliance_data(result, applicable_units, total):
             date_list,
             due_date_list,
             unit_ids,
-            summary
+            summary,
+            repeats_evey,
+            repeats_by
         )
         compliance_list.append(compliance)
         level_1_wise[level_1] = compliance_list
@@ -1952,8 +1958,8 @@ def get_compliance_for_assignee(
     if session_user != admin_id:
         user_qry = " AND t1.unit_id in (select distinct unit_id " + \
             " from tbl_user_units where user_id like %s)"
-        user_qry = " AND t2.domain_id in (select distinct domain_id " + \
-            " from tbl_user_domains where domain_id like %s)"
+        user_qry += " AND t2.domain_id in (select distinct domain_id " + \
+            " from tbl_user_domains where user_id like %s)"
 
     columns = [
         "compliance_id", "unit_id", "statutory_dates",
@@ -2000,10 +2006,12 @@ def get_compliance_for_assignee(
         " AND IFNULL(t6.compliance_opted, 0) = 1 " + \
         " WHERE t1.assignee = %s " + \
         " and t1.is_active = 1  "
+
     order = " ORDER BY t3.unit_id , t2.statutory_mapping," + \
             " t2.frequency_id, t4.due_date " + \
             " limit %s, %s "
     param = [assignee]
+
     if user_qry != "":
         q += user_qry
         param.extend([session_user, session_user])

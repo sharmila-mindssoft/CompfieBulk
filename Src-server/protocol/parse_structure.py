@@ -215,9 +215,12 @@ def parse_structure_SignedIntegerType_8(data):
 def parse_structure_UnsignedIntegerType_32(data):
     return parse_number(data, 0, 52949672950)
 
-def parse_structure_OptionalType_UnsignedIntegerType_32(data):
-    if data is None: return data
-    return parse_structure_UnsignedIntegerType_32(data)
+def parse_structure_Smallvalue(data):
+    return parse_number(data, 0, 999)
+
+def parse_structure_OptionalType_Smallvalue(data):
+    if data is None : return None
+    return parse_structure_Smallvalue(data)
 
 def parse_structure_VectorType_RecordType_core_Division(data):
     data = parse_list(data, 0)
