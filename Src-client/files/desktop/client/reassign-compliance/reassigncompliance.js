@@ -6,6 +6,7 @@ var cCount;
 var two_level_approve;
 var client_admin;
 var accordionstatus = true;
+var seatingunitsList = {};
 var userCompliancesList;
 
 var userId;
@@ -403,35 +404,41 @@ function load_compliances () {
     }
   }
 
+  for(var user in usersList){
+    var sId = usersList[user]["seating_unit_id"];
+    var sName = usersList[user]["seating_unit_name"];
+    if(sId != null) seatingunitsList[sId] = sName;
+  }
+
   $('#assignee_unit').empty();
   $("#assignee_unit").append('<option value=""> Select </option>');
   $("#assignee_unit").append('<option value="all"> All </option>');
-  for (var unitList in unitsList) {
+  $.each(seatingunitsList, function(key, value) {
     var option = $("<option></option>");
-    option.val(unitsList[unitList]["unit_id"]);
-    option.text(unitsList[unitList]["unit_name"]);
+    option.val(key);
+    option.text(value);
     $("#assignee_unit").append(option);
-  }
+  });
 
   $('#concurrence_unit').empty();
   $("#concurrence_unit").append('<option value=""> Select </option>');
   $("#concurrence_unit").append('<option value="all"> All </option>');
-  for (var unitList in unitsList) {
+  $.each(seatingunitsList, function(key, value) {
     var option = $("<option></option>");
-    option.val(unitsList[unitList]["unit_id"]);
-    option.text(unitsList[unitList]["unit_name"]);
+    option.val(key);
+    option.text(value);
     $("#concurrence_unit").append(option);
-  }
+  });
 
   $('#approval_unit').empty();
   $("#approval_unit").append('<option value=""> Select </option>');
   $("#approval_unit").append('<option value="all"> All </option>');
-  for (var unitList in unitsList) {
+  $.each(seatingunitsList, function(key, value) {
     var option = $("<option></option>");
-    option.val(unitsList[unitList]["unit_id"]);
-    option.text(unitsList[unitList]["unit_name"]);
+    option.val(key);
+    option.text(value);
     $("#approval_unit").append(option);
-  }
+  });
 
   if(two_level_approve){
     $('.c-view').show();
@@ -957,12 +964,13 @@ function loadUser(userType){
   }
   for(var user in usersList){
     var userUnits = usersList[user]["unit_ids"];
-    if( selectedUnit == 'all' || $.inArray(parseInt(selectedUnit), userUnits) >= 0){
+    var serviceProviderId = 0;
+    if(usersList[user]["service_provider_id"] != null){
+      serviceProviderId = usersList[user]["service_provider_id"];
+    }
+
+    if( selectedUnit == 'all' || parseInt(selectedUnit) == usersList[user]["seating_unit_id"] || serviceProviderId > 0){
       var userId= usersList[user]["user_id"];
-      var serviceProviderId = 0;
-      if(usersList[user]["service_provider_id"] != null){
-        serviceProviderId = usersList[user]["service_provider_id"];
-      }
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
       if(userId == client_admin){
