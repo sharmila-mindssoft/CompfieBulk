@@ -83,7 +83,7 @@ def get_profile(
             )
 
         if row["unit_name"] == None:
-            unit_name = row["service_provider_name"]
+            unit_name = " - "
         else:
             unit_name = "%s - %s" % (row["unit_code"], row["unit_name"])
         user_id = row["user_id"]
