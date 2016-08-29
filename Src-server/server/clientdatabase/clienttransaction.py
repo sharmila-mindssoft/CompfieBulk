@@ -678,10 +678,14 @@ def return_assign_compliance_data(result, applicable_units, total):
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
 
+        repeats_evey = repeats_by = None
         if r["frequency_id"] in (2, 3):
             summary = "Repeats every %s - %s" % (
                 r["repeats_every"], r["repeat_type"]
             )
+            repeats_evey = int(r["repeats_every"])
+            repeats_by = r["repeats_type_id"]
+
         elif r["frequency_id"] == 4:
             summary = "To complete within %s - %s" % (
                 r["duration"], r["duration_type"]
@@ -701,7 +705,9 @@ def return_assign_compliance_data(result, applicable_units, total):
             date_list,
             due_date_list,
             unit_ids,
-            summary
+            summary,
+            repeats_evey,
+            repeats_by
         )
         compliance_list.append(compliance)
         level_1_wise[level_1] = compliance_list

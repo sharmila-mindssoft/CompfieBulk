@@ -250,6 +250,13 @@ def to_structure_SignedIntegerType_8(data):
 def to_structure_UnsignedIntegerType_32(data):
     return parse_number(data, 0, 52949672950)
 
+def to_structure_OptionalType_Smallvalue(data):
+    if data is None : return None
+    return to_structure_Smallvalue(data)
+
+def to_structure_Smallvalue(data):
+    return parse_number(data, 0, 999)
+
 def to_structure_OptionalType_UnsignedIntegerType_32(data):
     if data is None : return data
     return to_structure_UnsignedIntegerType_32(data)
