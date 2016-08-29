@@ -191,7 +191,7 @@ function load_secondwizard(){
         var elementDuedate = '';
         var due_date_length = 0;
 
-        var repeats_type =  value["repeats_type"];
+        var repeats_type =  value["repeats_by"];
         var repeats_every=  value["repeats_every"];
 
 
@@ -692,6 +692,7 @@ function submitcompliance(){
                 }
                 if(max_triggerbefore > 0 && trigger_before_days > max_triggerbefore){
                   displayMessage(message.triggerdays_exceeding_repeatsevery)
+                  hideLoader();
                   return false;
                 }
               }else{
