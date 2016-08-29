@@ -843,11 +843,11 @@ def return_forms(db, form_ids=None):
     condition = "form_id != 24"
     condition_val = None
     if form_ids is not None:
-        condition, condition_val = db.generate_tuple_condition(
+        form_condition, form_condition_val = db.generate_tuple_condition(
             "form_id", [int(x) for x in form_ids.split(",")]
         )
-        condition_val = [condition_val]
-        condition += " AND %s " % condition
+        condition_val = [form_condition_val]
+        condition += " AND %s " % form_condition
     forms = db.get_data(
         tblForms, columns, condition, condition_val
     )
