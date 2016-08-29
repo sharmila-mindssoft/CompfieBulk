@@ -240,10 +240,11 @@ function onCountrySuccess(val){
 
 //load country list in autocomplete text box  
 $("#countryval").keyup(function(e){
-  var textval = $(this).val();
-  getCountryAutocomplete(e, textval, countriesList, function(val){
+  function callback(val){
     onCountrySuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getCountryAutocomplete(e, textval, countriesList, callback, flag=true)
 });
 
 //retrive businessgroup form autocomplete value

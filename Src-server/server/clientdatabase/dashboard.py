@@ -190,7 +190,7 @@ def get_compliance_status(
 
     where_qry += filter_type_ids
 
-    if is_primary_admin(db, user_id) is True:
+    if is_primary_admin(db, user_id):
         user_qry = ""
     else:
         user_qry = " AND (T1.completed_by LIKE %s " + \
@@ -495,9 +495,7 @@ def get_filtered_trend_data(
                         db, country_id, domain_id, client_id,
                         filter_id, filter_type
                     )
-                    print "compliance_history_ids : {}".format(
-                        compliance_history_ids
-                    )
+
                     if(
                         compliance_history_ids[0] is not None and
                         compliance_history_ids[2] is not None
@@ -508,9 +506,6 @@ def get_filtered_trend_data(
                             compliance_history_ids[0],
                             compliance_history_ids[2]
                         ]
-                        print "columns : {}".format(columns)
-                        print "condition: {}".format(condition)
-                        print "condition_val: {}".format(condition_val)
                         rows = db.get_data(
                             tblComplianceHistory, columns,
                             condition, condition_val
@@ -737,7 +732,7 @@ def get_compliances_details_for_status_chart(
 
     result = compliance_details_query(
         db, request, chart_type, compliance_status,
-        from_count, to_count, session_user
+        from_count, to_count, session_user, year
     )
     year_info = get_client_domain_configuration(db, int(year))[0]
     return return_compliance_details_drill_down(
@@ -747,7 +742,7 @@ def get_compliances_details_for_status_chart(
 
 def frame_compliance_details_query(
     db, chart_type, compliance_status, request,
-    from_count, to_count, user_id
+    from_count, to_count, user_id, chart_year=None
 ):
     domain_ids = request.domain_ids
     filter_type = request.filter_type
@@ -763,12 +758,27 @@ def frame_compliance_details_query(
     if len(domain_ids) == 1:
         domain_ids.append(0)
 
+    if chart_year is not None :
+        year_condition = get_client_domain_configuration(db, chart_year)[1]
+
+        for i, y in enumerate(year_condition):
+            if i == 0:
+                year_range_qry = y
+            else:
+                year_range_qry += " OR %s " % (y)
+        if len(year_condition) > 0:
+            year_range_qry = " AND (%s) " % year_range_qry
+        else :
+            year_range_qry = ""
+    else:
+        year_range_qry = ""
+
     where_qry = ""
     where_qry_val = []
     if compliance_status == "Inprogress":
-        where_qry = " AND ((IFNULL(T4.duration_type_id,0) = 2 " + \
+        where_qry = " AND ((IFNULL(T2.duration_type_id,0) = 2 " + \
             " AND T1.due_date >= now()) " + \
-            " or (IFNULL(T4.duration_type_id, 0) != 2  " + \
+            " or (IFNULL(T2.duration_type_id, 0) != 2  " + \
             " AND T1.due_date >= CURDATE())) " + \
             " AND IFNULL(T1.approve_status, 0) != 1"
 
@@ -781,26 +791,26 @@ def frame_compliance_details_query(
             " AND T1.approve_status = 1"
 
     elif compliance_status == "Not Complied":
-        where_qry = " AND ((IFNULL(T4.duration_type_id,0) =2 " + \
+        where_qry = " AND ((IFNULL(T2.duration_type_id,0) =2 " + \
             " AND T1.due_date < now()) " + \
-            " or (IFNULL(T4.duration_type_id,0) != 2 " + \
+            " or (IFNULL(T2.duration_type_id,0) != 2 " + \
             " AND T1.due_date < CURDATE())) " + \
             " AND IFNULL(T1.approve_status, 0) != 1 "
 
     if filter_type == "Group":
-        where_qry += " AND T5.country_id "
+        where_qry += " AND T3.country_id "
 
     elif filter_type == "BusinessGroup":
-        where_qry += " AND T5.business_group_id "
+        where_qry += " AND T3.business_group_id "
 
     elif filter_type == "LegalEntity":
-        where_qry += " AND T5.legal_entity_id "
+        where_qry += " AND T3.legal_entity_id "
 
     elif filter_type == "Division":
-        where_qry += " AND T5.division_id "
+        where_qry += " AND T3.division_id "
 
     elif filter_type == "Unit":
-        where_qry += " AND T5.unit_id "
+        where_qry += " AND T3.unit_id "
 
     if chart_type != "compliance_status":
         if len(filter_id) == 1:
@@ -834,49 +844,52 @@ def frame_compliance_details_query(
         where_qry += " AND T1.due_date >= %s AND T1.due_date <= %s "
         where_qry_val.extend([from_date, to_date])
 
-    if user_id > 0:
+    if is_primary_admin(db, user_id) is False:
         where_qry += " AND (T1.completed_by LIKE %s " + \
             " OR T1.concurred_by LIKE %s " + \
             " OR T1.approved_by LIKE %s)"
         where_qry_val.extend([user_id, user_id, user_id])
+
+    where_qry += year_range_qry
 
     query = "SELECT " + \
         " T1.compliance_history_id, T1.unit_id, " + \
         " T1.compliance_id, T1.start_date, " + \
         " T1.due_date, T1.completion_date, " + \
         " T1.completed_by, " + \
-        " T4.compliance_task, T4.document_name, " + \
-        " T4.compliance_description, T4.statutory_mapping, " + \
-        " T4.frequency_id, T4.duration_type_id, " + \
+        " T2.compliance_task, T2.document_name, " + \
+        " T2.compliance_description, T2.statutory_mapping, " + \
+        " T2.frequency_id, T2.duration_type_id, " + \
         " unit_name, " + \
         " (select division_name from tbl_divisions " + \
-        " where division_id = T5.division_id)division_name, " + \
+        " where division_id = T3.division_id)division_name, " + \
         " (select legal_entity_name from tbl_legal_entities " + \
-        " where legal_entity_id = T5.legal_entity_id)legal_entity_name, " + \
+        " where legal_entity_id = T3.legal_entity_id)legal_entity_name, " + \
         " (select business_group_name from tbl_business_groups " + \
-        " where business_group_id = T5.business_group_id) " + \
+        " where business_group_id = T3.business_group_id) " + \
         " business_group_name, " + \
         " (select country_name from tbl_countries " + \
-        " where country_id = T5.country_id)country_name, " + \
+        " where country_id = T3.country_id)country_name, " + \
         " (select employee_name from tbl_users " + \
         " where user_id = T1.completed_by) employee_name, " + \
-        " T5.unit_code, T5.address, T5.geography, T5.postal_code, " + \
-        " T5.industry_name, T5.country_id, " + \
-        " T4.domain_id, " + \
+        " T3.unit_code, T3.address, T3.geography, T3.postal_code, " + \
+        " T3.industry_name, T3.country_id, " + \
+        " T2.domain_id, " + \
         " YEAR(T1.due_date) as year, " + \
         " MONTH(T1.due_date) as month " + \
         " FROM tbl_compliance_history T1 " + \
-        " INNER JOIN tbl_compliances T4 " + \
-        " ON T1.compliance_id = T4.compliance_id " + \
-        " INNER JOIN tbl_units T5 ON T1.unit_id = T5.unit_id " + \
+        " INNER JOIN tbl_compliances T2 " + \
+        " ON T1.compliance_id = T2.compliance_id " + \
+        " INNER JOIN tbl_units T3 ON T1.unit_id = T3.unit_id " + \
         " WHERE " + \
-        " T4.domain_id IN %s "
+        " T2.domain_id IN %s "
 
     order = " ORDER BY  T1.unit_id, " + \
             " SUBSTRING_INDEX(SUBSTRING_INDEX( " + \
-            " T4.statutory_mapping, '>>', 1), '>>', -1), " + \
+            " T2.statutory_mapping, '>>', 1), '>>', -1), " + \
             " T1.due_date " + \
             " limit %s, %s "
+
     where_qry_val.extend([from_count, to_count])
     q = "%s %s %s " % (query, where_qry, order)
     param = [tuple(domain_ids)]
@@ -886,10 +899,10 @@ def frame_compliance_details_query(
 
 
 def compliance_details_query(
-    db, data, chart_type, compliance_status, from_count, to_count, user_id
+    db, data, chart_type, compliance_status, from_count, to_count, user_id, chart_year
 ):
     rows = frame_compliance_details_query(
-        db, chart_type, compliance_status, data, from_count, to_count, user_id
+        db, chart_type, compliance_status, data, from_count, to_count, user_id, chart_year
     )
     columns = [
         "compliance_history_id", "unit_id",
@@ -1311,7 +1324,7 @@ def get_escalation_drill_down_data(
     compliance_status = "Delayed Compliance"
     delayed_details = compliance_details_query(
         db, request, chart_type, compliance_status,
-        from_count, to_count, session_user
+        from_count, to_count, session_user, year
     )
 
     delayed_details_list = return_compliance_details_drill_down(
@@ -1322,7 +1335,7 @@ def get_escalation_drill_down_data(
     compliance_status = "Not Complied"
     not_complied_details = compliance_details_query(
         db, request, chart_type, compliance_status,
-        from_count, to_count, session_user
+        from_count, to_count, session_user, year
     )
 
     not_complied_details_list = return_compliance_details_drill_down(
@@ -1460,7 +1473,7 @@ def get_not_complied_drill_down(
     compliance_status = "Not Complied"
     not_complied_details_filtered = compliance_details_query(
         db, request, chart_type, compliance_status,
-        from_count, to_count, session_user
+        from_count, to_count, session_user , year=None
     )
     current_date = datetime.datetime.today()
     unit_wise_data = {}

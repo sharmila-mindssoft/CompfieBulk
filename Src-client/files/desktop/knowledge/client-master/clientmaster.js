@@ -94,6 +94,7 @@ function initialize(){
        if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
     }
     hideLoader();
+    $('#btn-clientgroup-submit').prop('disabled', false);
     function onSuccess(data){
         clientdata = data['client_list'];
         loadClientGroupList(data['client_list']);
@@ -322,12 +323,14 @@ $("#btn-clientgroup-submit").click(function(){
 
             function onSuccess(data){
                 hideLoader();
+                $('#btn-clientgroup-submit').prop('disabled', false);
                 $("#clientgroup-add").hide();
                 $("#clientgroup-view").show();
                 initialize();
             }
             function onFailure(error){
                 hideLoader();
+                $('#btn-clientgroup-submit').prop('disabled', false);
                 if(error == 'GroupNameAlreadyExists'){
                     displayMessage(message.groupname_exists);
                 }
@@ -343,6 +346,9 @@ $("#btn-clientgroup-submit").click(function(){
                 else if(error == "ServerIsFull"){
                     displayMessage(message.server_full);
                 }
+                else if(error == 'ShortNameAlreadyExists'){
+                    displayMessage(message.shortname_exists);
+                }
                 else{
                     displayMessage(error);
                 }
@@ -355,6 +361,7 @@ $("#btn-clientgroup-submit").click(function(){
                 parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
                 usernameVal, dateConfigurations, shortname);
             displayLoader();
+            $('#btn-clientgroup-submit').prop('disabled', true);
             mirror.saveClientGroup(clientGroupDetails,
                 function (error, response) {
                     if (error == null){
@@ -1308,6 +1315,9 @@ function loadAutoUsers () {
     $('#selectboxview-users ul').empty();
     var str = '';
     for(var i in users){
+        if (users[i]["is_active"] == false) {
+            continue;
+        }
         if(checkuser(users[i]["user_id"], users[i]["countries"], users[i]["domains"]) == 1){
             var selectUserStatus = '';
             for(var j = 0; j<editusersval.length; j++){
@@ -1348,7 +1358,7 @@ function activateUsers(element){
   else{
     $(element).addClass("active_selectbox_users");
   }
-  activateUsers_user();  
+  activateUsers_user();
 }
 
 function gototop(){

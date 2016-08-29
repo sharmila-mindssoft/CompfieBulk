@@ -245,10 +245,17 @@ def to_structure_VectorType_RecordType_core_ClientConfiguration(data):
 
 def to_structure_SignedIntegerType_8(data):
     # return parse_number(data, -128, 127)
-    return parse_number(data, 0, 4294967295)
+    return parse_number(data, 0, 52949672950)
 
 def to_structure_UnsignedIntegerType_32(data):
-    return parse_number(data, 0, 4294967295)
+    return parse_number(data, 0, 52949672950)
+
+def to_structure_OptionalType_Smallvalue(data):
+    if data is None : return None
+    return to_structure_Smallvalue(data)
+
+def to_structure_Smallvalue(data):
+    return parse_number(data, 0, 999)
 
 def to_structure_OptionalType_UnsignedIntegerType_32(data):
     if data is None : return data

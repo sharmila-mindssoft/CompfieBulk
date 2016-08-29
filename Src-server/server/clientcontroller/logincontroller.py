@@ -217,9 +217,9 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
     dashboard = compliance_task = compliance_approve = False
     if 1 in form_ids :
         dashboard = True
-    elif 9 in form_ids :
+    if 11 in form_ids :
         compliance_task = True
-    elif 11 in form_ids :
+    if 9 in form_ids :
         compliance_approve = True
     # menu = process_user_forms(db, form_ids, client_id, 0)
     return mobile.ClientUserLoginResponseSuccess(

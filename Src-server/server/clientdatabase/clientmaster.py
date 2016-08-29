@@ -628,10 +628,19 @@ def update_user(db, user, session_user, client_id):
 
     return True
 
+def check_user_group_active_status(db, user_id):
+    q = "select count(ug.user_group_id) from tbl_user_groups ug \
+        inner join tbl_users u on  ug.user_group_id = u.user_group_id \
+        where u.user_id = %s and ug.is_active = 1"
+    row = db.select_one(q, [user_id])
+    if int(row[0]) == 0 :
+        raise client_process_error("E030")
 
 def update_user_status(
     db, user_id, is_active, emp_name, session_user, client_id
 ):
+    check_user_group_active_status(db, user_id)
+
     columns = [
         "is_active", "updated_on", "updated_by"
     ]

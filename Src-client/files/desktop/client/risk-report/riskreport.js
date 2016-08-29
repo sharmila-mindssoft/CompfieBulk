@@ -110,11 +110,16 @@ function loadresult(complianceList){
           sno++;
           var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
           var clone3=tableRow3.clone();
+
+          var pc = "";
+          if(uCompliences[i]["penal_consequences"] != null){
+            pc = uCompliences[i]["penal_consequences"];
+          }
           $('.tbl_sno', clone3).text(sno);
           $('.tbl_statutoryprovision', clone3).text(uCompliences[i]["statutory_mapping"]);
           $('.tbl_compliance', clone3).text(uCompliences[i]["compliance_name"]);
           $('.tbl_description', clone3).text(uCompliences[i]["description"]);
-          $('.tbl_penalconsequences', clone3).text(uCompliences[i]["penal_consequences"]);
+          $('.tbl_penalconsequences', clone3).text(pc);
           $('.tbl_frequency', clone3).text(uCompliences[i]["compliance_frequency"]);
           $('.tbl_repeats', clone3).text(uCompliences[i]["repeats"]);
           $('.tbody-unit').append(clone3);
@@ -249,10 +254,11 @@ function onDomainSuccess(val){
 }
 //load domain list in autocomplete textbox  
 $("#domainval").keyup(function(e){
-  var textval = $(this).val();
-  getDomainAutocomplete(e, textval, domainsList, function(val){
+  function callback(val){
     onDomainSuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getDomainAutocomplete(e, textval, domainsList, callback, flag=true)
 });
 
 //retrive businessgroup form autocomplete value

@@ -867,15 +867,15 @@ def execute_bulk_insert(db, value_list, submitted_on=None):
     column = [
         "client_statutory_id",
         "compliance_id", "statutory_id", "statutory_applicable",
-        "statutory_opted", "not_applicable_remarks",
-        "compliance_applicable", "compliance_opted",
+        "not_applicable_remarks",
+        "compliance_applicable",
         "created_by",
     ]
     update_column = [
         "client_statutory_id", "compliance_id",
         "statutory_id", "statutory_applicable",
-        "statutory_opted", "not_applicable_remarks",
-        "compliance_applicable", "compliance_opted",
+        "not_applicable_remarks",
+        "compliance_applicable"
     ]
     if submitted_on is None:
         column.append("created_on")
@@ -903,9 +903,9 @@ def save_update_client_complainces(
             compliance_applicable_status = int(value)
             values = (
                 client_statutory_id, compliance_id,
-                level_1_id, applicable_status, applicable_status,
+                level_1_id, applicable_status,
                 not_applicable_remarks,
-                compliance_applicable_status,  compliance_applicable_status,
+                compliance_applicable_status,
                 int(user_id), created_on
             )
             value_list.append(values)

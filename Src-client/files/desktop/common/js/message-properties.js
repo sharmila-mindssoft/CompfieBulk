@@ -57,6 +57,7 @@ var message = {
 	"repeatstype_required" : "Repeats Type Required",
 	"repeatsevery_required" : "Repeats Every Required",
 	"duration_required" : "Duration Required",
+	"invalid_duration" : "Invalid Duration Value",
 	"durationtype_required" : "Duration Type Required",
 	"triggerbefore_exceed" : "Trigger before days should not exceed 100",
 	"triggerbefore_iszero" : "Trigger before days should be 1 to 100",
@@ -223,8 +224,9 @@ var message = {
 	"cannot_promote_sp_admin" : "Cannot promote a service provider as admin",
 	"techno_team_change_primary_admin_status" : "Only Techno team can change status of primary admin",
 	"cancel_operation" : "Are you sure, you want to cancel the operation?",
-	"invalid_statutory_month" : "Invalid statutory month",
-	"triggerdays_exceeding_repeatsevery" : "Trigger before days should not exceed repeats every value"
+	"invalid_statutory_month" : "Duplicate statutory month",
+	"triggerdays_exceeding_repeatsevery" : "Trigger before days should not exceed repeats every value",
+	"shortname_exists" : "Short Name Already Exists",
 };
 
 function clearMessage() {

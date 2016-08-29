@@ -547,6 +547,7 @@ function uploadedfile(e){
                 result += "<span class='"+fileclassname+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+fileclassname+"\",\""+filename+"\")' /></span>";
             }
             $(".uploaded-filename").html(result);
+            displayMessage("");
         }
         else{
           custom_alert(data);

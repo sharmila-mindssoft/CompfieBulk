@@ -262,10 +262,19 @@ class AutoStart(Database):
             if concurrence_person is not None or concurrence_person is not "NULL" :
                 save_notification_users(notification_id, concurrence_person)
 
+    def actual_start_date(self, due_date, trigger_before):
+        if due_date is not None and trigger_before is not None :
+            d = due_date - timedelta(days=int(trigger_before))
+            return d
+        else :
+            return None
+
     def start_new_task(self):
-        def notify(d, due_date, next_due_date, approval_person):
+        def notify(d, due_date, next_due_date, approval_person, trigger_before):
+            start_date = self.actual_start_date(due_date, trigger_before)
+
             compliance_history_id = self.save_in_compliance_history(
-                int(d["unit_id"]), int(d["compliance_id"]), self.current_date,
+                int(d["unit_id"]), int(d["compliance_id"]), start_date,
                 due_date, next_due_date, int(d["assignee"]),
                 d["concurrence_person"], int(approval_person)
             )
@@ -303,7 +312,7 @@ class AutoStart(Database):
             if trigger_before is None:
                 trigger_before = int(d["trigger_before_days"])
 
-            notify(d, due_date, next_due_date, approval_person)
+            notify(d, due_date, next_due_date, approval_person, trigger_before)
             return next_due_date, trigger_before
 
         data = self.get_compliance_to_start()
@@ -313,7 +322,10 @@ class AutoStart(Database):
                 approval_person = int(d["approval_person"])
                 if d["frequency"] == 1 :
                     next_due_date = "0000-00-00"
-                    notify(d, d["due_date"], next_due_date, approval_person)
+                    trigger_before = d["trigger_before_days"]
+                    if trigger_before is None :
+                        continue
+                    notify(d, d["due_date"], next_due_date, approval_person, trigger_before)
                 else:
                     next_due_date = trigger_before = None
                     due_date = d["due_date"]
@@ -324,7 +336,6 @@ class AutoStart(Database):
                         while (next_due_date - timedelta(days=trigger_before)) <= self.current_date :
                             # start for next-due-date
                             next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
-                            print next_due_date, trigger_before
                             self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
                 count += 1

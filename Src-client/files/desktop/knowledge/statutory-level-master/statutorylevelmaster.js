@@ -117,30 +117,58 @@ $("#submit").click(function(){
             var maxlevel = k;
           }
          }
-         var result="true";
+         var result = true;
          for(var k=1; k<=maxlevel; k++) {
           if($("#level"+k).val().trim().length==0){
-            result = "false";
+            result = false;
           }
          }
 
-         if( result == "true") {
+         if(result) {
           var isAdd = true;
           var passlevellist = [];
-         for(var k=1; k<=10; k++) {
-          if($("#levelid"+k).val().trim().length > 0 && $("#level"+k).val().trim().length == 0){
-            var msg = "Level "+ k;
-            displayMessage(msg + message.shouldnot_empty)
-            return false;
-          }else if($("#level"+k).val().trim().length > 0){
-            if($("#levelid"+k).val().trim().length > 0){
-              passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : parseInt($("#levelid"+k).val())});
+          for(var k=1; k<=10; k++) {
+
+            if($("#levelid"+k).val().trim() != ''){
+              var isRemove = false;
+              if($("#level"+k).val().trim() == ''){
+                isRemove = true;
+              }
+              passlevellist.push(
+                {
+                  "l_position" : k,
+                  "l_name" : $("#level"+k).val().trim(),
+                  "l_id" : parseInt($("#levelid"+k).val()),
+                  "is_remove": isRemove
+                }
+              );
               isAdd = false;
             }else{
-              passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : null});
+              if($("#level"+k).val().trim() != ''){
+                passlevellist.push(
+                  {
+                    "l_position" : k,
+                    "l_name" : $("#level"+k).val().trim(),
+                    "l_id" : null,
+                    "is_remove": false
+                  }
+                );
+              }
             }
-          }
-         }
+
+/*            if($("#levelid"+k).val().trim().length > 0 && $("#level"+k).val().trim().length == 0){
+              var msg = "Level "+ k;
+              displayMessage(msg + message.shouldnot_empty)
+              return false;
+            }else if($("#level"+k).val().trim().length > 0){
+              if($("#levelid"+k).val().trim().length > 0){
+                passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : parseInt($("#levelid"+k).val())});
+                isAdd = false;
+              }else{
+                passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : null});
+              }
+            }*/
+        }
         function onSuccess(response) {
           if(isAdd){
             displayMessage(message.record_added);

@@ -326,7 +326,7 @@ def process_save_statutory_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     domain_id = request_frame.domain_id
     levels = request_frame.levels
-    level_names = [x.level_name.lower().strip() for x in levels]
+    level_names = [x.level_name.lower().strip() for x in levels if x.level_name != '']
     if len([n for n in level_names if level_names.count(n.lower()) > 1]) > 1:
         return knowledgemaster.DuplicateStatutoryLevelsExists()
 
@@ -334,11 +334,9 @@ def process_save_statutory_level(db, request_frame, user_id):
     if len([p for p in level_positions if level_positions.count(p) > 1]) > 1:
         return knowledgemaster.DuplicateStatutoryLevelsExists()
 
-    save_statutory_levels(
+    return save_statutory_levels(
         db, country_id, domain_id, levels, user_id
     )
-    return knowledgemaster.SaveStatutoryLevelSuccess()
-
 
 # geography level
 def process_get_geography_level(db, user_id):

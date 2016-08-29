@@ -56,7 +56,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
     parse_structure_Text,
     parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
-    parse_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32
+    parse_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32,
+    parse_structure_OptionalType_Smallvalue
 )
 from protocol.to_structure import (
     to_structure_SignedIntegerType_8,
@@ -117,7 +118,8 @@ from protocol.to_structure import (
     to_structure_Text,
     to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
-    to_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32
+    to_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32,
+    to_structure_OptionalType_Smallvalue
 )
 
 #
@@ -1385,7 +1387,7 @@ class UNIT_WISE_STATUTORIES(object):
     def __init__(
         self, compliance_id, compliance_name, description,
         frequency, statutory_date, due_date, applicable_units,
-        summary
+        summary, repeats_every, repeats_by
     ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
@@ -1395,13 +1397,16 @@ class UNIT_WISE_STATUTORIES(object):
         self.due_date = due_date
         self.applicable_units = applicable_units
         self.summary = summary
+        self.repeats_every = repeats_every
+        self.repeats_by = repeats_by
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "compliance_id", "compliance_name", "description",
             "frequency", "statutory_date", "due_date",
-            "applicable_units", "summary"
+            "applicable_units", "summary",
+            "repeats_every", "repeats_by"
         ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
@@ -1419,10 +1424,14 @@ class UNIT_WISE_STATUTORIES(object):
         applicable_units = parse_structure_VectorType_UnsignedIntegerType_32(applicable_units)
         summary = data.get("summary")
         summary = parse_structure_OptionalType_CustomTextType_100(summary)
+        repeats_every = data.gte("repeats_every")
+        repeats_every = parse_structure_OptionalType_Smallvalue(repeats_every)
+        repeats_by = data.get("repeats_by")
+        repeats_by = parse_structure_OptionalType_Smallvalue(repeats_by)
         return UNIT_WISE_STATUTORIES(
             compliance_id, compliance_name, description,
             frequency, statutory_date, due_date, applicable_units,
-            summary
+            summary, repeats_every, repeats_by
         )
 
     def to_structure(self):
@@ -1434,7 +1443,9 @@ class UNIT_WISE_STATUTORIES(object):
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_OptionalType_VectorType_CustomTextType_20(self.due_date),
             "applicable_units": to_structure_VectorType_UnsignedIntegerType_32(self.applicable_units),
-            "summary": to_structure_OptionalType_CustomTextType_100(self.summary)
+            "summary": to_structure_OptionalType_CustomTextType_100(self.summary),
+            "repeats_every": to_structure_OptionalType_Smallvalue(self.repeats_every),
+            "repeats_by": to_structure_OptionalType_Smallvalue(self.repeats_by)
         }
 
 #
@@ -1615,7 +1626,8 @@ class ASSIGN_COMPLIANCE_USER(object):
         self, user_id, service_provider_id, user_name, user_level, seating_unit_id,
         unit_ids, domain_ids,
         is_assignee, is_approver,
-        is_concurrence
+        is_concurrence,
+        seating_unit_name
     ):
         self.user_id = user_id
         self.service_provider_id = service_provider_id
@@ -1627,13 +1639,14 @@ class ASSIGN_COMPLIANCE_USER(object):
         self.is_assignee = is_assignee
         self.is_approver = is_approver
         self.is_concurrence = is_concurrence
+        self.seating_unit_name = seating_unit_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "user_id", "service_provider_id", "user_name", "user_level",
             "seating_unit_id", "unit_ids", "domain_ids",
-            "is_assignee", "is_approver", "is_concurrence"
+            "is_assignee", "is_approver", "is_concurrence", "seating_unit_name"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -1655,10 +1668,12 @@ class ASSIGN_COMPLIANCE_USER(object):
         is_approver = parse_structure_Bool(is_approver)
         is_concurrence = data.get("is_concurrence")
         is_concurrence = parse_structure_Bool(is_concurrence)
+        seating_unit_name = data.get("seating_unit_name")
+        seating_unit_name = parse_structure_CustomTextType_250(seating_unit_name)
         return ASSIGN_COMPLIANCE_USER(
             user_id, service_provider_id, user_name, user_level, seating_unit_id,
             unit_ids, domain_ids,
-            is_assignee, is_concurrence, is_approver
+            is_assignee, is_concurrence, is_approver, seating_unit_name
         )
 
     def to_structure(self):
@@ -1672,7 +1687,8 @@ class ASSIGN_COMPLIANCE_USER(object):
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "is_assignee": to_structure_Bool(self.is_assignee),
             "is_concurrence": to_structure_Bool(self.is_concurrence),
-            "is_approver": to_structure_Bool(self.is_approver)
+            "is_approver": to_structure_Bool(self.is_approver),
+            "seating_unit_name": to_structure_CustomTextType_250(self.seating_unit_name)
         }
 
 #

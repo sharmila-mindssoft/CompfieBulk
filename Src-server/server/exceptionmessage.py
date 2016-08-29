@@ -7,7 +7,7 @@ messages = {
     "E006": "Statutory nature status update failed",
     "E007": "Statutory levels creation failed",
     "E008": "Statutory levels updation failed",
-    "E009": "Geography levels deletion failed",
+    "E009": "Level(s) deletion failed",
     "E010": "Geography levels creation failed",
     "E011": "Geography levels updation failed",
     "E012": "Geography location creation failed",
@@ -62,7 +62,8 @@ messages = {
     "E061": "Client info not found",
     "E062": "Client log save failed",
     "E063": "Geography used in statutory mapping",
-    "E064": "Geography have child level entries "
+    "E064": "Geography have child level entries ",
+    "E065": "User group is inactive, cannot activate user"
 }
 
 client_message = {
@@ -95,6 +96,7 @@ client_message = {
     "E027": "Client active status validation failed",
     "E028": "Email notification got failed",
     "E029": "Saving reset token failed",
+    "E030": "User group is inactive, cannot activate user"
 }
 
 

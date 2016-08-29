@@ -970,7 +970,7 @@ function initClientMirror() {
                 return;
             }
             else if(file_extension == 'exe'){
-                displayMessage("");
+                displayMessage(message.invalid_file_format);
                 return;
             }
             else if(file_extension == 'htm'){

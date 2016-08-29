@@ -341,9 +341,10 @@ function onCountrySuccess(val){
 //load country list in autocomplete text box  
 $("#countryval").keyup(function(e){
   var textval = $(this).val();
-  getCountryAutocomplete(e, textval, countriesList, function(val){
+  function callback(val){
     onCountrySuccess(val)
-  })
+  }
+  getCountryAutocomplete(e, textval, countriesList, callback, flag=true)
 });
 
 //retrive domain autocomplete value
@@ -353,10 +354,11 @@ function onDomainSuccess(val){
 }
 //load domain list in autocomplete textbox  
 $("#domainval").keyup(function(e){
-  var textval = $(this).val();
-  getDomainAutocomplete(e, textval, domainsList, function(val){
+  function callback(val){
     onDomainSuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getDomainAutocomplete(e, textval, domainsList, callback, flag=true)
 });
 
 //retrive industry autocomplete value
@@ -366,10 +368,11 @@ function onIndustrySuccess(val){
 }
 //load industry list in autocomplete textbox  
 $("#industryval").keyup(function(e){
-  var textval = $(this).val();
-  getIndustryAutocomplete(e, textval, industriesList, function(val){
+  function callback(val){
     onIndustrySuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getIndustryAutocomplete(e, textval, industriesList, callback, flag=true)
 });
 
 //retrive statutorynature autocomplete value
@@ -379,10 +382,11 @@ function onStatutoryNatureSuccess(val){
 }
 //load statutorynature list in autocomplete textbox  
 $("#statutorynatureval").keyup(function(e){
-  var textval = $(this).val();
-  getStatutoryNatureAutocomplete(e, textval, statutoryNaturesList, function(val){
+  function callback(val){
     onStatutoryNatureSuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getStatutoryNatureAutocomplete(e, textval, statutoryNaturesList, callback, flag=true)
 });
 
 //retrive geography autocomplete value
@@ -392,10 +396,11 @@ function onGeogaphySuccess(val){
 }
 //load geography list in autocomplete textbox  
 $("#geographyval").keyup(function(e){
-  var textval = $(this).val();
-  getGeographyAutocomplete(e, textval, geographiesList[$("#country").val()], function(val){
+  function callback(val){
     onGeogaphySuccess(val)
-  })
+  }
+  var textval = $(this).val();
+  getGeographyAutocomplete(e, textval, geographiesList[$("#country").val()], callback, flag=true)
 });
 
 //retrive statutory autocomplete value

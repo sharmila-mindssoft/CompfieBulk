@@ -438,7 +438,9 @@ def get_users_for_seating_units(db, session_user):
         " where service_provider_id = t1.service_provider_id) " + \
         " service_provider, " + \
         " (select form_ids from tbl_user_groups " + \
-        " where user_group_id = t1.user_group_id)form_ids " + \
+        " where user_group_id = t1.user_group_id)form_ids, " + \
+        " (select concat(unit_code,' - ',  unit_name) from tbl_units " + \
+        " where t1.seating_unit_id = unit_id ) seating_unit_name" + \
         " FROM tbl_users t1 " + \
         " INNER JOIN tbl_user_units t2 " + \
         " ON t1.user_id = t2.user_id " + \
@@ -453,7 +455,7 @@ def get_users_for_seating_units(db, session_user):
         "user_id", "service_provider_id", "employee_name", "employee_code",
         "seating_unit_id", "user_level",
         "is_service_provider", "service_provider",
-        "form_ids"
+        "form_ids", "seating_unit_name"
     ]
     result = convert_to_dict(rows, columns)
     user_list = []
@@ -474,6 +476,7 @@ def get_users_for_seating_units(db, session_user):
         unit_id = None
         if r["seating_unit_id"]:
             unit_id = int(r["seating_unit_id"])
+            unit_name = r["seating_unit_name"]
         # domain_ids = [
         #     int(x) for x in r["domain_ids"].split(',')
         # ]
@@ -505,7 +508,8 @@ def get_users_for_seating_units(db, session_user):
             domain_ids,
             is_assignee,
             is_approver,
-            is_concurrence
+            is_concurrence,
+            unit_name
         )
         # user_list = seating_unit_users.get(unit_id)
         # if user_list is None:
@@ -674,10 +678,14 @@ def return_assign_compliance_data(result, applicable_units, total):
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
 
+        repeats_evey = repeats_by = None
         if r["frequency_id"] in (2, 3):
             summary = "Repeats every %s - %s" % (
                 r["repeats_every"], r["repeat_type"]
             )
+            repeats_evey = int(r["repeats_every"])
+            repeats_by = r["repeats_type_id"]
+
         elif r["frequency_id"] == 4:
             summary = "To complete within %s - %s" % (
                 r["duration"], r["duration_type"]
@@ -697,7 +705,9 @@ def return_assign_compliance_data(result, applicable_units, total):
             date_list,
             due_date_list,
             unit_ids,
-            summary
+            summary,
+            repeats_evey,
+            repeats_by
         )
         compliance_list.append(compliance)
         level_1_wise[level_1] = compliance_list
@@ -1948,8 +1958,8 @@ def get_compliance_for_assignee(
     if session_user != admin_id:
         user_qry = " AND t1.unit_id in (select distinct unit_id " + \
             " from tbl_user_units where user_id like %s)"
-        user_qry = " AND t2.domain_id in (select distinct domain_id " + \
-            " from tbl_user_domains where domain_id like %s)"
+        user_qry += " AND t2.domain_id in (select distinct domain_id " + \
+            " from tbl_user_domains where user_id like %s)"
 
     columns = [
         "compliance_id", "unit_id", "statutory_dates",
@@ -1996,10 +2006,12 @@ def get_compliance_for_assignee(
         " AND IFNULL(t6.compliance_opted, 0) = 1 " + \
         " WHERE t1.assignee = %s " + \
         " and t1.is_active = 1  "
+
     order = " ORDER BY t3.unit_id , t2.statutory_mapping," + \
             " t2.frequency_id, t4.due_date " + \
             " limit %s, %s "
     param = [assignee]
+
     if user_qry != "":
         q += user_qry
         param.extend([session_user, session_user])

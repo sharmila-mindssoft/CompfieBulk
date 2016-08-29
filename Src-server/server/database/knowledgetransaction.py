@@ -363,20 +363,13 @@ def save_statutory_mapping(db, data, created_by):
         raise process_error("E018")
     else:
 
-        # if (self.save_data(statutory_table, field, data_save)):
-        # self.update_statutory_mapping_id(
-        #     data.statutory_ids,
-        #     statutory_mapping_id, created_by
-        # )
         ids, names = save_compliance(
             db,
             statutory_mapping_id, domain_id,
             compliances, created_by
         )
         compliance_ids = ','.join(str(x) for x in ids) + ","
-        # qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
-        #     where statutory_mapping_id = %s"
-        # db.execute(qry, [compliance_ids, statutory_mapping_id])
+
         db.update(
             tblStatutoryMappings, ["compliance_ids"],
             [compliance_ids, statutory_mapping_id],
@@ -410,9 +403,7 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
     compliance_names = []
     # is_format = False
     for data in datas:
-        # compliance_id = self.get_new_id(
-        #     "compliance_id", "tbl_compliances"
-        # )
+
         created_on = get_date_time()
 
         provision = data.statutory_provision
@@ -422,17 +413,11 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
         file_list = data.format_file_list
         file_name = ""
         file_size = 0
-        # file_content = ""
 
         if file_list is not None:
             file_list = file_list[0]
             file_name = file_list.file_name
-            # exten = file_list.file_name.split('.')[1]
-            # auto_code = self.new_uuid()
-            # file_name = "%s-%s.%s" % (name, auto_code, exten)
             file_size = file_list.file_size
-            # file_content = file_list.file_content
-            # is_format = True
 
         penal_consequences = data.penal_consequences
         compliance_frequency = data.frequency_id
@@ -453,7 +438,8 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
             "document_name", "format_file", "format_file_size",
             "penal_consequences", "frequency_id",
             "statutory_dates", "statutory_mapping_id",
-            "is_active", "created_by", "created_on", "domain_id"
+            "is_active", "created_by", "created_on", "domain_id",
+            "duration", "duration_type_id", "repeats_every", "repeats_type_id"
         ]
         values = [
             provision, compliance_task,
@@ -463,29 +449,24 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
             mapping_id, is_active, created_by, created_on, domain_id
         ]
         if compliance_frequency == 1:
-            pass
+            values.extend([0, 0, 0, 0])
 
         elif compliance_frequency == 4:
             if duration is None:
                 duration = ""
             if duration_type is None:
                 duration_type = ""
-            columns.extend(["duration", "duration_type_id"])
-            values.extend([duration, duration_type])
+            values.extend([duration, duration_type, 0, 0])
         else:
             if repeats_every is None:
                 repeats_every = ""
             if repeats_type is None:
                 repeats_type = ""
-            columns.extend(["repeats_every", "repeats_type_id"])
-            values.extend([repeats_every, repeats_type])
+            values.extend([0, 0, repeats_every, repeats_type])
         compliance_id = db.insert(table_name, columns, values)
         if compliance_id is False:
             raise process_error("E019")
 
-        # if is_format:
-        #     self.convert_base64_to_file(file_name, file_content)
-        #     is_format = False
         compliance_ids.append(compliance_id)
         if document_name == "None":
             document_name = None
@@ -774,7 +755,8 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
             "format_file", "format_file_size", "penal_consequences",
             "frequency_id", "statutory_dates",
             "statutory_mapping_id", "is_active",
-            "updated_by", "domain_id"
+            "updated_by", "domain_id",
+            "duration", "duration_type_id", "repeats_every", "repeats_type_id"
         ]
         values = [
             provision, compliance_task, description,
@@ -784,25 +766,13 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
             updated_by, domain_id
         ]
         if compliance_frequency == 1:
-            pass
+            values.extend([0, 0, 0, 0])
 
         elif compliance_frequency == 4:
-            columns.extend(
-                [
-                    "duration", "duration_type_id",
-                    "repeats_every", "repeats_type_id"
-                ]
-            )
             values.extend([duration, duration_type, 0, 0])
 
         else:
-            columns.extend(
-                [
-                    "repeats_every", "repeats_type_id",
-                    "duration", "duration_type_id"
-                ]
-            )
-            values.extend([repeats_every, repeats_type, 0, 0])
+            values.extend([0, 0, repeats_every, repeats_type])
 
         where_condition = "compliance_id = %s"
         values.append(compliance_id)

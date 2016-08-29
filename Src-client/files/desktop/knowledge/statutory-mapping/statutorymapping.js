@@ -963,6 +963,8 @@ $("#temp_addcompliance").click(function() {
       displayMessage(message.repeatsevery_required);
     }else if (compliance_frequency == "4" && $('#duration').val().trim() == ''){
       displayMessage(message.duration_required);
+    }else if (compliance_frequency == "4" && $('#duration').val().trim() == 0){
+      displayMessage(message.invalid_duration);
     }else if (compliance_frequency == "4" && $('#duration_type').val() == ''){
       displayMessage(message.durationtype_required);
     }else{
@@ -1170,6 +1172,7 @@ $("#temp_addcompliance").click(function() {
       $('#counter2').html('');
       $('#duration_type').val('');
       $("#summary").html("");
+      $(".summary_repeat").html("");
       for(i=1; i<=12; i++){
         $('#multiple_statutory_date'+i).show();
       }
@@ -1306,6 +1309,7 @@ function temp_editcompliance(edit_id){
     $('#One_Time').hide();
   }
   $('#complianceid').val(edit_id);
+  load_summary();
 }
 
 //remove compliance in third wizard
@@ -1926,7 +1930,7 @@ function load_stautorydates(){
     }
   }else{
     $('#single_statutory_date').show();
-    $('#single_statutory_month').show();
+    $('#single_statutory_month').hide();
     $('.multipleselect').hide();
     $('.multipleselectnone').show();
     $('#sdate').show();
@@ -1939,9 +1943,31 @@ function load_stautorydates(){
       $('#multiple_statutory_date'+i).hide();
     }
      $('#single_statutory_date').hide();
+     $('#sdate').hide();
   }
 }
 
+function load_summary(){
+  
+    var durationVal = $('#duration').val();
+    var durationType = $('#duration_type option:selected').text().trim();
+    var summaryVal = '';
+    if( durationVal != '' && durationType != 'Select'){
+      summaryVal = durationVal + ' ' + durationType;
+    }
+    $("#summary").html("To Complete within " + summaryVal);
+
+
+    var repeatVal = $('#repeats_every').val();
+    var repeatType = $('#repeats_type option:selected').text().trim();
+    var summaryVal1 = '';
+    if( repeatVal != '' && repeatType != 'Select'){
+      summaryVal1 = repeatVal + ' ' + repeatType;
+    }
+    $(".summary_repeat").html("Every " + summaryVal1);
+
+  
+}
 //display summary
 $(function()
 {
@@ -1993,49 +2019,23 @@ $(function()
       }
   });
   $('#duration').keyup(function()
-  {
-    var durationVal = $('#duration').val();
-    var durationType = $('#duration_type option:selected').text().trim();
-    var summaryVal = '';
-    if( durationVal != '' && durationType != 'Select'){
-      summaryVal = durationVal + ' ' + durationType;
-    }
-    $("#summary").html("To Complete within " + summaryVal);
+  { 
+    load_summary();
   });
 
   $('#duration_type').change(function()
-  {
-    var durationVal = $('#duration').val();
-    var durationType = $('#duration_type option:selected').text().trim();
-    var summaryVal = '';
-    if( durationVal != '' && durationType != 'Select'){
-      summaryVal = durationVal + ' ' + durationType;
-    }
-    $("#summary").html("To Complete within " + summaryVal);
+  { 
+    load_summary();
   });
 
   $('#repeats_every').change(function()
-  {
-    var repeatVal = $('#repeats_every').val();
-    var repeatType = $('#repeats_type option:selected').text().trim();
-    var summaryVal1 = '';
-    if( repeatVal != '' && repeatType != 'Select'){
-      summaryVal1 = repeatVal + ' ' + repeatType;
-    }
-    $(".summary_repeat").html("Every " + summaryVal1);
-
+  { 
+    load_summary();
   });
 
   $('#repeats_type').change(function()
   {
-    var repeatVal = $('#repeats_every').val();
-    var repeatType = $('#repeats_type option:selected').text().trim();
-    var summaryVal1 = '';
-    if( repeatVal != '' && repeatType != 'Select'){
-      summaryVal1 = repeatVal + ' ' + repeatType;
-    }
-    $(".summary_repeat").html("Every " + summaryVal1);
-
+    load_summary();
   });
 });
 
@@ -2366,6 +2366,7 @@ $('.tasktype').on('keyup change', function() {
     }else{
       $('.frequency_type').html('Review');
     }
+    
   }
   else if($(this).val() == "4" )
   {

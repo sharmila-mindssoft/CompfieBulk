@@ -399,14 +399,14 @@ class SaveStatutoryLevel(Request):
         domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         levels = data.get("levels")
-        levels = parse_structure_VectorType_RecordType_core_Level(levels)
+        levels = parse_structure_VectorType_RecordType_knowledgemaster_Level(levels)
         return SaveStatutoryLevel(country_id, domain_id, levels)
 
     def to_inner_structure(self):
         return {
             "c_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "d_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "levels": to_structure_VectorType_RecordType_core_Level(self.levels),
+            "levels": to_structure_VectorType_RecordType_knowledgemaster_Level(self.levels),
         }
 
 class GetStatutories(Request):
