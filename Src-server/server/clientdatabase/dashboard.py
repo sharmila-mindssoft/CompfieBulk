@@ -899,7 +899,7 @@ def frame_compliance_details_query(
 
 
 def compliance_details_query(
-    db, data, chart_type, compliance_status, from_count, to_count, user_id, chart_year
+    db, data, chart_type, compliance_status, from_count, to_count, user_id, chart_year=None
 ):
     rows = frame_compliance_details_query(
         db, chart_type, compliance_status, data, from_count, to_count, user_id, chart_year
@@ -1023,10 +1023,12 @@ def return_compliance_details_drill_down(
             if r["frequency_id"] != 4:
                 ageing = abs((due_date.date() - current_date.date()).days) + 1
             else:
-                diff = (due_date - current_date)
+
                 if r["duration_type_id"] == 2:
+                    diff = (due_date - current_date)
                     ageing = calculate_ageing_in_hours(diff)
                 else:
+                    diff = (due_date.date() - current_date.date())
                     ageing = diff.days
         elif compliance_status == "Complied":
             ageing = 0
@@ -1035,6 +1037,8 @@ def return_compliance_details_drill_down(
                 ageing = abs((current_date.date() - due_date.date()).days) + 1
             else:
                 diff = (current_date - due_date)
+                print current_date
+                print due_date
                 if r["duration_type_id"] == 2:
                     ageing = calculate_ageing_in_hours(diff)
                 else:
@@ -1473,7 +1477,7 @@ def get_not_complied_drill_down(
     compliance_status = "Not Complied"
     not_complied_details_filtered = compliance_details_query(
         db, request, chart_type, compliance_status,
-        from_count, to_count, session_user , year=None
+        from_count, to_count, session_user
     )
     current_date = datetime.datetime.today()
     unit_wise_data = {}
@@ -2730,16 +2734,5 @@ def get_dashboard_notification_counts(
     notification_count = len(notification_rows)
     reminder_count = len(reminder_rows)
     escalation_count = len(escalation_rows)
-
-    # statutory_column = "count(*) as result"
-    # statutory_condition = "user_id = %s and read_status = 0 ORDER BY " + \
-    #     " statutory_notification_id DESC"
-    # statutory_condition_val = [session_user]
-    # statutory_notification_rows = db.get_data(
-    #     tblStatutoryNotificationStatus, statutory_column,
-    #     statutory_condition, statutory_condition_val
-    # )
-    # statutory_notification_count = statutory_notification_rows[0]["result"]
-    # notification_count += statutory_notification_count
 
     return notification_count, reminder_count, escalation_count

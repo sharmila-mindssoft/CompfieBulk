@@ -460,12 +460,6 @@ def get_users_for_seating_units(db, session_user):
     result = convert_to_dict(rows, columns)
     user_list = []
     for r in result:
-        # q = "select unit_id from tbl_user_units where user_id = %s"
-        # r_rows = db.select_all(q, [int(r["user_id"])])
-        # r_unit_ids = convert_to_dict(r_rows, ["unit_id"])
-        # unit_ids = []
-        # for u in r_unit_ids:
-        #     unit_ids.append(u["unit_id"])
         user_id = int(r["user_id"])
         unit_ids = user_unit_mapping[user_id]
         domain_ids = user_domain_mapping[user_id]
@@ -477,13 +471,6 @@ def get_users_for_seating_units(db, session_user):
         if r["seating_unit_id"]:
             unit_id = int(r["seating_unit_id"])
             unit_name = r["seating_unit_name"]
-        # domain_ids = [
-        #     int(x) for x in r["domain_ids"].split(',')
-        # ]
-
-        # unit_ids = [
-        #     int(y) for y in r["unit_ids"].split(',')
-        # ]
         if r["form_ids"] is None:
             is_assignee = is_approver = is_concurrence = True
         else:
@@ -497,6 +484,9 @@ def get_users_for_seating_units(db, session_user):
             if 9 in form_ids:
                 is_concurrence = True
                 is_approver = True
+
+        if is_admin(db, user_id):
+            is_assignee = is_concurrence = is_approver = True
 
         user = clienttransactions.ASSIGN_COMPLIANCE_USER(
             user_id,
