@@ -839,9 +839,12 @@ def save_assigned_compliance(db, request, session_user):
 def get_units_for_user_grouped_by_industry(db, unit_ids):
     condition = "1"
     condition_val = None
+
     if unit_ids is not None:
-        condition = "unit_id in (%s)"
-        condition_val = [unit_ids]
+        condition, condition_val = db.generate_tuple_condition(
+            "unit_id", [int(x) for x in unit_ids.split(",")]
+        )
+        condition_val = [condition_val]
     industry_column = "industry_name"
     industry_condition = condition + " group by industry_name"
     industry_rows = db.get_data(

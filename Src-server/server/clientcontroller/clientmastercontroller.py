@@ -254,13 +254,12 @@ def process_change_service_provider_status(
         request.service_provider_id
     ):
         return clientmasters.InvalidServiceProviderId()
-    elif is_service_provider_in_contract(
-        db, request.service_provider_id
-    ) is False:
-        return clientmasters.CannotChangeStatusOfContractExpiredSP()
+    # elif is_service_provider_in_contract(
+    #     db, request.service_provider_id
+    # ) is False:
+    #     return clientmasters.CannotChangeStatusOfContractExpiredSP()
     elif is_user_exists_under_service_provider(
-        db,
-        request.service_provider_id
+        db, request.service_provider_id
     ):
         return clientmasters.CannotDeactivateUserExists()
     elif update_service_provider_status(

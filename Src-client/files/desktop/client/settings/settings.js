@@ -87,7 +87,7 @@ function loadClientProfileList(profiles){
         }
         var isadmin = ""
         if(lists[key]['is_admin'] == true){
-            isadmin = "Admin"
+            isadmin = "Promoted Admin"
         }
         if(lists[key]['is_primary_admin'] == true){
             isadmin = "Primary Admin"
@@ -102,7 +102,7 @@ function loadClientProfileList(profiles){
           $('.mobile-number', clone).text(lists[key]['contact_no']);
         }
         $('.seating-unit span', clone).html(seating_unit);
-        if(seating_unit != '-'){
+        if(seating_unit != ' - '){
           $('.seating-unit abbr', clone).attr("title", lists[key]['address']);
         }else{
           $('.seating-unit abbr', clone).text('');

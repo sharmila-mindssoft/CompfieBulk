@@ -64,7 +64,8 @@ __all__ = [
     "validate_reset_token",
     "remove_session",
     "update_profile",
-    "is_service_proivder_user"
+    "is_service_proivder_user",
+    "convert_datetime_to_date"
 
 ]
 
@@ -730,7 +731,10 @@ def calculate_ageing(
     # due_date = self.localize(due_date)
     if frequency_type == "On Occurrence":
         if completion_date is not None:  # Completed compliances
-            r = relativedelta.relativedelta(due_date, completion_date)
+            r = relativedelta.relativedelta(
+                convert_datetime_to_date(due_date),
+                convert_datetime_to_date(completion_date)
+            )
             diff = abs(due_date-completion_date)
             if r.days < 0 and r.hours < 0 and r.minutes < 0:
                 compliance_status = "On Time"
@@ -750,7 +754,10 @@ def calculate_ageing(
                     )
                 return r.days, compliance_status
         else:
-            r = relativedelta.relativedelta(due_date, current_time_stamp)
+            r = relativedelta.relativedelta(
+                convert_datetime_to_date(due_date),
+                convert_datetime_to_date(current_time_stamp)
+            )
             diff = abs(due_date-current_time_stamp)
             summary_text = ""
             if duration_type in ["2", 2]:
@@ -773,10 +780,12 @@ def calculate_ageing(
     else:
         if completion_date is not None:  # Completed compliances
             compliance_status = "On Time"
-            due_date = convert_datetime_to_date(due_date),
+            due_date = convert_datetime_to_date(due_date)
             completion_date = convert_datetime_to_date(completion_date)
             if due_date not in [None, "None", 0]:
-                r = relativedelta.relativedelta(due_date, completion_date)
+                r = relativedelta.relativedelta(
+                    due_date, completion_date
+                )
                 diff = abs(due_date-completion_date)
                 compliance_status = (
                     "Delayed by " + create_datetime_summary_text(
@@ -785,11 +794,11 @@ def calculate_ageing(
                 return r.days, compliance_status
         else:
             if due_date not in [None, "None", 0]:
-                due_date = convert_datetime_to_date(due_date),
+                due_date = convert_datetime_to_date(due_date)
                 current_time_stamp = convert_datetime_to_date(
                     current_time_stamp)
                 r = relativedelta.relativedelta(due_date, current_time_stamp)
-                diff = abs(due_date-completion_date)
+                diff = abs(due_date-current_time_stamp)
                 compliance_status = create_datetime_summary_text(
                     r, diff, only_hours=False
                 )
@@ -1281,7 +1290,7 @@ def calculate_due_date(
                 if from_date <= due_date <= to_date:
                     due_dates.append(due_date)
                 year += 1
-    if len(due_dates) > 2:
+    if len(due_dates) >= 2:
         if due_dates[0] > due_dates[1]:
             due_dates.reverse()
     return due_dates, summary
@@ -1297,14 +1306,20 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             formated_date_list.append("%s" % (x))
             # if len(formated_date_list) == 1:
             #     formated_date_list.append(formated_date_list[0])
-        due_dates = tuple(formated_date_list)
-        query = '''
-            SELECT is_ok FROM
-            (SELECT (CASE WHEN (unit_id = %s AND DATE(due_date) IN %s AND \
-            compliance_id = %s) THEN DATE(due_date) ELSE 'NotExists' END ) as
-            is_ok FROM tbl_compliance_history ) a WHERE is_ok != "NotExists"'''
-
-        rows = db.select_all(query, [unit_id, due_dates, compliance_id])
+        (
+            due_date_condition, due_date_condition_val
+        ) = db.generate_tuple_condition(
+            "DATE(due_date)", due_dates_list
+        )
+        query = " SELECT is_ok FROM " + \
+            " (SELECT (CASE WHEN (unit_id = %s " + \
+            " AND " + due_date_condition + \
+            " AND compliance_id = %s) THEN DATE(due_date) " + \
+            " ELSE 'NotExists' END ) as " + \
+            " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
+        rows = db.select_all(
+            query, [unit_id, due_date_condition_val, compliance_id]
+        )
         if len(rows) > 0:
             for row in rows:
                 formated_date_list.remove("%s" % (row[0]))

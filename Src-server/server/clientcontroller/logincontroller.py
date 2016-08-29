@@ -322,8 +322,7 @@ def send_reset_link(db, user_id, username, short_name):
 
 
 def process_reset_token(db, request):
-    client_id = get_client_id_from_short_name(db, request.short_name)
-    user_id = validate_reset_token(db, request.reset_token, client_id)
+    user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
         return login.ResetSessionTokenValidationSuccess()
     else:
@@ -331,11 +330,10 @@ def process_reset_token(db, request):
 
 
 def process_reset_password(db, request):
-    client_id = get_client_id_from_short_name(db, request.short_name)
-    user_id = validate_reset_token(db, request.reset_token, client_id)
+    user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
-        update_password(db, request.new_password, user_id, client_id)
-        delete_used_token(db, request.reset_token, client_id)
+        update_password(db, request.new_password, user_id)
+        delete_used_token(db, request.reset_token)
         return login.ResetPasswordSuccess()
     else:
         return login.InvalidResetToken()
@@ -343,7 +341,7 @@ def process_reset_password(db, request):
 
 def process_change_password(db, request):
     client_info = request.session_token.split("-")
-    session_token = "{}-{}".format(
+    session_token = "%s-%s" % (
         client_info[0], client_info[2]
     )
     # client_id = int(client_info[0])
@@ -364,7 +362,7 @@ def process_logout(db, request):
 
 def process_update_profile(db, request):
     client_info = request.session_token.split("-")
-    session_token = "{}-{}".format(
+    session_token = "%s- %s" % (
         client_info[0],  client_info[1]
     )
     session_user = db.validate_session_token(session_token)

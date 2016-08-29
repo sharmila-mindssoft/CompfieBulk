@@ -252,7 +252,10 @@ class ExpiryReportGenerator(object):
                         len(file_name_parts)-1
                     ]
                     unique_id_parts = unique_id_with_extention.split(".")
-                    extention = unique_id_parts[1]
+                    if len(unique_id_parts) > 1:
+                        extention = unique_id_parts[1]
+                    else:
+                        extention = ""
                     file_name_with_extention = "%s.%s" % (file_name, extention)
                     original_path = "%s%s" % (docment_path, doc)
 
