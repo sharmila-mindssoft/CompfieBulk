@@ -1052,7 +1052,7 @@ def get_where_query_for_reassigned_history_report(
     if session_user != admin_id:
         qry_where += " AND t1.unit_id in " + \
             " (select us.unit_id from tbl_user_units us where " + \
-            " us.user_id = %s"
+            " us.user_id = %s)"
         qry_where_val.append(int(session_user))
         qry_where += " and t3.domain_id IN " + \
             " (SELECT ud.domain_id FROM tbl_user_domains ud " + \
@@ -2174,7 +2174,7 @@ def get_compliance_task_applicability(db, request, session_user):
     if session_user != admin_id:
         where_qry += " AND T4.unit_id in " + \
             " (select us.unit_id from tbl_user_units us where " + \
-            " us.user_id = %s"
+            " us.user_id = %s)"
         where_qry_val.append(session_user)
 
     act_wise = {}
