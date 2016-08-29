@@ -64,7 +64,8 @@ __all__ = [
     "validate_reset_token",
     "remove_session",
     "update_profile",
-    "is_service_proivder_user"
+    "is_service_proivder_user",
+    "convert_datetime_to_date"
 
 ]
 
@@ -1277,7 +1278,7 @@ def calculate_due_date(
                 if from_date <= due_date <= to_date:
                     due_dates.append(due_date)
                 year += 1
-    if len(due_dates) > 2:
+    if len(due_dates) >= 2:
         if due_dates[0] > due_dates[1]:
             due_dates.reverse()
     return due_dates, summary
@@ -1293,14 +1294,20 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             formated_date_list.append("%s" % (x))
             # if len(formated_date_list) == 1:
             #     formated_date_list.append(formated_date_list[0])
-        due_dates = tuple(formated_date_list)
-        query = '''
-            SELECT is_ok FROM
-            (SELECT (CASE WHEN (unit_id = %s AND DATE(due_date) IN %s AND \
-            compliance_id = %s) THEN DATE(due_date) ELSE 'NotExists' END ) as
-            is_ok FROM tbl_compliance_history ) a WHERE is_ok != "NotExists"'''
-
-        rows = db.select_all(query, [unit_id, due_dates, compliance_id])
+        (
+            due_date_condition, due_date_condition_val
+        ) = db.generate_tuple_condition(
+            "DATE(due_date)", due_dates_list
+        )
+        query = " SELECT is_ok FROM " + \
+            " (SELECT (CASE WHEN (unit_id = %s " + \
+            " AND " + due_date_condition + \
+            " AND compliance_id = %s) THEN DATE(due_date) " + \
+            " ELSE 'NotExists' END ) as " + \
+            " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
+        rows = db.select_all(
+            query, [unit_id, due_date_condition_val, compliance_id]
+        )
         if len(rows) > 0:
             for row in rows:
                 formated_date_list.remove("%s" % (row[0]))
