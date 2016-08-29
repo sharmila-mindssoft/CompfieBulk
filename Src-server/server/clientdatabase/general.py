@@ -841,13 +841,17 @@ def validate_compliance_due_date(db, request):
             due_date, due_date_list, date_list = set_new_due_date(
                 s_dates, repeats_type_id, comp_id
             )
-
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-                if (n_due_date < t_due_date):
-                    # Due date should be lessthen statutory date
-                    return False, task
+                if c.validity_date is None :
+                    if (n_due_date < t_due_date):
+                        # Due date should be lessthen statutory date
+                        return False, task
+                else :
+                    v_due_date = datetime.datetime.strptime(c.validity_date, "%d-%b-%Y")
+                    if (t_due_date > v_due_date):
+                        return False, task
     return True, None
 
 
