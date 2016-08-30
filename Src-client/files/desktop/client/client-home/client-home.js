@@ -1318,7 +1318,6 @@ function updateAssigneeWiseComplianceFiltersList(data) {
   UNITLIST = data.units;
   USERLIST = data.users;
 }
-<<<<<<< HEAD
 
 function updateAssigneeWiseComplianceFiltersList(data)
 {
