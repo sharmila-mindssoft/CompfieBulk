@@ -260,33 +260,39 @@ function load_secondwizard(){
 
     if($("#clientstatutoryid").val() != ''){
       var newCompliances = newCompliancesList[level_1_statutory_id];
-      for(var newCompliance in newCompliances){
-        var statutoryprovision = '';
-        var compliance_id = newCompliances[newCompliance]["compliance_id"];
-        var compliance_applicable_status = newCompliances[newCompliance]["compliance_applicable_status"];
-        var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
-        var clone2=complianceDetailtableRow.clone();
-        $('.sno', clone2).html('<font color="#0404B4">'+statutoriesCount+'</font>');
-        $('.statutoryprovision', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["statutory_provision"]+'</font>');
-        $('.compliancetask', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["compliance_name"]+'</font>');
-        $('.compliancedescription', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["description"]+'</font>');
-        
-        $('.compliance-ck-box', clone2).attr('id', 'statutory'+statutoriesCount);
-        $('.compliance-ck-box', clone2).val(statutoriesCount);
-        $('.compliance-ck-box', clone2).addClass('statutoryclass'+actCount);
-        $('.compliance-label', clone2).attr('for', 'statutory'+statutoriesCount);
-        $(".compliance-ck-box", clone2).on("click", function() {
-          compliancestatus(this);
-        });
 
-        $('.accordion-content'+count).append(clone2);
+      if(newCompliances != undefined){
+        for(var newCompliance in newCompliances){
+          var statutoryprovision = '';
+          var compliance_id = newCompliances[newCompliance]["compliance_id"];
+          var compliance_applicable_status = newCompliances[newCompliance]["compliance_applicable_status"];
+          var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
+          var clone2=complianceDetailtableRow.clone();
+          $('.sno', clone2).html('<font color="#0404B4">'+statutoriesCount+'</font>');
+          $('.statutoryprovision', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["statutory_provision"]+'</font>');
+          $('.compliancetask', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["compliance_name"]+'</font>');
+          $('.compliancedescription', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["description"]+'</font>');
+          
+          $('.compliance-ck-box', clone2).attr('id', 'statutory'+statutoriesCount);
+          $('.compliance-ck-box', clone2).val(statutoriesCount);
+          $('.compliance-ck-box', clone2).addClass('statutoryclass'+actCount);
+          $('.compliance-label', clone2).attr('for', 'statutory'+statutoriesCount);
+          $(".compliance-ck-box", clone2).on("click", function() {
+            compliancestatus(this);
+          });
 
-        if(compliance_applicable_status == false){
-          $('#statutory'+statutoriesCount).each(function() {
-          this.checked = false;
+          $('.accordion-content'+count).append(clone2);
+
+          if(compliance_applicable_status == false){
+            $('#statutory'+statutoriesCount).each(function() {
+              this.checked = false;
+            });
+          }
+          statutoriesCount = statutoriesCount + 1;
+        }
+        $('#act'+actCount).each(function() {
+          this.checked = true;
         });
-      }
-        statutoriesCount = statutoriesCount + 1;
       }
     }
 
