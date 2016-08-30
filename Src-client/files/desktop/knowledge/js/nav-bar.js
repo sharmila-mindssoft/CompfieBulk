@@ -45,6 +45,9 @@ function initializeNavBar () {
         homeMenu.attr("href", "/home")
     }
 
+    if (menus.length == 0) {
+        window.location.href = "/knowledge/login";
+    }
     for (var i = 0; i < menus.length; i++) {
         var key = menus[i];
         if (!(key in navBarItems))
