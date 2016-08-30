@@ -188,13 +188,16 @@ function onArrowKey(e, ac_item, callback){
 
 //country autocomplete function
 var chosen = "";
-function getCountryAutocomplete(e, textval, listval, callback, flag=false){
+function getCountryAutocomplete(e, textval, listval, callback, flag){
   $("#country").val('');
   $("#ac-country").show();
   var countries = listval;
   var suggestions = [];
   $('#ac-country ul').empty();
   if(textval.length>0){
+
+    if(flag == undefined) flag = false;
+
     var isFlag = flag;
     for(var i in countries){
       if(isFlag == false){
@@ -215,13 +218,16 @@ function getCountryAutocomplete(e, textval, listval, callback, flag=false){
 }
 
 //domain autocomplete function
-function getDomainAutocomplete(e, textval, listval, callback, flag=false){
+function getDomainAutocomplete(e, textval, listval, callback, flag){
   $("#domain").val('');
   $("#ac-domain").show();
   var domains = listval;
   var suggestions = [];
   $('#ac-domain ul').empty();
   if(textval.length>0){
+
+    if(flag == undefined) flag = false;
+
     var isFlag = flag;
     for(var i in domains){
       if(isFlag == false){
@@ -265,13 +271,15 @@ function getUserGroupAutocomplete(e, textval, listval, callback){
 }
 
 //industry autocomplete function
-function getIndustryAutocomplete(e, textval, listval, callback, flag=false){
+function getIndustryAutocomplete(e, textval, listval, callback, flag){
   $("#ac-industry").show();
   $("#industry").val('');
   var industries = listval;
   var suggestions = [];
   $('#ac-industry ul').empty();
   if(textval.length>0){
+
+    if(flag == undefined) flag = false;
 
     var isFlag = flag;
     for(var i in industries){
@@ -293,13 +301,15 @@ function getIndustryAutocomplete(e, textval, listval, callback, flag=false){
 }
 
 //statutorynature autocomplete function
-function getStatutoryNatureAutocomplete(e, textval, listval, callback, flag=false){
+function getStatutoryNatureAutocomplete(e, textval, listval, callback, flag){
   $("#ac-statutorynature").show();
   $("#statutorynature").val('');
   var statutorynatures = statutoryNaturesList;
   var suggestions = [];
   $('#ac-statutorynature ul').empty();
   if(textval.length>0){
+    if(flag == undefined) flag = false;
+
     var isFlag = flag;
     for(var i in statutorynatures){
       if(isFlag == false){
@@ -320,13 +330,15 @@ function getStatutoryNatureAutocomplete(e, textval, listval, callback, flag=fals
 }
 
 //geography autocomplete function
-function getGeographyAutocomplete(e, textval, listval, callback, flag=false){
+function getGeographyAutocomplete(e, textval, listval, callback, flag){
   $("#ac-geography").show();
   $("#geography").val('');
   var geographies = listval;
   var suggestions = [];
   $('#ac-geography ul').empty();
   if(textval.length>0){
+    if(flag == undefined) flag = false;
+    
     var isFlag = flag;
     for(var i in geographies){
       if(isFlag == false){
