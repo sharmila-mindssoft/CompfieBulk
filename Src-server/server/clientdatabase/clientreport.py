@@ -825,7 +825,9 @@ def get_where_query_for_compliance_details_report(
     if from_date is not None and to_date is not None:
         start_date = string_to_datetime(from_date)
         end_date = string_to_datetime(to_date)
-        qry_where += " AND ch.due_date between %s and %s"
+        qry_where += " AND ch.due_date between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         qry_where_val.extend([start_date, end_date])
 
     else:
@@ -1987,7 +1989,7 @@ def get_compliance_activity_report(
                 " DATE_ADD(%s, INTERVAL 1 DAY)"
             condition_val.extend([year_start_date, year_end_date])
 
-        query = "SELECT distinct activity_date, activity_status, " + \
+        query = "SELECT activity_date, activity_status, " + \
             " compliance_status, cal.remarks, " + \
             " concat(unit_code, '-', unit_name), " + \
             " address, document_name, compliance_task, " + \
@@ -2003,13 +2005,16 @@ def get_compliance_activity_report(
             " INNER JOIN tbl_users us ON (us.user_id = ac.completed_by) " + \
             " WHERE u.country_id = %s " + \
             " AND c.domain_id = %s "
-        order = " ORDER BY cal.updated_on DESC"
+        order = " group by compliance_activity_id " + \
+            " ORDER BY cal.updated_on DESC"
 
         # print query
         param = [country_id, domain_id]
         if conditions != "":
             query += conditions
             param.extend(condition_val)
+        print query + order
+        print param
         result = db.select_all(query + order, param)
         columns = [
             "activity_date", "activity_status", "compliance_status", "remarks",
