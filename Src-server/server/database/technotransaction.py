@@ -329,7 +329,7 @@ def get_unassigned_compliances(
         statutory_nature_name = d["statutory_nature_name"]
         statutory_id = int(d["statutory_id"])
         statutory_data = STATUTORY_PARENTS.get(statutory_id)
-        s_mapping = statutory_data[1]
+        s_mapping = statutory_data[1].split(">>")
         level_1 = statutory_data[2][0]
         if level_1 == 0:
             level_1 = statutory_id
@@ -339,7 +339,7 @@ def get_unassigned_compliances(
         compliance_applicable_list = level_1_compliance.get(level_1)
         if compliance_applicable_list is None:
             compliance_applicable_list = []
-        provision = "%s - %s" % (s_mapping, d["statutory_provision"])
+        provision = "%s - %s" % (" >> ".join(s_mapping[1:]), d["statutory_provision"])
         document_name = d["document_name"]
         if document_name == "None":
             document_name = None
