@@ -31,7 +31,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    VERSION, IS_DEVELOPMENT
+    VERSION, IS_DEVELOPMENT, SESSION_CUTOFF
 )
 
 from server.templatepath import (
@@ -84,6 +84,15 @@ class API(object):
         self._io_loop = io_loop
         self._db = db
         self._ip_addess = None
+        self._remove_old_session()
+
+    def _remove_old_session(self):
+        def on_session_timeout():
+            self._db.clear_session(SESSION_CUTOFF)
+
+        self._io_loop.add_timeout(
+            time.time() + 1080, on_session_timeout
+        )
 
     def _send_response(
         self, response_data, response
