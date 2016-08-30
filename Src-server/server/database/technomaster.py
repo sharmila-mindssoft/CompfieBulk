@@ -329,7 +329,7 @@ def save_client_group_data(db, client_group, session_user):
         client_id = db.insert(tblClientGroups, columns, values)
         if client_id is False:
             raise process_error("E040")
-    else :
+    else:
         raise process_error("E062")
 
     # columns = ["logo_url"]
