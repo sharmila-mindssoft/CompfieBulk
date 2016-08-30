@@ -1,319 +1,277 @@
-
 function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
+  $('.error-message').hide();
+  $('.error-message').text('');
 }
 function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
+  $('.error-message').text(message);
+  $('.error-message').show();
 }
-
-$("#btn-userprivilege-add").click(function(){
-	$("#userprivilege-view").hide();
-	$("#userprivilege-add").show();
-	clearMessage(); 
-	$("#search-user-group-name").val("");
-  	$("#user-privilege-id").val('');
-  	$("#user-privilege-name").val('');
-  	$("#user-privilege-name").focus();
-  	$(".checkbox-full-check").prop('checked', false);
-  	$(".tbody-userprivilege-form-list tr").remove();
-	$('.tbody-userprivilege-form-list .form-checkbox').each(function() {
-		this.checked = false; 
-	});  	
-	function onSuccess(data){
-		loadUserGroupdata(data['user_groups']);
-		loadFormData(data['forms']['menus'])		
-	}
-	function onFailure(error){
-		displayMessage(error);
-	}
-	client_mirror.getClientUserGroups(
-		function (error, response){
-			if(error == null){
-				onSuccess(response);
-			}
-			else{
-				onFailure(error);
-			}
-		}
-	);
+$('#btn-userprivilege-add').click(function () {
+  $('#userprivilege-view').hide();
+  $('#userprivilege-add').show();
+  clearMessage();
+  $('#search-user-group-name').val('');
+  $('#user-privilege-id').val('');
+  $('#user-privilege-name').val('');
+  $('#user-privilege-name').focus();
+  $('.checkbox-full-check').prop('checked', false);
+  $('.tbody-userprivilege-form-list tr').remove();
+  $('.tbody-userprivilege-form-list .form-checkbox').each(function () {
+    this.checked = false;
+  });
+  function onSuccess(data) {
+    loadUserGroupdata(data.user_groups);
+    loadFormData(data.forms.menus);
+  }
+  function onFailure(error) {
+    displayMessage(error);
+  }
+  client_mirror.getClientUserGroups(function (error, response) {
+    if (error == null) {
+      onSuccess(response);
+    } else {
+      onFailure(error);
+    }
+  });
 });
-function loadFormData(formlist){
-	$.each(formlist, function(key, value) {  
-		var tableRowHeading = $('#templates-form-list .table-userprivilege-form-list .table-row-heading');
-		var clone = tableRowHeading.clone();
-		$('.heading-name', clone).text(key);
-		if(value.length != 0){
-			$('.tbody-userprivilege-form-list').append(clone);
-		}
-		$.each(value, function(i) { 
-			var formName = value[i]['form_name'];
-			var formId = value[i]['form_id'];
-			var tableRowForms = $('#templates-form-list .table-userprivilege-form-list .table-row-form-list');
-			var clone1 = tableRowForms.clone();
-			$('.form-checkbox', clone1).val(formId);
-			$('.form-name', clone1).text(formName);		
-			$('.tbody-userprivilege-form-list').append(clone1);	
-		});
-	});
+function loadFormData(formlist) {
+  $.each(formlist, function (key, value) {
+    var tableRowHeading = $('#templates-form-list .table-userprivilege-form-list .table-row-heading');
+    var clone = tableRowHeading.clone();
+    $('.heading-name', clone).text(key);
+    if (value.length != 0) {
+      $('.tbody-userprivilege-form-list').append(clone);
+    }
+    $.each(value, function (i) {
+      var formName = value[i].form_name;
+      var formId = value[i].form_id;
+      var tableRowForms = $('#templates-form-list .table-userprivilege-form-list .table-row-form-list');
+      var clone1 = tableRowForms.clone();
+      $('.form-checkbox', clone1).val(formId);
+      $('.form-name', clone1).text(formName);
+      $('.tbody-userprivilege-form-list').append(clone1);
+    });
+  });
 }
-$("#btn-userprivilege-cancel").click(function(){
-	$("#userprivilege-add").hide();
-	$("#userprivilege-view").show();
-	clearMessage(); 
-	$("#search-user-group-name").val("");
+$('#btn-userprivilege-cancel').click(function () {
+  $('#userprivilege-add').hide();
+  $('#userprivilege-view').show();
+  clearMessage();
+  $('#search-user-group-name').val('');
 });
-function initialize(){
-	function onSuccess(data){
-		clearMessage(); 
-		loadUserGroupdata(data['user_groups']);
-		$("#search-user-group-name").val("");
-	}
-	function onFailure(status, data){
-		displayMessage(error);
-	}
-	client_mirror.getClientUserGroups(
-		function (error, response){
-			if(error == null){
-				onSuccess(response);
-			}
-			else{
-				onFailure(error);
-			}
-		}
-	);
+function initialize() {
+  function onSuccess(data) {
+    clearMessage();
+    loadUserGroupdata(data.user_groups);
+    $('#search-user-group-name').val('');
+  }
+  function onFailure(status, data) {
+    displayMessage(error);
+  }
+  client_mirror.getClientUserGroups(function (error, response) {
+    if (error == null) {
+      onSuccess(response);
+    } else {
+      onFailure(error);
+    }
+  });
 }
-
-function loadUserGroupdata(userGroupList){
-	$(".tbody-userprivilege-list").find("tr").remove();
- 	var sno = 0;
-	var imageName, title;
-	for(var j in userGroupList){
-		var user_group_name = userGroupList[j]["user_group_name"];
-		var isActive = userGroupList[j]["is_active"];
-		var userGroupId = userGroupList[j]["user_group_id"];
-				
-		if(isActive == true){
-			imageName = "icon-active.png";
-			title = "Click here to deactivate"
-			statusVal = false;
-		}
-		else{
-			imageName = "icon-inactive.png";	
-			title = "Click here to Activate"
-			statusVal = true;
-		}
-
-		var tableRow = $('#templates .table-userprivilege-list .table-row');
-		var clone = tableRow.clone();
-		sno = sno + 1;
-		$('.sno', clone).text(sno);
-		$('.usergroup-name', clone).text(user_group_name);
-		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userPrivilegeEdit('+userGroupId+',\''+user_group_name+'\')"/>');
-		$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="userPrivilegeActive('+userGroupId+', '+statusVal+')"/>');
-		$('.tbody-userprivilege-list').append(clone);			
-	}
+function loadUserGroupdata(userGroupList) {
+  $('.tbody-userprivilege-list').find('tr').remove();
+  var sno = 0;
+  var imageName, title;
+  for (var j in userGroupList) {
+    var user_group_name = userGroupList[j].user_group_name;
+    var isActive = userGroupList[j].is_active;
+    var userGroupId = userGroupList[j].user_group_id;
+    if (isActive == true) {
+      imageName = 'icon-active.png';
+      title = 'Click here to deactivate';
+      statusVal = false;
+    } else {
+      imageName = 'icon-inactive.png';
+      title = 'Click here to Activate';
+      statusVal = true;
+    }
+    var tableRow = $('#templates .table-userprivilege-list .table-row');
+    var clone = tableRow.clone();
+    sno = sno + 1;
+    $('.sno', clone).text(sno);
+    $('.usergroup-name', clone).text(user_group_name);
+    $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userPrivilegeEdit(' + userGroupId + ',\'' + user_group_name + '\')"/>');
+    $('.is-active', clone).html('<img src="/images/' + imageName + '" title="' + title + '" onclick="userPrivilegeActive(' + userGroupId + ', ' + statusVal + ')"/>');
+    $('.tbody-userprivilege-list').append(clone);
+  }
 }
-
-$("#submit").click(function(){
-	var groupIdVal = $("#user-privilege-id").val().trim();
-	var groupNameVal = $("#user-privilege-name").val().trim();
-	var chkArray = [];
-	$(".tbody-userprivilege-form-list .form-checkbox:checked").each(function() {
-		chkArray.push($(this).val());
-	}); 
-	
-	if(groupNameVal == ''){
-	  	displayMessage(message.group_required);  	
-	}
-	else if(groupNameVal.length > 50){
-		displayMessage("User Group Name" + message.should_not_exceed + " 50 characters");
-	}
-	else if(chkArray.length == 0){
-		displayMessage(message.add_one_form);  	 	
-	}
-	else if(groupIdVal == ''){
-		chkArrayInt = chkArray.map(function(item) {
-			return parseInt(item, 10);
-		});
-		function onSuccess(data){  
-	    	$("#userprivilege-add").hide();
-	   		$("#userprivilege-view").show();
-	   		initialize();
-	 	}
-		function onFailure(error){		
-			if(error == "UserGroupNameAlreadyExists"){
-	   			displayMessage(message.usergroupname_exists);
-	  		}
-	  		else{
-	  			displayMessage(error);
-	  		}
-		}
-		var userGroupInsertDetails;
-		userGroupInsertDetails = client_mirror.getSaveClientUserGroupDict(groupNameVal, chkArrayInt)
-		client_mirror.saveClientUserGroup(userGroupInsertDetails,
-			function (error, response){
-				if(error == null){
-					onSuccess(response);
-				}
-				else{
-					onFailure(error);
-				}
-			}
-		);
-	}
-	else if(groupIdVal != ''){
-		chkArrayInt = chkArray.map(function(item) {
-	   		return parseInt(item, 10);
-		});
-		function onSuccess(data){
-		    $("#userprivilege-add").hide();
-		    $("#userprivilege-view").show();
-		    initialize();
-		}
-		function onFailure(error){
-			if(error == "UserGroupNameAlreadyExists"){
-				displayMessage(message.usergroupname_exists);
-			}
-			else{
-				displayMessage(error);
-			}
-		}
-		var userGroupUpdateDetails;
-		userGroupUpdateDetails = client_mirror.getUpdateClientUserGroupDict(parseInt(groupIdVal), groupNameVal, chkArrayInt);
-		client_mirror.updateClientUserGroup(userGroupUpdateDetails,
-			function (error, response){
-				if(error == null){
-					onSuccess(response);
-				}
-				else{
-					onFailure(error);
-				}
-			}
-		);
-	}
-
-});
-function userPrivilegeEdit(userGroupId, userGroupName){
-	clearMessage();
-	$("#userprivilege-add").show();
-	$("#userprivilege-view").hide();
-	$("#user-privilege-name").val(userGroupName);
-	$("#user-privilege-id").val(userGroupId);  
-	$(".checkbox-full-check").prop('checked' , false);
-	$(".tbody-userprivilege-form-list").find("tr").remove();
-
-	function onSuccess(data){
-		loadFormListUpdate(data['forms']['menus'], data['user_groups'], userGroupId);     
-	}
-	function onFailure(error){
-		displayMessage(error);
-	}
-	client_mirror.getClientUserGroups(
-		function (error, response){
-			if(error == null){
-				onSuccess(response);
-			}
-			else{
-				onFailure(error);
-			}
-		}
-	);
-}
-function loadFormListUpdate(formList, userGroupList, userGroupId){
-	$.each(formList, function(key, value) {  
-		var tableRowHeading=$('#templates-form-list .table-userprivilege-form-list .table-row-heading');
-		var clone=tableRowHeading.clone();
-		$('.heading-name', clone).text(key);
-		if(value.length!=0){
-			$('.tbody-userprivilege-form-list').append(clone);
-		}
-		$.each(value, function(i) { 
-			var formName=value[i]['form_name'];
-			var formId=value[i]['form_id'];
-			var tableRowForms=$('#templates-form-list .table-userprivilege-form-list .table-row-form-list');
-			var clone1=tableRowForms.clone();
-			$('.form-checkbox', clone1).val(formId);
-			$('.form-name', clone1).text(formName);		
-			$('.tbody-userprivilege-form-list').append(clone1);	
-		});
-	});
-	$.each(userGroupList, function(key, value){
-		if(userGroupList[key]['user_group_id'] == userGroupId){
-      var formIds=userGroupList[key]['form_ids'];
-      for(var i=0; i<formIds.length; i++){
-        $('.form-checkbox[value="'+formIds[i]+'"]').prop("checked", true);
+$('#submit').click(function () {
+  var groupIdVal = $('#user-privilege-id').val().trim();
+  var groupNameVal = $('#user-privilege-name').val().trim();
+  var chkArray = [];
+  $('.tbody-userprivilege-form-list .form-checkbox:checked').each(function () {
+    chkArray.push($(this).val());
+  });
+  if (groupNameVal == '') {
+    displayMessage(message.group_required);
+  } else if (groupNameVal.length > 50) {
+    displayMessage('User Group Name' + message.should_not_exceed + ' 50 characters');
+  } else if (chkArray.length == 0) {
+    displayMessage(message.add_one_form);
+  } else if (groupIdVal == '') {
+    chkArrayInt = chkArray.map(function (item) {
+      return parseInt(item, 10);
+    });
+    function onSuccess(data) {
+      $('#userprivilege-add').hide();
+      $('#userprivilege-view').show();
+      initialize();
+    }
+    function onFailure(error) {
+      if (error == 'UserGroupNameAlreadyExists') {
+        displayMessage(message.usergroupname_exists);
+      } else {
+        displayMessage(error);
       }
-		}
-	});
+    }
+    var userGroupInsertDetails;
+    userGroupInsertDetails = client_mirror.getSaveClientUserGroupDict(groupNameVal, chkArrayInt);
+    client_mirror.saveClientUserGroup(userGroupInsertDetails, function (error, response) {
+      if (error == null) {
+        onSuccess(response);
+      } else {
+        onFailure(error);
+      }
+    });
+  } else if (groupIdVal != '') {
+    chkArrayInt = chkArray.map(function (item) {
+      return parseInt(item, 10);
+    });
+    function onSuccess(data) {
+      $('#userprivilege-add').hide();
+      $('#userprivilege-view').show();
+      initialize();
+    }
+    function onFailure(error) {
+      if (error == 'UserGroupNameAlreadyExists') {
+        displayMessage(message.usergroupname_exists);
+      } else {
+        displayMessage(error);
+      }
+    }
+    var userGroupUpdateDetails;
+    userGroupUpdateDetails = client_mirror.getUpdateClientUserGroupDict(parseInt(groupIdVal), groupNameVal, chkArrayInt);
+    client_mirror.updateClientUserGroup(userGroupUpdateDetails, function (error, response) {
+      if (error == null) {
+        onSuccess(response);
+      } else {
+        onFailure(error);
+      }
+    });
+  }
+});
+function userPrivilegeEdit(userGroupId, userGroupName) {
+  clearMessage();
+  $('#userprivilege-add').show();
+  $('#userprivilege-view').hide();
+  $('#user-privilege-name').val(userGroupName);
+  $('#user-privilege-id').val(userGroupId);
+  $('.checkbox-full-check').prop('checked', false);
+  $('.tbody-userprivilege-form-list').find('tr').remove();
+  function onSuccess(data) {
+    loadFormListUpdate(data.forms.menus, data.user_groups, userGroupId);
+  }
+  function onFailure(error) {
+    displayMessage(error);
+  }
+  client_mirror.getClientUserGroups(function (error, response) {
+    if (error == null) {
+      onSuccess(response);
+    } else {
+      onFailure(error);
+    }
+  });
 }
-function userPrivilegeActive(userGroupId, isActive){
-
-	var msgstatus = message.deactive_message;
-	if(isActive){
-	    msgstatus = message.active_message;
-	}
-	$( ".warning-confirm" ).dialog({
-	    title: message.title_status_change,
-	    buttons: {
-	        Ok: function() {
-	            $( this ).dialog( "close" );
-
-	            function onSuccess(data){
-			   		initialize();
-			  	}
-			  	function onFailure(error){
-			  		if(error == "CannotDeactivateUserExists"){
-			  			//displayMessage(message.cannot_deactivate_usergroup)
-			  			custom_alert(message.cannot_deactivate_usergroup);
-			  		}else{
-			  			custom_alert(error);
-			  		}
-			  		
-			 	}
-			  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
-			  		function (error, response){
-						if(error == null){
-							onSuccess(response);
-						}
-						else{
-							onFailure(error);
-
-						}
-					}
-				);
-	            
-	        },
-	        Cancel: function() {
-	            $( this ).dialog( "close" );
-	        }
-	    },
-	    open: function ()  {
-	        $(".warning-message").html(msgstatus);
-	    }
-	});
+function loadFormListUpdate(formList, userGroupList, userGroupId) {
+  $.each(formList, function (key, value) {
+    var tableRowHeading = $('#templates-form-list .table-userprivilege-form-list .table-row-heading');
+    var clone = tableRowHeading.clone();
+    $('.heading-name', clone).text(key);
+    if (value.length != 0) {
+      $('.tbody-userprivilege-form-list').append(clone);
+    }
+    $.each(value, function (i) {
+      var formName = value[i].form_name;
+      var formId = value[i].form_id;
+      var tableRowForms = $('#templates-form-list .table-userprivilege-form-list .table-row-form-list');
+      var clone1 = tableRowForms.clone();
+      $('.form-checkbox', clone1).val(formId);
+      $('.form-name', clone1).text(formName);
+      $('.tbody-userprivilege-form-list').append(clone1);
+    });
+  });
+  $.each(userGroupList, function (key, value) {
+    if (userGroupList[key].user_group_id == userGroupId) {
+      var formIds = userGroupList[key].form_ids;
+      for (var i = 0; i < formIds.length; i++) {
+        $('.form-checkbox[value="' + formIds[i] + '"]').prop('checked', true);
+      }
+    }
+  });
 }
-
-$('.checkbox-full-check').click(function(event) {  
-	if(this.checked) { 
-		$('.tbody-userprivilege-form-list .form-checkbox').each(function() { 
-			this.checked = true;  
-	  	});
-	}
-	else{
-	  $('.tbody-userprivilege-form-list .form-checkbox').each(function() {
-	    this.checked = false; 
-	  });        
-	}
+function userPrivilegeActive(userGroupId, isActive) {
+  var msgstatus = message.deactive_message;
+  if (isActive) {
+    msgstatus = message.active_message;
+  }
+  $('.warning-confirm').dialog({
+    title: message.title_status_change,
+    buttons: {
+      Ok: function () {
+        $(this).dialog('close');
+        function onSuccess(data) {
+          initialize();
+        }
+        function onFailure(error) {
+          if (error == 'CannotDeactivateUserExists') {
+            //displayMessage(message.cannot_deactivate_usergroup)
+            custom_alert(message.cannot_deactivate_usergroup);
+          } else {
+            custom_alert(error);
+          }
+        }
+        client_mirror.changeClientUserGroupStatus(userGroupId, isActive, function (error, response) {
+          if (error == null) {
+            onSuccess(response);
+          } else {
+            onFailure(error);
+          }
+        });
+      },
+      Cancel: function () {
+        $(this).dialog('close');
+      }
+    },
+    open: function () {
+      $('.warning-message').html(msgstatus);
+    }
+  });
+}
+$('.checkbox-full-check').click(function (event) {
+  if (this.checked) {
+    $('.tbody-userprivilege-form-list .form-checkbox').each(function () {
+      this.checked = true;
+    });
+  } else {
+    $('.tbody-userprivilege-form-list .form-checkbox').each(function () {
+      this.checked = false;
+    });
+  }
 });
-$(function() {
-	initialize();
+$(function () {
+  initialize();
 });
-$(document).find('.js-filtertable').each(function(){
-    $(this).filtertable().addFilter('.js-filter');
+$(document).find('.js-filtertable').each(function () {
+  $(this).filtertable().addFilter('.js-filter');
 });
-
 $('#user-privilege-name').on('input', function (e) {
-    this.value = isCommon($(this));
+  this.value = isCommon($(this));
 });
