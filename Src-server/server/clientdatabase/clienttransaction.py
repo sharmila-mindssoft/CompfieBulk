@@ -1522,13 +1522,15 @@ def approve_compliance(
     query = " SELECT tch.unit_id, tch.compliance_id, " + \
         " (SELECT frequency_id FROM tbl_compliances tc " + \
         " WHERE tch.compliance_id = tc.compliance_id ), " + \
-        " due_date, completion_date " + \
+        " due_date, completion_date, " + \
+        " (select duration_type_id FROM tbl_compliances tc " + \
+        " where tch.compliance_id=tc.compliance_id) " + \
         " FROM tbl_compliance_history tch " + \
         " WHERE compliance_history_id = %s "
     rows = db.select_all(query, [compliance_history_id])
     columns = [
         "unit_id", "compliance_id", "frequency_id",
-        "due_date", "completion_date"
+        "due_date", "completion_date", "duration_type_id"
     ]
     rows = convert_to_dict(rows, columns)
 
@@ -1537,6 +1539,7 @@ def approve_compliance(
     due_date = rows[0]["due_date"]
     completion_date = rows[0]["completion_date"]
     frequency_id = rows[0]["frequency_id"]
+    duration_type_id = rows[0]["duration_type_id"]
 
     # Updating next due date validity dates in assign compliance table
     as_columns = []
@@ -1568,7 +1571,8 @@ def approve_compliance(
     # Saving in compliance activity
     ageing, remarks = calculate_ageing(
         due_date, frequency_type=frequency_id,
-        completion_date=completion_date, duration_type=None
+        completion_date=completion_date,
+        duration_type=duration_type_id
     )
     save_compliance_activity(
         db, unit_id, compliance_id, "Approved", status,
@@ -1685,18 +1689,22 @@ def reject_compliance_approval(
         "(SELECT concat( " + \
         " IFNULL(document_name+'-',''),compliance_task) " + \
         " FROM tbl_compliances tc " + \
-        " WHERE tc.compliance_id = ch.compliance_id) as compliance_name " + \
+        " WHERE tc.compliance_id = ch.compliance_id) as compliance_name, " + \
+        " (SELECT duration_type_id FROM tbl_compliances tc WHERE " + \
+        " tc.compliance_id = ch.compliance_id ) " + \
         " FROM tbl_compliance_history ch WHERE compliance_history_id = %s "
     result = db.select_all(query, [compliance_history_id])
     history_columns = [
         "unit_id", "compliance_id", "due_date", "completion_date",
-        "assignee_id", "concurrence_id", "approval_id", "compliance_name"
+        "assignee_id", "concurrence_id", "approval_id", "compliance_name",
+        "duration_type_id"
     ]
     rows = convert_to_dict(result, history_columns)
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     due_date = rows[0]["due_date"]
     completion_date = rows[0]["completion_date"]
+    duration_type_id = rows[0]["duration_type_id"]
     status = "Inprogress"
 
     if due_date is not None:
@@ -1705,7 +1713,8 @@ def reject_compliance_approval(
 
     ageing, ageing_remarks = calculate_ageing(
         due_date, frequency_type=None,
-        completion_date=completion_date, duration_type=None
+        completion_date=completion_date,
+        duration_type=duration_type_id
     )
     save_compliance_activity(
         db, unit_id, compliance_id, "Rejected", status,
@@ -1809,15 +1818,19 @@ def concur_compliance(
     values.append(compliance_history_id)
     db.update(tblComplianceHistory, columns, values, condition)
 
-    columns = "unit_id, compliance_id, due_date, completion_date"
+    columns = "unit_id, compliance_id, due_date, completion_date, " + \
+        " (select duration_type_id from tbl_compliances tc where  " + \
+        " tc.compliance_id = tch.compliance_id ) as duration_type_id"
     condition = "compliance_history_id = %s "
     rows = db.get_data(
-        tblComplianceHistory, columns, condition, [compliance_history_id]
+        tblComplianceHistory+ " tch", columns, condition,
+        [compliance_history_id]
     )
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     due_date = rows[0]["due_date"]
     completion_date = rows[0]["completion_date"]
+    duration_type_id = rows[0]["duration_type_id"]
 
     columns = []
     values = []
@@ -1842,7 +1855,7 @@ def concur_compliance(
     ageing, remarks = calculate_ageing(
         due_date, frequency_type=None,
         completion_date=completion_date,
-        duration_type=None
+        duration_type=duration_type_id
     )
     save_compliance_activity(
         db, unit_id, compliance_id, "Concurred", status,
@@ -1860,11 +1873,14 @@ def reject_compliance_concurrence(
         " ) " + \
         " FROM tbl_compliances tc " + \
         " WHERE tc.compliance_id = ch.compliance_id) as compliance_task"
+    duration_column = "(select duration_type_id  " + \
+        " from tbl_compliances tc  " + \
+        " where tc.compliance_id=ch.compliance_id) as duration_type_id"
     columns = [
         "unit_id", "ch.compliance_id as compliance_id",
         "due_date", "completion_date",
         "completed_by", "concurred_by", "approved_by",
-        compliance_name_column
+        compliance_name_column, duration_column
     ]
     condition = "compliance_history_id = %s "
 
@@ -1876,12 +1892,14 @@ def reject_compliance_concurrence(
     compliance_id = rows[0]["compliance_id"]
     due_date = rows[0]["due_date"]
     completion_date = rows[0]["completion_date"]
+    duration_type_id = rows[0]["duration_type_id"]
     status = "Inprogress"
     if due_date < completion_date:
         status = "Not Complied"
     ageing, ageing_remarks = calculate_ageing(
         due_date, frequency_type=None,
-        completion_date=completion_date, duration_type=None
+        completion_date=completion_date,
+        duration_type=duration_type_id
     )
     save_compliance_activity(
         db, unit_id, compliance_id, "Rejected", status,
