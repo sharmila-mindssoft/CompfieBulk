@@ -175,10 +175,13 @@ function initClientMirror() {
         var body = [
             sessionToken, requestFrame
         ]
-        jQuery.post(
-            CLIENT_BASE_URL + callerName,
-            toJSON(body),
-            function(data) {
+        $.ajax({
+            url : CLIENT_BASE_URL + callerName,
+            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            type: "POST",
+            contentType: "application/json",
+            data: toJSON(body),
+            success: function (data) {
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -200,22 +203,43 @@ function initClientMirror() {
                     }
 
                 }
-
-            }
-        )
-            .fail(
-                function(jqXHR, textStatus, errorThrown) {
-                    // alert("jqXHR:"+jqXHR.status);
-                    // alert("textStatus:"+textStatus);
-                    // alert("errorThrown:"+errorThrown);
-                    if (errorThrown == "Not Found"){
-                        alert("Server connection not found");
-                        redirect_login();
-                    }
-                    else
-                        callback(jqXHR["responseText"], errorThrown)
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (errorThrown == "Not Found"){
+                    alert("Server connection not found");
+                    redirect_login();
                 }
-        );
+                else
+                    callback(jqXHR["responseText"], errorThrown)
+            }
+        });
+    }
+
+    function LoginApiRequest(callerName, request, callback) {
+        $.ajax({
+            url: CLIENT_BASE_URL + callerName,
+            // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+            type: "POST",
+            contentType: "application/json",
+            data: toJSON(request),
+            success: function (data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                log("API STATUS :"+status)
+                if (status.toLowerCase().indexOf(matchString) != -1){
+                    callback(null, response);
+                }else{
+                    callback(status, null);
+                }
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                callback(jqXHR["responseText"], null);
+            }
+        });
+
     }
 
     function updateUserProfile(contact_no, address, callback){
@@ -229,66 +253,18 @@ function initClientMirror() {
                     "session_token": sessionToken
                 }
             ]
-        ]
-        jQuery.post(
-            CLIENT_BASE_URL + "login",
-            toJSON(request),
-            function(data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1) {
-                    updateUserInfo(response);
-                    callback(null, response);
-                }
-                else {
-                    callback(status, null);
-                }
-            }
-        ).fail(function(jqXHR, textStatus, errorThrown){
-            if(jqXHR.status == 404) {
-                callback("Client Database not exists")
-            }
-        });
-    }
+        ];
 
-    // Login function
-    function login(username, password, short_name, callback) {
-        if (window.sessionStorage["my_ip"] == null)
-            get_ip();
-        var request = [
-            short_name, [
-                "Login", {
-                    "login_type": "Web",
-                    "username": username,
-                    "password": password,
-                    "short_name": short_name,
-                    "ip": window.sessionStorage["my_ip"]
-                }
-            ]
-        ]
-        jQuery.post(
-            CLIENT_BASE_URL + "login",
-            toJSON(request),
-            function(data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1) {
-                    initSession(response, short_name)
-                    callback(null, response);
-                }
-                else {
-                    callback(status, null);
-                }
+        LoginApiRequest("login", request, function(status,response) {
+            if (status == null) {
+                updateUserInfo(response);
+                callback(null, response)
             }
-        ).fail(function(jqXHR, textStatus, errorThrown){
-            if(jqXHR.status == 404) {
-                callback("Client Database not exists")
+            else {
+                callback(status, null);
             }
         });
+
     }
 
     function verifyLoggedIn() {
@@ -309,23 +285,9 @@ function initClientMirror() {
                 }
             ]
         ];
-
-        jQuery.post(
-            CLIENT_BASE_URL + "login",
-            toJSON(request),
-            function(data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                // if (status.toLowerCase().indexOf(matchString) != -1) {
-                //     callback(null, response);
-                // } else {
-                //     callback(status, null);
-                // }
-                redirect_login()
-            }
-        )
+        LoginApiRequest("login", request, function(status, response) {
+            redirect_login();
+        });
     }
 
     // Change Password APIs
@@ -344,24 +306,7 @@ function initClientMirror() {
                 }
             ]
         ];
-
-        jQuery.post(
-            CLIENT_BASE_URL + "login",
-            toJSON(request),
-            function(data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1) {
-                    callback(null, response);
-
-                }
-                else {
-                    callback(status, null);
-                }
-            }
-        )
+        LoginApiRequest("login", request, callback);
 
     }
 
@@ -380,24 +325,7 @@ function initClientMirror() {
                 }
             ]
         ];
-        jQuery.post(
-            CLIENT_BASE_URL + callerName,
-            toJSON(request),
-            function(data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1) {
-                    // initSession(response, short_name)
-                    callback(null, response);
-
-                }
-                else {
-                    callback(status, null);
-                }
-            }
-        )
+        LoginApiRequest("login", request, callback);
     }
 
     function validateResetToken(resetToken, short_name,
@@ -413,24 +341,7 @@ function initClientMirror() {
                 }
             ]
         ]
-        jQuery.post(
-            CLIENT_BASE_URL + callerName,
-            toJSON(request),
-            function(data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1) {
-                    // initSession(response, short_name)
-                    callback(null, response);
-
-                }
-                else {
-                    callback(status, null);
-                }
-            }
-        )
+        LoginApiRequest("login", request, callback);
 
     }
 
@@ -448,24 +359,7 @@ function initClientMirror() {
                 }
             ]
         ];
-        jQuery.post(
-            CLIENT_BASE_URL + callerName,
-            toJSON(request),
-            function(data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1) {
-                    // initSession(response, short_name)
-                    callback(null, response);
-
-                }
-                else {
-                    callback(status, null);
-                }
-            }
-        )
+        LoginApiRequest("login", request, callback);
     }
 
     // Client User Group
@@ -1768,7 +1662,7 @@ function initClientMirror() {
         // updateUser_Session: updateUser_Session,
         clearSession: clearSession,
         verifyLoggedIn: verifyLoggedIn,
-        login: login,
+        // login: login,
         logout: logout,
         getClientShortName: getClientShortName,
         redirect_login : redirect_login,

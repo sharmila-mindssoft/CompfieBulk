@@ -340,7 +340,7 @@ def save_statutory_mapping(db, data, created_by):
     statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
     compliances = data.compliances
     geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
-    statutory_mapping = '-'.join(data.mappings)
+    statutory_mapping = ' ** '.join(data.mappings)
     created_on = get_date_time()
     is_active = 1
 
@@ -621,7 +621,7 @@ def update_statutory_mapping(db, data, updated_by):
     statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
     compliances = data.compliances
     geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
-    statutory_mapping = '-'.join(data.mappings)
+    statutory_mapping = ' ** '.join(data.mappings)
 
     save_statutory_backup(db, statutory_mapping_id, updated_by)
     table_name = "tbl_statutory_mappings"

@@ -1404,7 +1404,7 @@ def get_user_name_by_id(db, user_id):
             employee_name = "%s - %s" % (
                 rows[0]["employee_code"], rows[0]["employee_name"]
             )
-        if user_id == is_primary_admin(user_id):
+        if user_id == is_primary_admin(db, user_id):
             employee_name += " (Client Admin)"
     else:
         employee_name = "Administrator"

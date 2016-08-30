@@ -187,10 +187,15 @@ def return_knowledge_report(db, report_data, total_count=None):
 
     report_list = []
     for r in report_data:
+        m_lst = r["statutory_mapping"].split(" ** ")
+        statutory_provision = ""
+        for m in m_lst :
+            statutory_provision += " >>".join(m.split(">>")[1:])
+
         mapping = r["statutory_mapping"].split(">>")
         act_name = mapping[0].strip()
-        statutory_provision = " >>".join(mapping[1:])
-        statutory_provision += " " + r["statutory_provision"]
+
+        statutory_provision = r["statutory_mapping"] + " " + r["statutory_provision"]
         compliance_task = r["compliance_task"]
         document_name = r["document_name"]
         if document_name == "None":
