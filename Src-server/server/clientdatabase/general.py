@@ -706,7 +706,7 @@ def create_datetime_summary_text(r, diff, only_hours=False):
     if(only_hours):
         if abs(r.hours) > 0:
             hours = abs(r.hours)
-            if abs(r.months) > 0:
+            if abs(r.months) > 0 or abs(r.years) > 0:
                 hours = (diff.days * 24) + hours
             elif abs(r.days) > 0:
                 hours = (abs(r.days) * 24) + hours
@@ -714,11 +714,11 @@ def create_datetime_summary_text(r, diff, only_hours=False):
         elif r.minutes > 0:
             summary_text += " %s minute(s) " % r.minutes
     else:
-        if abs(r.years) > 0:
-            summary_text += " %s year(s) " % abs(r.years)
-        if abs(r.months) > 0:
-            summary_text += " %s month(s) " % abs(r.months)
-        if abs(r.days) > 0:
+        if abs(r.years) > 0 or abs(r.months) > 0:
+            summary_text += " %s day(s) " % abs(diff.days)
+        # if abs(r.months) > 0:
+        #     summary_text += " %s month(s) " % abs(r.months)
+        elif abs(r.days) >= 0:
             summary_text += " %s day(s) " % abs(r.days)
     return summary_text
 
@@ -728,7 +728,6 @@ def calculate_ageing(
 ):
     current_time_stamp = get_date_time_in_date()
     compliance_status = "-"
-    # due_date = self.localize(due_date)
     if frequency_type == "On Occurrence":
         if completion_date is not None:  # Completed compliances
             r = relativedelta.relativedelta(
@@ -741,6 +740,9 @@ def calculate_ageing(
             else:
                 summary_text = "Delayed by "
                 if duration_type in ["2", 2]:
+                    r = relativedelta.relativedelta(
+                        due_date, completion_date
+                    )
                     compliance_status = (
                             summary_text + create_datetime_summary_text(
                                 r, diff, only_hours=True
@@ -754,28 +756,35 @@ def calculate_ageing(
                     )
                 return r.days, compliance_status
         else:
-            r = relativedelta.relativedelta(
-                convert_datetime_to_date(due_date),
-                convert_datetime_to_date(current_time_stamp)
-            )
             diff = abs(due_date-current_time_stamp)
             summary_text = ""
             if duration_type in ["2", 2]:
+                r = relativedelta.relativedelta(
+                    due_date, current_time_stamp
+                )
                 compliance_status = (
                         summary_text + create_datetime_summary_text(
                             r, diff, only_hours=True
                         )
                     )
+                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                    compliance_status += " left"
+                else:
+                    compliance_status = " Overdue by " + compliance_status
             else:
+                r = relativedelta.relativedelta(
+                    convert_datetime_to_date(due_date),
+                    convert_datetime_to_date(current_time_stamp)
+                )
                 compliance_status = (
                         summary_text + create_datetime_summary_text(
                             r, diff, only_hours=False
                         )
                     )
-            if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
-                compliance_status += " left"
-            else:
-                compliance_status = " Overdue by " + compliance_status
+                if r.days >= 0:
+                    compliance_status += " left"
+                else:
+                    compliance_status = " Overdue by " + compliance_status
             return r.days, compliance_status
     else:
         if completion_date is not None:  # Completed compliances
