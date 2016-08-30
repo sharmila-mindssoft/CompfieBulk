@@ -54,8 +54,6 @@ def get_industry_by_id(db, industry_id):
     where_condition, where_condition_val = db.generate_tuple_condition(
         "industry_id", values_list)
     q = "SELECT industry_name FROM tbl_industries WHERE " + where_condition
-    print q
-    print where_condition_val
     row = db.select_all(q, [where_condition_val])
     industry_names = []
     for r in row :
