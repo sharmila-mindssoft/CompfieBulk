@@ -1,6 +1,8 @@
 import os
 import json
+import time
 import traceback
+import threading
 from tornado.web import StaticFileHandler
 from tornado.httpclient import AsyncHTTPClient
 from basics.webserver import WebServer
@@ -19,7 +21,7 @@ from server.client import (
     ClientReplicationManager, ReplicationManagerWithBase,
     DomainReplicationManager
 )
-
+from server.constants import SESSION_CUTOFF
 import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -80,6 +82,20 @@ class API(object):
         self._replication_managers = {}
         self._ip_address = None
 
+    def _remove_old_session(self, c_db):
+        def on_session_timeout():
+            c_db.begin()
+            try :
+                c_db.clear_session(SESSION_CUTOFF)
+                c_db.commit()
+            except Exception, e :
+                print e
+                c_db.rollback()
+
+        self._io_loop.add_timeout(
+            time.time() + 1080, on_session_timeout
+        )
+
     def close_connection(self, db):
         try:
             db.close()
@@ -91,20 +107,23 @@ class API(object):
         # self._databases = {}
         try:
             #
-            for company_id, db in self._databases.iteritems():
-                db.close()
+            # for company_id, db in self._databases.iteritems():
+            #     db.close()
 
-            for company_id, rep_man in self._replication_managers.iteritems():
-                rep_man.stop()
+            # for company_id, rep_man in self._replication_managers.iteritems():
+            #     rep_man.stop()
 
-            self._databases = {}
-            self._replication_managers = {}
+            # self._databases = {}
+            # self._replication_managers = {}
             # print servers
             for company_id, company in servers.iteritems():
 
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
+                    if self._databases.get(company_id) is not None :
+                        continue
+
                     try:
                         db = Database(
                             company.db_ip.ip_address,
@@ -117,6 +136,11 @@ class API(object):
                         db.connect()
                         if db._connection is not None :
                             self._databases[company_id] = db
+                            session_callout = threading.Thread(
+                                target=self._remove_old_session,
+                                args=[db]
+                            )
+                            session_callout.start()
                     except Exception, e:
                         print e
                         print str(traceback.format_exc())
@@ -329,28 +353,6 @@ class API(object):
     @api_request(mobile.RequestFormat)
     def handle_mobile_request(self, request, db):
         return mobilecontroller.process_client_mobile_request(request, db)
-
-    # @api_request("clientformat", file_session=True)
-    # def handle_client_format_file(self, request, db, session_token):
-        # def validate_session_from_body(content):
-        #     client_info = session_token.split("-")
-        #     client_id = int(client_info[0])
-
-        #     user_id = db.validate_session_token(client_id, str(session_token))
-        #     if user_id is None :
-        #         return False, client_id
-        #     else :
-        #         return True, client_id
-
-        # is_valid, client_id = validate_session_from_body(request.body())
-        # if is_valid :
-        #     print is_valid
-        #     info = request.files()
-        #     print info
-        #     response_data = process_uploaded_file(info, "client", client_id)
-        #     return response_data
-        # else :
-        #     return login.InvalidSessionToken()
 
 
 #
