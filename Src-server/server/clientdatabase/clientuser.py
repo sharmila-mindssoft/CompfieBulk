@@ -568,9 +568,6 @@ def start_on_occurrence_task(
         "unit_id", "compliance_id",
         "start_date", "due_date", "completed_by"
     ]
-    # compliance_history_id = db.get_new_id(
-    #     "compliance_history_id", tblComplianceHistory, client_id
-    # )
     start_date = string_to_datetime_with_time(start_date)
     duration = duration.split(" ")
     duration_value = duration[0]
@@ -585,14 +582,14 @@ def start_on_occurrence_task(
         session_user
     ]
 
-    approval_columns = "approval_person, concurrence_person"
+    approval_columns = ["approval_person", "concurrence_person"]
     approval_condition = " compliance_id = %s and unit_id = %s "
     rows = db.get_data(
         tblAssignedCompliances, approval_columns,
         approval_condition, [compliance_id, unit_id]
     )
-    concurred_by = rows[0]["approval_person"]
-    approved_by = rows[0]["concurrence_person"]
+    approved_by = rows[0]["approval_person"]
+    concurred_by = rows[0]["concurrence_person"]
     if is_two_levels_of_approval(db):
         columns.append("concurred_by")
         values.append(concurred_by)
