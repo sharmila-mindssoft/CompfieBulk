@@ -455,6 +455,8 @@ function showSideBar(idval, data){
                     hideLoader();
                     if (error == "NotEnoughSpaceAvailable") {
                         displayMessage(message.error)
+                    }else if (error == "FileSizeExceedsLimit") {
+                        displayMessage(message.filesize_exceeds_limit)
                     }else {
                         displayMessage(error);
                     }

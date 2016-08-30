@@ -210,7 +210,7 @@ var message = {
 	"password_reset_success" : "Password Reset Successfully",
 	"invalid_reset_token" : "Invalid Reset Token",
 	"password_already_used" : "Password already used. Enter different password",
-	"reassign_compliance_before_user_deactivate" : "Reassign compliances before deactivate",
+	"reassign_compliance_before_user_deactivate" : "User have compliances. Can't deactivate user. Reassign compliances before deactivate",
 	"cant_deactivate_primaryadmin" : "Only Techno team can change stauts of primary admin",
 	"trasaction_exists" : "Transaction Exists",
 	"NotEnoughSpaceAvailable": "Not enough space available",
@@ -227,6 +227,11 @@ var message = {
 	"invalid_statutory_month" : "Duplicate statutory month",
 	"triggerdays_exceeding_repeatsevery" : "Trigger before days should not exceed repeats every value",
 	"shortname_exists" : "Short Name Already Exists",
+	"filesize_exceeds_limit": "File Size Exceeds Limit",
+	"invalid_validitydate" : "Invalid Validity Date",
+	"promote_admin_change_status" : "Are you sure, you want to change promote client admin?",
+	"nocompliance_selected" : "No compliance selected",
+	"completion_lt_validity" : "Completion Date must be less than or equal to Validity Date"
 };
 
 function clearMessage() {
