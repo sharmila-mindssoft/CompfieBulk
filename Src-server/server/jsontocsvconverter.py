@@ -3,18 +3,21 @@ import io
 import json
 import csv
 import uuid
-from protocol import (
-    core
-)
+from protocol import (core)
 from server.common import (
     string_to_datetime, datetime_to_string,
     convert_to_dict
 )
-from server.clientdatabase.general import (
-    calculate_ageing
+from server.clientdatabase.common import (
+    get_country_domain_timelines
 )
+from server.clientdatabase.general import (calculate_ageing)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientreport import *
+from server.clientdatabase.general import (
+    get_user_unit_ids, get_date_time_in_date,
+    get_user_domains
+)
 
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -58,6 +61,9 @@ class ConvertJsonToCSV(object):
                     db, request, session_user)
             elif report_type == "ServiceProviderWise":
                 self.generate_service_provider_wise_report(
+                    db, request, session_user)
+            elif report_type == "AssigneeWise":
+                self.generate_assignee_wise_report(
                     db, request, session_user)
 
     def to_string(self, s):
@@ -936,3 +942,131 @@ class ConvertJsonToCSV(object):
                         due_date, validity_date
                     ]
                     self.write_csv(None, csv_values)
+
+    def generate_assignee_wise_report(
+        self, db, request, session_user
+    ):
+        is_header = False
+        country_id = request.country_id
+        business_group_id = request.business_group_id
+        legal_entity_id = request.legal_entity_id
+        division_id = request.division_id
+        unit_id = request.unit_id
+        assignee_id = request.user_id
+        condition = "tu.country_id =  %s"
+        condition_val = [country_id]
+        if business_group_id is not None:
+            condition += " AND tu.business_group_id = %s"
+            condition_val.append(business_group_id)
+        if legal_entity_id is not None:
+            condition += " AND tu.legal_entity_id = %s"
+            condition_val.append(legal_entity_id)
+        if division_id is not None:
+            condition += " AND tu.division_id = %s"
+            condition_val.append(division_id)
+        if unit_id is not None:
+            condition += " AND tu.unit_id = %s"
+            condition_val.append(unit_id)
+        else:
+            units = get_user_unit_ids(db, session_user)
+            unit_condition, unit_condition_val = db.generate_tuple_condition(
+                "tu.unit_id", units
+            )
+            condition = " %s AND %s " % (condition, unit_condition)
+            condition_val.append(unit_condition_val)
+        if assignee_id is not None:
+            condition += " AND tch.completed_by = %s"
+            condition_val.append(assignee_id)
+        domain_ids_list = get_user_domains(db, session_user)
+        current_date = get_date_time_in_date()
+        for domain_id in domain_ids_list:
+            timelines = get_country_domain_timelines(
+                db, [country_id], [domain_id], [current_date.year]
+            )
+            from_date = timelines[0][1][0][1][0]["start_date"].date()
+            to_date = timelines[0][1][0][1][0]["end_date"].date()
+            query = " SELECT " + \
+                " concat(IFNULL(employee_code, " + \
+                " 'Administrator'), '-', employee_name) " + \
+                " as Assignee, tch.completed_by, tch.unit_id, " + \
+                " concat(unit_code, '-', unit_name) as Unit, " + \
+                " address, tc.domain_id, " + \
+                " (SELECT domain_name FROM tbl_domains td " + \
+                " WHERE tc.domain_id = td.domain_id) as Domain, " + \
+                " sum(case when (approve_status = 1 " + \
+                " and (tch.due_date > completion_date or " + \
+                " tch.due_date = completion_date)) then 1 else 0 end) " + \
+                " as complied, " + \
+                " sum(case when ((approve_status = 0 " + \
+                " or approve_status is null) and " + \
+                " tch.due_date > now()) then 1 else 0 end) as Inprogress, " + \
+                " sum(case when ((approve_status = 0 " + \
+                " or approve_status is null) and " + \
+                " tch.due_date < now()) then 1 else 0 end) " + \
+                " as NotComplied, " + \
+                " sum(case when (approve_status = 1 " + \
+                " and completion_date > tch.due_date and " + \
+                " (is_reassigned = 0 or is_reassigned is null) ) " + \
+                " then 1 else 0 end) as DelayedCompliance , " + \
+                " sum(case when (approve_status = 1 " + \
+                " and completion_date > tch.due_date and " + \
+                " (is_reassigned = 1)) " + \
+                " then 1 else 0 end) as DelayedReassignedCompliance " + \
+                " FROM tbl_compliance_history tch " + \
+                " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+                " tch.compliance_id = tac.compliance_id " + \
+                " AND tch.unit_id = tac.unit_id) " + \
+                " INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id) " + \
+                " INNER JOIN tbl_users tus ON " + \
+                " (tus.user_id = tch.completed_by) " + \
+                " INNER JOIN tbl_compliances tc " + \
+                " ON (tac.compliance_id = tc.compliance_id) " + \
+                " WHERE " + condition + " AND domain_id = %s " + \
+                " AND tch.due_date " + \
+                " BETWEEN DATE_SUB(%s, INTERVAL 1 DAY) AND " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) " + \
+                " group by completed_by, tch.unit_id; "
+            param = [domain_id, from_date, to_date]
+            condition_val.extend(param)
+            rows = db.select_all(query, condition_val)
+            columns = [
+                "assignee", "completed_by", "unit_id", "unit_name",
+                "address", "domain_id", "domain_name", "complied",
+                "inprogress", "not_complied", "delayed", "delayed_reassigned"
+            ]
+            assignee_wise_compliances = convert_to_dict(rows, columns)
+            if not is_header:
+                csv_headers = [
+                    "Assignee", "Unit Name", "Address", "Domain",
+                    "Total", "Complied", "Delayed",
+                    "Delayed Reassigned", "Inprogress", "Not Complied"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+
+            for compliance in assignee_wise_compliances:
+                unit_name = compliance["unit_name"]
+                assignee = compliance["assignee"]
+                domain_name = compliance["domain_name"]
+                address = compliance["address"]
+                total_compliances = int(
+                    compliance["complied"]) + int(compliance["inprogress"])
+                total_compliances += int(
+                    compliance["delayed"]) + int(
+                    compliance["delayed_reassigned"])
+                total_compliances += int(compliance["not_complied"])
+
+                complied_count = int(compliance["complied"])
+                delayed_count = int(compliance["delayed"])
+                delayed_reassigned_count = int(
+                    compliance["delayed_reassigned"])
+                inprogress_count = int(compliance["inprogress"])
+                not_complied_count = int(compliance["not_complied"])
+                csv_values = [
+                    assignee, unit_name, address, domain_name,
+                    str(total_compliances),
+                    str(complied_count), str(delayed_count),
+                    str(delayed_reassigned_count),
+                    str(inprogress_count), str(not_complied_count)
+                ]
+                self.write_csv(None, csv_values)

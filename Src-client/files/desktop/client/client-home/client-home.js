@@ -1585,7 +1585,7 @@ function updateAssigneeWiseComplianceFiltersList(data)
     USERLIST = data['users'];
 }
 
-function showFiltersResults() {
+function showFiltersResults(csv) {
     var country = $("#country").val().trim();
     var countryval = $("#countryval").val().trim();
     if(countryval == ""){
@@ -1619,9 +1619,15 @@ function showFiltersResults() {
     displayLoader();
     client_mirror.getAssigneewiseComplianes(
         parseInt(country), businessgroupid, legalentityid,
-        divisionid, unitid, userid,
+        divisionid, unitid, userid, csv,
         function (status, data) {
-            updateAssigneeWiseComplianceList(data['chart_data']);
+            chart_data = data['chart_data'];
+            download_url = data['link'];
+            if(chart_data){
+                updateAssigneeWiseComplianceList(chart_data);    
+            }else if(download_url){
+                window.open(download_url, '_blank');
+            }
             hideLoader();
         }
     );
