@@ -1,5 +1,6 @@
-from protocol import (dashboard, login, general)
 from server import logger
+from protocol import (dashboard, login, general, clientreport)
+from server.jsontocsvconverter import ConvertJsonToCSV
 from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
 
@@ -9,6 +10,7 @@ from server.clientdatabase.general import (
     get_divisions_for_user, get_group_name,
     get_country_wise_domain_month_range,
     get_client_users, get_units_for_user,
+    get_assignees
     )
 __all__ = [
     "process_client_dashboard_requests"
@@ -378,7 +380,7 @@ def process_assigneewise_compliances_filters(
     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
     division_list = get_divisions_for_user(db, division_ids)
     unit_list = get_units_for_user(db, unit_ids)
-    users_list = get_client_users(db, unit_ids)
+    users_list = get_assignees(db, unit_ids)
     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
         countries=country_list, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,
@@ -391,19 +393,27 @@ def process_assigneewise_compliances_filters(
 # based on the received filters
 ########################################################
 def process_assigneewise_compliances(db, request, session_user, client_id):
-    country_id = request.country_id
-    business_group_id = request.business_group_id
-    legal_entity_id = request.legal_entity_id
-    division_id = request.division_id
-    unit_id = request.unit_id
-    user_id = request.user_id
-    chart_data = get_assigneewise_compliances_list(
-        db, country_id, business_group_id, legal_entity_id,
-        division_id, unit_id, session_user, client_id, user_id
-    )
-    return dashboard.GetAssigneeWiseCompliancesChartSuccess(
-        chart_data=chart_data
-    )
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "AssigneeWise"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        country_id = request.country_id
+        business_group_id = request.business_group_id
+        legal_entity_id = request.legal_entity_id
+        division_id = request.division_id
+        unit_id = request.unit_id
+        user_id = request.user_id
+        chart_data = get_assigneewise_compliances_list(
+            db, country_id, business_group_id, legal_entity_id,
+            division_id, unit_id, session_user, client_id, user_id
+        )
+        return dashboard.GetAssigneeWiseCompliancesChartSuccess(
+            chart_data=chart_data
+        )
 
 
 def process_assigneewise_yearwise_compliances(
@@ -429,7 +439,7 @@ def process_get_assigneewise_reassigned_compliances(
     domain_id = request.domain_id
     chart_data = get_assigneewise_reassigned_compliances(
         db,
-        country_id, unit_id, user_id, domain_id, client_id
+        country_id, unit_id, user_id, domain_id
     )
     return dashboard.GetAssigneewiseReassignedComplianesSuccess(
         chart_data=chart_data

@@ -2382,6 +2382,8 @@ def get_client_details_report(
         param.extend(condition_val)
 
     param.extend([start_count, to_count])
+    print query + order
+    print param
     rows = db.select_all(query + order, param)
 
     columns_list = columns.replace(" ", "").split(",")
@@ -2463,8 +2465,11 @@ def get_client_details_condition(
         condition_val.append(unit_id)
 
     else:
-        condition += " AND unit_id in %s"
-        condition_val.append(tuple(user_unit_ids))
+        unit_condition, unit_condition_val = db.generate_tuple_condition(
+            "unit_id", user_unit_ids
+        )
+        condition += " AND %s " % unit_condition
+        condition_val.append(unit_condition_val)
 
     if domain_ids is not None:
         dm_con = ""

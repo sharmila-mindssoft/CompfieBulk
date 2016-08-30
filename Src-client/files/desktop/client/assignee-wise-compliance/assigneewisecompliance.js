@@ -222,13 +222,18 @@ $('#pagination').click(function () {
     displayMessage(error);
     hideLoader();
   }
-  client_mirror.getAssigneewisecomplianceReport(parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount, function (error, response) {
-    if (error == null) {
-      onSuccess(response);
-    } else {
-      onFailure(error);
-    }
-  });
+  client_mirror.getAssigneewisecomplianceReport(
+    parseInt(country), parseInt(domain), parseInt(businessgroup),
+    parseInt(legalentity), parseInt(division), parseInt(unit),
+    parseInt(assignee), s_endCount, 
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
 });
 //get report data from api
 $('#submit').click(function () {
@@ -288,7 +293,18 @@ $('#submit').click(function () {
       } else {
         onFailure(error);
       }
-    });
+      client_mirror.getAssigneewisecomplianceReport(
+        parseInt(country), parseInt(domain), parseInt(businessgroup),
+        parseInt(legalentity), parseInt(division), parseInt(unit),
+        parseInt(assignee), s_endCount,
+        function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+        });
   }
 });
 //Autocomplete Script Starts

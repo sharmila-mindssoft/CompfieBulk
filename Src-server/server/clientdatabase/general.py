@@ -320,6 +320,25 @@ def get_client_users(db, unit_ids=None):
     return return_client_users(rows)
 
 
+def get_assignees(db, unit_ids=None):
+    columns = "user_id, employee_name, employee_code, is_active"
+    condition = " "
+    conditon_val = None
+    if unit_ids is not None:
+        condition, conditon_val = db.generate_tuple_condition(
+            "seating_unit_id", [int(x) for x in unit_ids.split(",")]
+        )
+        condition = " (%s or seating_unit_id is null) " % condition
+        conditon_val = [conditon_val]
+    condition += " and user_id in ( " + \
+        " select distinct assignee " + \
+        " from tbl_assigned_compliances)"
+    rows = db.get_data(
+        tblUsers, columns, condition, conditon_val
+    )
+    return return_client_users(rows)
+
+
 def return_client_users(users):
     results = []
     for user in users:
@@ -713,9 +732,16 @@ def convert_datetime_to_date(val):
 
 
 def create_datetime_summary_text(r, diff, only_hours=False):
+    print
+    print r
+    print diff
     summary_text = ""
     if(only_hours):
-        if abs(r.hours) > 0:
+        print "inside only hours"
+        if(
+            abs(r.hours) > 0 or abs(r.months) or abs(r.years) > 0
+        ):
+            print "inside if"
             hours = abs(r.hours)
             if abs(r.months) > 0 or abs(r.years) > 0:
                 hours = (diff.days * 24) + hours
@@ -723,6 +749,7 @@ def create_datetime_summary_text(r, diff, only_hours=False):
                 hours = (abs(r.days) * 24) + hours
             summary_text += " %s.%s hour(s) " % (hours, abs(r.minutes))
         elif r.minutes > 0:
+            print "inside else"
             summary_text += " %s minute(s) " % r.minutes
     else:
         if abs(r.years) > 0 or abs(r.months) > 0:
@@ -731,15 +758,18 @@ def create_datetime_summary_text(r, diff, only_hours=False):
         #     summary_text += " %s month(s) " % abs(r.months)
         elif abs(r.days) >= 0:
             summary_text += " %s day(s) " % abs(r.days)
+    print "summary_text %s" % summary_text
     return summary_text
 
 
 def calculate_ageing(
     due_date, frequency_type=None, completion_date=None, duration_type=None
 ):
+    print "inside calculate ageing: %s" % frequency_type
     current_time_stamp = get_date_time_in_date()
     compliance_status = "-"
-    if frequency_type == "On Occurrence":
+    if frequency_type == "On Occurrence" or frequency_type in [4, "4"]:
+        print "duration type : %s" % duration_type
         if completion_date is not None:  # Completed compliances
             r = relativedelta.relativedelta(
                 convert_datetime_to_date(due_date),
@@ -1391,7 +1421,7 @@ def convert_base64_to_file(file_name, file_content, client_id):
 
 def get_user_name_by_id(db, user_id):
     employee_name = None
-    if user_id is None :
+    if user_id is None:
         return ""
     if user_id is not None and user_id != 0:
         columns = "employee_code, employee_name"
