@@ -230,7 +230,6 @@ def get_compliance_status(
 
     param = [tuple(country_ids), tuple(domain_ids)]
     param.extend(where_qry_val)
-    # # print query
     q = "%s %s %s" % (query, where_qry1, order)
     rows = db.select_all(q, param)
     columns = [
@@ -465,7 +464,6 @@ def get_trend_chart(db, country_ids, domain_ids, client_id):
 def get_filtered_trend_data(
     db, country_ids, domain_ids, filter_type, filter_ids, client_id
 ):
-    print "inside get_filtered_trend_data"
     # import from common.py
     years = get_last_7_years()
     # import from common.py
@@ -1037,8 +1035,6 @@ def return_compliance_details_drill_down(
                 ageing = abs((current_date.date() - due_date.date()).days) + 1
             else:
                 diff = (current_date - due_date)
-                print current_date
-                print due_date
                 if r["duration_type_id"] == 2:
                     ageing = calculate_ageing_in_hours(diff)
                 else:
@@ -2005,7 +2001,6 @@ def get_user_company_details(db, user_id, client_id=None):
     legal_entity_ids = []
     business_group_ids = []
     for row in rows:
-        print row
         unit_ids.append(
             int(row["unit_id"])
         )
@@ -2032,24 +2027,30 @@ def get_assigneewise_compliances_list(
     db, country_id, business_group_id, legal_entity_id, division_id,
     unit_id, session_user, client_id, assignee_id
 ):
-    condition = "tu.country_id =  %s" % country_id
+    condition = "tu.country_id =  %s"
+    condition_val = [country_id]
     if business_group_id is not None:
-        condition += " AND tu.business_group_id = %s" % (business_group_id)
+        condition += " AND tu.business_group_id = %s"
+        condition_val.append(business_group_id)
     if legal_entity_id is not None:
-        condition += " AND tu.legal_entity_id = %s" % (legal_entity_id)
+        condition += " AND tu.legal_entity_id = %s"
+        condition_val.append(legal_entity_id)
     if division_id is not None:
-        condition += " AND tu.division_id = %s" % (division_id)
+        condition += " AND tu.division_id = %s"
+        condition_val.append(division_id)
     if unit_id is not None:
-        condition += " AND tu.unit_id = %s" % (unit_id)
+        condition += " AND tu.unit_id = %s"
+        condition_val.append(unit_id)
     else:
         units = get_user_unit_ids(db, session_user)
-        if len(units) == 1:
-            units.append(0)
-        condition += " AND tu.unit_id in (%s) " % (
-            ",".join(str(x) for x in units)
+        unit_condition, unit_condition_val = db.generate_tuple_condition(
+            "tu.unit_id", units
         )
+        condition = " %s AND %s " % (condition, unit_condition)
+        condition_val.append(unit_condition_val)
     if assignee_id is not None:
-        condition += " AND tch.completed_by = %s" % (assignee_id)
+        condition += " AND tch.completed_by = %s"
+        condition_val.append(assignee_id)
     domain_ids_list = get_user_domains(db, session_user)
     current_date = get_date_time_in_date()
     result = {}
@@ -2089,24 +2090,23 @@ def get_assigneewise_compliances_list(
             " tch.compliance_id = tac.compliance_id " + \
             " AND tch.unit_id = tac.unit_id) " + \
             " INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id) " + \
-            " INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee) " + \
+            " INNER JOIN tbl_users tus ON (tus.user_id = tch.completed_by) " + \
             " INNER JOIN tbl_compliances tc " + \
             " ON (tac.compliance_id = tc.compliance_id) " + \
-            " WHERE %s AND domain_id = %s "
-        query = query % (condition, domain_id)
-        date_condition = " AND tch.due_date " + \
-            " BETWEEN '%s' AND '%s' " + \
+            " WHERE " + condition + " AND domain_id = %s " + \
+            " AND tch.due_date " + \
+            " BETWEEN DATE_SUB(%s, INTERVAL 1 DAY) AND " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) " + \
             " group by completed_by, tch.unit_id; "
-        date_condition = date_condition % (from_date, to_date)
-        query = query + date_condition
-        rows = db.select_all(query)
+        param = [domain_id, from_date, to_date]
+        condition_val.extend(param)
+        rows = db.select_all(query, condition_val)
         columns = [
             "assignee", "completed_by", "unit_id", "unit_name",
             "address", "domain_id", "domain_name", "complied",
             "inprogress", "not_complied", "delayed", "delayed_reassigned"
         ]
         assignee_wise_compliances = convert_to_dict(rows, columns)
-
         for compliance in assignee_wise_compliances:
             unit_name = compliance["unit_name"]
             assignee = compliance["assignee"]
@@ -2741,7 +2741,6 @@ def get_dashboard_notification_counts(
     notification_query = "%s %s" % (query, notification_condition)
     reminder_query = "%s %s" % (query, reminder_condition)
     escalation_query = "%s %s" % (query, escalation_condition)
-
     notification_rows = db.select_all(notification_query, param)
     reminder_rows = db.select_all(reminder_query, param)
     escalation_rows = db.select_all(escalation_query, param)
