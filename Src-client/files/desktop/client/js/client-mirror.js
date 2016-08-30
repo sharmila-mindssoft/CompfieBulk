@@ -178,8 +178,9 @@ function initClientMirror() {
         if (errorThrown == 'Not Found') {
           alert('Server connection not found');
           redirect_login();
-        } else
+        } else{
           callback(jqXHR.responseText, errorThrown);
+        }
       }
     });
   }
