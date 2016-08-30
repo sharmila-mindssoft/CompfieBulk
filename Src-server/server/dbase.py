@@ -643,3 +643,7 @@ class Database(object):
             update tbl_user_sessions set last_accessed_time=%s
             where session_token = %s'''
         self.execute(q, (str(updated_on), str(session_token)))
+
+    def clear_session(self, session_cutouff):
+        q = "delete from tbl_user_sessions where last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
+        self.execute(q, [session_cutouff])
