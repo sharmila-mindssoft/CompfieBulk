@@ -10,6 +10,7 @@ from server.clientdatabase.general import (
     get_divisions_for_user, get_group_name,
     get_country_wise_domain_month_range,
     get_client_users, get_units_for_user,
+    get_assignees
     )
 __all__ = [
     "process_client_dashboard_requests"
@@ -379,7 +380,7 @@ def process_assigneewise_compliances_filters(
     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
     division_list = get_divisions_for_user(db, division_ids)
     unit_list = get_units_for_user(db, unit_ids)
-    users_list = get_client_users(db, unit_ids)
+    users_list = get_assignees(db, unit_ids)
     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
         countries=country_list, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,

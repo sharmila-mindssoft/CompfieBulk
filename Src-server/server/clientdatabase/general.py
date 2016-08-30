@@ -320,6 +320,25 @@ def get_client_users(db, unit_ids=None):
     return return_client_users(rows)
 
 
+def get_assignees(db, unit_ids=None):
+    columns = "user_id, employee_name, employee_code, is_active"
+    condition = " "
+    conditon_val = None
+    if unit_ids is not None:
+        condition, conditon_val = db.generate_tuple_condition(
+            "seating_unit_id", [int(x) for x in unit_ids.split(",")]
+        )
+        condition = " (%s or seating_unit_id is null) " % condition
+        conditon_val = [conditon_val]
+    condition += " and user_id in ( " + \
+        " select distinct assignee " + \
+        " from tbl_assigned_compliances)"
+    rows = db.get_data(
+        tblUsers, columns, condition, conditon_val
+    )
+    return return_client_users(rows)
+
+
 def return_client_users(users):
     results = []
     for user in users:
