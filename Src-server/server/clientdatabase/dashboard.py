@@ -2264,11 +2264,20 @@ def get_assigneewise_yearwise_compliances(
 
 
 def get_assigneewise_reassigned_compliances(
-    db, country_id, unit_id, user_id, domain_id, client_id
+    db, country_id, unit_id, user_id, domain_id
+):
+    results = fetch_assigneewise_reassigned_compliances(
+        db, country_id, unit_id, user_id, domain_id
+    )
+    return return_reassigned_details(results)
+
+
+def fetch_assigneewise_reassigned_compliances(
+    db, country_id, unit_id, user_id, domain_id
 ):
     current_year = get_date_time_in_date().year
     result = get_country_domain_timelines(
-        db, [country_id], [domain_id], [current_year], client_id
+        db, [country_id], [domain_id], [current_year]
     )
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
@@ -2309,6 +2318,10 @@ def get_assigneewise_reassigned_compliances(
         "compliance_name", "due_date", "start_date", "completion_date"
     ]
     results = convert_to_dict(rows, columns)
+    return results
+
+
+def return_reassigned_details(results):
     reassigned_compliances = []
     for compliance in results:
         compliance_name = compliance["compliance_name"]
@@ -2378,6 +2391,17 @@ def get_assigneewise_compliances_drilldown_data(
     db, country_id, assignee_id, domain_id, client_id, year, unit_id,
     start_count, to_count, session_user
 ):
+    result = fetch_assigneewise_compliances_drilldown_data(
+        db, country_id, assignee_id, domain_id, client_id, year, unit_id,
+        start_count, to_count, session_user
+    )
+    return return_assignee_wise_compliance_drill_down_data(result)
+
+
+def fetch_assigneewise_compliances_drilldown_data(
+    db, country_id, assignee_id, domain_id, client_id, year, unit_id,
+    start_count, to_count, session_user
+):
     domain_id_list = []
     if domain_id is None:
         domain_id_list = get_user_domains(db, session_user)
@@ -2393,7 +2417,7 @@ def get_assigneewise_compliances_drilldown_data(
     domain_condition = ",".join(str(x) for x in domain_id_list)
     if len(domain_id_list) == 1:
         result = get_country_domain_timelines(
-            db, [country_id], domain_id_list, [current_year], client_id
+            db, [country_id], domain_id_list, [current_year]
         )
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
@@ -2454,7 +2478,10 @@ def get_assigneewise_compliances_drilldown_data(
         "statutory_mapping", "assignee", "compliance_status"
     ]
     result = convert_to_dict(rows, columns_list)
+    return result
 
+
+def return_assignee_wise_compliance_drill_down_data(result):
     complied_compliances = {}
     inprogress_compliances = {}
     delayed_compliances = {}

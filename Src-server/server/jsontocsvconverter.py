@@ -3,18 +3,29 @@ import io
 import json
 import csv
 import uuid
-from protocol import (
-    core
-)
+import shutil
+import zipfile
+import datetime
+from protocol import (core)
 from server.common import (
     string_to_datetime, datetime_to_string,
     convert_to_dict
 )
-from server.clientdatabase.general import (
-    calculate_ageing
+from server.clientdatabase.common import (
+    get_country_domain_timelines
 )
+from server.clientdatabase.general import (calculate_ageing)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientreport import *
+from server.clientdatabase.dashboard import (
+    get_assigneewise_compliances_drilldown_data_count,
+    fetch_assigneewise_compliances_drilldown_data,
+    fetch_assigneewise_reassigned_compliances
+)
+from server.clientdatabase.general import (
+    get_user_unit_ids, get_date_time_in_date,
+    get_user_domains
+)
 
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -30,35 +41,104 @@ class ConvertJsonToCSV(object):
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
             FILE_DOWNLOAD_BASE_PATH, file_name)
         self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
-
+        self.documents_list = []
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
-        with io.FileIO(self.FILE_PATH, "wb+") as f:
-            self.writer = csv.writer(f)  # self.header, quoting=csv.QUOTE_ALL)
-            # self.convert_json_to_csv(jsonObj)
-            if report_type == "ActivityReport":
-                self.generate_compliance_activity_report(
-                    db, request, session_user)
-            elif report_type == "RiskReport":
-                self.generate_risk_report(db, request, session_user)
-            elif report_type == "ComplianceDetails":
-                self.generate_compliance_details_report(
-                    db, request, session_user)
-            elif report_type == "TaskApplicability":
-                self.generate_task_applicability_report(
-                    db, request, session_user)
-            elif report_type == "ClientDetails":
-                self.generate_client_details_report(
-                    db, request, session_user)
-            elif report_type == "Reassign":
-                self.generate_reassign_history_report(
-                    db, request, session_user)
-            elif report_type == "StatutoryNotification":
-                self.generate_statutory_notification_report(
-                    db, request, session_user)
-            elif report_type == "ServiceProviderWise":
-                self.generate_service_provider_wise_report(
-                    db, request, session_user)
+        if report_type == "AssigneeWise":
+            self.generate_assignee_wise_report_and_zip(
+                    db, request, session_user
+                )
+        else:
+            with io.FileIO(self.FILE_PATH, "wb+") as f:
+                self.writer = csv.writer(f)
+                # self.header, quoting=csv.QUOTE_ALL)
+                # self.convert_json_to_csv(jsonObj)
+                if report_type == "ActivityReport":
+                    self.generate_compliance_activity_report(
+                        db, request, session_user)
+                elif report_type == "RiskReport":
+                    self.generate_risk_report(db, request, session_user)
+                elif report_type == "ComplianceDetails":
+                    self.generate_compliance_details_report(
+                        db, request, session_user)
+                elif report_type == "TaskApplicability":
+                    self.generate_task_applicability_report(
+                        db, request, session_user)
+                elif report_type == "ClientDetails":
+                    self.generate_client_details_report(
+                        db, request, session_user)
+                elif report_type == "Reassign":
+                    self.generate_reassign_history_report(
+                        db, request, session_user)
+                elif report_type == "StatutoryNotification":
+                    self.generate_statutory_notification_report(
+                        db, request, session_user)
+                elif report_type == "ServiceProviderWise":
+                    self.generate_service_provider_wise_report(
+                        db, request, session_user)
+
+    def generate_assignee_wise_report_and_zip(
+        self, db, request, session_user
+    ):
+        s = str(uuid.uuid4())
+        docs_path = "%s/%s" % (CSV_PATH, s)
+        self.temp_path = "%s/%s" % (CSV_PATH, s)
+        self.create_a_csv("Assigneewise compliance count")
+        self.generate_assignee_wise_report_data(
+            db, request, session_user
+        )
+        self.generateZipFile(
+            docs_path, self.documents_list
+        )
+
+    def create_a_csv(self, file_name=None):
+        if not os.path.exists(self.temp_path):
+            os.makedirs(self.temp_path)
+        if file_name is None:
+            s = str(uuid.uuid4())
+            file_name = "%s.csv" % s.replace("-", "")
+        else:
+            s = file_name
+            file_name = "%s.csv" % s
+        self.documents_list.append(file_name)
+        self.FILE_PATH = "%s/%s" % (self.temp_path, file_name)
+
+    def generateZipFile(self, abs_src, documents):
+        # abs_src = "%s/%s" % (FILE_DOWNLOAD_BASE_PATH, self.client_id)
+        # for dirname, subdirs, files in os.walk(temp_path):
+        #     for filename in files:
+        #         if filename in documents:
+        #             shutil.copy(abs_src+"/"+filename, temp_path)
+
+        timestamp = datetime.datetime.utcnow()
+        # report_generated_date = self.datetime_to_string(timestamp)
+        zip_file_name = "AssigneewiseComplianceDetails%s.zip" % (
+            timestamp)
+        zip_file_path = "%s/%s" % (
+            CSV_PATH, zip_file_name
+        )
+        self.FILE_DOWNLOAD_PATH = "%s/%s" % (
+            FILE_DOWNLOAD_BASE_PATH, zip_file_name
+        )
+        print "zip_file_path :=====================> %s" % zip_file_path
+        zf = zipfile.ZipFile(
+            zip_file_path, "w", zipfile.ZIP_DEFLATED
+        )
+        print "created zip file: %s" % zf
+        # abs_src = "./%s/%s" % (
+        #     type_of_report, str(self.client_id)
+        # )
+        for dirname, subdirs, files in os.walk(abs_src):
+            for filename in files:
+                if filename == zip_file_name:
+                    continue
+                absname = os.path.join(dirname, filename)
+                arcname = absname[len(abs_src) + 0:]
+                zf.write(absname, arcname)
+        shutil.rmtree(abs_src, ignore_errors=True)
+        # os.remove(self.excel_file_path)
+        zf.close()
+        return zip_file_name
 
     def to_string(self, s):
         try:
@@ -936,3 +1016,372 @@ class ConvertJsonToCSV(object):
                         due_date, validity_date
                     ]
                     self.write_csv(None, csv_values)
+
+    def generate_assignee_wise_report_data(
+        self, db, request, session_user
+    ):
+        is_header = False
+        country_id = request.country_id
+        business_group_id = request.business_group_id
+        legal_entity_id = request.legal_entity_id
+        division_id = request.division_id
+        unit_id = request.unit_id
+        assignee_id = request.user_id
+        condition = "tu.country_id =  %s"
+        condition_val = [country_id]
+        if business_group_id is not None:
+            condition += " AND tu.business_group_id = %s"
+            condition_val.append(business_group_id)
+        if legal_entity_id is not None:
+            condition += " AND tu.legal_entity_id = %s"
+            condition_val.append(legal_entity_id)
+        if division_id is not None:
+            condition += " AND tu.division_id = %s"
+            condition_val.append(division_id)
+        if unit_id is not None:
+            condition += " AND tu.unit_id = %s"
+            condition_val.append(unit_id)
+        else:
+            units = get_user_unit_ids(db, session_user)
+            unit_condition, unit_condition_val = db.generate_tuple_condition(
+                "tu.unit_id", units
+            )
+            condition = " %s AND %s " % (condition, unit_condition)
+            condition_val.append(unit_condition_val)
+        if assignee_id is not None:
+            condition += " AND tch.completed_by = %s"
+            condition_val.append(assignee_id)
+        domain_ids_list = get_user_domains(db, session_user)
+        current_date = get_date_time_in_date()
+        for domain_id in domain_ids_list:
+            timelines = get_country_domain_timelines(
+                db, [country_id], [domain_id], [current_date.year]
+            )
+            from_date = timelines[0][1][0][1][0]["start_date"].date()
+            to_date = timelines[0][1][0][1][0]["end_date"].date()
+            query = " SELECT " + \
+                " concat(IFNULL(employee_code, " + \
+                " 'Administrator'), '-', employee_name) " + \
+                " as Assignee, tch.completed_by, tch.unit_id, " + \
+                " concat(unit_code, '-', unit_name) as Unit, " + \
+                " address, tc.domain_id, " + \
+                " (SELECT domain_name FROM tbl_domains td " + \
+                " WHERE tc.domain_id = td.domain_id) as Domain, " + \
+                " sum(case when (approve_status = 1 " + \
+                " and (tch.due_date > completion_date or " + \
+                " tch.due_date = completion_date)) then 1 else 0 end) " + \
+                " as complied, " + \
+                " sum(case when ((approve_status = 0 " + \
+                " or approve_status is null) and " + \
+                " tch.due_date > now()) then 1 else 0 end) as Inprogress, " + \
+                " sum(case when ((approve_status = 0 " + \
+                " or approve_status is null) and " + \
+                " tch.due_date < now()) then 1 else 0 end) " + \
+                " as NotComplied, " + \
+                " sum(case when (approve_status = 1 " + \
+                " and completion_date > tch.due_date and " + \
+                " (is_reassigned = 0 or is_reassigned is null) ) " + \
+                " then 1 else 0 end) as DelayedCompliance , " + \
+                " sum(case when (approve_status = 1 " + \
+                " and completion_date > tch.due_date and " + \
+                " (is_reassigned = 1)) " + \
+                " then 1 else 0 end) as DelayedReassignedCompliance " + \
+                " FROM tbl_compliance_history tch " + \
+                " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+                " tch.compliance_id = tac.compliance_id " + \
+                " AND tch.unit_id = tac.unit_id) " + \
+                " INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id) " + \
+                " INNER JOIN tbl_users tus ON " + \
+                " (tus.user_id = tch.completed_by) " + \
+                " INNER JOIN tbl_compliances tc " + \
+                " ON (tac.compliance_id = tc.compliance_id) " + \
+                " WHERE " + condition + " AND domain_id = %s " + \
+                " AND tch.due_date " + \
+                " BETWEEN DATE_SUB(%s, INTERVAL 1 DAY) AND " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) " + \
+                " group by completed_by, tch.unit_id; "
+            param = [domain_id, from_date, to_date]
+            condition_val.extend(param)
+            rows = db.select_all(query, condition_val)
+            columns = [
+                "assignee", "completed_by", "unit_id", "unit_name",
+                "address", "domain_id", "domain_name", "complied",
+                "inprogress", "not_complied", "delayed", "delayed_reassigned",
+            ]
+            assignee_wise_compliances = convert_to_dict(rows, columns)
+            with io.FileIO(self.FILE_PATH, "wb+") as f:
+                self.writer = csv.writer(f)
+                if not is_header:
+                    csv_headers = [
+                        "Assignee", "Unit Name", "Address", "Domain",
+                        "Total", "Complied", "Delayed",
+                        "Delayed Reassigned", "Inprogress", "Not Complied"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+
+                for compliance in assignee_wise_compliances:
+                    unit_name = compliance["unit_name"]
+                    assignee = compliance["assignee"]
+                    domain_name = compliance["domain_name"]
+                    address = compliance["address"]
+                    total_compliances = int(
+                        compliance["complied"]) + int(compliance["inprogress"])
+                    total_compliances += int(
+                        compliance["delayed"]) + int(
+                        compliance["delayed_reassigned"])
+                    total_compliances += int(compliance["not_complied"])
+
+                    complied_count = int(compliance["complied"])
+                    delayed_count = int(compliance["delayed"])
+                    delayed_reassigned_count = int(
+                        compliance["delayed_reassigned"])
+                    inprogress_count = int(compliance["inprogress"])
+                    not_complied_count = int(compliance["not_complied"])
+                    csv_values = [
+                        assignee, unit_name, address, domain_name,
+                        str(total_compliances),
+                        str(complied_count), str(delayed_count),
+                        str(delayed_reassigned_count),
+                        str(inprogress_count), str(not_complied_count)
+                    ]
+                    self.write_csv(None, csv_values)
+            drill_down_path = "%s/%s" % (
+                    self.temp_path, "Drilldown Data"
+                )
+            seven_years_path = "%s/%s" % (
+                    self.temp_path, "Assigneewise 7 yearwise Count"
+                )
+            reassigned = "%s/%s" % (
+                    self.temp_path, "Reassigned Compliance Details"
+                )
+            for compliance in assignee_wise_compliances:
+                self.temp_path = drill_down_path
+                file_name = "%s-%s-%s" % (
+                    compliance["unit_name"], compliance["assignee"],
+                    compliance["domain_name"]
+                )
+                self.create_a_csv(file_name)
+                with io.FileIO(self.FILE_PATH, "wb+") as f:
+                    self.writer = csv.writer(f)
+                    self.generate_assignee_wise_report_drill_down(
+                        db, country_id, compliance["completed_by"],
+                        compliance["domain_id"], compliance["unit_id"],
+                        session_user, compliance["domain_name"]
+                    )
+            for compliance in assignee_wise_compliances:
+                self.temp_path = seven_years_path
+                file_name = "%s-%s-%s" % (
+                    compliance["unit_name"], compliance["assignee"],
+                    compliance["domain_name"]
+                )
+                self.create_a_csv(file_name)
+                with io.FileIO(self.FILE_PATH, "wb+") as f:
+                    self.writer = csv.writer(f)
+                    self.get_assigneewise_yearwise_compliances(
+                        db, country_id, compliance["unit_id"],
+                        compliance["completed_by"]
+                    )
+            for compliance in assignee_wise_compliances:
+                self.temp_path = reassigned
+                file_name = "%s-%s-%s" % (
+                    compliance["unit_name"], compliance["assignee"],
+                    compliance["domain_name"]
+                )
+                self.create_a_csv(file_name)
+                with io.FileIO(self.FILE_PATH, "wb+") as f:
+                    self.writer = csv.writer(f)
+                    self.get_reassigned_details(
+                        db, country_id, compliance["unit_id"],
+                        compliance["completed_by"], compliance["domain_id"]
+                    )
+
+
+    def generate_assignee_wise_report_drill_down(
+        self, db, country_id, assignee_id, domain_id, unit_id,
+        session_user, domain_name, year=None
+    ):
+        is_header = False
+        count = get_assigneewise_compliances_drilldown_data_count(
+            db, country_id=country_id, assignee_id=assignee_id,
+            domain_id=domain_id, client_id=None, year=year,
+            unit_id=unit_id, session_user=session_user
+        )
+        result = fetch_assigneewise_compliances_drilldown_data(
+            db, country_id=country_id, assignee_id=assignee_id,
+            domain_id=domain_id, client_id=None,
+            year=year, unit_id=unit_id, start_count=0, to_count=count,
+            session_user=session_user
+        )
+        complied_compliances = {}
+        inprogress_compliances = {}
+        delayed_compliances = {}
+        not_complied_compliances = {}
+
+        if not is_header:
+            csv_headers = [
+                "Assignee", "Domain", "Status", "Leve 1 Statutory",
+                "Compliance", "Start Date", "Actual Due date",
+                "Date of Completion", "Year"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+
+        for compliance in result:
+            compliance_name = compliance["compliance_name"]
+            compliance_status = compliance["compliance_status"]
+            if compliance["document_name"] is not None:
+                compliance_name = "%s - %s" % (
+                    compliance["document_name"], compliance_name
+                )
+            level_1_statutory = compliance["statutory_mapping"].split(">>")[0]
+            current_list = not_complied_compliances
+            if compliance_status == "Complied":
+                current_list = complied_compliances
+            elif compliance_status == "Delayed":
+                current_list = delayed_compliances
+            elif compliance_status == "Inprogress":
+                current_list = inprogress_compliances
+            if level_1_statutory not in current_list:
+                current_list[level_1_statutory] = []
+
+            csv_values = [
+                compliance["assignee"], domain_name, compliance_status,
+                level_1_statutory, compliance_name, "Nil" if(
+                    compliance["start_date"] is None
+                ) else datetime_to_string(compliance["start_date"]),
+                datetime_to_string(compliance["due_date"]),
+                "Nil" if(
+                    compliance["completion_date"] is None
+                ) else datetime_to_string(compliance["completion_date"]),
+                year
+            ]
+            self.write_csv(None, csv_values)
+
+    def get_reassigned_details(
+        self, db, country_id, unit_id, user_id, domain_id
+    ):
+        is_header = False
+        results = fetch_assigneewise_reassigned_compliances(
+            db, country_id, unit_id, user_id, domain_id
+        )
+        if not is_header:
+            csv_headers = [
+                "Compliance", "Reassigned From", "Start Date", "Due Date",
+                "Reassigned Date", "Completed Date"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for compliance in results:
+            compliance_name = compliance["compliance_name"]
+            if compliance["document_name"] is not None:
+                compliance_name = "%s - %s" % (
+                    compliance["document_name"], compliance_name
+                )
+            csv_values = [
+                compliance_name, compliance["reassigned_from"],
+                compliance["start_date"], compliance["due_date"],
+                compliance["reassigned_date"], compliance["completion_date"]
+            ]
+            self.write_csv(None, csv_values)
+
+    def get_assigneewise_yearwise_compliances(
+        self, db, country_id, unit_id, user_id
+    ):
+        is_header = False
+        current_year = get_date_time_in_date().year
+        domain_ids_list = get_user_domains(db, user_id)
+        start_year = current_year - 5
+        iter_year = start_year
+        if not is_header:
+            csv_headers = [
+                "Year", "Total", "Complied", "Delayed",
+                "In progress", "Not complied"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        while iter_year <= current_year:
+            domainwise_complied = 0
+            domainwise_inprogress = 0
+            domainwise_notcomplied = 0
+            domainwise_total = 0
+            domainwise_delayed = 0
+            for domain_id in domain_ids_list:
+                result = get_country_domain_timelines(
+                    db, [country_id], [domain_id], [iter_year]
+                )
+                from_date = result[0][1][0][1][0]["start_date"].date()
+                to_date = result[0][1][0][1][0]["end_date"].date()
+                query = " SELECT tc.domain_id, " + \
+                    " sum(case when (approve_status = 1 " + \
+                    " and (tch.due_date > completion_date or " + \
+                    " tch.due_date = completion_date)) " + \
+                    " then 1 else 0 end) as complied, " + \
+                    " sum(case when ((approve_status = 0 " + \
+                    " or approve_status is null) and " + \
+                    " tch.due_date > now()) then 1 else 0 end) " + \
+                    " as Inprogress, " + \
+                    " sum(case when ((approve_status = 0 or " + \
+                    " approve_status is null) and " + \
+                    " tch.due_date < now()) then 1 else 0 end) " + \
+                    " as NotComplied, " + \
+                    " sum(case when (approve_status = 1 " + \
+                    " and completion_date > tch.due_date and " + \
+                    " (is_reassigned = 0 or is_reassigned is null) ) " + \
+                    " then 1 else 0 end) as DelayedCompliance, " + \
+                    " sum(case when (approve_status = 1 and " + \
+                    " completion_date > tch.due_date and " + \
+                    " (is_reassigned = 1)) " + \
+                    " then 1 else 0 end) as DelayedReassignedCompliance " + \
+                    " FROM tbl_compliance_history tch " + \
+                    " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+                    " tch.compliance_id = tac.compliance_id " + \
+                    " AND tch.unit_id = tac.unit_id " + \
+                    " AND tch.completed_by = %s) " + \
+                    " INNER JOIN tbl_units tu ON " + \
+                    " (tac.unit_id = tu.unit_id) " + \
+                    " INNER JOIN tbl_users tus " + \
+                    " ON (tus.user_id = tac.assignee) " + \
+                    " INNER JOIN tbl_compliances tc " + \
+                    " ON (tac.compliance_id = tc.compliance_id) " + \
+                    " INNER JOIN tbl_domains td " + \
+                    " ON (td.domain_id = tc.domain_id) " + \
+                    " WHERE tch.unit_id =%s " + \
+                    " AND tc.domain_id = %s "
+                date_condition = " AND tch.due_date between '%s' AND '%s';"
+                date_condition = date_condition % (from_date, to_date)
+                query = query + date_condition
+                rows = db.select_all(query, [
+                    user_id, unit_id, int(domain_id)
+                ])
+                if rows:
+                    convert_columns = [
+                        "domain_id", "complied", "inprogress", "not_complied",
+                        "delayed", "delayed_reassigned"
+                    ]
+                    count_rows = convert_to_dict(rows, convert_columns)
+                    for row in count_rows:
+                        domainwise_complied += 0 if(
+                            row["complied"] is None) else int(row["complied"])
+                        domainwise_inprogress += 0 if(
+                            row["inprogress"] is None) else int(
+                            row["inprogress"])
+                        domainwise_notcomplied += 0 if(
+                            row["not_complied"] is None
+                        ) else int(row["not_complied"])
+                        domainwise_delayed += 0 if(
+                            row["delayed"] is None) else int(row["delayed"])
+                        domainwise_delayed += 0 if(
+                                row["delayed_reassigned"] is None
+                            ) else int(row["delayed_reassigned"])
+            domainwise_total += (
+                domainwise_complied + domainwise_inprogress)
+            domainwise_total += (
+                domainwise_notcomplied + domainwise_delayed)
+            csv_values = [
+                str(iter_year), domainwise_total, domainwise_complied,
+                domainwise_delayed, domainwise_inprogress,
+                domainwise_notcomplied
+            ]
+            self.write_csv(None, csv_values)
+            iter_year += 1

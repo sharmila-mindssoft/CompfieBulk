@@ -325,8 +325,11 @@
                         </div>
                       </div>
                       <div class="submit-button-container">
-                        <input type="submit" name="cancel" value="Show" id="assigneeWiseShow" onclick="showFiltersResults()" class="btn-submit">
-                        <input type="submit" name="cancel" value="Export" class="btn-submit">
+                        <input type="submit" name="cancel" value="Show" id="assigneeWiseShow" onclick="showFiltersResults(false)" class="btn-submit">
+                        <input type="submit" name="cancel" 
+                        onclick="showFiltersResults(true)"
+                        value="Export" class="btn-submit">
+                        <span class="chart-error-message"></span>
                       </div>
                       <table style="border:1px solid #ddd;" class="table-assignee-wise-compliance-list" >
                         <tr >

@@ -371,7 +371,7 @@ class GetAssigneewiseComplianesFilters(Request):
 class GetAssigneeWiseCompliancesChart(Request):
     def __init__(
         self, country_id, business_group_id, legal_entity_id, division_id,
-        unit_id, user_id
+        unit_id, user_id, csv
     ):
         self.country_id = country_id
         self.business_group_id = business_group_id
@@ -379,13 +379,14 @@ class GetAssigneeWiseCompliancesChart(Request):
         self.division_id = division_id
         self.unit_id = unit_id
         self.user_id = user_id
+        self.csv = csv
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "country_id", "business_group_id", "legal_entity_id", "division_id",
-                "unit_id", "user_id"
+                "unit_id", "user_id", "csv"
             ]
         )
         country_id = data.get("country_id")
@@ -400,9 +401,11 @@ class GetAssigneeWiseCompliancesChart(Request):
         unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(unit_id)
         user_id = data.get("user_id")
         user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
+        csv = data.get("csv")
+        csv = parse_structure_Bool(csv)
         return GetAssigneeWiseCompliancesChart(
             country_id, business_group_id, legal_entity_id, division_id,
-            unit_id, user_id
+            unit_id, user_id, csv
         )
 
     def to_inner_structure(self):
@@ -412,7 +415,8 @@ class GetAssigneeWiseCompliancesChart(Request):
             "legal_entity_id": to_structure_OptionalType_UnsignedIntegerType_32(self.legal_entity_id),
             "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
             "unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.unit_id),
-            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id)
+            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id),
+            "csv": to_structure_Bool(self.csv)
         }
 
 class GetAssigneewiseYearwiseCompliances(Request):

@@ -1516,7 +1516,7 @@ function initClientMirror() {
 
     function getAssigneewiseComplianes(
         country_id, business_group_id, legal_entity_id, division_id,
-        unit_id, user_id, callback
+        unit_id, user_id, csv, callback
     ){
         var request = [
             "GetAssigneeWiseCompliancesChart",
@@ -1526,7 +1526,8 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "user_id" : user_id
+                "user_id" : user_id,
+                "csv": csv
             }
         ];
         callerName = "client_dashboard";
