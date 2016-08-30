@@ -1070,3 +1070,8 @@ class ConvertJsonToCSV(object):
                     str(inprogress_count), str(not_complied_count)
                 ]
                 self.write_csv(None, csv_values)
+
+    def generate_assignee_wise_report_drill_down(
+        self, db, country_id, assignee_id, domain_id, unit_id
+    ):
+        pass

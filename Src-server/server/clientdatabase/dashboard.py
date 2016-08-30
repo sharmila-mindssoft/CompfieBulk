@@ -2393,7 +2393,7 @@ def get_assigneewise_compliances_drilldown_data(
     domain_condition = ",".join(str(x) for x in domain_id_list)
     if len(domain_id_list) == 1:
         result = get_country_domain_timelines(
-            db, [country_id], domain_id_list, [current_year], client_id
+            db, [country_id], domain_id_list, [current_year]
         )
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
