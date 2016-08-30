@@ -236,9 +236,10 @@ function load_secondwizard(){
         $('.combineid-class', clone2).attr('id', 'combineid'+statutoriesCount);
         $('.combineid-class', clone2).val(combineId);
         $('.sno', clone2).text(statutoriesCount);
-
-        $('.compliancetask', clone2).text(compliance_name);
-        $('.tipso_style', clone2).attr('title', compliance_description);
+        
+        $('.compliancetask span', clone2).html(compliance_name);
+        $('.compliancetask abbr', clone2).attr("title", compliance_description);
+        
 
         var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
         var dispUnit = '';
@@ -383,6 +384,11 @@ $('#pagination').click(function(){
     }
   )
 });
+
+//find date difference between two dates
+function daydiff(first, second) {
+    return (second-first)/(1000*60*60*24)
+}
 
 //validation on first wizard
 function validate_firsttab(){
@@ -600,8 +606,15 @@ function submitcompliance(){
           var current_trigger_day = '';
           var current_due_dates = [];
           var validitydate = null;
-          if($('#validitydate'+totalCompliance).val() != undefined && $('#validitydate'+totalCompliance).val() != '') validitydate = $('#validitydate'+totalCompliance).val();
+          var cvaliditydate = null;
+          var minvaliditydate = false;
+          var maxvaliditydate = false;
 
+          if($('#validitydate'+totalCompliance).val() != undefined && $('#validitydate'+totalCompliance).val() != '') {
+            validitydate = $('#validitydate'+totalCompliance).val();
+
+            cvaliditydate = convert_date(validitydate);
+          }
           if(frequency != 'On Occurrence'){
             var dDate = null;
             var tDay = null;
@@ -639,72 +652,86 @@ function submitcompliance(){
             }
 
             var sort_elements = current_due_dates;
-              if(current_due_dates.length > 1){
-                sort_elements.sort(function(a, b) {
-                  a1 = convert_date(a[0]);
-                  b1 = convert_date(b[0]);
-                return a1 - b1;
-                });
+            if(current_due_dates.length > 1){
+              sort_elements.sort(function(a, b) {
+                a1 = convert_date(a[0]);
+                b1 = convert_date(b[0]);
+              return a1 - b1;
+              });
 
-              current_due_date = sort_elements[0][0];
-              current_trigger_day = parseInt(sort_elements[0][1]);
-          }else{
-            current_due_date = current_due_dates[0][0];
+            current_due_date = sort_elements[0][0];
             current_trigger_day = parseInt(sort_elements[0][1]);
-          }
-
-          for(var dDates = 0; dDates < sort_elements.length; dDates++){
-            var statutory_day = null;
-            var statutory_month = null;
-            var trigger_before_days = null;
-
-            if(sort_elements[dDates][0] != '' && sort_elements[dDates][0] != undefined){
-              var splitDueDates = sort_elements[dDates][0].split('-');
-              var strMonth = splitDueDates[1];
-              statutory_day = parseInt(splitDueDates[0]);
-              statutory_month = convert_month(strMonth);
-              trigger_before_days = sort_elements[dDates][1];
-
-              if(trigger_before_days != '') {
-
-                var max_triggerbefore = 0;
-
-                if(repeats_type != null){
-                  if(repeats_type == 1){
-                    max_triggerbefore = repeats_every;
-                  }else if(repeats_type == 2){
-                    max_triggerbefore = repeats_every * 30;
-                  }else{
-                    max_triggerbefore = repeats_every * 365;
-                  }
-                }
-                
-
-                trigger_before_days = parseInt(trigger_before_days);
-                if(trigger_before_days > 100){
-                  displayMessage(message.triggerbefore_exceed);
-                  hideLoader();
-                  return false;
-                }
-                if(trigger_before_days == 0){
-                  displayMessage(message.triggerbefore_iszero);
-                  hideLoader();
-                  return false;
-                }
-                if(max_triggerbefore > 0 && trigger_before_days > max_triggerbefore){
-                  displayMessage(message.triggerdays_exceeding_repeatsevery)
-                  hideLoader();
-                  return false;
-                }
-              }else{
-                displayMessage(message.compliance_triggerdate_required);
-                hideLoader();
-                return false;
-              }
+            }else{
+              current_due_date = current_due_dates[0][0];
+              current_trigger_day = parseInt(sort_elements[0][1]);
             }
-            statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, null);
-            statutory_dates.push(statutoryDateList);
-          }
+
+            for(var dDates = 0; dDates < sort_elements.length; dDates++){
+              var statutory_day = null;
+              var statutory_month = null;
+              var trigger_before_days = null;
+
+              if(sort_elements[dDates][0] != '' && sort_elements[dDates][0] != undefined){
+                var splitDueDates = sort_elements[dDates][0].split('-');
+                var strMonth = splitDueDates[1];
+                statutory_day = parseInt(splitDueDates[0]);
+                statutory_month = convert_month(strMonth);
+                trigger_before_days = sort_elements[dDates][1];
+
+                if(trigger_before_days != '') {
+
+                  var max_triggerbefore = 0;
+
+                  if(repeats_type != null){
+                    if(repeats_type == 1){
+                      max_triggerbefore = repeats_every;
+                    }else if(repeats_type == 2){
+                      max_triggerbefore = repeats_every * 30;
+                    }else{
+                      max_triggerbefore = repeats_every * 365;
+                    }
+                  }
+                  
+
+                  trigger_before_days = parseInt(trigger_before_days);
+                  if(trigger_before_days > 100){
+                    displayMessage(message.triggerbefore_exceed);
+                    hideLoader();
+                    return false;
+                  }
+                  if(trigger_before_days == 0){
+                    displayMessage(message.triggerbefore_iszero);
+                    hideLoader();
+                    return false;
+                  }
+                  if(max_triggerbefore > 0 && trigger_before_days > max_triggerbefore){
+                    displayMessage(message.triggerdays_exceeding_repeatsevery)
+                    hideLoader();
+                    return false;
+                  }
+
+                  if(validitydate != null){
+                    var convertDue = convert_date(sort_elements[dDates][0]);
+
+                    if(cvaliditydate >= convertDue) minvaliditydate = true;
+
+                    if(daydiff(convertDue, cvaliditydate) <= 90) maxvaliditydate = true;
+
+                    if(minvaliditydate == false || maxvaliditydate == false){
+                      displayMessage(message.invalid_validitydate)
+                      hideLoader();
+                      return false;
+                    }
+                  }
+                }else{
+                  displayMessage(message.compliance_triggerdate_required);
+                  hideLoader();
+                  return false;
+                }
+              }
+              statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, null);
+              statutory_dates.push(statutoryDateList);
+            }
           }
           else{
             var statutory_dates = null;

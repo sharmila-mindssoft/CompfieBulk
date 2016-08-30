@@ -216,8 +216,8 @@ function load_allcompliances(compliancesList){
           $('.combineid-class', clone2).val(combineId);
           $('.snoo', clone2).text(statutoriesCount);
 
-          $('.compliancetask', clone2).text(compliance_name);
-          $('.tipso_style', clone2).attr('title', compliance_description);
+          $('.compliancetask span', clone2).html(compliance_name);
+          $('.compliancetask abbr', clone2).attr("title", compliance_description);
 
           $('.compliancefrequency', clone2).text(frequency);
 
