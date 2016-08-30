@@ -1588,50 +1588,52 @@ function updateAssigneeWiseComplianceFiltersList(data)
 function showFiltersResults(csv) {
     var country = $("#country").val().trim();
     var countryval = $("#countryval").val().trim();
-    if(countryval == ""){
+    if(countryval == "" || country_val == null){
         displayMessage(message.country_required);
-    }
-    var businessgroupid = parseInt($("#businessgroupid").val());
-    var businessgroupsval = $("#businessgroupsval").val().trim();
-    if(businessgroupsval == ""){
-        businessgroupid = null
-    }
-    var legalentityid = parseInt($("#legalentityid").val().trim());
-    var legalentityval = $("#legalentityval").val().trim();
-    if(legalentityval == "" ){
-        legalentityid = null
-    }
-    var divisionid = parseInt($("#divisionid").val().trim());
-    var divisionval = $("#divisionval").val().trim();
-    if(divisionval == ""){
-        divisionid = null
-    }
-     var unitid = parseInt($("#unitid").val().trim());
-    var unitval = $("#unitval").val().trim();
-    if(unitval == ""){
-        unitid = null
-    }
-    var userid = parseInt($("#userid").val().trim());
-    var userval = $("#userval").val().trim();
-    if(userval == ""){
-        userid = null
-    }
-    displayLoader();
-    client_mirror.getAssigneewiseComplianes(
-        parseInt(country), businessgroupid, legalentityid,
-        divisionid, unitid, userid, csv,
-        function (status, data) {
-            chart_data = data['chart_data'];
-            download_url = data['link'];
-            if(chart_data){
-                updateAssigneeWiseComplianceList(chart_data);    
-            }else if(download_url){
-                window.open(download_url, '_blank');
-            }
-            hideLoader();
+        return
+    }else{
+        var businessgroupid = parseInt($("#businessgroupid").val());
+        var businessgroupsval = $("#businessgroupsval").val().trim();
+        if(businessgroupsval == ""){
+            businessgroupid = null
         }
-    );
-
+        var legalentityid = parseInt($("#legalentityid").val().trim());
+        var legalentityval = $("#legalentityval").val().trim();
+        if(legalentityval == "" ){
+            legalentityid = null
+        }
+        var divisionid = parseInt($("#divisionid").val().trim());
+        var divisionval = $("#divisionval").val().trim();
+        if(divisionval == ""){
+            divisionid = null
+        }
+         var unitid = parseInt($("#unitid").val().trim());
+        var unitval = $("#unitval").val().trim();
+        if(unitval == ""){
+            unitid = null
+        }
+        var userid = parseInt($("#userid").val().trim());
+        var userval = $("#userval").val().trim();
+        if(userval == ""){
+            userid = null
+        }
+        displayLoader();
+        client_mirror.getAssigneewiseComplianes(
+            parseInt(country), businessgroupid, legalentityid,
+            divisionid, unitid, userid, csv,
+            function (status, data) {
+                chart_data = data['chart_data'];
+                download_url = data['link'];
+                if(chart_data){
+                    updateAssigneeWiseComplianceList(chart_data);    
+                }else if(download_url){
+                    window.open(download_url, '_blank');
+                }else{
+                }
+                hideLoader();
+            }
+        );
+    }
 }
 
 function updateAssigneeWiseComplianceList(data){
