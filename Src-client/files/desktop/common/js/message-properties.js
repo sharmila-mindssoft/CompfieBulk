@@ -10,6 +10,7 @@ var message = {
 
 	"domainname_required" : "Domain Name Required",
 	"domainname_exists" : "Domain Name Already Exists",
+	"employee_name_exists" : "Employee name already exists",
 	"invalid_domainid" : "Invalid Domain Id",
 	"employeename_required" : "Employee Name Required",
 	"employeeid_required" : "Employee Id Required",
