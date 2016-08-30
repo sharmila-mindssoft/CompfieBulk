@@ -472,6 +472,8 @@ $("#submit").click(function(){
             function onFailure(error){
                 if(error == "EmailIdAlreadyExists"){
                     displayMessage(message.emailid_exists);
+                }else if(error == "EmployeeNameAlreadyExists"){
+                    displayMessage(message.employee_name_exists);
                 }
                 else{
                     displayMessage(error);
@@ -520,7 +522,11 @@ $("#submit").click(function(){
                 initialize();
             }
             function onFailure(status, data){
-                displayMessage(status);
+                if(status == "EmployeeNameAlreadyExists"){
+                    displayMessage(message.employee_name_exists);
+                }else{
+                    displayMessage(status);    
+                }
             }
             var clientUserDetail = [parseInt(userId),  parseInt(usergroup), employeename,
                       employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel),

@@ -439,6 +439,10 @@ def process_save_client_user(db, request, session_user, client_id):
         user_id=None
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
+    elif is_duplicate_employee_name(
+        db, request.employee_name, user_id=None
+    ):
+        return clientmasters.EmployeeNameAlreadyExists()
     elif save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 
@@ -455,6 +459,10 @@ def process_update_client_user(db, request, session_user, client_id):
         request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
+    elif is_duplicate_employee_name(
+        db, request.employee_name, user_id=request.user_id
+    ):
+        return clientmasters.EmployeeNameAlreadyExists()
     elif update_user(db, request, session_user, client_id):
         return clientmasters.UpdateClientUserSuccess()
 

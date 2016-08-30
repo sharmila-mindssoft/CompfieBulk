@@ -917,6 +917,7 @@ class EmailIdAlreadyExists(Response):
         return {
         }
 
+
 class EmployeeCodeAlreadyExists(Response):
     def __init__(self):
         pass
@@ -929,6 +930,21 @@ class EmployeeCodeAlreadyExists(Response):
     def to_inner_structure(self):
         return {
         }
+
+
+class EmployeeNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return EmployeeNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 class UpdateClientUserSuccess(Response):
     def __init__(self):
@@ -1143,6 +1159,7 @@ class CannotCloseUnit(Response):
         return {
         }
 
+
 def _init_Response_class_map():
     classes = [
         GetServiceProvidersSuccess, SaveServiceProviderSuccess,
@@ -1151,6 +1168,7 @@ def _init_Response_class_map():
         UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess,
         UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
         GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
+        EmployeeNameAlreadyExists,
         UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
         ChangeAdminStatusSuccess, GetAuditTrailSuccess, CannotDeactivateUserExists,
         GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
