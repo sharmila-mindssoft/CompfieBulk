@@ -802,6 +802,7 @@ def save_assigned_compliance(db, request, session_user):
                 request.approval_person_name,
                 compliance_names
             )
+        cc = [get_email_id_for_users(db, approval)[1]]
     else:
         action = " Following compliances has assigned to " + \
             " assignee - %s concurrence-person - %s " + \
@@ -812,13 +813,18 @@ def save_assigned_compliance(db, request, session_user):
                 request.approval_person_name,
                 compliance_names
             )
+        cc = [
+            get_email_id_for_users(db, concurrence)[1],
+            get_email_id_for_users(db, approval)[1]
+        ]
     activity_text = action.replace("<br>", " ")
     db.save_activity(session_user, 7, json.dumps(activity_text))
     receiver = get_email_id_for_users(db, assignee)[1]
+
     notify_assign_compliance = threading.Thread(
         target=email.notify_assign_compliance,
         args=[
-            receiver, request.assignee_name, action
+            receiver, request.assignee_name, action, cc
         ]
     )
     notify_assign_compliance.start()
@@ -2230,6 +2236,9 @@ def reassign_compliance(db, request, session_user):
                     get_user_name_by_id(db, request.approval_person),
                     compliance_names
                 )
+            cc = [
+                get_email_id_for_users(db, request.approval_person)[1],
+            ]
         else:
             action = " Following compliances has reassigned " + \
                 " to assignee - %s concurrence-person - %s " + \
@@ -2240,13 +2249,17 @@ def reassign_compliance(db, request, session_user):
                     get_user_name_by_id(db, request.approval_person),
                     compliance_names
                 )
+            cc = [
+                get_email_id_for_users(db, request.concurrence_person)[1],
+                get_email_id_for_users(db, request.approval_person)[1]
+            ]
     activity_text = action.replace("<br>", " ")
     db.save_activity(session_user, 8, json.dumps(activity_text))
     receiver = get_email_id_for_users(db, assignee)[1]
     notify_reassing_compliance = threading.Thread(
         target=email.notify_assign_compliance,
         args=[
-            receiver, request.assignee_name, action
+            receiver, request.assignee_name, action, cc
         ]
     )
     notify_reassing_compliance.start()
