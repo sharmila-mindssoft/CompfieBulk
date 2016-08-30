@@ -1591,7 +1591,7 @@ function showFiltersResults(csv) {
     var country = $("#country").val().trim();
     var countryval = $("#countryval").val().trim();
     if(countryval == "" || country_val == null){
-        displayMessage(message.country_required);
+        $(".assignee-chart-error-message").text(message.country_required);
         return
     }else{
         var businessgroupid = parseInt($("#businessgroupid").val());
