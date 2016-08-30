@@ -2228,6 +2228,7 @@ def reassign_compliance(db, request, session_user):
             request.assignee_name,
             compliance_names
         )
+        cc = None
     else :
         if concurrence is None:
             action = " Following compliances has reassigned to " + \
