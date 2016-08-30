@@ -10,6 +10,7 @@ var message = {
 
 	"domainname_required" : "Domain Name Required",
 	"domainname_exists" : "Domain Name Already Exists",
+	"employee_name_exists" : "Employee name already exists",
 	"invalid_domainid" : "Invalid Domain Id",
 	"employeename_required" : "Employee Name Required",
 	"employeeid_required" : "Employee Id Required",
@@ -222,6 +223,7 @@ var message = {
 	"title_status_change" : "Change Status",
 	"title_promote_admin" : "Promote Admin",
 	"cannot_promote_sp_admin" : "Cannot promote a service provider as admin",
+	"techno_team_change_old_primary_admin_status" : "Cannot reactivate Old Administrator",
 	"techno_team_change_primary_admin_status" : "Only Techno team can change status of primary admin",
 	"cancel_operation" : "Are you sure, you want to cancel the operation?",
 	"invalid_statutory_month" : "Duplicate statutory month",

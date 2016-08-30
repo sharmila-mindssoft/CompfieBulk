@@ -44,6 +44,7 @@ __all__ = [
     "get_units_closure_for_user",
     "close_unit",
     "get_audit_trails",
+    "is_duplicate_employee_name"
 ]
 
 
@@ -501,6 +502,17 @@ def is_duplicate_employee_code(db, employee_code, user_id=None):
     if user_id is not None:
         condition += " AND user_id != %s"
         condition_val.append(user_id)
+    return db.is_already_exists(tblUsers, condition, condition_val)
+
+
+def is_duplicate_employee_name(db, employee_name, user_id=None):
+    condition = "employee_name = %s "
+    condition_val = [employee_name]
+    if user_id is not None:
+        condition += " AND user_id != %s"
+        condition_val.append(user_id)
+    print condition
+    print condition_val
     return db.is_already_exists(tblUsers, condition, condition_val)
 
 

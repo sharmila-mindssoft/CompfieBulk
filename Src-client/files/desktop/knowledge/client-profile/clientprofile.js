@@ -102,7 +102,9 @@ function loadClientProfileList(groupId){
                   statusVal = true;
                 }*/
                 if(isAdmin == true){
-                    currentAdminId = userId;
+                    if(isActive == true){
+                        currentAdminId = userId;
+                    }
                     // adminstatus = false;
                     imageadminName = "promote-active.png";
                     admintitle = "Click here to deactivate Promote Admin";

@@ -36,12 +36,14 @@ email = EmailHandler()
 
 def get_inprogress_count(db, session_user):
     param = [session_user]
-    other_compliance_condition = " WHERE frequency_id != 4 " + \
+    other_compliance_condition = " WHERE (frequency_id != 4 OR " + \
+        " (frequency_id = 4 and duration_type_id=1) )" + \
         " AND completed_by=%s  AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) >= current_date() " + \
         " AND IFNULL(ch.completed_on, 0) = 0"
     on_occurrence_condition = " WHERE frequency_id = 4 " + \
+        " and duration_type_id=2" + \
         " AND completed_by = %s AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) >= now() " + \
@@ -70,13 +72,14 @@ def get_overdue_count(db, session_user):
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id) WHERE "
     param = [session_user]
     other_compliance_condition = " completed_by = %s " + \
-        " AND frequency_id != 4 AND " + \
+        " AND (frequency_id != 4 OR " + \
+        " (frequency_id = 4 and duration_type_id=1)) AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < current_date() AND " + \
         " IFNULL(ch.completed_on, 0) = 0 "
 
     on_occurrence_condition = " completed_by = %s " + \
-        " AND frequency_id = 4 AND " + \
+        " AND frequency_id = 4 AND duration_type_id=2 AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < now() AND " + \
         " IFNULL(ch.completed_on, 0) = 0 "

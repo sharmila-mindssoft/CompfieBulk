@@ -93,7 +93,13 @@ function loadClientProfileList(profiles){
             isadmin = "Primary Admin"
         }
         $('.sno', clone).text(sno);
-        $('.employee', clone).text(lists[key]['user_name']);
+        var employee_name = lists[key]['user_name']
+        if(lists[key]['is_primary_admin'] == true && lists[key]['is_active'] == true){
+            employee_name = "Administrator"
+        }else if(lists[key]['is_primary_admin'] == true && lists[key]['is_active'] == false){
+            employee_name = "Old Administrator"
+        }
+        $('.employee', clone).text(employee_name);
         $('.email', clone).text(lists[key]['email_id']);
         if(lists[key]['contact_no'] == null){
           $('.mobile-number', clone).text("-");

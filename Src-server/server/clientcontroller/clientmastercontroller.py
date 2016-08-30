@@ -11,7 +11,7 @@ from server.clientdatabase.general import (
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_units_for_user, have_compliances,
     is_seating_unit, get_user_company_details, is_primary_admin,
-    is_service_proivder_user
+    is_service_proivder_user, is_old_primary_admin
     )
 __all__ = [
     "process_client_master_requests"
@@ -439,6 +439,10 @@ def process_save_client_user(db, request, session_user, client_id):
         user_id=None
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
+    elif is_duplicate_employee_name(
+        db, request.employee_name, user_id=None
+    ):
+        return clientmasters.EmployeeNameAlreadyExists()
     elif save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 
@@ -455,6 +459,10 @@ def process_update_client_user(db, request, session_user, client_id):
         request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
+    elif is_duplicate_employee_name(
+        db, request.employee_name, user_id=request.user_id
+    ):
+        return clientmasters.EmployeeNameAlreadyExists()
     elif update_user(db, request, session_user, client_id):
         return clientmasters.UpdateClientUserSuccess()
 
@@ -465,6 +473,8 @@ def process_update_client_user(db, request, session_user, client_id):
 def process_change_client_user_status(db, request, session_user, client_id):
     if db.is_invalid_id(tblUsers, "user_id", request.user_id):
         return clientmasters.InvalidUserId()
+    elif is_old_primary_admin(db, request.user_id):
+        return clientmasters.CannotChangeOldPrimaryAdminStatus()
     elif is_primary_admin(db, request.user_id):
         return clientmasters.CannotChangePrimaryAdminStatus()
     elif have_compliances(
