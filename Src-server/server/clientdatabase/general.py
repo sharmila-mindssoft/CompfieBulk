@@ -65,8 +65,8 @@ __all__ = [
     "remove_session",
     "update_profile",
     "is_service_proivder_user",
-    "convert_datetime_to_date"
-
+    "convert_datetime_to_date",
+    "is_old_primary_admin"
 ]
 
 
@@ -425,6 +425,17 @@ def is_primary_admin(db, user_id):
     condition_val = [user_id]
     rows = db.get_data(tblUsers, column, condition, condition_val)
     if rows[0]["result"] > 0 or user_id == 1:
+        return True
+    else:
+        return False
+
+
+def is_old_primary_admin(db, user_id):
+    column = "count(1) as result"
+    condition = "user_id = %s and is_primary_admin = 1 and is_active = 0"
+    condition_val = [user_id]
+    rows = db.get_data(tblUsers, column, condition, condition_val)
+    if rows[0]["result"] > 0:
         return True
     else:
         return False

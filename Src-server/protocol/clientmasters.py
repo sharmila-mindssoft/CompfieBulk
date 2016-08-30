@@ -1052,6 +1052,21 @@ class ReassignCompliancesBeforeDeactivate(Response):
         return {
         }
 
+
+class CannotChangeOldPrimaryAdminStatus(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotChangeOldPrimaryAdminStatus()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class CannotChangePrimaryAdminStatus(Response):
     def __init__(self):
         pass
@@ -1064,6 +1079,7 @@ class CannotChangePrimaryAdminStatus(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class CannotPromoteServiceProvider(Response):
     def __init__(self):
@@ -1078,6 +1094,7 @@ class CannotPromoteServiceProvider(Response):
         return {
         }
 
+
 class CloseUnitSuccess(Response):
     def __init__(self):
         pass
@@ -1090,6 +1107,7 @@ class CloseUnitSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class ContactNumberAlreadyExists(Response):
     def __init__(self):
@@ -1168,7 +1186,7 @@ def _init_Response_class_map():
         UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess,
         UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
         GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
-        EmployeeNameAlreadyExists,
+        EmployeeNameAlreadyExists, CannotChangeOldPrimaryAdminStatus,
         UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
         ChangeAdminStatusSuccess, GetAuditTrailSuccess, CannotDeactivateUserExists,
         GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
