@@ -329,7 +329,8 @@ def process_save_past_records(
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous compliance " + \
                 " has validity greater than the " + \
-                " entered due date " % (compliance_name, compliance.due_date)
+                " entered due date "
+            error = error % (compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
     for compliance in compliance_list:
         if save_past_record(
@@ -343,11 +344,12 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
-            error = "Cannot Submit compliance task {}, " + \
+            error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
-                " for the entered due date {}, or previous " + \
+                " for the entered due date %s, or previous " + \
                 " compliance has validity greater than the " + \
-                " entered due date" % (compliance_name, compliance.due_date)
+                " entered due date"
+            error = error % (compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
     return clienttransactions.SavePastRecordsSuccess()
 

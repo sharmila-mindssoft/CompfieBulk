@@ -10,10 +10,6 @@ from server.constants import (
 )
 __all__ = ["EmailHandler"]
 
-# CLIENT_URL = "http://localhost:8080/"
-# KNOWLEDGE_URL= "http://localhost:8082/knowledge/"
-
-
 class Email(object):
 
     def __init__(self):
@@ -51,7 +47,10 @@ class Email(object):
             msg['Subject'] = subject
             print msg['Subject']
             if cc is not None:
-                msg['Cc'] = cc
+                if type(cc) is list :
+                    msg['Cc'] = ", ".join(cc)
+                else :
+                    msg['Cc'] = cc
                 print msg['Cc']
                 # receiver += cc
             msg.attach(MIMEText(message, 'html'))
@@ -83,12 +82,6 @@ class EmailHandler(Email):
     def send_reset_link(
         self, db, user_id, receiver, reset_link, employee_name
     ):
-        # email_to = [receiver]
-        # context = {
-        #     "User" : db.get_user_name_by_id(user_id),
-        #     "ResetLink" : reset_link
-        # }
-        # template_name = self.get_template("task_completed")
         subject = "Reset Password"
         message = '''
             Dear %s, <br> \
@@ -164,7 +157,7 @@ class EmailHandler(Email):
         )
 
     def notify_assign_compliance(
-        self, receiver, assignee_name, compliance_info
+        self, receiver, assignee_name, compliance_info, cc=None
     ):
         subject = "New compliance task assigned "
         message = '''
@@ -172,7 +165,7 @@ class EmailHandler(Email):
             <p>%s</p>''' % (
             assignee_name, compliance_info,
         )
-        self.send_email(receiver, subject, message, cc=None)
+        self.send_email(receiver, subject, message, cc)
 
     def notify_task(
         self, assignee_email, assignee_name,

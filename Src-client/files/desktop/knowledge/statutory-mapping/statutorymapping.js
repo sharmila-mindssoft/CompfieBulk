@@ -558,6 +558,7 @@ function remove_temp_file(edit_id){
 }
 
 //convert file to object on upload file
+file_type = ["exe", "xhtml", "htm", "html", "php", "py", "pyc", "sql", "xml", "css", "java", "apk", "javac", "asp"]
 $("#upload_file").on("change", function(e) {
 
   var tFN = this.files[0].name;
@@ -575,7 +576,7 @@ $("#upload_file").on("change", function(e) {
       $("#uploaded_fileview").hide();
       $("#uploaded_filename").html('');
       $("#upload_file").val('');
-    }else if(fE == 'exe' || fE == 'xhtml' || fE == 'htm' || fE == 'html'){
+    } else if (file_type.indexOf(fE) > -1) {
       displayMessage(message.invalid_file_format)
       $("#uploaded_fileview").hide();
       $("#uploaded_filename").html('');
@@ -1933,7 +1934,7 @@ function load_stautorydates(){
 }
 
 function load_summary(){
-  
+
     var durationVal = $('#duration').val();
     var durationType = $('#duration_type option:selected').text().trim();
     var summaryVal = '';
@@ -1951,7 +1952,7 @@ function load_summary(){
     }
     $(".summary_repeat").html("Every " + summaryVal1);
 
-  
+
 }
 //display summary
 $(function()
@@ -2004,17 +2005,17 @@ $(function()
       }
   });
   $('#duration').keyup(function()
-  { 
+  {
     load_summary();
   });
 
   $('#duration_type').change(function()
-  { 
+  {
     load_summary();
   });
 
   $('#repeats_every').change(function()
-  { 
+  {
     load_summary();
   });
 
@@ -2351,7 +2352,7 @@ $('.tasktype').on('keyup change', function() {
     }else{
       $('.frequency_type').html('Review');
     }
-    
+
   }
   else if($(this).val() == "4" )
   {

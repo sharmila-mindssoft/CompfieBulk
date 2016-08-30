@@ -4,7 +4,7 @@ from server.clientdatabase.tables import *
 from server.common import (
    convert_to_dict, new_uuid, get_date_time, get_date_time_in_date
 )
-
+from server.constants import SESSION_CUTOFF
 from server.clientdatabase.general import (
     is_service_proivder_user, is_service_provider_in_contract
 )
@@ -166,9 +166,10 @@ def get_client_configuration(db):
 
 def clear_old_session(db, user_id, session_type_id, client_id=None):
     query = "DELETE FROM tbl_user_sessions " + \
-        " WHERE user_id=%s and session_type_id=%s"
+        " WHERE user_id=%s and session_type_id=%s and " + \
+        " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE) "
     db.execute(query, (
-        user_id, session_type_id
+        user_id, session_type_id, int(SESSION_CUTOFF)
     ))
 
 

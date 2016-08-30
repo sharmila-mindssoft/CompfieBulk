@@ -54,11 +54,12 @@ def get_industry_by_id(db, industry_id):
     where_condition, where_condition_val = db.generate_tuple_condition(
         "industry_id", values_list)
     q = "SELECT industry_name FROM tbl_industries WHERE " + where_condition
-    row = db.select_one(q, [where_condition_val])
-    industry_name = None
-    if row:
-        industry_name = row[0]
-    return industry_name
+    row = db.select_all(q, [where_condition_val])
+    industry_names = []
+    for r in row :
+        industry_names.append(r[0])
+
+    return ", ".join(industry_names)
 
 
 def get_active_industries(db):

@@ -16,7 +16,7 @@ from server.common import (
 from server.clientdatabase.general import (
     get_user_unit_ids, calculate_ageing, get_admin_id,
     get_user_domains, get_group_name, is_primary_admin,
-    get_all_users
+    get_all_users, convert_datetime_to_date
 )
 from server.clientdatabase.clienttransaction import (
     get_units_for_assign_compliance
@@ -358,6 +358,9 @@ def frame_compliance_status_yearwise_count(
                 not_complied = v["not_complied_count"]
                 country_id = v["country_id"]
                 domain_id = v["domain_id"]
+                if int(inprogress) == int(complied) == int(delayed) == int(not_complied) == 0 :
+                    continue
+
                 compliance_count = core.NumberOfCompliances(
                     domain_id, country_id, str(year), complied,
                     delayed, inprogress, not_complied
@@ -899,7 +902,7 @@ def frame_compliance_details_query(
 
 
 def compliance_details_query(
-    db, data, chart_type, compliance_status, from_count, to_count, user_id, chart_year
+    db, data, chart_type, compliance_status, from_count, to_count, user_id, chart_year=None
 ):
     rows = frame_compliance_details_query(
         db, chart_type, compliance_status, data, from_count, to_count, user_id, chart_year
@@ -1023,10 +1026,12 @@ def return_compliance_details_drill_down(
             if r["frequency_id"] != 4:
                 ageing = abs((due_date.date() - current_date.date()).days) + 1
             else:
-                diff = (due_date - current_date)
+
                 if r["duration_type_id"] == 2:
+                    diff = (due_date - current_date)
                     ageing = calculate_ageing_in_hours(diff)
                 else:
+                    diff = (due_date.date() - current_date.date())
                     ageing = diff.days
         elif compliance_status == "Complied":
             ageing = 0
@@ -1035,6 +1040,8 @@ def return_compliance_details_drill_down(
                 ageing = abs((current_date.date() - due_date.date()).days) + 1
             else:
                 diff = (current_date - due_date)
+                print current_date
+                print due_date
                 if r["duration_type_id"] == 2:
                     ageing = calculate_ageing_in_hours(diff)
                 else:
@@ -1473,7 +1480,7 @@ def get_not_complied_drill_down(
     compliance_status = "Not Complied"
     not_complied_details_filtered = compliance_details_query(
         db, request, chart_type, compliance_status,
-        from_count, to_count, session_user , year=None
+        from_count, to_count, session_user
     )
     current_date = datetime.datetime.today()
     unit_wise_data = {}
@@ -1841,18 +1848,21 @@ def get_notifications(
             " ON (tc.compliance_id = nl.compliance_id) " + \
             " LEFT JOIN tbl_compliance_history tch " + \
             " ON (tch.compliance_id = nl.compliance_id AND " + \
-            " tch.unit_id = nl.unit_id) " + \
-            " WHERE notification_type_id = %s " + \
-            " AND user_id in (%s) " + \
-            " AND (compliance_history_id is null " + \
-            " OR  compliance_history_id = CAST(REPLACE( " + \
-            " SUBSTRING_INDEX(extra_details, '-', 1), " + \
-            " ' ','') AS UNSIGNED)) " + \
-            " ORDER BY read_status ASC, nul.notification_id DESC " + \
-            " limit %s, %s"
-    rows = db.select_all(query, [
-        notification_type_id,
-        ",".join(str(x) for x in user_ids),
+            " tch.unit_id = nl.unit_id) "
+    user_condition, user_val = db.generate_tuple_condition(
+        "user_id", user_ids
+    )
+    conditions = " WHERE notification_type_id = %s " + \
+        " AND " + user_condition + \
+        " AND (compliance_history_id is null " + \
+        " OR  compliance_history_id = CAST(REPLACE( " + \
+        " SUBSTRING_INDEX(extra_details, '-', 1), " + \
+        " ' ','') AS UNSIGNED)) " + \
+        " ORDER BY read_status ASC, nul.notification_id DESC " + \
+        " limit %s, %s"
+
+    rows = db.select_all(query + conditions, [
+        notification_type_id, user_val,
         start_count, to_count
     ])
     columns_list = [
@@ -1883,7 +1893,8 @@ def get_notifications(
                 no_of_days, delayed_days = calculate_ageing(due_date_as_date)
             else:
                 r = relativedelta.relativedelta(
-                    due_date_as_date, completion_date
+                    convert_datetime_to_date(due_date_as_date),
+                    convert_datetime_to_date(completion_date)
                 )
                 delayed_days = "-"
                 if r.days < 0 and r.hours < 0 and r.minutes < 0:
@@ -1955,8 +1966,11 @@ def update_notification_status(
         user_ids.append(0)
     columns = ["read_status"]
     values = [1 if has_read is True else 0]
-    condition = "notification_id = %s and user_id in %s"
-    values.extend([notification_id, tuple(user_ids)])
+    condition = " notification_id = %s AND "
+    user_condition, user_condition_val = db.generate_tuple_condition(
+        "user_id", user_ids)
+    condition = condition + user_condition
+    values.extend([notification_id, user_condition_val])
     db.update(
         tblNotificationUserLog, columns, values, condition
     )
@@ -1970,19 +1984,22 @@ def get_user_company_details(db, user_id, client_id=None):
     condition = " 1 "
     condition_val = None
     if user_id != admin_id:
-        columns = ["unit_id"]
-        condition = "  user_id = %s"
-        condition_val = [user_id]
+        user_units_columns = [
+            "unit_id"
+        ]
+        user_units_condition = "  user_id = %s"
+        user_units_condition_val = [user_id]
         rows = db.get_data(
-            tblUserUnits, columns, condition, condition_val
+            tblUserUnits, user_units_columns,
+            user_units_condition, user_units_condition_val
         )
         unit_ids = [
             int(row["unit_id"]) for row in rows
         ]
-        condition = " unit_id in (%s)"
-        condition_val = [
-            ",".join(str(x) for x in unit_ids)
-        ]
+        condition, condition_val = db.generate_tuple_condition(
+            "unit_id", unit_ids
+        )
+        condition_val = [condition_val]
     rows = db.get_data(
         tblUnits, columns, condition, condition_val
     )
@@ -1991,6 +2008,7 @@ def get_user_company_details(db, user_id, client_id=None):
     legal_entity_ids = []
     business_group_ids = []
     for row in rows:
+        print row
         unit_ids.append(
             int(row["unit_id"])
         )
@@ -2560,7 +2578,10 @@ def need_to_display_deletion_popup(db):
     if len(notification_rows) > 0:
         notification_id = notification_rows[0]["notification_id"]
         created_on = notification_rows[0]["created_on"]
-        r = relativedelta.relativedelta(current_date.date(), created_on)
+        r = relativedelta.relativedelta(
+            convert_datetime_to_date(current_date),
+            convert_datetime_to_date(created_on)
+        )
         if (
             (abs(r.days) % 6) == 0 and
             r.years == 0 and
@@ -2705,13 +2726,17 @@ def get_client_compliance_count(db):
 def get_dashboard_notification_counts(
     db, session_user
 ):
-    query = " SELECT tnl.notification_id FROM %s tnl " + \
-        " INNER JOIN %s tnul ON " + \
-        " tnl.notification_id = tnul.notification_id " + \
-        " WHERE user_id = %s AND read_status = 0 "
-    query = query % (
-        tblNotificationsLog, tblNotificationUserLog, session_user
+    user_ids = [session_user]
+    if is_primary_admin(db, session_user) is True:
+        user_ids.append(0)
+    user_condition, user_val = db.generate_tuple_condition(
+        "user_id", user_ids
     )
+    query = " SELECT tnl.notification_id FROM tbl_notifications_log tnl " + \
+        " INNER JOIN tbl_notification_user_log tnul ON " + \
+        " tnl.notification_id = tnul.notification_id " + \
+        " WHERE "+user_condition+" AND read_status = 0 "
+    param = [user_val]
     notification_condition = " AND notification_type_id = 1"
     escalation_condition = " AND notification_type_id = 3"
     reminder_condition = " AND notification_type_id = 2"
@@ -2720,23 +2745,12 @@ def get_dashboard_notification_counts(
     reminder_query = "%s %s" % (query, reminder_condition)
     escalation_query = "%s %s" % (query, escalation_condition)
 
-    notification_rows = db.select_all(notification_query)
-    reminder_rows = db.select_all(reminder_query)
-    escalation_rows = db.select_all(escalation_query)
+    notification_rows = db.select_all(notification_query, param)
+    reminder_rows = db.select_all(reminder_query, param)
+    escalation_rows = db.select_all(escalation_query, param)
 
     notification_count = len(notification_rows)
     reminder_count = len(reminder_rows)
     escalation_count = len(escalation_rows)
-
-    statutory_column = "count(*) as result"
-    statutory_condition = "user_id = %s and read_status = 0 ORDER BY " + \
-        " statutory_notification_id DESC"
-    statutory_condition_val = [session_user]
-    statutory_notification_rows = db.get_data(
-        tblStatutoryNotificationStatus, statutory_column,
-        statutory_condition, statutory_condition_val
-    )
-    statutory_notification_count = statutory_notification_rows[0]["result"]
-    notification_count += statutory_notification_count
 
     return notification_count, reminder_count, escalation_count

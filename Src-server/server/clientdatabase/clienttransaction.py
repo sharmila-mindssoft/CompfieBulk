@@ -460,12 +460,6 @@ def get_users_for_seating_units(db, session_user):
     result = convert_to_dict(rows, columns)
     user_list = []
     for r in result:
-        # q = "select unit_id from tbl_user_units where user_id = %s"
-        # r_rows = db.select_all(q, [int(r["user_id"])])
-        # r_unit_ids = convert_to_dict(r_rows, ["unit_id"])
-        # unit_ids = []
-        # for u in r_unit_ids:
-        #     unit_ids.append(u["unit_id"])
         user_id = int(r["user_id"])
         unit_ids = user_unit_mapping[user_id]
         domain_ids = user_domain_mapping[user_id]
@@ -477,13 +471,6 @@ def get_users_for_seating_units(db, session_user):
         if r["seating_unit_id"]:
             unit_id = int(r["seating_unit_id"])
             unit_name = r["seating_unit_name"]
-        # domain_ids = [
-        #     int(x) for x in r["domain_ids"].split(',')
-        # ]
-
-        # unit_ids = [
-        #     int(y) for y in r["unit_ids"].split(',')
-        # ]
         if r["form_ids"] is None:
             is_assignee = is_approver = is_concurrence = True
         else:
@@ -497,6 +484,9 @@ def get_users_for_seating_units(db, session_user):
             if 9 in form_ids:
                 is_concurrence = True
                 is_approver = True
+
+        if is_admin(db, user_id):
+            is_assignee = is_concurrence = is_approver = True
 
         user = clienttransactions.ASSIGN_COMPLIANCE_USER(
             user_id,
@@ -812,6 +802,7 @@ def save_assigned_compliance(db, request, session_user):
                 request.approval_person_name,
                 compliance_names
             )
+        cc = [get_email_id_for_users(db, approval)[1]]
     else:
         action = " Following compliances has assigned to " + \
             " assignee - %s concurrence-person - %s " + \
@@ -822,13 +813,18 @@ def save_assigned_compliance(db, request, session_user):
                 request.approval_person_name,
                 compliance_names
             )
+        cc = [
+            get_email_id_for_users(db, concurrence)[1],
+            get_email_id_for_users(db, approval)[1]
+        ]
     activity_text = action.replace("<br>", " ")
     db.save_activity(session_user, 7, json.dumps(activity_text))
     receiver = get_email_id_for_users(db, assignee)[1]
+
     notify_assign_compliance = threading.Thread(
         target=email.notify_assign_compliance,
         args=[
-            receiver, request.assignee_name, action
+            receiver, request.assignee_name, action, cc
         ]
     )
     notify_assign_compliance.start()
@@ -849,9 +845,12 @@ def save_assigned_compliance(db, request, session_user):
 def get_units_for_user_grouped_by_industry(db, unit_ids):
     condition = "1"
     condition_val = None
+
     if unit_ids is not None:
-        condition = "unit_id in (%s)"
-        condition_val = [unit_ids]
+        condition, condition_val = db.generate_tuple_condition(
+            "unit_id", [int(x) for x in unit_ids.split(",")]
+        )
+        condition_val = [condition_val]
     industry_column = "industry_name"
     industry_condition = condition + " group by industry_name"
     industry_rows = db.get_data(
@@ -2224,30 +2223,43 @@ def reassign_compliance(db, request, session_user):
         update_user_settings(db, new_unit_settings)
 
     compliance_names = " <br> ".join(compliance_names)
-    if concurrence is None:
-        action = " Following compliances has reassigned to " + \
-            " assignee - %s and approval-person - %s <br> %s" % (
-                request.assignee_name,
-                approval,
-                compliance_names
-            )
-    else:
-        action = " Following compliances has reassigned " + \
-            " to assignee - %s concurrence-person - %s " + \
-            " approval-person - %s <br> %s"
-        action = action % (
-                request.assignee_name,
-                concurrence,
-                approval,
-                compliance_names
-            )
+    if is_admin(db, assignee):
+        action = " Following compliances has reassigned to %s <br> %s" % (
+            request.assignee_name,
+            compliance_names
+        )
+    else :
+        if concurrence is None:
+            action = " Following compliances has reassigned to " + \
+                " assignee - %s and approval-person - %s <br> %s" % (
+                    request.assignee_name,
+                    get_user_name_by_id(db, request.approval_person),
+                    compliance_names
+                )
+            cc = [
+                get_email_id_for_users(db, request.approval_person)[1],
+            ]
+        else:
+            action = " Following compliances has reassigned " + \
+                " to assignee - %s concurrence-person - %s " + \
+                " approval-person - %s <br> %s"
+            action = action % (
+                    request.assignee_name,
+                    get_user_name_by_id(db, request.concurrence_person),
+                    get_user_name_by_id(db, request.approval_person),
+                    compliance_names
+                )
+            cc = [
+                get_email_id_for_users(db, request.concurrence_person)[1],
+                get_email_id_for_users(db, request.approval_person)[1]
+            ]
     activity_text = action.replace("<br>", " ")
     db.save_activity(session_user, 8, json.dumps(activity_text))
     receiver = get_email_id_for_users(db, assignee)[1]
     notify_reassing_compliance = threading.Thread(
         target=email.notify_assign_compliance,
         args=[
-            receiver, request.assignee_name, action
+            receiver, request.assignee_name, action, cc
         ]
     )
     notify_reassing_compliance.start()

@@ -25,7 +25,7 @@ var message = {
 	"cpassword_required" : "Current Password Required",
 	"npassword_required" : "New Password Required",
 	"conpassword_required" : "Confirm Password Required",
-	"password_notmatch" : "New Password & Confirm Password Do Not Match",
+	"password_notmatch" : "New Password & Confirm Password should match",
 	"password_changed_success" : "Password Changed Successfully",
 	"invalid_cpassword" : "Invalid Current Password",
 	"username_required" : "Username Required",

@@ -119,8 +119,10 @@ class ConvertJsonToCSV(object):
                 datetime_to_string(
                     row["activity_date"]
                 ),
-                core.COMPLIANCE_ACTIVITY_STATUS(row["activity_status"]),
-                core.COMPLIANCE_STATUS(row["compliance_status"]),
+                core.COMPLIANCE_ACTIVITY_STATUS(
+                    row["activity_status"]).to_structure(),
+                core.COMPLIANCE_STATUS(
+                    row["compliance_status"]).to_structure(),
                 row["remarks"], employee_name
             ]
             self.write_csv(None, csv_values)

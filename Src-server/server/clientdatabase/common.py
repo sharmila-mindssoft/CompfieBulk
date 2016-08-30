@@ -4,6 +4,9 @@ from server.clientdatabase.tables import *
 from server.common import (
     string_to_datetime
 )
+from server.clientdatabase.general import (
+    convert_datetime_to_date
+)
 
 
 def get_last_7_years():
@@ -51,7 +54,10 @@ def get_country_domain_timelines(
                         end_year
                     )
                     end_date = string_to_datetime(end_date_string)
-                    r = relativedelta.relativedelta(end_date, start_date)
+                    r = relativedelta.relativedelta(
+                        convert_datetime_to_date(end_date),
+                        convert_datetime_to_date(start_date)
+                    )
                     if r.years > 0:
                         end_date = (
                             end_date - relativedelta.relativedelta(years=1)
@@ -72,12 +78,16 @@ def get_country_domain_timelines(
 
 def calculate_ageing_in_hours(ageing):
         day = ageing.days
+        print day
         hour = 0
-        if day > 0:
-            hour += day * 24
+        # if day > 0:
+        #     hour += day * 24
         hour += (ageing.seconds / 3600)
         minutes = (ageing.seconds / 60 % 60)
-        summary = "%s:%s Hour(s)" % (hour, minutes)
+        if day == 0:
+            summary = "%s:%s Hour(s)" % (hour, minutes)
+        else :
+            summary = "%s Day(s) %s:%s Hour(s)" % (day, hour, minutes)
         return summary
 
 

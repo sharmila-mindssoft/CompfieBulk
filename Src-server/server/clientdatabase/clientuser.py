@@ -11,7 +11,8 @@ from server.common import (
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
     save_compliance_activity, save_compliance_notification, is_primary_admin,
-    get_user_email_name, convert_base64_to_file, update_used_space
+    get_user_email_name, convert_base64_to_file, update_used_space,
+    convert_datetime_to_date
 )
 from server.exceptionmessage import client_process_error
 from server.emailcontroller import EmailHandler
@@ -294,7 +295,10 @@ def update_compliances(
         next_due_date = None
 
     if None not in [validity_date, next_due_date]:
-        r = relativedelta.relativedelta(validity_date, next_due_date)
+        r = relativedelta.relativedelta(
+            convert_datetime_to_date(validity_date),
+            convert_datetime_to_date(next_due_date)
+        )
         if abs(r.months) > 3 or abs(r.years) > 0:
             return False
     # Hanling upload
@@ -391,7 +395,8 @@ def update_compliances(
         rows = db.select_one(query, [compliance_id])
         columns = ["frequency_id"]
         rows = convert_to_dict(rows, columns)
-        frequency_id = int(rows["frequency_id"])
+        frequency_id = int(rows["frequency_id"]) if(
+            rows["frequency_id"] is not None) else None
         as_columns = []
         as_values = []
         if next_due_date is not None:

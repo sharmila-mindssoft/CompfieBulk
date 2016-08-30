@@ -1988,7 +1988,7 @@ class Notification(object):
         due_date = data.get("due_date")
         due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         delayed_days = data.get("delayed_days")
-        delayed_days = parse_structure_OptionalType_CustomTextType_20(delayed_days)
+        delayed_days = parse_structure_OptionalType_CustomTextType_500(delayed_days)
         penal_consequences = data.get("penal_consequences")
         penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         return Notification(
@@ -2014,7 +2014,7 @@ class Notification(object):
             "compliance_name" : to_structure_OptionalType_CustomTextType_500(self.compliance_name),
             "compliance_description" : to_structure_OptionalType_CustomTextType_500(self.compliance_description),
             "due_date" : to_structure_OptionalType_CustomTextType_20(self.due_date),
-            "delayed_days" : to_structure_OptionalType_CustomTextType_20(self.delayed_days),
+            "delayed_days" : to_structure_OptionalType_CustomTextType_500(self.delayed_days),
             "penal_consequences" : to_structure_OptionalType_CustomTextType_500(self.penal_consequences)
         }
 

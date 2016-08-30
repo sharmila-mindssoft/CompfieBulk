@@ -187,8 +187,8 @@ def update_service_provider(db, service_provider, session_user):
 
 def is_service_provider_in_contract(db, service_provider_id):
     column = ["count(service_provider_id) as services"]
-    condition = " now() between contract_from and " + \
-        " DATE_ADD(contract_to, INTERVAL 1 DAY) " + \
+    condition = " now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+        " and DATE_ADD(contract_to, INTERVAL 1 DAY) " + \
         " and service_provider_id = %s "
     condition_val = [service_provider_id]
     rows = db.get_data(tblServiceProviders, column, condition, condition_val)
@@ -452,7 +452,8 @@ def return_user_details(
 
 def get_service_providers(db):
     columns = ["service_provider_id", "service_provider_name", "is_active"]
-    condition = "1"
+    condition = " now() between DATE_SUB(contract_from, INTERVAL 1 DAY) " + \
+        " and DATE_ADD(contract_to, INTERVAL 1 DAY)"
     rows = db.get_data(
         tblServiceProviders, columns, condition
     )
@@ -842,11 +843,11 @@ def return_forms(db, form_ids=None):
     condition = "form_id != 24"
     condition_val = None
     if form_ids is not None:
-        condition, condition_val = db.generate_tuple_condition(
+        form_condition, form_condition_val = db.generate_tuple_condition(
             "form_id", [int(x) for x in form_ids.split(",")]
         )
-        condition_val = [condition_val]
-        condition += " AND %s " % condition
+        condition_val = [form_condition_val]
+        condition += " AND %s " % form_condition
     forms = db.get_data(
         tblForms, columns, condition, condition_val
     )
