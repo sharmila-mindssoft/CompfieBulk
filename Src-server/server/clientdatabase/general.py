@@ -715,7 +715,9 @@ def convert_datetime_to_date(val):
 def create_datetime_summary_text(r, diff, only_hours=False):
     summary_text = ""
     if(only_hours):
-        if abs(r.hours) > 0:
+        if(
+            abs(r.hours) > 0 or abs(r.months) or abs(r.years) > 0
+        ):
             hours = abs(r.hours)
             if abs(r.months) > 0 or abs(r.years) > 0:
                 hours = (diff.days * 24) + hours

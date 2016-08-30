@@ -1588,7 +1588,7 @@ function updateAssigneeWiseComplianceFiltersList(data)
 function showFiltersResults(csv) {
     var country = $("#country").val().trim();
     var countryval = $("#countryval").val().trim();
-    if(countryval == "" || country_val == null){
+    if(countryval == ""){
         displayMessage(message.country_required);
         return
     }else{
