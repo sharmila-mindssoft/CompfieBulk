@@ -138,6 +138,7 @@ function load_selectdomain_master(){
 }
 
 $(".btn-statutorymapping-add").click(function(){
+  reset_compliance();
   $("#statutorymapping-view").hide();
   $("#statutorymapping-add").show();
   $("#edit_sm_id").val('');
@@ -816,8 +817,7 @@ function temp_removestatutories(remove_id){
   load_statories();
 }
 
-//load compliances in third wizard
-function load_compliance(){
+function reset_compliance(){
   $('#statutory_provision').val('');
   $('#compliance_task').val('');
   $('#compliance_description').val('');
@@ -838,6 +838,25 @@ function load_compliance(){
   uploadFile = null;
   $("#uploaded_fileview").hide();
   $("#uploaded_filename").html('');
+  $('.multipleinput').prop("checked",false);
+  $('.multipleselectnone').show();
+  $('.multipleselect').hide();
+  $('#multipleview').hide();
+  $('#dayofmonth').prop("checked", true);
+  $('.repeatby-view').show();
+  $('#counter').html('');
+  $('#counter1').html('');
+  $('#counter2').html('');
+  $('#duration_type').val('');
+  $("#summary").html("");
+  $(".summary_repeat").html("");
+  for(i=1; i<=12; i++){
+    $('#multiple_statutory_date'+i).show();
+  }
+  resetvalues();
+}
+//load compliances in third wizard
+function load_compliance(){
   isAllComplianceActive = false;
 
   $(".tbody-compliance-list").find("tr").remove();
@@ -1141,42 +1160,7 @@ $("#temp_addcompliance").click(function() {
         compliances[comp_id]["is_active"] = true;
         compliances[comp_id]["download_file_list"] = null;
       }
-      $('#statutory_provision').val('');
-      $('#compliance_task').val('');
-      $('#compliance_description').val('');
-      $('#compliance_frequency').val('');
-      $('#compliance_document').val('');
-      $('#upload_file').val('');
-      $('#penal_consequences').val('');
-      $('#Recurring').hide();
-      $('#Occasional').hide();
-      $('#One_Time').hide();
-      $('#repeats_every').val('');
-      $('#repeats_type').val('');
-      $('#duration').val('');
-      $('#statutory_date').val('');
-      $('#statutory_month').val('');
-      $('#triggerbefore').val('');
-      $('#complianceid').val('');
-      uploadFile = null;
-      $("#uploaded_fileview").hide();
-      $("#uploaded_filename").html('');
-      $('.multipleinput').prop("checked",false);
-      $('.multipleselectnone').show();
-      $('.multipleselect').hide();
-      $('#multipleview').hide();
-      $('#dayofmonth').prop("checked", true);
-      $('.repeatby-view').show();
-      $('#counter').html('');
-      $('#counter1').html('');
-      $('#counter2').html('');
-      $('#duration_type').val('');
-      $("#summary").html("");
-      $(".summary_repeat").html("");
-      for(i=1; i<=12; i++){
-        $('#multiple_statutory_date'+i).show();
-      }
-      resetvalues();
+      reset_compliance();
       load_compliance();
       $("#statutory_provision").focus();
       }
@@ -1208,7 +1192,7 @@ function temp_editcompliance(edit_id){
     var fullname = compliances[edit_id]["f_f_list"][0]["file_name"];
     var concatfilename = '';
     if(fullname.indexOf('-') != -1){
-      var fname= fullname.substr(0, fullname.indexOf('-'));
+      var fname= fullname.substr(0, fullname.lastIndexOf('-'));
       var fextension = fullname.substr(fullname.indexOf(".") + 1);
       concatfilename = fname + "." +fextension;
     }else{
@@ -1854,6 +1838,7 @@ function displayEdit (sm_Id) {
   sm_geographyids = statutoryMappingsList[sm_Id]["geography_ids"];
   load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid);
   load_statories();
+  reset_compliance();
   load_compliance();
   edit_geography(sm_countryid,sm_geographyids);
 }
