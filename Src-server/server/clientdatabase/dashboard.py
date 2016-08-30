@@ -2642,12 +2642,13 @@ def get_compliance_history_ids_for_trend_chart(
 ):
     # Units related to the selected country and domain
     unit_columns = "unit_id"
-    unit_condition = "country_id = %s " % (country_id)
-    unit_condition += " AND  find_in_set( " + \
-        " %s, domain_ids) " % (
-            domain_id
-        )
+    unit_condition = "country_id = %s "
     unit_condition_val = [country_id]
+
+    unit_condition += " AND  find_in_set( " + \
+        " %s, domain_ids) "
+    unit_condition_val.append(domain_id)
+
     if filter_type is not None:
         if filter_type == "BusinessGroup":
             unit_condition += " AND business_group_id =%s "
@@ -2659,7 +2660,7 @@ def get_compliance_history_ids_for_trend_chart(
             unit_condition += " AND unit_id =%s "
         unit_condition_val.append(filter_id)
     unit_result_rows = db.get_data(
-        tblUnits, unit_columns, unit_condition
+        tblUnits, unit_columns, unit_condition, unit_condition_val
     )
     unit_rows = []
     for row in unit_result_rows:
