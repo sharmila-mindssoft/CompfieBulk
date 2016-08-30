@@ -166,8 +166,10 @@ class TemplateHandler(RequestHandler):
                 url
             )
             if company is None:
+                path = "files/desktop/common/html/notfound.html"
+                temp = template_env.get_template(path)
                 self.set_status(404)
-                self.write("client not found")
+                self.write(temp.render())
                 return
         path = self.__path_desktop
         if self.__path_mobile is not None:

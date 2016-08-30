@@ -88,7 +88,13 @@ class API(object):
 
     def _remove_old_session(self):
         def on_session_timeout():
-            self._db.clear_session(SESSION_CUTOFF)
+            self._db.begin()
+            try :
+                self._db.clear_session(SESSION_CUTOFF)
+                self._db.commit()
+            except Exception, e :
+                print e
+                self._db.rollback()
 
         self._io_loop.add_timeout(
             time.time() + 1080, on_session_timeout
