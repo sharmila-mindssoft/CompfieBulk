@@ -382,6 +382,7 @@ class DailyProcess(KnowledgeConnect):
     def begin_process(self):
         current_date = datetime.datetime.utcnow().date()
         client_info = self.get_client_db_list()
+        print client_info
         for c in client_info:
             try :
                 task = AutoStart(
