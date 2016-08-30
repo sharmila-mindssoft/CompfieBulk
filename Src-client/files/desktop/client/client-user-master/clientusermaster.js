@@ -280,9 +280,10 @@ function loadUserUpdate(userId){
             $("#mobile-number").val(contactno[2]);
             $("#usergroupval").val(usergroupname);
             $("#usergroup").val(userList[user]['user_group_id']);
-            if(userList[user]['is_admin']){
+            if(is_session_user_primary_admin == false  && (userList[user]['is_admin'] || userList[user]['is_primary_admin'])){
                 $("#usergroupval").attr("disabled", "disabled");
             }
+
             $("#user-level").val(userList[user]['user_level']);
             //$("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
             $("#email-id").val(userList[user]['email_id']);
