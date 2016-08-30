@@ -165,23 +165,25 @@ function loadClientUserList(){
         sno = sno + 1;
         $('.sno', clone).text(sno);
 
-        // if (isActive == false && isPrimaryAdmin == true){
-        //     emp_code_name = "Old Administrator";
-        // }
-        // else if(isActive == true && isPrimaryAdmin == true && users["employee_name"] == null){
-        //     emp_code_name = "Administrator";
-        // }
-        if(isServiceProvide == true){
-            emp_code_name = getServiceProviderName(userList[i]["service_provider_id"])+" - "+users["employee_name"];
+        if (isActive == false && isPrimaryAdmin == true){
+            emp_code_name = "Old Administrator";
         }
-        else{
-            if(users["employee_code"] != null){
-                emp_code_name = users["employee_code"]+" - "+users["employee_name"];
-            }else{
-                emp_code_name = users["employee_name"];
+        else if(isActive == true && isPrimaryAdmin == true){
+            emp_code_name = "Administrator";
+        }else{
+            if(isServiceProvide == true){
+                emp_code_name = getServiceProviderName(userList[i]["service_provider_id"])+" - "+users["employee_name"];
             }
-            
+            else{
+                if(users["employee_code"] != null){
+                    emp_code_name = users["employee_code"]+" - "+users["employee_name"];
+                }else{
+                    emp_code_name = users["employee_name"];
+                }
+                
+            }
         }
+        
         $('.employee-code-name', clone).text(emp_code_name);
 
         $(".username", clone).text(username);
@@ -196,15 +198,15 @@ function loadClientUserList(){
         if (userId != 1){
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
         }
-        if (isPrimaryAdmin == false){
-            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+', \''+ emp_code_name +'\')"/>');
+        $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+', \''+ emp_code_name +'\')"/>');
+        if (isPrimaryAdmin == false){            
             if (is_session_user_primary_admin == true && isServiceProvide == false){
                 $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+', \''+ emp_code_name +'\')" />');
             }
-        }else{
-            if (is_session_user_primary_admin == true && isServiceProvide == false){
-                $('.promote-admin', clone).text("Primary Admin");
-            }
+        // }else{
+        //     if (is_session_user_primary_admin == true && isServiceProvide == false){
+        //         $('.promote-admin', clone).text("Primary Admin");
+        //     }
         }
         
         // }
@@ -291,9 +293,10 @@ function loadUserUpdate(userId){
             $("#mobile-number").val(contactno[2]);
             $("#usergroupval").val(usergroupname);
             $("#usergroup").val(userList[user]['user_group_id']);
-            if(userList[user]['is_admin']){
+            if(is_session_user_primary_admin == false  && (userList[user]['is_admin'] || userList[user]['is_primary_admin'])){
                 $("#usergroupval").attr("disabled", "disabled");
             }
+
             $("#user-level").val(userList[user]['user_level']);
             //$("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
             $("#email-id").val(userList[user]['email_id']);
@@ -472,6 +475,8 @@ $("#submit").click(function(){
             function onFailure(error){
                 if(error == "EmailIdAlreadyExists"){
                     displayMessage(message.emailid_exists);
+                }else if(error == "EmployeeNameAlreadyExists"){
+                    displayMessage(message.employee_name_exists);
                 }
                 else{
                     displayMessage(error);
@@ -520,7 +525,11 @@ $("#submit").click(function(){
                 initialize();
             }
             function onFailure(status, data){
-                displayMessage(status);
+                if(status == "EmployeeNameAlreadyExists"){
+                    displayMessage(message.employee_name_exists);
+                }else{
+                    displayMessage(status);    
+                }
             }
             var clientUserDetail = [parseInt(userId),  parseInt(usergroup), employeename,
                       employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel),
@@ -562,6 +571,8 @@ function user_active(userId, isActive, employeeCodeName){
                 function onFailure(error){
                     if (error == "CannotChangePrimaryAdminStatus"){
                         custom_alert(message.cant_deactivate_primaryadmin);
+                    }else if (error == "CannotChangeOldPrimaryAdminStatus"){
+                        custom_alert(message.techno_team_change_old_primary_admin_status);
                     }
                     else if(error == "ReassignCompliancesBeforeDeactivate"){
                         custom_alert(message.reassign_compliance_before_user_deactivate)
@@ -608,10 +619,13 @@ function user_isadmin(userId, isAdmin, employeeName){
                     initialize();
                 }
                 function onFailure(error){
+                    console.log(error);
                     if (error == "CannotPromoteServiceProvider"){
                         custom_alert(message.cannot_promote_sp_admin);
                     }else if (error == "CannotChangePrimaryAdminStatus"){
                         custom_alert(message.techno_team_change_primary_admin_status);
+                    }else if (error == "CannotChangeOldPrimaryAdminStatus"){
+                        custom_alert(message.techno_team_change_old_primary_admin_status);
                     }else{
                         custom_alert(error);
                     }

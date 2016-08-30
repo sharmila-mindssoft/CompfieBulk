@@ -281,18 +281,20 @@ $("#submit").click(function(){
   s_endCount = 0;
   fullArrayList = [];
   clearMessage();
-  $(".grid-table-rpt").show();
-
+  
   if(country.length == 0){
     displayMessage(message.country_required);
+    $(".grid-table-rpt").hide();
     hideLoader();
   }
   else if(domain.length == 0){
     displayMessage(message.domain_required);
+    $(".grid-table-rpt").hide();
     hideLoader();
   }
   else{
       function onSuccess(data){
+        $(".grid-table-rpt").show();
         assigneeWiseComplianceList = data["compliance_list"];
         totalRecord = data["total_count"];
         loadArray(assigneeWiseComplianceList);

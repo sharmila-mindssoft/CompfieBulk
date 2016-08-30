@@ -135,6 +135,7 @@ function loadApproveStatutory(){
     displayMessage(message.domain_required);
   }
   else{
+    displayMessage("");
     j = 1;
     var statutorymappingId = 0;
     var industryName = '';
@@ -364,6 +365,7 @@ function reloadStatutoryMapping(){
   function onSuccess(data){
       statutoryMappingsList = data["statutory_mappings"];
       loadApproveStatutory();
+      displayMessage(message.action_selection_success);
     }
       function onFailure(error){
         displayMessage(error);
@@ -420,8 +422,8 @@ $("#saverecord").click(function(){
   }
   function onSuccess(response) {
     $(".grid-table").hide();
-    displayMessage(message.action_selection_success);
     reloadStatutoryMapping();
+    
   }
   function onFailure(error, response){
     if (error == "TransactionFailed") {

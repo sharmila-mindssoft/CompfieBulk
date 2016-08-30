@@ -10,6 +10,7 @@ from server.constants import (
 )
 __all__ = ["EmailHandler"]
 
+
 class Email(object):
 
     def __init__(self):
@@ -42,20 +43,37 @@ class Email(object):
             msg = MIMEMultipart()
             msg['From'] = self.sender
             print msg['From']
-            msg['To'] = receiver
+            if type(cc) is list:
+                msg['To'] = ",".join(receiver)
+            else:
+                msg['To'] = receiver
             print msg['To']
             msg['Subject'] = subject
             print msg['Subject']
             if cc is not None:
-                if type(cc) is list :
+                if type(cc) is list:
                     msg['Cc'] = ", ".join(cc)
-                else :
+                else:
                     msg['Cc'] = cc
                 print msg['Cc']
                 # receiver += cc
             msg.attach(MIMEText(message, 'html'))
             print msg.as_string()
-            response = server.sendmail(self.sender, receiver,  msg.as_string())
+            final_receiver = receiver
+            if cc is not None:
+                if type(cc) is list:
+                    if(type(receiver) is list):
+                        final_receiver = receiver + cc
+                    else:
+                        final_receiver = cc + [receiver]
+                else:
+                    if(type(receiver) is list):
+                        final_receiver = receiver + [cc]
+                    else:
+                        final_receiver = [receiver] + [cc]
+            response = server.sendmail(
+                self.sender, final_receiver,  msg.as_string()
+            )
             print response
             server.close()
         else:

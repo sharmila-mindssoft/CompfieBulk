@@ -10,6 +10,7 @@ var message = {
 
 	"domainname_required" : "Domain Name Required",
 	"domainname_exists" : "Domain Name Already Exists",
+	"employee_name_exists" : "Employee name already exists",
 	"invalid_domainid" : "Invalid Domain Id",
 	"employeename_required" : "Employee Name Required",
 	"employeeid_required" : "Employee Id Required",
@@ -210,7 +211,7 @@ var message = {
 	"password_reset_success" : "Password Reset Successfully",
 	"invalid_reset_token" : "Invalid Reset Token",
 	"password_already_used" : "Password already used. Enter different password",
-	"reassign_compliance_before_user_deactivate" : "Reassign compliances before deactivate",
+	"reassign_compliance_before_user_deactivate" : "User have compliances. Can't deactivate user. Reassign compliances before deactivate",
 	"cant_deactivate_primaryadmin" : "Only Techno team can change stauts of primary admin",
 	"trasaction_exists" : "Transaction Exists",
 	"NotEnoughSpaceAvailable": "Not enough space available",
@@ -222,11 +223,17 @@ var message = {
 	"title_status_change" : "Change Status",
 	"title_promote_admin" : "Promote Admin",
 	"cannot_promote_sp_admin" : "Cannot promote a service provider as admin",
+	"techno_team_change_old_primary_admin_status" : "Cannot reactivate Old Administrator",
 	"techno_team_change_primary_admin_status" : "Only Techno team can change status of primary admin",
 	"cancel_operation" : "Are you sure, you want to cancel the operation?",
 	"invalid_statutory_month" : "Duplicate statutory month",
 	"triggerdays_exceeding_repeatsevery" : "Trigger before days should not exceed repeats every value",
 	"shortname_exists" : "Short Name Already Exists",
+	"filesize_exceeds_limit": "File Size Exceeds Limit",
+	"invalid_validitydate" : "Invalid Validity Date",
+	"promote_admin_change_status" : "Are you sure, you want to change promote client admin?",
+	"nocompliance_selected" : "No compliance selected",
+	"completion_lt_validity" : "Completion Date must be less than or equal to Validity Date"
 };
 
 function clearMessage() {

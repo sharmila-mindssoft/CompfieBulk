@@ -1537,10 +1537,10 @@ function unit_close(){
         function onFailure(error){
             if(error == 'InvalidPassword'){
                 $('.popup-error-msg').html("Enter Correct password");
-                $('#password').val("");
             }else{
                 $('.popup-error-msg').html(error);
             }
+            $('#password').val("");
         }
         mirror.reactivateUnit(parseInt(clientidval), parseInt(unitidval), password,
             function (error, response){

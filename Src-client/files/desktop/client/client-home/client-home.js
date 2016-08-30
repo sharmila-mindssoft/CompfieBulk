@@ -840,6 +840,7 @@ function escalationDrilldown(status, data){
 function escalationDrilldownnotcomplied(status, data){
     if(data[status] == ''){
         $("#pagination").hide();
+        accordianTypenotcomplied('accordionNC', 'accordion-toggle', 'accordion-nc-content');
     }
     else{
         $("#pagination").show();
@@ -908,6 +909,7 @@ function escalationDrilldownnotcomplied(status, data){
 function escalationDrilldowndelayed(status, data){
     if(data[status] == ''){
         $("#pagination").hide();
+        accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
     }
     else{
         $("#pagination").show();

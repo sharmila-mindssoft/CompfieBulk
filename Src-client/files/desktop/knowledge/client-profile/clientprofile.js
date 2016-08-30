@@ -102,7 +102,9 @@ function loadClientProfileList(groupId){
                   statusVal = true;
                 }*/
                 if(isAdmin == true){
-                    currentAdminId = userId;
+                    if(isActive == true){
+                        currentAdminId = userId;
+                    }
                     // adminstatus = false;
                     imageadminName = "promote-active.png";
                     admintitle = "Click here to deactivate Promote Admin";
@@ -197,45 +199,60 @@ function alertUserToPromoteAnotherAdmin(isActive){
 }
 
 function clientprofile_isadmin(userId, clientId, userName){
-    function onSuccess(data){
-        // initialize();
-        //$('#groupsval').val('');
-        function onSuccess(data){
-            groupList = data['group_companies'];
-            profiles = data['profiles'];
-            $("#group-id").val(clientId);
-            loadClientProfileList(clientId)
-        }
-        function onFailure(error){
-            displayMessage(error);
-        }
-        mirror.getClientProfile(
-            function(error, response){
-                if(error == null){
-                    onSuccess(response);
-                }
-                else{
-                    onFailure(error);
-                }
-            }
+      var msgstatus = message.promote_admin_change_status;
+      
+      $( ".warning-confirm" ).dialog({
+          title: message.title_status_change,
+          buttons: {
+              Ok: function() {
+                $( this ).dialog( "close" );
 
-        );
-    }
-    function failure(error){
-        if(error == "ReassignFirst"){
-            custom_alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform admin to reassign those compliances to another user.");
-        }
-    }
-    mirror.createNewAdmin(userId, clientId, currentAdminId, userName,
-        function(error, response){
-            if(error == null){
-                onSuccess(response);
-            }
-            else{
-                failure(error);
-            }
-        }
-    );
+                function onSuccess(response){
+                    // initialize();
+                    //$('#groupsval').val('');
+                    function onSuccess(data){
+                        groupList = data['group_companies'];
+                        profiles = data['profiles'];
+                        $("#group-id").val(clientId);
+                        loadClientProfileList(clientId)
+                    }
+                    function onFailure(error){
+                        displayMessage(error);
+                    }
+                    mirror.getClientProfile(
+                        function(error, response){
+                            if(error == null){
+                                onSuccess(response);
+                            }
+                            else{
+                                onFailure(error);
+                            }
+                        }
+
+                    );
+                }
+                function onFailure(error){
+                  displayMessage(error);
+                }
+                mirror.createNewAdmin(userId, clientId, currentAdminId, userName,
+                function(error, response){
+                    if(error == null){
+                        onSuccess(response);
+                    }
+                    else{
+                        onFailure(error);
+                    }
+                }
+                );
+              },
+              Cancel: function() {
+                  $( this ).dialog( "close" );
+              }
+          },
+          open: function ()  {
+              $(".warning-message").html(msgstatus);
+          }
+      });
 }
 
 //retrive form autocomplete value

@@ -97,8 +97,8 @@ function load_thirdwizard(){
 
         $('.sno', clone2).text(sno);
 
-        $('.compliancetask', clone2).text(compliance_name);
-        $('.tipso_style', clone2).attr('title', compliance_description);
+        $('.compliancetask span', clone2).html(compliance_name);
+        $('.compliancetask abbr', clone2).attr("title", compliance_description);
 
         $('.compliancefrequency', clone2).text(frequency);
 
@@ -251,7 +251,7 @@ function validate_thirdtab(){
   return true;
 }
 
-//convert string to date format
+/*//convert string to date format
 function convert_date (data){
   var date = data.split("-");
   var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -265,7 +265,7 @@ function convert_date (data){
   }
   return new Date(date[2], date[1]-1, date[0]);
 }
-
+*/
 //find date difference between two dates
 function daydiff(first, second) {
     return (second-first)/(1000*60*60*24)
@@ -273,9 +273,14 @@ function daydiff(first, second) {
 
 //save past records data
 function submitcompliance(){
+
     displayLoader();
     var unit_id = parseInt($('.unitlist.active').attr('id'));;
     compliance_list = [];
+
+    function parseMyDate(s) {
+        return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+    }
 
     for(var i=1; i<=sno; i++){
         var complianceApplicable = false;
@@ -313,10 +318,10 @@ function submitcompliance(){
             hideLoader();
             return false;
           }else if(validity_date != '' && frequency_ == 'Periodical'){
-            var convertDueDate = convert_date(due_date);
+            /*var convertDueDate = convert_date(due_date);
             var convertValidityDate = convert_date(validity_date);
-            var dateDifference = daydiff(convertDueDate, convertValidityDate);
-            if (convertDueDate > convertValidityDate) {
+            var dateDifference = daydiff(convertDueDate, convertValidityDate);*/
+            if (parseMyDate(due_date) > parseMyDate(validity_date)) {
               displayMessage(message.duedatelessthanvaliditydate_compliance + compliance_name);
               hideLoader();
               return false;
@@ -324,7 +329,13 @@ function submitcompliance(){
               displayMessage(message.invalid_duedate + compliance_name);
               hideLoader();
               return false;*/
-            }else{
+            }
+            else if(parseMyDate(completion_date) > parseMyDate(validity_date)){
+              displayMessage(message.completion_lt_validity);
+              hideLoader();
+              return false;
+            }
+            else{
               displayMessage("");
             }
           }else{
@@ -333,6 +344,11 @@ function submitcompliance(){
           compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, file_list, validity_date, completed_by);
           compliance_list.push(compliance);
         }
+    }
+    if(compliance_list.length <= 0){
+      displayMessage(message.nocompliance_selected);
+      hideLoader();
+      return false;
     }
 
   function onSuccess(data){
