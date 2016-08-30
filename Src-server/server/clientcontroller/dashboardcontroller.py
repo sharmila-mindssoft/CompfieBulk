@@ -438,7 +438,7 @@ def process_get_assigneewise_reassigned_compliances(
     domain_id = request.domain_id
     chart_data = get_assigneewise_reassigned_compliances(
         db,
-        country_id, unit_id, user_id, domain_id, client_id
+        country_id, unit_id, user_id, domain_id
     )
     return dashboard.GetAssigneewiseReassignedComplianesSuccess(
         chart_data=chart_data
