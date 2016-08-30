@@ -421,6 +421,8 @@ function compliancelist(data){
     $('.tbody-task-applicability-list').append(clone);
     if(totalrecords == sno){
         $("#pagination").hide();
+    }else{
+        $("#pagination").show();
     }
 }
 
