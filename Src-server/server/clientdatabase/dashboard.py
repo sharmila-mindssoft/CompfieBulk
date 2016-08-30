@@ -358,6 +358,9 @@ def frame_compliance_status_yearwise_count(
                 not_complied = v["not_complied_count"]
                 country_id = v["country_id"]
                 domain_id = v["domain_id"]
+                if int(inprogress) == int(complied) == int(delayed) == int(not_complied) == 0 :
+                    continue
+
                 compliance_count = core.NumberOfCompliances(
                     domain_id, country_id, str(year), complied,
                     delayed, inprogress, not_complied
