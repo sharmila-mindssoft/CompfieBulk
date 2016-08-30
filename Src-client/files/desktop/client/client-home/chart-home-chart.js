@@ -119,6 +119,108 @@ function updateComplianceStatusStackBarChart(data) {
     // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
 }
 
+function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter_name) {
+    var total = 0;
+    for (var i=0; i < data_list.length; i++) {
+        item = data_list[i];
+        total += parseInt(item["y"]);
+    }
+    var options = {
+    // var options = new Highcharts.Chart({
+        colors:['#A5D17A','#F58835', '#F0F468', '#F32D2B'],
+        chart: {
+            renderTo: "status-container",
+        },
+        title: {
+            text: chartTitle
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            categories: true,
+            title: {
+                text: 'Compliance Status'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Total compliances'
+            }
+        },
+        tooltip: {
+              headerFormat : '',
+            pointFormat: '{point.name}:{point.y} Out of ' + total
+
+        },
+        legend: {
+            enabled: true
+        },
+        plotOptions: {
+            series: {
+                pointWidth: 50,
+                allowPointSelect: true
+            },
+            column: {
+                colorByPoint: true,
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown;
+                            if (drilldown) {
+                              loadComplianceStatusDrillDown(this.name, this.filter_id, filter_name)
+                            }
+                        }
+                    }
+                }
+            },
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage:.0f}%'
+                },
+                showInLegend: true,
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown;
+                            if (drilldown) {
+                              loadComplianceStatusDrillDown(this.name, this.filter_id, filter_name)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            data: data_list
+        }]
+    };
+    $(".btn-back").show();
+    if (chartType == "pie") {
+        $(".btn-pie-chart").hide();
+        $(".btn-bar-chart").show();
+        options.chart.type = 'pie';
+        options.chart.options3d = {
+            enabled: true,
+            alpha: 55,
+            beta: 0
+        };
+        var chart1 = new Highcharts.Chart(options);
+
+    } else {
+        $(".btn-pie-chart").show();
+        $(".btn-bar-chart").hide();
+        options.chart.type = 'column';
+        options.legend.enabled = false;
+        options.colors = ['#A5D17A','#F58835', '#F0F468', '#F32D2B'];
+        var chart1 = new Highcharts.Chart(options);
+    }
+}
+
 //
 // Escalation chart
 //
@@ -1398,9 +1500,14 @@ function prepareComplianceStatusChartData (chart_data) {
     if (chartTitle == "Consolidated") {
         data_series = [];
         for (var i=0; i < yAxis.length; i++) {
+            if (sum_values(yAxisData[i]) == 0)
+                v_visible = false;
+            else
+                v_visible = true;
             data_series.push({
                 "name": yAxis[i],
                 "y": sum_values(yAxisData[i]),
+                "visible": v_visible,
             });
         }
         return data_series;
@@ -1410,10 +1517,16 @@ function prepareComplianceStatusChartData (chart_data) {
         values = yAxisData[i]
         y_list = [];
         for (var x=0; x< values.length; x++) {
+            if (values[x] == 0)
+                v_visible = false;
+            else
+                v_visible = true;
+
             y_list.push({
                 "y": values[x],
                 "drilldown": yAxis[i],
-                "filter_type_id": xAxisIds[x]
+                "filter_type_id": xAxisIds[x],
+                "visible": v_visible,
             });
         }
         chartDataSeries.push({
@@ -1426,11 +1539,17 @@ function prepareComplianceStatusChartData (chart_data) {
         data_list = []
         for (var x1 = 0; x1 < yAxis.length; x1++) {
             value = yAxisData[x1][j]
+            if (value == 0)
+                v_visible = false;
+            else
+                v_visible = true;
+
             data_list.push({
                 "name": yAxis[x1],
                 "y": value,
                 "filter_id": xAxisIds[j],
-                "drilldown": xAxis[j]
+                "drilldown": xAxis[j],
+                "visible": v_visible,
             });
         }
         xAxisDrillDownSeries[xAxis[j]] = data_list
@@ -1466,15 +1585,25 @@ function prepareEscalationChartdata(source_data) {
 
         }
         else {
+            if (delayed == 0)
+                v_visible = false
+            else
+                v_visible = true
             delayed_data.push({
                 "y": delayed,
                 "drilldown": "Delayed Compliance",
-                "year": year
+                "year": year,
+                "visible": v_visible
             });
+            if (not_complied == 0)
+                v_visible = false
+            else
+                v_visible = true
             not_complied_data.push({
                 "y": not_complied,
                 "drilldown": "Not Complied",
-                "year": year
+                "year": year,
+                "visible": v_visible
             });
             xAxis.push(year);
         }
@@ -1557,12 +1686,18 @@ function prepareNotCompliedChart(source_data) {
     count = 0;
     $.each(source_data, function(key, item) {
         count += item;
+        if (item == 0)
+            v_visible = false;
+        else
+            v_visible = true;
+
         if (key == "T_31_to_60_days_count") {
             chartDataSeries.push(
                 {
                     name: "Below 60",
                     y: item,
-                    drilldown: "Below 60"
+                    drilldown: "Below 60",
+                    visible: v_visible,
                 }
             );
         }
@@ -1571,7 +1706,8 @@ function prepareNotCompliedChart(source_data) {
                 {
                     name: "Below 30",
                     y: item,
-                    drilldown: "Below 30"
+                    drilldown: "Below 30",
+                    visible: v_visible,
                 }
             );
         }
@@ -1580,7 +1716,8 @@ function prepareNotCompliedChart(source_data) {
                 {
                     name: "Below 90",
                     y: item,
-                    drilldown: "Below 90"
+                    drilldown: "Below 90",
+                    visible: v_visible,
                 }
             )
         }
@@ -1589,7 +1726,8 @@ function prepareNotCompliedChart(source_data) {
                 {
                     name: "Above 90",
                     y: item,
-                    drilldown: "Above 90"
+                    drilldown: "Above 90",
+                    visible: v_visible,
                 }
             )
         }
@@ -1626,20 +1764,36 @@ function prepareComplianceApplicability(source_data) {
         //pass
     }
     else {
+        if (applicable == 0)
+            v_visible = false;
+        else
+            v_visible = true;
         chartDataSeries.push({
             name: "Applicable",
             y: applicable,
-            drilldown: "Applicable"
+            drilldown: "Applicable",
+            visible: v_visible
         });
+        if (not_applicable == 0)
+            v_visible = false;
+        else
+            v_visible = true;
         chartDataSeries.push({
             name: "Not Applicable",
             y: not_applicable,
-            drilldown: "Not Applicable"
+            drilldown: "Not Applicable",
+            visible: v_visible
+
         });
+        if (not_opted == 0)
+            v_visible = false;
+        else
+            v_visible = true;
         chartDataSeries.push({
             name: "Not Opted",
             y: not_opted,
-            drilldown: "Not Opted"
+            drilldown: "Not Opted",
+            visible: v_visible
         });
     }
     var filterTypeInput = getFilterTypeInput()

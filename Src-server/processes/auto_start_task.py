@@ -278,6 +278,8 @@ class AutoStart(Database):
                 due_date, next_due_date, int(d["assignee"]),
                 d["concurrence_person"], int(approval_person)
             )
+            if compliance_history_id is False :
+                return False
 
             if d["document_name"] :
                 compliance_name = d["document_name"] + " - " + d["compliance_task"]
@@ -312,7 +314,10 @@ class AutoStart(Database):
             if trigger_before is None:
                 trigger_before = int(d["trigger_before_days"])
 
-            notify(d, due_date, next_due_date, approval_person, trigger_before)
+            c_h_id = notify(d, due_date, next_due_date, approval_person, trigger_before)
+            if c_h_id is False :
+                print "compliance history save failed"
+                print d
             return next_due_date, trigger_before
 
         data = self.get_compliance_to_start()
@@ -325,7 +330,10 @@ class AutoStart(Database):
                     trigger_before = d["trigger_before_days"]
                     if trigger_before is None :
                         continue
-                    notify(d, d["due_date"], next_due_date, approval_person, trigger_before)
+                    c_h_id = notify(d, d["due_date"], next_due_date, approval_person, trigger_before)
+                    if c_h_id is False :
+                        # compliance history id is false so continue further
+                        continue
                 else:
                     next_due_date = trigger_before = None
                     due_date = d["due_date"]
@@ -374,6 +382,7 @@ class DailyProcess(KnowledgeConnect):
     def begin_process(self):
         current_date = datetime.datetime.utcnow().date()
         client_info = self.get_client_db_list()
+        print client_info
         for c in client_info:
             try :
                 task = AutoStart(

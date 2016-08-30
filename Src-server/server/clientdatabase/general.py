@@ -1391,6 +1391,8 @@ def convert_base64_to_file(file_name, file_content, client_id):
 
 def get_user_name_by_id(db, user_id):
     employee_name = None
+    if user_id is None :
+        return ""
     if user_id is not None and user_id != 0:
         columns = "employee_code, employee_name"
         condition = "user_id = %s "
@@ -1402,6 +1404,8 @@ def get_user_name_by_id(db, user_id):
             employee_name = "%s - %s" % (
                 rows[0]["employee_code"], rows[0]["employee_name"]
             )
+        if user_id == is_primary_admin(user_id):
+            employee_name += " (Client Admin)"
     else:
         employee_name = "Administrator"
     return employee_name
