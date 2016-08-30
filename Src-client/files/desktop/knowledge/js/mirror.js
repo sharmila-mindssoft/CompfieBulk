@@ -204,10 +204,13 @@ function initMirror() {
     }
 
     function LoginApiRequest(callerName, request, callback) {
-        jQuery.post(
-            BASE_URL + callerName,
-            toJSON(request),
-            function (data) {
+        $.ajax({
+            url: BASE_URL + callerName,
+            // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+            type: "POST",
+            contentType: "application/json",
+            data: toJSON(request),
+            success: function (data) {
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -216,54 +219,18 @@ function initMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
                 }else{
-                    callback(status, null)
+                    callback(status, null);
                 }
 
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                callback(jqXHR["responseText"], null);
             }
-        )
-        .fail(
-            function (jqXHR, textStatus, errorThrown) {
-                // alert("jqXHR:"+jqXHR.status);
-                // alert("textStatus:"+textStatus);
-                // alert("errorThrown:"+errorThrown);
-                // callback(error, null);
-            }
-        );
+        });
+
     }
 
     // Login function
-    function login(username, password, short_name, callback) {
-        if (window.sessionStorage["my_ip"] == null)
-            get_ip();
-        my_ip = window.sessionStorage["my_ip"]
-
-        var request = [
-            "Login", {
-                "login_type": "Web",
-                "username": username,
-                "password": password,
-                "short_name": short_name,
-                "ip" : my_ip
-            }
-        ];
-        jQuery.post(
-            BASE_URL + "login",
-            toJSON(request),
-            function (data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1){
-                    initSession(response)
-                    callback(null, response);
-                }
-                else {
-                    callback(status, null);
-                }
-            }
-        )
-    }
     function verifyLoggedIn() {
         sessionToken = getSessionToken();
         if (sessionToken == null){
@@ -282,7 +249,7 @@ function initMirror() {
         ]
         $.ajax({
             url: BASE_URL + "login",
-            headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+            // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
             type: "POST",
             contentType: "application/json",
             data: toJSON(request),
@@ -1551,7 +1518,7 @@ function initMirror() {
         // updateUser_Session: updateUser_Session,
         clearSession: clearSession,
         verifyLoggedIn: verifyLoggedIn,
-        login: login,
+        // login: login,
         logout: logout,
 
         getEmployeeName: getEmployeeName,
