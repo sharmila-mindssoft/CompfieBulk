@@ -317,669 +317,583 @@ function initClientMirror() {
     ];
     LoginApiRequest('login', request, callback);
   }
-
-    /* Compliance Approal */
-
-    function getComplianceApprovalList(start_count, callback) {
-        var request = [
-            "GetComplianceApprovalList",
-            {
-                "start_count": start_count
-            }
-        ];
-        clientApiRequest("client_transaction", request, callback);
-    }
-
-    function getClientReportFilters(callback) {
-        var request = [
-            "GetClientReportFilters", {}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getUnitwisecomplianceReport(
-        country_id, domain_id, business_group_id, legal_entity_id,
-        division_id, unit_id, user_id, record_count, callback
-    ) {
-        var request = [
-            "GetUnitwisecomplianceReport", {
-                "country_id": country_id,
-                "domain_id": domain_id,
-                "business_group_id": business_group_id,
-                "legal_entity_id": legal_entity_id,
-                "division_id": division_id,
-                "unit_id": unit_id,
-                "user_id": user_id,
-                "record_count": record_count
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getAssigneewisecomplianceReport(
-        country_id, domain_id, business_group_id, legal_entity_id,
-        division_id, unit_id, user_id, record_count, callback
-    ) {
-        var request = [
-            "GetAssigneewisecomplianceReport", {
-                "country_id": country_id,
-                "domain_id": domain_id,
-                "business_group_id": business_group_id,
-                "legal_entity_id": legal_entity_id,
-                "division_id": division_id,
-                "unit_id": unit_id,
-                "user_id": user_id,
-                "record_count": record_count
-          	}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function approveCompliance(
-        compliance_history_id, compliance_approval_status,
-        remarks, next_due_date, validity_date, callback
-    ) {
-        var request = [
-            "ApproveCompliance", {
-                "compliance_history_id": compliance_history_id,
-                "approval_status": compliance_approval_status,
-                "remarks": remarks,
-                "next_due_date": next_due_date,
-                "validity_date" : validity_date
-            }
-        ];
-        callerName = "client_transaction";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getChartFilters(callback) {
-        var request = [
-            "GetChartFilters", {}
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
-    //     var request = [
-    //         "GetComplianceStatusChart", {
-    //             "country_ids": countryIds,
-    //             "domain_ids": domainIds,
-    //             "filter_type": filterType,
-    //             "filter_ids": filterIds,
-    //             "from_date": fromDate,
-    //             "to_date": toDate,
-
-    //         }
-
-    function getComplianceStatusChartData(requestData, callback) {
-        var request = [
-            "GetComplianceStatusChart",
-            requestData
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceStatusDrillDown(requestData, callback) {
-        var request = [
-            "GetComplianceStatusDrillDownData",
-            requestData
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getEscalationChartData(requestData, callback) {
-        var request = [
-            "GetEscalationsChart",
-            requestData
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getEscalationDrillDown(requestData, callback) {
-        var request = [
-            "GetEscalationsDrillDownData",
-            requestData
-        ];
-        var callerName =  "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getServiceProviderReportFilters(callback) {
-        var request = [
-            "GetServiceProviderReportFilters", {}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getServiceProviderWiseCompliance(
-        country_id, domain_id, statutory_id, unit_id, service_provider_id, record_count, csv, callback) {
-        var request = [
-            "GetServiceProviderWiseCompliance", {
-                "country_id": country_id,
-                "domain_id": domain_id,
-                "statutory_id": statutory_id,
-                "unit_id": unit_id,
-                "service_provider_id": service_provider_id,
-                "record_count": record_count,
-                "csv": csv
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceDetailsReportFilters(callback) {
-        var request = [
-            "GetComplianceDetailsReportFilters", {}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-
-    function getComplianceDetailsReport(
-        country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date,
-        compliance_status, csv, record_count, callback
-    ) {
-        var request = [
-            "GetComplianceDetailsReport", {
-                "country_id": country_id,
-                "domain_id": domain_id,
-                "statutory_id": statutory_id,
-                "unit_id": unit_id,
-                "compliance_id": compliance_id,
-                "assignee_id": assignee_id,
-                "from_date": from_date,
-                "to_date": to_date,
-                "compliance_status": compliance_status,
-                "csv" : csv,
-                "record_count": record_count
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /* Trend Chart */
-
-    function getTrendChart(requestData, callback) {
-        var request = [
-            "GetTrendChart",
-            requestData
-        ];
-        var callerName = "client_dashboard"
-        clientApiRequest(callerName, request, callback)
-    }
-
-    function getTrendChartDrillDown(requestData, callback) {
-        var request = [
-            "GetTrendChartDrillDownData",
-            requestData
-        ];
-        var callerName = "client_dashboard"
-        clientApiRequest(callerName, request, callback)
-    }
-
-    function getNotCompliedData(requestData, callback) {
-        var request = [
-            "GetNotCompliedChart",
-            requestData
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getNotCompliedDrillDown(requestData, callback) {
-        var request = [
-            "GetNotCompliedDrillDown",
-            requestData
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceApplicabilityChart(requestData, callback) {
-        var request = [
-            "GetComplianceApplicabilityStatusChart",
-            requestData
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceApplicabilityDrillDown(requestData, callback) {
-        var request = [
-            "GetComplianceApplicabilityStatusDrillDown",
-            requestData
-        ];
-        var callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /* Settings */
-
-    function getSettings(callback) {
-        var request = [
-            "GetSettings", {}
-        ];
-        var callerName = "client_admin_settings"
-        clientApiRequest(callerName, request, callback)
-    }
-
-    function updateSettings(is_two_levels_of_approval, assignee_reminder_days,
-        escalation_reminder_In_advance_days, escalation_reminder_days, callback) {
-        var request = [
-            "UpdateSettings", {
-                "is_two_levels_of_approval": is_two_levels_of_approval,
-                "assignee_reminder_days": assignee_reminder_days,
-                "escalation_reminder_In_advance_days": escalation_reminder_In_advance_days,
-                "escalation_reminder_days": escalation_reminder_days
-            }
-        ];
-        var callerName = "client_admin_settings"
-        clientApiRequest(callerName, request, callback)
-    }
-
-    /* Notifications */
-    function getNotifications(notification_type, start_count, callback) {
-        callerName = "client_dashboard"
-        var request = [
-            "GetNotifications", {
-                "notification_type": notification_type,
-                "start_count" : start_count
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function updateNotificationStatus(notification_id, has_read, callback) {
-        callerName = "client_dashboard"
-        var request = [
-            "UpdateNotificationStatus", {
-                "notification_id": notification_id,
-                "has_read": has_read
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /* Get Compliance List*/
-    function getCurrentComplianceDetail(current_start_count, callback) {
-        callerName = "client_user"
-        var request = [
-            "GetCurrentComplianceDetail", {
-                "current_start_count": current_start_count,
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
-        callerName = "client_user"
-        var request = [
-            "GetUpcomingComplianceDetail", {
-                "upcoming_start_count": upcoming_start_count
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /* Risk Report */
-    function getRiskReportFilters(callback) {
-        var request = [
-            "GetRiskReportFilters", {}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getRiskReport(
-        country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
-        level_1_statutory_name, statutory_status, csv, recordCount, callback
-    ) {
-        var request = [
-            "GetRiskReport", {
-                "country_id": country_id,
-                "domain_id": domain_id,
-                "business_group_id": business_group_id,
-                "legal_entity_id": legal_entity_id,
-                "division_id": division_id,
-                "unit_id": unit_id,
-                "level_1_statutory_name": level_1_statutory_name,
-                "statutory_status": statutory_status,
-                "csv" : csv,
-                "record_count": recordCount
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function updateComplianceDetail(compliance_history_id, documents, completion_date,
-        validity_date, next_due_date, remarks, callback) {
-        callerName = "client_user"
-        var request = [
-            "UpdateComplianceDetail", {
-                "compliance_history_id": compliance_history_id,
-                "documents": documents,
-                "completion_date": completion_date,
-                "validity_date": validity_date,
-                "next_due_date": next_due_date,
-                "remarks": remarks
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /*Statutory Notifications List*/
-    function getStatutoryNotificationsListFilters(callback){
-        callerName = "client_reports"
-        var request = [
-            "GetStatutoryNotificationsListFilters",
-            {}
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId,
-        legalEntityId, divisionId, unitId, level1Id, fromdate, todate, csv, callback){
-        callerName = "client_reports"
-        var request = [
-            "GetStatutoryNotificationsListReport",
-            {
-                "country_name": countryName,
-                "domain_name": domainName,
-                "business_group_id": businessGroupId,
-                "legal_entity_id": legalEntityId,
-                "division_id": divisionId,
-                "unit_id": unitId,
-                "level_1_statutory_name": level1Id,
-                "from_date": fromdate,
-                "to_date": todate,
-                "csv": csv
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /* Reassigned History Report */
-    function getReassignedHistoryReportFilters(callback) {
-        var request = [
-            "GetReassignedHistoryReportFilters", {}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id,
-        compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
-        var request = [
-            "GetReassignedHistoryReport", {
-
-                "country_id": country_id,
-                "domain_id": domain_id,
-                "unit_id": unit_id,
-                "level_1_statutory_id": level_1_statutory_id,
-                "compliance_id": compliance_id,
-                "user_id": user_id,
-                "from_date" : from_date,
-                "to_date" : to_date,
-                "csv": csv,
-                "record_count" : record_count
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getLoginTrace(record_count, user_id, from_date, to_date, callback){
-        var request = [
-            "GetLoginTrace",{
-                "record_count" : record_count,
-                "user_id" : user_id,
-                "from_date": from_date,
-                "to_date": to_date
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceActivityReportFilters(callback){
-        var request = [
-            "GetComplianceActivityReportFilters",{}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-
-    function getComplianceActivityReportData(
-            user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id,
-            compliance_id, from_date, to_date, csv, callback
-        ){
-        var request = [
-            "GetComplianceActivityReport",
-            {
-                "user_type": user_type,
-                "user_id": user_id,
-                "country_id" : country_id,
-                "domain_id": domain_id,
-                "level_1_statutory_name": level_1_statutory_name,
-                "unit_id": unit_id,
-                "compliance_id": compliance_id,
-                "from_date" : from_date,
-                "to_date" : to_date,
-                "csv" : csv
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-
-    }
-    // Client Details Report
-    function getClientDetailsReportFilters(callback){
-        var request = [
-            "GetClientDetailsReportFilters",
-            {}
-        ];
-        callerName = "client_reports"
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getClientDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
-        unitId, domainIds, csv, start_count, callback){
-        callerName = "client_reports"
-        var request = [
-            "GetClientDetailsReportData",
-            {
-                "country_id": countryId,
-                "business_group_id": businessGroupId,
-                "legal_entity_id" : legalEntityId,
-                "division_id" : divisionId,
-                "unit_id": unitId,
-                "domain_ids" : domainIds,
-                "csv": csv,
-                "start_count": start_count
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getAssigneewiseComplianesFilters(
-        callback
-    ){
-        var request = [
-            "GetAssigneewiseComplianesFilters",
-            {}
-        ];
-        callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-
-    }
-
-    function getAssigneewiseComplianes(
-        country_id, business_group_id, legal_entity_id, division_id,
-        unit_id, user_id, csv, callback
-    ){
-        var request = [
-            "GetAssigneeWiseCompliancesChart",
-            {
-                "country_id": country_id,
-                "business_group_id": business_group_id,
-                "legal_entity_id": legal_entity_id,
-                "division_id": division_id,
-                "unit_id": unit_id,
-                "user_id" : user_id,
-                "csv": csv
-            }
-        ];
-        callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-
-    }
-
-    function getAssigneewiseYearwiseComplianes(
-        country_id, unit_id, user_id, callback
-    ){
-        var request = [
-            "GetAssigneewiseYearwiseCompliances",
-            {
-                "country_id": country_id,
-                "unit_id": unit_id,
-                "user_id" : user_id
-            }
-        ];
-        callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-
-    }
-
-    function getAssigneewiseReassignedComplianes(
-        country_id, unit_id, user_id, domain_id, callback
-    ){
-        var request = [
-            "GetAssigneewiseReassignedComplianes",
-            {
-                "country_id": country_id,
-                "unit_id": unit_id,
-                "user_id" : user_id,
-                "domain_id": domain_id
-            }
-        ];
-        callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-
-    }
-
-    function getAssigneewiseCompliancesDrilldown(
-        country_id, assignee_id, domain_id, year, unit_id, start_count, callback
-    ){
-        var request = [
-            "GetAssigneeWiseComplianceDrillDown",
-            {
-                "country_id" : country_id,
-                "assignee_id": assignee_id,
-                "domain_id": domain_id,
-                "year" : year,
-                "unit_id": unit_id,
-                "start_count": start_count
-            }
-        ];
-        callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
-    }
-
-
-    function getTaskApplicabilityReportFilters(callback) {
-        var request = [
-            "GetTaskApplicabilityStatusFilters", {}
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getTaskApplicabilityReportData(
-        country_id, domain_id, business_group_id,
-        legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, csv, record_count, callback
-    ) {
-        var request = [
-            "GetComplianceTaskApplicabilityStatusReport", {
-                "country_id" : country_id,
-                "domain_id" : domain_id,
-                "business_group_id": business_group_id,
-                "legal_entity_id": legal_entity_id,
-                "division_id": division_id,
-                "unit_id": unit_id,
-                "statutory_name": statutory_name,
-                "applicable_status": applicable_status,
-                "csv": csv,
-                "record_count":record_count,
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getOnOccurrenceCompliances(start_count, callback){
-        var request = [
-            "GetOnOccurrenceCompliances", {
-                "start_count": start_count
-            }
-        ];
-        callerName = "client_user";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function startOnOccurrenceCompliance(
-        compliance_id, start_date, unit_id, duration, callback
-    ){
-        var request = [
-            "StartOnOccurrenceCompliance",
-            {
-                "compliance_id": compliance_id,
-                "start_date": start_date,
-                "unit_id": unit_id,
-                "duration": duration
-            }
-        ];
-        callerName = "client_user";
-        clientApiRequest(callerName, request, callback);
-    }
-    function exportToCSV(jsonResponse, callback){
-        var request = [
-            "ExportToCSV",
-            {
-                "data":jsonResponse
-            }
-        ];
-        callerName = "client_reports";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getUserwiseCompliances(callback){
-        var request = [
-            "GetUserwiseCompliances", {}
-        ];
-        callerName = "client_transaction";
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function checkContractExpiration(callback){
-        var request = [
-            "CheckContractExpiration", {}
-        ];
-        callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);
+  /* Compliance Approal */
+  function getComplianceApprovalList(start_count, callback) {
+    var request = [
+      'GetComplianceApprovalList',
+      { 'start_count': start_count }
+    ];
+    clientApiRequest('client_transaction', request, callback);
+  }
+  function getClientReportFilters(callback) {
+    var request = [
+      'GetClientReportFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, record_count, callback) {
+    var request = [
+      'GetUnitwisecomplianceReport',
+      {
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'business_group_id': business_group_id,
+        'legal_entity_id': legal_entity_id,
+        'division_id': division_id,
+        'unit_id': unit_id,
+        'user_id': user_id,
+        'record_count': record_count
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, record_count, callback) {
+    var request = [
+      'GetAssigneewisecomplianceReport',
+      {
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'business_group_id': business_group_id,
+        'legal_entity_id': legal_entity_id,
+        'division_id': division_id,
+        'unit_id': unit_id,
+        'user_id': user_id,
+        'record_count': record_count
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
+    var request = [
+      'ApproveCompliance',
+      {
+        'compliance_history_id': compliance_history_id,
+        'approval_status': compliance_approval_status,
+        'remarks': remarks,
+        'next_due_date': next_due_date,
+        'validity_date': validity_date
+      }
+    ];
+    callerName = 'client_transaction';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getChartFilters(callback) {
+    var request = [
+      'GetChartFilters',
+      {}
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
+  //     var request = [
+  //         "GetComplianceStatusChart", {
+  //             "country_ids": countryIds,
+  //             "domain_ids": domainIds,
+  //             "filter_type": filterType,
+  //             "filter_ids": filterIds,
+  //             "from_date": fromDate,
+  //             "to_date": toDate,
+  //         }
+  function getComplianceStatusChartData(requestData, callback) {
+    var request = [
+      'GetComplianceStatusChart',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getComplianceStatusDrillDown(requestData, callback) {
+    var request = [
+      'GetComplianceStatusDrillDownData',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getEscalationChartData(requestData, callback) {
+    var request = [
+      'GetEscalationsChart',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getEscalationDrillDown(requestData, callback) {
+    var request = [
+      'GetEscalationsDrillDownData',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getServiceProviderReportFilters(callback) {
+    var request = [
+      'GetServiceProviderReportFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getServiceProviderWiseCompliance(country_id, domain_id, statutory_id, unit_id, service_provider_id, record_count, csv, callback) {
+    var request = [
+      'GetServiceProviderWiseCompliance',
+      {
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'statutory_id': statutory_id,
+        'unit_id': unit_id,
+        'service_provider_id': service_provider_id,
+        'record_count': record_count,
+        'csv': csv
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getComplianceDetailsReportFilters(callback) {
+    var request = [
+      'GetComplianceDetailsReportFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getComplianceDetailsReport(country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, csv, record_count, callback) {
+    var request = [
+      'GetComplianceDetailsReport',
+      {
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'statutory_id': statutory_id,
+        'unit_id': unit_id,
+        'compliance_id': compliance_id,
+        'assignee_id': assignee_id,
+        'from_date': from_date,
+        'to_date': to_date,
+        'compliance_status': compliance_status,
+        'csv': csv,
+        'record_count': record_count
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  /* Trend Chart */
+  function getTrendChart(requestData, callback) {
+    var request = [
+      'GetTrendChart',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getTrendChartDrillDown(requestData, callback) {
+    var request = [
+      'GetTrendChartDrillDownData',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getNotCompliedData(requestData, callback) {
+    var request = [
+      'GetNotCompliedChart',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getNotCompliedDrillDown(requestData, callback) {
+    var request = [
+      'GetNotCompliedDrillDown',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getComplianceApplicabilityChart(requestData, callback) {
+    var request = [
+      'GetComplianceApplicabilityStatusChart',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getComplianceApplicabilityDrillDown(requestData, callback) {
+    var request = [
+      'GetComplianceApplicabilityStatusDrillDown',
+      requestData
+    ];
+    var callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  /* Settings */
+  function getSettings(callback) {
+    var request = [
+      'GetSettings',
+      {}
+    ];
+    var callerName = 'client_admin_settings';
+    clientApiRequest(callerName, request, callback);
+  }
+  function updateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days, callback) {
+    var request = [
+      'UpdateSettings',
+      {
+        'is_two_levels_of_approval': is_two_levels_of_approval,
+        'assignee_reminder_days': assignee_reminder_days,
+        'escalation_reminder_In_advance_days': escalation_reminder_In_advance_days,
+        'escalation_reminder_days': escalation_reminder_days
+      }
+    ];
+    var callerName = 'client_admin_settings';
+    clientApiRequest(callerName, request, callback);
+  }
+  /* Notifications */
+  function getNotifications(notification_type, start_count, callback) {
+    callerName = 'client_dashboard';
+    var request = [
+      'GetNotifications',
+      {
+        'notification_type': notification_type,
+        'start_count': start_count
+      }
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  function updateNotificationStatus(notification_id, has_read, callback) {
+    callerName = 'client_dashboard';
+    var request = [
+      'UpdateNotificationStatus',
+      {
+        'notification_id': notification_id,
+        'has_read': has_read
+      }
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  /* Get Compliance List*/
+  function getCurrentComplianceDetail(current_start_count, callback) {
+    callerName = 'client_user';
+    var request = [
+      'GetCurrentComplianceDetail',
+      { 'current_start_count': current_start_count }
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  function getUpcomingComplianceDetail(upcoming_start_count, callback) {
+    callerName = 'client_user';
+    var request = [
+      'GetUpcomingComplianceDetail',
+      { 'upcoming_start_count': upcoming_start_count }
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  /* Risk Report */
+  function getRiskReportFilters(callback) {
+    var request = [
+      'GetRiskReportFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_name, statutory_status, csv, recordCount, callback) {
+    var request = [
+      'GetRiskReport',
+      {
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'business_group_id': business_group_id,
+        'legal_entity_id': legal_entity_id,
+        'division_id': division_id,
+        'unit_id': unit_id,
+        'level_1_statutory_name': level_1_statutory_name,
+        'statutory_status': statutory_status,
+        'csv': csv,
+        'record_count': recordCount
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function updateComplianceDetail(compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks, callback) {
+    callerName = 'client_user';
+    var request = [
+      'UpdateComplianceDetail',
+      {
+        'compliance_history_id': compliance_history_id,
+        'documents': documents,
+        'completion_date': completion_date,
+        'validity_date': validity_date,
+        'next_due_date': next_due_date,
+        'remarks': remarks
+      }
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  /*Statutory Notifications List*/
+  function getStatutoryNotificationsListFilters(callback) {
+    callerName = 'client_reports';
+    var request = [
+      'GetStatutoryNotificationsListFilters',
+      {}
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, legalEntityId, divisionId, unitId, level1Id, fromdate, todate, csv, callback) {
+    callerName = 'client_reports';
+    var request = [
+      'GetStatutoryNotificationsListReport',
+      {
+        'country_name': countryName,
+        'domain_name': domainName,
+        'business_group_id': businessGroupId,
+        'legal_entity_id': legalEntityId,
+        'division_id': divisionId,
+        'unit_id': unitId,
+        'level_1_statutory_name': level1Id,
+        'from_date': fromdate,
+        'to_date': todate,
+        'csv': csv
+      }
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  /* Reassigned History Report */
+  function getReassignedHistoryReportFilters(callback) {
+    var request = [
+      'GetReassignedHistoryReportFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
+    var request = [
+      'GetReassignedHistoryReport',
+      {
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'unit_id': unit_id,
+        'level_1_statutory_id': level_1_statutory_id,
+        'compliance_id': compliance_id,
+        'user_id': user_id,
+        'from_date': from_date,
+        'to_date': to_date,
+        'csv': csv,
+        'record_count': record_count
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
+    var request = [
+      'GetLoginTrace',
+      {
+        'record_count': record_count,
+        'user_id': user_id,
+        'from_date': from_date,
+        'to_date': to_date
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getComplianceActivityReportFilters(callback) {
+    var request = [
+      'GetComplianceActivityReportFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getComplianceActivityReportData(user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id, compliance_id, from_date, to_date, csv, callback) {
+    var request = [
+      'GetComplianceActivityReport',
+      {
+        'user_type': user_type,
+        'user_id': user_id,
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'level_1_statutory_name': level_1_statutory_name,
+        'unit_id': unit_id,
+        'compliance_id': compliance_id,
+        'from_date': from_date,
+        'to_date': to_date,
+        'csv': csv
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  // Client Details Report
+  function getClientDetailsReportFilters(callback) {
+    var request = [
+      'GetClientDetailsReportFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getClientDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId, unitId, domainIds, csv, start_count, callback) {
+    callerName = 'client_reports';
+    var request = [
+      'GetClientDetailsReportData',
+      {
+        'country_id': countryId,
+        'business_group_id': businessGroupId,
+        'legal_entity_id': legalEntityId,
+        'division_id': divisionId,
+        'unit_id': unitId,
+        'domain_ids': domainIds,
+        'csv': csv,
+        'start_count': start_count
+      }
+    ];
+    clientApiRequest(callerName, request, callback);
+  }
+  function getAssigneewiseComplianesFilters(callback) {
+    var request = [
+      'GetAssigneewiseComplianesFilters',
+      {}
+    ];
+    callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getAssigneewiseComplianes(country_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, csv, callback) {
+    var request = [
+      'GetAssigneeWiseCompliancesChart',
+      {
+        'country_id': country_id,
+        'business_group_id': business_group_id,
+        'legal_entity_id': legal_entity_id,
+        'division_id': division_id,
+        'unit_id': unit_id,
+        'user_id': user_id,
+        'csv': csv
+      }
+    ];
+    callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, callback) {
+    var request = [
+      'GetAssigneewiseYearwiseCompliances',
+      {
+        'country_id': country_id,
+        'unit_id': unit_id,
+        'user_id': user_id
+      }
+    ];
+    callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getAssigneewiseReassignedComplianes(country_id, unit_id, user_id, domain_id, callback) {
+    var request = [
+      'GetAssigneewiseReassignedComplianes',
+      {
+        'country_id': country_id,
+        'unit_id': unit_id,
+        'user_id': user_id,
+        'domain_id': domain_id
+      }
+    ];
+    callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, callback) {
+    var request = [
+      'GetAssigneeWiseComplianceDrillDown',
+      {
+        'country_id': country_id,
+        'assignee_id': assignee_id,
+        'domain_id': domain_id,
+        'year': year,
+        'unit_id': unit_id,
+        'start_count': start_count
+      }
+    ];
+    callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getTaskApplicabilityReportFilters(callback) {
+    var request = [
+      'GetTaskApplicabilityStatusFilters',
+      {}
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getTaskApplicabilityReportData(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_name, applicable_status, csv, record_count, callback) {
+    var request = [
+      'GetComplianceTaskApplicabilityStatusReport',
+      {
+        'country_id': country_id,
+        'domain_id': domain_id,
+        'business_group_id': business_group_id,
+        'legal_entity_id': legal_entity_id,
+        'division_id': division_id,
+        'unit_id': unit_id,
+        'statutory_name': statutory_name,
+        'applicable_status': applicable_status,
+        'csv': csv,
+        'record_count': record_count
+      }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getOnOccurrenceCompliances(start_count, callback) {
+    var request = [
+      'GetOnOccurrenceCompliances',
+      { 'start_count': start_count }
+    ];
+    callerName = 'client_user';
+    clientApiRequest(callerName, request, callback);
+  }
+  function startOnOccurrenceCompliance(compliance_id, start_date, unit_id, duration, callback) {
+    var request = [
+      'StartOnOccurrenceCompliance',
+      {
+        'compliance_id': compliance_id,
+        'start_date': start_date,
+        'unit_id': unit_id,
+        'duration': duration
+      }
+    ];
+    callerName = 'client_user';
+    clientApiRequest(callerName, request, callback);
+  }
+  function exportToCSV(jsonResponse, callback) {
+    var request = [
+      'ExportToCSV',
+      { 'data': jsonResponse }
+    ];
+    callerName = 'client_reports';
+    clientApiRequest(callerName, request, callback);
+  }
+  function getUserwiseCompliances(callback) {
+    var request = [
+      'GetUserwiseCompliances',
+      {}
+    ];
+    callerName = 'client_transaction';
+    clientApiRequest(callerName, request, callback);
+  }
+  function checkContractExpiration(callback) {
+    var request = [
+      'CheckContractExpiration',
+      {}
+    ];
+    callerName = 'client_dashboard';
+    clientApiRequest(callerName, request, callback);
   }
   // Client User Group
   function getClientUserGroups(callback) {
