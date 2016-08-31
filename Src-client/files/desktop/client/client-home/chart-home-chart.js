@@ -356,7 +356,7 @@ function updateTrendChart(data) {
       shared: true,
       backgroundColor: '#FCFFC5',
       headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
-      pointFormat: '({point.y} out of {point.stackTotal})',
+      pointFormat: '({point.point.y} out of {point.stackTotal})',
       formatter: function () {
         var s = '<b>' + this.x + '</b>', sum = 0;
         $.each(this.points, function (i, point) {

@@ -1101,8 +1101,8 @@ class ConvertJsonToCSV(object):
                 " DATE_ADD(%s, INTERVAL 1 DAY) " + \
                 " group by completed_by, tch.unit_id; "
             param = [domain_id, from_date, to_date]
-            condition_val.extend(param)
-            rows = db.select_all(query, condition_val)
+            parameter_list = condition_val + param
+            rows = db.select_all(query, parameter_list)
             columns = [
                 "assignee", "completed_by", "unit_id", "unit_name",
                 "address", "domain_id", "domain_name", "complied",
