@@ -436,7 +436,6 @@ def get_audit_trails(
         tblForms, form_column, form_condition
     )
     forms = None
-    print rows
     form_ids = [int(row["form_id"]) for row in rows]
     forms = return_forms(
         db, ",".join(str(x) for x in form_ids)
