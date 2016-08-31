@@ -787,7 +787,7 @@ def frame_compliance_details_query(
     if len(domain_ids) == 1:
         domain_ids.append(0)
 
-    if chart_year is not None :
+    if chart_year is not None:
         year_condition = get_client_domain_configuration(db, chart_year)[1]
 
         for i, y in enumerate(year_condition):
@@ -797,7 +797,7 @@ def frame_compliance_details_query(
                 year_range_qry += " OR %s " % (y)
         if len(year_condition) > 0:
             year_range_qry = " AND (%s) " % year_range_qry
-        else :
+        else:
             year_range_qry = ""
     else:
         year_range_qry = ""
