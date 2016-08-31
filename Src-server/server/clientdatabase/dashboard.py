@@ -640,17 +640,17 @@ def get_trend_chart_drill_down(
                 history_columns += "tu.employee_name, tc.compliance_task,"
                 history_columns += " tc.compliance_description, "
                 history_columns += " tc.document_name,"
-                history_columns += "tc.compliance_description, "
-                history_columns += "tc.statutory_mapping"
-                history_condition = "due_date between '%s' and '%s'" % (
-                    start_date, end_date
+                history_columns += " tc.compliance_description, "
+                history_columns += " tc.statutory_mapping"
+                history_condition = " due_date between %s and %s"
+                comp_cond, comp_val = db.generate_tuple_condition(
+                    "tch.compliance_id",
+                    [int(x) for x in compliance_ids.split(",")]
                 )
-                history_condition += " and tch.compliance_id in (%s)" % (
-                    compliance_ids
-                )
-                history_condition += " and tch.unit_id = %s" % (
-                    unit_id
-                )
+                history_condition += " AND %s" % comp_cond
+                history_condition += " and tch.unit_id = %s"
+                history_condition_val = [
+                    start_date, end_date, comp_val, unit_id]
                 tables = [
                     tblComplianceHistory,
                     tblUsers, tblCompliances
@@ -664,16 +664,24 @@ def get_trend_chart_drill_down(
                 history_rows = db.get_data_from_multiple_tables(
                     history_columns, tables, aliases,
                     join_type, join_condition,
-                    history_condition,
+                    history_condition, history_condition_val
                 )
                 level_1_statutory_wise_compliances = {}
                 for history_row in history_rows:
-                    assignee_name = "%s-%s" % (history_row[1], history_row[2])
-                    compliance_name = "%s-%s" % (
-                        history_row[5], history_row[3]
-                    )
-                    description = history_row[4]
-                    statutories = history_row[7].split(">>")
+                    assignee_name = history_row["employee_name"]
+                    if history_row["employee_code"] is not None:
+                        assignee_name = "%s-%s" % (
+                            history_row["employee_code"],
+                            history_row["employee_name"]
+                        )
+                    compliance_name = history_row["compliance_task"]
+                    if history_row["document_name"] is not None:
+                        compliance_name = "%s-%s" % (
+                            history_row["document_name"],
+                            history_row["compliance_task"]
+                        )
+                    description = history_row["compliance_description"]
+                    statutories = history_row["statutory_mapping"].split(">>")
                     level_1_statutory = statutories[0]
                     if(
                         level_1_statutory not in
@@ -694,24 +702,24 @@ def get_trend_chart_drill_down(
             division_name = None
             if business_group_id is not None:
                 rows = db.get_data(
-                    tblBusinessGroups, "business_group_name",
+                    tblBusinessGroups, ["business_group_name"],
                     "business_group_id=%s", [business_group_id]
                 )
                 if rows:
-                    business_group_name = rows[0][0]
+                    business_group_name = rows[0]["business_group_name"]
             if division_id is not None:
                 rows = db.get_data(
-                    tblDivisions, "division_name",
+                    tblDivisions, ["division_name"],
                     "division_id=%s", [division_id]
                 )
                 if rows:
-                    division_name = rows[0][0]
+                    division_name = rows[0]["division_name"]
             rows = db.get_data(
-                tblLegalEntities, "legal_entity_name",
+                tblLegalEntities, ["legal_entity_name"],
                 "legal_entity_id=%s", [legal_entity_id]
             )
             if rows:
-                legal_entity_name = rows[0][0]
+                legal_entity_name = rows[0]["legal_entity_name"]
 
             drill_down_data.append(
                 dashboard.TrendDrillDownData(
@@ -2642,12 +2650,13 @@ def get_compliance_history_ids_for_trend_chart(
 ):
     # Units related to the selected country and domain
     unit_columns = "unit_id"
-    unit_condition = "country_id = %s " % (country_id)
-    unit_condition += " AND  find_in_set( " + \
-        " %s, domain_ids) " % (
-            domain_id
-        )
+    unit_condition = "country_id = %s "
     unit_condition_val = [country_id]
+
+    unit_condition += " AND  find_in_set( " + \
+        " %s, domain_ids) "
+    unit_condition_val.append(domain_id)
+
     if filter_type is not None:
         if filter_type == "BusinessGroup":
             unit_condition += " AND business_group_id =%s "
@@ -2659,7 +2668,7 @@ def get_compliance_history_ids_for_trend_chart(
             unit_condition += " AND unit_id =%s "
         unit_condition_val.append(filter_id)
     unit_result_rows = db.get_data(
-        tblUnits, unit_columns, unit_condition
+        tblUnits, unit_columns, unit_condition, unit_condition_val
     )
     unit_rows = []
     for row in unit_result_rows:
