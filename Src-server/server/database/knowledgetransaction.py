@@ -224,10 +224,10 @@ def return_statutory_mappings(db, data, is_report=None):
         statutory_mapping_list = []
         for s_id in statutory_ids:
             s_map_data = STATUTORY_PARENTS.get(int(s_id))
-            # if s_map_data is not None:
-            #     s_map_data = s_map_data[1]
+            if s_map_data is not None:
+                s_map_data = s_map_data[1]
             statutory_mapping_list.append(
-                s_map_data[1]
+                s_map_data
             )
         industry_ids = [
             int(x) for x in d["industry_ids"][:-1].split(',')
