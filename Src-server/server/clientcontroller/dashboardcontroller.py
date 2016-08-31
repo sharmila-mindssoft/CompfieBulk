@@ -218,15 +218,14 @@ def process_trend_chart(db, request, session_user, client_id):
     trend_chart_info = None
     if request.filter_type == "Group":
         trend_chart_info = get_trend_chart(
-            db,
-            request.country_ids, request.domain_ids,
-            client_id
+            db, request.country_ids, request.domain_ids,
+            client_id, session_user
         )
     else:
         trend_chart_info = get_filtered_trend_data(
-            db,
-            request.country_ids, request.domain_ids,
-            request.filter_type, request.filter_ids, client_id
+            db, request.country_ids, request.domain_ids,
+            request.filter_type, request.filter_ids, client_id,
+            session_user
         )
     years = trend_chart_info[0]
     data = trend_chart_info[1]
