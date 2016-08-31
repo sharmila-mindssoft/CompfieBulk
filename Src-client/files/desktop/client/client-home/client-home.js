@@ -1307,6 +1307,7 @@ function accordianType(idtype, toggleClass, contentClass) {
     $('.' + contentClass).not($(this).next()).slideUp('fast');
   });
 }
+
 function updateAssigneeWiseComplianceFiltersList(data) {
   $('.table-assignee-wise-compliance-list').hide();
   $('.grid-table-dash1').hide();
@@ -1320,25 +1321,11 @@ function updateAssigneeWiseComplianceFiltersList(data) {
   USERLIST = data.users;
 }
 
-function updateAssigneeWiseComplianceFiltersList(data)
-{
-    $(".table-assignee-wise-compliance-list").hide();
-    $(".grid-table-dash1").hide();
-    $('.popupoverlay').css("visibility","hidden");
-    $('.popupoverlay').css("opacity","0");
-    COUNTRYLIST = data['countries'];
-    BUSINESSGROUPSLIST = data['business_groups'];
-    LEGALENTITYLIST = data['legal_entities'];
-    DIVISIONLIST = data['divisions'];
-    UNITLIST = data['units'];
-    USERLIST = data['users'];
-}
-
 function showFiltersResults(csv) {
     var country = $("#country").val().trim();
     var countryval = $("#countryval").val().trim();
-    if(countryval == ""){
-        displayMessage(message.country_required);
+    if(countryval == "" || countryval == null){
+        $(".assignee-chart-error-message").text(message.country_required);
         return
     }else{
         var businessgroupid = parseInt($("#businessgroupid").val());
@@ -1374,7 +1361,7 @@ function showFiltersResults(csv) {
                 chart_data = data['chart_data'];
                 download_url = data['link'];
                 if(chart_data){
-                    updateAssigneeWiseComplianceList(chart_data);    
+                    updateAssigneeWiseComplianceList(chart_data);
                 }else if(download_url){
                     window.open(download_url, '_blank');
                 }else{

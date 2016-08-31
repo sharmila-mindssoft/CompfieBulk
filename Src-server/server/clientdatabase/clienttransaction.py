@@ -2247,7 +2247,7 @@ def reassign_compliance(db, request, session_user):
             compliance_names
         )
         cc = None
-    else:
+    else :
         if concurrence is None:
             action = " Following compliances has reassigned to " + \
                 " assignee - %s and approval-person - %s <br> %s" % (
