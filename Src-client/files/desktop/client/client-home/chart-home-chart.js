@@ -1628,13 +1628,17 @@ function loadEscalationChart() {
 function loadTrendChart() {
   console.log("inside load Trend chart");
   var filter_type = chartInput.getFilterType();
+  var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
+  if (filterType == 'Group') {
+    filter_ids = chartInput.getCountries();
+  }
   var requestData = {
     'country_ids': chartInput.getCountries(),
     'domain_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': [1]
+    'filter_ids': filter_ids
   };
   console.log("going to call getTrendChart api");
   client_mirror.getTrendChart(requestData, function (status, data) {
