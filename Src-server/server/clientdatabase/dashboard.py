@@ -2659,8 +2659,7 @@ def need_to_display_deletion_popup(db):
 
 
 def get_compliance_history_ids_for_trend_chart(
-    db,
-    country_id, domain_id, client_id,
+    db, country_id, domain_id, client_id,
     filter_id=None, filter_type=None
 ):
     # Units related to the selected country and domain
