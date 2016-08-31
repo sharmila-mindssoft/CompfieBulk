@@ -215,6 +215,7 @@ function showmorerecords() {
       'year': parseInt(year)
     };
     $('.btn-back').on('click', function () {
+      console.log("back button clicked");
       loadTrendChart();
     });
     client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
@@ -1742,6 +1743,7 @@ function loadTrendChartDrillDown(year) {
     'record_count': SNO
   };
   $('.btn-back').on('click', function () {
+    console.log("back button clicked")
     loadTrendChart();
   });
   client_mirror.getTrendChartDrillDown(requestData, function (status, data) {

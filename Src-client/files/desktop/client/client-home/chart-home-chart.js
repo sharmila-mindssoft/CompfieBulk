@@ -386,7 +386,8 @@ function updateTrendChart(data) {
     loadTrendChartDrillDown(value);
     $('.btn-back').show();
     $('.btn-back').on('click', function () {
-      updateTrendChart(data);
+      // updateTrendChart(data);
+      loadTrendChart();
       $('.btn-back').hide();
     });  // setChart(value);
   });
@@ -1625,6 +1626,7 @@ function loadEscalationChart() {
   });
 }
 function loadTrendChart() {
+  console.log("inside load Trend chart");
   var filter_type = chartInput.getFilterType();
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
@@ -1634,6 +1636,7 @@ function loadTrendChart() {
     'filter_type': filterType,
     'filter_ids': [1]
   };
+  console.log("going to call getTrendChart api");
   client_mirror.getTrendChart(requestData, function (status, data) {
     TREND_CHART_DATA = data;
     updateTrendChart(data);
