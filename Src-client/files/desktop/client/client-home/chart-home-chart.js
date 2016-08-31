@@ -1218,7 +1218,6 @@ function parseComplianceStatusApiInput() {
   return requestData;
 }
 function prepareComplianceStatusChartData(chart_data) {
-  console.log(chart_data);
   // var currentYear = (new Date()).getFullYear();
   // var yearInput = chartInput.getCurrentYear()
   chartYear = chartInput.getChartYear();
@@ -1434,6 +1433,7 @@ function prepareTrendChartData(source_data) {
   for (var i = 0; i < source_data.data.length; i++) {
     chartData = source_data.data[i];
     var filter_type_id = chartData.filter_id;
+    var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)
       continue;
     var filterTypeName = getFilterTypeName(filter_type_id);
@@ -1626,7 +1626,6 @@ function loadEscalationChart() {
   });
 }
 function loadTrendChart() {
-  console.log("inside load Trend chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
@@ -1640,7 +1639,6 @@ function loadTrendChart() {
     'filter_type': filterType,
     'filter_ids': filter_ids
   };
-  console.log("going to call getTrendChart api");
   client_mirror.getTrendChart(requestData, function (status, data) {
     TREND_CHART_DATA = data;
     updateTrendChart(data);
