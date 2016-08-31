@@ -75,7 +75,7 @@ class API(object):
             io_loop,
             knowledge_server_address,
             http_client,
-            120,
+            100,
             self.server_added
         )
         self._databases = {}
@@ -107,14 +107,14 @@ class API(object):
         # self._databases = {}
         try:
             #
-            # for company_id, db in self._databases.iteritems():
-            #     db.close()
+            for company_id, db in self._databases.iteritems():
+                db.close()
 
-            # for company_id, rep_man in self._replication_managers.iteritems():
-            #     rep_man.stop()
+            for company_id, rep_man in self._replication_managers.iteritems():
+                rep_man.stop()
 
-            # self._databases = {}
-            # self._replication_managers = {}
+            self._databases = {}
+            self._replication_managers = {}
             # print servers
             for company_id, company in servers.iteritems():
 
@@ -155,6 +155,7 @@ class API(object):
             # After database connection client poll
 
             def client_added(clients):
+                print clients
                 for c, client in clients.iteritems():
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
