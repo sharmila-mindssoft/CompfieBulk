@@ -486,36 +486,51 @@ def get_filtered_trend_data(
                 start_end_dates = domain_wise_timeline[1]
                 for index, dates in enumerate(start_end_dates):
                     columns = "count(*) as total, " + \
-                        " sum(case when approve_status is null then 1 " + \
-                        " else 0 end) as complied"
-                    condition = "due_date between '{}' and '{}'".format(
+                        " sum(case when approve_status is null then 0 " + \
+                        " else 1 end) as complied"
+                    condition = "due_date between %s and %s "
+                    condition_val = [
                         dates["start_date"], dates["end_date"]
-                    )
+                    ]
                     fn = get_compliance_history_ids_for_trend_chart
                     compliance_history_ids = fn(
                         db, country_id, domain_id, client_id,
                         filter_id, filter_type
                     )
-
                     if(
                         compliance_history_ids[0] is not None and
                         compliance_history_ids[2] is not None
                     ):
-                        condition += " and compliance_history_id in (%s)"
-                        condition += " and unit_id in (%s)"
-                        condition_val = [
-                            compliance_history_ids[0],
-                            compliance_history_ids[2]
-                        ]
+                        (
+                            comp_hist_cond, comp_hist_cond_val
+                        ) = db.generate_tuple_condition(
+                            "compliance_history_id",
+                            [
+                                int(x) for x in compliance_history_ids[0].split(",")
+                            ]
+                        )
+                        (
+                            unit_cond, unit_cond_val
+                        ) = db.generate_tuple_condition(
+                            "unit_id",
+                            [
+                                int(x) for x in compliance_history_ids[2].split(",")
+                            ]
+                        )
+                        condition += " and %s " % comp_hist_cond
+                        condition += " and %s " % unit_cond
+                        condition_val.extend(
+                            [comp_hist_cond_val, unit_cond_val]
+                        )
                         rows = db.get_data(
                             tblComplianceHistory, columns,
                             condition, condition_val
                         )
                         if len(rows) > 0:
                             row = rows[0]
-                            total_compliances = int(row[0])
-                            complied_comp = int(row[1]) if (
-                                row[1] != None) else 0
+                            total_compliances = int(row["total"])
+                            complied_comp = int(row["complied"]) if (
+                                row["complied"] != None) else 0
                             year_wise_count[index][0] += total_compliances if(
                                 total_compliances is not None) else 0
                             year_wise_count[index][1] += complied_comp if(
@@ -2110,8 +2125,8 @@ def get_assigneewise_compliances_list(
             " DATE_ADD(%s, INTERVAL 1 DAY) " + \
             " group by completed_by, tch.unit_id; "
         param = [domain_id, from_date, to_date]
-        condition_val.extend(param)
-        rows = db.select_all(query, condition_val)
+        parameter_list = condition_val + param
+        rows = db.select_all(query, parameter_list)
         columns = [
             "assignee", "completed_by", "unit_id", "unit_name",
             "address", "domain_id", "domain_name", "complied",
@@ -2644,8 +2659,7 @@ def need_to_display_deletion_popup(db):
 
 
 def get_compliance_history_ids_for_trend_chart(
-    db,
-    country_id, domain_id, client_id,
+    db, country_id, domain_id, client_id,
     filter_id=None, filter_type=None
 ):
     # Units related to the selected country and domain
