@@ -2105,10 +2105,20 @@ def get_assigneewise_compliances_list(
             " as complied, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date > now()) then 1 else 0 end) as Inprogress, " + \
+            " tch.due_date >= now() and frequency_id=4) " + \
+            "  then 1 else 0 end) as OnOccurrence_Inprogress, " + \
+            " sum(case when ((approve_status = 0 " + \
+            " or approve_status is null) and frequency_id!=4 and " + \
+            " tch.due_date >= current_date) then 1 else 0 end) " + \
+            " as Inprogress, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date < now()) then 1 else 0 end) as NotComplied, " + \
+            " tch.due_date < now() and frequency_id=4) " + \
+            " then 1 else 0 end) as OnOccurrence_NotComplied, " + \
+            " sum(case when ((approve_status = 0 " + \
+            " or approve_status is null) and " + \
+            " tch.due_date < current_date and frequency_id != 4) " + \
+            " then 1 else 0 end) as NotComplied, " + \
             " sum(case when (approve_status = 1 " + \
             " and completion_date > tch.due_date and " + \
             " (is_reassigned = 0 or is_reassigned is null) ) " + \
@@ -2121,7 +2131,8 @@ def get_assigneewise_compliances_list(
             " tch.compliance_id = tac.compliance_id " + \
             " AND tch.unit_id = tac.unit_id) " + \
             " INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id) " + \
-            " INNER JOIN tbl_users tus ON (tus.user_id = tch.completed_by) " + \
+            " INNER JOIN tbl_users tus ON " + \
+            " (tus.user_id = tch.completed_by) " + \
             " INNER JOIN tbl_compliances tc " + \
             " ON (tac.compliance_id = tc.compliance_id) " + \
             " WHERE " + condition + " AND domain_id = %s " + \
@@ -2135,7 +2146,9 @@ def get_assigneewise_compliances_list(
         columns = [
             "assignee", "completed_by", "unit_id", "unit_name",
             "address", "domain_id", "domain_name", "complied",
-            "inprogress", "not_complied", "delayed", "delayed_reassigned"
+            "on_occurrence_inprogress", "inprogress",
+            "on_occurrence_not_complied", "not_complied",
+            "delayed", "delayed_reassigned"
         ]
         assignee_wise_compliances = convert_to_dict(rows, columns)
         for compliance in assignee_wise_compliances:
@@ -2153,10 +2166,14 @@ def get_assigneewise_compliances_list(
                     "domain_wise": []
                 }
             total_compliances = int(
-                compliance["complied"]) + int(compliance["inprogress"])
+                compliance["complied"]) + int(
+                    compliance["on_occurrence_inprogress"]) + int(
+                    compliance["inprogress"])
             total_compliances += int(
                 compliance["delayed"]) + int(compliance["delayed_reassigned"])
-            total_compliances += int(compliance["not_complied"])
+            total_compliances += int(
+                compliance["not_complied"]) + int(
+                compliance["on_occurrence_not_complied"])
             result[unit_name]["assignee_wise"][assignee]["domain_wise"].append(
                 dashboard.DomainWise(
                     domain_id=domain_id,
@@ -2165,8 +2182,12 @@ def get_assigneewise_compliances_list(
                     complied_count=int(compliance["complied"]),
                     assigned_count=int(compliance["delayed"]),
                     reassigned_count=int(compliance["delayed_reassigned"]),
-                    inprogress_compliance_count=int(compliance["inprogress"]),
-                    not_complied_count=int(compliance["not_complied"])
+                    inprogress_compliance_count=int(
+                        compliance["inprogress"]) + int(
+                        compliance["on_occurrence_inprogress"]),
+                    not_complied_count=int(
+                        compliance["not_complied"]) + int(
+                        compliance["on_occurrence_not_complied"])
                 )
             )
     chart_data = []
