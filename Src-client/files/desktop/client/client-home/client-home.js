@@ -205,17 +205,25 @@ function showmorerecords() {
     });
   } else if (getcharttype == 'trend_chart') {
     var filter_type = chartInput.getFilterType();
+    var filter_ids = getFilterIds(filter_type);
     var filterType = filter_type.replace('_', '-');
     filterType = hyphenatedToUpperCamelCase(filterType);
+    if (filterType == 'Group') {
+      filter_ids = chartInput.getCountries();
+    }
+    console.log("year: " + chartInput.chartYear);
+    
+    var year = chartInput.chartYear;
     var requestData = {
       'country_ids': chartInput.getCountries(),
       'domain_ids': chartInput.getDomains(),
       'filter_type': filterType,
-      'filter_ids': [1],
+      'filter_ids': filter_ids,
       'year': parseInt(year)
     };
     $('.btn-back').on('click', function () {
-      console.log("back button clicked");
+      $('.graph-container.compliance-status').show();
+      $('.drilldown-container').hide();
       loadTrendChart();
     });
     client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
@@ -1718,6 +1726,10 @@ function loadEscalationDrillDown(year) {
 }
 function loadTrendChartDrillDown(year) {
   SNO = 0;
+  chartInput.chartYear = year;
+  console.log("year: "+year);
+  console.log("chartInput.chartYear: "+chartInput.chartYear);
+  console.log("chartInput.getChartYear(): "+chartInput.getChartYear());
   var filter_type = chartInput.getFilterType();
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
@@ -1730,8 +1742,9 @@ function loadTrendChartDrillDown(year) {
     'record_count': SNO
   };
   $('.btn-back').on('click', function () {
-    console.log("back button clicked")
-    loadTrendChart();
+     $('.graph-container.compliance-status').show();
+     $('.drilldown-container').hide();
+     loadTrendChart();
   });
   client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
     TREND_CHART_DATA = data;
