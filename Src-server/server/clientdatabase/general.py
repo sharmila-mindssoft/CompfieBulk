@@ -731,17 +731,15 @@ def convert_datetime_to_date(val):
         return val
 
 
-def create_datetime_summary_text(r, diff, only_hours=False):
+def create_datetime_summary_text(r, diff, only_hours=False, ext=None):
     print
     print r
     print diff
     summary_text = ""
     if(only_hours):
-        print "inside only hours"
         if(
             abs(r.hours) > 0 or abs(r.months) or abs(r.years) > 0
         ):
-            print "inside if"
             hours = abs(r.hours)
             if abs(r.months) > 0 or abs(r.years) > 0:
                 hours = (diff.days * 24) + hours
@@ -749,15 +747,20 @@ def create_datetime_summary_text(r, diff, only_hours=False):
                 hours = (abs(r.days) * 24) + hours
             summary_text += " %s.%s hour(s) " % (hours, abs(r.minutes))
         elif r.minutes > 0:
-            print "inside else"
             summary_text += " %s minute(s) " % r.minutes
     else:
         if abs(r.years) > 0 or abs(r.months) > 0:
-            summary_text += " %s day(s) " % abs(diff.days)
+            days = abs(diff.days)
+            if ext == "left":
+                days += 1
+            summary_text += " %s day(s) " % days
         # if abs(r.months) > 0:
         #     summary_text += " %s month(s) " % abs(r.months)
         elif abs(r.days) >= 0:
-            summary_text += " %s day(s) " % abs(r.days)
+            days = abs(diff.days)
+            if ext == "left":
+                days += 1
+            summary_text += " %s day(s) " % days
     print "summary_text %s" % summary_text
     return summary_text
 
@@ -767,6 +770,9 @@ def calculate_ageing(
 ):
     print "inside calculate ageing: %s" % frequency_type
     current_time_stamp = get_date_time_in_date()
+    print "due_date :%s, completion_date: %s, current_date: %s" % (
+        due_date, completion_date, current_time_stamp
+    )
     compliance_status = "-"
     if frequency_type == "On Occurrence" or frequency_type in [4, "4"]:
         print "duration type : %s" % duration_type
@@ -786,13 +792,13 @@ def calculate_ageing(
                     )
                     compliance_status = (
                             summary_text + create_datetime_summary_text(
-                                r, diff, only_hours=True
+                                r, diff, only_hours=True, ext=summary_text
                             )
                         )
                 else:
                     compliance_status = (
                         summary_text + create_datetime_summary_text(
-                            r, diff, only_hours=False
+                            r, diff, only_hours=False, ext=summary_text
                         )
                     )
                 return r.days, compliance_status
@@ -803,15 +809,23 @@ def calculate_ageing(
                 r = relativedelta.relativedelta(
                     due_date, current_time_stamp
                 )
-                compliance_status = (
-                        summary_text + create_datetime_summary_text(
-                            r, diff, only_hours=True
+                # compliance_status = (
+                #         summary_text + create_datetime_summary_text(
+                #             r, diff, only_hours=True ext="left"
+                #         )
+                #     )
+                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                    compliance_status = " %s left" % (
+                        create_datetime_summary_text(
+                            r, diff, only_hours=True, ext="left"
                         )
                     )
-                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
-                    compliance_status += " left"
                 else:
-                    compliance_status = " Overdue by " + compliance_status
+                    compliance_status = " Overdue by %s" % (
+                        create_datetime_summary_text(
+                            r, diff, only_hours=True, ext="Overdue by"
+                        )
+                    )
             else:
                 r = relativedelta.relativedelta(
                     convert_datetime_to_date(due_date),
@@ -823,9 +837,17 @@ def calculate_ageing(
                         )
                     )
                 if r.days >= 0:
-                    compliance_status += " left"
+                    compliance_status = " %s left" % (
+                        create_datetime_summary_text(
+                            r, diff, only_hours=False, ext="left"
+                        )
+                    )
                 else:
-                    compliance_status = " Overdue by " + compliance_status
+                    compliance_status = " Overdue by %s " % (
+                        create_datetime_summary_text(
+                            r, diff, only_hours=False, ext="Overdue by"
+                        )
+                    )
             return r.days, compliance_status
     else:
         if completion_date is not None:  # Completed compliances
@@ -839,7 +861,7 @@ def calculate_ageing(
                 diff = abs(due_date-completion_date)
                 compliance_status = (
                     "Delayed by " + create_datetime_summary_text(
-                        r, diff, only_hours=False)
+                        r, diff, only_hours=False, ext="Delayed by")
                 )
                 return r.days, compliance_status
         else:
@@ -849,13 +871,21 @@ def calculate_ageing(
                     current_time_stamp)
                 r = relativedelta.relativedelta(due_date, current_time_stamp)
                 diff = abs(due_date-current_time_stamp)
-                compliance_status = create_datetime_summary_text(
-                    r, diff, only_hours=False
-                )
+                # compliance_status = create_datetime_summary_text(
+                #     r, diff, only_hours=False, ext="left"
+                # )
                 if r.days < 0:
-                    compliance_status = "Overdue by " + compliance_status
+                    compliance_status = "Overdue by %s " % (
+                        create_datetime_summary_text(
+                            r, diff, only_hours=False, ext="Overdue by"
+                        )
+                    )
                 else:
-                    compliance_status = compliance_status + " left"
+                    compliance_status = " %s left" % (
+                        create_datetime_summary_text(
+                            r, diff, only_hours=False, ext="left"
+                        )
+                    )
                 return r.days, compliance_status
     return 0, compliance_status
 
