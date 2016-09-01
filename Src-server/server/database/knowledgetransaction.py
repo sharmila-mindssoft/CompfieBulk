@@ -227,7 +227,12 @@ def return_statutory_mappings(db, data, is_report=None):
             if s_map_data is not None:
                 s_map_data = s_map_data[1]
             else :
-                s_map_data = ""
+                get_statutory_master(db)
+                s_map_data = STATUTORY_PARENTS.get(int(s_id))
+                if s_map_data is not None :
+                    s_map_data = s_map_data[1]
+                else :
+                    s_map_data = ""
             statutory_mapping_list.append(
                 s_map_data
             )
