@@ -2490,9 +2490,29 @@ def fetch_assigneewise_compliances_drilldown_data(
         "            IF ( " + \
         "                 ((approve_status = 0 " + \
         "                 or approve_status is null) and " + \
-        "                due_date > now()), " + \
-        "                'Inprogress', " + \
-        "                'NotComplied' " + \
+        "                due_date >= now() and frequency_id=4 and " + \
+        "                 duration_type_id=2), " + \
+        "                'On_occurrence_Inprogress', " + \
+        "                ( " + \
+        "                  IF( " + \
+        "                       ((approve_status = 0 " + \
+        "                       or approve_status is null) and " + \
+        "                       due_date >= current_date and " + \
+        "                        (frequency_id!=4 or (frequency_id=4 " + \
+        "                          and duration_type_id!=2)))," + \
+        "                       'Inprogress'," + \
+        "                       ( " + \
+        "                           IF( " + \
+        "                               ((approve_status = 0 " + \
+        "                               or approve_status is null) and " + \
+        "                               due_date < now() and frequency_id=4 and " + \
+        "                               duration_type_id=2)," + \
+        "                               'On_occurrence_NotComplied'," + \
+        "                               'NotComplied' " + \
+        "                           )" + \
+        "                       )" + \
+        "                   )" + \
+        "                )" + \
         "            ) " + \
         "        ) " + \
         "    ) " + \
@@ -2545,14 +2565,14 @@ def return_assignee_wise_compliance_drill_down_data(result):
             )
         level_1_statutory = compliance["statutory_mapping"].split(">>")[0]
 
-        current_list = not_complied_compliances
         if compliance_status == "Complied":
             current_list = complied_compliances
         elif compliance_status == "Delayed":
             current_list = delayed_compliances
-        elif compliance_status == "Inprogress":
+        elif compliance_status in ["Inprogress", "On_occurrence_Inprogress"]:
             current_list = inprogress_compliances
-
+        elif compliance_status in ["NotComplied", "On_occurrence_NotComplied"]:
+            current_list = not_complied_compliances
         if level_1_statutory not in current_list:
             current_list[level_1_statutory] = []
 
