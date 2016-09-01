@@ -732,9 +732,6 @@ def convert_datetime_to_date(val):
 
 
 def create_datetime_summary_text(r, diff, only_hours=False, ext=None):
-    print
-    print r
-    print diff
     summary_text = ""
     if(only_hours):
         if(
@@ -761,21 +758,15 @@ def create_datetime_summary_text(r, diff, only_hours=False, ext=None):
             if ext == "left":
                 days += 1
             summary_text += " %s day(s) " % days
-    print "summary_text %s" % summary_text
     return summary_text
 
 
 def calculate_ageing(
     due_date, frequency_type=None, completion_date=None, duration_type=None
 ):
-    print "inside calculate ageing: %s" % frequency_type
     current_time_stamp = get_date_time_in_date()
-    print "due_date :%s, completion_date: %s, current_date: %s" % (
-        due_date, completion_date, current_time_stamp
-    )
     compliance_status = "-"
     if frequency_type == "On Occurrence" or frequency_type in [4, "4"]:
-        print "duration type : %s" % duration_type
         if completion_date is not None:  # Completed compliances
             r = relativedelta.relativedelta(
                 convert_datetime_to_date(due_date),
