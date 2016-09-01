@@ -356,7 +356,7 @@ function updateTrendChart(data) {
       shared: true,
       backgroundColor: '#FCFFC5',
       headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
-      pointFormat: '({point.y} out of {point.stackTotal})',
+      pointFormat: '({point.point.y} out of {point.stackTotal})',
       formatter: function () {
         var s = '<b>' + this.x + '</b>', sum = 0;
         $.each(this.points, function (i, point) {
@@ -1218,7 +1218,6 @@ function parseComplianceStatusApiInput() {
   return requestData;
 }
 function prepareComplianceStatusChartData(chart_data) {
-  console.log(chart_data);
   // var currentYear = (new Date()).getFullYear();
   // var yearInput = chartInput.getCurrentYear()
   chartYear = chartInput.getChartYear();
@@ -1434,6 +1433,7 @@ function prepareTrendChartData(source_data) {
   for (var i = 0; i < source_data.data.length; i++) {
     chartData = source_data.data[i];
     var filter_type_id = chartData.filter_id;
+    var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)
       continue;
     var filterTypeName = getFilterTypeName(filter_type_id);
@@ -1626,17 +1626,19 @@ function loadEscalationChart() {
   });
 }
 function loadTrendChart() {
-  console.log("inside load Trend chart");
   var filter_type = chartInput.getFilterType();
+  var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
+  if (filterType == 'Group') {
+    filter_ids = chartInput.getCountries();
+  }
   var requestData = {
     'country_ids': chartInput.getCountries(),
     'domain_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': [1]
+    'filter_ids': filter_ids
   };
-  console.log("going to call getTrendChart api");
   client_mirror.getTrendChart(requestData, function (status, data) {
     TREND_CHART_DATA = data;
     updateTrendChart(data);
