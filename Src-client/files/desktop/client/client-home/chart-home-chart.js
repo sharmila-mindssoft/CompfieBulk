@@ -361,9 +361,9 @@ function updateTrendChart(data) {
         var s = '<b>' + this.x + '</b>', sum = 0;
         $.each(this.points, function (i, point) {
           total = point.point.t;
-          tasks = point.y / 100 * total;
+          tasks = Math.round(point.point.y * 100 / total, 2);
           color = point.color;
-          s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + point.y + '% (' + Math.round(tasks) + ' out of ' + total + ')';
+          s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';
           sum += point.y;
         });
         return s;
