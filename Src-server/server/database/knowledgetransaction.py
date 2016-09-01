@@ -711,6 +711,7 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
             continue
         else:
             saved_file = get_saved_format_file(db, compliance_id)
+        print saved_file
         provision = data.statutory_provision
         compliance_task = data.compliance_task
         description = data.description
@@ -718,29 +719,29 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
         file_list = data.format_file_list
         file_name = ""
         file_size = 0
-        file_content = ""
+        # file_content = ""
         saved_file_name = saved_file[0]
-
+        print file_list
+        print saved_file_name
         if len(saved_file_name) == 0:
             saved_file_name = None
         if file_list is None:
             if saved_file_name is not None:
                 remove_uploaded_file(file_path + "/" + saved_file_name)
         else:
-            if saved_file_name is None:
-                file_list = file_list[0]
-                file_name = file_list.file_name
-                file_size = file_list.file_size
-                file_content = file_list.file_content
-                is_format = True
-            else:
-                file_list = file_list[0]
-                file_name = file_list.file_name
+            file_list = file_list[0]
+            file_name = file_list.file_name
+            file_size = file_list.file_size
+            # file_content = file_list.file_content
+
+            if saved_file_name is not None:
+                print saved_file_name
+                print file_name
                 if len(file_name) == 0:
                     file_name = None
-
-                file_size = file_list.file_size
-                file_content = file_list.file_content
+                    remove_uploaded_file(file_path + "/" + saved_file_name)
+                elif file_name != saved_file_name :
+                    remove_uploaded_file(file_path + "/" + saved_file_name)
 
         penal_consequences = data.penal_consequences
         compliance_frequency = data.frequency_id
