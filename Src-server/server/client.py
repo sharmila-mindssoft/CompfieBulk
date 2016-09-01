@@ -54,7 +54,7 @@ class ClientReplicationManager(object) :
         self._io_loop.add_callback(self._poll)
 
     def _poll(self) :
-        # print "client list call"
+        print "client list call"
         # self._http_client.fetch(self._request_body, self._poll_response)
 
         def on_timeout():
