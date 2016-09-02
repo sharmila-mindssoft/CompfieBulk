@@ -822,12 +822,12 @@ def calculate_ageing(
                     convert_datetime_to_date(due_date),
                     convert_datetime_to_date(current_time_stamp)
                 )
-                compliance_status = (
-                        summary_text + create_datetime_summary_text(
-                            r, diff, only_hours=False
-                        )
-                    )
-                if r.days >= 0:
+                # compliance_status = (
+                #         summary_text + create_datetime_summary_text(
+                #             r, diff, only_hours=False
+                #         )
+                #     )
+                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
                             r, diff, only_hours=False, ext="left"
@@ -865,7 +865,7 @@ def calculate_ageing(
                 # compliance_status = create_datetime_summary_text(
                 #     r, diff, only_hours=False, ext="left"
                 # )
-                if r.days < 0:
+                if r.days < 0 or r.months < 0 or r.years < 0:
                     compliance_status = "Overdue by %s " % (
                         create_datetime_summary_text(
                             r, diff, only_hours=False, ext="Overdue by"

@@ -3,14 +3,12 @@ from protocol import (dashboard, login, general, clientreport)
 from server.jsontocsvconverter import ConvertJsonToCSV
 from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
-
 from server.clientdatabase.general import (
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_group_name,
     get_country_wise_domain_month_range,
-    get_client_users, get_units_for_user,
-    get_assignees
+    get_units_for_user, get_assignees
     )
 __all__ = [
     "process_client_dashboard_requests"

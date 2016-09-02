@@ -20,6 +20,57 @@ def get_last_7_years():
     return seven_years_list
 
 
+def get_country_domain_timelines_dict(
+    db, country_ids, domain_ids, years, client_id=None
+):
+    country_wise_timelines = {}
+    for country_id in country_ids:
+        domain_wise_timeline = {}
+        for domain_id in domain_ids:
+            columns = "period_from, period_to"
+            condition = "country_id = %s and domain_id = %s "
+            condition_val = [country_id, domain_id]
+            rows = db.get_data(
+                tblClientConfigurations, columns,
+                condition, condition_val
+            )
+            if len(rows) > 0:
+                period_from = rows[0]["period_from"]
+                period_to = rows[0]["period_to"]
+                start_end_dates = {}
+                for year in years:
+                    start_year = year
+                    end_year = year+1
+                    start_date_string = None
+                    end_date_string = None
+                    start_date_string = "1-%s-%s" % (
+                        db.string_months[period_from],
+                        start_year
+                    )
+                    start_date = string_to_datetime(start_date_string)
+                    end_date_string = "%s-%s-%s" % (
+                        db.end_day_of_month[period_to],
+                        db.string_months[period_to],
+                        end_year
+                    )
+                    end_date = string_to_datetime(end_date_string)
+                    r = relativedelta.relativedelta(
+                        convert_datetime_to_date(end_date),
+                        convert_datetime_to_date(start_date)
+                    )
+                    if r.years > 0:
+                        end_date = (
+                            end_date - relativedelta.relativedelta(years=1)
+                        )
+                    start_end_dates[year] = {
+                        "start_date": start_date,
+                        "end_date": end_date
+                    }
+                domain_wise_timeline[domain_id] = start_end_dates
+        country_wise_timelines[country_id] = domain_wise_timeline
+    return country_wise_timelines
+
+
 def get_country_domain_timelines(
     db, country_ids, domain_ids, years, client_id=None
 ):
