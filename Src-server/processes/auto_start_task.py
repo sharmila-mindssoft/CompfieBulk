@@ -77,6 +77,8 @@ class AutoStart(Database):
         super(AutoStart, self).__init__(
             c_db_ip, c_db_port, c_db_username, c_db_password, c_db_name
         )
+        self._c_db_ip = c_db_ip
+        self._c_db_name = c_db_name
         self.connect()
         self.client_id = client_id
         self.current_date = current_date
@@ -360,13 +362,20 @@ class AutoStart(Database):
     def check_service_provider_contract_period(self):
         query = "UPDATE tbl_service_providers set is_active = 0 WHERE \
         contract_from >= now() and contract_to <= now()"
-        self.execute(query)
+        try :
+            self.execute(query)
+        except Exception, e :
+            print e
 
     def start_process(self):
+        if self._connection is None :
+            details = "%s, %s" % (self._c_db_ip, self._c_db_name)
+            logger.logProcessError("connection not found", details)
+            return
         try :
             self.begin()
             self.start_new_task()
-            self.check_service_provider_contract_period()
+            # self.check_service_provider_contract_period()
             self.commit()
         except Exception, e :
             print e
