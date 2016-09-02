@@ -2305,6 +2305,9 @@ $(document).ready(function () {
   }
   getStatutoryMappings();
   getStatutoryMappingsMastersList();
+
+
+  
 });
 //create tool tip
 $(document).tooltip({
