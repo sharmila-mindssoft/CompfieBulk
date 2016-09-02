@@ -2,7 +2,7 @@ from corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
-    KNOWLEDGE_URL, CAPTCHA_LENGHT, NO_OF_FAILURE_ATTEMPTS
+    KNOWLEDGE_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS
 )
 
 from server import logger
@@ -88,7 +88,7 @@ def process_login(db, request, session_user_ip):
                 if rows:
                     no_of_attempts = rows[0]["login_attempt"]
                 if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
-                    captcha_text = generate_random(CAPTCHA_LENGHT)
+                    captcha_text = generate_random(CAPTCHA_LENGTH)
                 else:
                     captcha_text = None
                 return login.InvalidCredentials(captcha_text)
