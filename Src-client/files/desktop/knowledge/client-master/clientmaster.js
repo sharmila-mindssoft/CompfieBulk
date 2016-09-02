@@ -295,6 +295,9 @@ $('#btn-clientgroup-submit').click(function () {
           'jpeg'
         ]) == -1) {
         displayMessage(message.logo_invalid);
+        return false;
+      }else{
+        console.log(ext);
       }
       function onSuccess(data) {
         hideLoader();
@@ -322,7 +325,11 @@ $('#btn-clientgroup-submit').click(function () {
           displayMessage(error);
         }
       }
-      var clientGroupDetails = mirror.getSaveClientGroupDict(clientGroupNameVal, countriesVal, domainsVal, logo_file, contractFromVal, contractToVal, inchargePersonVal, parseInt(licenceVal), parseFloat(Number(fileSpaceVal * 100 / 100)), subscribeSmsVal, usernameVal, dateConfigurations, shortname);
+      var clientGroupDetails = mirror.getSaveClientGroupDict(
+        clientGroupNameVal, countriesVal, domainsVal, logo_file,
+        contractFromVal, contractToVal, inchargePersonVal,
+        parseInt(licenceVal), parseFloat(Number(fileSpaceVal * 100 / 100)),
+        subscribeSmsVal, usernameVal, dateConfigurations, shortname);
       displayLoader();
       $('#btn-clientgroup-submit').prop('disabled', true);
       mirror.saveClientGroup(clientGroupDetails, function (error, response) {
@@ -378,7 +385,12 @@ $('#btn-clientgroup-submit').click(function () {
           displayMessage(error);
         }
       }
-      var clientGroupDetails = mirror.getUpdateClientGroupDict(parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal, domainsVal, logo_file, contractFromVal, contractToVal, inchargePersonVal, parseInt(licenceVal), parseFloat(Number(fileSpaceVal * 100 / 100)), subscribeSmsVal, dateConfigurations);
+      var clientGroupDetails = mirror.getUpdateClientGroupDict(
+        parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal,
+        domainsVal, logo_file, contractFromVal, contractToVal,
+        inchargePersonVal, parseInt(licenceVal),
+        parseFloat(Number(fileSpaceVal * 100 / 100)),
+        subscribeSmsVal, dateConfigurations);
       mirror.updateClientGroup(clientGroupDetails, function (error, response) {
         if (error == null) {
           onUpdateSuccess(response);
@@ -610,7 +622,11 @@ function getClientDomainName(doaminId) {
 }
 $('#upload-logo').on('change', function (e) {
   mirror.uploadFile(e, function result_data(data) {
-    if (data != 'File max limit exceeded' || data != 'File content is empty') {
+    if (
+        data != 'File max limit exceeded' ||
+        data != 'File content is empty' ||
+        data != 'Invalid file format'
+      ) {
       uploadFile = data;
       logo_file = data;
     } else {
