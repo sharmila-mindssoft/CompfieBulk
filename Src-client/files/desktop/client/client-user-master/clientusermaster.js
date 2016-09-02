@@ -288,7 +288,9 @@ function loadUserUpdate(userId) {
         var unitid = unitList[units].unit_id;
         var user_unitids = userList[user].unit_ids;
         if ($.inArray(unitid, user_unitids) != -1) {
-          bgroups.push(unitList[units].business_group_id);
+          if(unitList[units].business_group_id != null){
+            bgroups.push(unitList[units].business_group_id);
+          }
           lentities.push(unitList[units].legal_entity_id);
           if (unitList[units].division_id != null)
             divisions.push(unitList[units].division_id);
@@ -822,10 +824,15 @@ function activate_bg() {
   });
   $('#bgroupsselected').val(totalcount + ' Selected');
   $('#business-groups').val(selids);
-  $('#selectboxview-legal-entities ul').empty();
+ /* $('#selectboxview-legal-entities ul').empty();
   $('#legal-entities-selected').val('0 Selected');
   $('#legal-entities').val('');
   unitview();
+  */
+  loadautolegalentities();
+  activate_legalentity();
+  document.getElementById('selectboxview-legal-entities').style.display = 'none';
+
 }
 function activatebgroups(element) {
   var chkstatus = $(element).attr('class');
@@ -845,6 +852,8 @@ function loadautolegalentities() {
   document.getElementById('selectboxview-legal-entities').style.display = 'block';
   var bgroupsValue = $('#business-groups').val();
   var arraybusinessgroups = bgroupsValue.split(',');
+
+  arraybusinessgroups.push(null);
   $('#selectboxview-legal-entities ul').empty();
   if (arraybusinessgroups.length != 0) {
     $.each(arraybusinessgroups, function (count, values) {
@@ -860,6 +869,10 @@ function loadautolegalentities() {
             str += '<li class="li-heading">' + val.business_group_name + '</li> ';
           }
         });
+
+        if (arraybusinessgroups[count] == null) {
+          str += '<li class="li-heading">' + 'nil' + '</li> ';
+        }
       }
       $.each(legalEntitiesList, function (k, val) {
         if (arraybusinessgroups[count] == val.business_group_id) {
@@ -882,7 +895,7 @@ function loadautolegalentities() {
       $('#legal-entities-selected').val(editlegalentitiesval.length + ' Selected');
     });
   }
-  if (bgroupsValue == '') {
+  else {
     var editlegalentitiesval = [];
     if ($('#legal-entities').val() != '') {
       editlegalentitiesval = $('#legal-entities').val().split(',');
@@ -923,6 +936,11 @@ function activate_legalentity() {
   });
   $('#legal-entities-selected').val(totalcount + ' Selected');
   $('#legal-entities').val(selids);
+
+  loadautodivision();
+  activate_division();
+  document.getElementById('selectboxview-division').style.display = 'none';
+
   unitview();
 }
 function activatelegalentities(element) {
@@ -1078,7 +1096,7 @@ function unitview() {
         }
       });
     }
-    if (divisionIds == '') {
+    if ($('#legal-entities').val() != '') {
       var leIds = $('#legal-entities').val();
       var arrayle = leIds.split(',');
       $.each(arrayle, function (count, values) {
