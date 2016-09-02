@@ -55,7 +55,6 @@ def get_trail_log(db, client_id, received_count):
             "column_name", "value", "client_id", "action"
         ]
         results = convert_to_dict(rows, columns)
-    print "get_trail_log ", results
     if len(results) == 0:
         update_client_replication_status(db, client_id, received_count)
     return return_changes(results)
@@ -93,7 +92,6 @@ def get_trail_log_for_domain(
             "column_name", "value", "client_id", "action"
         ]
         results = convert_to_dict(rows, columns)
-    print "get_trail_log_for_domain ", len(results)
     if len(results) == 0:
         update_client_replication_status(
             db, client_id, 0, type="domain_trail_id"
