@@ -641,21 +641,7 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
-  function UpdateStatutoryMappingData(cId, dId, iIds, sNId, sIds, compliances, gIds, mappings, mId) {
-    var mappingData = {};
-    mappingData.c_id = cId;
-    mappingData.d_id = dId;
-    mappingData.i_ids = iIds;
-    mappingData.s_n_id = sNId;
-    mappingData.s_ids = sIds;
-    mappingData.compliances = compliances;
-    mappingData.g_ids = gIds;
-    mappingData.mappings = mappings;
-    if (mId !== null) {
-      mappingData.s_m_id = mId;
-    }
-    return mappingData;
-  }
+  
   function updateStatutoryMapping(mappingData, callback) {
     var request = [
       'UpdateStatutoryMapping',
@@ -1348,8 +1334,33 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+
+  function progress(percent, $element) {
+    var progressBarWidth = percent * $element.width() / 100;
+    $element.find('div').animate({ width: progressBarWidth }, 500).html(percent + "% ");
+  }
+
   function uploadFormatFile(formdata, callback) {
     $.ajax({
+
+      xhr: function() {
+        var xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener("progress", function(evt) {
+          if (evt.lengthComputable) {
+            var percentComplete = evt.loaded / evt.total;
+            percentComplete = parseInt(percentComplete * 100);
+            console.log(percentComplete);
+            progress(percentComplete, $('#progressBar'));
+
+            if (percentComplete === 100) {
+
+            }
+
+          }
+        }, false);
+        return xhr;
+      },
+
       url: '/knowledge/api/files',
       type: 'POST',
       crossDomain: true,
@@ -1427,7 +1438,6 @@ function initMirror() {
     uploadFileFormat: uploadFileFormat,
     complianceDetails: complianceDetails,
     statutoryMapping: statutoryMapping,
-    UpdateStatutoryMappingData: UpdateStatutoryMappingData,
     checkDuplicateStatutoryMapping: checkDuplicateStatutoryMapping,
     saveStatutoryMapping: saveStatutoryMapping,
     updateStatutoryMapping: updateStatutoryMapping,

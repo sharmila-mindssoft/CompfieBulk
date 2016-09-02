@@ -1448,6 +1448,8 @@ function filter_geography(position) {
     }
   }
 }
+
+
 //save/update statutory mapping
 function savestatutorymapping() {
   function onSuccess(data) {
@@ -1480,24 +1482,47 @@ function savestatutorymapping() {
   if ($('#edit_sm_id').val().length > 0) {
     sm_id = parseInt($('#edit_sm_id').val());
   }
+
+  var isUpload = false;
+  for (var [key, value] of form_data.entries()) {
+    isUpload = true;
+    //console.log(key, value);
+  }
+  statutorymappingData = mirror.statutoryMapping(sm_countryid, sm_domainid, sm_industryids, sm_statutorynatureid, sm_statutoryids, compliances, sm_geographyids, disp_statutories, sm_id);
+  
   if (sm_id == null) {
-    statutorymappingData = mirror.statutoryMapping(sm_countryid, sm_domainid, sm_industryids, sm_statutorynatureid, sm_statutoryids, compliances, sm_geographyids, disp_statutories, sm_id);
+    
     mirror.saveStatutoryMapping(statutorymappingData, function (error, response) {
       if (error == null) {
-        mirror.uploadFormatFile(form_data, function result_data(status, data) {
+        if(isUpload){
+          $('#progressBar').show();
+          mirror.uploadFormatFile(form_data, function result_data(status, data) {
+            form_data = new FormData();
+            $('#progressBar').hide();
+            $('#progressBar').html('');
+            onSuccess(response);
+          });
+        }else{
           onSuccess(response);
-        });
+        }
       } else {
         onFailure(error, response);
       }
     });
   } else {
-    statutorymappingData = mirror.UpdateStatutoryMappingData(sm_countryid, sm_domainid, sm_industryids, sm_statutorynatureid, sm_statutoryids, compliances, sm_geographyids, disp_statutories, sm_id);
+
     mirror.updateStatutoryMapping(statutorymappingData, function (error, response) {
       if (error == null) {
-        mirror.uploadFormatFile(form_data, function result_data(status, data) {
+        if(isUpload){
+          $('#progressBar').show();
+          mirror.uploadFormatFile(form_data, function result_data(status, data) {
+            form_data = new FormData();
+            $('#progressBar').hide();
+            onSuccess(response);
+          });
+        }else{
           onSuccess(response);
-        });
+        }
       } else {
         onFailure(error, response);
       }
