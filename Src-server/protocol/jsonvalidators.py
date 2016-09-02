@@ -63,10 +63,10 @@ def parse_string(x) :
     t = type(x)
     if t is unicode :
         x = x.encode("utf-8")
-        x = x.replace("'", "")
+        # x = x.replace("'", "")
         return x
     elif t is str:
-        x = x.replace("'", "")
+        # x = x.replace("'", "")
         return x
     else :
         raise expectation_error("a string", x)
@@ -80,10 +80,10 @@ def parse_custom_string(x, length) :
     custom_string = None
     if t is unicode :
         x = x.encode("utf-8")
-        x = x.replace("'", "")
+        # x = x.replace("'", "")
         custom_string = x
     elif t is str :
-        x = x.replace("'", "")
+        # x = x.replace("'", "")
         custom_string = x
     else :
         raise expectation_error("a string", x)
