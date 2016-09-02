@@ -14,7 +14,7 @@ know_trace_log_path = "logs/knowledge/trace-log"
 process_error_log_path = "logs/daily_process_error-log"
 know_query_log_path = "logs/knowledge/query-log"
 client_query_log_path = "logs/client/query-log"
-
+knowledge_group_log_path = "logs/knowledge/group-log"
 
 def _get_time_rotate_file_obj(logger_name, log_path):
     log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
@@ -83,7 +83,6 @@ def logLogin(log_level, ip, user, message):
     elif log_level == "info" :
         loginLogger.info(log_message)
 
-
 webfrontLogger = _get_rotate_file_obj("webfrontend_logger", webfront_log_path)
 def logWebfront(message):
     log_message = "%s" % (message)
@@ -116,3 +115,8 @@ def logQuery(knowledge_qry, callername, message):
             clientQueryLogger.info(log_message)
         else :
             knowtQueryLogger.info(log_message)
+
+knowGroupLogger = _get_rotate_file_obj("know_group_log", knowledge_group_log_path)
+def logGroup(callername, message):
+    log_message = "%s : %s" % (callername, message)
+    knowGroupLogger.error(log_message)
