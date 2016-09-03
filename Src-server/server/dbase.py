@@ -606,13 +606,12 @@ class Database(object):
     # field
     ########################################################
     def get_new_id(self, field, table_name, client_id=None):
-        newId = 1
+        new_id = 1
         query = "SELECT max(%s) from %s " % (field, table_name)
-        row = None
         row = self.select_one(query)
         if row[0] is not None:
-            newId = int(row[0]) + 1
-        return newId
+            new_id = int(row[0]) + 1
+        return new_id
 
     def save_activity(self, user_id, form_id, action):
         created_on = get_date_time()
@@ -638,11 +637,10 @@ class Database(object):
         return user_id
 
     def update_session_time(self, session_token):
-        updated_on = get_date_time()
         q = '''
             update tbl_user_sessions set last_accessed_time = now()
             where session_token = %s'''
-        self.execute(q, (str(updated_on), str(session_token)))
+        self.execute(q, [str(session_token)])
 
     def clear_session(self, session_cutouff):
         q = "delete from tbl_user_sessions where last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
