@@ -640,7 +640,7 @@ class Database(object):
     def update_session_time(self, session_token):
         updated_on = get_date_time()
         q = '''
-            update tbl_user_sessions set last_accessed_time=%s
+            update tbl_user_sessions set last_accessed_time = now()
             where session_token = %s'''
         self.execute(q, (str(updated_on), str(session_token)))
 

@@ -87,36 +87,34 @@ def save_client_group(db, request, session_user):
     elif not is_logo_in_image_format(request.logo):
         return technomasters.NotAnImageFile()
     else:
-        country_ids = ",".join(str(x) for x in request.country_ids)
-        domain_ids = ",".join(str(x) for x in request.domain_ids)
-        short_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.short_name)
-        short_name = short_name.replace(" ", "")
-        client_id = save_client_group_data(
-            db, request, session_user
-        )
-        create_db = ClientDBCreate(
-            db, client_id, short_name, request.email_id,
-            country_ids, domain_ids
-        )
         try:
-            print "db process being"
+            country_ids = ",".join(str(x) for x in request.country_ids)
+            domain_ids = ",".join(str(x) for x in request.domain_ids)
+            short_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.short_name)
+            short_name = short_name.replace(" ", "")
+            client_id = save_client_group_data(
+                db, request, session_user
+            )
+            create_db = ClientDBCreate(
+                db, client_id, short_name, request.email_id,
+                country_ids, domain_ids
+            )
             is_db_created = create_db.begin_process()
-            print "db process end"
+            logger.logGroup("save_client_group", "db process end")
             save_date_configurations(
                 db, client_id, request.date_configurations,
                 session_user
             )
             save_client_countries(db, client_id, request.country_ids)
-            print "---- country"
+            logger.logGroup("save_client_group", "countries saved")
             save_client_domains(db, client_id, request.domain_ids)
-            print "---- domain"
+            logger.logGroup("save_client_group", "domains saved")
             save_incharge_persons(db, request, client_id)
-            print "--- person"
+            logger.logGroup("save_client_group", "incharge saved")
             save_client_user(db, request, session_user, client_id)
-            print "----user"
+            logger.logGroup("save_client_group", "client user saved")
             notify_incharge_persons(db, request)
-            print "--notify"
-            print is_db_created
+            logger.logGroup("save_client_group", "notified")
             if is_db_created[0] is True:
                 send_client_credentials_thread = threading.Thread(
                     target=send_client_credentials, args=[
@@ -128,8 +126,8 @@ def save_client_group(db, request, session_user):
         except Exception, e:
             print e
             create_db.delete_database()
-            print "Exception client_db_delete_database()", e
-            raise Exception(str("Client group creation failed"))
+            print "Exception client_db_delete_database", str(e)
+            raise Exception(str(e))
 
 
 ########################################################
