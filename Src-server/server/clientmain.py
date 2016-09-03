@@ -115,7 +115,6 @@ class API(object):
 
             self._databases = {}
             self._replication_managers = {}
-            # print servers
             for company_id, company in servers.iteritems():
 
                 company_server_ip = company.company_server_ip
@@ -155,7 +154,6 @@ class API(object):
             # After database connection client poll
 
             def client_added(clients):
-                print clients
                 for c, client in clients.iteritems():
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
