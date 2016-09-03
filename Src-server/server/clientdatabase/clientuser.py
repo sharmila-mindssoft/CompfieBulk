@@ -2,11 +2,11 @@ import datetime
 import threading
 from server import logger
 from dateutil import relativedelta
-from protocol import (core, clientuser)
+from protocol import (core, clientuser, clienttransactions)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
-    string_to_datetime_with_time, convert_to_dict
+    string_to_datetime_with_time, convert_to_dict, get_date_time_in_date
 )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
@@ -284,27 +284,7 @@ def get_upcoming_compliances_list(
     return upcoming_compliances_list
 
 
-def update_compliances(
-    db, compliance_history_id, documents, completion_date,
-    validity_date, next_due_date, remarks, client_id, session_user
-):
-    if validity_date not in [None, "None", ""]:
-        validity_date = string_to_datetime(validity_date)
-    else:
-        validity_date = None
-    if next_due_date not in [None, "None", ""]:
-        next_due_date = string_to_datetime(next_due_date)
-    else:
-        next_due_date = None
-
-    if None not in [validity_date, next_due_date]:
-        r = relativedelta.relativedelta(
-            convert_datetime_to_date(validity_date),
-            convert_datetime_to_date(next_due_date)
-        )
-        if abs(r.months) > 3 or abs(r.years) > 0:
-            return False
-    # Hanling upload
+def handle_file_upload(db, documents, client_id):
     document_names = []
     file_size = 0
     if documents is not None:
@@ -334,6 +314,34 @@ def update_compliances(
                 update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
+    return document_names
+
+
+def update_compliances(
+    db, compliance_history_id, documents, completion_date,
+    validity_date, next_due_date, remarks, client_id, session_user
+):
+    if validity_date not in [None, "None", ""]:
+        validity_date = string_to_datetime(validity_date)
+    else:
+        validity_date = None
+    if next_due_date not in [None, "None", ""]:
+        next_due_date = string_to_datetime(next_due_date)
+    else:
+        next_due_date = None
+
+    if None not in [validity_date, next_due_date]:
+        r = relativedelta.relativedelta(
+            convert_datetime_to_date(validity_date),
+            convert_datetime_to_date(next_due_date)
+        )
+        if abs(r.months) > 3 or abs(r.years) > 0:
+            #  Difference should not be more than 90 days
+            return False
+    # Hanling upload
+    document_names = handle_file_upload(db, documents, client_id)
+    if type(document_names) is not list:
+        return document_names
     history = get_compliance_history_details(db, compliance_history_id)
     assignee_id = history["completed_by"]
     concurrence_id = history["concurred"]
@@ -341,7 +349,7 @@ def update_compliances(
     compliance_name = history["compliance_name"]
     document_name = history["doc_name"]
     due_date = history["due_date"]
-    current_time_stamp = get_date_time()
+    current_time_stamp = get_date_time_in_date()
     history_columns = [
         "completion_date", "documents", "remarks", "completed_on"
     ]
@@ -369,6 +377,7 @@ def update_compliances(
     rows = db.get_data(
         tblComplianceHistory, columns, condition, [compliance_history_id]
     )
+    print "got history details 2nd time"
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     ageing, remarks = calculate_ageing(
@@ -376,6 +385,7 @@ def update_compliances(
         completion_date=completion_date,
         duration_type=None
     )
+    print "got ageing and remarks"
     if(
         assignee_id == approver_id or
         is_primary_admin(db, assignee_id)
@@ -430,11 +440,15 @@ def update_compliances(
         )
 
     history_values.extend(history_condition_val)
-    db.update(
+    update_status = db.update(
         tblComplianceHistory, history_columns, history_values,
         history_condition
     )
+    print "update_status: %s" % update_status
+    if(update_status is False):
+        return clienttransactions.ComplianceUpdateFailed()
 
+    print "updated history table"
     if assignee_id != approver_id:
         if(
             document_name is not None and
