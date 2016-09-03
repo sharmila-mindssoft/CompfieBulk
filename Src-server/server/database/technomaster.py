@@ -565,7 +565,7 @@ def update_client_group_record(db, client_group, session_user):
         columns.append("logo_url")
         columns.append("logo_size")
         file_name = update_client_logo(
-            client_group.logo, client_group.client_id
+            db, client_group.logo, client_group.client_id
         )
         values.append(file_name)
         values.append(client_group.logo.file_size)

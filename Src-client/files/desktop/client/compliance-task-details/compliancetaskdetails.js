@@ -407,7 +407,9 @@ function showSideBar(idval, data) {
             displayMessage(message.error);
           } else if (error == 'FileSizeExceedsLimit') {
             displayMessage(message.filesize_exceeds_limit);
-          } else {
+          } else if (error == 'ComplianceUpdateFailed') {
+            displayMessage(message.compliance_update_failed);
+          }else {
             displayMessage(error);
           }  //displayMessage(message.unsupported_file);
         }

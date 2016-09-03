@@ -482,8 +482,8 @@ class Database(object):
         query += " WHERE " + condition
         # print query
         try:
-            self.execute(query, values)
-            return True
+            status = self.execute(query, values)
+            return status
         except mysql.Error, e:
             print query, values
             print e
@@ -560,7 +560,6 @@ class Database(object):
     ########################################################
 
     def increment(self, table, column, condition, value=1, condition_val=None):
-        print condition_val
         rows = self.get_data(table, column, condition, condition_val)
         currentValue = int(rows[0][column[0]]) if(
             rows[0][column[0]] is not None) else 0
@@ -606,29 +605,29 @@ class Database(object):
     # field
     ########################################################
     def get_new_id(self, field, table_name, client_id=None):
-        newId = 1
+        new_id = 1
         query = "SELECT max(%s) from %s " % (field, table_name)
-        row = None
         row = self.select_one(query)
         if row[0] is not None:
-            newId = int(row[0]) + 1
-        return newId
+            new_id = int(row[0]) + 1
+        return new_id
 
     def save_activity(self, user_id, form_id, action):
         created_on = get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
-        query = '''INSERT INTO tbl_activity_log
-            (activity_log_id, user_id, form_id, action, created_on)
-            VALUES (%s, %s, %s, %s, %s)'''
+        query = " INSERT INTO tbl_activity_log " + \
+            " (activity_log_id, user_id, form_id, action, created_on) " + \
+            " VALUES (%s, %s, %s, %s, %s) "
         self.execute(query, (
                 activityId, user_id, form_id, action, created_on
         ))
         return True
 
     def validate_session_token(self, session_token):
-        query = '''SELECT t01.user_id FROM tbl_user_sessions t01
-            LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id and is_active = 1
-            WHERE  session_token=%s'''
+        query = "SELECT t01.user_id FROM tbl_user_sessions t01 " + \
+            " LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id " + \
+            " and is_active = 1 " + \
+            " WHERE  session_token=%s"
         param = [session_token]
         row = self.select_one(query, param)
         user_id = None
@@ -638,12 +637,12 @@ class Database(object):
         return user_id
 
     def update_session_time(self, session_token):
-        updated_on = get_date_time()
         q = '''
-            update tbl_user_sessions set last_accessed_time=%s
+            update tbl_user_sessions set last_accessed_time = now()
             where session_token = %s'''
-        self.execute(q, (str(updated_on), str(session_token)))
+        self.execute(q, [str(session_token)])
 
     def clear_session(self, session_cutouff):
-        q = "delete from tbl_user_sessions where last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
+        q = "delete from tbl_user_sessions where " + \
+            " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
         self.execute(q, [session_cutouff])

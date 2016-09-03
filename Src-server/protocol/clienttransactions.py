@@ -770,6 +770,21 @@ class UpdateStatutorySettingsSuccess(Response):
         return {
         }
 
+
+class ComplianceUpdateFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ComplianceUpdateFailed()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class InvalidPassword(Response):
     def __init__(self):
         pass
@@ -1199,7 +1214,7 @@ def _init_Response_class_map():
         ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess,
         GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
         GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed,
-        GetAssigneeCompliancesSuccess
+        GetAssigneeCompliancesSuccess, ComplianceUpdateFailed
     ]
     class_map = {}
     for c in classes:
@@ -1657,7 +1672,7 @@ class ASSIGN_COMPLIANCE_USER(object):
         user_level = data.get("user_level")
         user_level = parse_structure_CustomIntegerType_1_10(user_level)
         seating_unit_id = data.get("seating_unit_id")
-        seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
+        seating_unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(seating_unit_id)
         unit_ids = data.get("unit_ids")
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         domain_ids = data.get("domain_ids")
@@ -1669,7 +1684,7 @@ class ASSIGN_COMPLIANCE_USER(object):
         is_concurrence = data.get("is_concurrence")
         is_concurrence = parse_structure_Bool(is_concurrence)
         seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_CustomTextType_250(seating_unit_name)
+        seating_unit_name = parse_structure_OptionalType_CustomTextType_500(seating_unit_name)
         return ASSIGN_COMPLIANCE_USER(
             user_id, service_provider_id, user_name, user_level, seating_unit_id,
             unit_ids, domain_ids,
@@ -1688,7 +1703,7 @@ class ASSIGN_COMPLIANCE_USER(object):
             "is_assignee": to_structure_Bool(self.is_assignee),
             "is_concurrence": to_structure_Bool(self.is_concurrence),
             "is_approver": to_structure_Bool(self.is_approver),
-            "seating_unit_name": to_structure_CustomTextType_250(self.seating_unit_name)
+            "seating_unit_name": to_structure_OptionalType_CustomTextType_500(self.seating_unit_name)
         }
 
 #

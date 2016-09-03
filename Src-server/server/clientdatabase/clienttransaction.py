@@ -468,6 +468,7 @@ def get_users_for_seating_units(db, session_user):
         else:
             name = "%s - %s" % (r["service_provider"], r["employee_name"])
         unit_id = None
+        unit_name = ""
         if r["seating_unit_id"]:
             unit_id = int(r["seating_unit_id"])
             unit_name = r["seating_unit_name"]
