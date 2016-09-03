@@ -1337,7 +1337,8 @@ function initMirror() {
 
   function progress(percent, $element) {
     var progressBarWidth = percent * $element.width() / 100;
-    $element.find('div').animate({ width: progressBarWidth }, 500).html(percent + "% ");
+    $('.upload-progress-count').html("Uploading " + percent + "% ")
+    //$element.find('div').animate({ width: progressBarWidth }, 500).html(percent + "% ");
   }
 
   function uploadFormatFile(formdata, callback) {
@@ -1349,11 +1350,10 @@ function initMirror() {
           if (evt.lengthComputable) {
             var percentComplete = evt.loaded / evt.total;
             percentComplete = parseInt(percentComplete * 100);
-            console.log(percentComplete);
             progress(percentComplete, $('#progressBar'));
 
             if (percentComplete === 100) {
-
+              $('.upload-progress-count').hide();
             }
 
           }
