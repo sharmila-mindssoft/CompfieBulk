@@ -770,6 +770,21 @@ class UpdateStatutorySettingsSuccess(Response):
         return {
         }
 
+
+class ComplianceUpdateFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ComplianceUpdateFailed()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class InvalidPassword(Response):
     def __init__(self):
         pass
@@ -1199,7 +1214,7 @@ def _init_Response_class_map():
         ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess,
         GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
         GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed,
-        GetAssigneeCompliancesSuccess
+        GetAssigneeCompliancesSuccess, ComplianceUpdateFailed
     ]
     class_map = {}
     for c in classes:

@@ -482,8 +482,8 @@ class Database(object):
         query += " WHERE " + condition
         # print query
         try:
-            self.execute(query, values)
-            return True
+            status = self.execute(query, values)
+            return status
         except mysql.Error, e:
             print query, values
             print e
@@ -615,18 +615,19 @@ class Database(object):
     def save_activity(self, user_id, form_id, action):
         created_on = get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
-        query = '''INSERT INTO tbl_activity_log
-            (activity_log_id, user_id, form_id, action, created_on)
-            VALUES (%s, %s, %s, %s, %s)'''
+        query = " INSERT INTO tbl_activity_log " + \
+            " (activity_log_id, user_id, form_id, action, created_on) " + \
+            " VALUES (%s, %s, %s, %s, %s) "
         self.execute(query, (
                 activityId, user_id, form_id, action, created_on
         ))
         return True
 
     def validate_session_token(self, session_token):
-        query = '''SELECT t01.user_id FROM tbl_user_sessions t01
-            LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id and is_active = 1
-            WHERE  session_token=%s'''
+        query = "SELECT t01.user_id FROM tbl_user_sessions t01 " + \
+            " LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id " + \
+            " and is_active = 1 " + \
+            " WHERE  session_token=%s"
         param = [session_token]
         row = self.select_one(query, param)
         user_id = None
@@ -642,5 +643,6 @@ class Database(object):
         self.execute(q, [str(session_token)])
 
     def clear_session(self, session_cutouff):
-        q = "delete from tbl_user_sessions where last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
+        q = "delete from tbl_user_sessions where " + \
+            " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
         self.execute(q, [session_cutouff])
