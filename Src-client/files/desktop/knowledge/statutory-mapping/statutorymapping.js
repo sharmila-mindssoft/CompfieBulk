@@ -1452,6 +1452,7 @@ function filter_geography(position) {
 
 //save/update statutory mapping
 function savestatutorymapping() {
+  displayLoader();
   function onSuccess(data) {
     getStatutoryMappings();
     $('.listfilter').val('');
@@ -1465,6 +1466,7 @@ function savestatutorymapping() {
     $('#uploaded_fileview').hide();
     $('#uploaded_filename').html('');
     $('#statutorymapping-view').show();
+    hideLoader();
   }
   function onFailure(error, response) {
     if (error == 'ComplianceNameAlreadyExists') {
@@ -1477,6 +1479,7 @@ function savestatutorymapping() {
     $('#activate-step-finish').text('Submit');
     $('#activate-step-finish').addClass('btn-right');
     $('#activate-step-finish').removeClass('btn-right-submiting');
+    hideLoader();
   }
   var sm_id = null;
   if ($('#edit_sm_id').val().length > 0) {
@@ -1495,12 +1498,23 @@ function savestatutorymapping() {
     mirror.saveStatutoryMapping(statutorymappingData, function (error, response) {
       if (error == null) {
         if(isUpload){
-          $('#progressBar').show();
+          $('.upload-progress-count').html("");
+          $('.upload-progress-count').show();
           mirror.uploadFormatFile(form_data, function result_data(status, data) {
-            form_data = new FormData();
-            $('#progressBar').hide();
-            $('#progressBar').html('');
-            onSuccess(response);
+            if(status == 'FileUploadSuccess'){
+              form_data = new FormData();
+              $('.upload-progress-count').hide();
+              onSuccess(response);
+            }else{
+              displayMessage(status);
+              hideLoader();
+              $('.upload-progress-count').hide();
+              $('.upload-progress-count').html("");
+              $('#activate-step-finish').prop('disabled', false);
+              $('#activate-step-finish').text('Submit');
+              $('#activate-step-finish').addClass('btn-right');
+              $('#activate-step-finish').removeClass('btn-right-submiting');
+            }
           });
         }else{
           onSuccess(response);
@@ -1514,11 +1528,24 @@ function savestatutorymapping() {
     mirror.updateStatutoryMapping(statutorymappingData, function (error, response) {
       if (error == null) {
         if(isUpload){
-          $('#progressBar').show();
+          $('.upload-progress-count').html("");
+          $('.upload-progress-count').show();
           mirror.uploadFormatFile(form_data, function result_data(status, data) {
-            form_data = new FormData();
-            $('#progressBar').hide();
-            onSuccess(response);
+
+            if(status == 'FileUploadSuccess'){
+              form_data = new FormData();
+              $('.upload-progress-count').hide();
+              onSuccess(response);
+            }else{
+              displayMessage(status);
+              hideLoader();
+              $('.upload-progress-count').hide();
+              $('.upload-progress-count').html("");
+              $('#activate-step-finish').prop('disabled', false);
+              $('#activate-step-finish').text('Submit');
+              $('#activate-step-finish').addClass('btn-right');
+              $('#activate-step-finish').removeClass('btn-right-submiting');
+                        }
           });
         }else{
           onSuccess(response);
@@ -2307,7 +2334,7 @@ $(document).ready(function () {
   getStatutoryMappingsMastersList();
 
 
-  
+
 });
 //create tool tip
 $(document).tooltip({

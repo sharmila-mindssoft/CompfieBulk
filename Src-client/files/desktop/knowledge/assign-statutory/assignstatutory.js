@@ -972,12 +972,15 @@ $('.pagination').click(function (event) {
 });
 //get assigned statutories list from api
 function getAssignedStatutories() {
+  displayLoader();
   function onSuccess(data) {
     assignedStatutoriesList = data.assigned_statutories;
     loadAssignedStatutoriesList(assignedStatutoriesList);
+    hideLoader();
   }
   function onFailure(error) {
     custom_alert(error);
+    hideLoader();
   }
   mirror.getAssignedStatutoriesList(function (error, response) {
     if (error == null) {

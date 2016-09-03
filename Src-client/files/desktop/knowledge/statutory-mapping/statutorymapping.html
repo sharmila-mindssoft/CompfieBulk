@@ -1,7 +1,11 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
     <div class='loading-indicator-spin'>
-      <span><img src='/images/loading-img.gif' alt="">  </span>
+      <span>
+      <img src='/images/loading-img.gif' alt="">  
+      <br><br> 
+      <div class="upload-progress-count default-display-none">  </div>
+      </span>
     </div>
     <div class="content-container width100" id="statutorymapping-view">
       <div class="content-area">
@@ -651,7 +655,7 @@
 
               <tr>
               <td colspan="2">
-                <div id="progressBar"><div> </div></div>
+                
               </td>
               </tr>
 
@@ -682,5 +686,16 @@
       </div>
     </div>
 </div>
+
+
+<!-- <div id="popup" class="overlay" >
+  <div class="popup-progressbar">
+    <div class="content">
+      Uploading File(s)<br>
+      <div id="progressBar" class="default-display-none"><div></div></div>
+    </div>
+  </div>
+</div> -->
+
   <script type="text/javascript" src="/script/statutory-mapping/statutorymapping.js"></script>
 {% endblock %}

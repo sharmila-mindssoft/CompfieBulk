@@ -171,7 +171,7 @@
         <div class="field-label">Country:<span class="mandatory">*</span></div>
         <div class="field-input">
           <input type="hidden" id="country">
-          <input type="text" class="input-box icon-autocomplete" id="countryselected"  tabindex="12" value="" readonly="readonly" onclick="loadautocountry()">
+          <input type="text" class="input-box icon-autocomplete" id="countryselected"  tabindex="12" value="" readonly="readonly" onfocus="loadautocountry()" onclick="loadautocountry()">
           <div id="selectboxview-country" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenu();">
             <ul id="ulist-country" style="width:85%;"></ul>
           </div>
@@ -181,7 +181,7 @@
       <div class="field-label">Business Group:</div>
       <div class="field-input">
            <input type="hidden" id="business-groups">
-          <input type="text" class="input-box icon-autocomplete" id="bgroupsselected" tabindex="13" value="" readonly="readonly" onclick="loadautobusinessgroups()">
+          <input type="text" class="input-box icon-autocomplete" id="bgroupsselected" tabindex="13" value="" readonly="readonly" onfocus="loadautobusinessgroups()" onclick="loadautobusinessgroups()">
           <div id="selectboxview-businessgroup" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenubgroup();">
             <ul id="ulist-bg" style="width:85%;"></ul>
           </div>
@@ -191,7 +191,7 @@
       <div class="field-label">Legal Entity:<span class="mandatory">*</span></div>
       <div class="field-input">
         <input type="hidden" id="legal-entities">
-        <input type="text" class="input-box icon-autocomplete" id="legal-entities-selected"  tabindex="14" value="" readonly="readonly" onclick="loadautolegalentities()">
+        <input type="text" class="input-box icon-autocomplete" id="legal-entities-selected"  tabindex="14" value="" readonly="readonly" onfocus="loadautolegalentities()" onclick="loadautolegalentities()">
         <div id="selectboxview-legal-entities" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenulegalentities();">
           <ul id="ulist-legalentity" style="width:85%;"></ul>
         </div>
@@ -203,7 +203,7 @@
       <div class="field-label">Division:</div>
       <div class="field-input">
         <input type="hidden" id="division">
-        <input type="text" class="input-box icon-autocomplete" id="division-selected" value="" tabindex="15" readonly="readonly" onclick="loadautodivision()">
+        <input type="text" class="input-box icon-autocomplete" id="division-selected" value="" tabindex="15" readonly="readonly" onfocus="loadautodivision()" onclick="loadautodivision()">
         <div id="selectboxview-division" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudivision();">
           <ul id="ulist-division" style="width:85%;"></ul>
         </div>
@@ -213,7 +213,7 @@
         <div class="field-label">Domain:<span class="mandatory">*</span></div>
         <div class="field-input">
           <input type="hidden" id="domains">
-          <input type="text" class="input-box icon-autocomplete" id="domainsselected" value="" tabindex="16" readonly="readonly" onclick="loadautodomains()">
+          <input type="text" class="input-box icon-autocomplete" id="domainsselected" value="" tabindex="16" readonly="readonly" onfocus="loadautodomains()" onclick="loadautodomains()">
           <div id="selectboxview-domains" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudomains();">
             <ul id="ulist-domain" style="width:85%;"></ul>
           </div>
