@@ -1328,11 +1328,11 @@ $('#assignee').click(function (event) {
       });
       $(event.target).addClass('active');
     }
-    var assigneeText = '';
+    var assigneeSelectedId = '';
     if ($('.assigneelist.active').attr('id') != undefined) {
-      assigneeText = $('.assigneelist.active').attr('id').split('-')[0];
+      assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
     }
-    if (assigneeText != client_admin) {
+    if (assigneeSelectedId != client_admin) {
       loadUser('concurrence');
       loadUser('approval');
     } else {
@@ -1374,7 +1374,7 @@ $('#assignee_unit').change(function () {
   loadUser('assignee');
 });
 $('#concurrence_unit').change(function () {
-  loadUser('concurrence');
+  var assigneeSelectedId = '';
   if ($('.assigneelist.active').attr('id') != undefined) {
     assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
   }
@@ -1385,6 +1385,7 @@ $('#concurrence_unit').change(function () {
   }
 });
 $('#approval_unit').change(function () {
+  var assigneeSelectedId = '';
   if ($('.assigneelist.active').attr('id') != undefined) {
     assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
   }
