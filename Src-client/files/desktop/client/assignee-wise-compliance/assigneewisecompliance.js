@@ -305,6 +305,7 @@ $('#submit').click(function () {
             onFailure(error);
           }
         });
+    });
   }
 });
 //Autocomplete Script Starts
