@@ -33,6 +33,7 @@ __all__ = [
 
 email = EmailHandler()
 
+CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
 def get_inprogress_count(db, session_user):
     param = [session_user]
@@ -96,14 +97,15 @@ def get_current_compliances_list(
     db, current_start_count, to_count, session_user, client_id
 ):
     columns = [
-        "compliance_history_id", "start_date", "due_date", "validity_date",
-        "next_due_date", "document_name", "compliance_task", "description",
+        "compliance_history_id", "start_date", "due_date", "documents",
+        "validity_date", "next_due_date",
+        "document_name", "compliance_task", "description",
         "format_file", "unit", "domain_name", "frequency", "remarks",
         "compliance_id", "duration_type_id"
     ]
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
-        " ch.due_date as due_date, " + \
+        " ch.due_date as due_date, documents, " + \
         " ch.validity_date, ch.next_due_date, document_name, " + \
         " compliance_task, compliance_description, format_file, " + \
         " (SELECT " + \
@@ -159,6 +161,30 @@ def get_current_compliances_list(
         remarks = compliance["remarks"]
         if remarks in ["None", None, ""]:
             remarks = None
+        download_urls = []
+        file_name = []
+        if compliance["documents"] is not None and len(
+                compliance["documents"]) > 0:
+            for document in compliance["documents"].split(","):
+                if document is not None and document.strip(',') != '':
+                    dl_url = "%s/%s/%s" % (
+                        CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
+                    )
+                    download_urls.append(dl_url)
+                    file_name_part = document.split("-")[0]
+                    file_extn_parts = document.split(".")
+                    file_extn_part = None
+                    if len(file_extn_parts) > 1:
+                        file_extn_part = file_extn_parts[
+                            len(file_extn_parts)-1
+                        ]
+                    if file_extn_part is not None:
+                        name = "%s.%s" % (
+                            file_name_part, file_extn_part
+                        )
+                        file_name.append(name)
+                    else:
+                        file_name.append(file_name_part)
         current_compliances_list.append(
             core.ActiveCompliance(
                 compliance_history_id=compliance["compliance_history_id"],
@@ -181,7 +207,8 @@ def get_current_compliances_list(
                 unit_name=unit_name, address=address,
                 compliance_description=compliance["description"],
                 remarks=remarks,
-                compliance_id=compliance["compliance_id"]
+                compliance_id=compliance["compliance_id"],
+                download_url=download_urls, file_names=file_name
             )
         )
     return current_compliances_list
