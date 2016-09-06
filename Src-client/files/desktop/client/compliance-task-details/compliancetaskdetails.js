@@ -11,6 +11,7 @@ var snoInprogress = 1;
 var countOverdue = 0;
 var countInprogress = 0;
 var sno = 0;
+var uploaded_file_list = [];
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -253,9 +254,16 @@ function loadUpcomingCompliancesDetails(data) {
 }
 function compliancealreadyexists() {
 }
+
+function remove_uploaded_temp_file(removeId) {
+  $('.uploaded' + removeId).remove();
+  uploaded_file_list.splice(parseInt(removeId), 1);  
+}
+
 function showSideBar(idval, data) {
   $('.half-width-task-details').empty();
   file_list = [];
+  uploaded_file_list = [];
   $('.uploaded-filename').html('');
   clearMessage();
   var d = new Date().toLocaleDateString('en-GB', {
@@ -269,6 +277,7 @@ function showSideBar(idval, data) {
   //SideView append ---------------------------------------------------------------------
   $.each(data, function (k, value) {
     if (data[k].compliance_history_id == idval) {
+      var udocumentslist = [];
       $('.validity1_label').show();
       $('.duedate1_label').show();
       $('.validity1_textbox').hide();
@@ -277,7 +286,6 @@ function showSideBar(idval, data) {
       var cloneValSide = tableRowSide.clone();
       var complianceStatus = data[k].compliance_status;
       var rejected_reason = data[k].remarks;
-      console.log('rejected_reason' + rejected_reason);
       $('.sideview-compliance-unit span', cloneValSide).html(data[k].unit_name);
       $('.sideview-compliance-unit abbr', cloneValSide).attr('title', data[k].address);
       $('.sideview-compliance-task .ct', cloneValSide).html(data[k].compliance_name);
@@ -290,7 +298,6 @@ function showSideBar(idval, data) {
         $('#rejected-reason-header', cloneValSide).show();
         $('.sideview-compliance-reason', cloneValSide).html(rejected_reason);
       } else {
-        console.log('rejected reason is null');
         $('#rejected-reason-header', cloneValSide).hide();
       }
       $('.sideview-upload-date', cloneValSide).html(currentDate.substring(0, 11));
@@ -300,6 +307,21 @@ function showSideBar(idval, data) {
           return;
         uploadedfile(e);
       });
+
+      uploaded_file_list = data[k].file_names;
+      udocumentslist = data[k].download_url;
+      if (uploaded_file_list != null && uploaded_file_list.length > 0) {
+        $('#uploaded-documents-header', cloneValSide).show();
+        for (var i = 0; i < uploaded_file_list.length; i++) {
+          if (uploaded_file_list[i] != '') {                                                                                                                                                                                                                                                                                                                                                                                          
+            $('.sidebar-uploaded-documents', cloneValSide).append('<span class=\'uploaded' + i + '\'><abbr class=\'sidebardocview\'>' + uploaded_file_list[i] + '</abbr><a href=\'' + udocumentslist[i] + '\' download=\'' + udocumentslist[i] + '\' class=\'download-file\' ><img src=\'/images/download.png\' style=\'width:16px;height:16px\' title=\'Download\' /></a> <img src=\'/images/deletebold.png\' style=\'width:16px;height:16px;\' title=\'Remove\' onclick=\'remove_uploaded_temp_file("' + i + '")\'/></span>');
+            $('.tr-sidebar-uploaded-date', cloneValSide).show();
+          }
+        }
+      } else {
+        $('#uploaded-documents-header', cloneValSide).hide();
+      }
+
       if (data[k].compliance_frequency == 'One Time' || data[k].compliance_frequency == 'On Occurrence') {
         $('.validityAndDueDate', cloneValSide).hide();
       } else if (data[k].compliance_frequency != 'One Time') {
@@ -316,6 +338,7 @@ function showSideBar(idval, data) {
         var completion_date;
         var compliance_history_id;
         var documents = [];
+        var uploaded_documents = [];
         var validity_date;
         var next_due_date;
         var start_date;
@@ -326,6 +349,10 @@ function showSideBar(idval, data) {
         documents = file_list;
         if (documents.length == 0) {
           documents = null;
+        }
+        uploaded_documents = uploaded_file_list;
+        if (uploaded_documents.length == 0) {
+          uploaded_documents = null;
         }
         completion_date = $('.sideview-completion-date').val();
         validity_date = $('.validity1-textbox-input').val();
@@ -419,7 +446,7 @@ function showSideBar(idval, data) {
           $('.upload-progress-count').html("");
           $('.upload-progress-count').show();
         }
-        client_mirror.updateComplianceDetail(compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks, function (error, response) {
+        client_mirror.updateComplianceDetail(compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks, function (error, response) {
           if (error == null) {
             $('.upload-progress-count').hide();
             $('.upload-progress-count').html("");
