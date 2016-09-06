@@ -623,8 +623,13 @@ function initClientMirror() {
     callerName = 'client_reports';
     clientApiRequest(callerName, request, callback);
   }
+  
+  function progress(percent, $element) {
+    var progressBarWidth = percent * $element.width() / 100;
+    $('.upload-progress-count').html("Uploading " + percent + "% ")
+  }
+
   function updateComplianceDetail(compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks, callback) {
-    callerName = 'client_user';
     var request = [
       'UpdateComplianceDetail',
       {
@@ -636,8 +641,72 @@ function initClientMirror() {
         'remarks': remarks
       }
     ];
-    clientApiRequest(callerName, request, callback);
+    var sessionToken = getSessionToken();
+    var requestFrame = {
+      'session_token': sessionToken,
+      'request': request
+    };
+    var body = [
+      sessionToken,
+      requestFrame
+    ];
+    $.ajax({
+
+      xhr: function() {
+        var xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener("progress", function(evt) {
+          if (evt.lengthComputable) {
+            var percentComplete = evt.loaded / evt.total;
+            percentComplete = parseInt(percentComplete * 100);
+            progress(percentComplete, $('#progressBar'));
+            console.log(percentComplete)
+            if (percentComplete === 100) {
+              //console.log(percentComplete)
+              $('.upload-progress-count').hide();
+            }
+
+          }
+        }, false);
+        return xhr;
+      },
+
+      url: CLIENT_BASE_URL + 'client_user',
+      // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+      type: 'POST',
+      contentType: 'application/json',
+      data: toJSON(body),
+      success: function (data) {
+        var data = parseJSON(data);
+        var status = data[0];
+        var response = data[1];
+        matchString = 'success';
+        log('API STATUS :' + status);
+        ///callback(null, response)
+        if (status.toLowerCase().indexOf(matchString) != -1) {
+          callback(null, response);
+        } else if (status == 'InvalidSessionToken') {
+          // console.log(status)
+          redirect_login();
+        } else {
+          if (status == 'SavePastRecordsFailed') {
+            callback(data, null);
+          } else {
+            callback(status, response);
+          }
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        if (errorThrown == 'Not Found') {
+          alert('Server connection not found');
+          redirect_login();
+        } else{
+          callback(jqXHR.responseText, errorThrown);
+        }
+      }
+    });
   }
+
+
   /*Statutory Notifications List*/
   function getStatutoryNotificationsListFilters(callback) {
     callerName = 'client_reports';
@@ -1677,21 +1746,7 @@ function initClientMirror() {
     callerName = 'client_reports';
     clientApiRequest(callerName, request, callback);
   }
-  function updateComplianceDetail(compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks, callback) {
-    callerName = 'client_user';
-    var request = [
-      'UpdateComplianceDetail',
-      {
-        'compliance_history_id': compliance_history_id,
-        'documents': documents,
-        'completion_date': completion_date,
-        'validity_date': validity_date,
-        'next_due_date': next_due_date,
-        'remarks': remarks
-      }
-    ];
-    clientApiRequest(callerName, request, callback);
-  }
+
   /*Statutory Notifications List*/
   function getStatutoryNotificationsListFilters(callback) {
     callerName = 'client_reports';

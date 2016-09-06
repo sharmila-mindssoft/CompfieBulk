@@ -203,9 +203,9 @@ class API(object):
 
         client_id = request.client_id
         received_count = request.received_count
-        # print  "received_count", received_count
-        if received_count > actual_count:
-            return InvalidReceivedCount()
+        # print "received_count", received_count
+        # if received_count > actual_count:
+        #     return InvalidReceivedCount()
         # print "replication client_id = %s, received_count = %s" % (client_id, received_count)
         res = GetChangesSuccess(
             gen.get_trail_log(db, client_id, received_count)

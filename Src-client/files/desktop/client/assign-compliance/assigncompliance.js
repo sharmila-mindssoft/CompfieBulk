@@ -1274,7 +1274,7 @@ function loadUser(userType) {
       serviceProviderId = usersList[user].service_provider_id;
     }
     //if( selectedUnit == 'all' || $.inArray(parseInt(selectedUnit), userUnits) >= 0){
-    if (selectedUnit == 'all' || parseInt(selectedUnit) == usersList[user].seating_unit_id || serviceProviderId > 0) {
+    if (selectedUnit == 'all' || parseInt(selectedUnit) == usersList[user].seating_unit_id || (serviceProviderId > 0 && selectedUnit != '')) {
       var userId = usersList[user].user_id;
       var uLevel = usersList[user].user_level;
       var userName = usersList[user].user_name + ' - Level ' + uLevel;
@@ -1328,11 +1328,11 @@ $('#assignee').click(function (event) {
       });
       $(event.target).addClass('active');
     }
-    var assigneeText = '';
+    var assigneeSelectedId = '';
     if ($('.assigneelist.active').attr('id') != undefined) {
-      assigneeText = $('.assigneelist.active').attr('id').split('-')[0];
+      assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
     }
-    if (assigneeText != client_admin) {
+    if (assigneeSelectedId != client_admin) {
       loadUser('concurrence');
       loadUser('approval');
     } else {
@@ -1374,10 +1374,26 @@ $('#assignee_unit').change(function () {
   loadUser('assignee');
 });
 $('#concurrence_unit').change(function () {
-  loadUser('concurrence');
+  var assigneeSelectedId = '';
+  if ($('.assigneelist.active').attr('id') != undefined) {
+    assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
+  }
+  if (assigneeSelectedId != client_admin) {
+    loadUser('concurrence');
+  } else {
+    $('#concurrence').empty();
+  }
 });
 $('#approval_unit').change(function () {
-  loadUser('approval');
+  var assigneeSelectedId = '';
+  if ($('.assigneelist.active').attr('id') != undefined) {
+    assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
+  }
+  if (assigneeSelectedId != client_admin) {
+    loadUser('approval');
+  } else {
+    $('#approval').empty();
+  }
 });
 //load master data in first wizard
 function load_firstwizard() {

@@ -652,11 +652,11 @@ function submitcompliance() {
         } else {
           assigneeInserUnits = null;
         }
-        if (approvalInserCountry.length == 0) {
-          approvalInserCountry = null;
+        if (assigneeInserCountry.length == 0) {
+          assigneeInserCountry = null;
         }
         assigneeText = assigneeText + 'not applicable for Assignee. ';
-        newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, assigneeInserDomain, approvalInserCountry);
+        newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, assigneeInserDomain, assigneeInserCountry);
         newSettingsList.push(newSetting);
       }
       if (concurrenceInserUnits.length > 0 || concurrenceInserDomain.length > 0) {
@@ -798,6 +798,7 @@ function loadUser(userType) {
     selectedUnit = $('#approval_unit').val();
     userClass = 'approvallist';
   }
+
   $('#' + userType).empty();
   var assigneeUserId = null;
   if ($('.assigneelist.active').attr('id') != undefined) {
@@ -857,7 +858,7 @@ function loadUser(userType) {
     if (usersList[user].service_provider_id != null) {
       serviceProviderId = usersList[user].service_provider_id;
     }
-    if (selectedUnit == 'all' || parseInt(selectedUnit) == usersList[user].seating_unit_id || serviceProviderId > 0) {
+    if (selectedUnit == 'all' || parseInt(selectedUnit) == usersList[user].seating_unit_id || (serviceProviderId > 0 && selectedUnit != '') ) {
       var userId = usersList[user].user_id;
       var uLevel = usersList[user].user_level;
       var userName = usersList[user].user_name + ' - Level ' + uLevel;
@@ -912,11 +913,11 @@ $('#assignee').click(function (event) {
       });
       $(event.target).addClass('active');
     }
-    var assigneeText = '';
+    var assigneeSelectedId = '';
     if ($('.assigneelist.active').attr('id') != undefined) {
-      assigneeText = $('.assigneelist.active').attr('id').split('-')[0];
+      assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
     }
-    if (assigneeText != client_admin) {
+    if (assigneeSelectedId != client_admin) {
       loadUser('concurrence');
       loadUser('approval');
     } else {
@@ -936,7 +937,6 @@ $('#concurrence').click(function (event) {
       });
       $(event.target).addClass('active');
     }
-    //loadUser('assignee');
     loadUser('approval');
   }
 });
@@ -991,10 +991,26 @@ $('#assignee_unit').change(function () {
   loadUser('assignee');
 });
 $('#concurrence_unit').change(function () {
-  loadUser('concurrence');
+  var assigneeSelectedId = '';
+  if ($('.assigneelist.active').attr('id') != undefined) {
+    assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
+  }
+  if (assigneeSelectedId != client_admin) {
+    loadUser('concurrence');
+  } else {
+    $('#concurrence').empty();
+  }
 });
 $('#approval_unit').change(function () {
-  loadUser('approval');
+  var assigneeSelectedId = '';
+  if ($('.assigneelist.active').attr('id') != undefined) {
+    assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
+  }
+  if (assigneeSelectedId != client_admin) {
+    loadUser('approval');
+  } else {
+    $('#approval').empty();
+  }
 });
 $('#reason').keyup(function (e) {
   var maxLength = 500;

@@ -288,7 +288,9 @@ function loadUserUpdate(userId) {
         var unitid = unitList[units].unit_id;
         var user_unitids = userList[user].unit_ids;
         if ($.inArray(unitid, user_unitids) != -1) {
-          bgroups.push(unitList[units].business_group_id);
+          if(unitList[units].business_group_id != null){
+            bgroups.push(unitList[units].business_group_id);
+          }
           lentities.push(unitList[units].legal_entity_id);
           if (unitList[units].division_id != null)
             divisions.push(unitList[units].division_id);
@@ -625,7 +627,7 @@ function checkdomainids(arrayunitdomain, arrayalldomain) {
 }
 var chosen_clientuser = '';
 function onArrowKeyUser(e, ac_item) {
-  if (e.keyCode == 13) {
+  if (e.keyCode == 13 || e.keyCode == 27) {
     chosen_clientuser = '';
     $('#selectboxview-country').hide();
     $('#selectboxview-businessgroup').hide();
@@ -636,6 +638,7 @@ function onArrowKeyUser(e, ac_item) {
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
     chosen_clientuser = '';
   }
+
   if (e.keyCode == 40) {
     if (chosen_clientuser === '') {
       chosen_clientuser = 0;
@@ -659,43 +662,47 @@ function onArrowKeyUser(e, ac_item) {
   if (e.keyCode == 32) {
     $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('auto-selected');
     var ms_id = $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').attr('id');
-    var chkstatus = $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').attr('class');
-    if (ac_item == 'ulist-domain') {
-      if (chkstatus == 'active_selectbox_domains') {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_domains');
+
+    if(ms_id != undefined){
+      var chkstatus = $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').attr('class');
+      if (ac_item == 'ulist-domain') {
+        if (chkstatus == 'active_selectbox_domains') {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_domains');
+        } else {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_domains');
+        }
+        activate_domain();
+      } else if (ac_item == 'ulist-country') {
+        if (chkstatus == 'active_selectbox_country') {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_country');
+        } else {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_country');
+        }
+        activate_country();
+      } else if (ac_item == 'ulist-bg') {
+        if (chkstatus == 'active_selectbox_bgroups') {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_bgroups');
+        } else {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_bgroups');
+        }
+        activate_bg();
+      } else if (ac_item == 'ulist-legalentity') {
+        if (chkstatus == 'active_selectbox_legal_entities') {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_legal_entities');
+        } else {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_legal_entities');
+        }
+        activate_legalentity();
       } else {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_domains');
+        if (chkstatus == 'active_selectbox_division') {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_division');
+        } else {
+          $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_division');
+        }
+        activate_division();
       }
-      activate_domain();
-    } else if (ac_item == 'ulist-country') {
-      if (chkstatus == 'active_selectbox_country') {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_country');
-      } else {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_country');
-      }
-      activate_country();
-    } else if (ac_item == 'ulist-bg') {
-      if (chkstatus == 'active_selectbox_bgroups') {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_bgroups');
-      } else {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_bgroups');
-      }
-      activate_bg();
-    } else if (ac_item == 'ulist-legalentity') {
-      if (chkstatus == 'active_selectbox_legal_entities') {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_legal_entities');
-      } else {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_legal_entities');
-      }
-      activate_legalentity();
-    } else {
-      if (chkstatus == 'active_selectbox_division') {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').removeClass('active_selectbox_division');
-      } else {
-        $('#' + ac_item + ' li:eq(' + chosen_clientuser + ')').addClass('active_selectbox_division');
-      }
-      activate_division();
     }
+    
     return false;
   }
 }
@@ -720,7 +727,12 @@ function hidemenu() {
   document.getElementById('selectboxview-country').style.display = 'none';
 }
 function loadautocountry() {
-  document.getElementById('selectboxview-country').style.display = 'block';
+  $('#selectboxview-country').show();
+  /*$('#selectboxview-legal-entities').hide();
+  $('#selectboxview-division').hide();
+  $('#selectboxview-domains').hide();
+  $('#selectboxview-businessgroup').hide();*/
+
   var editcountryval = [];
   if ($('#country').val() != '') {
     editcountryval = $('#country').val().split(',');
@@ -780,7 +792,12 @@ function hidemenubgroup() {
   chosen_clientuser = '';
 }
 function loadautobusinessgroups() {
-  document.getElementById('selectboxview-businessgroup').style.display = 'block';
+  /*$('#selectboxview-country').hide();
+  $('#selectboxview-legal-entities').hide();
+  $('#selectboxview-division').hide();
+  $('#selectboxview-domains').hide();*/
+  $('#selectboxview-businessgroup').show();
+
   var editbgroupsval = [];
   if ($('#business-groups').val() != '') {
     editbgroupsval = $('#business-groups').val().split(',');
@@ -822,10 +839,15 @@ function activate_bg() {
   });
   $('#bgroupsselected').val(totalcount + ' Selected');
   $('#business-groups').val(selids);
-  $('#selectboxview-legal-entities ul').empty();
+ /* $('#selectboxview-legal-entities ul').empty();
   $('#legal-entities-selected').val('0 Selected');
   $('#legal-entities').val('');
   unitview();
+  */
+  loadautolegalentities();
+  activate_legalentity();
+  document.getElementById('selectboxview-legal-entities').style.display = 'none';
+
 }
 function activatebgroups(element) {
   var chkstatus = $(element).attr('class');
@@ -838,13 +860,21 @@ function activatebgroups(element) {
 }
 // Legal Entity----------------------------------------------------------------------------------------------------------------------
 function hidemenulegalentities() {
-  document.getElementById('selectboxview-legal-entities').style.display = 'none';
+  $('#selectboxview-legal-entities').hide();
   chosen_clientuser = '';
 }
 function loadautolegalentities() {
-  document.getElementById('selectboxview-legal-entities').style.display = 'block';
+  /*$('#selectboxview-country').hide();
+  $('#selectboxview-division').hide();
+  $('#selectboxview-domains').hide();
+  $('#selectboxview-businessgroup').hide();*/
+
+  $('#selectboxview-legal-entities').show();
+
   var bgroupsValue = $('#business-groups').val();
   var arraybusinessgroups = bgroupsValue.split(',');
+
+  arraybusinessgroups.push(null);
   $('#selectboxview-legal-entities ul').empty();
   if (arraybusinessgroups.length != 0) {
     $.each(arraybusinessgroups, function (count, values) {
@@ -860,6 +890,10 @@ function loadautolegalentities() {
             str += '<li class="li-heading">' + val.business_group_name + '</li> ';
           }
         });
+
+        if (arraybusinessgroups[count] == null) {
+          str += '<li class="li-heading">' + 'nil' + '</li> ';
+        }
       }
       $.each(legalEntitiesList, function (k, val) {
         if (arraybusinessgroups[count] == val.business_group_id) {
@@ -882,7 +916,7 @@ function loadautolegalentities() {
       $('#legal-entities-selected').val(editlegalentitiesval.length + ' Selected');
     });
   }
-  if (bgroupsValue == '') {
+  else {
     var editlegalentitiesval = [];
     if ($('#legal-entities').val() != '') {
       editlegalentitiesval = $('#legal-entities').val().split(',');
@@ -923,6 +957,11 @@ function activate_legalentity() {
   });
   $('#legal-entities-selected').val(totalcount + ' Selected');
   $('#legal-entities').val(selids);
+
+  loadautodivision();
+  activate_division();
+  document.getElementById('selectboxview-division').style.display = 'none';
+
   unitview();
 }
 function activatelegalentities(element) {
@@ -936,11 +975,16 @@ function activatelegalentities(element) {
 }
 // Divisions----------------------------------------------------------------------------------------------------------------------
 function hidemenudivision() {
-  document.getElementById('selectboxview-division').style.display = 'none';
+  $('#selectboxview-division').hide();
   chosen_clientuser = '';
 }
 function loadautodivision() {
-  document.getElementById('selectboxview-division').style.display = 'block';
+  /*$('#selectboxview-country').hide();
+  $('#selectboxview-legal-entities').hide();
+  $('#selectboxview-domains').hide();
+  $('#selectboxview-businessgroup').hide();*/
+
+  $('#selectboxview-division').show();
   var lentityValue = $('#legal-entities').val();
   var arraylentity = lentityValue.split(',');
   $('#selectboxview-division ul').empty();
@@ -1078,7 +1122,7 @@ function unitview() {
         }
       });
     }
-    if (divisionIds == '') {
+    if ($('#legal-entities').val() != '') {
       var leIds = $('#legal-entities').val();
       var arrayle = leIds.split(',');
       $.each(arrayle, function (count, values) {
@@ -1162,10 +1206,16 @@ function activateUnit(element) {
 }
 //Domains---------------------------------------------------------------------------------------
 function hidemenudomains() {
-  document.getElementById('selectboxview-domains').style.display = 'none';
+  $('#selectboxview-domains').hide();
 }
 function loadautodomains() {
-  document.getElementById('selectboxview-domains').style.display = 'block';
+  /*$('#selectboxview-country').hide();
+  $('#selectboxview-legal-entities').hide();
+  $('#selectboxview-division').hide();
+  $('#selectboxview-businessgroup').hide();*/
+
+  $('#selectboxview-domains').show();
+
   var editdomainsval = [];
   if ($('#domains').val() != '') {
     editdomainsval = $('#domains').val().split(',');
