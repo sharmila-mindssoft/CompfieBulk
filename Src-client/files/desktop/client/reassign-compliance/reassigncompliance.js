@@ -652,11 +652,11 @@ function submitcompliance() {
         } else {
           assigneeInserUnits = null;
         }
-        if (approvalInserCountry.length == 0) {
-          approvalInserCountry = null;
+        if (assigneeInserCountry.length == 0) {
+          assigneeInserCountry = null;
         }
         assigneeText = assigneeText + 'not applicable for Assignee. ';
-        newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, assigneeInserDomain, approvalInserCountry);
+        newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, assigneeInserDomain, assigneeInserCountry);
         newSettingsList.push(newSetting);
       }
       if (concurrenceInserUnits.length > 0 || concurrenceInserDomain.length > 0) {
