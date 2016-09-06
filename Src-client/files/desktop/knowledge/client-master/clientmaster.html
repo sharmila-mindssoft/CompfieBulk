@@ -1,7 +1,10 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-<link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
-  <div class="content-container width40" id="clientgroup-view">
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
+<link href="/css/jquery-ui/jquery-ui.css" rel="stylesheet">
+  <div class="content-container width50" id="clientgroup-view">
     <div class="content-area">
       <h1>Clients</h1>
       <div class="filters-and-search">
@@ -9,19 +12,21 @@
       </div>
       <div class="clearfix"></div>
       <div class="grid-table">
-        <table>
+        <table class="js-filtertable">
+          <thead>
           <tr align="left">
-            <th align="center">#</th>
+            <th align="center" style="width: 8%">#</th>
             <th>Group</th>
-            <th align="center">Edit</th>
-            <th align="center">Status</th>
+            <th align="center" style="width: 15%" >Edit</th>
+            <th align="center" style="width: 15%">Status</th>
           </tr>
           <tr>
             <td align="center"></td>
-            <td><input type="text" class="filter-text-box" id="search-clientgroup-name"></td>
+            <td><input type="text" class="filter-text-box js-filter" id="search-clientgroup-name"></td>
             <td align="center"></td>
             <td align="center"></td>
           </tr>
+          </thead>
           <tbody class="tbody-clientgroup-list">
           </tbody>
         </table>
@@ -32,8 +37,12 @@
         <tr class="table-row">
           <td align="center" class="sno"></td>
           <td class="clientgroup-name"></td>
-          <td align="center" class="edit"></td>
-          <td align="center" class="is-active"></td>
+          <td align="center">
+            <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+          </td>
+          <td align="center">
+            <span class="status" style="width: 16px; height: 16px; display:block"> </span>
+          </td>
         </tr>
       </table>
     </div>
@@ -49,7 +58,7 @@
               <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
               <div class="field-input">
                 <input id="clientgroup-id" type="hidden" value="">
-                <input id="clientgroup-name" type="text" class="input-box"  value="" >
+                <input id="clientgroup-name" type="text" class="input-box"  autofocus="autofocus" tabindex="1" value="" maxlength="50" >
               </div>
             </div>
             <div class="input-row">
@@ -57,9 +66,9 @@
               <div class="field-input">
                 <input type="hidden" id="country">
                 <input type="hidden" id="countryNames">
-                <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()">
+                <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" tabindex="2" readonly="readonly" onclick="loadautocountry()">
                 <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
-                <ul id="ulist-country" onmouseleave="hidemenu();" style="width:213px;"></ul>
+                <ul id="ulist-country" onmouseleave="hidemenu();" style="width:85%;" ></ul>
               </div>
             </div>
           </div>
@@ -68,28 +77,29 @@
             <div class="field-input">
               <input type="hidden" id="domain">
               <input type="hidden" id="domainNames">
-              <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()">
+              <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" tabindex="3" readonly="readonly" onclick="loadauto()">
               <div id="selectboxview" class="ac-selectbox" style="display:none;">
-              <ul id="ulist" onmouseleave="hidemenu();" style="width:213px;"></ul>
+              <ul id="ulist" onmouseleave="hidemenu();" style="width:85%;"></ul>
             </div>
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="">
+            <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="" tabindex="4">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Contract  To:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" id="contract-to" readonly="readonly" value="">
+            <input type="text" class="input-box" id="contract-to" readonly="readonly" value="" tabindex="5">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" placeholder="user@domain.com" id="username" value=""><br>
+            <span id="labelusername"></span>
+            <input type="text" class="input-box" placeholder="user@domain.com" id="username" value="" maxlength="100" tabindex="5"><br>
             <span style="font-size:10px;">[&#9658;This will be used as the username for user acc.<br>&#9658;
             Password will be auto-generated]</span>
           </div>
@@ -99,43 +109,44 @@
         <div class="input-row">
           <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="file" class="input-box" id="upload-logo" value="">
-            <img src="/files/desktop/common/images/icon-graph.png" id="upload-logo-img" width="20" style="display:none;">
+            <input type="file" class="input-box" id="upload-logo" value="" accept="image/*"  tabindex="6">
+            <img  id="upload-logo-img" width="32">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box"  id="no-of-user-licence" value="">
+            <input type="text" class="input-box"  id="no-of-user-licence" value="" maxlength="3" tabindex="7">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="">
+            <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="" tabindex="8" maxlength="3">
             <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label"><p>Subscribe for SMS Notification:</p></div>
           <div class="field-input" style="margin-top:5px;">
-            <input type="checkbox" id="subscribe-sms">
+            <input type="checkbox" id="subscribe-sms" tabindex="9">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Incharge Person:<span class="mandatory">*</span></div>
           <div class="field-input">
             <input type="hidden" id="users">
-            <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" readonly="readonly" onclick="loadAutoUsers()">
+            <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly" onclick="loadAutoUsers()">
             <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
-            <ul id="ulist-users" onmouseleave="hidemenu();" style="width:213px;"></ul>
+            <ul id="ulist-user" onmouseleave="hidemenu();" style="width:85%;"></ul>
           </div>
         </div>
       </div>
       <div class="input-row">
         <div class="single-column-field-label">Short Name:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input id="short-name" type="text" class="input-box"  value="" >
+          <input id="short-name" type="text" class="input-box" tabindex="10"  value="" maxlength="20">
+           <span style="font-size:10px;">[http://domain.com/login/<abbr class="shorturl"></abbr>]</span>
         </div>
       </div>
     </div>
@@ -181,6 +192,7 @@
       </td>
       <td align="center" width="35%">
         <select class="input-box tl-from" style="width:100px">
+        <!-- <option value="">Select</option> -->
         <option value="1">January</option>
         <option value="2">February</option>
         <option value="3">March</option>
@@ -197,6 +209,7 @@
       </td>
       <td align="center" width="35%">
         <select class="input-box tl-to" style="width:100px">
+        <!-- <option value="">Select</option> -->
         <option value="1">January</option>
         <option value="2">February</option>
         <option value="3">March</option>
@@ -208,13 +221,13 @@
         <option value="9">September</option>
         <option value="10">October</option>
         <option value="11">November</option>
-        <option value="12" selected>December</option>
+        <option value="12" selected="selected">December</option>
         </select>
       </td>
     </tr>
   </table>
 </div>
-<script type="text/javascript" src="/files/desktop/knowledge/client-master/clientmaster.js"></script>
+<script type="text/javascript" src="/script/client-master/clientmaster.js"></script>
 
 <script type="text/javascript">
 $(function() {
@@ -230,16 +243,16 @@ $(function() {
   }
 });
 $( "#contract-to" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
-}
-});
+  changeMonth: true,
+  changeYear: true,
+  numberOfMonths: 1,
+  dateFormat: "dd-M-yy",
+  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  onClose: function( selectedDate ) {
+    $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
+    }
+  });
 });
 </script>
 {% endblock %}

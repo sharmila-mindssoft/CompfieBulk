@@ -1,14 +1,8 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-<style type="text/css">
-  /*td, th {
-    border : 1px solid red;
-  }
-
-tbody {
-  border : 1px solid blue;
-}*/
-</style>
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
   <div class="content-container" id="assignstatutory-view">
     <div class="content-area">
       <h1>Assign Statutory </h1>
@@ -30,6 +24,7 @@ tbody {
             <th width="12%">Unit</th>
             <th >Domain</th>
             <th >Status</th>
+            <th >Assigned On</th>
             <th align="center" width="5%" style="padding-right:5px">Edit</th>
             <th align="center" width="5%" style="padding-right:5px">View & Submit</th>
           </tr>
@@ -45,61 +40,23 @@ tbody {
             <td><input type="text" class="filter-text-box listfilter" id="filter8"></td>
             <td><input type="text" class="filter-text-box listfilter" id="filter9"></td>
             <td><input type="text" class="filter-text-box listfilter" id="filter10"></td>
+            <td><input type="text" class="filter-text-box listfilter" id="filter11" readonly></td>
             <td align="center"></td>
             <td align="center"></td>
           </tr>
           <tbody class="tbody-assignstatutory-list">
           </tbody>
-          <!--  <tr>
-            <td align="center">1</td>
-            <td>India</td>
-            <td>VRM Motors</td>
-            <td>VRM Business Group</td>
-            <td>VRM & Sons</td>
-            <td>Auto Parts - Manufacturing</td>
-
-            <td>Tamilnadu</td>
-            <td>Factory</td>
-            <td>VRM1005 - Branch Office 2</td>
-            <td>Industrial Law</td>
-            <td>Submitted</td>
-            <td align="center"></td>
-            <td align="center"></td>
-          </tr>
-
-          <tr>
-            <td align="center">2</td>
-            <td>India</td>
-            <td>VRM Motors</td>
-            <td>VRM Business Group</td>
-            <td>VRM & Sons</td>
-
-            <td>Tamilnadu</td>
-            <td>Factory</td>
-            <td>Auto Parts - Manufacturing</td>
-            <td>VRM1004 - Branch Office 1</td>
-            <td>Industrial Law</td>
-            <td>Pending</td>
-            <td align="center"><img src="/images/icon-edit.png" id="editid"   onclick="location.href='/assignservicemapping'"/></td>
-            <td align="center"><img src="/images/icon-viewsubmit.png" onclick="location.href='/assignservicemapping/editsubmit'" /></td>
-          </tr>
-          <tr>
-            <td align="center">3</td>
-            <td>India</td>
-            <td>ART Private Ltd.</td>
-            <td>ART Business Group</td>
-            <td>ART Legal Entity</td>
-            <td>ART Pvt Ltd</td>
-
-            <td>Tamilnadu</td>
-            <td>Factory</td>
-            <td>ART1004 - Regional Office 1</td>
-            <td>Industrial Law</td>
-            <td>Pending</td>
-            <td align="center"><img src="/images/icon-edit.png" id="editid"  onclick="location.href='/assignservicemapping'" /></td>
-            <td align="center"><img src="/images/icon-viewsubmit.png" onclick="location.href='/assignservicemapping/editsubmit'" /></td>
-          </tr> -->
         </table>
+      </div>
+      <div style="background-color: #ffffff;">
+        <div align="right">
+        <ul class="pagination">
+        </ul>
+        </div>
+
+        <div style="padding-bottom:10px;padding-top:10px;padding-right:10px;" align="right">
+         <p class="view-count-message" style="font-size:0.8em">
+        </div>
       </div>
 
     </div>
@@ -118,15 +75,20 @@ tbody {
         <td class="tbl_unit"></td>
         <td class="tbl_domain"></td>
         <td class="tbl_status"></td>
-        <td class="tbl_edit" align="center"></td>
-        <td class="tbl_view" align="center"></td>
+        <td class="tbl_assigned_date"></td>
+        <td align="center">
+          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+        </td>
+        <td align="center">
+          <span class="view-icon" style="width: 16px; height: 16px; display:block"> </span>
+        </td>
       </tr>
     </table>
   </div>
-  <div class="content-container width75 default-display-none" id="assignstatutory-add" >
+  <div class="content-container width100 default-display-none" id="assignstatutory-add" >
     <div class="content-area">
       <h1>Assign Statutory</h1>
-      <div class="add-container">
+      <div class="add-container completed-container">
         <div class="form-container-outer">
           <ul class="nav  nav-pills nav-justified setup-panel">
             <li class="active" style="width: 49.5%;"><a href="#step-1">
@@ -143,10 +105,10 @@ tbody {
             <div class="form-container-grid-table">
               <table style="border:1px solid #ccc; margin-bottom:5px; height:200px !important;">
                 <tr align="left">
-                  <th width="20%">Country</th>
-                  <th width="20%">Group </th>
+                  <th width="20%">Country <span class="mandatory">*</span> </th>
+                  <th width="20%">Group <span class="mandatory">*</span> </th>
                   <th width="20%">Business Group </th>
-                  <th width="20%">Legal Entity </th>
+                  <th width="20%">Legal Entity <span class="mandatory">*</span> </th>
                   <th width="20%">Division</th>
                 </tr>
                 <tr>
@@ -193,11 +155,11 @@ tbody {
               </table>
               <table>
                 <tr align="left">
-                  <th width="20%">Geography Levels</th>
-                  <th width="20%">Location</th>
-                  <th width="20%">Industry</th>
-                  <th width="20%">Unit</th>
-                  <th width="20%" >Domain</th>
+                  <th width="20%">Geography Levels <span class="mandatory">*</span></th>
+                  <th width="20%">Location <span class="mandatory">*</span> </th>
+                  <th width="20%">Industry <span class="mandatory">*</span></th>
+                  <th width="20%">Unit <span class="mandatory">*</span></th>
+                  <th width="20%" >Domain <span class="mandatory">*</span></th>
                 </tr>
                 <tr>
                   <td>
@@ -246,10 +208,10 @@ tbody {
           </div>
           <table width="100%">
             <tr>
-              <td width="50%" valign="middle">
+              <td width="70%" valign="middle">
                 <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
               </td>
-              <td align="right" width="50%">
+              <td align="right" width="30%">
                 <button id="activate-step-2" class="btn-right">Next</button>
               </td>
             </tr>
@@ -265,16 +227,15 @@ tbody {
           </div>
           <table width="100%">
             <tr>
-              <td width="45%" valign="middle">
+              <td width="70%" valign="middle">
                 <span class="error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
               </td>
-              <td align="center" width="10%">
-                <button id="activate-step-submit" class="btn-right default-display-none">Submit</button>
-              </td>
-              <td align="right" width="45%">
+              <td align="right" width="30%">
                 <input type="hidden" id="clientstatutoryid" value="">
+                <button id="activate-step-submit" class="btn-right default-display-none">Submit</button>
                 <button id="activate-step-finish" class="btn-right">Save</button>
                 <button id="backward-step-1" class="btn-right">Previous</button>
+                <button id="activate-step-finish-cancel" class="btn-right">Cancel</button>
               </td>
             </tr>
           </table>
@@ -288,9 +249,32 @@ tbody {
   <table class="font1" >
   <tbody class="accordion-toggle tbody-heading">
     <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
-      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="5"><div class="actapplicable gt" style="float:left; width:3%;padding-top:5px;"></div><div class="actname" style="float:left; width:94%;margin-top:0px;"></div>
-      <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png"></div>
+      
+      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="5">
+
+      <div class="actapplicable ot" style="float:left; width:3%;padding-top:5px;">
+        <input type="checkbox" checked="checked" onclick="actstatus(this)" style="margin-top:100px;" class="act-ck-box"> 
+        <label style="margin-top:100px;" class="act-label"> </label> 
+      </div>
+
+      <div class="actname" style="float:left; width:60%;margin-top:5px;">
+      </div>
+
+      <div style="float:left;width:34%;">  
+        <div style="float:right; width:500px;" class="default-display-none act-remark" >
+          <div style="float:right;  width:250px;"> 
+            <input type="text" maxlength="500" class="input-box remark-text" style="width:200px;" placeholder="Enter Remarks" >
+          </div>
+          <div style="float:right; width:70px;margin-top:5px;"> Remarks
+        </div>
+      </div>
+      </div>
+
+      <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png">
+      </div>
+
       </th>
+   
     </tr>
     </tbody>
   </table>
@@ -301,7 +285,7 @@ tbody {
       <td width="5%"><span style="font-weight:bold;">#</span></td>
       <td width="30%" ><span style="font-weight:bold;">Statutory Provision</span></td>
       <td width="30%"><span style="font-weight:bold;">Compliance Task</span></td>
-      <td width="35%"> <span style="font-weight:bold; ">Compliance Description</span></td>
+      <td width="25%"> <span style="font-weight:bold; ">Compliance Description</span></td>
       <td width="10%" align="center">
         <span style="font-weight:bold;">
           <img src="/images/icon-client-comply.png" title="Applicable" >
@@ -318,20 +302,21 @@ tbody {
       <td class="statutoryprovision"></td>
       <td class="compliancetask"></td>
       <td class="compliancedescription"></td>
-      <td align="center" class="gt complianceapplicable"></td>
+      <td align="center" class="gt complianceapplicable">
+        <input type="checkbox" checked="checked" class="compliance-ck-box">
+        <label style="margin-top:100px;" class="compliance-label"> </label> 
+      </td>
     </tr>
   </table>
 </div>
-<!--     <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%" class="gt"><input type="checkbox" checked="checked" id="ch_h2" style="margin-top:10px;"><label for="ch_h2" style="margin-top:10px;"></label></th>
-  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Indian Partnership Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
-</tr>
-<tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%" class="gt"><input type="checkbox"  id="ch_h3" style="margin-top:10px;"><label for="ch_h3" style="margin-top:10px;"></label></th>
-  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;vertical-align:middle;" width="95%">The Factories Act, 1948 <span><img src="/images/chevron_black_right.png"></span>
-  <div style="float:right; width:500px;" class="ch_h3_remarks" ><div style="float:right;  width:250px;"> <input type="text" class="input-box"  style="width:200px;margin-top:-3px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;"> Remarks</div></div>
-</th>
-</tr> -->
 
-<script type="text/javascript" src="/files/desktop/knowledge/assign-statutory/assignstatutory.js"></script>
+<div id="no-record-templates" class="default-display-none">
+  <table class="font1" >
+  <tr> 
+  <td style="height:100px;vertical-align:middle;text-align:center;font-weight:bold;"> No Compliance Available</td>
+  </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/script/assign-statutory/assignstatutory.js"></script>
 {% endblock %}

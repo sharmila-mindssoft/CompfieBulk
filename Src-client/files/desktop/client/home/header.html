@@ -1,19 +1,63 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<link rel="shortcut icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
-<link rel="icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/reset.css">
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/common.css">
-<link rel="stylesheet" type="text/css" href="/files/desktop/nav-bar/nav-bar.css">
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/jquery-ui/jquery-ui.css">
+<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" property="icon">
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon" property="icon">
+<link rel="stylesheet" type="text/css" href="/css/reset.css">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+<link rel="stylesheet" type="text/css" href="/css/nav-bar.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/css/styles.css">
 
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/styles.css">
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/script/js/client-mirror.js"></script>
+<script type="text/javascript" src="/js/menu-script.js"></script>
+<script type="text/javascript" src="/script/js/nav-bar.js"></script>
+<script type="text/javascript" src="/js/message-properties.js"></script>
+<script type="text/javascript" src="/js/length-validation.js"></script>
+<script type="text/javascript" src="/js/common-functions.js"></script>
+<script type="text/javascript" src="/js/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="/js/filtertable.jquery.js"></script>
+<script type="text/javascript">
+    (function() {
 
-<script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
-<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
-<script type="text/javascript" src="/files/desktop/common/js/client-mirror.js"></script>
-<script type="text/javascript" src="/files/desktop/nav-bar/nav-bar.js"></script>
+        if (!sessionStorage.length) {
+            localStorage.setItem('getSessionStorage', Date.now());
+        };
 
-<script type="text/javascript" src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
+        window.addEventListener('storage', function(event) {
+
+            if (event.key == 'getSessionStorage') {
+
+                localStorage.setItem('sessionStorage', JSON.stringify(sessionStorage));
+                localStorage.removeItem('sessionStorage');
+
+            } else if (event.key == 'sessionStorage' && !sessionStorage.length) {
+
+                var data = JSON.parse(event.newValue),
+                            value;
+
+                for (key in data) {
+                    sessionStorage.setItem(key, data[key]);
+                }
+
+                showSessionStorage();
+            }
+        });
+
+        window.onbeforeunload = function() {
+            //sessionStorage.clear();
+        };
+    })();
+</script>
+
+<div class="warning-confirm">
+    <!-- <span class="ui-icon ui-icon-alert" style="float:left; margin:0px 12px 10px 0;"></span> -->
+    <span class="warning-message"></span>
+</div>
+
+<div class="alert-confirm" title="Alert">
+    <span class="alert-message"></span>
+</div>

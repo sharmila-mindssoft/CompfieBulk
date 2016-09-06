@@ -39,9 +39,10 @@ def parse_number(x, min_value, max_value) :
     if x >= min_value and x <= max_value:
         return x
     else:
-        msg = "a number between %s and %s" % (
-            min_value, max_value
-        )
+        # msg = "a number between %s and %s" % (
+        #     min_value, max_value
+        # )
+        msg = "a number greater than 0"
         raise expectation_error(msg, x)
 
 def parse_point_numbers(x) :

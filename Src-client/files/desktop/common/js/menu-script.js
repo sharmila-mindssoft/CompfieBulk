@@ -1,50 +1,39 @@
-( function( $ ) {
-$( document ).ready(function() {
-$('#cssmenu').prepend('<div id="indicatorContainer"><div id="pIndicator"><div id="cIndicator"></div></div></div>');
-    var activeElement = $('#cssmenu>ul>li:first');
-
-    $('#cssmenu>ul>li').each(function() {
-        if ($(this).hasClass('active')) {
-            activeElement = $(this);
-        }
+(function (a) {
+  a(document).ready(function () {
+    a('#cssmenu').prepend('<div id="indicatorContainer"><div id="pIndicator"><div id="cIndicator"></div></div></div>');
+    var f = a('#cssmenu>ul>li:first');
+    a('#cssmenu>ul>li').each(function () {
+      if (a(this).hasClass('active')) {
+        f = a(this);
+      }
     });
-
-
-	var posLeft = activeElement.position().left;
-	var elementWidth = activeElement.width();
-	posLeft = posLeft + elementWidth/2 -6;
-	if (activeElement.hasClass('has-sub')) {
-		posLeft -= 6;
-	}
-
-	$('#cssmenu #pIndicator').css('left', posLeft);
-	var element, leftPos, indicator = $('#cssmenu pIndicator');
-	
-	$("#cssmenu>ul>li").hover(function() {
-        element = $(this);
-        var w = element.width();
-        if ($(this).hasClass('has-sub'))
-        {
-        	leftPos = element.position().left + w/2 - 12;
-        }
-        else {
-        	leftPos = element.position().left + w/2 - 6;
-        }
-
-        $('#cssmenu #pIndicator').css('left', leftPos);
+    var b = f.position().left;
+    var g = f.width();
+    b = b + g / 2 - 6;
+    if (f.hasClass('has-sub')) {
+      b -= 6;
     }
-    , function() {
-    	$('#cssmenu #pIndicator').css('left', posLeft);
+    a('#cssmenu #pIndicator').css('left', b);
+    var e, d, c = a('#cssmenu pIndicator');
+    a('#cssmenu>ul>li').hover(function () {
+      e = a(this);
+      var h = e.width();
+      if (a(this).hasClass('has-sub')) {
+        d = e.position().left + h / 2 - 12;
+      } else {
+        d = e.position().left + h / 2 - 6;
+      }
+      a('#cssmenu #pIndicator').css('left', d);
+    }, function () {
+      a('#cssmenu #pIndicator').css('left', b);
     });
-
-	$('#cssmenu>ul').prepend('<li id="menu-button"><a>Menu</a></li>');
-	$( "#menu-button" ).click(function(){
-    		if ($(this).parent().hasClass('open')) {
-    			$(this).parent().removeClass('open');
-    		}
-    		else {
-    			$(this).parent().addClass('open');
-    		}
-    	});
-});
-} )( jQuery );
+    a('#cssmenu>ul').prepend('<li id="menu-button"></li>');
+    a('#menu-button').click(function () {
+      if (a(this).parent().hasClass('open')) {
+        a(this).parent().removeClass('open');
+      } else {
+        a(this).parent().addClass('open');
+      }
+    });
+  });
+}(jQuery));

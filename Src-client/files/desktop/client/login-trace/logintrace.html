@@ -1,23 +1,26 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-<div class="content-container width70">
+   <div class='loading-indicator-spin'>
+      <span><img src='/images/loading-img.gif' alt="">  </span>
+    </div>
+<div class="content-container width80">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Login Trace<span class="error-message"><!----></span></div>
+      <div class="add-container-heading">Login Trace<span class="error-message"></span></div>
       <div class="input-row-left">
         <div class="input-row">
           <div class="field-label">From Date:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" id="from-date" placeholder="dd-Mon-yyyy">
+            <input type="text" class="input-box" id="from-date" tabindex="1" readonly="readonly" placeholder="dd-Mon-yyyy">
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">User:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="userval" value=""   onkeyup="loadauto_user(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="userval"  tabindex="3" value="" placeholder="Enter User">
               <input type="hidden" id="userid">
-              <div id="autocompleteview-user" class="ac-textbox" style="display:none;"  onclick="hideuserlist();">
-                  <ul style="width:195px;"></ul>
+              <div id="ac-user" class="ac-textbox default-display-none">
+                  <ul style="width:85%;"></ul>
               </div>
           </div>
         </div>
@@ -26,13 +29,13 @@
         <div class="input-row">
           <div class="field-label">To Date:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" id="to-date" placeholder="dd-Mon-yyyy">
+            <input type="text" class="input-box" id="to-date" readonly="readonly" tabindex="2" placeholder="dd-Mon-yyyy">
           </div>
         </div>
 
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="submit" value="Show" id="show-button" class="btn-submit">
+        <input type="submit" name="submit" value="Show" id="show-button" onclick="showrecord()" tabindex="4" class="btn-submit">
       </div>
       <div class="clearfix"></div>
       <div class="grid-table default-display-none">
@@ -45,6 +48,10 @@
           <tbody class="tbody-login-trace-list">
           </tbody>
       </table>
+      
+<div align="center" style="padding-top:10px;">
+  <input type="button" value="Show more records" class="btn-submit" id="pagination">
+</div>
     </div>
   </div>
 </div>
@@ -52,15 +59,15 @@
 <div id="templates">
 <table class="table-logintrace-list">
   <tr class="table-row">
-    <td class="date-time"></td>
-    <td class="form-name"></td>
-    <td class="info-text"></td>
+    <td class="date-time" width="22%"></td>
+    <td class="form-name" width="20%"></td>
+    <td class="info-text" width="58%"></td>
   </tr>
 </table>
 </div>
 
-<script type="text/javascript" src="/files/desktop/client/login-trace/logintrace.js"></script>
-<script src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="/script/login-trace/logintrace.js"></script>
+<script src="/js/jquery-ui/jquery-ui.js"></script>
 <script type="text/javascript">
 $(function() {
 $("#from-date" ).datepicker({
@@ -87,4 +94,4 @@ $( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
 });
 });
 </script>
-{% endblock %} 
+{% endblock %}

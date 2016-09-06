@@ -1,0 +1,163 @@
+{% extends "files/desktop/client/home/container.html" %}
+{% block content %}
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
+
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">
+        Unit Details
+        <span class="error-message"></span>
+      </div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">
+            Country
+            <span class="mandatory">*</span>
+            :
+          </div>
+          <div class="field-input">
+            <input type="hidden" id="country" value="">
+            <input type="text" class="input-box icon-autocomplete" id="countryval" value="" placeholder="Enter Country">
+            <div id="ac-country" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Domain:</div>
+          <div class="field-input">
+            <input type="hidden" id="domain">
+            <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" placeholder="Select Domain" readonly="readonly" onclick="loadauto_domains()">
+            <div id="selectboxview-domains" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudomains();">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Business Group:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" placeholder="Enter Business Group">
+            <input type="hidden" id="businessgroupid">
+            <div id="ac-businessgroup" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+
+        <div class="input-row">
+          <div class="field-label">Legal Entity:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="legalentityval" value=""  placeholder="Enter Legal Entity">
+            <input type="hidden" id="legalentityid">
+            <div id="ac-legalentity" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Division:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" placeholder="Enter Division">
+            <input type="hidden" id="divisionid">
+            <div id="ac-division" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Unit:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" placeholder="Enter Unit">
+            <input type="hidden" id="unitid">
+            <div id="ac-unit" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
+        <input type="submit" name="cancel" value="Export" id="export-button"  class="btn-submit"></div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt default-display-none">
+        <h1>Unit Details</h1>
+        <div class="unitdetails-list">
+          <table style="border-bottom:dotted 1px #999999;">
+            <tbody class="filter-heading-list"></tbody>
+            <tbody class="heading-list"></tbody>
+            <tbody class="tbody-unitdetails-list"></tbody>
+
+          </table>
+        </div>
+        <div align="center" style="padding-top:10px;">
+          <input type="button" value="Show more records" class="btn-submit" id="pagination">
+        </div>
+        <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="templates">
+  <table class="table-unitdetails-list">
+    <tr class="filter-heading-list" style="border-top:1px solid #eee; ">
+      <td colspan="6">
+        <div style="margin-left:15%;padding-top:10px;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Country :
+              <span style="margin-left:10px; font-weight:bold;" class="filter-country-name"></span>
+            </div>
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Business Group  :
+              <span style="margin-left:10px; font-weight:bold;" class="filter-business-group-name"></span>
+            </div>
+          </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Legal Entity :
+              <span style="margin-left:10px; font-weight:bold;" class="filter-legal-entity-name"></span>
+            </div>
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Division :
+              <span style="margin-left:10px; font-weight:bold;"class= "filter-division-name"></span>
+            </div>
+
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr align="left" class="heading-list">
+      <th width="3%" align="center" class="header-bg">#</th>
+      <th width="15%" class="header-bg">Unit</th>
+      <th width="15%" class="header-bg">Domain</th>
+      <th width="22%"  class="header-bg">Unit Location</th>
+      <th width="20%" class="header-bg">Unit Address</th>
+      <th class="header-bg" width="10%">Postal Code</th>
+    </tr>
+    <tr class="table-row" >
+      <td align="center" class="sno"></td>
+      <td class="unit-name"></td>
+      <td class="domain-name"></td>
+      <td class="unit-address"></td>
+      <td class="unit-location"></td>
+      <td class="pincode"></td>
+    </tr>
+  </table>
+</div>
+
+<div id="no-record-templates" class="default-display-none">
+<table class="table-no-content">
+<tr align="left" class="table-row-no-content">
+<td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+</tr>
+</table>
+</div>
+
+<script type="text/javascript" src="/script/unit-details-report/unitdetailsreport.js"></script>
+{% endblock %}

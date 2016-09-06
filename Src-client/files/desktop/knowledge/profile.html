@@ -1,6 +1,6 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-  <div class="content-container width80">
+  <div class="content-container width90">
     <div class="content-area">
       <div class="add-container">
         <div class="add-container-heading">Profile<span class="error-message"></span></div>
@@ -19,8 +19,8 @@
           </div>
 
           <div class="input-row" style="padding-bottom:0px;">
-            <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
-            <div class="field-input"><input type="text" class="input-box countrycode"  value="+91"> <input type="text" class="input-box areacode"  value=""> <input type="text" class="input-box mobile"  value=""></div>
+            <div class="field-label">Contact No.:</div>
+            <div class="field-input"><input type="text" class="input-box countrycode" id="countrycode" maxlength="4"  value=""> <input type="text" class="input-box areacode" id="areacode"  value="" maxlength="4"> <input type="text" class="input-box mobile" id="mobile"maxlength="10" value=""></div>
           </div>
           <div class="input-row">
             <div class="field-label">&nbsp;</div>
@@ -41,18 +41,18 @@
           </div>
           <div class="input-row">
             <div class="field-label">Address:</div>
-            <div class="field-input"><textarea class="input-box address" style="height:70px;"   ></textarea></div>
+            <div class="field-input"><textarea class="input-box address" style="height:70px;" id="address"></textarea></div>
           </div>
         </div>
         <input type="hidden" class="userid">
         <div class="submit-button-container">
           <input type="submit" name="save" value="Save" class="btn-submit" id="submit">
           &nbsp;&nbsp;
-          <input type="submit" name="change_pwd" value="Change Password" onclick="location.href='/change_password'" class="btn-submit">
+          <input type="submit" name="change_pwd" value="Change Password" onclick="location.href='/knowledge/change-password'" class="btn-submit">
         </div>
         <div class="clearfix"></div>
       </div>
     </div>
   </div>
-  <script type="text/javascript" src="/files/desktop/common/js/profile.js"></script>
+  <script type="text/javascript" src="/script/js/profile.js"></script>
 {% endblock %}

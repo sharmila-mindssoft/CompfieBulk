@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Home</title>
+  <title>Compfie</title>
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/tab-script.js"></script>
+  {% include "/files/desktop/knowledge/home/jsfiles.html" %}
   {% include "/files/desktop/knowledge/home/header.html" %}
-  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/home.css">
-  <script type="text/javascript" src="/files/desktop/common/js/home.js"></script>
+
 </head>
 <body>
   <div id="wrapper">
-    {% include "/files/desktop/knowledge/home/nav-bar.html" %}
     <div class="main-content-area">
+        {% include "/files/desktop/knowledge/home/nav-bar.html" %}
       <div class="content-container">
         <div class="content-area">
           <!-- <div class="welcome-msg"></div> -->
@@ -17,7 +19,10 @@
         </div>
       </div>
     </div>
+    <div class="clearfix"></div>
+    <div class="push"></div>
   </div>
   {% include "/files/desktop/knowledge/home/footer.html" %}
 </body>
+
 </html>

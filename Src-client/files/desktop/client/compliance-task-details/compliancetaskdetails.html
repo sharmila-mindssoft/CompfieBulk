@@ -1,0 +1,371 @@
+{% extends "files/desktop/client/home/container.html" %}
+{% block content %}
+<style>
+.grid-table table tr:hover {
+  background-color: #F1E9F6;
+  cursor: pointer;
+}
+.grid-table table tr:nth-child(even) {
+  background: #fff;
+}
+
+.grid-table table tr:nth-child(odd) {
+  background: #fff;
+}
+
+.grid-table table tr:nth-child(odd):hover {
+  background-color: #F1E9F6;
+  cursor: pointer;
+}
+.grid-table table tr:nth-child(even):hover {
+  background-color: #F1E9F6;
+  cursor: pointer;
+}
+.half-width{
+  vertical-align:top;
+  background:#F1E9F6;
+  padding-left:10px;
+}
+.uploaded-filename span{
+  background-color: #ddd;
+  border: 1px solid #aaa;
+  display: inline-table;
+  margin-bottom: 3px !important;
+  width: 85%;
+  line-height: 25px;
+  text-indent: 5px;
+
+}
+.uploaded-filename span .removeicon{
+  text-align: right !important;
+  float: right;
+  line-height: 25px;
+  padding-top: 2px;
+  vertical-align: middle;
+}
+</style>
+
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
+
+<div class="content-container width100">
+  <div class="content-area">
+    <div class="add-container completed-container">
+      <div class="archive-container">
+        <div class="archive-header">
+          <span class="current-tab active">Compliance Tasks</span>
+          <span class="upcomming-tab">Upcoming Compliance Tasks</span>
+          <abbr class="error-message" style="padding-right:10px; padding-top:5px;"></abbr>
+        </div>
+
+        <div class="main-tab-content" style="border:1px solid white;">
+          <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+            <tr>
+              <td width="100%" class="full-width-list">
+                <div class="grid-table" style="padding-bottom:0px;">
+                  <table> 
+                    <thead>
+                      <tr align="left" style="background:#ccc;" >
+                        <td width="3%">
+                          <span style="font-weight:bold;">#</span>
+                        </td>
+                        <td width="32%">
+                          <span style="font-weight:bold;">Compliance Task</span>
+                        </td>
+                        <td width="15%">
+                          <span style="font-weight:bold;">Domain</span>
+                        </td>
+                        <td width="10%">
+                          <span style="font-weight:bold;">Start Date</span>
+                        </td>
+                        <td width="10%">
+                          <span style="font-weight:bold;">Due Date</span>
+                        </td>
+                        <td width="15%">
+                          <span style="font-weight:bold;">Days</span>
+                        </td>
+                        <td width="10%">
+                          <span style="font-weight:bold;">Status</span>
+                        </td>
+                        <td width="5%">
+                          <span style="font-weight:bold;padding-right:5px">Format</span>
+                        </td>
+                      </tr>
+                      </thead>
+                    </table>
+                </div>
+
+                <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
+                  <table class="js-filtertable">
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter" ></td>
+                      <td>
+                        <input type="text" class="filter-text-box js-filter"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter"></td>
+                      <td></td>
+                    </tr>
+                    </thead>
+                    <tbody class="tbody-compliances-task-list-overdue"></tbody>
+                    <tbody class="tbody-compliances-task-list-inprogress"></tbody>
+                  </table>
+
+                  <div align="center" style="padding-top:10px;">
+                    <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination">
+                  </div>
+
+                </div>
+              </td>
+              <td width="1%" class="half-width-task-details default-display-none" style="vertical-align:top; background:#F1E9F6; padding-left:10px;"></td>
+            </tr>
+          </table>
+          <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count1"></p>
+          <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count2"></p>
+        </div>
+
+        <!-- archive tab content start here -->
+        <div class="upcomming-tab-content" style="display:none; border:1px solid #fff;">
+          <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+            <tr>
+              <td width="100%">
+
+                <div class="grid-table" style="padding-bottom:0px;">
+                  <table class="js-filtertable-upcoming">
+                  <thead>
+
+                    <tr align="left" style="background:#ccc;">
+                      <td width="5%">
+                        <span style="font-weight:bold;">#</span>
+                      </td>
+                      <td width="50%">
+                        <span style="font-weight:bold;">Compliance Task</span>
+                      </td>
+                      <td width="15%">
+                        <span style="font-weight:bold;">Domain</span>
+                      </td>
+                      <td width="10%">
+                        <span style="font-weight:bold;">Start Date</span>
+                      </td>
+                      <td width="10%">
+                        <span style="font-weight:bold;">Due Date</span>
+                      </td>
+
+                      <td width="10%">
+                        <span style="font-weight:bold;padding-right:5px">Format</span>
+                      </td>
+                    </tr>
+                    </thead>
+                    </table>
+                </div>
+
+
+                <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
+                  <table class="js-filtertable-upcoming">
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter-upcoming"  ></td>
+                      <td>
+                        <input type="text" class="filter-text-box js-filter-upcoming"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter-upcoming"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box js-filter-upcoming"></td>
+                      
+                    </tr>
+                  </thead>
+                  <tbody class="tbody-upcoming-compliances-list"></tbody>
+                  </table>
+                  <div align="center" style="padding-top:10px;">
+                    <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination-upcoming">
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </table>
+          <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count_upcoming"></p>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div id="templates">
+  <table class="table-compliances-task-list">
+    <tr class="headingRow">
+      <th colspan="9" align="left" style="background:#ccc;color:black;font-weight:bold" class="compliance-types"></th>
+    </tr>
+    <tr style="background:#fff;" class="table-row-list expand-compliance" >
+      <td class="sno" width="3%"></td>
+      <td width="32%"> <abbr class="page-load compliance-task" title=""><img src="/images/icon-info.png">
+          <span></span></abbr>
+      </td>
+      <td class="domain" width="15%"></td>
+      <td class="startdate" width="10%"></td>
+      <td class="duedate" width="10%" ></td>
+      <td class="days-text" style="" width="15%"></td>
+      <td class="status" width="10%"></td>
+      <td align="center" width="5%"><span class=""></span>
+        <a class="format-file" href="" target="new">
+          <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></a>
+      </td>
+    </tr >
+  </table>
+  <table class="table-upcoming-compliances-list">
+    <tr style="background:#fff;" class="table-row-list">
+      <td class="uc-sno" width="5%"></td>
+      <td width="50%"> <abbr class="page-load uc-compliance-task" title=""><img src="/images/icon-info.png" style="margin-right:3px">
+          <span></span></abbr>
+      </td>
+      <td class="uc-domain" width="15%"></td>
+      <td class="uc-startdate" width="10%"></td>
+      <td class="uc-duedate" width="10%"></td>
+
+      <td align="center" width="10%"> 
+        <a class="format-file" href="" target="new" style="text-align:center;">
+          <img src="/images/download.png" style="width:16px;height:16px; text-align: center;" title="Download Format" align="center"></a>
+      </td>
+
+    </tr>
+  </table>
+
+  <div class="sideview-div" style="width:100%; height:100%;">
+
+    <table class="managetask">
+      <tr>
+        <td colspan="2">
+          <a class="popup-link">
+            <img class="close" src="/images/delete.png" style="float:right;" onclick="closeicon()" />
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td >
+          <span style="font-weight:bold;">Unit:</span>
+        </td>
+        <td class="sideview-compliance-unit"><abbr class="page-load" title=""><img src="/images/icon-info.png" style="margin-right:3px"></abbr><span></span></td>
+      </tr>
+      <tr align="left">
+        <td width="30%">
+          <span style="font-weight:bold;">Compliance Task</span>
+        </td>
+        <td width="70%" colspan="3" class="sideview-compliance-task">
+          <abbr class="page-load" title="">
+            <img src="/images/icon-info.png" style="margin-right:3px">
+          </abbr>
+          <span class="ct"></span>
+
+        </td>
+      </tr>
+      <tr>
+        <td >
+          <span style="font-weight:bold;">Compliance Frequency:</span>
+        </td>
+        <td class="sideview-compliance-frequency"></td>
+      </tr>
+      <tr>
+        <td >
+          <span style="font-weight:bold;">Upload Documents</span>
+        </td>
+        <td >
+          <input type="file" class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple"  style="width: 83px; height: 25px; overflow: hidden; " value="" />
+          <span style="float:right;">
+            <span style="font-weight:bold;" class="sideview-upload-date"></span>
+            <br>
+            <span style="font-size:10px">(Upload Date)</span>
+          </span>
+          <br>
+          <span style="font-size:0.75em;">(max 50 MB)</span>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td >
+          <span style="font-weight:bold;">Attached Documents:</span>
+        </td>
+        <td colspan="2" class="uploaded-filename"></td>
+      </tr>
+      <tr>
+        <td>
+          <span style="font-weight:bold;">Document / Completion Date<input type="hidden" class="sideview-startdate" /></span>
+        </td>
+        <td class="sideview-completion-date-td">
+
+        </td>
+      </tr>
+      <tr class="validityAndDueDate" >
+        <td >
+          <span style="font-weight:bold;">Validity Date:</span>
+        </td>
+        <td>
+          <span class="validity1_label"><abbr></abbr>
+            <img src="/images/icon-edit.png" class="validity1_icon" style="padding-left:40px;">
+          </span>
+          <span class="validity1_textbox" style="display:none;">
+            <input type="text" value="" class="input-box validity1-textbox-input" readonly="readonly" />
+          </span>
+        </td>
+      </tr>
+      <tr class="validityAndDueDate">
+        <td >
+          <span style="font-weight:bold;">Next Due Date:</span>
+        </td>
+        <td>
+          <span class="duedate1_label"><abbr></abbr></span>
+          <span class="duedate1_textbox" style="display:none;">
+            <input type="text" value="" class="input-box duedate1-textbox-input" readonly="readonly"/>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span style="font-weight:bold;">Status</span>
+        </td>
+        <td class="sideview-compliance-status"></td>
+      </tr>
+      <tr id="rejected-reason-header">
+        <td>
+          <span style="font-weight:bold;" >Rejected Reason</span>
+        </td>
+        <td class="sideview-compliance-reason"></td>
+      </tr>
+      <tr>
+        <td style="vertical-align:middle;">
+          <span style="font-weight:bold;">Remarks</span>
+        </td>
+        <td  colspan="3">
+          <span class="sideview-remarks-td"></span>
+          <br>
+          <span style="font-size:0.75em;">(max 500 characters)</span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center">
+          <input type="submit" value="Submit" class="btn-submit" id="submit"></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div id="no-record-templates" class="default-display-none">
+<table class="table-no-content">
+<tr align="left" class="table-row-no-content">
+<td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1em; font-weight:bold"></td>
+</tr>
+</table>
+</div>
+
+<script src="/js/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="/script/compliance-task-details/compliancetaskdetails.js"></script>
+{% endblock %}

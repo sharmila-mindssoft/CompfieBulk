@@ -1,7 +1,6 @@
 import json
 from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-    parse_structure_CustomIntegerType_1_7,
     parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL,
@@ -10,20 +9,22 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
     parse_structure_VariantType_clientadminsettings_Request,
     parse_structure_OptionalType_CustomTextType_250,
-    parse_structure_Float
+    parse_structure_Float,
+    parse_structure_OptionalType_CustomTextType_20,
+    parse_structure_OptionalType_CustomTextType_100
 )
 from protocol.to_structure import (
-    to_structure_CustomIntegerType_1_7,
     to_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER,
     to_structure_CustomTextType_250,
-    to_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL,
-    to_structure_SignedIntegerType_8, to_structure_CustomTextType_100,
+    to_structure_UnsignedIntegerType_32, to_structure_CustomTextType_100,
     to_structure_Bool, to_structure_CustomTextType_20,
     to_structure_CustomTextType_50,
     to_structure_VariantType_clientadminsettings_Request,
     to_structure_RecordType_clientadminsettings_PROFILE_DETAIL,
     to_structure_OptionalType_CustomTextType_250,
-    to_structure_Float
+    to_structure_Float,
+    to_structure_OptionalType_CustomTextType_20,
+    to_structure_OptionalType_CustomTextType_100
 )
 
 #
@@ -78,19 +79,19 @@ class UpdateSettings(Request):
         is_two_levels_of_approval = data.get("is_two_levels_of_approval")
         is_two_levels_of_approval = parse_structure_Bool(is_two_levels_of_approval)
         assignee_reminder_days = data.get("assignee_reminder_days")
-        assignee_reminder_days = parse_structure_CustomIntegerType_1_7(assignee_reminder_days)
+        assignee_reminder_days = parse_structure_UnsignedIntegerType_32(assignee_reminder_days)
         escalation_reminder_In_advance_days = data.get("escalation_reminder_In_advance_days")
-        escalation_reminder_In_advance_days = parse_structure_CustomIntegerType_1_7(escalation_reminder_In_advance_days)
+        escalation_reminder_In_advance_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_In_advance_days)
         escalation_reminder_days = data.get("escalation_reminder_days")
-        escalation_reminder_days = parse_structure_CustomIntegerType_1_7(escalation_reminder_days)
+        escalation_reminder_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_days)
         return UpdateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days)
 
     def to_inner_structure(self):
         return {
             "is_two_levels_of_approval": to_structure_Bool(self.is_two_levels_of_approval),
-            "assignee_reminder_days": to_structure_CustomIntegerType_1_7(self.assignee_reminder_days),
-            "escalation_reminder_In_advance_days": to_structure_CustomIntegerType_1_7(self.escalation_reminder_In_advance_days),
-            "escalation_reminder_days": to_structure_CustomIntegerType_1_7(self.escalation_reminder_days),
+            "assignee_reminder_days": to_structure_UnsignedIntegerType_32(self.assignee_reminder_days),
+            "escalation_reminder_In_advance_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_In_advance_days),
+            "escalation_reminder_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_days),
         }
 
 
@@ -155,9 +156,9 @@ class GetSettingsSuccess(Response):
     def to_inner_structure(self):
         return {
             "is_two_levels_of_approval": to_structure_Bool(self.is_two_levels_of_approval),
-            "assignee_reminder_days": to_structure_SignedIntegerType_8(self.assignee_reminder_days),
-            "escalation_reminder_In_advance_days": to_structure_SignedIntegerType_8(self.escalation_reminder_In_advance_days),
-            "escalation_reminder_days": to_structure_SignedIntegerType_8(self.escalation_reminder_days),
+            "assignee_reminder_days": to_structure_UnsignedIntegerType_32(self.assignee_reminder_days),
+            "escalation_reminder_In_advance_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_In_advance_days),
+            "escalation_reminder_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_days),
             "profile_detail": to_structure_RecordType_clientadminsettings_PROFILE_DETAIL(self.profile_detail),
         }
 
@@ -213,7 +214,7 @@ class RequestFormat(object):
 #
 
 class PROFILE_DETAIL(object):
-    def __init__(self, contract_from, contract_to, no_of_user_licence, 
+    def __init__(self, contract_from, contract_to, no_of_user_licence,
         remaining_licence, licence_holders, total_file_space, used_space):
         self.contract_from = contract_from
         self.contract_to = contract_to
@@ -225,7 +226,7 @@ class PROFILE_DETAIL(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["contract_from", "contract_to", 
+        data = parse_dictionary(data, ["contract_from", "contract_to",
             "no_of_user_licence", "remaining_licence", "licence_holders",
             "total_file_space", "used_space"])
         contract_from = data.get("contract_from")
@@ -242,57 +243,85 @@ class PROFILE_DETAIL(object):
         total_file_space = parse_structure_Float(total_file_space)
         used_space = data.get("used_space")
         used_space = parse_structure_Float(used_space)
-        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence, 
+        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence,
             remaining_licence, licence_holders, total_file_space, used_space)
 
     def to_structure(self):
         return {
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
-            "remaining_licence": to_structure_SignedIntegerType_8(self.remaining_licence),
+            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
+            "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
             "licence_holders": to_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(self.licence_holders),
             "total_file_space": to_structure_Float(self.total_file_space),
             "used_space": to_structure_Float(self.used_space)
         }
+
 
 #
 # LICENCE_HOLDER
 #
 
 class LICENCE_HOLDER(object):
-    def __init__(self, user_id, user_name, email_id, contact_no, seating_unit_name, address):
+    def __init__(
+        self, user_id, user_name, email_id, contact_no,
+        seating_unit_name, address, is_admin, is_active, is_primary_admin
+    ):
         self.user_id = user_id
         self.user_name = user_name
         self.email_id = email_id
         self.contact_no = contact_no
         self.seating_unit_name = seating_unit_name
         self.address = address
+        self.is_admin = is_admin
+        self.is_active = is_active
+        self.is_primary_admin = is_primary_admin
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "email_id", "contact_no", "seating_unit_name", "address"])
+        data = parse_dictionary(
+            data, [
+                "user_id", "user_name", "email_id", "contact_no",
+                "seating_unit_name", "address", "is_active", "is_admin",
+                "is_primary_admin"
+            ]
+        )
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
-        user_name = parse_structure_CustomTextType_100(user_name)
+        user_name = parse_structure_CustomTextType_250(user_name)
         email_id = data.get("email_id")
         email_id = parse_structure_CustomTextType_100(email_id)
         contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
+        contact_no = parse_structure_OptionalType_CustomTextType_20(contact_no)
         seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_CustomTextType_100(seating_unit_name)
+        seating_unit_name = parse_structure_OptionalType_CustomTextType_100(
+            seating_unit_name)
         address = data.get("address")
         address = parse_structure_OptionalType_CustomTextType_250(address)
-        return LICENCE_HOLDER(user_id, user_name, email_id, contact_no, seating_unit_name, address)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        is_admin = data.get("is_admin")
+        is_admin = parse_structure_Bool(is_admin)
+        is_primary_admin = data.get("is_primary_admin")
+        is_primary_admin = parse_structure_Bool(is_primary_admin)
+        return LICENCE_HOLDER(
+            user_id, user_name, email_id, contact_no,
+            seating_unit_name, address, is_admin, is_active, is_primary_admin
+        )
 
     def to_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "user_name": to_structure_CustomTextType_100(self.user_name),
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "user_name": to_structure_CustomTextType_250(self.user_name),
             "email_id": to_structure_CustomTextType_100(self.email_id),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_name": to_structure_CustomTextType_100(self.seating_unit_name),
-            "address": to_structure_OptionalType_CustomTextType_250(self.address)
+            "contact_no": to_structure_OptionalType_CustomTextType_20(
+                self.contact_no),
+            "seating_unit_name": to_structure_OptionalType_CustomTextType_100(
+                self.seating_unit_name),
+            "address": to_structure_OptionalType_CustomTextType_250(
+                self.address),
+            "is_active": to_structure_Bool(self.is_active),
+            "is_admin": to_structure_Bool(self.is_admin),
+            "is_primary_admin": to_structure_Bool(self.is_primary_admin)
         }
-

@@ -1,36 +1,3 @@
-.header-section {
-  width: 100%;
-  background: #fc9b01;
-  float: left;
-  position: relative;
-  z-index: 2;
-}
-.header-content {
-  width: 62.500em;
-  margin: auto;
-}
-.header-content-inner {
-  width: 100%;
-  float: left;
-  background: #fc9b01;
-  padding: 0;
-}
-.site-logo {
-  float: left;
-  padding: 0.3em 0;
-}
-.site-logo img {
-  width: 8em;
-}
-.nav-bar {
-  width: 100%;
-  float: left;
-  background: #fc9b01;
-}
-.navigation {
-  width: 62.500em;
-  margin: auto;
-}
 #nav-bar-templates {
   display: none;
 }
@@ -38,10 +5,9 @@
 /* main nav bar starts */
 
 #cssmenu {
-  position: relative;
+  position: absolute;
   height: 44px;
-  width: auto;
-  float: right;
+  right: 0;
 }
 #cssmenu ul {
   list-style: none;
@@ -208,7 +174,7 @@
   transition: all .35s ease;
 }
 #cssmenu ul ul ul li a {
-  width: 140px ; 
+  width: 170px ; 
   border-bottom: 1px solid #eeeeee;
   padding: 10px 15px;
   font-size: 12px;
@@ -293,6 +259,31 @@
   padding-top: 5px;
 }
 
+#noti_Container {
+    position:relative;    
+    border:0px;
+    width:16px;
+    height:16px;
+    cursor:pointer;
+
+}
+.noti_bubble {
+    position:absolute;    /* This breaks the div from the normal HTML document. */
+    top: 9px;
+    right:-3px;
+    padding:1px 2px 1px 2px;
+    background-color: #0024FF; /* you could use a background image if you'd like as well */
+    color:white;
+    font-weight:bold;
+    font-size:0.55em;
+    border-radius:30px;
+    box-shadow:1px 1px 1px gray;
+    cursor:hand;
+}
+.noti_icon{
+  padding: 0px 20px !important;
+}
+
 @media all and (max-width: 800px), only screen and (-webkit-min-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (min--moz-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (-o-min-device-pixel-ratio: 2/1) and (max-width: 1024px), only screen and (min-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (min-resolution: 192dpi) and (max-width: 1024px), only screen and (min-resolution: 2dppx) and (max-width: 1024px) {
   #cssmenu {
     width: auto;
@@ -311,8 +302,11 @@
     display: none;
   }
   #cssmenu > ul {
-    height: auto;
+    position: relative;
     display: block;
+    background: #ddd;
+    width: 100%;
+    z-index: 500;
   }
   #cssmenu > ul > li {
     float: none;
@@ -342,13 +336,41 @@
   }
   #cssmenu ul li a {
     padding: 12px 20px;
+    width: 100%;
+  }
+  .noti_bubble {
+    position: relative;
+    top: -4em;
+    left: 3.5em;
+    padding: 0.5em;
+    background-color: red;
+    color: white;
+    font-weight: normal;
+    font-size: 0.55em;
+    border-radius: 2em;
+    box-shadow: 1px 1px 1px gray;
+    cursor: hand;
+    float: left;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+  }
+  #cssmenu ul li a img {
+    max-width: 1.4em;
+    margin-bottom: 0.5em;
+    float: left;
   }
   #cssmenu ul ul li a {
     border: 0;
     background: none;
     width: auto;
     padding: 8px 35px;
+    color: #333;
   }
+  #cssmenu ul ul ul li a {
+    width: 100%;
+  }
+
   #cssmenu.align-right ul ul li a {
     text-align: left;
   }
@@ -367,6 +389,7 @@
   }
   #cssmenu ul ul ul ul ul ul a {
     padding: 8px 95px;
+    width: 100%;
   }
   #cssmenu > ul > #menu-button {
     display: block;
@@ -392,8 +415,8 @@
     position: absolute;
     height: 3px;
     width: 22px;
-    border-top: 2px solid #7a8189;
-    border-bottom: 2px solid #7a8189;
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #333;
     right: 20px;
     top: 15px;
   }
@@ -403,7 +426,7 @@
     position: absolute;
     height: 3px;
     width: 22px;
-    border-top: 2px solid #7a8189;
+    border-top: 2px solid #333;
     right: 20px;
     top: 25px;
   }

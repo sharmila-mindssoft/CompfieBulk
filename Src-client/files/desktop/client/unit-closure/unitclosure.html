@@ -58,12 +58,13 @@
   color: red;
 }
 </style>
-<div class="content-container width75">
+<div class="content-container width100">
   <div class="content-area">
    <h1> Unit Closure</h1>
     <div class="clearfix"></div>
     <div class="grid-table">
-      <table>
+      <table class="js-filtertable">
+      <thead>
           <tr align="left">
             <th align="center">#</th>
             <th>Business Group</th>
@@ -77,16 +78,30 @@
         </tr>
          <tr>
           <td align="center"></td>
-          <td><input type="text" class="filter-text-box" id="business-group-search"></td>
-          <td><input type="text" class="filter-text-box" id="legalentity-search"></td>
-          <td><input type="text" class="filter-text-box" id="division-search"></td>
-          <td><input type="text" class="filter-text-box" id="unit-search"></td>
-          <td><input type="text" class="filter-text-box" id="address-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="business-group-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="legalentity-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="division-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="unit-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="address-search"></td>
           <td align="center"></td>
         </tr>
+        </thead>
         <tbody class="tbody-unitclosure-list">
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+<div id="popup" class="overlay" >
+  <div class="popup">
+    <a class="close">X</a>
+    <div class="content">
+      Password<br>
+      <input type="hidden" id="unitidval">
+      <input type="hidden" id="unitnameval"></input>
+     <input type="password" name="password" class="input-box" autofocus tabindex="0" autoindex="1" id="password" maxlength="20" style="margin-top:10px;"><br>
+     <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Submit" onclick="unit_close()" style="margin-top:10px;">
+     <span class="popup-error-msg"></span>
     </div>
   </div>
 </div>
@@ -104,18 +119,7 @@
   </table>
 </div>
 
-<div id="popup" class="overlay" >
-  <div class="popup">
-    <a class="close" href="#">X</a>
-    <div class="content">
-      Password<br>
-      <input type="hidden" id="unitidval">
-     <input type="password" name="password" class="input-box" id="password" style="margin-top:10px;"><br>
-     <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Submit" onclick="unit_close()" style="margin-top:10px;">
-     <span class="popup-error-msg"></span>
-    </div>
-  </div>
-</div>
 
-<script type="text/javascript" src="/files/desktop/client/unit-closure/unitclosure.js"></script>
+
+<script type="text/javascript" src="/script/unit-closure/unitclosure.js"></script>
 {% endblock %}

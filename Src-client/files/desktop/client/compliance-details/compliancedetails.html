@@ -1,5 +1,10 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
+
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
+
   <div class="content-container">
     <div class="content-area">
 
@@ -9,27 +14,27 @@
           <div class="input-row">
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
-            <select class="input-box" id="country">
+            <select class="input-box" id="country" autofocus="autofocus" tabindex="1">
             </select>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" tabindex="2">
             <input type="hidden" id="domain" value="">
-            <div id="autocomplete_domain" class="ac-textbox default-display-none">
-            <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+            <div id="ac-domain" class="ac-textbox default-display-none">
+            <ul style="width:85%;" class="hidemenu"></ul>
           </div>
         </div>
       </div>
       <div class="input-row">
         <div class="field-label">Act:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act">
+          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act" tabindex="3"> 
           <input type="hidden" id="act">
-          <div id="autocomplete_act" class="ac-textbox default-display-none">
-          <ul id="ulist_act" style="width:215px;" class="hidemenu"></ul>
+          <div id="ac-statutory" class="ac-textbox default-display-none">
+          <ul style="width:85%;"></ul>
         </div>
       </div>
     </div>
@@ -37,10 +42,10 @@
     <div class="input-row">
       <div class="field-label">Unit:</div>
       <div class="field-input">
-        <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit">
+        <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit" tabindex="4">
         <input type="hidden" id="unit">
-        <div id="autocomplete_unit" class="ac-textbox default-display-none">
-        <ul id="ulist_unit" style="width:215px;" class="hidemenu"></ul>
+        <div id="ac-unit" class="ac-textbox default-display-none">
+        <ul style="width:85%;"></ul>
       </div>
       </div>
     </div>
@@ -48,10 +53,10 @@
       <div class="input-row">
         <div class="field-label">Compliance Task:</div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="compliancetaskval" placeholder="Enter Compliance Task">
+          <input type="text" class="input-box icon-autocomplete" id="compliancetaskval" placeholder="Enter Compliance Task" tabindex="5">
           <input type="hidden" id="compliancetask">
-          <div id="autocomplete_compliancetask" class="ac-textbox default-display-none">
-          <ul id="ulist_compliancetask" style="width:215px;" class="hidemenu"></ul>
+          <div id="ac-compliancetask" class="ac-textbox default-display-none">
+          <ul style="width:85%;"></ul>
         </div>
       </div>
     </div>
@@ -62,10 +67,10 @@
 <div class="input-row">
 <div class="field-label">User:</div>
  <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" id="assigneeval" placeholder="Enter User">
+    <input type="text" class="input-box icon-autocomplete" id="assigneeval" placeholder="Enter User" tabindex="6">
     <input type="hidden" id="assignee">
-    <div id="autocomplete_assignee" class="ac-textbox default-display-none">
-    <ul id="ulist_assignee" style="width:215px;" class="hidemenu"></ul>
+    <div id="ac-user" class="ac-textbox default-display-none">
+    <ul style="width:85%;"></ul>
   </div>
 </div>
 </div>
@@ -73,24 +78,25 @@
 <div class="input-row">
 <div class="field-label">From:</div>
  <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="fromdate" placeholder="dd-mon-yyyy">
+    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="fromdate" placeholder="dd-mon-yyyy" tabindex="7">
 </div>
 </div>
 
 <div class="input-row">
 <div class="field-label">To:</div>
  <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="todate" placeholder="dd-mon-yyyy">
+    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="todate" placeholder="dd-mon-yyyy" tabindex="8">
 </div>
 </div>
 
 <div class="input-row">
   <div class="field-label">Status:</div>
   <div class="field-input">
-  <select class="input-box" id="status">
+  <select class="input-box" id="status" tabindex="9">
   <option value=''>Select</option>
   <option value='Complied'>Complied</option>
-  <option value='DelayedCompliance'>DelayedCompliance</option>
+  <option value='Delayed Compliance'>Delayed Compliance</option>
+  <option value='Not Complied'>Not Complied</option>
   <option value='Inprogress'>Inprogress</option>
   </select>
 </div>
@@ -99,8 +105,8 @@
 
 </div>
 <div class="submit-button-container">
-<input type="submit" value="Show" class="btn-submit" id="submit">
-<input type="submit" value="Export" class="btn-submit" id="export">
+<input type="submit" value="Show" class="btn-submit" id="submit" tabindex="10">
+<input type="submit" value="Export" class="btn-submit" id="export" tabindex="11">
 </div>
 
 
@@ -110,6 +116,9 @@
 <table class="tbody-unit" width="100%">
 
 </table>
+<div align="center" style="padding-top:10px;">
+  <input type="button" value="Show more records" class="btn-submit" id="pagination">
+</div>
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
 </div>
 </div>
@@ -146,17 +155,18 @@
 <th width="10%"  style="background:#ccc;" ><span style="font-weight:bold;">Due Date</span></th>
 <th width="10%" style="background:#ccc;" ><span style="font-weight:bold;">Completion Date</span></th>
 <th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Validity Date</span></th>
-<th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Remarks</span></th>
-<th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Uploaded Document</span></th>
+<th width="14%"  style="background:#ccc;" ><span style="font-weight:bold;">Remarks</span></th>
+<th width="10%"  style="background:#ccc;" ><span style="font-weight:bold;">Uploaded Document</span></th>
 </tr>
 </table>
 </div>
 
 
-<div id="unit-name-templates">
+<div id="unit-name-templates" class="default-display-none">
 <table class="table-unit-name">
 <tr class="table-row-unit-name">
 <td align="left" class="tbl_unitheading" colspan="11">
+  <div class="heading" style="margin-top:5px;width:auto;"> </div>
 </td>
 </tr>
 </table>
@@ -175,14 +185,22 @@
 <td class="tbl_completiondate" > </td>
 <td class="tbl_validitydate"></td>
 <td class="tbl_remarks" > </td>
-<td class="tbl_document" > </td>
+<td class="tbl_document" > 
+  <a class="doc_link" target="_new" download> </a>
+</td>
 
 </tr>
 </table>
 </div>
+<div id="no-record-templates" class="default-display-none">
+<table class="table-no-content">
+<tr align="left" class="table-row-no-content">
+<td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+</tr>
+</table>
+</div>
 
-
-<script type="text/javascript" src="/files/desktop/client/compliance-details/compliancedetails.js"></script>
+<script type="text/javascript" src="/script/compliance-details/compliancedetails.js"></script>
 <script type="text/javascript">
 $(function() {
   $("#fromdate" ).datepicker({
@@ -194,18 +212,18 @@ $(function() {
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     onClose: function( selectedDate ) {
     $( "#todate" ).datepicker( "option", "minDate", selectedDate );
-  }
+    }
 });
 $( "#todate" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#fromdate" ).datepicker( "option", "maxDate", selectedDate );
-}
+  changeMonth: true,
+  changeYear: true,
+  numberOfMonths: 1,
+  dateFormat: "dd-M-yy",
+  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  onClose: function( selectedDate ) {
+  $( "#fromdate" ).datepicker( "option", "maxDate", selectedDate );
+  }
 });
 });
 </script>

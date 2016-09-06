@@ -278,6 +278,9 @@ GetClientProfileSuccess = RecordType("GetClientProfileSuccess", [
 	Field("profiles", PROFILES)
 ])
 
+UserIsNotResponsibleForAnyClient = RecordType("UserIsNotResponsibleForAnyClient", [
+])
+
 Response = VariantType("Response", [
 	GetClientGroupsSuccess, SaveClientGroupSuccess,
 	GroupNameAlreadyExists, UpdateClientGroupSuccess, 
@@ -289,5 +292,5 @@ Response = VariantType("Response", [
 	UpdateClientSuccess, ChangeClientStatusSuccess,
 	ReactivateUnitSuccess, GetClientProfileSuccess,
 	InvalidBusinessGroupId,InvalidLegalEntityId,InvalidDivisionId,
-	InvalidUnitId, InvalidPassword]
+	InvalidUnitId, InvalidPassword, UserIsNotResponsibleForAnyClient]
 )

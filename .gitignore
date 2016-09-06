@@ -2,6 +2,14 @@
 *.sublime-workspace
 *~
 *.txt
-/Src-server/server/knowledgeformat
-/Src-server/server/knowledgeformat
-/clientdocuments
+*.csv
+*.log
+*.xlsx
+*.zip
+/Src-server/logs/
+/Src-server/processes/*.log
+/Src-server/server/knowledgeformat/*
+/Src-server/server/clientdocuments/
+/Src-server/server/clientlogo/
+/exported_reports/
+/Src-server/processes/expired/

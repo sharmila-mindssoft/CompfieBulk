@@ -8,20 +8,20 @@
         <div class="input-row">
           <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country">
-          <input type="hidden" id="country">
-          <div id="autocompleteview" class="ac-textbox default-display-none">
-                <ul id="ulist_text"  class="hidemenu" style="width:215px;"></ul>
-          </div>
+            <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" autofocus="autofocus" tabindex="1">
+            <input type="hidden" id="country">
+            <div id="ac-country" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+            </div>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Industry:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="industryval"  placeholder="Enter Industry">
+            <input type="text" class="input-box icon-autocomplete" id="industryval"  placeholder="Enter Industry" tabindex="2">
           <input type="hidden" id="industry">
-          <div id="autocomplete_industry" class="ac-textbox default-display-none">
-                <ul id="ulist_industry" class="hidemenu" style="width:215px;"></ul>
+          <div id="ac-industry" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
           </div>
           </div>
         </div>
@@ -30,34 +30,34 @@
         <div class="input-row">
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" tabindex="3">
           <input type="hidden" id="domain">
-          <div id="autocomplete_domain" class="ac-textbox default-display-none">
-                <ul id="ulist_domain" class="hidemenu" style="width:215px;"></ul>
+          <div id="ac-domain" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
           </div>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Statutory Nature:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature">
+            <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature" tabindex="4">
           <input type="hidden" id="statutorynature">
-          <div id="autocomplete_statutorynature" class="ac-textbox default-display-none">
-                <ul id="ulist_statutorynature" class="hidemenu" style="width:215px;"></ul>
+          <div id="ac-statutorynature" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
           </div>
           </div>
         </div>
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Show" class="btn-submit" id="submit">
+        <input type="submit" name="cancel" value="Show" class="btn-submit" id="submit" tabindex="5">
       </div>
       <div class="clearfix"></div>
       <div class="grid-table" style="display:none">
         <table>
           <tr align="left">
-            <th width="10%">Industry</th>
-            <th width="10%">Statutory Nature</th>
-            <th width="20%">Statutory Provision</th>
+            <th width="7%">Industry</th>
+            <th width="13%">Statutory Nature</th>
+            <th width="20%">Statutory</th>
             <th width="20%">Compliance Task</th>
             <th width="15%">Applicable Location</th>
             <th width="10%">Action</th>
@@ -76,14 +76,13 @@
       </div>
     </div>
 
-<div id="popup1" class="overlay default-display-none">
+<div class="overlay">
   <div class="popup">
-    <a class="close" href="#">x</a>
+    <a class="close">x</a>
     <div class="content">
-
      <table width="100%">
         <tr align="left">
-          <td width="40%" >Statutory</td>
+          <td width="40%" >Statutory Provision</td>
           <!-- <td>Section 2 <img src="/images/right_arrow.png"> Rule 3(i)</td> -->
           <td class="popup_statutory"> </td>
         </tr>
@@ -129,13 +128,9 @@
 
         </tr>
     </table>
-
     </div>
   </div>
 </div>
-
-
-
 
 <div id="templates">
 <table class="table-statutorymapping">
@@ -143,14 +138,32 @@
     <td class="industry"></td>
     <td class="statutorynature"></td>
     <td class="statutory"></td>
-    <td class="compliancetask"></td>
+    <td class="compliancetask" style="line-height:25px;"></td>
     <td class="applicablelocation"></td>
-    <td class="action"></td>
-    <td class="reason" style="vertical-align: middle;"></td>
+    <td>
+      <input type="hidden" class="mapping_id" /> 
+      <input type="hidden" class="statutoryprovision"/> 
+      <select class="input-box action" onchange="dispreason(this)"></select>
+    </td>
+    <td style="vertical-align: top;">
+      <textarea class="input-box userreason default-display-none" maxlength="500" placeholder="Enter notification text" style="height:50px;"></textarea>
+      <span style="font-size:0.75em;" class="max-span default-display-none"> 
+      <br> (max 500 characters)
+      </span> 
+      <input type="text" maxlength="500" class="input-box reason default-display-none" placeholder="Enter reason" />'
+    </td>
   </tr>
 </table>
 </div>
 
-<script type="text/javascript" src="/files/desktop/knowledge/approve-statutory-mapping/approvestatutorymapping.js"></script>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/script/approve-statutory-mapping/approvestatutorymapping.js"></script>
 {% endblock %}
 

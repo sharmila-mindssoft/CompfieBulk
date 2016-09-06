@@ -1,3 +1,6 @@
+import re
+from collections import OrderedDict
+
 __all__ = [
     "parse_bool",
     "parse_number",
@@ -19,7 +22,7 @@ __all__ = [
 
 def expectation_error(expected, received) :
     msg = "expected %s, but received: %s"
-    return ValueError(msg % (expected, repr(received)))
+    return ValueError(msg % (expected, str(received)))
 
 def empty_error():
     return ValueError("null is not allowed")
@@ -39,9 +42,10 @@ def parse_number(x, min_value, max_value) :
     if x >= min_value and x <= max_value:
         return x
     else:
-        msg = "a number between %s and %s" % (
-            min_value, max_value
-        )
+        # msg = "a number between %s and %s" % (
+        #     min_value, max_value
+        # )
+        msg = "a number greater than 0"
         raise expectation_error(msg, x)
 
 def parse_point_numbers(x) :
@@ -54,10 +58,15 @@ def parse_point_numbers(x) :
 def parse_string(x) :
     if x is None:
         raise empty_error()
+    # elif x  == "":
+    #     raise empty_error()
     t = type(x)
     if t is unicode :
-        return x.encode("utf8")
-    elif t is str :
+        x = x.encode("utf-8")
+        # x = x.replace("'", "")
+        return x
+    elif t is str:
+        # x = x.replace("'", "")
         return x
     else :
         raise expectation_error("a string", x)
@@ -65,11 +74,16 @@ def parse_string(x) :
 def parse_custom_string(x, length) :
     if x is None:
         raise empty_error()
+    # elif x is "":
+    #     raise empty_error()
     t = type(x)
     custom_string = None
     if t is unicode :
-        custom_string = x.encode("utf8")
+        x = x.encode("utf-8")
+        # x = x.replace("'", "")
+        custom_string = x
     elif t is str :
+        # x = x.replace("'", "")
         custom_string = x
     else :
         raise expectation_error("a string", x)
@@ -85,6 +99,8 @@ def parse_custom_string(x, length) :
 def parse_bytes(x) :
     if x is None:
         raise empty_error()
+    # elif x  == "":
+    #     raise empty_error()
     t = type(x)
     if t is unicode :
         return x
@@ -118,7 +134,7 @@ def parse_static_list(x, length=0) :
 def parse_dictionary(x, field_names=[]) :
     if x is None:
         raise empty_error()
-    if type(x) is not dict :
+    if (type(x) is not dict) and (type(x) is not OrderedDict):
         raise expectation_error("a dict", x)
     for field_name in field_names:
         if field_name not in x.keys():

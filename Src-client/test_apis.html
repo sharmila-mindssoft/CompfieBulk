@@ -10,7 +10,16 @@
 		<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
 		<script type="text/javascript" src="/files/desktop/common/js/client-mirror.js"></script>
 		<script type="text/javascript">
+			var CLIENT_BASE_URL = "http://localhost:8080/api/";
 			var file_list = []
+			var logo_file;
+			var jsonResponse;
+			function parseJSON(data) {
+		        return JSON.parse(data);
+		    }
+			function toJSON(data) {
+		        return JSON.stringify(data, null, " ");
+		    }
 			function createSession(){
 				var userDetails = {
 		            "user_id": 0,
@@ -28,15 +37,37 @@
 			}
 
 			function login () {
-				mirror.login(
-					"sharmi",
-					"123456",
-					function (status, response) {
-						console.log(status, response);
-					}, function (data) {
-						console.log(data);
-					}
-				);
+				var request = [
+					"tvs",
+					[
+						"Login",
+						 {
+						  "login_type": "Android",
+						  "username": "sharmila@mindssoft.com",
+						  "password": "Admin@123456",
+						  "short_name": "tvs",
+						  "ip": "122.164.164.35"
+						 }
+					]
+				];
+				console.log(toJSON(request));
+		        jQuery.post(
+		            CLIENT_BASE_URL + "login",
+		            toJSON(request),
+		            function (data) {
+		                var data = parseJSON(data);
+		                var status = data[0];
+		                var response = data[1];
+		                matchString = 'success';
+		                if (status.toLowerCase().indexOf(matchString) != -1){
+		                    console.log("mirror success");
+		                    callback(null, response);
+		                }
+		                else {
+		                    callback(status, null);
+		                }
+		            }
+		        )
 			}
 			function logout () {
 				mirror.logout();
@@ -50,6 +81,7 @@
 				);
 			}
 			function callback(status, response){
+				jsonResponse = response
 				console.log(status, response);
 			}
 			function failure_callback(status, response){
@@ -62,7 +94,7 @@
 		          contractTo = "11-Aug-2016"
 		          contactPerson = "Test Contact Person 8"
 		          contactNo = "+919184473452"
-		          serviceProviderDetail = [serviceProviderName, address, 
+		          serviceProviderDetail = [serviceProviderName, address,
 		          contractFrom, contractTo, contactPerson, contactNo]
 		          serviceProviderDetail = client_mirror.getSaveServiceProviderDict(serviceProviderDetail)
 		          client_mirror.saveServiceProvider(serviceProviderDetail, callback)
@@ -75,7 +107,7 @@
 		        contractTo = "11-Aug-2016"
 		        contactPerson = "Test Contact Person 5 Update"
 		        contactNo = "+917193473452"
-		        serviceProviderDetail = [serviceProviderId, serviceProviderName, address, 
+		        serviceProviderDetail = [serviceProviderId, serviceProviderName, address,
 		        contractFrom, contractTo, contactPerson, contactNo]
 		        serviceProviderDetail = client_mirror.getUpdateServiceProviderDict(serviceProviderDetail)
 		        client_mirror.updateServiceProvider(serviceProviderDetail, callback)
@@ -111,14 +143,14 @@
 				client_mirror.getClientUserGroups(callback);
 			}
 			function getClientUsers(){
-				client_mirror.getClientUsers(callback)	
+				client_mirror.getClientUsers(callback)
 			}
 			function saveClientUser(){
-				emailId  = "TestClientUser7@domain.com"
+				emailId  = "ssharmila.m@gmail.com"
 		        userGroupId = 1
 		        employeeName = "Test Employee 7"
-		        employeeCode = "TEMP007"
-		        contactNo = "+919745729583"
+		        employeeCode = "TEMP137"
+		        contactNo = "+91-73-3729583"
 		        seatingUnitId = null
 		        userLevel = 1
 		        countryIds = [1]
@@ -127,8 +159,8 @@
 		        isAdmin = false
 		        isServiceProvider = true
 		        serviceProviderId = 1
-		        clientUserDetail = [emailId, userGroupId, employeeName, 
-		        employeeCode, contactNo, seatingUnitId, userLevel, 
+		        clientUserDetail = [emailId, userGroupId, employeeName,
+		        employeeCode, contactNo, seatingUnitId, userLevel,
 		        countryIds, domainIds, unitIds, isAdmin, isServiceProvider,
 		        serviceProviderId]
 		        clientUserDetailDict = client_mirror.getSaveClientUserDict(clientUserDetail)
@@ -149,12 +181,12 @@
 			      isAdmin = false
 			      isServiceProvider = true
 			      serviceProviderId = 1
-			      clientUserDetail = [userId, userGroupId, employeeName, 
-			      employeeCode, contactNo, seatingUnitId, userLevel, 
+			      clientUserDetail = [userId, userGroupId, employeeName,
+			      employeeCode, contactNo, seatingUnitId, userLevel,
 			      countryIds, domainIds, unitIds, isAdmin, isServiceProvider,
 			      serviceProviderId]
 			      clientUserDetailDict = client_mirror.getUpdateClientUserDict(clientUserDetail)
-			      client_mirror.updateClientUser(clientUserDetailDict, callback) 
+			      client_mirror.updateClientUser(clientUserDetailDict, callback)
 			}
 			function changeClientUserStatus(){
 				userId = 1
@@ -179,7 +211,7 @@
 		        formCategoryId = 1
 		        formIds = [5,6]
           		userGroupDetail = mirror.getSaveAdminUserGroupDict(userGroupName, formCategoryId, formIds);
-          		mirror.saveAdminUserGroup(userGroupDetail, callback) 
+          		mirror.saveAdminUserGroup(userGroupDetail, callback)
 			}
 			function updateAdminUserGroup(){
 				userGroupId = 10
@@ -187,7 +219,7 @@
 		        formCategoryId = 1
 		        formIds = [4,5]
 		        userGroupDetail = mirror.getUpdateAdminUserGroupDict(userGroupId, userGroupName, formCategoryId, formIds);
-		        mirror.updateAdminUserGroup(userGroupDetail, 
+		        mirror.updateAdminUserGroup(userGroupDetail,
 		          callback)
 			}
 			function changeAdminUserGroupStatus(){
@@ -196,18 +228,18 @@
                 mirror.changeAdminUserGroupStatus(userGroupId, Status, callback);
 			}
 			function getAdminUserGroupList(){
-				mirror.getAdminUserGroupList(callback, 
+				mirror.getAdminUserGroupList(callback,
 					failure_callback);
 			}
 			function getAdminUsers(){
 				mirror.getAdminUserList(callback);
 			}
 			function saveAdminUser(){
-				emailId =  "testUser13@domain.com"
+				emailId =  "siva@mindssoft.com"
 		        userGroupId = 1
 		        employeeName = "Test User 13"
-		        employeeCode = "TU0013"
-		        contactNo = "+9199987832675"
+		        employeeCode = "TU1723"
+		        contactNo = "+918787832675"
 		        address = "Test Address 12"
 		        designation = "Test designation 12"
 		        countryIds = [1,2]
@@ -233,7 +265,7 @@
 			function changeAdminUserStatus(){
 				userId = 1
 		        isActive = false
-		        mirror.changeAdminUserStatus(userId, isActive, callback); 
+		        mirror.changeAdminUserStatus(userId, isActive, callback);
 			}
 			function changePassword(){
 				currentPassword = "123456"
@@ -246,11 +278,11 @@
 				client_mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){
-				username = "admin"
+				username = "sharmila@mindssoft.com"
 				mirror.forgotPassword(username, callback)
 			}
 			function ClientForgotPassword(){
-				username = "sharmi"
+				username = "sharmila@mindssoft.com"
 				client_mirror.forgotPassword(username, callback)
 			}
 			function validateResetToken(){
@@ -264,12 +296,12 @@
 			function resetPassword(){
 				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
 				newPassword = "admin"
-				mirror.resetPassword(resetToken, newPassword, callback) 
+				mirror.resetPassword(resetToken, newPassword, callback)
 			}
 			function resetClientPassword(){
 				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
 				newPassword = "admin"
-				mirror.resetPassword(resetToken, newPassword, callback) 
+				mirror.resetPassword(resetToken, newPassword, callback)
 			}
 			function saveClientGroup(){
 				dateConfigurations = []
@@ -287,18 +319,18 @@
 		        dateConfigurations.push(configuration5)
 		        dateConfigurations.push(configuration6)
 
-			    group_name = "BPL Groups";
-		        country_ids = [1,2, 4];
+			    group_name = "Tupper";
+		        country_ids = [1,2, 3, 4];
 		        domain_ids = [1,2];
-		        logo = "logo.png";
+		        logo = logo_file;
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
 		        incharge_persons = [1];
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
-		        email_id = "info@bpl.com";
-		        shortName = "bpl"
+		        email_id = "tupper@mindssoft.com";
+		        shortName = "tuper"
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
 		            country_ids, domain_ids, logo, contract_from, contract_to,
 		            incharge_persons, no_of_user_licence,file_space,
@@ -309,17 +341,17 @@
 			function updateClientGroup(){
 				dateConfigurations = []
 
-		        configuration1 = mirror.getDateConfigurations(1,1,1,12)
+		        configuration1 = mirror.getDateConfigurations(1,1,5,4)
 		        dateConfigurations.push(configuration1)
 
-		        client_id = 7
-		        group_name = "Client Test Group 21 Update";
-		        country_ids = [1];
-		        domain_ids = [1];
-		        logo = "logo.png";
+		        client_id = 1
+		        group_name = "P and G";
+		        country_ids = [1,2];
+		        domain_ids = [2];
+		        logo = logo_file;
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
-		        incharge_persons = [1];
+		        incharge_persons = [4];
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
@@ -349,8 +381,8 @@
 		        countryWiseUnits = []
 		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
-		        mirror.saveClient(1, businessGroup, legalEntity, 
-		        division, countryWiseUnits, callback) 
+		        mirror.saveClient(1, businessGroup, legalEntity,
+		        division, countryWiseUnits, callback)
 			}
 			function updateClient(){
 				businessGroup = mirror.getBusinessGroupDict(4,"Test Business Group 3");
@@ -365,8 +397,8 @@
 		        countryWiseUnits = []
 		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
-		        mirror.updateClient(1, businessGroup, legalEntity, 
-		        division, countryWiseUnits, callback) 
+		        mirror.updateClient(1, businessGroup, legalEntity,
+		        division, countryWiseUnits, callback)
 			}
 			function getClients(){
 				mirror.getClients(callback)
@@ -379,9 +411,9 @@
 		        mirror.changeClientStatus(clientId, legalEntityId, divisionId, isActive, callback)
 			}
 			function reactivateUnit(){
-				clientId = 11
-		        unitId = 2
-		        password = "1234567"
+				clientId = 1
+		        unitId = 3
+		        password = "123"
 		        mirror.reactivateUnit(clientId, unitId, password, callback)
 			}
 			function getClientProfile(){
@@ -413,10 +445,11 @@
 			function getStatutoriesByUnit(){
 				unit_id = 1
 				domain_id = 1
-				level_1_statutory_name = null //"Gratuity Act, 1972"
-				compliance_frequency =  null//"Periodical"
-				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, 
-					compliance_frequency, callback);
+				level_1_statutory_name = null
+				compliance_frequency =  null
+				country_id = 1
+				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name,
+					compliance_frequency, country_id, callback);
 			}
 			function getComplianceApprovalList(){
 				client_mirror.getComplianceApprovalList(callback);
@@ -434,18 +467,31 @@
 
 			function approveCompliance(){
 				compliance_history_id = 1
-				compliance_approval_status = "RejectConcurrence"
-				remarks = "Sample Remarks"
-				next_due_date = "12-Aug-2016"
-				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date,callback);
+				compliance_approval_status = "Reject Concurrence"
+				remarks = null
+				next_due_date = null
+				validity_date = null
+				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback);
 			}
 
 			function getTrendChart(){
-				country_ids = [1]
-				domain_ids = [1]
-				filter_type = "Unit"
-        		filter_ids = [1]
-        		client_mirror.getTrendChart(country_ids, domain_ids, filter_type, filter_ids, callback);
+				// country_ids = [1]
+				// domain_ids = [1]
+				// filter_type = "Unit"
+    //     		filter_ids = [1]
+    //     		client_mirror.getTrendChart(country_ids, domain_ids, filter_type, filter_ids, callback);
+    			request = [
+    				"getTrendChart",
+    				{}
+    			];
+    			clientApiRequest(
+					"mobile",
+					request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
 			}
 			function getTrendChartDrillDown(){
 				country_ids = [1]
@@ -483,18 +529,21 @@
 				has_read = false
 				client_mirror.updateNotificationStatus(notification_id, has_read, callback)	;
 			}
-			function getComplianceDetail(){
-				client_mirror.getComplianceDetail(callback);
+			function getCurrentComplianceDetail(){
+				client_mirror.getCurrentComplianceDetail(0, callback);
+			}
+			function getUpcomingComplianceDetail(){
+				client_mirror.getUpcomingComplianceDetail(0, callback);
 			}
 			function updateComplianceDetail(){
-				compliance_history_id = 3;
-		        documents =  ["Document1"];
-		        completion_date = "25-Jan-2016";
-		        validity_date = "25-Jan-2017";
-		        next_due_date = "24-Jan-2017";
-		        remarks = "Sample Remarks";
-		        client_mirror.updateComplianceDetail(compliance_history_id, 
-		        	documents, completion_date, validity_date, next_due_date, 
+				compliance_history_id = 1;
+		        documents =  null;
+		        completion_date = "19-Feb-2016";
+		        validity_date = null;
+		        next_due_date = null;
+		        remarks = null;
+		        client_mirror.updateComplianceDetail(compliance_history_id,
+		        	documents, completion_date, validity_date, next_due_date,
 		        	remarks, callback);
 			}
 			function getReassignedHistoryReportFilters(){
@@ -503,23 +552,22 @@
 			function getReassignedHistoryReport(){
 				country_id = 1
 				domain_id =1
-				level_1_statutory_id =null
-				unit_id =null
-				compliance_id = null
+				level_1_statutory_id = "Finance Act"
+				unit_id = 1
+				compliance_id = 21
 				user_id = null
-				from_date = null
-				to_date = null
-
-				client_mirror.getReassignedHistoryReport(country_id, domain_id,level_1_statutory_id,unit_id, compliance_id, user_id,from_date, to_date, callback)
+				from_date = "2015-01-01"
+				to_date = "2015-05-01"
+				client_mirror.getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id,  from_date, to_date, callback)
 			}
 			function savePastRecords(){
 				unit_id = 1;
-				compliance_id = 21;
-				due_date = "25-Aug-2014";
-				completion_date = "20-Aug-2014";
+				compliance_id = 2;
+				due_date = "01-Jan-2016";
+				completion_date = "31-Dec-2015";
 				documents = file_list;
-				validity_date = "25-Aug-2015";
-				completed_by = 3;
+				validity_date = "1-Jun-2016";
+				completed_by = 1;
 				compliance_list = [];
 				compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date,documents, validity_date, completed_by);
 				compliance_list.push(compliance);
@@ -531,28 +579,279 @@
 			}
 			function getComplianceActivityReportData(){
 				country_id = 1
-				assignee_id = 3;
+				assignee_id = null;
 				domain_id = 1;
 				level_1_statutory_id = null;
 				unit_id = 1;
-				compliance_id = 21;
-				from_date = "12-Aug-2015"
-				to_date = "11-Aug-2016"
-				user_type = "Inhouse"
+				compliance_id = null;
+				from_date = null;
+				to_date = null;
+				user_type = "Inhouse";
+				csv = true;
 				client_mirror.getComplianceActivityReportData(
-					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, callback
+					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, csv, callback
 				);
 			}
+			function getRiskReportFilters(){
+				client_mirror.getRiskReportFilters(callback);
+			}
+			function getRiskReport(){
+				country_id = 1;
+				domain_id = 2;
+				business_group_id = null;
+				legal_entity_id = null;
+				division_id = null;
+				unit_id = null;
+			    level_1_statutory_name = null
+			    statutory_status = null
+			    csv = false
+				client_mirror.getRiskReport(
+			        country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
+			        level_1_statutory_name, statutory_status, csv, callback
+			    );
+			}
+			function getAssigneewiseComplianesFilters(){
+				console.log(client_mirror);
+				console.log(callback);
+				client_mirror.getAssigneewiseComplianesFilters(callback);
+			}
+			function getAssigneewiseComplianes(){
+				country_id = 1
+				business_group_id = 0
+				legal_entity_id = 0
+				division_id = 0
+				unit_id = 0
+				user_id = 0
+				csv = true
+				client_mirror.getAssigneewiseComplianes(
+					country_id, business_group_id, legal_entity_id, division_id,
+					unit_id, user_id, csv, callback
+				);
+			}
+			function getAssigneewiseComplianesDrillDown(){
+                country_id = 1;
+				user_id = 0;
+				domain_id = null;
+				year = null;
+                unit_id = 38;
+                start_count = 0
+				client_mirror.getAssigneewiseCompliancesDrilldown(
+					country_id, user_id, domain_id, year, unit_id, start_count, callback
+				);
+			}
+			function getOnOccurrenceList(){
+				client_mirror.getOnOccurrenceCompliances(callback);
+			}
+			function startOnOccurrenceCompliance(){
+				compliance_id = 12
+				start_date = "1-Dec-2016"
+				unit_id = 2
+				duration = "12days"
+				client_mirror.startOnOccurrenceCompliance(
+			        compliance_id, start_date, unit_id, duration, callback
+			    );
+			}
+			function exportToCSV(){
+				country_id = 1
+				assignee_id = null;
+				domain_id = 1;
+				level_1_statutory_id = null;
+				unit_id = 1;
+				compliance_id = null;
+				from_date = null;
+				to_date = null;
+				user_type = "Inhouse";
+				report = "ComplianceActivity"
+				client_mirror.exportToCSV(
+					user_type, assignee_id, country_id, domain_id,level_1_statutory_id, unit_id, compliance_id, from_date, to_date, report, callback
+				);
+			}
+			function getTrendChartForMobile(){
+		        request = [
+		        	"GetTrendChartData",
+		        	{
+		        		"user_id": 0
+		        	}
+		        ];
+		        clientApiRequest(
+					"mobile",
+					request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+	
+			}
+		</script>
+		<script type="text/javascript">
+		function clientApiRequest(callerName, request, callback) {
+        var sessionToken = "1-669c9ebc2aca488ba153d79aebba03ea";
+        var requestFrame = {
+            "session_token": sessionToken,
+            "request": request
+        };
+        var body = [
+            sessionToken, requestFrame
+        ]
+        jQuery.post(
+            CLIENT_BASE_URL + callerName,
+            toJSON(body),
+            function(data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                console.log("API STATUS :" + status);
+                ///callback(null, response)
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    callback(null, response);
+                }
+                else if (status == "InvalidSessionToken") {
+                    // console.log(status)
+                    redirect_login()
+                }
+                else {
+                    if (status == "SavePastRecordsFailed"){
+                        callback(data, null);
+                    }else{
+                        callback(status, response);
+                    }
+
+                }
+
+            }
+        )
+            .fail(
+                function(jqXHR, textStatus, errorThrown) {
+                    // alert("jqXHR:"+jqXHR.status);
+                    // alert("textStatus:"+textStatus);
+                    // alert("errorThrown:"+errorThrown);
+                    if (errorThrown == "Not Found"){
+                        alert("Server connection not found");
+                        redirect_login();
+                    }
+                    else
+                        callback(jqXHR["responseText"], errorThrown)
+                }
+        );
+    }
+			function get_mobile_version() {
+				request = [
+					"GetVersions", {}
+				]
+				clientApiRequest(
+					"mobile",
+					request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+			}
+			function get_mobile_users() {
+				request = [
+					"GetUsers", {}
+				];
+				clientApiRequest(
+					"mobile",
+					request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+			}
+			function get_mobile_units() {
+				request = [
+					"GetUnitDetails", {}
+				];
+				clientApiRequest(
+					"mobile", request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+			}
+			function get_compliance_applicability() {
+				request = [
+					"GetComplianceApplicabilityStatus", {}
+				];
+				clientApiRequest(
+					"mobile", request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+			}
+			function get_compliance_history() {
+				request = [
+					"GetComplianceHistory", {
+						"compliance_history_id": 0
+					}
+				];
+				clientApiRequest(
+					"mobile", request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+			}
+			function check_disk_space() {
+				request = [
+					"CheckDiskSpace", {}
+				];
+				clientApiRequest(
+					"mobile", request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+			}
+			function yearwise(){
+				country_id = 1
+                unit_id = 38
+                user_id = 0
+                client_mirror.getAssigneewiseYearwiseComplianes(
+                    country_id, unit_id, user_id, callback
+                );
+			}
+            function reassigned(){
+                country_id = 1
+                unit_id = 38
+                user_id = 0
+                domain_id = 2
+                client_mirror.getAssigneewiseReassignedComplianes(
+                    country_id, unit_id, user_id, domain_id, callback
+                );
+            }
+            function next_count(){
+            	alert("inside next count")
+            	mirror.getNextUnitCode(
+                    1, callback
+                );
+            }
 		</script>
 	</head>
 	<body>
 		<h1>Testing APIs</h1>
 		<div>
+			<button onclick="next_count()">Next unit code count</button>
+		</div>
+		<div>
+			<button onclick="yearwise()">Assigneewise Yearwise compliance count</button>
+            <button onclick="reassigned()">Assigneewise Reassigned compliance popup</button>
+		</div>
+		<div>
 			<button onclick="login()">Login</button>
 			<button onclick="logout()">Logout</button>
 			<button onclick="test()">Test Client</button>
 			<button onclick="createSession()">Create Session</button>
-			
+
 		</div>
 		<fieldset>
 			<legend>Client Masters</legend>
@@ -665,7 +964,7 @@
 				</button>
 				<button onclick="validateClientResetToken()">
 					Validate Client Reset Token
-				</button>	
+				</button>
 			</div>
 			<div>
 				<button onclick="resetPassword()">
@@ -679,6 +978,8 @@
 		<fieldset>
 			<legend>Techno Masters</legend>
 			<div>
+				<input id="upload_logo" type = "file" name = "logo"/>
+				<div id="uploaded_logo"></div>
 				<button onclick="saveClientGroup()">
 					Save Client Group
 				</button>
@@ -694,10 +995,10 @@
 			</div>
 			<div>
 				<button onclick="saveClient()">
-					Save Client 
+					Save Client
 				</button>
 				<button onclick="updateClient()">
-					Update Client 
+					Update Client
 				</button>
 				<button onclick="changeClientStatus()">
 					Change Client  Status
@@ -740,7 +1041,7 @@
 					Get Client Details Report Filters
 				</button>
 				<button onclick="getClientDetailsReport()">
-					Get Client Details Report 
+					Get Client Details Report
 				</button>
 			</div>
 			<div>
@@ -758,6 +1059,17 @@
 				<button onclick="getComplianceActivityReportData()">
 					Get Compliance Activity Report Data
 				</button>
+				<button onclick="exportToCSV()">
+					Export to CSV
+				</button>
+			</div>
+			<div>
+				<button onclick="getRiskReportFilters()">
+					Get Risk Report Filters
+				</button>
+				<button onclick="getRiskReport()">
+					Get Risk Report Data
+				</button>
 			</div>
 		</fieldset>
 		<fieldset>
@@ -774,13 +1086,13 @@
 				</button>
 				<input id="upload_file" type = "file" name = "files[]" multiple/>
 				<div id="uploaded_filename"></div>
-				<button onclick="uploadPastRecordDocuments()">
-					Upload Past Record Documents
-				</button>
 			</div>
 			<div>
-				<button onclick="getComplianceDetail()">
-					Get Compliance Detail
+				<button onclick="getCurrentComplianceDetail()">
+					Get Current Compliance Detail
+				</button>
+				<button onclick="getUpcomingComplianceDetail()">
+					Get Upcoming Compliance Detail
 				</button>
 				<button onclick="updateComplianceDetail()">
 					Update Compliance Detail
@@ -791,12 +1103,20 @@
 					Get Compliance Approval List
 				</button>
 				<button onclick="approveCompliance()">
-					Approve Compliance				
+					Approve Compliance
 				</button>
 			</div>
 			<div>
 				<button onclick="getUnitWiseComplianceReport()">
 					Get Unit Wise Compliane Report
+				</button>
+			</div>
+			<div>
+				<button onclick="getOnOccurrenceList()">
+					Get On Occurrence Compliance List
+				</button>
+				<button onclick="startOnOccurrenceCompliance()">
+					start On Occurrence Compliance
 				</button>
 			</div>
 		</fieldset>
@@ -832,31 +1152,106 @@
 					Update Client Notification Status
 				</button>
 			</div>
+			<div>
+				<button onclick="getAssigneewiseComplianesFilters()">
+					Get Assignee Wise Compliances Filters
+				</button>
+				<button onclick="getAssigneewiseComplianes()">
+					Get Assignee Wise Compliances
+				</button>
+				<button onclick="getAssigneewiseComplianesDrillDown()">
+					Get Assignee Wise Compliances Drill Down
+				</button>
+			</div>
+			<div>
+				<button onclick="get_mobile_version()">
+					Get Version
+				</button>
+				<button onclick="get_mobile_users()">
+					Get Users
+				</button>
+				<button onclick="get_mobile_units()">
+					Get Units
+				</button>
+				<button onclick="get_compliance_applicability()">
+					Get compliance applicability
+				</button>
+				<button onclick="get_compliance_history()">
+					Get compliance history
+				</button>
+				<button onclick="check_disk_space()">
+					Check Disk Space
+				</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Mobile APIS</legend>
+			<div>
+				<button onclick="getTrendChartForMobile()">
+					Get Trend Chart
+				</button>
+			</div>
 		</fieldset>
 		<br>
 		<br>
 	</body>
 	<script>
-		$("#upload_file").on("change", function(e) {
-			  
-			  client_mirror.uploadFile(e, function result_data(data) {
+		$("#upload_logo").on("change", function(e) {
+			mirror.uploadFile(e, function result_data(data) {
 			    if(data != 'File max limit exceeded' || data != 'File content is empty'){
 			      uploadFile = data;
-			      file_list = data
+			      logo_file = data
 			      var result = ""
 			      console.log("result : "+data);
 			      console.log("result size : "+data.length);
-			      for(i = 0; i < data.length; i++){
-			      	console.log(data[i]["file_name"]);
-			      	result += data[i]["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' /> </br>";	
-			      }
-			      $("#uploaded_filename").html(result);
+			      console.log(data["file_name"]);
+			      result += data["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' /> </br>";
+			      $("#uploaded_logo_name").html(result);
 			    }
 			    else{
 			      alert(data);
 			    }
 			 });
+		});
 
+		// $("#upload_file").on("change", function(e) {
+		// 	  client_mirror.uploadFile(e, function result_data(data) {
+		// 	    if(data != 'File max limit exceeded' || data != 'File content is empty'){
+		// 	      uploadFile = data;
+		// 	      file_list = data
+		// 	      var result = ""
+		// 	      console.log("result : "+data);
+		// 	      console.log("result size : "+data.length);
+		// 	      for(i = 0; i < data.length; i++){
+		// 	      	console.log(data[i]["file_name"]);
+		// 	      	result += data[i]["file_name"] + "    <img src='/images/delete.png' style='width:16px;height:16px;' onclick='remove_temp_file()' /> </br>";
+		// 	      }
+		// 	      $("#uploaded_filename").html("<span>"+result+"</span>");
+		// 	    }
+		// 	    else{
+		// 	      alert(data);
+		// 	    }
+		// 	 });
+
+		// });
+		$("#upload_file").on("change", function(e) {
+			alert($("#upload_file").val());
+			// var file_data = this.files[0];
+			var form_data = new FormData();
+			var file_lst = e.target.files;
+
+			for (var i = 0; i <= file_lst.length; i++) {
+				var file_data = file_lst[i];
+				form_data.append("file" + i, file_data);
+			}
+			// var file_data = e.target.files[0];
+			// form_data.append("file1", file_data, file_data.name)
+			// form_data.append("file2", file_data, file_data.name)
+			form_data.append("session_token",
+				"d11a163de8834a4fbe0024c2d915407a")
+			mirror.uploadFormatFile(form_data, function result_data (data) {
+				console.log(data);
+			})
 		});
 	</script>
 </html>

@@ -1,6 +1,9 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-<link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt="">   </span>
+</div>
+<link href="/css/jquery-ui/jquery-ui.css" rel="stylesheet">
 <div class="content-container">
     <div class="content-area">
         <div class="add-container">
@@ -16,10 +19,10 @@
                         :
                     </div>
                     <div class="field-input">
-                        <input type="hidden" id="country" value="1">
-                        <input type="text" class="input-box icon-autocomplete" id="countryval" value="India"  onkeyup="loadauto_country(this.value)">
-                        <div id="selectboxview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
-                            <ul style="width:195px;"></ul>
+                        <input type="hidden" id="country" value="">
+                        <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" autofocus value=""  >
+                        <div id="ac-country" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -30,20 +33,20 @@
                         :
                     </div>
                     <div class="field-input">
-                        <input type="hidden" id="domain" value="1">
-                        <input type="text" class="input-box icon-autocomplete" id="domainval" value="Test Domain"  onkeyup="loadauto_domains(this.value)">
-                        <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
-                            <ul style="width:195px;"></ul>
+                        <input type="hidden" id="domain" value="">
+                        <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="" >
+                        <div id="ac-domain" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
                 <div class="input-row">
                     <div class="field-label">Business Group:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" style="width:213px;"  onkeyup="loadauto_businessgroups(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" placeholder="Enter Business Group">
                         <input type="hidden" id="businessgroupid">
-                        <div id="autocompleteview-bgroups" class="ac-textbox" style="display:none;"  onclick="hidebgroupslist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
 
                     </div>
@@ -51,20 +54,20 @@
                 <div class="input-row">
                     <div class="field-label">Legal Entity:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" style="width:213px;"  onkeyup="loadauto_lentity(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" placeholder="Enter Legal Entity">
                         <input type="hidden" id="legalentityid">
-                        <div id="autocompleteview-lentity" class="ac-textbox" style="display:none;"  onclick="hidelentitylist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
                 <div class="input-row">
                     <div class="field-label">Division:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" style="width:213px;"  onkeyup="loadauto_division(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" placeholder="Enter Division">
                         <input type="hidden" id="divisionid">
-                        <div id="autocompleteview-division" class="ac-textbox" style="display:none;"  onclick="hidedivisionlist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-division" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -74,10 +77,10 @@
                 <div class="input-row">
                     <div class="field-label">Unit:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="unitval" value="" style="width:213px;"  onkeyup="loadauto_unit(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="unitval" value="" placeholder="Enter Unit">
                         <input type="hidden" id="unitid">
-                        <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-unit" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -88,10 +91,10 @@
                         :
                     </div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="level1val" value="" style="width:213px;"  onkeyup="loadauto_level1(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="level1val" value="" placeholder="Enter Act">
                         <input type="hidden" id="level1id">
-                        <div id="autocompleteview-level1" class="ac-textbox" style="display:none;"  onclick="hidelevel1list();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-statutory" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -99,19 +102,19 @@
                 <div class="input-row">
                     <div class="field-label">From:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box" autofocus id="from-date"  placeholder="From date" value="01-Feb-2016" />
+                        <input type="text" class="input-box"  id="from-date"  placeholder="dd-mon-yyyy" value="" />
                     </div>
                 </div>
                 <div class="input-row">
                     <div class="field-label">To:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box" id="to-date" placeholder="To Date"  value="08-Feb-2016" />
+                        <input type="text" class="input-box" id="to-date" placeholder="dd-mon-yyyy"  value="" />
                     </div>
                 </div>
             </div>
             <div class="submit-button-container">
                 <input type="submit" name="cancel" value="Show" class="btn-submit" id="show-button">
-                <input type="button"  class="btn-submit" value="Export" />
+                <!-- <input type="button"  class="btn-submit" value="Export" id="export-button" /> -->
             </div>
             <div class="clearfix"></div>
             <div class="grid-table-rpt default-display-none">
@@ -123,11 +126,13 @@
                         <tbody class="heading-list"> </tbody>
                         <tbody class="tbody-statutory-notifications-list"></tbody>
                     </table>
-                    <div class="clearfix"></div><br style="border-bottom:1px solid red;">
+                    <div align="center" style="padding-top:10px;">
+                        <input type="button" value="Show more records" class="btn-submit" id="pagination">
+                    </div>
+                    <div class="clearfix"></div><br style="border-bottom:1px solid #ccc;">
                 </div>
                 <p style="border-top:1px dashed #ccc;" >
-                    Total :
-                    <span class="total-records"></span>
+                    Total : <span class="total-records"></span>
                 </p>
             </div>
         </div>
@@ -171,7 +176,7 @@
         <td width="22%" style="padding-top:6px;">Statutory Provision</td>
         <td style="padding-top:6px;">Unit Name</td>
         <td style="padding-top:6px;">Notifications Content</td>
-        <td style="padding-top:6px;" width="15%">Date and Time</td>
+        <td style="padding-top:6px;" width="15%">Date</td>
     </tr>
     <tr class="table-row-heading">
         <td colspan="4" class="table-definition">
@@ -187,8 +192,8 @@
     </tr>
 </table>
 </div>
-<script type="text/javascript" src="/files/desktop/client/statutory-notifications-list-report/statutorynotificationslistreport.js"></script>
-<script src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="/script/statutory-notifications-list-report/statutorynotificationslistreport.js"></script>
+<script src="/js/jquery-ui/jquery-ui.js"></script>
 <script type="text/javascript">
 $(function() {
 $("#from-date" ).datepicker({

@@ -10,10 +10,10 @@
           <div class="input-row">
             <div class="single-column-field-label">Client:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-                <input type="text" class="input-box icon-autocomplete" id="groupsval" value="" style="width:200px;"  onkeyup="loadauto_text(this.value)">
+                <input type="text" class="input-box icon-autocomplete" id="groupsval" autofocus="autofocus" value="" style="width:50%;">
                 <input type="hidden" id="group-id">
-                <div id="autocompleteview" class="ac-textbox" style="display:none;"  onclick="hidelist();">
-                  <ul style="width:195px;"></ul>
+                <div id="ac-group" class="ac-textbox default-display-none">
+                  <ul style="width:50%;"></ul>
                 </div>
             </div>
           </div>
@@ -67,7 +67,8 @@
           </table>
       </div>
       <div class="grid-table">
-          <table>
+          <table class="js-filtertable">
+          <thead>
             <tr>
               <th align="left" colspan="4" style="background:#ccc;color:black;font-weight:bold">
               Licence Holders list
@@ -83,17 +84,18 @@
           <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="10%">Mobile Number</th>
           <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="20%">Seating Unit</th>
           <th align="center" style="background:#A381BD;color:black;font-weight:bold" width="7%">Status</th>
-         <th align="center" style="background:#A381BD;color:black;font-weight:bold" width="9%">Promote Admin</th>
+         <th align="center" style="background:#A381BD;color:black;font-weight:bold" width="9%">Promote Client Admin</th>
         </tr>
         <tr>
           <td align="center">&nbsp;</td>
-          <td><input type="text" class="filter-text-box" id="search-employee"></td>
-          <td><input type="text" class="filter-text-box" id="search-email"></td>
-          <td><input type="text" class="filter-text-box" id="search-mobile-number"></td>
-          <td><input type="text" class="filter-text-box" id="search-seating-unit"></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
           <td align="center">&nbsp;</td>
           <td align="center">&nbsp;</td>
         </tr>
+        </thead>
         <tbody class="tbody-clientprofile-list">
         </tbody>
         </table>
@@ -114,17 +116,26 @@
       <td class="employee"></td>
       <td class="email"></td>
       <td class="mobile-number"></td>
-      <td class="seating-unit"></td>
+      <td class="seating-unit"><abbr title=""><img style="margin-right:5px" src="/images/icon-info.png"/></abbr><span></span></td>
       <td align="center" class="is-active"></td>
       <td align="center" class="promote-admin"> </td>
     </tr>
   </table>
 </div>
-<script type="text/javascript" src="/files/desktop/knowledge/client-profile/clientprofile.js"></script>
-<script type="text/javascript">
-$('.toggleModal').on('click', function (e) {
-  $('.modal').toggleClass('active');
-});
-</script>
+
+<div id="popup" class="overlay" >
+  <div class="popup-window">
+    <a class="close">X</a>
+    <div class="content">
+     <span class="popup-content"></span>
+     <br>
+     <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Ok" onclick="dismissPopup()" style="margin-top:10px;">
+     <span class="popup-error-msg"></span>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript" src="/script/client-profile/clientprofile.js"></script>
 {% endblock %}
 

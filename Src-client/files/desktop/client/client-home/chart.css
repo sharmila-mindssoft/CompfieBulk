@@ -119,10 +119,10 @@ input.radio:checked ~ label {
   margin-top: 10px;
 }
 #cssmenu > ul > li:hover > ul {
-  top: 46.5px !important;
+  /*top: 46.5px !important;*/
 }
 
-.ms-drop ul > li label.optgroup {
+/*.ms-drop ul > li label.optgroup {
   font-size: 0.75em;
 }
 .optgroup
@@ -132,12 +132,10 @@ input.radio:checked ~ label {
 .ms-drop ul > li label
 {
   font-size: 0.75em !important;
-}
+}*/
 .filtertable {
   width: 57%;
   margin-top: 20px;
-  float: left;
-  margin-left: 12%;
 }
 .filtertable td{
   vertical-align: top;
@@ -161,7 +159,7 @@ input.radio:checked ~ label {
   width: 120px;
   padding-left: 3.5em;
   margin-bottom: 5px;
-  margin-left: 10px;
+  /*margin-left: 10px;*/
   margin-right: 10px;
 
   -webkit-border-radius: 3px;
@@ -229,9 +227,9 @@ input.radio:checked ~ label {
 }
 
 .text-filterby {
-  width: 70px;
+  width: 100px;
   float: left;
-  margin-top: 20px;
+  margin-top: 7px;
 }
 .country-selection,
 .domain-selection,
@@ -307,11 +305,11 @@ table.filtertable-1 tr td table tr td {
 }
 
 #assignee-wise-compliance {
-  width: 90%;
+  width: 100%;
   float: left;
-  margin-left: 5%;
+/*  margin-left: 5%;
   margin-right: 5%;
-}
+*/}
 
 .year-selection {
   float: right;
@@ -345,7 +343,6 @@ table.filtertable-1 tr td table tr td {
 /*.graph-box,*/
 .graph-container,
 .drilldown-container,
-.compliance-report-tab-content,
 .btn-back,
 .btn-pie-chart,
 .btn-bar-chart {
@@ -363,3 +360,143 @@ table.filtertable-1 tr td table tr td {
 .legal-entity-selection,
 .division-selection,
 .unit-selection,*/
+
+
+/*Popup For Assignee Wise Compliance*/
+
+.popupoverlay{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000;
+}
+.popupoverlay:target {
+  visibility: visible;
+  opacity: 1;
+
+}
+.popupoverlay1{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000;
+}
+.popupoverlay1:target {
+  visibility: visible;
+  opacity: 1;
+
+}
+
+.popup-year {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 70%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup-year h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup-year .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  text-decoration: none;
+  color: #333;
+}
+.popup-year .close:hover {
+  color: orange;
+}
+.popup-year .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+.popup-reassigned {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 70%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup-reassigned h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup-reassigned .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  text-decoration: none;
+  color: #333;
+}
+.popup-reassigned .close:hover {
+  color: orange;
+}
+.popup-reassigned .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+.popup-error-msg{
+  font-size: 0.813em;
+  color: red;
+}
+
+.assignee-name-for-popup{
+  color: #00f;
+  text-decoration: underline;
+}
+.popup-year-val {
+  width: 30%;
+}
+.delayedvalue{
+  color: #00f;
+  text-decoration: underline;
+}
+.close{
+  cursor: pointer;
+}
+.escalation-status-value {
+  background: #F1E9F6;
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.ms-drop input[type=radio]{
+  display: none;
+}
+.ms-drop label {
+  padding: 2px  0px 2px 5px;
+}

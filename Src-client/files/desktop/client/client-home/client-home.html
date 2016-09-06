@@ -1,36 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard</title>
-  {% include "/files/desktop/common/html/header.html" %}
-  <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/dashboard.css">
-  <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/popup.css">
-  <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/chart.css">
-  <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/multiple-select.css">
-  <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/client-home.css">
-  <script type="text/javascript" src="/files/desktop/common/js/common.js"></script>
-  <script type="text/javascript" src="/files/desktop/client/client-home/modernizr.js"></script>
-  <script src="/files/desktop/client/client-home/multiple-select.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/highcharts/js/highcharts.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/exporting.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/customEvents.js"></script>
-  <script src="/files/desktop/common/highcharts/js/modules/drilldown.js"></script>
-  <script src="/files/desktop/common/highcharts/js/highcharts-3d.js"></script>
-  <script type="text/javascript" src="/files/desktop/client/client-home/client-home.js"></script>
-  <!-- <script type="text/javascript" src="/files/desktop/client/client-home/client-home-design.js"></script> -->
-</head>
+  <title>Compfie</title>
+  {% include "/files/desktop/client/home/header.html" %}
+  <link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+  <link rel="stylesheet" type="text/css" href="/script/client-home/popup.css">
+  <link rel="stylesheet" type="text/css" href="/script/client-home/chart.css">
+  <link rel="stylesheet" type="text/css" href="/script/client-home/multiple-select.css">
+  <link rel="stylesheet" type="text/css" href="/script/client-home/client-home.css">
+
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script src="/script/client-home/multiple-select.js"></script>
+  <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript" src="/script/client-home/modernizr.js"></script>
+
+  <script type="text/javascript" src="/common/highcharts/highcharts.js"></script>
+  <script type="text/javascript" src="/common/highcharts/highcharts-3d.js"></script>
+  <script type="text/javascript" src="/common/highcharts/modules/no-data-to-display.js"></script>
+  <script type="text/javascript" src="/common/highcharts/modules/exporting.js"></script>
+
+  <script type="text/javascript" src="/common/highcharts/modules/drilldown.js"></script>
+  <!-- <script type="text/javascript" src="/common/highcharts/customEvents.js"></script> -->
+  <script type="text/javascript" src="/script/client-home/chart-home-chart.js"></script>
+  <script type="text/javascript" src="/script/client-home/client-home.js"></script>
+  <script type="text/javascript" src="/js/jquery-ui/jquery-ui.js"></script>
+  <script type="text/javascript" src="/js/jquery-ui/jquery-ui-timepicker.js"></script>
+  <script type="text/javascript" src="/script/client-home/filtertable.jquery.js"></script>
+  <script type="text/javascript" src="/js/client-notification.js"></script>
+
+  <!-- <script type="text/javascript" src="/script/client-home/client-home-design.js"></script> -->
+
+  <script type="text/javascript" src="/js/client-notification.js"></script>
+ </head>
 <body>
   <div id="wrapper">
-    {% include "/files/desktop/client/home/nav-bar.html" %}
     <div class="main-content-area">
+      {% include "/files/desktop/client/home/nav-bar.html" %}
       <div class="loading-indicator-spin">
-        <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+        <span><img src='/images/loading-img.gif' alt=""></span>
+      </div>
+      <div class="contract_timer_container">
+        <span class="contract_timer"></span>
       </div>
       <div class="error-message"><span class="chart-error-message"></span></div>
       <div class="content-container">
         <!-- <span style="float:right;padding-top:1em;">Contract Renewal : 20 Days Left</span> -->
         <div class="content-area">
-          <div class="chart-container" style="width:100%;margin-bottom: 40px;">
+          <div class="chart-container" style="width:100%;padding-bottom: 40px;">
             <div class="chart-header">
               <span class="chart-tab compliance-status-tab active">Compliance Status</span>
               <span class="chart-tab escalations-tab">Escalations</span>
@@ -44,7 +60,7 @@
               <div class="chart-filters" align="center">
                 <table class="filtertable-1 common-filter">
                   <tr>
-                    <td>
+                    <td align="center">
                       <table>
                         <tr>
                           <td>
@@ -83,8 +99,8 @@
                             <div class="selections date-selection">
                               <table>
                                 <tr>
-                                  <td><input type="text" class="input-box" placeholder="From date"/></td>
-                                  <td><input type="text" class="input-box" placeholder="To date"/></td>
+                                  <td><input type="text" id="fromdate" class="input-box" placeholder="From date"/></td>
+                                  <td><input type="text" id="todate" class="input-box" placeholder="To date"/></td>
                                   <td><div class="btn-go"><input type="button" class="btn btn-date-filter" value="Go"/></div></td>
                                 </tr>
                               </table>
@@ -174,6 +190,9 @@
                   </tr>
                 </table>
               </div>
+              <div class="chart-filters-autocomplete">
+                <span>Autocomplete goes here</span>
+              </div>
               <div class="clearfix" ></div>
               <br />
               <div class="graph-box">
@@ -181,12 +200,28 @@
                 <input type="button" class="btn-bar-chart" value="View as bar chart"/>
                 <input type="button" class="btn-back" value="Back"/>
                 <div class="clearfix"></div>
-                <div id="status-container" class="graph-container compliance-status" style="height: 400px;" align="center"></div>
-                <div class="graph-container escalations" style="height: 400px;" align="center"></div>
+                <div id="status-container" class="graph-container compliance-status" style="height: 420px; width:100%;" align="center"></div>
+                <!-- <div class="graph-container escalations" style="height: 400px;" align="center"></div>
                 <div class="graph-container not-complied" style="height: 400px;" align="center"></div>
                 <div class="graph-container trend-chart" style="height: 400px;" align="center"></div>
-                <div class="graph-container applicability-status" style="height: 400px;" align="center"></div>
-                <div class="drilldown-container">Compliance drilldown gose here
+                <div class="graph-container applicability-status" style="height: 400px;" align="center"></div> -->
+                <div class="drilldown-container">
+                  <div class="grid-table">
+                  <h2 class="drilldown-title"></h2>
+                  <br>
+                  <table class="table-drilldown-list js-filtertable" id="accordion">
+
+                  <thead class="table-thead-drilldown-list">
+                  </thead>
+
+                  </table>
+                  <table class="escalation-drilldown-list  escalations-font-list">
+                  <tr><td class="td-escalation" style="padding-left:0em; "></td></tr>
+                  </table>
+                  <div align="center" style="padding-top:10px;">
+                    <input type="button" value="Show more records" class="btn-submit" id="pagination" onclick="showmorerecords();">
+                  </div>
+                </div>
                 </div>
 
                 <!-- <div class="chart-space" align="center">
@@ -205,8 +240,10 @@
                   <input type="button" class="btn-next" value="Next >>"/>
                 </div>
               </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="report-container-inner">
               <div class="compliance-report-tab-content" id="assignee-wise-compliance">
-                <!-- archive tab content start here -->
                 <div class="archive-tab-content">
                   <div class="archive-list-content" style="width:100% !important;">
                     <div class="grid-table-dash">
@@ -214,19 +251,38 @@
                         <div class="input-row">
                           <div class="field-label">Country:<span class="mandatory">*</span></div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Country">
+                            <input type="hidden" id="a_user" value="">
+                            <input type="hidden" id="a_domain" value="">
+                            <input type="hidden" id="a_year" value="">
+                            <input type="hidden" id="a_unit" value="">
+
+                            <input type="hidden" id="country" value="">
+                            <input type="text" class="input-box icon-autocomplete" id="countryval" value="" onkeyup="ac_country_load(this.value, event)">
+                            <div id="ac-country" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Legal Entity:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Legal entity">
+                            <input type="text" class="input-box icon-autocomplete" id="legalentityval" onkeyup="ac_le_load(this.value, event)">
+                            <input type="hidden" id="legalentityid">
+                            <div id="ac-legalentity" class="ac-textbox default-display-none" >
+                            <ul style="width:85%;"></ul>
                           </div>
                         </div>
+                        </div>
                         <div class="input-row">
-                          <div class="field-label">Seating Unit:</div>
+                          <div class="field-label">Unit:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Seating Unit">
+                            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" onkeyup="ac_unit_load(this.value, event)">
+                            <input type="hidden" id="unitid">
+                            <div id="ac-unit" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
                           </div>
                         </div>
                       </div>
@@ -234,27 +290,55 @@
                         <div class="input-row">
                           <div class="field-label">Business Group:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Business Group">
+                            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" onkeyup="ac_bg_load(this.value, event)">
+                            <input type="hidden" id="businessgroupid">
+                            <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Division:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Division">
+
+                            <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" onkeyup="ac_division_load(this.value, event)">
+                            <input type="hidden" id="divisionid">
+                            <div id="ac-division" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
                           </div>
                         </div>
                         <div class="input-row">
-                          <div class="field-label">User:</div>
+                          <div class="field-label">Assignee:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="User">
+
+                            <input type="text" class="input-box icon-autocomplete" id="userval" value="" onkeyup="ac_user_load(this.value, event)">
+                            <input type="hidden" id="userid">
+                            <div id="ac-user" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
+
                           </div>
                         </div>
                       </div>
                       <div class="submit-button-container">
-                        <input type="submit" name="cancel" value="Show" class="btn-submit">
-                        <input type="submit" name="cancel" value="Export" class="btn-submit">
+
+                        <div>
+                          <input type="submit" name="cancel" value="Show" id="assigneeWiseShow" onclick="showFiltersResults(false)" class="btn-submit">
+                          <input type="submit" name="cancel" 
+                          onclick="showFiltersResults(true)"
+                          value="Export" class="btn-submit">
+                        </div>
+
+                        <div>
+                            <span class="assignee-chart-error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+                        </div>
+
                       </div>
-                      <table style="border:1px solid #ddd;" >
+                      <table style="border:1px solid #ddd;" class="table-assignee-wise-compliance-list" >
                         <tr >
                           <th width="5%" align="center">#</th>
                           <th width="25%" align="left">Domain</th>
@@ -267,7 +351,7 @@
                         </tr>
                         <tr style="background-color:#fff;">
                           <td width="4%" align="center"></td>
-                          <td width="15%" align="left"><input type="text"  class="filter-text-box"></td>
+                          <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
                           <td width="10%" align="center"></td>
                           <td width="10%" align="center"></td>
                           <td width="10%" align="center"></td>
@@ -275,330 +359,83 @@
                           <td width="10%" align="center"></td>
                           <td></td>
                         </tr>
-                        <tr>
-                          <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
-                            KG1009 - Madurai unit
-                          </td>
-                        </tr>
-                        <tr align="left" >
-                          <td style="background-color:#fff;" align="left" colspan="8"> <a href="#" class="toggleModal" >EMP1028 -Sivaraman</a></th>
-                        </tr>
-                        <a href="#">
-                          <tr align="center" style="cursor:pointer;padding-right:5px" class="usecom1-tab">
-                            <td>1</td>
-                            <td align="left">Finance</td>
-                            <td>10</td>
-                            <td>06</td>
-                            <td>02</span></td>
-                            <td>01</td>
-                            <td>01</td>
-                            <td align="left" ><img src="/images/right_arrow.png" /></td>
-                          </tr>
-                        </a>
-                        <tr align="center" style="background-color:#FFFFFF">
-                          <td>2</td>
-                          <td align="left">Labour Law</td>
-                          <td>11</td>
-                          <td>04</td>
-                          <td>
-                            03
-                            <span class="toggleModal1">
-                              <a href="#" style="text-decoration:none">(+2)</a>
-                          </td>
-                          <td>01</td>
-                          <td>01</td>
-                          <td align="left" style="padding-right:1px;"><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="center" >
-                        <td>3</td>
-                        <td align="left">Industrial Law</td>
-                        <td>11</td>
-                        <td>04</td>
-                        <td>03</td>
-                        <td>01</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="center" >
-                        <td colspan="2">Total</td>
-                        <td>32</td>
-                        <td>14</td>
-                        <td>10</td>
-                        <td>03</td>
-                        <td>03</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="10" style="background-color:#FFFFFF"><span><a href="#">EMP1027 - Vijayan</a></span></th>
-                        </tr>
-                        <tr align="center"  style="background-color:#FFFFFF">
-                        <td>4</td>
-                        <td align="left">Labour law</td>
-                        <td>08</td>
-                        <td>04</td>
-                        <td>01</td>
-                        <td>02</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr>
-                        <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
-                        KG1180 - Namakkal unit
-                        </td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1129 - Sivanathan</a></th>
-                        </tr>
-                        <tr align="center" >
-                        <td>5</td>
-                        <td align="left">Industrial law</td>
-                        <td>09</td>
-                        <td>04</td>
-                        <td>02</td>
-                        <td>02</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1207 - Velmurugan</a></th>
-                        </tr>
-                        <tr align="center">
-                        <td>6</td>
-                        <td align="left">Finance</td>
-                        <td>10</td>
-                        <td>04</td>
-                        <td>03</td>
-                        <td>02</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="10" style="background-color:#FFFFFF"><a href="#">EMP2018 - Vetriselvam</a></th>
-                        </tr>
-                        <tr align="center" >
-                        <td>7</td>
-                        <td align="left">Finance</td>
-                        <td>08</td>
-                        <td>02</td>
-                        <td>04</td>
-                        <td>01</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png"/></td>
-                        </tr>
+                        <tbody class="tbody-assignee-wise-compliance-list"></tbody>
                       </table>
                     </div>
+
                     <div class="grid-table-dash1">
                       <table  style="border:1px solid #ddd;" >
-                        <tr >
-                        <td colspan="6" style="background-color:#FFF;"><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b> EMP1028 -Sivaraman</span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;"><b>Domain :</b> Finance</span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> 2015</span></td>
-                        </tr>
-                        <tr align="left" class="rightside">
-                        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Complied<span><img src="/images/chevron_black_down.png"></span></th>
-                        </tr>
-                        <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;">
-                        <td width="5%" align="center">#</th>
-                        <td width="45%">Compliance</th>
-                        <td width="15%">Start date</th>
-                        <td width="15%">Actual due date</th>
-                        <td width="15%" colspan="2">Date of completion</th>
-                        </tr>
-                        <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1009 - Madurai unit </td></tr>
-                        <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
-                          inset 0 0 0 1px rgba(53,86,129, 0.4),
-                          inset 0 0 5px rgba(53,86,129, 0.5),
-                          inset -285px 0 35px white;
-                          border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">1</td>
-                        <td>Opening and closing hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">14-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">2</td>
-                        <td>Daily and weekly hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">15-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">3</td>
-                        <td>Overtime</td>
-                        <td>10-Sep-2015</td>
-                        <td>16-Sep-2015</td>
-                        <td colspan="2">15-Sep-2015</td>
-                        </tr>
-                        <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
-                          inset 0 0 0 1px rgba(53,86,129, 0.4),
-                          inset 0 0 5px rgba(53,86,129, 0.5),
-                          inset -285px 0 35px white;
-                          border-radius: 0 5px 0 5px;"  width="250px"> The Batteries act - 2001 </span> </th>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">4</td>
-                        <td>Form I - Importers Half yearly returns</td>
-                        <td>12-Sep-2015</td>
-                        <td>20-Sep-2015</td>
-                        <td colspan="2">18-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">5</td>
-                        <td>Form II - Importers registration</td>
-                        <td>15-Sep-2015</td>
-                        <td>24-Sep-2015</td>
-                        <td colspan="2">24-Sep-2015</td>
-                        </tr>
-                        <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1010 - Chennai unit </td></tr>
-                        <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
-                          inset 0 0 0 1px rgba(53,86,129, 0.4),
-                          inset 0 0 5px rgba(53,86,129, 0.5),
-                          inset -285px 0 35px white;
-                          border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">1</td>
-                        <td>Opening and closing hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">14-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">2</td>
-                        <td>Daily and weekly hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">15-Sep-2015</td>
-                        </tr>
-                        <tr  align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Delayed<span><img src="/images/chevron_black_right.png"></span></th>
-                        </tr>
-                        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                        <th  colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: In progress<span><img src="/images/chevron_black_right.png"></span></th>
-                        </tr>
-                        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Not complied<span><img src="/images/chevron_black_right.png"></span></th>
+                      <tbody class="compliance-details-drilldown"></tbody>
                         </tr>
                       </table>
                     </div>
                   </div>
                 </div>
+
+                <div align="center" style="padding-top:10px; ">
+                  <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination-assignee" onclick="getShowmoreData()">
+                </div>
+                <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count_assignee"></p>
+
                 <!-- archive tab content end here -->
-                <div id="assignee">
-                  <div class="modal" style="width:75%; margin-left:-37.5%;">
-                    <header>
-                    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
-                    <div class="close toggleModal"></div>
-                    </header>
-                    <section>
-                    <p style="font-size:0.8em; padding-top:10px;">
-                    <table class="modaltable" width="100%">
-                    <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
-                    <th width="5%" align="center">#</th>
-                    <th width="15%" align="left">Year</th>
-                    <th width="12%" align="center">Total</th>
-                    <th width="12%" align="center">Complied</th>
-                    <th width="12%" align="center">Delayed</th>
-                    <th width="12%" align="center">In progress</th>
-                    <th width="13%" align="center">Not complied</th>
-                    <th width="5%"></th>
-                    </tr>
-                    <tr >
-                    <td align="center">1</td>
-                    <td align="left"><a href="/home_userwise_2015" class="year2015">2015</a></td>
-                    <td align="center">10</td>
-                    <td align="center">06</td>
-                    <td align="center">02</td>
-                    <td align="center">01</td>
-                    <td align="center">01</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr >
-                    <td align="center">2</td>
-                    <td align="left">2014</td>
-                    <td align="center">10</td>
-                    <td align="center">08</td>
-                    <td align="center">00</td>
-                    <td align="center">01</td>
-                    <td align="center">01</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr >
-                    <td align="center">3</td>
-                    <td align="left">2013</td>
-                    <td align="center">10</td>
-                    <td align="center">07</td>
-                    <td align="center">02</td>
-                    <td align="center">0</td>
-                    <td align="center">01</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr >
-                    <td align="center">4</td>
-                    <td align="left">2012</td>
-                    <td align="center">10</td>
-                    <td align="center">10</td>
-                    <td align="center">0</td>
-                    <td align="center">0</td>
-                    <td align="center">0</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr>
-                    <td align="center">5</td>
-                    <td align="left">2011</td>
-                    <td align="center">10</td>
-                    <td align="center">07</td>
-                    <td align="center">02</td>
-                    <td align="center">01</td>
-                    <td align="center">00</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    </table>
-                    </p>
-                    </section>
+                  <div id="popup-year" class="popupoverlay" >
+                    <div class="popup-year">
+                      <a class="close">x</a>
+                      <div class="content">
+                        <div>
+                        <header>
+                          <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color:#000; font-size:1em;" class="year-heading"> </h1>
+                          <div class="close"></div>
+                        </header>
+                        <section>
+                        <p style="font-size:0.8em; padding-top:10px;">
+                        <table class="modaltable" width="100%">
+                        <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                        <th width="5%" align="center">#</th>
+                        <th width="15%" align="left">Year</th>
+                        <th width="12%" align="center">Total</th>
+                        <th width="12%" align="center">Complied</th>
+                        <th width="12%" align="center">Delayed</th>
+                        <th width="12%" align="center">In progress</th>
+                        <th width="13%" align="center">Not complied</th>
+                        <th width="5%"></th>
+                        </tr>
+                        <tbody class="tbody-popup-list">
+                        </tbody>
+                        </table>
+                        </p>
+                        </section>
+                      </div>
+                    </div>
                   </div>
-                  <div class="modal modal1" style="width:75%; margin-left:-37.5%;">
-                    <header>
-                    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
-                    <div class="close toggleModal1"></div>
-                    </header>
-                    <section>
-                    <p style="font-size:0.8em; padding-top:10px;">
-                    <table class="modaltable" width="100%">
-                    <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
-                    <th width="5%" align="center">#</th>
-                    <th width="15%" align="left">Compliance</th>
-                    <th width="15%" align="left">Reassigned From</th>
-                    <th width="12%" align="center">Start Date</th>
-                    <th width="12%" align="center">Due Date</th>
-                    <th width="12%" align="center">Reassigned Date</th>
-                    <th width="13%" align="center">Completed Date</th>
-                    </tr>
-                    <tr >
-                    <td align="center">1</td>
-                    <td align="left">Form T - Wage Slip Submission</td>
-                    <td align="left">EMP1020 - Raguram</td>
-                    <td align="center">20-Oct-2015</td>
-                    <td align="center">30-Dec-2015</td>
-                    <td align="center">28-Dec-2015</td>
-                    <td align="center">03-Jan-2015</td>
-                    </tr>
-                    <tr >
-                    <td align="center">2</td>
-                    <td align="left">Form Q - Register of employment</td>
-                    <td align="left">EMP1022 - Vijayakumar</td>
-                    <td align="center">01-Nov-2015</td>
-                    <td align="center">30-Dec-2015</td>
-                    <td align="center">01-Jan-2015</td>
-                    <td align="center">03-Jan-2015</td>
-                    </tr>
-                    </table>
-                    </p>
-                    </section>
+                </div>
+
+                <div id="popup-reassigned" class="popupoverlay1" >
+                  <div class="popup-reassigned">
+                    <a class="close">x</a>
+                    <div class="content">
+                        <header>
+                        <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color:#000; font-size:1em;" class="comp-delayed-heading"></h1>
+                        </header>
+                        <section>
+                        <p style="font-size:0.8em; padding-top:10px;">
+                        <table class="modaltable" width="100%">
+                        <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                        <th width="5%" align="center">#</th>
+                        <th width="15%" align="left">Compliance</th>
+                        <th width="15%" align="left">Reassigned From</th>
+                        <th width="12%" align="center">Start Date</th>
+                        <th width="12%" align="center">Due Date</th>
+                        <th width="12%" align="center">Reassigned Date</th>
+                        <th width="13%" align="center">Completed Date</th>
+                        </tr>
+                        <tbody class="tbody-popup-reassigned-list">
+
+                        </tbody>
+                        </table>
+                        </p>
+                        </section>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -608,6 +445,275 @@
       </div>
     </div>
   </div>
+
   {% include "/files/desktop/client/home/footer.html" %}
+  <div id="templates">
+
+    <div class="compliance-status">
+      <table>
+
+        <tr class="tr-heading">
+          <th width="3%" align="center">#</th>
+          <th width="13%" align="left" class="business-group-row">Business Group</th>
+          <th width="13%" align="left" class="legal-entity-row">Legal Entity </th>
+          <th width="15%" align="left" class="division-row">Division </th>
+          <th width="5%" align="left" class="type-row">Type </th>
+          <th width="20%" align="left" class="compliance-row">Compliance </th>
+          <th width="11%" align="left" class="assigned-to-row">Assigned To </th>
+          <th width="11%" class="delayed-by-row" align="left">Delayed By</th>
+          <th width="11%" class="dates-left-to-complete-row" align="left">Days Left to Complete </th>
+          <th width="11%" class="over-due-row" align="left">Over Due</th>
+
+        </tr>
+        <tr class="tr-filter">
+          <td align="center"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="delayed-by-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="dates-left-to-complete-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="over-due-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+        </tr>
+        <tbody class="tr-unit accordion-toggle">
+          <tr style="padding:10px;text-align:left;">
+            <th colspan="6" style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" class="unit-heading"></th>
+            <th style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;padding-right:5px" align="right"><img src="/images/chevron_black_down.png"/></th>
+          </tr>
+        </tbody>
+        <tr align="left" class="rightside tr-level1" >
+          <th  colspan="7" style="background-color:#fff; padding-left:0px; " align="left">
+            <span class="heading" style="color:#000; float:left;"></span>
+          </th>
+        </tr>
+        <tr class="table-row-list">
+          <td align="center" class="sno"></td>
+          <td class="businessgroup-name"></td>
+          <td class="legalentity-name"></td>
+          <td class="division-name"></td>
+          <td class="industry-type-name"></td>
+          <td class="compliance-name"><img src="/images/icon-info.png" style="padding-right:3px;"><span><span></td>
+          <td class="assigned-to"></td>
+          <td class="delayed-by-row delayed-by"></td>
+          <td class="dates-left-to-complete-row dates-left-to-complete"></td>
+          <td class="over-due-row over-due"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="escalation-status">
+      <table >
+      <tr class="tr-h2">
+        <td colspan="8" style="padding:0px;"><h2 class="escalation-status-value"> </h2></td>
+      </tr>
+        <tr class="tr-heading escalations-font-list">
+          <th width="3%" align="center">#</th>
+          <th width="13%" align="left" class="business-group-row" style="font-size:1em">Business Group</th>
+          <th width="13%" align="left" class="legal-entity-row" style="font-size:1em">Legal Entity </th>
+          <th width="15%" align="left" class="division-row" style="font-size:1em">Division </th>
+          <th width="5%" align="left" class="type-row" style="font-size:1em">Type </th>
+          <th width="20%" align="left" class="compliance-row" style="font-size:1em">Compliance </th>
+          <th width="11%" align="left" class="assigned-to-row" style="font-size:1em">Assigned To </th>
+          <th width="11%" class="delayed-by-row" align="left" style="font-size:1em">Delayed By</th>
+          <th width="11%" class="over-due-row" align="left" style="font-size:1em">Over Due</th>
+
+        </tr>
+        <tr class="tr-filter">
+          <td align="center"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="delayed-by-row"><input type="text"  class="filter-text-box " placeholder="Search"></td>
+          <td class="over-due-row"><input type="text"  class="filter-text-box " placeholder="Search"></td>
+        </tr>
+        <tbody class="tr-unit accordion-toggle">
+          <tr style="padding:10px;text-align:left;">
+            <th colspan="6" style="background-color:#DBDBDB; color:#000000; font-size: 0.95em;font-weight: bold;" class="unit-heading"></th>
+            <th style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;padding-right:5px" align="right"><img src="/images/chevron_black_down.png"/></th>
+          </tr>
+        </tbody>
+        <tr align="left" class="rightside tr-level1" >
+          <th  colspan="7" style="background-color:#fff; padding-left:0px; " align="left">
+            <span class="heading" style="color:#000; float:left; font-size: 1em;"></span>
+          </th>
+        </tr>
+        <tr class="table-row-list">
+          <td align="center" class="sno" style="font-size:1em"></td>
+          <td class="businessgroup-name" style="font-size:1em"></td>
+          <td class="legalentity-name" style="font-size:1em"></td>
+          <td class="division-name" style="font-size:1em"></td>
+          <td class="industry-type-name" style="font-size:1em"></td>
+          <td class="compliance-name" style="font-size:1em"><img src="/images/icon-info.png" style="padding-right:3px;"><span><span></td>
+          <td class="assigned-to" style="font-size:1em"></td>
+          <td class="delayed-by-row delayed-by" style="font-size:1em"></td>
+          <td class="over-due-row over-due" style="font-size:1em"></td>
+        </tr>
+         <tr class="norecords-list">
+          <td class="norecord" colspan="4"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="notComplied-status">
+      <table>
+        <tr class="tr-heading">
+          <th width="3%" align="center">#</th>
+          <th width="13%" align="left" class="business-group-row">Business Group</th>
+          <th width="13%" align="left" class="legal-entity-row">Legal Entity </th>
+          <th width="15%" align="left" class="division-row">Division </th>
+          <th width="5%" align="left" class="type-row">Type </th>
+          <th width="20%" align="left" class="compliance-row">Compliance </th>
+          <th width="11%" align="left" class="assigned-to-row">Assigned To </th>
+          <th width="11%" class="over-due-row-nc" align="left">Over Due</th>
+
+        </tr>
+        <tr class="tr-filter">
+          <td align="center"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="over-due-row-nc"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+        </tr>
+        <tbody class="tr-unit accordion-toggle">
+          <tr style="padding:10px;text-align:left;">
+            <th colspan="6" style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" class="unit-heading"></th>
+            <th style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;padding-right:5px" align="right"><img src="/images/chevron_black_down.png"/></th>
+          </tr>
+        </tbody>
+        <tr align="left" class="rightside tr-level1" >
+          <th colspan="7" style="background-color:#fff; padding-left:0px;" align="left">
+            <span class="heading" style="color:#000; float:left;"></span>
+          </th>
+        </tr>
+        <tr class="table-row-list">
+          <td align="center" class="sno"></td>
+          <td class="businessgroup-name"></td>
+          <td class="legalentity-name"></td>
+          <td class="division-name"></td>
+          <td class="industry-type-name"></td>
+          <td class="compliance-name"><img src="/images/icon-info.png" style="padding-right:3px;"><span><span></td>
+          <td class="assigned-to"></td>
+          <td class="over-due-row-nc over-due"></td>
+        </tr>
+
+      </table>
+    </div>
+    <div class="compliance-applicable-status">
+      <table>
+        <tr class="tr-heading">
+          <th width="3%" align="center">#</th>
+          <th width="15%" align="left" class="statutory-row">Statutory</th>
+          <th width="15%" align="left" class="compliance-task-row">Compliance Task </th>
+          <th width="18%" align="left" class="compliance-description-row">Compliance Description </th>
+          <th width="12%" align="left" class="penal-consequences-row">Penal Consequences </th>
+          <th width="10%" align="left" class="compliance-frequency-row">Compliance Frequency</th>
+          <th width="17%" align="left" class="repeats-row">Repeats </th>
+          <!-- <th width="10%" class="statutory-date-row" align="left">Statutory Date<span><img src="/images/dropdown-arrow.png"/></span></th> -->
+          <th width="10%" class="trigger-before-row" align="left">Trigger Before </th>
+        </tr>
+        <tbody class="tr-level1 accordion-toggle">
+          <tr style="padding:10px;text-align:left;">
+            <th colspan="7" style="background-color:#DBDBDB; color:#000000; font-size: 0.813em; font-weight: bold;" class="level-heading"></th>
+            <th style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;padding-right:5px" align="right"><img src="/images/chevron_black_down.png"/></th>
+          </tr>
+        </tbody>
+        <tr align="left" class="rightside tr-unit" >
+          <th  colspan="9" style="background-color:#fff; padding-left:0px; " align="left">
+            <span class="heading" style="color:#000; float:left;"></span>
+          </th>
+        </tr>
+        <tr class="table-row-list">
+          <td align="center" class="sno"></td>
+          <td class="statutory-name"></td>
+          <td class="compliance-task-name"></td>
+          <td class="compliance-description-name"></td>
+          <td class="penal-consequences-name"></td>
+          <td class="compliance-frequency-name"></td>
+          <td class="repeats"></td>
+          <!-- <td class="statutory-date"></td> -->
+          <td class="trigger-before"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="assignee-wise-compliance-list">
+      <table>
+        <tr class="unitHeading">
+        <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="8" class="unit-name">
+        </td>
+      </tr>
+      <tr align="left" class="userHeading" >
+        <td style="background-color:#fff;" align="left" colspan="8"> <span class="assignee-name-for-popup"></span></td>
+      </tr>
+      <tr align="center" style="cursor:pointer;padding-right:5px" class="usecom1-tab assignee-row-list"  >
+        <td class="sno"></td>
+        <td align="left" class="level1value"></td>
+        <td class="total-count"></td>
+        <td class="complied-count"></td>
+        <td class="delayed-count"></td>
+        <td class="inprogress-count"></td>
+        <td class="not-complied-count"></td>
+        <td align="left" class="open-details-list"><img src="/images/right_arrow.png" /></td>
+      </tr>
+      </table>
+    </div>
+    <table class="year-wise-compliance-list-popup">
+    <tr class="tablerow assign-wise-compliance-details">
+      <td align="center" class="popup-sno"></td>
+      <td align="left" class="popup-year-val"></td>
+      <td align="center" class="popup-total-count"></td>
+      <td align="center" class="popup-complied-count"></td>
+      <td align="center" class="popup-delayed-count"></td>
+      <td align="center" class="popup-inprogress-count"></td>
+      <td align="center" class="popup-not-complied-count"></td>
+      <td class="popup-click-drilldown"><img src="/images/right_arrow.png"></td>
+      </tr>
+  </table>
+  <table class="compliance-details-list">
+   <tr class="filterHeader">
+    <td colspan="6" style="background-color:#FFF;"  ><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b><span class="comp-list-user"></span></span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;" class="comp-list-filter-domain"><b>Domain :</b> <span class="comp-list-domain"></span></span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> <span class="comp-list-year"></span></span></td>
+  </tr>
+  <tr align="left" class="rightside comp-list-statusheading">
+    <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: <abbr class="comp-list-status"></span><abbr><img src="/images/chevron_black_down.png"></span></th>
+  </tr>
+  <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;" class="comp-list-heading">
+    <td width="5%" align="center">#</th>
+    <td width="45%">Compliance</th>
+    <td width="15%">Start date</th>
+    <td width="15%">Actual due date</th>
+    <td width="15%" colspan="2">Date of completion</th>
+  </tr>
+  <tr class="comp-list-filter-unitname">
+    <td colspan="5" style="background:#D4B7EB;font-weight:bold;" class="comp-list-unitname">  </td>
+  </tr>
+  <tr align="left" class="rightside comp-list-level1" >
+    <th  colspan="5" style="background-color:#fff; padding-left:0px;  "> <span class="comp-list-level1-val heading" style="color:#000; float:left;"> </span> </th>
+  </tr>
+  <tr style="background:#fff;" class="comp-list-tablerowlist">
+    <td align="center" class="comp-list-sno"></td>
+    <td class="comp-list-compliance"></td>
+    <td class="comp-list-startdate"></td>
+    <td class="comp-list-duedate"></td>
+    <td class="comp-list-completiondate" colspan="2"></td>
+    </tr>
+
+
+    <tr class="comp-list-delayed-row-list" >
+    <td align="center" class="comp-delayed-sno"></td>
+    <td align="left" class="comp-delayed-compliance"></td>
+    <td align="left" class="comp-delayed-reassigned-from"></td>
+    <td align="center" class="comp-delayed-startdate"></td>
+    <td align="center" class="comp-delayed-duedate"></td>
+    <td align="center" class="comp-delayed-reassigned-date"></td>
+    <td align="center" class="comp-delayed-completed-date"></td>
+    </tr>
+  </table>
+
+</div>
 </body>
 </html>

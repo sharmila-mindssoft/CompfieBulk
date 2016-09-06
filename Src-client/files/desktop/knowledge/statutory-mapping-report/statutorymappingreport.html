@@ -1,5 +1,8 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
+  <div class='loading-indicator-spin'>
+    <span><img src='/images/loading-img.gif' alt="">   </span>
+  </div>
   <div class="content-container">
     <div class="content-area">
       <div class="add-container">
@@ -8,77 +11,79 @@
           <div class="input-row">
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
-              <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" value="">
+              <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" value="" autofocus="autofocus" tabindex="1">
               <input type="hidden" id="country" value="">
-              <div id="autocompleteview" class="ac-textbox default-display-none">
-              <ul id="ulist_text" style="width:215px;" class="hidemenu"></ul>
+              <div id="ac-country" class="ac-textbox default-display-none">
+              <ul style="width:85%;" class="hidemenu"></ul>
+            </div>
+            </div>
+          </div>
+            <div class="input-row">
+              <div class="field-label">Domain:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="" tabindex="2">
+                <input type="hidden" id="domain" value="">
+                <div id="ac-domain" class="ac-textbox default-display-none">
+                <ul style="width:85%;" class="hidemenu"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="field-label">Industry:</div>
+            <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" id="industryval" placeholder="Enter Industry" tabindex="3">
+              <input type="hidden" id="industry">
+              <div id="ac-industry" class="ac-textbox default-display-none">
+              <ul style="width:85%;" class="hidemenu"></ul>
             </div>
           </div>
         </div>
         <div class="input-row">
-          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-label">Statutory Nature:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
-            <input type="hidden" id="domain" value="">
-            <div id="autocomplete_domain" class="ac-textbox default-display-none">
-            <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+            <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature" tabindex="4">
+            <input type="hidden" id="statutorynature">
+            <div id="ac-statutorynature" class="ac-textbox default-display-none" >
+            <ul style="width:85%;" class="hidemenu"></ul>
           </div>
         </div>
       </div>
-      <div class="input-row">
-        <div class="field-label">Industry:</div>
-        <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="industryval" placeholder="Enter Industry">
-          <input type="hidden" id="industry">
-          <div id="autocomplete_industry" class="ac-textbox default-display-none">
-          <ul id="ulist_industry" style="width:215px;" class="hidemenu"></ul>
-        </div>
-      </div>
     </div>
-    <div class="input-row">
-      <div class="field-label">Statutory Nature:</div>
-      <div class="field-input">
-        <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature">
-        <input type="hidden" id="statutorynature">
-        <div id="autocomplete_statutorynature" class="ac-textbox default-display-none" >
-        <ul id="ulist_statutorynature" style="width:215px;" class="hidemenu"></ul>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="input-row-right">
   <div class="input-row">
     <div class="field-label">Geography:</div>
     <div class="field-input">
-      <input type="text" class="input-box icon-autocomplete" id="geographyval" placeholder="Enter Geography">
+      <input type="text" class="input-box icon-autocomplete" id="geographyval" placeholder="Enter Geography" tabindex="5">
       <input type="hidden" id="geography">
-      <div id="autocomplete_geography" class="ac-textbox default-display-none">
-      <ul id="ulist_geography" style="width:215px;" class="hidemenu"></ul>
+      <div id="ac-geography" class="ac-textbox default-display-none">
+      <ul style="width:85%;" class="hidemenu"></ul>
     </div>
   </div>
 </div>
 <div class="input-row">
   <div class="field-label">Act:</div>
   <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" id="statutoryval" placeholder="Enter Act">
+    <input type="text" class="input-box icon-autocomplete" id="statutoryval" placeholder="Enter Act" tabindex="6">
     <input type="hidden" id="statutory">
-    <div id="autocomplete_statutory" class="ac-textbox default-display-none">
-    <ul id="ulist_statutory" style="width:215px;" class="hidemenu"></ul>
+    <div id="ac-statutory" class="ac-textbox default-display-none">
+    <ul style="width:85%;" class="hidemenu"></ul>
   </div>
 </div>
 </div>
 <div class="input-row">
 <div class="field-label">Compliance Frequency:</div>
 <div class="field-input">
-  <select class="input-box tasktype" id="compliance_frequency">
+  <select class="input-box tasktype" id="compliance_frequency" tabindex="7">
     <option value="All" Selected="selected">All</option>
   </select>
 </div>
 </div>
 </div>
+
 <div class="submit-button-container">
-<input type="submit" value="Show" class="btn-submit" id="submit">
+<input type="submit" value="Show" class="btn-submit" id="submit" tabindex="8">
 </div>
+
 <div class="clearfix"></div>
 <div class="grid-table-rpt" style="padding-bottom:0em;">
 <h1>Statutory Mappings</h1>
@@ -94,6 +99,12 @@
 <table class="tbody-compliance" id="accordion">
 
 </table>
+
+<div align="center" style="padding-top:10px;">
+  <input type="button" value="Show more records" class="btn-submit" id="pagination">
+</div>
+
+
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
 </div>
 </div>
@@ -102,7 +113,7 @@
 <table class="font1 table-act-list" style="width:100%;height:30px; ">
 <tbody class=" table-row-act-list accordion-toggle">
 <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-<th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="5"  class="actname" >
+<th style="background-color:#C4C0C0; color:#000000; font-size: 0.813em;font-weight: bold;height:30px; margin-top:0px;" colspan="5"  class="actname" >
 </th>
 </tr>
 </tbody>
@@ -112,15 +123,15 @@
 <div id="head-templates">
 <table class="table-compliance-frequency-list">
 <tr class="table-row-com-frequency">
-<td align="center" class="tbl_heading" ></td>
+<td align="center" class="tbl_heading" colspan="5"></td>
 </tr>
 </table>
 <div class="clearfix"></div>
 </div>
 
 <div id="compliance-templates" style="display:none;">
-<table width="100%" style="border:1px dotted #CCCCCC;" class="table-compliances-list">
-<tr align="left" class="sub-head table-row">
+<table width="100%" class="table-compliances-list">
+<tr align="left" class="sub-head table-row"  style="border-top:1px dotted #CCCCCC;">
 <th width="3%" align="center">#</th>
 <th width="12%">Industry Type</th>
 <th width="12%">Statutory Nature</th>
@@ -132,7 +143,7 @@
 <td class="tbl_industrytype"></td>
 <td class="tbl_statutorynature"></td>
 <td class="tbl_statutoryprovision"></td>
-<td class="tbl_compliancetask"><a href="#"></a></td>
+<td class="tbl_compliancetask"><a></a></td>
 </tr>
 <tr align="left" class="sub-head table-row">
 <th align="center">&nbsp;</th>
@@ -141,7 +152,7 @@
 <th>Compliance Occurence</th>
 <th colspan="2" >Applicable Location</th>
 </tr>
-<tr class="table-row">
+<tr class="table-row" style="border-bottom:1px dotted #ccc;">
 <td></td>
 <td class="tbl_description"></td>
 <td class="tbl_penalconsequences"></td>
@@ -159,5 +170,5 @@
 </table>
 </div>
 </div>
-<script type="text/javascript" src="/files/desktop/knowledge/statutory-mapping-report/statutorymappingreport.js"></script>
+<script type="text/javascript" src="/script/statutory-mapping-report/statutorymappingreport.js"></script>
 {% endblock %}

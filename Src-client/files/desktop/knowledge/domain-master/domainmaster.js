@@ -1,182 +1,203 @@
 var domainsList;
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-$(".btn-domain-add").click(function(){
-  $("#domain-view").hide();
-  $("#domain-add").show();
-  $("#domainname").val('');
-  $("#domainid").val('');
-  $(".error-message").html('');
+$('.btn-domain-add').click(function () {
+  $('#domain-view').hide();
+  $('#domain-add').show();
+  $('#domainname').val('');
+  $('#domainid').val('');
+  $('.error-message').html('');
+  $('#domainname').focus();
 });
-$(".btn-domain-cancel").click(function(){
-  $("#domain-add").hide();
-  $("#domain-view").show();
+$('.btn-domain-cancel').click(function () {
+  $('#domain-add').hide();
+  $('#domain-view').show();
 });
-
-function getDomains () {
-  function onSuccess(data){
-    domainsList = data["domains"];
+//get domains list from api
+function getDomains() {
+  function onSuccess(data) {
+    domainsList = data.domains;
     loadDomainList(domainsList);
   }
-  function onFailure(error){
-    displayMessage(error);
+  function onFailure(error) {
+    custom_alert(error);
   }
-  mirror.getDomainList(
-      function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-      }
-  );
+  mirror.getDomainList(function (error, response) {
+    if (error == null) {
+      onSuccess(response);
+    } else {
+      onFailure(error);
+    }
+  });
 }
-
-function loadDomainList (domainsList) {
+//display domains list in view page
+function loadDomainList(domainsList) {
   var j = 1;
-  var imgName = null;
-  var passStatus = null;
-  var domainId = 0;
-  var domainName = null;
-  var isActive = false;
-  $(".tbody-domain-list").find("tr").remove();
-    for(var entity in domainsList) {
-      domainId = domainsList[entity]["domain_id"];
-      domainName = domainsList[entity]["domain_name"];
-      isActive = domainsList[entity]["is_active"];
-      if(isActive == true) {
-        passStatus=false;
-        imgName="icon-active.png"
-      }
-      else {
-        passStatus=true;
-        imgName="icon-inactive.png"
-      }
-      var tableRow=$('#templates .table-domain-master .table-row');
-      var clone=tableRow.clone();
-      $('.sno', clone).text(j);
-      $('.domain-name', clone).text(domainName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+domainId+',\''+domainName+'\')"/>');
-      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+domainId+','+passStatus+')"/>');
-      $('.tbody-domain-list').append(clone);
-      j = j + 1;
+  $('.tbody-domain-list1').find('tr').remove();
+  $.each(domainsList, function (key, value) {
+    var domainName = value.domain_name;
+    var domainId = value.domain_id;
+    var isActive = value.is_active;
+    var passStatus = null;
+    var classValue = null;
+    if (isActive == true) {
+      passStatus = false;
+      classValue = 'active-icon';
+    } else {
+      passStatus = true;
+      classValue = 'inactive-icon';
     }
+    var tableRow = $('#templates .table-domain-master .table-row');
+    var clone = tableRow.clone();
+    $('.sno', clone).text(j);
+    $('.domain-name', clone).text(domainName);
+    $('.edit-icon').attr('title', 'Edit');
+    $('.edit-icon', clone).on('click', function () {
+      displayEdit(domainId, domainName);
+    });
+    $('.status', clone).addClass(classValue);
+    $('.active-icon').attr('title', 'Deactivate');
+    $('.inactive-icon').attr('title', 'Activate');
+    $('.status', clone).on('click', function () {
+      changeStatus(domainId, passStatus);
+    });
+    $('.tbody-domain-list1').append(clone);
+    j = j + 1;
+  });
 }
-
-function validate(){
-  if($("#domainname").val().trim().length==0){
-    displayMessage('Domain Name Required');
-  }else{
-    displayMessage('');
-    return true
+//validation
+function validate() {
+  var checkLength = domainValidate();
+  if (checkLength) {
+    if ($('#domainname').val().trim().length == 0) {
+      displayMessage(message.domainname_required);
+    } else {
+      displayMessage('');
+      return true;
+    }
   }
 }
-
-$("#submit").click(function(){
-  var domainId = $("#domainid").val();
-  var domainName = $("#domainname").val();
-
-if(validate()){
-  if($("#domainid").val() == ''){
-    function onSuccess(response) {
-      getDomains ();
-      $("#domain-add").hide();
-      $("#domain-view").show();
-    }    function onFailure(error){
-                      
-        if(error == "DomainNameAlreadyExists"){
-            displayMessage("Domain Name Already Exists");
+//save or update domain master
+$('#submit').click(function () {
+  var domainId = $('#domainid').val();
+  var domainName = $('#domainname').val().trim();
+  if (validate()) {
+    if ($('#domainid').val() == '') {
+      function onSuccess(response) {
+        getDomains();
+        $('#domain-add').hide();
+        $('#domain-view').show();
+        $('#search-domain-name').val('');
+      }
+      function onFailure(error) {
+        if (error == 'DomainNameAlreadyExists') {
+          displayMessage(message.domainname_exists);
+        } else {
+          displayMessage(error);
         }
-    }
-    mirror.saveDomain(domainName,
-    function (error, response) {
-        if (error == null){
+      }
+      mirror.saveDomain(domainName, function (error, response) {
+        if (error == null) {
           onSuccess(response);
-        }
-        else {
+        } else {
           onFailure(error);
         }
       });
-  }
-  else{
-    function onSuccess(response){
-      getDomains();
-      $("#domain-add").hide();
-      $("#domain-view").show();
+    } else {
+      function onSuccess(response) {
+        getDomains();
+        $('#domain-add').hide();
+        $('#domain-view').show();
+        $('#search-domain-name').val('');
       }
-    function onFailure(error) {
-        if(error == "InvalidDomainId"){
-            displayMessage("Invalid Domain Id");
-        }  
-
-        if(error == 'DomainNameAlreadyExists'){
-            displayMessage("Domain Name Already Exists");
+      function onFailure(error) {
+        if (error == 'InvalidDomainId') {
+          displayMessage(message.invalid_domainid);
+        } else if (error == 'DomainNameAlreadyExists') {
+          displayMessage(message.domainname_exists);
+        } else {
+          displayMessage(error);
         }
-    }
-    mirror.updateDomain(parseInt(domainId), domainName,
-        function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
+      }
+      mirror.updateDomain(parseInt(domainId), domainName, function (error, response) {
+        if (error == null) {
+          onSuccess(response);
+        } else {
+          onFailure(error);
+        }
       });
+    }
   }
-}
-});   
-
+});
+//save or update domain master when press enter key
 $('#domainname').keypress(function (e) {
   if (e.which == 13) {
-    if(validate()){
+    if (validate()) {
       jQuery('#submit').focus().click();
     }
   }
 });
-
-function displayEdit (domainId,domainName) {
-  $(".error-message").text("");
-  $("#domain-view").hide();
-  $("#domain-add").show();
-  $("#domainname").val(domainName);
-  $("#domainid").val(domainId);
+//edit domain master
+function displayEdit(domainId, domainName) {
+  $('.error-message').text('');
+  $('#domain-view').hide();
+  $('#domain-add').show();
+  $('#domainname').val(domainName.replace(/##/gi, '"'));
+  $('#domainid').val(domainId);
 }
-
-function changeStatus (domainId,isActive) {
-  function onSuccess(response){
-    getDomains ();
-    displayMessage("Status Changed Successfully");
+//activate/deactivate domain master
+function changeStatus(domainId, isActive) {
+  var msgstatus = message.deactive_message;
+  if (isActive) {
+    msgstatus = message.active_message;
   }
-  function onFailure(error){
-  }
-  mirror.changeDomainStatus(domainId, isActive,
-    function (error, response) {
-      if (error == null){
-        onSuccess(response);
+  $('.warning-confirm').dialog({
+    title: message.title_status_change,
+    buttons: {
+      Ok: function () {
+        $(this).dialog('close');
+        function onSuccess(response) {
+          getDomains();
+          $('#search-domain-name').val('');
+        }
+        function onFailure(error) {
+          if (error == 'TransactionExists') {
+            custom_alert(message.trasaction_exists);
+          } else {
+            custom_alert(error);
+          }
+        }
+        mirror.changeDomainStatus(domainId, isActive, function (error, response) {
+          if (error == null) {
+            onSuccess(response);
+          } else {
+            onFailure(error);
+          }
+        });
+      },
+      Cancel: function () {
+        $(this).dialog('close');
       }
-      else {
-        onFailure(error);
-      }
-    });
-}
-
-$("#search-domain-name").keyup(function() { 
-  var filterkey = this.value.toLowerCase();
-  var filteredList=[];
-    for(var entity in domainsList) {
-      domainName = domainsList[entity]["domain_name"];
-      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(domainsList[entity]);
+    },
+    open: function () {
+      $('.warning-message').html(msgstatus);
     }
+  });
+}
+//filter process
+$('#search-domain-name').keyup(function () {
+  var filterkey = this.value.toLowerCase();
+  var filteredList = [];
+  for (var entity in domainsList) {
+    domainName = domainsList[entity].domain_name;
+    if (~domainName.toLowerCase().indexOf(filterkey))
+      filteredList.push(domainsList[entity]);
+  }
   loadDomainList(filteredList);
 });
-
+//initialization
 $(document).ready(function () {
-  getDomains ();
+  getDomains();
+  $('#domainname').focus();
+});
+$('#domainname').on('input', function (e) {
+  this.value = isAlphabetic($(this));
 });

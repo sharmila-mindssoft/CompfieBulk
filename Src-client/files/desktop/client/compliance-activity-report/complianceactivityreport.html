@@ -1,26 +1,23 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <style type="text/css">
-  .smallfont td
-  {
-    font-size: 0.75em !important;
-  
-  }
-  .largefont td
-  {
-   font-size: 1.0em;
-   border:1px solid red;
-      
- }
-
- .tree,
- .tree ul {
+.smallfont td
+{
+  font-size: 0.75em !important;
+}
+.largefont td
+{
+  font-size: 1.0em;
+  border:1px solid red;    
+}
+.tree,
+.tree ul {
   margin:0 0 0 1em; /* indentation */
   padding:0;
   list-style:none;
   color:#369;
   position:relative;
-   margin-left:380px;
+  margin-left:455px;
 }
 
 .tree ul {margin-left:.5em} /* (indentation/2) */
@@ -40,10 +37,11 @@
 
 .tree li {
   margin:0;
-  padding:0 0.5em; /* indentation + .5em */
+  padding:0 0 0 0.5em; /* indentation + .5em */
   line-height:1em; /* default list item's `line-height` */
   font-weight:bold;
   position:relative;
+
 
 }
 
@@ -65,8 +63,14 @@
   top:1em; /* (line-height/2) */
   bottom:0;
 }
+.tree li table td {
+    font-size:1em; 
+}
 </style>
-<div class="content-container width75">
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt="">   </span>
+</div>
+<div class="content-container width100">
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">
@@ -77,31 +81,39 @@
       <div class="input-row-left">
         <div class="input-row">
           <div class="field-label">
-            Country:<span class="mandatory">*</span>
-           
+            Country:
+            <span class="mandatory">*</span>
+
           </div>
           <div class="field-input">
-            <input type="hidden" id="country" value="1">
-            <input type="text" class="input-box icon-autocomplete" id="countryval" value="India"  onkeyup="loadauto_country(this.value)">
-            <div id="selectboxview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
-              <ul style="width:195px;"></ul>
+            <input type="hidden" id="country" value="">
+            <input type="text" class="input-box icon-autocomplete" id="countryval" tabindex="1" autofocus="autofocus" value="" placeholder="Enter Country">
+            <div id="ac-country" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
           </div>
         </div>
         <div class="input-row">
-            <div class="field-label">Domain:<span class="mandatory">*</span></div>
-            <div class="field-input">
-                <input type="hidden" id="domain" value="1">
-                <input type="text" class="input-box icon-autocomplete" id="domainval" value="Finance Law"  onkeyup="loadauto_domains(this.value)">
-                <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
-                    <ul style="width:195px;"></ul>
-                </div>
+          <div class="field-label">
+            Domain:
+            <span class="mandatory">*</span>
+          </div>
+          <div class="field-input">
+            <input type="hidden" id="domain" value="">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value="" tabindex="2" placeholder="Enter Domain">
+            <div id="ac-domain" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
+          </div>
         </div>
         <div class="input-row">
-            <div class="field-label">User Type:<span class="mandatory">*</span></div>
+          <div class="field-label">
+            User Type:
+            <span class="mandatory">*</span>
+          </div>
           <div class="field-input">
-            <select class="input-box" id="user-type" >
+            <select class="input-box" id="user-type" tabindex="3" >
+              <option value="">Select</option>
               <option value="Inhouse">Inhouse</option>
               <option value="ServiceProvider">Service Provider</option>
             </select>
@@ -110,221 +122,170 @@
         <div class="input-row">
           <div class="field-label">Assignee:</div>
           <div class="field-input">
-             <input type="text" class="input-box icon-autocomplete" id="userval" autofocus placeholder="Enter assignee" onkeyup="loadauto_user(this.value)">
-            <input type="hidden" id="userid"> 
-            <div id="autocompleteview-user" class="ac-textbox default-display-none"  onchange="hideuserlist();" onclick="hideuserlist();">
-              <ul style="width:195px;"></ul> 
+            <input type="text" class="input-box icon-autocomplete" id="userval" tabindex="4" placeholder="Enter Assignee">
+            <input type="hidden" id="userid">
+            <div id="ac-user" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
-        </div>
+          </div>
         </div>
 
         <div class="input-row">
           <div class="field-label">Act:</div>
           <div class="field-input">
-                <input type="text" class="input-box icon-autocomplete" id="level1val" value="" style="width:213px;"  onkeyup="loadauto_level1(this.value)" placeholder="Enter Act">
-                <input type="hidden" id="level1id">
-                <div id="autocompleteview-level1" class="ac-textbox" style="display:none;"  onclick="hidelevel1list();">
-                    <ul style="width:195px;"></ul>
-                </div>
-        </div>
+            <input type="text" class="input-box icon-autocomplete" id="level1val" value="" tabindex="5" placeholder="Enter Act">
+            <input type="hidden" id="level1id">
+            <div id="ac-statutory" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
         </div>
       </div>
       <div class="input-row-right">
         <div class="input-row">
           <div class="field-label">Unit:</div>
           <div class="field-input">
-                <input type="text" class="input-box icon-autocomplete" id="unitval" value=""  placeholder="Enter Unit"  style="width:213px;"  onkeyup="loadauto_unit(this.value)">
-                <input type="hidden" id="unitid">
-                <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
-                    <ul style="width:195px;"></ul>
-                </div>
+            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" tabindex="6" placeholder="Enter Unit">
+            <input type="hidden" id="unitid">
+            <div id="ac-unit" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
           </div>
         </div>
 
         <div class="input-row">
           <div class="field-label">Compliance Task:</div>
           <div class="field-input">
-               <input type="text" class="input-box icon-autocomplete" id="complianceval" value=""  placeholder="Enter compliance"  style="width:213px;"  onkeyup="loadauto_compliance(this.value)">
-                <input type="hidden" id="complianceid">
-                <div id="autocompleteview-compliance" class="ac-textbox" style="display:none;"  onclick="hidecompliancelist();">
-                    <ul style="width:195px;"></ul>
-                </div>
+            <input type="text" class="input-box icon-autocomplete" id="complianceval" value="" tabindex="7" placeholder="Enter Compliance Task">
+            <input type="hidden" id="complianceid">
+            <div id="ac-compliancetask" class="ac-textbox default-display-none">
+              <ul></ul>
+            </div>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">From Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" id="from-date" placeholder="dd-Mon-yyyy"></div>
+            <input type="text" class="input-box" id="from-date" readonly="readonly" tabindex="8" placeholder="dd-mon-yyyy"></div>
         </div>
         <div class="input-row">
           <div class="field-label">To Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" id="to-date" placeholder="dd-Mon-yyyy"></div>
+            <input type="text" class="input-box" id="to-date" readonly="readonly" tabindex="9" placeholder="dd-mon-yyyy"></div>
         </div>
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit" tabindex="10">
         &nbsp;&nbsp;
-        <input type="submit" name="cancel" value="Export" class="btn-submit"></div>
+        <input type="submit" name="cancel" value="Export" id="export-button" class="btn-submit"></div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt default-display-none">
         <h1>Compliance Activity Report</h1>
-      
-
-        <table>
-        <tr><td colspan="6">
-        <div style="margin-left:15%;">
-          <div style="float:left; padding-bottom:0.5em; margin-left:1%;">
-           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              Country :
-              <span style="margin-left:10px; font-weight:bold;">India</span>
-            </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              User Type :
-              <span style="margin-left:10px; font-weight:bold;">Service Provider</span>
-            </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              User :
-              <span style="margin-left:10px; font-weight:bold;">PGM Solutions</span>
-            </div>
-          </div>
-          <div style="float:right; margin-right:20%;">
-          <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              Domain :
-              <span style="margin-left:10px; font-weight:bold;">Finance Law</span>
-            </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              From Date :
-              <span style="margin-left:10px; font-weight:bold;">01-Aug-2015</span>
-            </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              To Date :
-              <span style="margin-left:10px; font-weight:bold;">10-Aug-2015</span>
-            </div>
-          </div>
-        </div> 
-        </td>
-         </tr>
- <tr><td colspan="6">
-        <h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;"> <abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600001">VRP10037 - Branch Office - 1</abbr>
-        </h2>
-          </td>
-         </tr>
-
-
-          <tr align="left">
-            <th class="header-bg">#</th>
-            <th class="header-bg">Compliance Task</th>
-            <th class="header-bg">Date</th>
-            <th class="header-bg">Activity Status</th>
-            <th class="header-bg">Compliance Task Status</th>
-            <th class="header-bg">Remarks</th>
-          </tr>
-          <tbody class="tbody-compliance-activity-list">
-          </tbody>
-         <!--  <tr>
-            <td colspan="5">
-              <span class="heading">
-                Industrial Law
-                <img src="/images/right_arrow.png">Batteries Act</span>
-            </td>
-          </tr>
-          <tr style="border-bottom:1px solid #ccc;">
-            <td>1</td>
-            <td>FORM I - Half yearly returns Submission</td>
-            <td>10-Aug-2015</td>
-            <td>Approved</td>
-            <td>Complied</td>
-            <td>On Time</td>
-          </tr>
+          <div class="compliance-activity-list">
+            <table class="table-compliance-activity-list" id="accordion">
+            <tbody class="heading-list"></tbody>
         </table>
-        <ul class="tree">
-          <li>
-            <table>
-              <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
-                <td width="19%">24-Jul-2015</td>
-                <td  width="26%">Submitted</td>
-                <td  width="20%">Inprogress</td>
-                <td align="right" >Delayed By 7 Days</td>
-              </tr>
-            </table>
-          </li>
-          <li>
-            <table>
-              <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
-
-                <td  width="19.5%">17-Jul-2015</td>
-                <td  width="25.5%">Rejected</td>
-                <td  width="20%">Not Complied</td>
-                <td align="right">Over due by 3 Days</td>
-              </tr>
-
-            </table>
-          </li>
-        </ul>
-        <br>
-
-        <table>
-          <tr>
-            <td>2</td>
-            <td width="38%">FORM II - Registration</td>
-            <td width="12%">10-Aug-2015</td>
-            <td width="15%">Approved</td>
-            <td width="20%">Delayed Compliance</td>
-            <td align="right">Delayed by 5 days</td>
-          </tr>
-
-        <tr>
-          <td colspan="5">
-            <span class="heading">
-              Industrial Law
-              <img src="/images/right_arrow.png">The Tamilnadu Gratuity Act</span>
-          </td>
-        </tr>
-        <tr>
-          <td>3</td>
-
-          <td>Notice of Opening</td>
-          <td>07-Aug-2015</td>
-          <td>Approved</td>
-          <td width="22%">Complied</td>
-          <td >On Time</td>
-        </tr>
-        <tr>
-          <td>4</td>
-
-          <td>Opening And Closing Hours</td>
-          <td>06-Aug-2015</td>
-          <td>Rejected</td>
-          <td width="22%">Inprogress</td>
-          <td>5 Days left</td>
-        </tr>
- -->
-      </table>
-      <p style="border-top:1px dashed #ccc;" class="total-records">Total : 7 records</p>
+        <div align="center" style="padding-top:10px;">
+        <p  class="no-records" align="center"></p>
+          <input type="button" value="Show more records" class="btn-submit" id="pagination">
+        </div>
+      </div>
+      <p style="border-top:1px dashed #ccc;" class="total-records"></p>
     </div>
   </div>
 </div>
 </div>
 <div id="templates">
-<table class="table-compliance-activity-report">
-  <tr class="table-level1-heading">
-    <td colspan="5">
-      <span class="heading"></span>
+<table class="table-compliance-activity-list-temp">
+<tbody class="filter-heading-list">
+<tr class="">
+  <td colspan="7">
+  <div style="margin-left:15%;">
+      <div style="float:left; padding-bottom:0.5em; margin-left:1%;">
+        <div style="margin-left:10px; padding-bottom:1em;">
+          Country :
+          <span style="margin-left:10px; font-weight:bold;" class="country-filter-name"></span>
+        </div>
+        <div style="margin-left:10px;  padding-bottom:1em;">
+          User Type :
+          <span style="margin-left:10px; font-weight:bold;" class="usertype-filter-name"> </span>
+        </div>
+       
+      </div>
+      <div style="float:right; margin-right:20%;">
+        <div style="margin-left:10px; padding-bottom:1em;">
+          Domain :
+          <span style="margin-left:10px; font-weight:bold;" class="domain-filter-name"> </span>
+        </div>
+        <div style="margin-left:10px;  padding-bottom:1em;">
+          From Date :
+          <span style="margin-left:10px; font-weight:bold;" class="fromdate-filter-name"></span>
+        </div>
+        <div style="margin-left:10px; padding-bottom:1em;">
+          To Date :
+          <span style="margin-left:10px; font-weight:bold;" class="todate-filter-name"></span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr>
+</tbody>
+<tbody class="table-unit-heading">
+  <tr >
+    <td colspan="7">
+       <h2 style="background:#f1e9f6; text-align:left;" class="unit-heading"> <abbr class="page-load tipso_style" title=""></abbr></h2>
     </td>
   </tr>
-  <tr class="table-row-list">
-    <td class="sno"></td>
-    <td class="compliance-task"></td>
-    <td class="compliance-date"></td>
-    <td class="activity-status"></td>
-    <td class="compliance-task-status" width="22%"></td>
-    <td class="remarks"></td>
+<tbody class="table-level1-heading">
+  <tr>
+    <td colspan="7">
+        <span class="heading level1-heading"></span>
+    </td>
   </tr>
+</tbody>
+  <tbody class="table-heading-th">
+  <tr align="left" >
+    <th class="header-bg">#</th>
+    <th class="header-bg">Compliance Task</th>
+    <th class="header-bg">Assignee</th>
+    <th class="header-bg">Date</th>
+    <th class="header-bg">Activity Status</th>
+    <th class="header-bg">Compliance Task Status</th>
+    <th class="header-bg">Remarks</th>
+  </tr>
+  </tbody>
+  <tbody class="accordion-toggle tbody-activity-list">
+    <tr class="table-row-list">
+      <td class="sno" style="width: 2%;"></td>
+      <td class="compliance-task" style="width: 30%;"></td>
+      <td class="assigneee" style="width: 15%;"></td>
+      <td class="compliance-date" style="width: 10%;"></td>
+      <td class="activity-status" style="width: 15%;"></td>
+      <td class="compliance-task-status" style="width: 13%;"></td>
+      <td class="remarks" style="width: 15%;"></td>
+    </tr>
+  </tbody>
+
+<tr class="tree-tr" style="padding: 0px; margin: 0px;">
+  <td colspan="7" style="padding: 0px; margin: 0px;"> 
+  <ul class="tree" >
+    <li>
+      <table style="padding: 0px; margin: 0px;"  >
+        <tr class="" style="background-color:#eae8e8; color:#000000;">
+          <td class="li-date"  style="width: 7%;"></td>
+          <td class="li-activitystatus"  style="width: 15%;"></td>
+          <td class="li-taskstatus"  style="width: 13%;"></td>
+          <td class="li-remarks"  style="width: 15%;"></td>
+        </tr>
+      </table>  
+    </li>
+  </ul>
+  </td>
+</tr>
 </table>
 </div>
-<script type="text/javascript" src="/files/desktop/client/compliance-activity-report/complianceactivityreport.js"></script>
-<script src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="/script/compliance-activity-report/complianceactivityreport.js"></script>
+<script src="/js/jquery-ui/jquery-ui.js"></script>
 <script type="text/javascript">
 $(function() {
     $("#from-date" ).datepicker({
@@ -351,5 +312,4 @@ $(function() {
     });
 });
 </script>
-
 {% endblock %}

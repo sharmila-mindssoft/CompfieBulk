@@ -23,6 +23,7 @@ METHODS = set([
 
 class RequestHandler(tornado.web.RequestHandler) :
     __default_headers = {}
+
     def initialize(self, handler_map) :
         self.__handler_map = handler_map
         self.__close_callback = None
@@ -65,14 +66,22 @@ class UploadedFile(object) :
         self._body = body
 
     def file_name(self) : return self._file_name
+
     def content_type(self) : return self._content_type
+
     def body(self) : return self._body
 
     def __repr__(self) :
-        return "UploadedFile(%s, %s, size=%s)" % (
-            repr(self._file_name), repr(self._content_type),
-            len(self._body)
-        )
+        # return "UploadedFile(%s, %s, size=%s)" % (
+        #     repr(self._file_name), repr(self._content_type),
+        #     len(self._body)
+        # )
+        res = {
+            "file_name": self._file_name,
+            "file_content_type": self._content_type,
+            "body": self._body
+        }
+        return str(res)
 
 class WebRequest(object) :
     def __init__(self, inner, arguments) :
@@ -207,14 +216,19 @@ class WebServer(object) :
             for entry in lower_level_handlers :
                 self.low_level_url(*entry)
 
+        settings = {
+            # "xsrf_cookies": True,
+            "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
+            "gzip": True
+        }
         self._application = tornado.web.Application(
             self._application_urls,
-            gzip=True
+            **settings
         )
         self._http_server = tornado.httpserver.HTTPServer(
             self._application,
-            io_loop = self._io_loop.inner(),
-            xheaders = True
+            io_loop=self._io_loop.inner(),
+            xheaders=True
         )
 
         if type(port_or_address) in (tuple, list) :

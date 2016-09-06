@@ -1,6 +1,6 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-  <div class="content-container width40" id="statutory-nature-view">
+  <div class="content-container width50" id="statutory-nature-view">
     <div class="content-area">
       <h1>Statutory Nature</h1>
       <div class="filters-and-search">
@@ -33,8 +33,12 @@
       <tr class="table-row">
         <td align="center" class="sno"></td>
         <td align="left" class="statutory-nature-name"></td>
-        <td align="center" class="edit"></td>
-        <td align="center" class="is-active"></td>
+         <td align="center">
+          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+        </td>
+        <td align="center">
+          <span class="status" style="width: 16px; height: 16px; display:block"> </span>
+        </td>
       </tr>
     </table>
   </div>
@@ -45,7 +49,7 @@
         <div class="single-column-input-row">
           <div class="input-row">
             <div class="single-column-field-label">Statutory Nature :<span class="mandatory">*</span></div>
-            <div class="single-column-field-input"><input type="text"  class="input-box" name="statutory-nature-name" id="statutory-nature-name"></div>
+            <div class="single-column-field-input"><input type="text"  class="input-box" name="statutory-nature-name" autofocus="autofocus" tabindex="1" maxlength="50" id="statutory-nature-name"></div>
             <input type="hidden" name="statutory-nature-id" id="statutory-nature-id" value="">
           </div>
         </div>
@@ -56,5 +60,5 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript" src="/files/desktop/knowledge/statutory-nature-master/statutorynaturemaster.js"></script>
+  <script type="text/javascript" src="/script/statutory-nature-master/statutorynaturemaster.js"></script>
 {% endblock %}

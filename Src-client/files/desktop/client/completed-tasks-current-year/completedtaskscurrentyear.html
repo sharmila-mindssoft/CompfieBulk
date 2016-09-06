@@ -1,0 +1,257 @@
+{% extends "files/desktop/client/home/container.html" %}
+{% block content %}
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
+  <div class="content-container width100" >
+    <div class="content-area">
+      <h1>Completed Tasks - Current year</h1>
+      <div class="add-container completed-container">
+        <div class="form-container-outer">
+          <ul class="nav  nav-pills nav-justified setup-panel">
+            <li class="active" style="width: 32.8%;"><a href="#step-1">
+              <h4 class="list-group-item-heading">1. Select Unit</h4>
+            </a>
+            </li>
+          <li class="disabled" style="width: 32.8%;"><a href="#step-2">
+            <h4 class="list-group-item-heading">2. Select Domain</h4>
+          </a></li>
+
+          <li class="disabled" style="width: 32.8%;" id="step3"><a href="#step-3">
+            <h4 class="list-group-item-heading">3. Compliances</h4>
+          </a></li>
+
+        </ul>
+        <div class="clearfix"></div>
+        <div class="setup-content" id="step-1">
+          <div class="innercontent">
+            <div class="form-container-grid-table">
+              <table style="border:1px solid #ccc; margin-bottom:5px; height:450px !important;">
+                <tr align="left">
+                  <th width="18%">Country<span class="mandatory">*</span></th>
+                  <th width="18%">Business Group </th>
+                  <th width="18%">Legal Entity<span class="mandatory">*</span> </th>
+                  <th width="20%">Division</th>
+                  <th width="26%">Unit<span class="mandatory">*</span></th>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_country">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_businessgroup">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_legalentity">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_division">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_unit">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="country">
+                    </ul>
+                  </td>
+                
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="businessgroup">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="legalentity">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="division">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="unit">
+                    </ul>
+                  </td>
+
+                </tr>
+              </table>
+            </div>
+          </div>
+          <table width="100%">
+            <tr>
+              <td width="75%" valign="middle">
+                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              </td>
+              <td align="right" width="25%">
+                <button id="activate-step-2" class="btn-right">Next</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="setup-content" id="step-2">
+
+          <div class="innercontent">
+          <div class="form-container-grid-table">
+          <table style="width:100%">   
+            <tr align="left">
+                <th width="33%">Domain<span class="mandatory">*</span></th>
+                <th width="33%">Act </th>
+                <th width="33%">Frequency </th>
+              </tr>             
+                <tr>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_domain" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_act" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_frequency" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="domain">
+                    </ul>
+                  </td>
+                
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="act">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="frequency">
+                    </ul>
+                  </td>
+
+                </tr>
+              </table> 
+            </div>
+
+           
+          </div>
+
+          <table width="100%">
+            <tr>
+              <td width="75%" valign="middle">
+                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              </td>
+              
+              <td align="right" width="25%">
+                <button id="activate-step-3" class="btn-right">Next</button>
+                <button id="backward-step-1" class="btn-right">Previous</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="setup-content" id="step-3">
+          <div class="innercontent">
+             <div class="grid-table">
+             <h2 style="font-size:0.813em;" class="breadcrumbs"> </h2>
+
+             <table>
+             <tr align="left">
+              <td width="2%"  ><span style="font-weight:bold;">#</td>
+              <td width="18%"  ><span style="font-weight:bold;">Compliance Tasks</td>
+              <td width="8%" ><span style="font-weight:bold;">Compliance Frequency</span></td>
+              <td width="12%"><span style="font-weight:bold;" >Statutory Date</span></td>
+              <td width="12%" ><span style="font-weight:bold;">Due Date</span><span class="mandatory">*</span></td>
+              <td width="12%" ><span style="font-weight:bold;">Completion Date</span><span class="mandatory">*</span></td>
+              <td width="12%"  ><span style="font-weight:bold;">Validity Date</span></td>
+              <td width="11%" ><span style="font-weight:bold;">Document Upload</span></td>                  
+              <td width="18%" ><span style="font-weight:bold;">Assignee</span><span class="mandatory">*</span></td>
+              <td width="3%" ><span style="font-weight:bold;">Save</span></td>
+            </tr>
+            <tbody class="tbody-assignstatutory">
+          </tbody>
+
+             </table>
+              
+            </div>
+          </div>
+
+          <div align="center" style="padding-top:10px;">
+            <input type="button" value="Show more records" class="btn-submit" id="pagination">
+          </div>
+          <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
+
+          <table width="100%">
+            <tr>
+              <td width="75%" valign="middle">
+                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              </td>
+              
+              <td align="right" width="25%">
+                <button id="activate-step-finish" class="btn-right">Submit</button>
+                <button id="backward-step-2" class="btn-right">Previous</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div id="act-templates" class="default-display-none">
+  <table class="font1" >
+    <tr align="left" class="tableRow">
+      <td colspan="10" style="padding:0em;" class="actname">
+      <div class="heading" style="margin-top:5px;width:auto;"> </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+ <div id="statutory-values" class="default-display-none">
+  <table class="table-statutory-values">
+    <tr class="compliance-details">
+      <input type="hidden" class="combineid-class" />
+
+      <td class="sno"></td>
+      <td class="compliancetask">
+        <abbr class="page-load" title=""><img src="/images/icon-info.png" style="margin-right:3px"></abbr>
+        <span></span>
+      </td>
+      <td class="compliancefrequency"></td>
+      <td class="statutorydate"></td>
+      <td>
+        <input type="text" readonly="readonly" class="input-box duedate" />
+      </td>
+      <td>
+        <input type="text" value="" readonly="readonly" class="input-box completiondate"/>
+      </td>
+      <td class="view-validitydate">
+        <input type="text" value="" readonly="readonly" class="input-box validitydate"/>
+      </td>
+      <td>
+        <input type="file" class="input-box documentupload" multiple />
+      </td>
+      <td>
+        <input type="text" class="input-box icon-autocomplete" style="width:100px;" /> 
+        <input type="hidden" class="assignee"> 
+        <div class="ac-textbox default-display-none"> 
+          <ul style="width:115px;" class="hidemenu"></ul>
+        </div>
+      </td>
+      <td>
+        <input type="checkbox" class="completedstatus">
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div id="no-record-templates" class="default-display-none">
+<table class="table-no-content">
+<tr align="left" class="table-row-no-content">
+<td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+</tr>
+</table>
+</div>
+
+<script type="text/javascript" src="/script/completed-tasks-current-year/completedtaskscurrentyear.js"></script>
+
+{% endblock %}

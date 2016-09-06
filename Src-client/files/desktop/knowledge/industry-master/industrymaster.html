@@ -1,6 +1,6 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-  <div class="content-container width40" id="industry-view">
+  <div class="content-container width60" id="industry-view">
     <div class="content-area">
       <h1>Industries</h1>
       <div class="filters-and-search">
@@ -11,9 +11,9 @@
         <table>
           <tr align="left">
             <th width="10%" align="center">#</th>
-            <th width="70%">Industry</th>
+            <th width="68%">Industry</th>
             <th width="10%" align="center" >Edit</th>
-            <th width="10%" align="center">Status</th>
+            <th width="12%" align="center">Status</th>
           </tr>
           <tr>
             <td>&nbsp;</td>
@@ -22,7 +22,7 @@
             <td>&nbsp;</td>
           </tr>
 
-          <tbody class="tbody-industry-list">
+          <tbody class="tbody-industry-list-view">
           </tbody>
         </table>
       </div>
@@ -33,12 +33,16 @@
       <tr class="table-row">
         <td class="sno" align="center"></td>
         <td class="industry-name"></td>
-        <td class="edit" align="center"></td>
-        <td class="status" align="center"></td>
+        <td align="center">
+          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+        </td>
+        <td align="center">
+          <span class="status" style="width: 16px; height: 16px; display:block"> </span>
+        </td>
       </tr>
     </table>
   </div>
-  <div class="single-column-form-outer width40 default-display-none" id="industry-add">
+  <div class="single-column-form-outer width60 default-display-none" id="industry-add">
     <div class="content-area">
       <div class="single-column-form-inner">
         <div class="single-column-header">Industry Master<span class="error-message"></span></div>
@@ -46,16 +50,16 @@
           <div class="input-row">
             <div class="single-column-field-label">Industry:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <input type="text" id="industryname" class="input-box" value="" maxlength="50" >
+              <input type="text" id="industryname" class="input-box" value="" maxlength="50" tabindex="1" autofocus="autofocus">
               <input type="hidden" id="industryid" value="">
             </div>
           </div>
           <div class="submit-button-container">
             <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-industry-cancel">&nbsp;&nbsp;
-            <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit">
+            <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
           </div>
         </div></div>
       </div>
     </div>
-    <script type="text/javascript" src="/files/desktop/knowledge/industry-master/industrymaster.js"></script>
+    <script type="text/javascript" src="/script/industry-master/industrymaster.js"></script>
   {% endblock %}

@@ -1,9 +1,7 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_VectorType_RecordType_core_Level,
-    parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
@@ -11,16 +9,22 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_Bool,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography,
     parse_structure_VariantType_knowledgemaster_Request,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
     parse_structure_CustomTextType_50,
-    parse_structure_SignedIntegerType_8
+    parse_structure_SignedIntegerType_8,
+    parse_structure_VectorType_CustomTextType_50,
+    parse_structure_VectorType_UnsignedIntegerType_32,
+    parse_structure_CustomTextType_100,
+    parse_structure_VectorType_CustomTextType_100,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_CustomIntegerType_1_10,
+    parse_structure_VectorType_RecordType_knowledgemaster_Level
 )
 from protocol.to_structure import (
-to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     to_structure_VectorType_RecordType_core_Level,
-    to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_SignedIntegerType_8,
     to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
@@ -31,7 +35,15 @@ to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     to_structure_VariantType_knowledgemaster_Request,
     to_structure_VectorType_RecordType_core_StatutoryNature,
-    to_structure_CustomTextType_50
+    to_structure_CustomTextType_50,
+    to_structure_VectorType_CustomTextType_50,
+    to_structure_VectorType_UnsignedIntegerType_32,
+    to_structure_UnsignedIntegerType_32,
+    to_structure_CustomTextType_100,
+    to_structure_VectorType_CustomTextType_100,
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_CustomIntegerType_1_10,
+    to_structure_VectorType_RecordType_knowledgemaster_Level
 )
 
 #
@@ -73,6 +85,34 @@ class GetGeographyLevels(Request):
         return {
         }
 
+class Level(object):
+    def __init__(self, level_id, level_position, level_name, is_remove):
+        self.level_id = level_id
+        self.level_position = level_position
+        self.level_name = level_name
+        self.is_remove = is_remove
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["l_id", "l_position", "l_name", "is_remove"])
+        level_id = data.get("l_id")
+        level_id = parse_structure_OptionalType_UnsignedIntegerType_32(level_id)
+        level_position = data.get("l_position")
+        level_position = parse_structure_CustomIntegerType_1_10(level_position)
+        level_name = data.get("l_name")
+        level_name = parse_structure_CustomTextType_50(level_name)
+        is_remove = data.get("is_remove")
+        is_remove = parse_structure_Bool(is_remove)
+        return Level(level_id, level_position, level_name, is_remove)
+
+    def to_structure(self):
+        return {
+            "l_id": to_structure_OptionalType_UnsignedIntegerType_32(self.level_id),
+            "l_position": to_structure_CustomIntegerType_1_10(self.level_position),
+            "l_name": to_structure_CustomTextType_50(self.level_name),
+            "is_remove": to_structure_Bool(self.is_remove)
+        }
+
 class SaveGeographyLevel(Request):
     def __init__(self, country_id, levels):
         self.country_id = country_id
@@ -80,17 +120,17 @@ class SaveGeographyLevel(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "levels"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "levels"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         levels = data.get("levels")
-        levels = parse_structure_VectorType_RecordType_core_Level(levels)
+        levels = parse_structure_VectorType_RecordType_knowledgemaster_Level(levels)
         return SaveGeographyLevel(country_id, levels)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "levels": to_structure_VectorType_RecordType_core_Level(self.levels),
+            "c_id": to_structure_SignedIntegerType_8(self.country_id),
+            "levels": to_structure_VectorType_RecordType_knowledgemaster_Level(self.levels),
         }
 
 class GetGeographies(Request):
@@ -107,63 +147,71 @@ class GetGeographies(Request):
         }
 
 class SaveGeography(Request):
-    def __init__(self, geography_level_id, geography_name, parent_ids, country_id):
+    def __init__(self, geography_level_id, geography_name, parent_ids, parent_names, country_id):
         self.geography_level_id = geography_level_id
         self.geography_name = geography_name
         self.parent_ids = parent_ids
+        self.parent_names = parent_names
         self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["geography_level_id", "geography_name", "parent_ids", "country_id"])
-        geography_level_id = data.get("geography_level_id")
+        data = parse_dictionary(data, ["g_l_id", "g_name", "p_ids", "p_names", "c_id"])
+        geography_level_id = data.get("g_l_id")
         geography_level_id = parse_structure_UnsignedIntegerType_32(geography_level_id)
-        geography_name = data.get("geography_name")
+        geography_name = data.get("g_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
-        parent_ids = data.get("parent_ids")
-        parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
-        country_id = data.get("country_id")
+        parent_ids = data.get("p_ids")
+        parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
+        parent_names = data.get("p_names")
+        parent_names = parse_structure_VectorType_CustomTextType_50(parent_names)
+        country_id = data.get("c_id")
         country_id = parse_structure_SignedIntegerType_8(country_id)
-        return SaveGeography(geography_level_id, geography_name, parent_ids, country_id)
+        return SaveGeography(geography_level_id, geography_name, parent_ids, parent_names, country_id)
 
     def to_inner_structure(self):
         return {
-            "geography_level_id": to_structure_SignedIntegerType_8(self.geography_level_id),
-            "geography_name": to_structure_CustomTextType_50(self.geography_name),
-            "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
-            "country_id": to_structure_SignedIntegerType_8(self.country_id)
+            "g_l_id": to_structure_UnsignedIntegerType_32(self.geography_level_id),
+            "g_name": to_structure_CustomTextType_50(self.geography_name),
+            "p_ids": to_structure_VectorType_UnsignedIntegerType_32(self.parent_ids),
+            "p_names": to_structure_VectorType_CustomTextType_50(self.parent_names),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
 class UpdateGeography(Request):
-    def __init__(self, geography_id, geography_level_id, geography_name, parent_ids, country_id):
+    def __init__(self, geography_id, geography_level_id, geography_name, parent_ids, parent_names, country_id):
         self.geography_id = geography_id
         self.geography_level_id = geography_level_id
         self.geography_name = geography_name
         self.parent_ids = parent_ids
+        self.parent_names = parent_names
         self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["geography_id", "geography_level_id", "geography_name", "parent_ids", "country_id"])
-        geography_id = data.get("geography_id")
+        data = parse_dictionary(data, ["g_id", "g_l_id", "g_name", "p_ids", "p_names", "c_id"])
+        geography_id = data.get("g_id")
         geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
-        geography_level_id = data.get("geography_level_id")
+        geography_level_id = data.get("g_l_id")
         geography_level_id = parse_structure_UnsignedIntegerType_32(geography_level_id)
-        geography_name = data.get("geography_name")
+        geography_name = data.get("g_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
-        parent_ids = data.get("parent_ids")
-        parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
-        country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
-        return UpdateGeography(geography_id, geography_level_id, geography_name, parent_ids, country_id)
+        parent_ids = data.get("p_ids")
+        parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
+        parent_names = data.get("p_names")
+        parent_names = parse_structure_VectorType_CustomTextType_50(parent_names)
+        country_id = data.get("c_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        return UpdateGeography(geography_id, geography_level_id, geography_name, parent_ids, parent_names, country_id)
 
     def to_inner_structure(self):
         return {
-            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
-            "geography_level_id": to_structure_SignedIntegerType_8(self.geography_level_id),
-            "geography_name": to_structure_CustomTextType_50(self.geography_name),
-            "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
-            "country_id": to_structure_SignedIntegerType_8(self.country_id)
+            "g_id": to_structure_UnsignedIntegerType_32(self.geography_id),
+            "g_l_id": to_structure_UnsignedIntegerType_32(self.geography_level_id),
+            "g_name": to_structure_CustomTextType_50(self.geography_name),
+            "p_ids": to_structure_VectorType_UnsignedIntegerType_32(self.parent_ids),
+            "p_names": to_structure_CustomTextType_50(self.parent_names),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
 class ChangeGeographyStatus(Request):
@@ -173,8 +221,8 @@ class ChangeGeographyStatus(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["geography_id", "is_active"])
-        geography_id = data.get("geography_id")
+        data = parse_dictionary(data, ["g_id", "is_active"])
+        geography_id = data.get("g_id")
         geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
@@ -182,7 +230,7 @@ class ChangeGeographyStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
+            "g_id": to_structure_UnsignedIntegerType_32(self.geography_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -205,14 +253,14 @@ class SaveIndustry(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["industry_name"])
-        industry_name = data.get("industry_name")
+        data = parse_dictionary(data, ["i_name"])
+        industry_name = data.get("i_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
         return SaveIndustry(industry_name)
 
     def to_inner_structure(self):
         return {
-            "industry_name": to_structure_CustomTextType_50(self.industry_name),
+            "i_name": to_structure_CustomTextType_50(self.industry_name),
         }
 
 class UpdateIndustry(Request):
@@ -222,17 +270,17 @@ class UpdateIndustry(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["industry_id", "industry_name"])
-        industry_id = data.get("industry_id")
+        data = parse_dictionary(data, ["i_id", "i_name"])
+        industry_id = data.get("i_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
-        industry_name = data.get("industry_name")
+        industry_name = data.get("i_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
         return UpdateIndustry(industry_id, industry_name)
 
     def to_inner_structure(self):
         return {
-            "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
-            "industry_name": to_structure_CustomTextType_50(self.industry_name),
+            "i_id": to_structure_UnsignedIntegerType_32(self.industry_id),
+            "i_name": to_structure_CustomTextType_50(self.industry_name),
         }
 
 class ChangeIndustryStatus(Request):
@@ -242,8 +290,8 @@ class ChangeIndustryStatus(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["industry_id", "is_active"])
-        industry_id = data.get("industry_id")
+        data = parse_dictionary(data, ["i_id", "is_active"])
+        industry_id = data.get("i_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
@@ -251,7 +299,7 @@ class ChangeIndustryStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
+            "i_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -274,14 +322,14 @@ class SaveStatutoryNature(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_nature_name"])
-        statutory_nature_name = data.get("statutory_nature_name")
+        data = parse_dictionary(data, ["s_n_name"])
+        statutory_nature_name = data.get("s_n_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         return SaveStatutoryNature(statutory_nature_name)
 
     def to_inner_structure(self):
         return {
-            "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
+            "s_n_name": to_structure_CustomTextType_50(self.statutory_nature_name),
         }
 
 class UpdateStatutoryNature(Request):
@@ -291,17 +339,17 @@ class UpdateStatutoryNature(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_nature_id", "statutory_nature_name"])
-        statutory_nature_id = data.get("statutory_nature_id")
+        data = parse_dictionary(data, ["s_n_id", "s_n_name"])
+        statutory_nature_id = data.get("s_n_id")
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
-        statutory_nature_name = data.get("statutory_nature_name")
+        statutory_nature_name = data.get("s_n_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         return UpdateStatutoryNature(statutory_nature_id, statutory_nature_name)
 
     def to_inner_structure(self):
         return {
-            "statutory_nature_id": to_structure_SignedIntegerType_8(self.statutory_nature_id),
-            "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
+            "s_n_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
+            "s_n_name": to_structure_CustomTextType_50(self.statutory_nature_name),
         }
 
 class ChangeStatutoryNatureStatus(Request):
@@ -311,8 +359,8 @@ class ChangeStatutoryNatureStatus(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_nature_id", "is_active"])
-        statutory_nature_id = data.get("statutory_nature_id")
+        data = parse_dictionary(data, ["s_n_id", "is_active"])
+        statutory_nature_id = data.get("s_n_id")
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
@@ -320,7 +368,7 @@ class ChangeStatutoryNatureStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "statutory_nature_id": to_structure_SignedIntegerType_8(self.statutory_nature_id),
+            "s_n_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -345,20 +393,20 @@ class SaveStatutoryLevel(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "levels"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "d_id", "levels"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("domain_id")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         levels = data.get("levels")
-        levels = parse_structure_VectorType_RecordType_core_Level(levels)
+        levels = parse_structure_VectorType_RecordType_knowledgemaster_Level(levels)
         return SaveStatutoryLevel(country_id, domain_id, levels)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "levels": to_structure_VectorType_RecordType_core_Level(self.levels),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "d_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "levels": to_structure_VectorType_RecordType_knowledgemaster_Level(self.levels),
         }
 
 class GetStatutories(Request):
@@ -375,55 +423,67 @@ class GetStatutories(Request):
         }
 
 class SaveStatutory(Request):
-    def __init__(self, statutory_level_id, statutory_name, parent_ids):
+    def __init__(self, domain_id, statutory_level_id, statutory_name, parent_ids, parent_names):
+        self.domain_id = domain_id
         self.statutory_level_id = statutory_level_id
         self.statutory_name = statutory_name
         self.parent_ids = parent_ids
+        self.parent_names = parent_names
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_level_id", "statutory_name", "parent_ids"])
-        statutory_level_id = data.get("statutory_level_id")
+        data = parse_dictionary(data, ["d_id", "s_l_id", "s_name", "p_ids", "p_names"])
+        domain_id = data.get("d_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        statutory_level_id = data.get("s_l_id")
         statutory_level_id = parse_structure_UnsignedIntegerType_32(statutory_level_id)
-        statutory_name = data.get("statutory_name")
-        statutory_name = parse_structure_CustomTextType_50(statutory_name)
-        parent_ids = data.get("parent_ids")
-        parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
-        return SaveStatutory(statutory_level_id, statutory_name, parent_ids)
+        statutory_name = data.get("s_name")
+        statutory_name = parse_structure_CustomTextType_100(statutory_name)
+        parent_ids = data.get("p_ids")
+        parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
+        parent_names = data.get("p_names")
+        parent_names = parse_structure_VectorType_CustomTextType_100(parent_names)
+        return SaveStatutory(domain_id, statutory_level_id, statutory_name, parent_ids, parent_names)
 
     def to_inner_structure(self):
         return {
-            "statutory_level_id": to_structure_SignedIntegerType_8(self.statutory_level_id),
-            "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
-            "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
+            "d_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "s_l_id": to_structure_UnsignedIntegerType_32(self.statutory_level_id),
+            "s_name": to_structure_CustomTextType_100(self.statutory_name),
+            "p_ids": to_structure_VectorType_UnsignedIntegerType_32(self.parent_ids),
+            "p_names": to_structure_VectorType_CustomTextType_100(self.parent_names)
         }
 
 class UpdateStatutory(Request):
-    def __init__(self, statutory_id, statutory_level_id, statutory_name, parent_ids):
+    def __init__(self, statutory_id, statutory_level_id, statutory_name, parent_ids, parent_names):
         self.statutory_id = statutory_id
         self.statutory_level_id = statutory_level_id
         self.statutory_name = statutory_name
         self.parent_ids = parent_ids
+        self.parent_names = parent_names
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_id", "statutory_level_id", "statutory_name", "parent_ids"])
-        statutory_id = data.get("statutory_id")
+        data = parse_dictionary(data, ["s_id", "s_l_id", "s_name", "p_ids", "p_names"])
+        statutory_id = data.get("s_id")
         statutory_id = parse_structure_UnsignedIntegerType_32(statutory_id)
-        statutory_level_id = data.get("statutory_level_id")
+        statutory_level_id = data.get("s_l_id")
         statutory_level_id = parse_structure_UnsignedIntegerType_32(statutory_level_id)
-        statutory_name = data.get("statutory_name")
-        statutory_name = parse_structure_CustomTextType_50(statutory_name)
-        parent_ids = data.get("parent_ids")
-        parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
-        return UpdateStatutory(statutory_id, statutory_level_id, statutory_name, parent_ids)
+        statutory_name = data.get("s_name")
+        statutory_name = parse_structure_CustomTextType_100(statutory_name)
+        parent_ids = data.get("p_ids")
+        parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
+        parent_names = data.get("p_names")
+        parent_names = parse_structure_VectorType_CustomTextType_100(parent_names)
+        return UpdateStatutory(statutory_id, statutory_level_id, statutory_name, parent_ids, parent_names)
 
     def to_inner_structure(self):
         return {
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
-            "statutory_level_id": to_structure_SignedIntegerType_8(self.statutory_level_id),
-            "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
-            "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
+            "s_id": to_structure_UnsignedIntegerType_32(self.statutory_id),
+            "s_l_id": to_structure_UnsignedIntegerType_32(self.statutory_level_id),
+            "s_name": to_structure_CustomTextType_100(self.statutory_name),
+            "p_ids": parse_structure_VectorType_UnsignedIntegerType_32(self.parent_ids),
+            "p_names": to_structure_VectorType_CustomTextType_100(self.parent_names)
         }
 
 
@@ -508,6 +568,22 @@ class DuplicateGeographyLevelsExists(Response):
         return {
         }
 
+class LevelShouldNotbeEmpty(Response):
+    def __init__(self, level):
+        self.level = level
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["level"])
+        level = data.get("level")
+        level = parse_structure_UnsignedIntegerType_32(level)
+        return LevelShouldNotbeEmpty(level)
+
+    def to_inner_structure(self):
+        return {
+            "level": to_structure_UnsignedIntegerType_32(self.level)
+        }
+
 class UpdateGeographyLevelSuccess(Response):
     def __init__(self):
         pass
@@ -548,7 +624,7 @@ class GetGeographiesSuccess(Response):
         geography_levels = data.get("geography_levels")
         geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
         geographies = data.get("geographies")
-        geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
+        geographies = parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography(geographies)
         return GetGeographiesSuccess(countries, geography_levels, geographies)
 
     def to_inner_structure(self):
@@ -922,7 +998,7 @@ class InvalidStatutoryId(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetGeographyLevelsSuccess, SaveGeographyLevelSuccess, DuplicateGeographyLevelsExists, UpdateGeographyLevelSuccess, InvalidGeographyLevelId, GetGeographiesSuccess, SaveGeographySuccess, GeographyNameAlreadyExists, InvalidGeographyId, ChangeGeographyStatusSuccess, GetIndustriesSuccess, SaveIndustrySuccess, IndustryNameAlreadyExists, UpdateIndustrySuccess, InvalidIndustryId, ChangeIndustryStatusSuccess, GetStatutoryNaturesSuccess, SaveStatutoryNatureSuccess, StatutoryNatureNameAlreadyExists, UpdateStatutoryNatureSuccess, ChangeStatutoryNatureStatusSuccess, InvalidStatutoryNatureId, GetStatutoryLevelsSuccess, SaveStatutoryLevelSuccess, DuplicateStatutoryLevelsExists, GetStatutoriesSuccess, SaveStatutorySuccess, StatutoryNameAlreadyExists, InvalidStatutoryId]
+    classes = [GetGeographyLevelsSuccess, SaveGeographyLevelSuccess, DuplicateGeographyLevelsExists, LevelShouldNotbeEmpty, UpdateGeographyLevelSuccess, InvalidGeographyLevelId, GetGeographiesSuccess, SaveGeographySuccess, GeographyNameAlreadyExists, InvalidGeographyId, ChangeGeographyStatusSuccess, GetIndustriesSuccess, SaveIndustrySuccess, IndustryNameAlreadyExists, UpdateIndustrySuccess, InvalidIndustryId, ChangeIndustryStatusSuccess, GetStatutoryNaturesSuccess, SaveStatutoryNatureSuccess, StatutoryNatureNameAlreadyExists, UpdateStatutoryNatureSuccess, ChangeStatutoryNatureStatusSuccess, InvalidStatutoryNatureId, GetStatutoryLevelsSuccess, SaveStatutoryLevelSuccess, DuplicateStatutoryLevelsExists, GetStatutoriesSuccess, SaveStatutorySuccess, StatutoryNameAlreadyExists, InvalidStatutoryId]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

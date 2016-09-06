@@ -1,6 +1,18 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
 <div class="welcome-msg"></div>
-
+<div class="notification-container">
+    <ul class="notification-ul">
+    </ul>
+</div>
+<div id="templates">
+<ul>
+    <li class="list">
+        <p class="notification-text"></p>
+        <p class="time notification-time"></p>
+    </li>
+</li>
+</div>
+<script type="text/javascript" src="/script/home/home.js"></script>
 {% endblock %}

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="content-container">
   <div class="content-area">
-    <div class="add-container">
+    <div class="add-container settings-container">
 
       <div class="add-container-heading">Settings<span class="error-message"></span></div>
           <div class="single-column-input-row" style="margin-top:10px">
@@ -18,7 +18,7 @@
               <div class="single-column-field-label" style="font-size:0.8em;">Reminder to Assignee : </div>
               <div class="single-column-field-input">
                  <span style="margin-left:10px;margin-bottom:10px; font-size:0.8em;">
-                        For Every <input type="text" class="input-box" style="width:50px" id= "assigneeval" />
+                        For Every <input type="text" class="input-box" style="width:50px" maxlength="2" id= "assigneeval" />
                         <span style="padding-top:10px;"> days</span>
                       </span>
               </div>
@@ -27,7 +27,7 @@
               <div class="single-column-field-label" style="font-size:0.8em">Escalation Reminders to Concurrence & Approval Person : </div>
               <div class="single-column-field-input">
                  <span style="margin-left:10px;margin-bottom:10px;font-size:0.8em;">
-                       <input type="text" class="input-box" style="width:50px" id= "concurrenceapprovalval"/>
+                       <input type="text" class="input-box" style="width:50px" maxlength="2" id= "concurrenceapprovalval"/>
                         <span style="padding-top:10px;"> days before due date</span>
                       </span>
               </div>
@@ -36,7 +36,7 @@
               <div class="single-column-field-label" style="font-size:0.8em">Escalation Reminders to Assignee, Concurrence & Approval person : </div>
               <div class="single-column-field-input">
                  <span style="margin-left:10px;margin-bottom:10px;font-size:0.8em;">
-                        For Every <input type="text" class="input-box" style="width:50px" id="allval" />
+                        For Every <input type="text" class="input-box" style="width:50px" maxlength="2" id="allval" />
                         <span style="padding-top:10px;"> days after due date</span>
                       </span>
               </div>
@@ -103,7 +103,8 @@
           </table>
       </div>
       <div class="grid-table">
-          <table>
+          <table  class="js-filtertable">
+          <thead>
             <tr>
               <th align="left" colspan="4" style="background:#ccc;color:black;font-weight:bold">
               Licence Holders list
@@ -118,15 +119,20 @@
           <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="10%">Email</th>
           <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="10%">Mobile Number</th>
           <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="20%">Seating Unit</th>
-
+          <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="5%">Status</th>
+          <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="5%">Admin Status</th>
         </tr>
+
         <tr>
           <td align="center">&nbsp;</td>
-          <td><input type="text" class="filter-text-box" id="search-employee"></td>
-          <td><input type="text" class="filter-text-box" id="search-email"></td>
-          <td><input type="text" class="filter-text-box" id="search-mobile-number"></td>
-          <td><input type="text" class="filter-text-box" id="search-seating-unit"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-employee"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-email"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-mobile-number"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-seating-unit"></td>
+          <td></td>
+          <td></td>
         </tr>
+        </thead>
         <tbody class="tbody-clientprofile-list">
         </tbody>
         </table>
@@ -147,10 +153,15 @@
       <td class="employee"></td>
       <td class="email"></td>
       <td class="mobile-number"></td>
-      <td class="seating-unit"></td>
+      <td class="seating-unit">
+        <abbr title=""><img style="margin-right:5px" src="/images/icon-info.png"/></abbr>
+        <span></span>
+      </td>
+      <td class="status"></td>
+      <td class="admin-status"></td>
     </tr>
   </table>
 </div>
-<script type="text/javascript" src="/files/desktop/client/settings/settings.js"></script>
+<script type="text/javascript" src="/script/settings/settings.js"></script>
 {% endblock %}
 

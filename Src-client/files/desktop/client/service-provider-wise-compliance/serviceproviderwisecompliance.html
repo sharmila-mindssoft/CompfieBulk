@@ -1,35 +1,39 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
+
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
+
   <div class="content-container">
     <div class="content-area">
-
       <div class="add-container">
         <div class="add-container-heading">Service Provider wise Compliances<span class="error-message"></span></div>
         <div class="input-row-left">
           <div class="input-row">
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
-            <select class="input-box" id="country">
+            <select class="input-box" id="country" autofocus="autofocus" tabindex="1">
             </select>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" tabindex="2">
             <input type="hidden" id="domain" value="">
-            <div id="autocomplete_domain" class="ac-textbox default-display-none">
-            <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+            <div id="ac-domain" class="ac-textbox default-display-none">
+            <ul style="width:85%;"></ul>
           </div>
         </div>
       </div>
       <div class="input-row">
         <div class="field-label">Act:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Business Group">
+          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act" tabindex="3">
           <input type="hidden" id="act">
-          <div id="autocomplete_act" class="ac-textbox default-display-none">
-          <ul id="ulist_act" style="width:215px;" class="hidemenu"></ul>
+          <div id="ac-statutory" class="ac-textbox default-display-none">
+          <ul style="width:85%;"></ul>
         </div>
       </div>
     </div>
@@ -38,27 +42,27 @@
 <div class="input-row">
   <div class="field-label">Unit:</div>
   <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit">
+    <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit" tabindex="4">
     <input type="hidden" id="unit">
-    <div id="autocomplete_unit" class="ac-textbox default-display-none">
-    <ul id="ulist_unit" style="width:215px;" class="hidemenu"></ul>
+    <div id="ac-unit" class="ac-textbox default-display-none">
+    <ul style="width:85%;"></ul>
   </div>
 </div>
 </div>
 <div class="input-row">
 <div class="field-label">Service Provider:</div>
  <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" id="serviceproviderval" placeholder="Enter Service Provider">
+    <input type="text" class="input-box icon-autocomplete" id="serviceproviderval" placeholder="Enter Service Provider" tabindex="5">
     <input type="hidden" id="serviceprovider">
     <div id="autocomplete_serviceprovider" class="ac-textbox default-display-none">
-    <ul id="ulist_serviceprovider" style="width:215px;" class="hidemenu"></ul>
+    <ul id="ulist_serviceprovider" style="width:85%;" class="hidemenu"></ul>
   </div>
 </div>
 </div>
 </div>
 <div class="submit-button-container">
-<input type="submit" value="Show" class="btn-submit" id="submit">
-<input type="submit" value="Export" class="btn-submit" id="export">
+<input type="submit" value="Show" class="btn-submit" id="submit" tabindex="6">
+<input type="submit" value="Export" class="btn-submit" id="export" tabindex="7">
 </div>
 
 
@@ -69,6 +73,9 @@
 
 </table>
 
+<div align="center" style="padding-top:10px;">
+  <input type="button" value="Show more records" class="btn-submit" id="pagination">
+</div>
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
 </div>
 </div>
@@ -98,19 +105,17 @@
 <table style=" border:dotted 1px #ccc;" class="table-serviceprovider-head" width="100%">
         <tr class="table-row-serviceprovider-head">
           <th style="background:#ccc;" width="3%" align="center">#</th>
-          <th style="background:#ccc;" width="15%" align="left">Service Provider Name</th>
-          <th style="background:#ccc;" width="14%" align="left">Contact Person</th>
-          <th style="background:#ccc;" width="14%" align="left">Email</th>
-          <th style="background:#ccc;" width="10%" align="left" colspan="3">Mobile</th>
-          <th style="background:#ccc;" width="25%" align="left">Address</th>
-          <th style="background:#ccc;"  align="left" width="18%" colspan="2">Contract Period</th>
+          <th style="background:#ccc;" width="28%" align="left">Service Provider Name</th>
+          <th style="background:#ccc;" width="25%" align="left">Contact Person</th>
+          <th style="background:#ccc;" width="10%" align="left">Mobile</th>
+          <th style="background:#ccc;" width="15%" align="left">Address</th>
+          <th style="background:#ccc;"  align="left" width="20%" colspan="2">Contract Period</th>
         </tr>
         <tr style="background:#f1e9f6;" class="table-row-serviceprovider-headvalue">
           <td align="center" class="tbl_sp_count"></td>
           <td class="tbl_sp_name" ></td>
           <td class="tbl_sp_contactperson"></td>
-          <td class="tbl_sp_email"></td>
-          <td class="tbl_sp_contactno" colspan="3">></td>
+          <td class="tbl_sp_contactno"></td>
           <td class="tbl_sp_address" ></td>
           <td class="tbl_sp_period" colspan="2"></td>
         </tr>
@@ -120,22 +125,29 @@
 <div id="unit-head-templates" style="display:none;">
 <table class="table-unit-head">
 <tr align="left" class="table-row-unit-head">
-<th width="2%" style="background:#ccc;"><span style="font-weight:bold;"></span></th>
-<th width="28%" style="background:#ccc;" ><span style="font-weight:bold;">Compliance Task</span></th>
-<th width="13%"  style="background:#ccc;"><span style="font-weight:bold;">Compliance Description</span></th>
-<th width="15%"  style="background:#ccc;"colspan="4" ><span style="font-weight:bold;" >Statutory Date</span></th>
-<th width="10%" style="background:#ccc;" ><span style="font-weight:bold;">Trigger Before</span></th>
-<th width="10%"  style="background:#ccc;" ><span style="font-weight:bold;">Due Date</span></th>
-<th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Validity Date</span></th>
+<th style="background:#ccc;"><span style="font-weight:bold;"></span></th>
+<th style="background:#ccc;" ><span style="font-weight:bold;">Compliance Task</span></th>
+<th style="background:#ccc;"><span style="font-weight:bold;">Compliance Description</span></th>
+<th style="background:#ccc;"><span style="font-weight:bold;" >Statutory Date</span></th>
+<th style="background:#ccc;" ><span style="font-weight:bold;">Trigger Before</span></th>
+<th style="background:#ccc;" ><span style="font-weight:bold;">Due Date</span></th>
+<th style="background:#ccc;" ><span style="font-weight:bold;">Validity Date</span></th>
 </tr>
 </table>
 </div>
 
 
-<div id="unit-name-templates">
+<div id="unit-name-templates" class="default-display-none">
 <table class="table-unit-name">
 <tr class="table-row-unit-name">
-<td align="left" class="tbl_unitheading" colspan="11">
+<td align="left" colspan="7">
+
+  <div class="heading" style="margin-top:5px;width:auto;"> 
+    <abbr class="page-load tipso_style">
+      <img src="/images/icon-info.png" style="margin-right:10px">
+    </abbr>
+  <span class="tbl_unitheading"> </span>
+
 </td>
 </tr>
 </table>
@@ -149,14 +161,22 @@
 <td  align="center" class="tbl_sno"></td>
 <td class="tbl_compliance"> </td>
 <td class="tbl_description"> </td>
-<td colspan="4" class="tbl_statutorydate"></td>
+<td class="tbl_statutorydate"></td>
 <td class="tbl_triggerbefore" > </td>
-<td class="tbl_duedate" ></td>
-<td class="tbl_validitydate"></td>
+<td align="center" class="tbl_duedate" ></td>
+<td align="center" class="tbl_validitydate"></td>
 
 </tr>
 </table>
 </div>
 
-<script type="text/javascript" src="/files/desktop/client/service-provider-wise-compliance/serviceproviderwisecompliance.js"></script>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/script/service-provider-wise-compliance/serviceproviderwisecompliance.js"></script>
 {% endblock %}

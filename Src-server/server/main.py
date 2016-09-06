@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import traceback
 import mimetypes
@@ -14,16 +15,37 @@ from protocol import (
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions
 )
-from server.database import KnowledgeDatabase
+# from server.database import KnowledgeDatabase
 import controller
+from server.dbase import Database
+from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
     CompanyServerDetails
 )
-from server.constants import TEMPLATE_PATHS
+from replication.protocol import (
+    GetChanges, GetDomainChanges, GetChangesSuccess,
+    InvalidReceivedCount, GetDelReplicatedSuccess,
+    GetClientChanges, GetClientChangesSuccess
+)
+from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    VERSION, IS_DEVELOPMENT, SESSION_CUTOFF
+)
 
+from server.templatepath import (
+    TEMPLATE_PATHS
+)
+
+import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+
+if IS_DEVELOPMENT :
+    FILE_VERSION = time.time()
+else :
+    FILE_VERSION = VERSION
 
 #
 # cors_handler
@@ -41,9 +63,7 @@ def cors_handler(request, response):
 # api_request
 #
 
-def api_request(
-    request_data_type
-):
+def api_request(request_data_type):
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
@@ -52,7 +72,6 @@ def api_request(
             )
         return wrapped
     return wrapper
-
 
 #
 # API
@@ -64,6 +83,22 @@ class API(object):
     ):
         self._io_loop = io_loop
         self._db = db
+        self._ip_addess = None
+        self._remove_old_session()
+
+    def _remove_old_session(self):
+        def on_session_timeout():
+            self._db.begin()
+            try :
+                self._db.clear_session(SESSION_CUTOFF)
+                self._db.commit()
+            except Exception, e :
+                print e
+                self._db.rollback()
+
+        self._io_loop.add_timeout(
+            time.time() + 1080, on_session_timeout
+        )
 
     def _send_response(
         self, response_data, response
@@ -82,23 +117,34 @@ class API(object):
             request_data = request_data_type.parse_structure(
                 data
             )
+            return request_data
         except Exception, e:
-            #print e
-            #print(traceback.format_exc())
+            print "_parse_request"
+            print e
+            logger.logKnowledgeApi(e, "_parse_request")
+            logger.logKnowledgeApi(traceback.format_exc(), "")
+
+            logger.logKnowledge("error", "main.py-parse-request", e)
+            print(traceback.format_exc())
+            logger.logKnowledge("error", "main.py", traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None
-        return request_data
 
     def handle_api_request(
         self, unbound_method, request, response,
         request_data_type
     ):
         response.set_default_header("Access-Control-Allow-Origin", "*")
-        ip_address = unicode(request.remote_ip())
-        request_data = self._parse_request(
-            request_data_type, request, response
-        )
+        ip_address = str(request.remote_ip())
+        self._ip_addess = ip_address
+        if request_data_type == "knowledgeformat" :
+            request_data = request
+        else :
+            request_data = self._parse_request(
+                request_data_type, request, response
+            )
+
         if request_data is None:
             return
 
@@ -107,27 +153,100 @@ class API(object):
                 response_data, response
             )
 
-        self._db.begin()
         try:
+            self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
-            self._db.commit()
+            if response_data is None or type(response_data) is bool :
+                # print response_data
+                self._db.rollback()
+            if type(response_data) != technomasters.ClientCreationFailed:
+                self._db.commit()
+            else:
+                self._db.rollback()
+            # print response_data
             respond(response_data)
         except Exception, e:
-            print(traceback.format_exc())
-            print e
+            # print "handle_api_request"
+            # print e
+            # print(traceback.format_exc())
+            # print ip_address
+            logger.logKnowledgeApi(e, "handle_api_request")
+            logger.logKnowledgeApi(traceback.format_exc(), "")
+            logger.logKnowledgeApi(ip_address, "")
+
+            logger.logKnowledge("error", "main.py-handle-api-", e)
+            logger.logKnowledge("error", "main.py", traceback.format_exc())
+            # if str(e).find("expected a") is False :
+            #     print "------- rollbacked"
             self._db.rollback()
+            response.set_status(400)
+            response.send(str(e))
 
     @api_request(
         DistributionRequest
     )
     def handle_server_list(self, request, db):
         return CompanyServerDetails(
-            db.get_servers()
+            gen.get_servers(db)
         )
+
+    @api_request(GetClientChanges)
+    def handle_client_list(self, request, db) :
+        return GetClientChangesSuccess(
+            gen.get_client_replication_list(db)
+        )
+
+    @api_request(GetChanges)
+    def handle_replication(self, request, db):
+        actual_count = gen.get_trail_id(db)
+        # print "actual_count ", actual_count
+
+        client_id = request.client_id
+        received_count = request.received_count
+        # print  "received_count", received_count
+        if received_count > actual_count:
+            return InvalidReceivedCount()
+        # print "replication client_id = %s, received_count = %s" % (client_id, received_count)
+        res = GetChangesSuccess(
+            gen.get_trail_log(db, client_id, received_count)
+        )
+        return res
+
+    @api_request(GetDomainChanges)
+    def handle_domain_replication(self, request, db):
+        actual_count = gen.get_trail_id(db)
+        client_id = request.client_id
+        domain_id = request.domain_id
+        received_count = request.received_count
+        actual_replica_count = request.actual_count
+
+        if received_count > actual_count :
+            return InvalidReceivedCount()
+
+        res = GetChangesSuccess(
+            gen.get_trail_log_for_domain(
+                db, client_id, domain_id, received_count,
+                actual_replica_count
+            )
+        )
+        return res
+
+    @api_request(GetChanges)
+    def handle_delreplicated(self, request, db):
+        actual_count = gen.get_trail_id(db)
+
+        client_id = request.client_id
+        received_count = request.received_count
+        s = "%s, %s, %s " % (client_id, received_count, actual_count)
+        logger.logKnowledge("info", "trail", s)
+        if actual_count >= received_count :
+            gen.remove_trail_log(client_id, received_count)
+        return GetDelReplicatedSuccess()
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        return controller.process_login_request(request, db)
+        # print self._ip_addess
+        return controller.process_login_request(request, db, self._ip_addess)
         # return login.ResetPasswordSuccess()
 
     @api_request(admin.RequestFormat)
@@ -166,13 +285,31 @@ class API(object):
     def handle_techno_report(self, request, db):
         return controller.process_techno_report_request(request, db)
 
+    @api_request("knowledgeformat")
+    def handle_format_file(self, request, db):
+        def validate_session_from_body(content):
+            content_list = content.split("\r\n\r\n")
+            session = content_list[-1].split("\r\n")[0]
+            user_id = db.validate_session_token(str(session))
+            if user_id is None :
+                return False
+            else :
+                return True
+
+        if (validate_session_from_body(request.body())) :
+            info = request.files()
+            response_data = controller.process_uploaded_file(info, "knowledge")
+            return response_data
+        else :
+            return login.InvalidSessionToken()
+
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
 )
 template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile,     parameters) :
+    def initialize(self, path_desktop, path_mobile, parameters) :
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
         self.__parameters = parameters
@@ -190,18 +327,28 @@ class TemplateHandler(tornado.web.RequestHandler) :
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = self.set_path(url)
+            if node.tag == "script" :
+                new_url += "?v=%s" % (FILE_VERSION)
+            if node.tag == "img" :
+                new_url += "?v=%s" % (FILE_VERSION)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = self.set_path(url)
+                if node.tag == "link" :
+                    new_url += "?v=%s" % (FILE_VERSION)
             else :
                 new_url = url
+                if node.tag == "link" :
+                    new_url += "?v=%s" % (FILE_VERSION)
             node.set('href', new_url)
         data = etree.tostring(tree, method="html")
         return data
 
-    def get(self) :
+    def get(self, url=None) :
+        if url is not None:
+            print "url:{}".format(url)
         path = self.__path_desktop
         if self.__path_mobile is not None :
             useragent = self.request.headers.get("User-Agent")
@@ -215,14 +362,28 @@ class TemplateHandler(tornado.web.RequestHandler) :
         template = template_env.get_template(path)
         output = template.render(**self.__parameters)
         output = self.update_static_urls(output)
+        token = str(time.time())
+        print token
+        self.set_secure_cookie("_xsrf", token)
+        # self.set_cookie("_test", to)
+        # if not self.get_cookie("_xsrf"):
+        #     token = self.xsrf_token
+        #     self.set_cookie("_xsrf", token)
         self.write(output)
 
-    def options(self) :
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "Content-Type")
-        self.set_header("Access-Control-Allow-Methods", "GET, POST")
-        self.set_status(204)
-        self.write("")
+class TokenHandler(tornado.web.RedirectHandler):
+    def initialize(self):
+        pass
+
+    def get(self):
+        print "token handler called"
+        if not self.get_cookie("_xsrf") :
+            print "not cookie"
+            token = self.xsrf_token
+            self.set_cookie("_xsrf", token)
+            self.write(dict(xsrf=token))
+        else :
+            self.write(dict(xsrf=self.get_cookie('_xsrf')))
 
 #
 # run_server
@@ -232,15 +393,14 @@ def run_server(port):
     io_loop = IOLoop()
 
     def delay_initialize():
-        db = KnowledgeDatabase(
-            "localhost", 3306, "root", "123456",
-            "mirror_knowledge"
+        db = Database(
+            KNOWLEDGE_DB_HOST,
+            KNOWLEDGE_DB_PORT,
+            KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
+            KNOWLEDGE_DATABASE_NAME
         )
-        # db = KnowledgeDatabase(
-        #     "198.143.141.73", 3306, "root", "Root!@#123",
-        #     "mirror_knowledge"
-        # )
         db.connect()
+
         web_server = WebServer(io_loop)
 
         # web_server.url("/", GET=handle_root)
@@ -253,10 +413,16 @@ def run_server(port):
             }
             web_server.low_level_url(url, TemplateHandler, args)
 
+        web_server.low_level_url("/knowledge/token", TokenHandler)
         api = API(io_loop, db)
 
+        # post urls
         api_urls_and_handlers = [
-            ("/server-list", api.handle_server_list),
+            ("/knowledge/server-list", api.handle_server_list),
+            ("/knowledge/client-list", api.handle_client_list),
+            ("/knowledge/replication", api.handle_replication),
+            ("/knowledge/domain-replication", api.handle_domain_replication),
+            ("/knowledge/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/techno", api.handle_techno),
@@ -275,7 +441,8 @@ def run_server(port):
                 "/knowledge/api/techno_transaction",
                 api.handle_techno_transaction
             ),
-            ("/knowledge/api/techno_report", api.handle_techno_report)
+            ("/knowledge/api/techno_report", api.handle_techno_report),
+            ("/knowledge/api/files", api.handle_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
@@ -283,11 +450,18 @@ def run_server(port):
         server_path = os.path.join(ROOT_PATH, "Src-server")
         server_path = os.path.join(server_path, "server")
         format_path = os.path.join(server_path, "knowledgeformat")
+        logo_path = os.path.join(server_path, "clientlogo")
 
         web_server.low_level_url(
             r"/knowledge/compliance_format/(.*)",
             StaticFileHandler,
             dict(path=format_path)
+        )
+
+        web_server.low_level_url(
+            r"/knowledge/clientlogo/(.*)",
+            StaticFileHandler,
+            dict(path=logo_path)
         )
 
         static_path = os.path.join(ROOT_PATH, "Src-client")
@@ -297,6 +471,8 @@ def run_server(port):
         images_path = os.path.join(common_path, "images")
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
+        script_path = os.path.join(desktop_path, "knowledge")
+        login_path = os.path.join(desktop_path, "login")
 
         web_server.low_level_url(
             r"/images/(.*)",
@@ -318,6 +494,16 @@ def run_server(port):
             r"/knowledge/common/(.*)",
             StaticFileHandler,
             dict(path=common_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/script/(.*)",
+            StaticFileHandler,
+            dict(path=script_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/login/(.*)",
+            StaticFileHandler,
+            dict(path=login_path)
         )
 
         api_design_path = os.path.join(

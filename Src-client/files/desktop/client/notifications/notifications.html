@@ -1,5 +1,6 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
+<script type="text/javascript" src="/js/client-notification.js"></script>
 <style>
   abbr
   {
@@ -34,7 +35,7 @@
     background-image: -o-linear-gradient(top, #9c9d9e, #c4c4c4);
     background-image: linear-gradient(to bottom, #9c9d9e, #c4c4c4);
     text-decoration: none;
-    curosr:hand;
+    cursor:hand;
   }
 
   .tooltip
@@ -205,6 +206,9 @@
 </style>
 
 <!-- notification section end here -->
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
 
 <div class="content-container" >
     <div class="content-area">
@@ -217,7 +221,9 @@
             <div class="clearfix"></div>
             <div class="notification-container1" >
                 <ul id="notificationsList"></ul>
-
+            </div>
+            <div align="center" style="padding-top:10px;">
+              <input type="button" value="Show more records" class="btn-submit" id="pagination">
             </div>
         </div>
     </div>
@@ -225,23 +231,23 @@
 
 <div id="popup1" class="overlay">
     <div class="popup">
-        <a class="close" href="#">x</a>
+        <a class="close">x</a>
         <div class="content">
             <header>
-                <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">Notifications</h1>
+                <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color: #000;">Notifications</h1>
                 <div class="close unread"></div>
             </header>
             <section>
                 <p style="font-size:0.8em; padding-top:10px;">
                     <table class="modaltable" width="100%">
-                        <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                        <tr style="background-color:#DBDBDB;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
                             <th width="16.67%" align="left">Act</th>
                             <th width="20%" align="left">Unit</th>
                             <th width="20%" align="left">Compliance</th>
                             <th width="16.67%" align="center">Due Date</th>
                             <th width="13%" align="center">Delayed By</th>
                         </tr>
-                        <tr >
+                        <tr style="line-height: 12px;" >
                             <td align="left" class="popup_act"></td>
                             <td align="left" class="popup_unit"></td>
                             <td align="left" class="popup_compliance"></td>
@@ -252,7 +258,7 @@
                     </table>
                     <br>
                     <table class="modaltable" width="100%">
-                        <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                        <tr style="background-color:#DBDBDB;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
 
                             <th width="33.33%" align="left">Assignee</th>
                             <th width="33.33%" align="left">Concurrence</th>
@@ -281,7 +287,7 @@
     });
   });
 
-  </script>
+</script>
 
-<script type="text/javascript" src="/files/desktop/client/notifications/notifications.js"></script>
+<script type="text/javascript" src="/script/notifications/notifications.js"></script>
 {% endblock %}

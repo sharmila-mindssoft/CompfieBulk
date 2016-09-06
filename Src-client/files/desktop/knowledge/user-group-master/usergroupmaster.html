@@ -8,7 +8,8 @@
       </div>
       <div class="clearfix"></div>
       <div class="grid-table">
-        <table>
+        <table class="js-filtertable">
+          <thead>
           <tr align="left">
             <th width="9%" align="center">#</th>
             <th>Group Name</th>
@@ -18,11 +19,12 @@
           </tr>
           <tr>
             <td align="center"></td>
-            <td><input type="text" name="groupNameSearch" id="groupNameSearch" class="filter-text-box"></td>
-            <td><input type="text" name="categoryNameSearch" id="categoryNameSearch" class="filter-text-box"></td>
+            <td><input type="text" name="groupNameSearch" id="groupNameSearch" class="filter-text-box js-filter"></td>
+            <td><input type="text" name="categoryNameSearch" id="categoryNameSearch" class="filter-text-box js-filter"></td>
             <td align="center"></td>
             <td align="center"></td>
           </tr>
+          </thead>
           <tbody class="tbody-usergroups-list">
           </tbody>
         </table>
@@ -35,8 +37,12 @@
         <td align="center" class="sno"></td>
         <td class="group-name"></td>
         <td class="catg-name"></td>
-        <td align="center" class="edit"></td>
-        <td align="center" class="is-active"></td>
+        <td align="center">
+          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+        </td>
+        <td align="center">
+          <span class="status" style="width: 16px; height: 16px; display:block"> </span>
+        </td>
       </tr>
     </table>
   </div>
@@ -49,8 +55,8 @@
           <div class="input-row">
             <div class="single-column-field-label">Group Name:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <input type="text" class="input-box" name="groupName" id="groupName">
-              <input type="hidden" name="groupId" id="groupId" value="">
+              <input type="text" class="input-box" name="groupName" id="groupName" autofocus="autofocus" maxlength="50" tabindex="1">
+              <input type="hidden" name="groupId" id="groupId" value="">        
             </div>
           </div>
         </div>
@@ -58,14 +64,16 @@
           <div class="input-row">
             <div class="single-column-field-label">Category Name:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <select class="input-box" id="categoryName" name="categoryName">
+              <select class="input-box" id="categoryName" name="categoryName" tabindex="2">
+              <option value="">Select</option>
               </select>
             </div>
           </div>
         </div>
-        <div class="submit-button-container">
+      <!--   <input type="hidden" id="tempcatgid" value=""> -->
+      <!-- <div class="submit-button-container">
           <input type="submit" name="cancel" value="Show" class="btn-submit" id="btnUserGroupShow">
-        </div>
+        </div>  -->
         <div class="clearfix"></div>
         <div id="formList">
           <div class="grid-table formNameList">
@@ -103,5 +111,5 @@
         </tr>
       </table>
     </div>
-    <script type="text/javascript" src="/files/desktop/knowledge/user-group-master/usergroupmaster.js"></script>
+    <script type="text/javascript" src="/script/user-group-master/usergroupmaster.js"></script>
   {% endblock %}
