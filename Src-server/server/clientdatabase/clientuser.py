@@ -17,7 +17,7 @@ from server.clientdatabase.general import (
 from server.exceptionmessage import client_process_error
 from server.emailcontroller import EmailHandler
 from server.constants import (
-    FORMAT_DOWNLOAD_URL,
+    FORMAT_DOWNLOAD_URL, CLIENT_DOCS_BASE_PATH
 )
 __all__ = [
     "get_inprogress_count",
@@ -311,7 +311,9 @@ def get_upcoming_compliances_list(
     return upcoming_compliances_list
 
 
-def handle_file_upload(db, documents, client_id):
+def handle_file_upload(
+    db, documents, uploaded_documents, client_id, old_documents
+):
     document_names = []
     file_size = 0
     if documents is not None:
@@ -341,10 +343,191 @@ def handle_file_upload(db, documents, client_id):
                 update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
+
+    if old_documents is not None and len(old_documents) > 0:
+        for document in old_documents.split(","):
+            if document is not None and document.strip(',') != '':
+                name = document.split("-")[0]
+                if name not in uploaded_documents:
+                    path = "%s/%s/%s" % (
+                       CLIENT_DOCS_BASE_PATH, client_id, document
+                    )
+                    remove_uploaded_file(path)
     return document_names
 
 
+def is_diff_greater_than_90_days(validity_date, next_due_date):
+    if validity_date not in [None, "None", ""]:
+        validity_date = string_to_datetime(validity_date)
+    else:
+        validity_date = None
+    if next_due_date not in [None, "None", ""]:
+        next_due_date = string_to_datetime(next_due_date)
+    else:
+        next_due_date = None
+
+    if None not in [validity_date, next_due_date]:
+        r = relativedelta.relativedelta(
+            convert_datetime_to_date(validity_date),
+            convert_datetime_to_date(next_due_date)
+        )
+        if abs(r.months) > 3 or abs(r.years) > 0:
+            #  Difference should not be more than 90 days
+            return False
+        else:
+            return True
+    else:
+        return True
+
+
 def update_compliances(
+    db, compliance_history_id, documents, uploaded_compliances, completion_date,
+    validity_date, next_due_date, remarks, client_id, session_user
+):
+    query = " SELECT unit_id, compliance_id,  completed_by, " + \
+        " ifnull(concurred_by, 0) as concurred, approved_by, " + \
+        " compliance_task, document_name, " + \
+        " due_date, frequency_id, duration_type_id, documents " + \
+        " FROM tbl_compliance_history tch " + \
+        " INNER JOIN tbl_compliances tc " + \
+        " ON (tc.compliance_id=tch.compliance_id) " + \
+        " WHERE compliacne_history_id=%s "
+    param = [compliance_history_id]
+    rows = db.select_all(query, param)
+    columns = [
+        "unit_id", "compliance_id", "completed_by", "concurred_by",
+        "approved_by", "compliance_name", "document_name", "due_date",
+        "frequency_id", "documents"
+    ]
+    result = convert_to_dict(rows, columns)
+    row = result[0]
+    ageing, remarks = calculate_ageing(
+        row["due_date"], frequency_type=None, completion_date=completion_date,
+        duration_type=None
+    )
+    if not is_diff_greater_than_90_days(validity_date, next_due_date):
+        return False
+    document_names = handle_file_upload(
+        db, documents, uploaded_compliances, client_id, row["documents"])
+    if type(document_names) is not list:
+        return document_names
+    if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
+        completion_date = string_to_datetime(row["completion_date"])
+    else:
+        completion_date = string_to_datetime(row["completion_date"]).date()
+    history_values = [
+        completion_date, ",".join(document_names), remarks, current_time_stamp
+    ]
+    if validity_date not in ["", None, "None"]:
+        history_columns.append("validity_date")
+        history_values.append(validity_date)
+    if next_due_date not in ["", None, "None"]:
+        history_columns.append("next_due_date")
+        history_values.append(next_due_date)
+
+    history_condition = "compliance_history_id = %s " + \
+        " and completed_by = %s "
+    history_condition_val = [compliance_history_id, session_user]
+    if(
+        row["completed_by"] == row["approved_by"] or
+        is_primary_admin(db, row["completed_by"])
+    ):
+        history_columns.extend(["approve_status", "approved_on"])
+        history_values.extend([1, current_time_stamp])
+        if row["concurred_by"] not in [None, 0, ""]:
+            history_columns.extend(["concurrence_status", "concurred_on"])
+            history_values.extend([1, current_time_stamp])
+        as_columns = []
+        as_values = []
+        if next_due_date is not None:
+            as_columns.append("due_date")
+            as_values.append(next_due_date)
+        if validity_date is not None:
+            as_columns.append("validity_date")
+            as_values.append(validity_date)
+        if frequency_id in (1, "1"):
+            as_columns.append("is_active")
+            as_values.append(0)
+
+        as_condition = " unit_id = %s and compliance_id = %s "
+        as_values.extend([unit_id, compliance_id])
+        db.update(
+            tblAssignedCompliances, as_columns, as_values, as_condition
+        )
+        save_compliance_activity(
+            db, unit_id, compliance_id, "Approved", "Complied", remarks
+        )
+    else:
+        save_compliance_activity(
+            db, unit_id, compliance_id, "Submitted", "Inprogress", remarks
+        )
+
+    history_values.extend(history_condition_val)
+    update_status = db.update(
+        tblComplianceHistory, history_columns, history_values,
+        history_condition
+    )
+    if(update_status is False):
+        return clienttransactions.ComplianceUpdateFailed()
+    if row["completed_by"] == row["approver_id"]:
+        notify_users(
+            db, row["document_name"], row["compliance_task"],
+            row["completed_by"],  row["approved_by"]
+        )
+    return True
+
+
+def notify_users(
+    db, document_name, compliance_task, assignee_id,  approver_id
+):
+    compliance_name = compliance_task
+    if(
+        document_name is not None and
+        document_name != '' and document_name != 'None'
+    ):
+        compliance_name = "%s - %s" % (document_name, compliance_task)
+
+    assignee_email, assignee_name = get_user_email_name(
+        db, str(assignee_id)
+    )
+    approver_email, approver_name = get_user_email_name(
+        db, str(approver_id)
+    )
+    action = "approve"
+    notification_text = "%s has completed the " + \
+        " compliance %s. Review and approve"
+    notification_text = notification_text % (
+            assignee_name, compliance_name
+        )
+    concurrence_email, concurrence_name = (None, None)
+    if(
+        is_two_levels_of_approval(db) and
+        concurrence_id not in [None, "None", 0, "", "null", "Null"]
+    ):
+        concurrence_email, concurrence_name = get_user_email_name(
+            db, str(concurrence_id)
+        )
+        action = "Concur"
+        notification_text = "%s has completed the " + \
+            " compliance %s. Review and concur"
+        notification_text = notification_text % (
+                assignee_name, compliance_name
+            )
+    save_compliance_notification(
+        db, compliance_history_id, notification_text,
+        "Compliance Completed", action
+    )
+    notify_task_completed_thread = threading.Thread(
+        target=email.notify_task_completed, args=[
+            assignee_email, assignee_name, concurrence_email,
+            concurrence_name, approver_email, approver_name, action,
+            is_two_levels_of_approval(db), compliance_name
+        ]
+    )
+    notify_task_completed_thread.start()
+
+
+def update_compliances1(
     db, compliance_history_id, documents, completion_date,
     validity_date, next_due_date, remarks, client_id, session_user
 ):
@@ -404,7 +587,6 @@ def update_compliances(
     rows = db.get_data(
         tblComplianceHistory, columns, condition, [compliance_history_id]
     )
-    print "got history details 2nd time"
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     ageing, remarks = calculate_ageing(
@@ -412,7 +594,6 @@ def update_compliances(
         completion_date=completion_date,
         duration_type=None
     )
-    print "got ageing and remarks"
     if(
         assignee_id == approver_id or
         is_primary_admin(db, assignee_id)
