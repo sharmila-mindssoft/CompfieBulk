@@ -446,7 +446,10 @@ function showSideBar(idval, data) {
           $('.upload-progress-count').html("");
           $('.upload-progress-count').show();
         }
-        client_mirror.updateComplianceDetail(compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks, function (error, response) {
+        client_mirror.updateComplianceDetail(
+          compliance_history_id, documents, uploaded_documents,
+          completion_date, validity_date, next_due_date, remarks, 
+        function (error, response) {
           if (error == null) {
             $('.upload-progress-count').hide();
             $('.upload-progress-count').html("");
