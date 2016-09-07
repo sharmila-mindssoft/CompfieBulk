@@ -43,39 +43,39 @@ function custom_alert(output_msg) {
 //Validate that input value contains only one or more letters
 function isCommon(inputElm) {
   //allowed => alphanumeric, dot, comma, Hyphen
-  return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/, '');
+  return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
 }
 function isAlphabetic(inputElm) {
   //allowed => alphabetic
-  return inputElm.val().replace(/[^ A-Za-z]/, '');
+  return inputElm.val().replace(/[^ A-Za-z]/gi, '');
 }
 function isAlphanumeric(inputElm) {
   //allowed => alphanumeric
-  return inputElm.val().replace(/[^ 0-9A-Za-z]/, '');
+  return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
 }
 function isNumbers(inputElm) {
   //allowed => only numbers
-  return inputElm.val().replace(/[^0-9]/, '');
+  return inputElm.val().replace(/[^0-9]/gi, '');
 }
 function isCommon_Name(inputElm) {
   //allowed => alphanumeric, dot
-  return inputElm.val().replace(/[^ A-Za-z.]/, '');
+  return inputElm.val().replace(/[^ A-Za-z.]/gi, '');
 }
 function isCommon_Address(inputElm) {
   //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-  return inputElm.val().replace(/[^ A-Za-z_.,-@#]/, '');
+  return inputElm.val().replace(/[^ A-Za-z_.,-@#]/gi, '');
 }
 function isNumbers_Countrycode(inputElm) {
   //allowed => only numbers,+
-  return inputElm.val().replace(/[^0-9+]/, '');
+  return inputElm.val().replace(/[^0-9+]/gi, '');
 }
 function isAlphanumeric_Shortname(inputElm) {
   //allowed => alphanumeric
-  return inputElm.val().replace(/[^0-9a-z]/, '');
+  return inputElm.val().replace(/[^0-9a-z]/gi, '');
 }
 function isCommon_Unitcode(inputElm) {
   //allowed => alphanumeric
-  return inputElm.val().replace(/[^0-9A-Za-z]/, '');
+  return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
 }
 //move to top function
 jQuery(document).ready(function () {

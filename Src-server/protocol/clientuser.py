@@ -14,6 +14,7 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_CustomTextType_500,
+    parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
     parse_structure_CustomTextType_250,
     parse_structure_Text
@@ -31,6 +32,7 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_CustomTextType_500,
+    to_structure_OptionalType_VectorType_CustomTextType_500,
     to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
     to_structure_UnsignedIntegerType_32,
     to_structure_CustomTextType_250,
@@ -105,6 +107,7 @@ class GetUpcomingComplianceDetail(Request):
             "upcoming_start_count": to_structure_UnsignedIntegerType_32(self.upcoming_start_count),
         }
 
+
 class CheckDiskSpace(Request):
     def __init__(self):
         pass
@@ -118,10 +121,15 @@ class CheckDiskSpace(Request):
         return {
         }
 
+
 class UpdateComplianceDetail(Request):
-    def __init__(self, compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks):
+    def __init__(
+        self, compliance_history_id, documents, uploaded_documents,
+        completion_date, validity_date, next_due_date, remarks
+    ):
         self.compliance_history_id = compliance_history_id
         self.documents = documents
+        self.uploaded_documents = uploaded_documents
         self.completion_date = completion_date
         self.validity_date = validity_date
         self.next_due_date = next_due_date
@@ -129,11 +137,21 @@ class UpdateComplianceDetail(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliance_history_id", "documents", "completion_date", "validity_date", "next_due_date", "remarks"])
+        data = parse_dictionary(
+            data, [
+                "compliance_history_id", "documents", "uploaded_documents",
+                "completion_date", "validity_date", "next_due_date", "remarks"
+            ]
+        )
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(
+            compliance_history_id)
         documents = data.get("documents")
-        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
+        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(
+            documents)
+        uploaded_documents = data.get("uploaded_documents")
+        uploaded_documents = parse_structure_OptionalType_VectorType_CustomTextType_500(
+            uploaded_documents)
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
         validity_date = data.get("validity_date")
@@ -142,12 +160,17 @@ class UpdateComplianceDetail(Request):
         next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         remarks = data.get("remarks")
         remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
-        return UpdateComplianceDetail(compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks)
+        return UpdateComplianceDetail(
+            compliance_history_id, documents, uploaded_documents,
+            completion_date, validity_date, next_due_date, remarks
+        )
 
     def to_inner_structure(self):
         return {
             "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
             "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
+            "uploaded_documents": to_structure_OptionalType_VectorType_CustomTextType_500(
+                self.uploaded_documents),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),

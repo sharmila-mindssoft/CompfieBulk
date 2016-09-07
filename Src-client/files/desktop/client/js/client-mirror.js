@@ -629,12 +629,16 @@ function initClientMirror() {
     $('.upload-progress-count').html("Uploading " + percent + "% ")
   }
 
-  function updateComplianceDetail(compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks, callback) {
+  function updateComplianceDetail(
+    compliance_history_id, documents, uploaded_documents, 
+    completion_date, validity_date, next_due_date, remarks, callback
+  ) {
     var request = [
       'UpdateComplianceDetail',
       {
         'compliance_history_id': compliance_history_id,
         'documents': documents,
+        'uploaded_documents': uploaded_documents,
         'completion_date': completion_date,
         'validity_date': validity_date,
         'next_due_date': next_due_date,
