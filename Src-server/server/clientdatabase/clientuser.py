@@ -381,8 +381,9 @@ def is_diff_greater_than_90_days(validity_date, next_due_date):
 
 
 def update_compliances(
-    db, compliance_history_id, documents, uploaded_compliances, completion_date,
-    validity_date, next_due_date, remarks, client_id, session_user
+    db, compliance_history_id, documents, uploaded_compliances,
+    completion_date, validity_date, next_due_date, remarks,
+    client_id, session_user
 ):
     query = " SELECT unit_id, compliance_id,  completed_by, " + \
         " ifnull(concurred_by, 0) as concurred, approved_by, " + \
