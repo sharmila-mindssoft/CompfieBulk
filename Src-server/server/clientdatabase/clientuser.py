@@ -1,3 +1,4 @@
+import os
 import datetime
 import threading
 from server import logger
@@ -348,11 +349,16 @@ def handle_file_upload(
         for document in old_documents.split(","):
             if document is not None and document.strip(',') != '':
                 name = document.split("-")[0]
+                document_parts = document.split(".")
+                ext = document_parts[len(document_parts)-1]
+                name = "%s.%s" % (name, ext)
                 if name not in uploaded_documents:
                     path = "%s/%s/%s" % (
                        CLIENT_DOCS_BASE_PATH, client_id, document
                     )
                     remove_uploaded_file(path)
+                else:
+                    document_names.append(document)
     return document_names
 
 
@@ -382,30 +388,28 @@ def is_diff_greater_than_90_days(validity_date, next_due_date):
 
 def update_compliances(
     db, compliance_history_id, documents, uploaded_compliances,
-    completion_date, validity_date, next_due_date, remarks,
+    completion_date, validity_date, next_due_date, assignee_remarks,
     client_id, session_user
 ):
-    query = " SELECT unit_id, compliance_id,  completed_by, " + \
+    current_time_stamp = get_date_time_in_date()
+    query = " SELECT unit_id, tch.compliance_id,  completed_by, " + \
         " ifnull(concurred_by, 0) as concurred, approved_by, " + \
         " compliance_task, document_name, " + \
         " due_date, frequency_id, duration_type_id, documents " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tc.compliance_id=tch.compliance_id) " + \
-        " WHERE compliacne_history_id=%s "
+        " WHERE compliance_history_id=%s "
     param = [compliance_history_id]
     rows = db.select_all(query, param)
     columns = [
         "unit_id", "compliance_id", "completed_by", "concurred_by",
         "approved_by", "compliance_name", "document_name", "due_date",
-        "frequency_id", "documents"
+        "frequency_id", "duration_type_id", "documents"
     ]
     result = convert_to_dict(rows, columns)
     row = result[0]
-    ageing, remarks = calculate_ageing(
-        row["due_date"], frequency_type=None, completion_date=completion_date,
-        duration_type=None
-    )
+
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
         return False
     document_names = handle_file_upload(
@@ -413,11 +417,19 @@ def update_compliances(
     if type(document_names) is not list:
         return document_names
     if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
-        completion_date = string_to_datetime(row["completion_date"])
+        completion_date = string_to_datetime(completion_date)
     else:
-        completion_date = string_to_datetime(row["completion_date"]).date()
+        completion_date = string_to_datetime(completion_date).date()
+    ageing, remarks = calculate_ageing(
+        row["due_date"], frequency_type=None, completion_date=completion_date,
+        duration_type=row["duration_type_id"]
+    )
+    history_columns = [
+        "completion_date", "documents", "remarks", "completed_on"
+    ]
     history_values = [
-        completion_date, ",".join(document_names), remarks, current_time_stamp
+        completion_date, ",".join(document_names),
+        assignee_remarks, current_time_stamp
     ]
     if validity_date not in ["", None, "None"]:
         history_columns.append("validity_date")
@@ -456,11 +468,13 @@ def update_compliances(
             tblAssignedCompliances, as_columns, as_values, as_condition
         )
         save_compliance_activity(
-            db, unit_id, compliance_id, "Approved", "Complied", remarks
+            db, row["unit_id"], row["compliance_id"],
+            "Approved", "Complied", assignee_remarks
         )
     else:
         save_compliance_activity(
-            db, unit_id, compliance_id, "Submitted", "Inprogress", remarks
+            db, row["unit_id"], row["compliance_id"],
+            "Submitted", "Inprogress", assignee_remarks
         )
 
     history_values.extend(history_condition_val)
@@ -470,7 +484,7 @@ def update_compliances(
     )
     if(update_status is False):
         return clienttransactions.ComplianceUpdateFailed()
-    if row["completed_by"] == row["approver_id"]:
+    if row["completed_by"] == row["approved_by"]:
         notify_users(
             db, row["document_name"], row["compliance_task"],
             row["completed_by"],  row["approved_by"]
@@ -653,11 +667,9 @@ def update_compliances1(
         tblComplianceHistory, history_columns, history_values,
         history_condition
     )
-    print "update_status: %s" % update_status
     if(update_status is False):
         return clienttransactions.ComplianceUpdateFailed()
 
-    print "updated history table"
     if assignee_id != approver_id:
         if(
             document_name is not None and
