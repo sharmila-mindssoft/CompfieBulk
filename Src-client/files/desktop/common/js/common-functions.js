@@ -1,3 +1,13 @@
+//Load count values in pagination selectbox
+var pageList = [2,10,25,50,100,500];
+function loadItemsPerPage() {
+  for(var i=0; i<pageList.length; i++) {
+    var Id = pageList[i];
+    $('#items_per_page').append($('<option value="' + Id + '">' + Id + '</option>'));
+  };
+}
+
+
 //Convert Number to Srting of Month
 function getMonth_IntegettoString(intMonth) {
   var stringMonth = '';
@@ -168,6 +178,7 @@ function onArrowKey(e, ac_item, callback) {
     return false;
   }
 }
+
 //country autocomplete function
 var chosen = '';
 function getCountryAutocomplete(e, textval, listval, callback, flag) {
