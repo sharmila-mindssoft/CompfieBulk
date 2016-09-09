@@ -31,7 +31,7 @@ Auditpage.prototype.displayMessage = function(message){
 	Msg_pan.show();
 };
 
-Auditpage.prototype.clearMessage = function(message){
+Auditpage.prototype.clearMessage = function(){
 	Msg_pan.text('');
 	Msg_pan.hide();
 };
@@ -57,14 +57,14 @@ Auditpage.prototype.getValue = function(field_name, f_id){
 		if (u_id == '') {
 			return null;
 		}
-		return u_id;
+		return parseInt(u_id);
 	}
 	else if (field_name == "form") {
-		f_id = Form_id.val().trim();
-		if (f_id == '') {
+		fr_id = Form_id.val().trim();
+		if (fr_id == '') {
 			return null;
 		}
-		return f_id;
+		return parseInt(fr_id);
 	}
 	else if (field_name == "fromdate") {
 		f_date = From_date.val().trim();
@@ -142,7 +142,6 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
 Auditpage.prototype.fetchData = function() {
 	var t_this = this;
 	_from_date = this.getValue("fromdate", null);
-	alert(_from_date);
 	_to_date = this.getValue("todate", null);
 	_user_id = this.getValue("user", null);
 	_form_id = this.getValue("form", null);
@@ -166,10 +165,14 @@ Auditpage.prototype.renderControl = function(){
 	From_date.val(past_days(7));  // 7 days bafore to_date
 };
 
+Auditpage.prototype.renderPages = function() {
+	alert('');
+};
+
 initializeControlEvents = function(a_page){
 	User.keyup(function(e) {
 		var textval = $(this).val();
-		getUserAutocomplete(e, textval, userList, function (v) {
+		getUserAutocomplete(e, textval, a_page._userList, function (v) {
     		User.val(v[1]);
     		User_id.val(v[0]);
   		});
@@ -177,7 +180,7 @@ initializeControlEvents = function(a_page){
 
 	Form.keyup(function(e) {
 		var textval = $(this).val();
-		getFormAutocomplete(e, textval, formList, function (v) {
+		getFormAutocomplete(e, textval, a_page._formList, function (v) {
 		    Form.val(v[1]);
 		    Form_id.val(v[0]);
 		});
@@ -189,6 +192,14 @@ initializeControlEvents = function(a_page){
 			a_page.fetchData();
 		}
 	});
+	on_page_load = function() {
+		a_page.resetFields();
+		is_valid = a_page.validateMandatory();
+		if (is_valid == true) {
+			a_page.fetchData();
+		}
+	}
+	on_page_load();
 
 }
 
