@@ -1,0 +1,99 @@
+.pagination-rpt
+{
+    display: inline-block;
+    padding-left: 0;
+    margin: 20px 0;
+    border-radius: 4px
+}
+
+.pagination-rpt>li
+{
+    display: inline;
+    font-size: 0.813em;
+}
+
+.pagination-rpt>li>a,.pagination-rpt>li>span
+{
+    position: relative;
+    float: left;
+    padding: 4px 8px;
+    margin-left: -1px;
+    line-height: 1.428571429;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #662d91;
+}
+
+.pagination-rpt>li:first-child>a,.pagination-rpt>li:first-child>span
+{
+    margin-left: 0;
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+}
+
+.pagination-rpt>li:last-child>a,.pagination-rpt>li:last-child>span
+{
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px
+}
+
+.pagination-rpt>li>a:hover,.pagination-rpt>li>span:hover,.pagination-rpt>li>a:focus,.pagination-rpt>li>span:focus
+{
+    background-color: #eee
+}
+
+.pagination-rpt>.active>a,.pagination-rpt>.active>span,.pagination-rpt>.active>a:hover,.pagination-rpt>.active>span:hover,.pagination-rpt>.active>a:focus,.pagination-rpt>.active>span:focus
+{
+    z-index: 2;
+    color: #fff;
+    cursor: default;
+    background-color: #662d91;
+    border-color: #662d91
+}
+
+.pagination-rpt>.disabled>span,.pagination-rpt>.disabled>span:hover,.pagination-rpt>.disabled>span:focus,.pagination-rpt>.disabled>a,.pagination-rpt>.disabled>a:hover,.pagination-rpt>.disabled>a:focus
+{
+    color: #999;
+    cursor: not-allowed;
+    background-color: #fff;
+    border-color: #ddd
+}
+
+.pagination-rpt-lg>li>a,.pagination-rpt-lg>li>span
+{
+    padding: 10px 16px;
+    font-size: 0.813em;
+}
+
+.pagination-rpt-lg>li:first-child>a,.pagination-rpt-lg>li:first-child>span
+{
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px
+}
+
+.pagination-rpt-lg>li:last-child>a,.pagination-rpt-lg>li:last-child>span
+{
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px
+}
+
+.pagination-rpt-sm>li>a,.pagination-rpt-sm>li>span
+{
+    padding: 5px 10px;
+    font-size: 0.813em
+}
+
+.pagination-rpt-sm>li:first-child>a,.pagination-rpt-sm>li:first-child>span
+{
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px
+}
+
+.pagination-rpt-sm>li:last-child>a,.pagination-rpt-sm>li:last-child>span
+{
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px
+}
+
+
