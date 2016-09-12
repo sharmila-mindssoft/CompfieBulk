@@ -64,12 +64,12 @@ __all__ = [
 def report_unitwise_compliance(
     db, country_id, domain_id, business_group_id,
     legal_entity_id, division_id, unit_id, assignee,
-    session_user, from_count, to_count
+    session_user, from_count, page_count
 ):
     data, total = report_assigneewise_compliance(
         db, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, assignee,
-        session_user, from_count, to_count
+        session_user, from_count, page_count
     )
     return data, total
 

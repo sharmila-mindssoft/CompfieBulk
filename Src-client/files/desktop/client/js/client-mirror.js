@@ -352,7 +352,7 @@ function initClientMirror() {
     callerName = 'client_reports';
     clientApiRequest(callerName, request, callback);
   }
-  function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, record_count, callback) {
+  function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, from_count, page_count, callback) {
     var request = [
       'GetAssigneewisecomplianceReport',
       {
@@ -363,7 +363,8 @@ function initClientMirror() {
         'division_id': division_id,
         'unit_id': unit_id,
         'user_id': user_id,
-        'record_count': record_count
+        'from_count': from_count,
+        'page_count': page_count
       }
     ];
     callerName = 'client_reports';
@@ -1463,23 +1464,7 @@ function initClientMirror() {
     clientApiRequest(callerName, request, callback);
   }
   
-  function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, record_count, callback) {
-    var request = [
-      'GetAssigneewisecomplianceReport',
-      {
-        'country_id': country_id,
-        'domain_id': domain_id,
-        'business_group_id': business_group_id,
-        'legal_entity_id': legal_entity_id,
-        'division_id': division_id,
-        'unit_id': unit_id,
-        'user_id': user_id,
-        'record_count': record_count
-      }
-    ];
-    callerName = 'client_reports';
-    clientApiRequest(callerName, request, callback);
-  }
+  
   function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
     var request = [
       'ApproveCompliance',

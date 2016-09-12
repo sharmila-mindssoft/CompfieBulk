@@ -225,7 +225,7 @@ $('#pagination').click(function () {
   client_mirror.getAssigneewisecomplianceReport(
     parseInt(country), parseInt(domain), parseInt(businessgroup),
     parseInt(legalentity), parseInt(division), parseInt(unit),
-    parseInt(assignee), s_endCount, 
+    parseInt(assignee), s_endCount, 2,
     function (error, response) {
       if (error == null){
         onSuccess(response);
@@ -287,7 +287,9 @@ $('#submit').click(function () {
       displayMessage(error);
       hideLoader();
     }
-    client_mirror.getAssigneewisecomplianceReport(parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount, function (error, response) {
+    client_mirror.getAssigneewisecomplianceReport(parseInt(country), parseInt(domain), 
+      parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), 
+      parseInt(assignee), s_endCount, 2, function (error, response) {
       if (error == null) {
         onSuccess(response);
       } else {
@@ -296,7 +298,7 @@ $('#submit').click(function () {
       client_mirror.getAssigneewisecomplianceReport(
         parseInt(country), parseInt(domain), parseInt(businessgroup),
         parseInt(legalentity), parseInt(division), parseInt(unit),
-        parseInt(assignee), s_endCount,
+        parseInt(assignee), s_endCount, 2,
         function (error, response) {
           if (error == null){
             onSuccess(response);

@@ -325,13 +325,13 @@ def get_assigneewise_compliance(db, request, session_user):
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
-    from_count = request.record_count
-    to_count = RECORD_DISPLAY_COUNT
+    from_count = request.from_count
+    page_count = request.page_count
 
     data, total_count = report_assigneewise_compliance(
         db, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,
-        from_count, to_count
+        from_count, page_count
     )
     assignee_wise_compliances_list = return_assignee_report_data(data)
     return clientreport.GetAssigneewisecomplianceReportSuccess(
