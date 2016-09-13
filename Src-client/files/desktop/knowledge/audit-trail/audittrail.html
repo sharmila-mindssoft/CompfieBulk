@@ -48,6 +48,7 @@
       <div class="grid-table default-display-none">
         <table>
           <tr align="left">
+            <th>S.No#</th>
             <th>User</th>
             <th>Date & Time (IST)</th>
             <th>Form Name</th>
@@ -56,19 +57,44 @@
           <tbody class="tbody-audittrail-list">
           </tbody>
         </table>
-          <div align="center" style="padding-top:10px;">
-          <input type="button" value="Show more records" class="btn-submit" id="pagination">
+
+        <div id="no-record-templates" >
+          <table>
+          <tr align="left" >
+          <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold">No record(s) found</td>
+          </tr>
+          </table>
         </div>
+
       </div>
+
+      <table class="pagination-view default-display-none">
+        <tr>
+          <td>
+            <span class="compliance_count"> </span>
+            <span class="divider-view"> | </span>
+            <span class="items-per-page"> Show
+              <select id="items_per_page">
+              </select>
+              entries
+            </span>
+          </td>
+          <td style="text-align:right;padding-right:10px;">
+            <ul id="pagination-rpt"></ul>
+          </td>
+        </tr>
+      </table>
+
     </div>
   </div>
 </div>
 <div id="templates">
 <table class="table-audittrail-list">
 <tr class="tableRow">
-  <td class="username" style="width: 20%;"></td>
+  <td class="snumber" style="width: 8%;"></td>
+  <td class="username" style="width: 15%;"></td>
   <td class="datetime" style="width: 15%;"></td>
-  <td class="formname" style="width: 15%;"></td>
+  <td class="formname" style="width: 25%;"></td>
   <td class="action" style="width: 50%;"></td>
 </tr>
 </table>
