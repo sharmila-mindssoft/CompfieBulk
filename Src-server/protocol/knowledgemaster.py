@@ -248,37 +248,54 @@ class GetIndustries(Request):
         }
 
 class SaveIndustry(Request):
-    def __init__(self, industry_name):
+    def __init__(self, country_id, domain_id, industry_name):
+        self.country_id = country_id
+        self.domain_id = domain_id
         self.industry_name = industry_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["i_name"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "i_name"])
+        country_id = data.get("c_ids")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_id = data.get("d_ids")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         industry_name = data.get("i_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
-        return SaveIndustry(industry_name)
+        return SaveIndustry(country_id, domain_id, industry_name)
 
     def to_inner_structure(self):
         return {
+            "c_ids": to_structure_UnsignedIntegerType_32(self.country_id),
+            "d_ids": to_structure_UnsignedIntegerType_32(self.domain_id),
             "i_name": to_structure_CustomTextType_50(self.industry_name),
         }
 
+
 class UpdateIndustry(Request):
-    def __init__(self, industry_id, industry_name):
+    def __init__(self, country_id, domain_id, industry_id, industry_name):
+        self.country_id = country_id
+        self.domain_id = domain_id
         self.industry_id = industry_id
         self.industry_name = industry_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["i_id", "i_name"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "i_id", "i_name"])
+        country_id = data.get("c_ids")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_id = data.get("d_ids")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         industry_id = data.get("i_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("i_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
-        return UpdateIndustry(industry_id, industry_name)
+        return UpdateIndustry(country_id, domain_id, industry_id, industry_name)
 
     def to_inner_structure(self):
         return {
+            "c_ids": to_structure_UnsignedIntegerType_32(self.country_id),
+            "d_ids": to_structure_UnsignedIntegerType_32(self.domain_id),
             "i_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "i_name": to_structure_CustomTextType_50(self.industry_name),
         }
@@ -701,19 +718,28 @@ class ChangeGeographyStatusSuccess(Response):
         }
 
 class GetIndustriesSuccess(Response):
-    def __init__(self, industries):
+    def __init__(self, industries, countries, domains):
         self.industries = industries
+        self.countries = countries
+        self.domains = domains
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["industries"])
+        data = parse_dictionary(data, ["industries", "countries", "domains"])
         industries = data.get("industries")
         industries = parse_structure_VectorType_RecordType_core_Industry(industries)
-        return GetIndustriesSuccess(industries)
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+
+        return GetIndustriesSuccess(industries, countries, domains)
 
     def to_inner_structure(self):
         return {
             "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains)
         }
 
 class SaveIndustrySuccess(Response):

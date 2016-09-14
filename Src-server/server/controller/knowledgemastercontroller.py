@@ -174,7 +174,12 @@ def process_knowledge_master_request(request, db):
 ########################################################
 def process_get_industry(db):
     results = get_industries(db)
-    return knowledgemaster.GetIndustriesSuccess(industries=results)
+    print "inside ctrl"
+    print results
+    domain_list = get_domains_for_user(db, 0)
+    country_list = get_countries_for_user(db, 0)
+
+    return knowledgemaster.GetIndustriesSuccess(industries=results, countries=country_list, domains=domain_list)
 
 
 ########################################################
@@ -185,12 +190,14 @@ def process_get_industry(db):
     # SaveIndustrySuccess
 ########################################################
 def process_save_industry(db, request_frame, user_id):
+    country_ids = request_frame.country_id
+    domain_ids = request_frame.domain_id
     industry_name = request_frame.industry_name
     isDuplicate = check_duplicate_industry(db, industry_name, industry_id=None)
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
-    if (save_industry(db, industry_name, user_id)):
+    if (save_industry(db, country_ids, domain_ids, industry_name, user_id)):
         return knowledgemaster.SaveIndustrySuccess()
 
 
@@ -203,13 +210,16 @@ def process_save_industry(db, request_frame, user_id):
     # UpdateIndustrySuccess
 ########################################################
 def process_update_industry(db, request_frame, user_id):
+    country_ids = request_frame.country_id
+    domain_ids = request_frame.domain_id
+    print domain_ids
     industry_name = request_frame.industry_name
     industry_id = request_frame.industry_id
     isDuplicate = check_duplicate_industry(db, industry_name, industry_id)
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
-    if (update_industry(db, industry_id, industry_name, user_id)):
+    if (update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id)):
         return knowledgemaster.UpdateIndustrySuccess()
     else:
         return knowledgemaster.InvalidIndustryId()

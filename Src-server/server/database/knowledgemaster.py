@@ -37,14 +37,27 @@ GEOGRAPHY_PARENTS = {}
 
 
 def get_industries(db):
-    columns = ["industry_id", "industry_name", "is_active"]
-    order = "  ORDER BY industry_name"
-    result = db.get_data(
-        "tbl_industries", columns, condition=None,
-        condition_val=None, order=order
-    )
+    columns = [
+        "country_id", "country_name",
+        "domain_id", "domain_name",
+        "industry_id", "industry_name",
+        "is_active"
+    ]
+    query = "SELECT t1.country_id, t2.country_name, " + \
+            " t1.domain_id, t3.domain_name, " + \
+            " t1.industry_id, t1.industry_name, t1.is_active " + \
+            " FROM tbl_industries t1 " + \
+            " INNER JOIN tbl_countries t2 " + \
+            " on t1.country_id = t2.country_id " + \
+            " INNER JOIN tbl_domains t3 " + \
+            " on t1.domain_id = t3.domain_id"
+    rows = db.select_all(query)
+    result = []
+    if rows:
+        result = convert_to_dict(rows, columns)
+        print "result"
+        print result
     return return_industry(result)
-
 
 def get_industry_by_id(db, industry_id):
     if type(industry_id) is int:
@@ -63,24 +76,33 @@ def get_industry_by_id(db, industry_id):
 
 
 def get_active_industries(db):
-    columns = ["industry_id", "industry_name", "is_active"]
-    condition = " is_active = %s "
+    columns = ["country_id", "country_name", "domain_id", "domain_name", "industry_id", "industry_name", "is_active"]
+    tables = [
+        tbl_industries, tbl_countries, tbl_domains
+    ]
+    aliases = ["t1", "t2", "t3"]
+    condition = " is_active = %s and t1.country_id = t2.country_id and t1.domain_id = t3.domain_id "
     order = " ORDER BY industry_name"
-    result = db.get_data(
-        "tbl_industries", columns, condition, condition_val=[1], order=order
+    result = db.get_data_from_multiple_tables(
+        columns, tables, aliases, condition, condition_val=[1], order=order
     )
-
+    print "result"
+    print result
     return return_industry(result)
 
 
 def return_industry(data):
     results = []
     for d in data:
+        country_id = d["country_id"]
+        country_name = d["country_name"]
+        domain_id = d["domain_id"]
+        domain_name = d["domain_name"]
         industry_id = d["industry_id"]
         industry_name = d["industry_name"]
         is_active = bool(d["is_active"])
         results.append(core.Industry(
-            industry_id, industry_name, is_active
+            country_id, country_name, domain_id, domain_name, industry_id, industry_name, is_active
         ))
     return results
 
@@ -99,11 +121,11 @@ def check_duplicate_industry(db, industry_name, industry_id):
     return isDuplicate
 
 
-def save_industry(db, industry_name, user_id):
+def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     table_name = "tbl_industries"
     created_on = get_date_time()
-    columns = ["industry_name", "created_by", "created_on"]
-    values = [industry_name, str(user_id), str(created_on)]
+    columns = ["country_id", "domain_id", "industry_name", "created_by", "created_on"]
+    values = [country_ids, domain_ids, industry_name, str(user_id), str(created_on)]
     new_id = db.insert(table_name, columns, values)
     if new_id is False:
         raise process_error("E001")
@@ -113,14 +135,14 @@ def save_industry(db, industry_name, user_id):
         return True
 
 
-def update_industry(db, industry_id, industry_name, user_id):
+def update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id):
     oldData = get_industry_by_id(db, industry_id)
     if oldData is None:
         return False
     table_name = "tbl_industries"
-    columns = ["industry_name", "updated_by"]
+    columns = ["country_id", "domain_id" "industry_name", "updated_by"]
     where_condition = " industry_id = %s"
-    values = [industry_name, int(user_id), industry_id]
+    values = [country_ids, domain_ids, industry_name, int(user_id), industry_id]
     if (db.update(table_name, columns, values, where_condition)):
         action = "Industry type %s updated" % (industry_name)
         db.save_activity(user_id, 7, action)
