@@ -1,0 +1,468 @@
+[TOC]
+
+# Background Info
+
+
+#### SESSION_TOKEN, USERNAME, URL, MENU_NAME, EMPLOYEE_CODE, USER_GROUP_NAME, EMAIL_ID, ADDRESS, FORM_NAME, MAPPING_NAME, DOCUMENT_NAME, COMPLIANCE_NAME, FORMAT_FILE_NAME, GEOGRAPHY_MAPPING_NAME, UNIT_CODE, LEVEL_1_STATUTORY_NAME, CONTACT_NUMBER, UNIT_NAME, EMPLOYEE_NAME, COMPLIANCE_TASK_NAME
+
+All are String
+
+
+#### STATUTORY_ID, STATUTORY_MAPPING_ID, GROUP_ID, BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, COMPLIANCE_HISTORY_ID, SERVICE_PROVIDER_ID, CLIENT_USER_GROUP_ID, COMPLIANCE_ID, STATUTORY_NATURE_ID, COUNTRY_ID, DOMAIN_ID, FORM_ID, INDUSTRY_ID,USER_ID , USER_GROUP_ID, GEOGRAPHY_LEVEL_ID, GEOGRAPHY_ID, STATUTORY_LEVEL_ID, RESET_TOKEN, LEVEL_1_STATUTORY_ID,FORM_CATEGORY_ID
+
+All are int
+
+#### STATUS, IS_ACTIVE, HAS_READ
+
+All are Boolean
+
+#### TIMESTAMP
+
+Is Float
+
+#### Date
+
+is of format dd-mm-yyyy
+
+#### USER_LEVEL, LEVEL_POSITION
+
+	1 to 10
+
+#### USER_TYPE
+
+	- Inhouse
+	- ServiceProvider
+
+#### APPROVAL_STATUS
+
+    - Approve
+    - Reject
+    - ApproveAndNotify
+
+#### COMPLIANCE_APPROVAL_STATUS
+
+    - Concur
+    - RejectConcurrence
+    - Approve
+    - RejectApproval
+
+#### ASSIGN_STATUTORY_SUBMISSION_STATUS
+
+	- Submited
+	- Pending
+
+#### ASSIGN_STATUTORY_SUBMISSION_TYPE
+
+	- Submit
+	- Save
+
+#### NOTIFICATION_TYPE
+
+    - Notification
+    - Reminder
+    - Escalation
+
+#### FILTER_TYPE
+
+    - Group
+    - BusinessGroup
+    - LegalEntity
+    - Division
+    - Unit
+
+#### COMPLIANCE_FREQUENCY
+
+	- OneTime
+	- Periodical
+	- Review
+	- OnOccurrence
+
+#### COMPLIANCE_STATUS
+
+   	- Complied
+   	- DelayedCompliance
+   	- Inprogress
+   	- NotComplied
+
+#### APPLICABILITY_STATUS
+
+   	- Applicable
+   	- NotApplicable
+   	- NotOpted
+
+#### FORM_TYPE
+
+	- IT
+	- Knowledge
+	- Techno
+	- Client
+	- ServiceProvider
+
+#### REPEATS_TYPE
+
+	- Year
+	- Month
+	- Day
+
+#### DURATION_TYPE
+
+	- Day
+	- Hour
+
+#### FILTER_ID
+
+    GROUP_ID / BUSINESS_GROUP_ID / LEGAL_ENTITY_ID / DIVISION_ID / UNIT_ID
+
+#### FILTER_NAME
+
+    Country Name / Group Name / Business Group Name / Legal Entity Name / Division Name / Unit Name
+
+## FormCategory
+
+    {
+        "form_category_id": FORM_CATEGORY_ID,
+        "form_category": String
+    }
+
+## Form
+
+    {
+        "form_id": FORM_ID,
+        "form_name": String,
+        "form_url": String,
+        "form_type": FORM_TYPE
+    }
+
+## Menu
+
+    {
+      	"masters": [Form,],
+      	"transactions": [Form,],
+      	"reports": [Form,],
+      	"settings":[Form,]
+    }
+
+## UserGroup
+
+    {
+        "user_group_id": USER_GROUP_ID,
+        "user_group_name": USER_GROUP_NAME,
+        "form_category_id": FOMR_CATEGORY_ID,
+        "form_ids": [FORM_ID,]
+        "is_active": IS_ACTIVE
+    }
+
+## Country
+
+    {
+        "country_id": COUNTRY_ID,
+        "country_name": String,
+        "is_active": IS_ACTIVE
+    }
+
+## Domain
+
+    {
+        "domain_id": DOMAIN_ID,
+        "domain_name": String,
+        "is_active": IS_ACTIVE
+    }
+
+## GeographyLevel
+
+    {
+        "level_id": GEOGRAPHY_LEVEL_ID ,
+        "level_position": LEVEL_POSITION,
+        "level_name": String
+    }
+
+## Geography
+
+    {
+        "geography_id": GEOGRAPHY_ID,
+        "geography_name": String,
+        "level_id": GEOGRAPHY_LEVEL_ID,
+        "parent_ids": [GEOGRAPHY_ID,],
+        "is_active": IS_ACTIVE
+    }
+
+## Industry
+
+    {
+      	"industry_id": INDUSTRY_ID,
+      	"industry_name": String,
+      	"country_name": string,
+      	"domain_name": string,
+      	"is_active": IS_ACTIVE
+    }
+
+## StatutoryNature
+
+    {
+        "statutory_nature_id": STATUTORY_NATURE_ID,
+        "statutory_nature_name": String,
+        "is_active": IS_ACTIVE
+    }
+
+## StatutoryLevel
+    {
+      	"level_id": STATUTORY_LEVEL_ID,
+      	"level_position": LEVEL_POSITION,
+      	"level_name": String
+    }
+
+## Statutory
+
+    {
+        "statutory_id": STATUTORY_ID,
+        "statutory_name": String,
+        "level_id": STATUTORY_LEVEL_ID,
+        "parent_ids": [STATUTORY_ID,],
+        "is_active": IS_ACTIVE
+    }
+
+## Compliance
+
+    {
+        "compliance_id": COMPLIANCE_ID,
+        "statutory_provision" : String,
+        "compliance_task": String,
+        "description": String,
+        "document_name": DOCUMENT_NAME,
+        "format_file_name": [FORMAT_FILE_NAME,],
+        "penal_description": String,
+        "compliance_frequency": COMPLIANCE_FREQUENCY,
+        "statutory_dates": [
+            {
+                "statutory_date": int,
+                "statutory_month": int,
+                "trigger_before_days": int
+            },
+        ],
+        "repeats_type": REPEATS_TYPE,
+        "repeats_every": int,
+        "duration_type": DURATION_TYPE,
+        "duration": int,
+        "is_active": IS_ACTIVE
+    }
+
+## StatutoryMapping
+    {
+        "statutory_mapping_id":STATUTORY_MAPPING_ID,
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "industry_ids": [INDUSTRY_ID,],
+        "statutory_nature_id": STATUTORY_NATURE_ID,
+        "statutories": [ Statutory,],
+        "compliances":[Compliance,],
+        "geographies":[ GEOGRAPHY_ID,],
+        "approval_status": APPROVAL_STATUS
+    }
+
+## GroupCompany
+
+    {
+      	"client_id": CLIENT_ID,
+      	"group_name": String,
+    }
+
+## GroupCompanyDetail
+
+    {
+      	"client_id": CLIENT_ID,
+      	"group_company_name": String,
+      	"domains": [DOMAIN_ID, ],
+      	"logo": URL,
+      	"contract_from": Date,
+      	"contract_to": Date,
+      	"no_of_user_licence": int,
+      	"total_disk_space": float,
+      	"is_sms_subscribed": STATUS,
+      	"username": USERNAME
+    }
+
+## ClientConfiguration
+
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "period_from": int,
+        "period_to": int
+    }
+
+## BusinessGroup
+
+    {
+        "business_group_id": BUSINESS_GROUP_ID,
+        "business_group_name": NAME,
+        "client_id": CLIENT_ID
+    }
+
+## LegalEntity
+
+    {
+      	"legal_entity_id": LEGAL_ENTITY_ID,
+      	"legal_entity_name": NAME,
+      	"business_group_id": BUSINESS_GROUP_ID,
+      	"client_id": CLIENT_ID
+    }
+
+## Division
+
+    {
+        "division_id": DIVISION_ID,
+        "division_name": NAME,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "client_id": CLIENT_ID
+    }
+
+## Unit
+
+    {
+        "unit_id": UNIT_ID,
+        "division_id": DIVISION_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "client_id"  : CLIENT_ID,
+        "country_id": COUNTRY_ID,
+        "geography_id": GEOGRAPHY_ID,
+        "unit_code": UNIT_CODE,
+        "unit_name": NAME,
+        "industry_id": INDUSTRY_ID,
+        "unit_address": ADDRESS,
+        "postal_code": String,
+        "domain_ids":[DOMAIN_ID ,],
+        "is_active": IS_ACTIVE
+    }
+
+## ServiceProvider
+    {
+        "service_provider_id": SERVICE_PROVIDER_ID,
+        "service_provider_name": String,
+        "address": ADDRESS,
+        "contract_from": Date,
+        "contract_to": Date,
+        "contact_person": String,
+        "contact_no": CONTACT_NO,
+        "is_active": IS_ACTIVE
+    }
+
+## ClientUser
+    {
+        "user_id": USER_ID,
+        "email_id": EMAIL_ID,
+        "user_group_id": USER_GROUP_ID,
+        "employee_name": String,
+        "employee_code": EMPLOYEE_CODE,
+        "contact_no": CONTACT_NUMBER,
+        "seating_unit_id": UNIT_ID,
+        "seating_unit_name": String,
+        "user_level": USER_LEVEL,
+        "country_ids":[COUNTRY_ID,],
+        "domain_ids": [DOMAIN_ID,],
+        "unit_ids": [UNIT_ID,],
+        "is_admin": BOOLEAN,
+        "is_service_provider": BOOLEAN,
+        "service_provider_id": SERVICE_PROVIDER_ID,
+        "is_active": IS_ACTIVE
+    }
+
+## AssignedStatutory
+
+    {
+        "level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+        "level_1_statutory_name":LEVEL_1_STATUTORY_NAME,
+        "compliances":[
+          	{
+            	"compliance_id": COMPLIANCE_ID,
+            	"compliance_name": DOCUMENT_NAME - String,
+            	"description": String,
+            	"statutory_provision": String,
+            	"statutory_nature": String,
+            	"compliance_applicable_status": Boolean,
+            	"compliance_opted_status": Boolean,
+            	"compliance_remarks": String
+          	},
+        ],
+        "applicable_status": Boolean,
+        "not_applicable_remarks": String
+    }
+
+## ActiveCompliance
+
+    {
+        "compliance_history_id": COMPLIANCE_HISTORY_ID,
+        "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+        "compliance_frequency": COMPLIANCE_FREQUENCY,
+        "domain_name": String,
+        "start_date": DATE,
+        "due_date": DATE,
+        "compliance_status": COMPLIANCE_STATUS,
+        "validity_date": DATE,
+        "next_due_date": DATE,
+        "ageing": int,
+        "format_file_name": [ FORMAT_FILE_NAME,]
+    }
+
+## UpcomingCompliance
+
+    {
+        "compliance_history_id": COMPLIANCE_HISTORY_ID,
+        "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+        "domain_name": String,
+        "start_date": DATE,
+        "due_date": DATE,
+        "format_file_name": [ FORMAT_FILE_NAME,]
+    }
+
+## NumberOfCompliances
+
+    {
+        "complied_count": int,
+        "delayed_compliance_count": int,
+        "inprogress_compliance_count":int,
+        "not_complied_count":int
+    }
+
+## ChartFilters
+
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "from_date": DATE,
+        "to_date": DATE,
+        "filter_type": FILTER_TYPE,
+        "filter_id": FILTER_ID
+    }
+
+##  ComplianceStatusDrillDown
+
+    {
+        "unit_name": UNIT_CODE - UNIT_NAME,
+        "address": ADDRESS,
+        "compliances": [
+            {
+              	"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+              	"description": String,
+              	"assignee_name": EMPLOYEE_CODE - EMPLOYEE_NAME
+            },
+        ]
+    }
+
+## EscalationsDrillDown
+
+    {
+        "unit_name": UNIT_CODE - UNIT_NAME,
+        "address": ADDRESS,
+        "compliances": [
+            {
+              	"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+              	"description": String,
+              	"assignee_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+              	"compliance_status" : COMPLIANCE_STATUS,
+              	"ageing": int
+            },
+        ]
+    }
+
