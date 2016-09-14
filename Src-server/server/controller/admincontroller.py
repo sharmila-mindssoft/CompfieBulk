@@ -21,6 +21,7 @@ forms = [3, 4]
 # To Redirect Requests to Functions
 ########################################################
 def process_admin_request(request, db):
+
     session_token = request.session_token
     request_frame = request.request
     session_user = validate_user_session(db, session_token)
@@ -31,7 +32,6 @@ def process_admin_request(request, db):
 
     if session_user is None:
         return login.InvalidSessionToken()
-
     if type(request_frame) is admin.GetUserGroups:
         logger.logKnowledgeApi("GetUserGroups", " process begin")
         result = get_user_groups(db, request_frame, session_user)
@@ -71,6 +71,18 @@ def process_admin_request(request, db):
         logger.logKnowledgeApi("ChangeUserStatus", "process begin")
         result = change_user_status(db, request_frame, session_user)
         logger.logKnowledgeApi("ChangeUserStatus", "process end")
+
+    if type(request_frame) is admin.GetValidityDateList:
+        logger.logKnowledgeApi("GetValidityDateList", "process begin")
+        result = process_getvaliditydate_request(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("GetValidityDateList", "process end")
+
+    if type(request_frame) is admin.SaveValidityDateSettings:
+        logger.logKnowledgeApi("SaveValidityDateSettings", "process begin")
+        result = process_save_validity_date_settings(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveValidityDateSettings", "process end")
     return result
 
 
@@ -300,9 +312,9 @@ def save_user_record(db, request, session_user):
         return admin.SaveUserSuccess()
 
 
-########################################################
+#################################################################
 # To Handle Update user request
-########################################################
+#################################################################
 def update_user_record(db, request, session_user):
     user_id = request.user_id
     user_group_id = request.user_group_id
@@ -326,9 +338,9 @@ def update_user_record(db, request, session_user):
         return admin.UpdateUserSuccess()
 
 
-########################################################
+###################################################################
 # To Change the status of user
-########################################################
+###################################################################
 def change_user_status(db, request, session_user):
     user_id = request.user_id
     is_active = 0 if request.is_active is False else 1
@@ -337,3 +349,28 @@ def change_user_status(db, request, session_user):
 
     elif update_user_status(db, user_id, is_active):
         return admin.ChangeUserStatusSuccess()
+
+
+################################################################
+# To Get list of Countries, domains and Validity Dates
+################################################################
+def process_getvaliditydate_request(db, request, session_user):
+    countries = get_mapped_countries(db)
+    domains = get_mapped_domains(db)
+    validity_dates = get_validity_dates(db)
+    country_domain_mappings = get_country_domain_mappings(db)
+    return admin.GetValidityDateListSuccess(
+        countries=countries,
+        domains=domains,
+        validity_dates=validity_dates,
+        country_domain_mappings=country_domain_mappings
+    )
+
+
+################################################################
+# To save validity date settings
+################################################################
+def process_save_validity_date_settings(db, request, session_user):
+    save_validity_date_settings(
+        db, request.validity_date_settings, session_user)
+    return admin.SaveValidityDateSettingsSuccess()

@@ -2287,6 +2287,7 @@ def to_structure_VectorType_RecordType_mobile_ComplianceHistory(data):
         lst.append(to_structure_RecordType_mobile_ComplianceHistory(item))
     return lst
 
+
 def to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(data):
     data = parse_list(data, 0)
     lst = []
@@ -2294,6 +2295,33 @@ def to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabili
         lst.append(to_structure_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(item))
     return lst
 
-def to_structure_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(data):
+
+def to_structure_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(
+    data):
     from protocol import clientreport
     return clientreport.GetComplianceTaskApplicabilityStatusReportData.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_core_ValidityDates(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ValidityDates(item))
+    return lst
+
+
+def to_structure_RecordType_core_ValidityDates(data):
+    from protocol import core
+    return core.ValidityDates.to_structure(data)
+
+
+def to_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(
+    data
+):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_UnsignedIntegerType_32(key)
+        value = to_structure_VectorType_UnsignedIntegerType_32(value)
+        dict[key] = value
+    return dict

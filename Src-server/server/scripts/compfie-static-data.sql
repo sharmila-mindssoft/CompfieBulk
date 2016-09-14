@@ -47,6 +47,7 @@ INSERT INTO tbl_forms VALUES(24, 3, 3, 'Compliance List', '/knowledge/compliance
 INSERT INTO tbl_forms VALUES(25, 3, 3, 'Statutory Notifications List', '/knowledge/statutory-notifications-list', 25, null);
 -- common
 INSERT INTO tbl_forms VALUES(26, 4, 3, 'Audit Trail', '/knowledge/audit-trail', 26, null);
+INSERT INTO tbl_forms VALUES(27, 1, 1, 'Validity Date Settings', '/knowledge/validity-date-settings', 27, null);
 
 -- tbl_admin
 -- username, password -- 123456

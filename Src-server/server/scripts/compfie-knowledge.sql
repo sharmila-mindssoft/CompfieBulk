@@ -669,3 +669,20 @@ CREATE TABLE `tbl_client_replication_status` (
   `domain_id` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_validity_days_settings`;
+CREATE TABLE `tbl_validity_days_settings` (
+  `validity_days_id` int(11) NOT NULL AUTO_INCREMENT,
+  `country_id` int(11) DEFAULT NULL,
+  `domain_id` int(11) DEFAULT NULL,
+  `days` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`validity_days_id`),
+  KEY `fk_tbl_validity_days_settings_1_idx` (`country_id`),
+  KEY `fk_tbl_validity_days_settings_2_idx` (`domain_id`),
+  CONSTRAINT `fk_tbl_validity_days_settings_1` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_validity_days_settings_2` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

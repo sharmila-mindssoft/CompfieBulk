@@ -2754,10 +2754,10 @@ class StatutoryApprovalStatus(object):
             "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
+
 #
 # ComplianceApprovalStatus
 #
-
 class ComplianceApprovalStatus(object):
     def __init__(self, approval_status_id, approval_status):
         self.approval_status_id = approval_status_id
@@ -2765,23 +2765,29 @@ class ComplianceApprovalStatus(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["approval_status_id", "approval_status"])
+        data = parse_dictionary(
+            data, ["approval_status_id", "approval_status"]
+        )
         approval_status_id = data.get("approval_status_id")
-        approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
+        approval_status_id = parse_structure_UnsignedIntegerType_32(
+            approval_status_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(
+            approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
-            "approval_status_id": to_structure_SignedIntegerType_8(self.approval_status_id),
-            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
+            "approval_status_id": to_structure_SignedIntegerType_8(
+                self.approval_status_id),
+            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(
+                self.approval_status),
         }
+
 
 #
 # Client Level One Statutory
 #
-
 class ClientLevelOneStatutory(object):
     def __init__(self, statutory):
         self.statutory = statutory
@@ -2798,10 +2804,10 @@ class ClientLevelOneStatutory(object):
             "statutory": to_structure_CustomTextType_50(self.statutory)
         }
 
+
 #
 # Client Compliance Filter
 #
-
 class ComplianceFilter(object):
     def __init__(self, compliance_id, compliance_name):
         self.compliance_id = compliance_id
@@ -2820,6 +2826,49 @@ class ComplianceFilter(object):
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
+            "compliance_id": to_structure_UnsignedIntegerType_32(
+                self.compliance_id),
+            "compliance_name": to_structure_CustomTextType_500(
+                self.compliance_name),
+        }
+
+
+#
+# Validity Dates
+#
+class ValidityDates(object):
+    def __init__(self, validity_days_id, country_id, domain_id, validity_days):
+        self.validity_days_id = validity_days_id
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.validity_days = validity_days
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "validity_days_id", "country_id", "domain_id", "validity_days"
+            ]
+        )
+        validity_days_id = data.get("validity_days_id")
+        validity_days_id = parse_structure_OptionalType_UnsignedIntegerType_32(
+            validity_days_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        validity_days = data.get("validity_days")
+        validity_days = parse_structure_UnsignedIntegerType_32(validity_days)
+        return ValidityDates(
+            validity_days_id, country_id, domain_id, validity_days
+        )
+
+    def to_structure(self):
+        return {
+            "validity_days_id": to_structure_OptionalType_UnsignedIntegerType_32(
+                self.validity_days_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "validity_days": to_structure_UnsignedIntegerType_32(
+                self.validity_days)
         }

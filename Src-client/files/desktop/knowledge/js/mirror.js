@@ -1334,6 +1334,40 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getValidityDateList(callback){
+    callerName = 'admin';
+    var request = [
+      'GetValidityDateList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function get_validity_day_setting(
+    validity_days_id, country_id, domain_id, validity_days
+  ){
+      if(!validity_days_id){
+        validity_days_id = null;
+      }
+      return {
+        "validity_days_id": validity_days_id,
+        "country_id": country_id,
+        "domain_id": domain_id,
+        "validity_days": validity_days 
+      }
+  }
+
+  function saveValidityDateSettings(
+    validity_date_settings, callback
+  ){
+    callerName = "admin";
+    var request = [
+      'SaveValidityDateSettings',
+      {
+        "validity_date_settings": validity_date_settings
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
 
   function progress(percent, $element) {
     var progressBarWidth = percent * $element.width() / 100;
@@ -1505,7 +1539,10 @@ function initMirror() {
     updateNotificationStatus: updateNotificationStatus,
     createNewAdmin: createNewAdmin,
     getNextUnitCode: getNextUnitCode,
-    uploadFormatFile: uploadFormatFile
+    uploadFormatFile: uploadFormatFile,
+    getValidityDateList: getValidityDateList,
+    get_validity_day_setting: get_validity_day_setting,
+    saveValidityDateSettings: saveValidityDateSettings
   };
 }
 var mirror = initMirror();

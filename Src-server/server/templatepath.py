@@ -245,6 +245,11 @@ TEMPLATE_PATHS = [
         "files/desktop/knowledge/user-master/usermaster.html",
         None, {}
     ),
+    (
+        "/knowledge/validity-date-settings",
+        "files/desktop/knowledge/validity-date-settings/validitydatesettings.html",
+        None, {}
+    ),
     # knowledge manager transaction
     (
         "/knowledge/approve-statutory-mapping",

@@ -173,7 +173,6 @@ class Database(object):
                 )
                 cursor.execute(query, param)
             elif type(param) is list:
-                # print "inside elif "
                 if len(param) > 1:
                     logger.logQuery(
                         self._for_client, "execute_insert",
@@ -577,7 +576,6 @@ class Database(object):
     # given table. if a row exists this function will return
     # True otherwise returns false
     ########################################################
-
     def is_already_exists(self, table, condition, condition_val):
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
@@ -646,3 +644,35 @@ class Database(object):
         q = "delete from tbl_user_sessions where " + \
             " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
         self.execute(q, [session_cutouff])
+
+    def reconnect(self):
+        self.close()
+        self.connect()
+
+    def call_proc(self, procedure_name, args, columns=None):
+        # args is tuple e.g, (parm1, parm2)
+        cursor = self.cursor()
+        assert cursor is not None
+        if args is None:
+            try:
+                cursor.callproc(procedure_name)
+            except (AttributeError, mysql.OperationalError):
+                self.reconnect()
+                self.begin()
+                cursor = self.cursor()
+                cursor.callproc(procedure_name)
+        else:
+            try:
+                cursor.callproc(procedure_name, args)
+            except (AttributeError, mysql.OperationalError):
+                self.reconnect()
+                self.begin()
+                cursor = self.cursor()
+                cursor.callproc(procedure_name, args)
+        rows = cursor.fetchall()
+        cursor.nextset()
+        if columns is not None:
+            result = convert_to_dict(rows, columns)
+            return result
+        else:
+            return rows

@@ -1,11 +1,11 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (
+    parse_dictionary, parse_static_list
+)
 from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu,
     parse_structure_CustomTextType_100,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_VariantType_admin_Request,
-    parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_UserGroup,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_FormCategory,
@@ -14,17 +14,17 @@ from protocol.parse_structure import (
     parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_UserDetails,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
-    parse_structure_RecordType_admin_UserGroup,
     parse_structure_VectorType_RecordType_admin_UserGroup,
     parse_structure_OptionalType_CustomTextType_250,
-    parse_structure_OptionalType_CustomTextType_50
+    parse_structure_OptionalType_CustomTextType_50,
+    parse_structure_VectorType_RecordType_core_ValidityDates,
+    parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32
 )
 from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu,
     to_structure_CustomTextType_100,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_VariantType_admin_Request,
-    to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_core_UserGroup,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_core_FormCategory,
@@ -32,17 +32,18 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Country, to_structure_Bool,
     to_structure_VectorType_RecordType_core_UserDetails,
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
-    to_structure_RecordType_admin_UserGroup,
     to_structure_VectorType_RecordType_admin_UserGroup,
     to_structure_UnsignedIntegerType_32,
     to_structure_OptionalType_CustomTextType_250,
-    to_structure_OptionalType_CustomTextType_50
+    to_structure_OptionalType_CustomTextType_50,
+    to_structure_VectorType_RecordType_core_ValidityDates,
+    to_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32
 )
+
 
 #
 # Request
 #
-
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
@@ -65,6 +66,7 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+
 class GetUserGroups(Request):
     def __init__(self):
         pass
@@ -78,6 +80,7 @@ class GetUserGroups(Request):
         return {
         }
 
+
 class SaveUserGroup(Request):
     def __init__(self, user_group_name, form_category_id, form_ids):
         self.user_group_name = user_group_name
@@ -90,7 +93,8 @@ class SaveUserGroup(Request):
         user_group_name = data.get("ug_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         form_category_id = data.get("fc_id")
-        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(
+            form_category_id)
         form_ids = data.get("f_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
         return SaveUserGroup(user_group_name, form_category_id, form_ids)
@@ -99,11 +103,15 @@ class SaveUserGroup(Request):
         return {
             "ug_name": to_structure_CustomTextType_50(self.user_group_name),
             "fc_id": to_structure_SignedIntegerType_8(self.form_category_id),
-            "f_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
+            "f_ids": to_structure_VectorType_SignedIntegerType_8(
+                self.form_ids)
         }
 
+
 class UpdateUserGroup(Request):
-    def __init__(self, user_group_id, user_group_name, form_category_id, form_ids):
+    def __init__(
+        self, user_group_id, user_group_name, form_category_id, form_ids
+    ):
         self.user_group_id = user_group_id
         self.user_group_name = user_group_name
         self.form_category_id = form_category_id
@@ -117,18 +125,22 @@ class UpdateUserGroup(Request):
         user_group_name = data.get("ug_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         form_category_id = data.get("fc_id")
-        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(
+            form_category_id)
         form_ids = data.get("f_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
-        return UpdateUserGroup(user_group_id, user_group_name, form_category_id, form_ids)
+        return UpdateUserGroup(
+            user_group_id, user_group_name, form_category_id, form_ids)
 
     def to_inner_structure(self):
         return {
             "ug_id": to_structure_SignedIntegerType_8(self.user_group_id),
             "ug_name": to_structure_CustomTextType_50(self.user_group_name),
             "fc_id": to_structure_SignedIntegerType_8(self.form_category_id),
-            "f_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
+            "f_ids": to_structure_VectorType_SignedIntegerType_8(
+                self.form_ids)
         }
+
 
 class ChangeUserGroupStatus(Request):
     def __init__(self, user_group_id, is_active):
@@ -150,6 +162,7 @@ class ChangeUserGroupStatus(Request):
             "active": to_structure_Bool(self.is_active),
         }
 
+
 class GetUsers(Request):
     def __init__(self):
         pass
@@ -163,8 +176,13 @@ class GetUsers(Request):
         return {
         }
 
+
 class SaveUser(Request):
-    def __init__(self, email_id, user_group_id, employee_name, employee_code, contact_no, address, designation, country_ids, domain_ids):
+    def __init__(
+        self, email_id, user_group_id, employee_name,
+        employee_code, contact_no, address, designation,
+        country_ids, domain_ids
+    ):
         self.email_id = email_id
         self.user_group_id = user_group_id
         self.employee_name = employee_name
@@ -178,7 +196,8 @@ class SaveUser(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "email", "ug_id", "emp_n", "emp_c", "c_n", "add", "desig", "c_ids", "d_ids"])
+            "email", "ug_id", "emp_n", "emp_c", "c_n",
+            "add", "desig", "c_ids", "d_ids"])
         email_id = data.get("email")
         email_id = parse_structure_CustomTextType_100(email_id)
         user_group_id = data.get("ug_id")
@@ -192,13 +211,15 @@ class SaveUser(Request):
         address = data.get("add")
         address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("desig")
-        designation = parse_structure_OptionalType_CustomTextType_50(designation)
+        designation = parse_structure_OptionalType_CustomTextType_50(
+            designation)
         country_ids = data.get("c_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
+        country_ids = parse_structure_VectorType_SignedIntegerType_8(
+            country_ids)
         domain_ids = data.get("d_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         return SaveUser(
-            email_id, user_group_id, employee_name, employee_code, contact_no, 
+            email_id, user_group_id, employee_name, employee_code, contact_no,
             address, designation, country_ids, domain_ids
         )
 
@@ -210,13 +231,21 @@ class SaveUser(Request):
             "emp_c": to_structure_CustomTextType_50(self.employee_code),
             "c_n": to_structure_CustomTextType_20(self.contact_no),
             "add": to_structure_OptionalType_CustomTextType_250(self.address),
-            "desig": to_structure_OptionalType_CustomTextType_50(self.designation),
-            "c_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "d_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "desig": to_structure_OptionalType_CustomTextType_50(
+                self.designation),
+            "c_ids": to_structure_VectorType_SignedIntegerType_8(
+                self.country_ids),
+            "d_ids": to_structure_VectorType_SignedIntegerType_8(
+                self.domain_ids),
         }
 
+
 class UpdateUser(Request):
-    def __init__(self, user_id, user_group_id, employee_name, employee_code, contact_no, address, designation, country_ids, domain_ids):
+    def __init__(
+        self, user_id, user_group_id, employee_name,
+        employee_code, contact_no, address, designation,
+        country_ids, domain_ids
+    ):
         self.user_id = user_id
         self.user_group_id = user_group_id
         self.employee_name = employee_name
@@ -230,7 +259,7 @@ class UpdateUser(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "u_id", "ug_id", "emp_n", "emp_c", "c_n", 
+            "u_id", "ug_id", "emp_n", "emp_c", "c_n",
             "add", "desig", "c_ids", "d_ids"
         ])
         user_id = data.get("u_id")
@@ -246,13 +275,15 @@ class UpdateUser(Request):
         address = data.get("add")
         address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("desig")
-        designation = parse_structure_OptionalType_CustomTextType_50(designation)
+        designation = parse_structure_OptionalType_CustomTextType_50(
+            designation)
         country_ids = data.get("c_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
+        country_ids = parse_structure_VectorType_SignedIntegerType_8(
+            country_ids)
         domain_ids = data.get("d_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         return UpdateUser(
-            user_id, user_group_id, employee_name, employee_code, contact_no, 
+            user_id, user_group_id, employee_name, employee_code, contact_no,
             address, designation, country_ids, domain_ids
         )
 
@@ -264,10 +295,14 @@ class UpdateUser(Request):
             "emp_c": to_structure_CustomTextType_50(self.employee_code),
             "c_n": to_structure_CustomTextType_20(self.contact_no),
             "add": to_structure_OptionalType_CustomTextType_250(self.address),
-            "desig": to_structure_OptionalType_CustomTextType_50(self.designation),
-            "c_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "d_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "desig": to_structure_OptionalType_CustomTextType_50(
+                self.designation),
+            "c_ids": to_structure_VectorType_SignedIntegerType_8(
+                self.country_ids),
+            "d_ids": to_structure_VectorType_SignedIntegerType_8(
+                self.domain_ids),
         }
+
 
 class ChangeUserStatus(Request):
     def __init__(self, user_id, is_active):
@@ -290,8 +325,45 @@ class ChangeUserStatus(Request):
         }
 
 
+class GetValidityDateList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetValidityDateList()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class SaveValidityDateSettings(Request):
+    def __init__(self, validity_date_settings):
+        self.validity_date_settings = validity_date_settings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["validity_date_settings"])
+        validity_date_settings = data.get("validity_date_settings")
+        validity_date_settings = parse_structure_VectorType_RecordType_core_ValidityDates(
+            validity_date_settings)
+        return SaveValidityDateSettings(validity_date_settings)
+
+    def to_inner_structure(self):
+        return {
+            "validity_date_settings": to_structure_VectorType_RecordType_core_ValidityDates(
+                self.validity_date_settings)
+        }
+
+
 def _init_Request_class_map():
-    classes = [GetUserGroups, SaveUserGroup, UpdateUserGroup, ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser, ChangeUserStatus]
+    classes = [
+        GetUserGroups, SaveUserGroup, UpdateUserGroup,
+        ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser,
+        ChangeUserStatus, GetValidityDateList, SaveValidityDateSettings
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -299,10 +371,10 @@ def _init_Request_class_map():
 
 _Request_class_map = _init_Request_class_map()
 
+
 #
 # Response
 #
-
 class Response(object):
     def to_structure(self):
         name = type(self).__name__
@@ -325,9 +397,12 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+
 class UserGroup(object):
-    def __init__(self, user_group_id, user_group_name, form_category_id, 
-        form_ids, is_active, no_of_users):
+    def __init__(
+        self, user_group_id, user_group_name, form_category_id,
+        form_ids, is_active, no_of_users
+    ):
         self.user_group_id = user_group_id
         self.user_group_name = user_group_name
         self.form_category_id = form_category_id
@@ -337,32 +412,43 @@ class UserGroup(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_group_id", "user_group_name", 
-            "form_category_id", "form_ids", "is_active", "no_of_users"])
+        data = parse_dictionary(
+            data, [
+                "user_group_id", "user_group_name",
+                "form_category_id", "form_ids", "is_active", "no_of_users"
+            ])
         user_group_id = data.get("user_group_id")
         user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(
+            form_category_id)
         form_ids = data.get("form_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         no_of_users = data.get("no_of_users")
         no_of_users = parse_structure_UnsignedIntegerType_32(no_of_users)
-        return UserGroup(user_group_id, user_group_name, form_category_id,
+        return UserGroup(
+            user_group_id, user_group_name, form_category_id,
             form_ids, is_active, no_of_users)
 
     def to_structure(self):
         return {
-            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
-            "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
-            "form_category_id": to_structure_SignedIntegerType_8(self.form_category_id),
-            "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
+            "user_group_id": to_structure_UnsignedIntegerType_32(
+                self.user_group_id),
+            "user_group_name": to_structure_CustomTextType_50(
+                self.user_group_name),
+            "form_category_id": to_structure_SignedIntegerType_8(
+                self.form_category_id),
+            "form_ids": to_structure_VectorType_SignedIntegerType_8(
+                self.form_ids),
             "is_active": to_structure_Bool(self.is_active),
-            "no_of_users" : to_structure_UnsignedIntegerType_32(self.no_of_users)
+            "no_of_users": to_structure_UnsignedIntegerType_32(
+                self.no_of_users)
         }
+
 
 class GetUserGroupsSuccess(Response):
     def __init__(self, form_categories, forms, user_groups):
@@ -372,21 +458,29 @@ class GetUserGroupsSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["form_categories", "forms", "user_groups"])
+        data = parse_dictionary(
+            data, ["form_categories", "forms", "user_groups"])
         form_categories = data.get("form_categories")
-        form_categories = parse_structure_VectorType_RecordType_core_FormCategory(form_categories)
+        form_categories = parse_structure_VectorType_RecordType_core_FormCategory(
+            form_categories)
         forms = data.get("forms")
-        forms = parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(forms)
+        forms = parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(
+            forms)
         user_groups = data.get("user_groups")
-        user_groups = parse_structure_VectorType_RecordType_admin_UserGroup(user_groups)
+        user_groups = parse_structure_VectorType_RecordType_admin_UserGroup(
+            user_groups)
         return GetUserGroupsSuccess(form_categories, forms, user_groups)
 
     def to_inner_structure(self):
         return {
-            "form_categories": to_structure_VectorType_RecordType_core_FormCategory(self.form_categories),
-            "forms": to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(self.forms),
-            "user_groups": to_structure_VectorType_RecordType_admin_UserGroup(self.user_groups),
+            "form_categories": to_structure_VectorType_RecordType_core_FormCategory(
+                self.form_categories),
+            "forms": to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(
+                self.forms),
+            "user_groups": to_structure_VectorType_RecordType_admin_UserGroup(
+                self.user_groups),
         }
+
 
 class SaveUserGroupSuccess(Response):
     def __init__(self):
@@ -401,6 +495,7 @@ class SaveUserGroupSuccess(Response):
         return {
         }
 
+
 class GroupNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -413,6 +508,7 @@ class GroupNameAlreadyExists(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class UpdateUserGroupSuccess(Response):
     def __init__(self):
@@ -427,6 +523,7 @@ class UpdateUserGroupSuccess(Response):
         return {
         }
 
+
 class InvalidUserGroupId(Response):
     def __init__(self):
         pass
@@ -439,6 +536,7 @@ class InvalidUserGroupId(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class ChangeUserGroupStatusSuccess(Response):
     def __init__(self):
@@ -453,6 +551,7 @@ class ChangeUserGroupStatusSuccess(Response):
         return {
         }
 
+
 class GetUsersSuccess(Response):
     def __init__(self, user_groups, domains, countries, users):
         self.user_groups = user_groups
@@ -462,24 +561,32 @@ class GetUsersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_groups", "domains", "countries", "users"])
+        data = parse_dictionary(
+            data, ["user_groups", "domains", "countries", "users"])
         user_groups = data.get("user_groups")
-        user_groups = parse_structure_VectorType_RecordType_core_UserGroup(user_groups)
+        user_groups = parse_structure_VectorType_RecordType_core_UserGroup(
+            user_groups)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        countries = parse_structure_VectorType_RecordType_core_Country(
+            countries)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_core_UserDetails(users)
         return GetUsersSuccess(user_groups, domains, countries, users)
 
     def to_inner_structure(self):
         return {
-            "user_groups": to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "users": to_structure_VectorType_RecordType_core_UserDetails(self.users),
+            "user_groups": to_structure_VectorType_RecordType_core_UserGroup(
+                self.user_groups),
+            "domains": to_structure_VectorType_RecordType_core_Domain(
+                self.domains),
+            "countries": to_structure_VectorType_RecordType_core_Country(
+                self.countries),
+            "users": to_structure_VectorType_RecordType_core_UserDetails(
+                self.users),
         }
+
 
 class SaveUserSuccess(Response):
     def __init__(self):
@@ -494,6 +601,7 @@ class SaveUserSuccess(Response):
         return {
         }
 
+
 class EmailIDAlreadyExists(Response):
     def __init__(self):
         pass
@@ -506,6 +614,7 @@ class EmailIDAlreadyExists(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class ContactNumberAlreadyExists(Response):
     def __init__(self):
@@ -520,6 +629,7 @@ class ContactNumberAlreadyExists(Response):
         return {
         }
 
+
 class EmployeeCodeAlreadyExists(Response):
     def __init__(self):
         pass
@@ -532,6 +642,7 @@ class EmployeeCodeAlreadyExists(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class InvalidUserId(Response):
     def __init__(self):
@@ -546,6 +657,7 @@ class InvalidUserId(Response):
         return {
         }
 
+
 class CannotDeactivateUserExists(Response):
     def __init__(self):
         pass
@@ -559,6 +671,7 @@ class CannotDeactivateUserExists(Response):
         return {
         }
 
+
 class UpdateUserSuccess(Response):
     def __init__(self):
         pass
@@ -571,6 +684,7 @@ class UpdateUserSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class ChangeUserStatusSuccess(Response):
     def __init__(self):
@@ -586,12 +700,73 @@ class ChangeUserStatusSuccess(Response):
         }
 
 
+class SaveValidityDateSettingsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveValidityDateSettingsSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class GetValidityDateListSuccess(Response):
+    def __init__(
+        self, countries, domains, validity_dates, country_domain_mappings
+    ):
+        self.countries = countries
+        self.domains = domains
+        self.validity_dates = validity_dates
+        self.country_domain_mappings = country_domain_mappings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "countries", "domains", "validity_dates",
+                "country_domain_mappings"
+            ])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(
+            countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        validity_dates = data.get("validity_dates")
+        validity_dates = parse_structure_VectorType_RecordType_core_ValidityDates(
+            validity_dates)
+        country_domain_mappings = data.get("country_domain_mappings")
+        country_domain_mappings = parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(country_domain_mappings)
+        return GetValidityDateListSuccess(
+            countries, domains, validity_dates, country_domain_mappings
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(
+                self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(
+                self.domains),
+            "validity_dates": to_structure_VectorType_RecordType_core_ValidityDates(
+                self.validity_dates),
+            "country_domain_mappings": to_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(
+                self.country_domain_mappings)
+        }
+
+
 def _init_Response_class_map():
-    classes = [GetUserGroupsSuccess, SaveUserGroupSuccess, 
-    GroupNameAlreadyExists, UpdateUserGroupSuccess, InvalidUserGroupId, 
-    ChangeUserGroupStatusSuccess, GetUsersSuccess, SaveUserSuccess, 
-    EmailIDAlreadyExists, ContactNumberAlreadyExists, EmployeeCodeAlreadyExists, 
-    InvalidUserId, UpdateUserSuccess, ChangeUserStatusSuccess, CannotDeactivateUserExists]
+    classes = [
+        GetUserGroupsSuccess, SaveUserGroupSuccess,
+        GroupNameAlreadyExists, UpdateUserGroupSuccess, InvalidUserGroupId,
+        ChangeUserGroupStatusSuccess, GetUsersSuccess, SaveUserSuccess,
+        EmailIDAlreadyExists, ContactNumberAlreadyExists,
+        EmployeeCodeAlreadyExists, InvalidUserId, UpdateUserSuccess,
+        ChangeUserStatusSuccess, CannotDeactivateUserExists,
+        GetValidityDateListSuccess, SaveValidityDateSettingsSuccess
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -599,10 +774,10 @@ def _init_Response_class_map():
 
 _Response_class_map = _init_Response_class_map()
 
+
 #
 # RequestFormat
 #
-
 class RequestFormat(object):
     def __init__(self, session_token, request):
         self.session_token = session_token
@@ -619,7 +794,7 @@ class RequestFormat(object):
 
     def to_structure(self):
         return {
-            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "session_token": to_structure_CustomTextType_50(
+                self.session_token),
             "request": to_structure_VariantType_admin_Request(self.request),
         }
-

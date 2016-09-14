@@ -233,7 +233,10 @@ var message = {
   'promote_admin_change_status': 'Are you sure, you want to change promote client admin?',
   'nocompliance_selected': 'No compliance selected',
   'completion_lt_validity': 'Completion Date must be less than or equal to Validity Date',
-  'compliance_update_failed': 'Compliance update failed. A Compliance with same due date for same unit has already submitted.'
+  'compliance_update_failed': 'Compliance update failed. A Compliance with same due date for same unit has already submitted.',
+  'invalid_validity_days': 'Validity days must be less than 366',
+  'validity_date_required': 'Validity date required',
+  'settings_save_success': 'Validity date settings saved successfully'
 };
 function clearMessage() {
   $('.error-message').hide();

@@ -2216,3 +2216,26 @@ def parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientrepor
         value = parse_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(value)
         dict[key] = value
     return dict
+
+
+def parse_structure_VectorType_RecordType_core_ValidityDates(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_ValidityDates(item))
+    return lst
+
+
+def parse_structure_RecordType_core_ValidityDates(data):
+    from protocol import core
+    return core.ValidityDates.parse_structure(data)
+
+
+def parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_UnsignedIntegerType_32(key)
+        value = parse_structure_VectorType_UnsignedIntegerType_32(value)
+        d[key] = value
+    return d
