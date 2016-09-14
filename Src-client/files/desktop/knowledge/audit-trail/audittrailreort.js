@@ -154,7 +154,7 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
 };
 
 Auditpage.prototype.fetchData = function() {
-    a_page.displayLoader();
+    this.displayLoader();
     var t_this = this;
     _from_date = this.getValue("fromdate", null);
     _to_date = this.getValue("todate", null);
@@ -210,7 +210,7 @@ Auditpage.prototype.createPageView = function(a_obj, total_records) {
     a_obj.hidePageView();
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
-        visiblePages: "5",
+        visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
             if (parseInt(a_obj._on_current_page) != cPage) {
