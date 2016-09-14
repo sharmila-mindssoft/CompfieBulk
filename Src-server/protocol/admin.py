@@ -1,11 +1,9 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu,
     parse_structure_CustomTextType_100,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_VariantType_admin_Request,
-    parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_UserGroup,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_FormCategory,
@@ -14,7 +12,6 @@ from protocol.parse_structure import (
     parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_UserDetails,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
-    parse_structure_RecordType_admin_UserGroup,
     parse_structure_VectorType_RecordType_admin_UserGroup,
     parse_structure_OptionalType_CustomTextType_250,
     parse_structure_OptionalType_CustomTextType_50
@@ -24,7 +21,6 @@ from protocol.to_structure import (
     to_structure_CustomTextType_100,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_VariantType_admin_Request,
-    to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_core_UserGroup,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_core_FormCategory,
@@ -32,7 +28,6 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Country, to_structure_Bool,
     to_structure_VectorType_RecordType_core_UserDetails,
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
-    to_structure_RecordType_admin_UserGroup,
     to_structure_VectorType_RecordType_admin_UserGroup,
     to_structure_UnsignedIntegerType_32,
     to_structure_OptionalType_CustomTextType_250,
@@ -198,7 +193,7 @@ class SaveUser(Request):
         domain_ids = data.get("d_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         return SaveUser(
-            email_id, user_group_id, employee_name, employee_code, contact_no, 
+            email_id, user_group_id, employee_name, employee_code, contact_no,
             address, designation, country_ids, domain_ids
         )
 
@@ -230,7 +225,7 @@ class UpdateUser(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "u_id", "ug_id", "emp_n", "emp_c", "c_n", 
+            "u_id", "ug_id", "emp_n", "emp_c", "c_n",
             "add", "desig", "c_ids", "d_ids"
         ])
         user_id = data.get("u_id")
@@ -252,7 +247,7 @@ class UpdateUser(Request):
         domain_ids = data.get("d_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         return UpdateUser(
-            user_id, user_group_id, employee_name, employee_code, contact_no, 
+            user_id, user_group_id, employee_name, employee_code, contact_no,
             address, designation, country_ids, domain_ids
         )
 
@@ -326,7 +321,7 @@ class Response(object):
         raise NotImplementedError
 
 class UserGroup(object):
-    def __init__(self, user_group_id, user_group_name, form_category_id, 
+    def __init__(self, user_group_id, user_group_name, form_category_id,
         form_ids, is_active, no_of_users):
         self.user_group_id = user_group_id
         self.user_group_name = user_group_name
@@ -337,7 +332,7 @@ class UserGroup(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_group_id", "user_group_name", 
+        data = parse_dictionary(data, ["user_group_id", "user_group_name",
             "form_category_id", "form_ids", "is_active", "no_of_users"])
         user_group_id = data.get("user_group_id")
         user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
@@ -587,10 +582,10 @@ class ChangeUserStatusSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetUserGroupsSuccess, SaveUserGroupSuccess, 
-    GroupNameAlreadyExists, UpdateUserGroupSuccess, InvalidUserGroupId, 
-    ChangeUserGroupStatusSuccess, GetUsersSuccess, SaveUserSuccess, 
-    EmailIDAlreadyExists, ContactNumberAlreadyExists, EmployeeCodeAlreadyExists, 
+    classes = [GetUserGroupsSuccess, SaveUserGroupSuccess,
+    GroupNameAlreadyExists, UpdateUserGroupSuccess, InvalidUserGroupId,
+    ChangeUserGroupStatusSuccess, GetUsersSuccess, SaveUserSuccess,
+    EmailIDAlreadyExists, ContactNumberAlreadyExists, EmployeeCodeAlreadyExists,
     InvalidUserId, UpdateUserSuccess, ChangeUserStatusSuccess, CannotDeactivateUserExists]
     class_map = {}
     for c in classes:
