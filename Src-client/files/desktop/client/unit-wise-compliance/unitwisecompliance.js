@@ -180,7 +180,7 @@ function createPageView(perPage){
   $('#pagination-rpt').unbind('page');
   $('#pagination-rpt').twbsPagination({
     totalPages: Math.ceil(totalRecord / perPage),
-    visiblePages: "5",
+    visiblePages: visiblePageCount,
     onPageClick: function (event, page) {
         cPage = parseInt(page);
         paginationLoad(cPage);
