@@ -180,9 +180,8 @@ class API(object):
 
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
-            # if str(e).find("expected a") is False :
-            #     print "------- rollbacked"
-            self._db.rollback()
+            if str(e).find("expected a") is False :
+                self._db.rollback()
             response.set_status(400)
             response.send(str(e))
 
