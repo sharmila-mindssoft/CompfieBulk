@@ -3411,3 +3411,22 @@ div.scrollable {
 	color: #ffffff;
 
 }
+
+
+.pagination-view{
+	width: 100%;
+}
+.pagination-view tr td {
+	vertical-align: middle;
+}
+.compliance_count {
+	font-size: 0.813em;
+}
+.divider-view{
+	font-size: 0.813em;
+	padding-left:10px; 
+	padding-right:10px;
+}
+.items-per-page{
+	font-size: 0.813em;
+}

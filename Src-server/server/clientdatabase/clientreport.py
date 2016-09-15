@@ -78,7 +78,7 @@ def report_unitwise_compliance(
 def report_assigneewise_compliance(
     db, country_id, domain_id, business_group_id,
     legal_entity_id, division_id, unit_id, assignee,
-    session_user, from_count, to_count
+    session_user, from_count, page_count
 ):
     columns = [
         "country_id", "unit_id", "compliance_id", "statutory_dates",
@@ -191,7 +191,7 @@ def report_assigneewise_compliance(
         q += qry_where
         param.extend(qry_where_val)
 
-    param.extend([from_count, to_count])
+    param.extend([from_count, page_count])
     rows = db.select_all("%s %s" % (q, order), param)
 
     data = convert_to_dict(rows, columns)

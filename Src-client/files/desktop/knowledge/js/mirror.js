@@ -641,7 +641,7 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
-  
+
   function updateStatutoryMapping(mappingData, callback) {
     var request = [
       'UpdateStatutoryMapping',
@@ -1276,7 +1276,7 @@ function initMirror() {
     callerName = 'techno_report';
     apiRequest(callerName, request, callback);
   }
-  function getAuditTrail(fromDate, toDate, userId, formId, recordCount, callback) {
+  function getAuditTrail(fromDate, toDate, userId, formId, recordCount, pageCount, callback) {
     callerName = 'general';
     var request = [
       'GetAuditTrails',
@@ -1285,7 +1285,8 @@ function initMirror() {
         'to_date': toDate,
         'user_id': userId,
         'form_id': formId,
-        'record_count': recordCount
+        'record_count': recordCount,
+        'page_count': pageCount
       }
     ];
     apiRequest(callerName, request, callback);

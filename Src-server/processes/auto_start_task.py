@@ -4,9 +4,9 @@ import datetime
 import json
 import traceback
 import threading
-from server import logger
 from datetime import timedelta
-from server.dbase import Database
+from processes.process_logger import logProcessError, logProcessInfo
+from processes.process_dbase import Database
 # from server.countrytimestamp import countries
 from server.emailcontroller import EmailHandler
 from server.common import (
@@ -24,6 +24,7 @@ email = EmailHandler()
 __all__ = [
     "KnowledgeConnect"
 ]
+
 
 class KnowledgeConnect(object):
     def __init__(self):
@@ -46,7 +47,7 @@ class KnowledgeConnect(object):
             self._k_db.commit()
             return convert_to_dict(rows, ["country_id", "country_name"])
         except Exception, e:
-            print e
+            logProcessError("get_countries", str(e))
             self._k_db.rollback()
 
     def get_client_db_list(self):
@@ -55,6 +56,7 @@ class KnowledgeConnect(object):
             query = "SELECT T1.client_id, T1.database_ip, T1.database_port, \
                 T1.database_username, T1.database_password, T1.database_name \
                 FROM tbl_client_database T1"
+            logProcessInfo("client_db_list", str(query))
             rows = self._k_db.select_all(query)
             self._k_db.commit()
             if rows :
@@ -68,9 +70,9 @@ class KnowledgeConnect(object):
                 return None
 
         except Exception, e :
-            print e
+            logProcessError("get_countries", str(e))
             self._k_db.rollback()
-            print (traceback.format_exc())
+            logProcessError("get_countries", str(traceback.format_exc()))
 
 class AutoStart(Database):
     def __init__(self, c_db_ip, c_db_username, c_db_password, c_db_name, c_db_port, client_id, current_date):
@@ -85,6 +87,7 @@ class AutoStart(Database):
 
     def get_email_id_for_users(self, user_id):
         q = "SELECT employee_name, email_id from tbl_users where user_id = %s"
+        logProcessInfo("user_email_id", q % (user_id))
         row = self.select_one(q, [user_id])
         if row :
             return row[0], row[1]
@@ -106,9 +109,10 @@ class AutoStart(Database):
             LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id \
                 AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)\
             WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= %s \
-            AND t1.is_active = 1 AND t2.is_active = 1 \
+            AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id != 4 \
             AND t4.compliance_id is null "
 
+        logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date))
         rows = self.select_all(query, [self.current_date])
         columns = [
             "country_id", "unit_id", "compliance_id", "statutory_dates",
@@ -128,13 +132,14 @@ class AutoStart(Database):
     ):
         # frequency 1: One Time, 2 : Periodical, 3 : Review, 4: On occurance
         #  repeat_type 1 : Days, 2 : Months, 3 : years
-        repeat_every = int(repeat_every)
-        repeat_type = int(repeat_type)
+
         statutory_dates = json.loads(statutory_dates)
         trigger_before_days = None
         if statutory_dates == []:
             statutory_dates = None
         if frequency == 2 or frequency == 3 :
+            repeat_every = int(repeat_every)
+            repeat_type = int(repeat_type)
             if statutory_dates is None or len(statutory_dates) == 1 :
                 if repeat_type == 1 :
                     new_due_date = addDays(repeat_every, old_due_date)
@@ -143,12 +148,13 @@ class AutoStart(Database):
                 elif repeat_type == 3 :
                     new_due_date = addYears(repeat_every, old_due_date)
                 else :
-                    "repeat_type not matched"
+                    print "repeat_type not matched"
                     new_due_date = old_due_date
                 return (new_due_date,  trigger_before_days)
             else :
                 temp_date = convert_string_to_date(str(old_due_date))
                 old_month = temp_date.month
+                repeat_type = int(repeat_type)
                 if repeat_type == 2 :
                     for index, dat in enumerate(statutory_dates) :
                         day = dat["statutory_date"]
@@ -209,6 +215,8 @@ class AutoStart(Database):
                 start_date, due_date, next_due_date, completed_by, approved_by) \
                 VALUES (%s, %s, %s, %s, %s, %s, %s) "
 
+        logProcessInfo("save_new_compliance %s" % self.client_id, query % values)
+
         compliance_history_id = self.execute_insert(query, values)
         return compliance_history_id
 
@@ -216,7 +224,9 @@ class AutoStart(Database):
         query = "UPDATE tbl_assigned_compliances set due_date= %s, \
             trigger_before_days= %s \
             WHERE unit_id = %s AND compliance_id = %s "
-        self.execute(query, [due_date, trigger_before, unit_id, compliance_id])
+        values = (due_date, trigger_before, unit_id, compliance_id)
+        logProcessInfo("update_assigne_compliance", query % values)
+        self.execute(query, values)
 
     def save_in_notification(
         self, country_id, domain_id, business_group_id, legal_entity_id, division_id,
@@ -227,7 +237,9 @@ class AutoStart(Database):
             if user_id is not "NULL" and user_id is not None  :
                 q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
                     VALUES (%s, %s)"
-                self.execute(q, [notification_id, user_id])
+                v = (notification_id, user_id)
+                logProcessInfo("save_notification_user %s" % self.client_id, q % v)
+                self.execute(q, v)
 
         # notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
         created_on = datetime.datetime.now()
@@ -306,10 +318,11 @@ class AutoStart(Database):
                 ]
             )
             notify_new_task.start()
+            return True
 
         def start_next_due_date_task(d, due_date, approval_person) :
             next_due_date, trigger_before = self.calculate_next_due_date(
-                d["frequency"], d["statutory_dates"], d["repeat_type_id"],
+                int(d["frequency"]), d["statutory_dates"], d["repeat_type_id"],
                 d["repeats_every"], due_date
             )
 
@@ -318,8 +331,9 @@ class AutoStart(Database):
 
             c_h_id = notify(d, due_date, next_due_date, approval_person, trigger_before)
             if c_h_id is False :
-                print "compliance history save failed"
-                print d
+                logProcessError("next_due_date_task %s" % self.client_id, "compliance history save failed for %s" % (next_due_date))
+                logProcessError("next_due_date_task %s " % self.client_id, str(d))
+                return None, trigger_before
             return next_due_date, trigger_before
 
         data = self.get_compliance_to_start()
@@ -340,37 +354,38 @@ class AutoStart(Database):
                     next_due_date = trigger_before = None
                     due_date = d["due_date"]
                     next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
-                    self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
-                    print next_due_date
                     if next_due_date is not None :
+                        self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
                         while (next_due_date - timedelta(days=trigger_before)) <= self.current_date :
                             # start for next-due-date
                             next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
+                            if next_due_date is None :
+                                break
                             self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
                 count += 1
             except Exception, e :
-                print e
-                print "task start failed"
-                print d
-                print
+                logProcessError("task_start_failed", str(e))
+                logProcessError("task_start_failed", d)
+                logProcessError("task_start_failed", str(traceback.format_exc()))
                 continue
-                print(traceback.format_exc())
 
-        print " %s compliances started for client_id %s - %s" % (count, self.client_id, self.current_date)
+        print_msg = " %s compliances started for client_id %s - %s" % (count, self.client_id, self.current_date)
+        logProcessInfo("start_new_task %s" % self.client_id, str(print_msg))
 
     def check_service_provider_contract_period(self):
         query = "UPDATE tbl_service_providers set is_active = 0 WHERE \
         contract_from >= now() and contract_to <= now()"
         try :
             self.execute(query)
+            logProcessInfo("check_service_provider_contract_period %s" % self.client_id, str(query))
         except Exception, e :
-            print e
+            logProcessError("check_service_provider_contract_period %s" % self.client_id, str(e))
 
     def start_process(self):
         if self._connection is None :
             details = "%s, %s" % (self._c_db_ip, self._c_db_name)
-            logger.logProcessError("connection not found", details)
+            logProcessInfo("connection not found %s" % self.client_id, details)
             return
         try :
             self.begin()
@@ -378,9 +393,9 @@ class AutoStart(Database):
             # self.check_service_provider_contract_period()
             self.commit()
         except Exception, e :
-            print e
-            print (traceback.format_exc())
-            logger.logProcessError("DailyProcess", (traceback.format_exc()))
+            logProcessError("start_process %s" % self.client_id, str(e))
+            logProcessError("start_process", str(traceback.format_exc()))
+            logProcessError("start_process", (traceback.format_exc()))
             self.rollback()
             self.close()
 
@@ -391,7 +406,9 @@ class DailyProcess(KnowledgeConnect):
     def begin_process(self):
         current_date = datetime.datetime.utcnow().date()
         client_info = self.get_client_db_list()
-        print client_info
+        logProcessInfo("DailyProcess", "process begin")
+        logProcessInfo("DailyProcess", str(current_date))
+        logProcessInfo("begin_process", client_info)
         for c in client_info:
             try :
                 task = AutoStart(
@@ -401,9 +418,8 @@ class DailyProcess(KnowledgeConnect):
                 )
                 task.start_process()
             except Exception, e :
-                print e
-                logger.logProcessError("DailyProcess", e)
-                logger.logProcessError("DailyProcess", (traceback.format_exc()))
+                logProcessError("DailyProcess", e)
+                logProcessError("DailyProcess", (traceback.format_exc()))
 
 def run_daily_process():
     dp = DailyProcess()
