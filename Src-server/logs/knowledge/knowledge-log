@@ -7198,3 +7198,39 @@ AssertionError
     convert_base64_to_file(file_name, file_content)
 NameError: global name 'convert_base64_to_file' is not defined
 
+2016-09-14 18:13:19,071 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-09-14 18:13:19,094 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 118, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1425, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 426, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 76, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-09-14 18:34:26,279 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-09-14 18:34:26,280 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 118, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1425, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 426, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 76, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-09-14 18:44:05,992 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-09-14 18:44:05,992 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 118, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1425, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 426, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 76, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+

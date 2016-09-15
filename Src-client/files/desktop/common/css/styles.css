@@ -442,7 +442,36 @@ a:hover {
 	-moz-border-radius: 0.5em;
 	border-radius: 0.5em;
 }
-
+.btn-add:hover {
+	background: #fc9b01 url(../images/icon-plus-active.png) no-repeat 0.5em center;
+	color: #fff;
+}
+.btn-back {
+	float: left;
+	background: #662D91 url(../images/icon-back-active.png) no-repeat 0.5em center;
+	cursor: pointer;
+	color: #fff;
+	font-size: 13px;
+	text-align: center;
+	border: none;
+	outline: none;
+	font-weight: normal;
+	padding: 0.4em 1em 0.4em 2.2em;
+	-webkit-border-radius: 0.5em;
+	-moz-border-radius: 0.5em;
+	border-radius: 0.5em;
+}
+.btn-back:hover {
+	background: #ccc url(../images/icon-back.png) no-repeat 0.5em center;
+	color: #000;
+}
+.btn-edit {
+	background: #662D91 url(../images/icon-edit-white.png) no-repeat 0.5em center !important;
+}
+.btn-edit:hover {
+	background: #ccc url(../images/icon-edit.png) no-repeat 0.5em center !important;
+	color: #000;
+}
 .btn-back-geography {
 	width: 5.625em;
 	float: left;
@@ -505,6 +534,82 @@ a:hover {
 }
 .grid-table table tr:nth-child(odd) {
 	background: #fff;
+}
+.grid-table table tr.rejected_row {
+	color: #ff4644 !important;
+}
+.grid-table table tr.rejected_row input {
+	color: #ff4644 !important;
+}
+.grid-table table tr.rejected_row .CaptionCont {
+	color: #ff4644 !important;
+}
+.grid-table table tr.rejected_row .ms-choice {
+	color: #ff4644 !important;
+}
+.grid-table table tr.rejected_row textarea {
+	color: #ff4644 !important;
+}
+
+.newcomp {
+	color: #0404B4;
+}
+
+.inner-table {
+	width: 99.3% !important;
+	float: left;
+	padding-bottom: 1em;
+	margin-top: 5px;
+	color: #333;
+	border: 1px dotted #ccc;
+	margin-bottom: 5px;
+}
+.inner-table tr th {
+	background: #662d91;
+	height: 2.5em;
+	vertical-align: middle;
+	font-size: 0.9em !important;
+	color: #fff;
+	padding-left:0.5em;
+}
+.inner-table tr td {
+	font-size: 1.0em !important;
+	/*color: #333;*/
+	height: 2.3em;
+	vertical-align: top !important;
+	padding-left:0.5em;
+	line-height:16px;
+	padding-top:5px;
+	padding-bottom:5px;
+}
+.inner-table tr td input[type=button] {
+	font-size:0.9em;
+}
+.inner-table tr td img {
+	/*width: 1em;*/
+	cursor: pointer;
+}
+.inner-table tr td img.inactive {
+	/*width: 1em;*/
+	cursor: pointer;
+}
+.inner-table tr:nth-child(even) {
+	background: #fff !important;
+}
+.inner-table tr:nth-child(odd) {
+	background: #fff;
+}
+.inner-table tr.rejected_row {
+	color: #ff4644 !important;
+}
+.subheader-bg {
+	background: #f1e9f6 !important;
+}
+.filter-bg {
+	background: #fff !important;
+}
+.tblcomp-bg {
+	background: #fff !important;
 }
 .pagination-section {
 	width: 100%;
@@ -628,6 +733,9 @@ a:hover {
 	float: left;
 	padding-bottom: 0.7em;
 }
+.input-notes {
+	font-size:10px;
+}
 .field-label {
 	font-size: 0.813em;
 	color: #333;
@@ -668,6 +776,17 @@ a:hover {
 	border-radius: 0.3em;
 	font: normal 0.813em/100% Verdana, Tahoma, sans-serif;
 }
+.input-box-white {
+	width: 85%;
+	height: 2.0em;
+	background-color: #FFFFFF !important;
+	padding: 0em 0.3em;
+	border: 1px solid #999;
+	-webkit-border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	border-radius: 0.3em;
+	font: normal 13px/100% Verdana, Tahoma, sans-serif;
+}
 textarea.input-box{
 	height: 80px;
 }
@@ -702,6 +821,9 @@ textarea.input-box{
 	text-align: center;
 	padding-bottom: 1em;
 }
+.btn-add {
+	float: right;
+}
 .btn-cancel, .btn-submit {
 	padding: 0.4em 1em;
 	background: #662d91;
@@ -710,6 +832,27 @@ textarea.input-box{
 	cursor: pointer;
 	border: none;
 	outline: none;
+
+	-webkit-border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	border-radius: 0.3em;
+}
+.btn-cancel:hover, .btn-submit:hover, .btn-save:hover {
+	background: #999;
+	color: #000;
+
+}
+.btn-save {
+	display: inline-block;
+	padding: 0.4em 1em;
+	background: #fc9b01;
+	color: #fff;
+	text-align: center;
+	cursor: pointer;
+	outline: none;
+	border: none;
+	font-size: 0.813em;
+	/*margin-left: 0.5em;*/
 
 	-webkit-border-radius: 0.3em;
 	-moz-border-radius: 0.3em;
@@ -1290,6 +1433,57 @@ width:70% !important;
 textarea.heightsmall{ height: 40px; }
 .mandatory { color: #f00; padding-left: 3px;}
 
+.float-left {
+	float: left;
+}
+.white-bg {
+	background-color: #ffffff !important;
+}
+.input-notes {
+	font-size:10px;
+}
+.form-sub-title {
+	padding:5px;
+	padding-left:10px;
+	font-weight:bold !important;
+}
+.icon-info {
+	margin-right:3px;
+}
+.form-sub-header {
+	background-color:#eee;
+	border-radius:5px;
+}
+.form-sub-table tr {
+	background-color:#eee !important;
+}
+.form-sub-table-tr {
+	background-color:#eee !important;
+}
+.text-right {
+	text-align: right;
+}
+.cursor-poter {
+	cursor: pointer;
+}
+.float-right {
+	float: right;
+}
+.letable {
+	border: 1px dotted #ccc;
+}
+.letable tr td {
+	font-size: 13px !important;
+}
+.letable tr td input {
+	font-size: 13px; !important;
+	color: #333 !important;
+}
+.form-sub-table-th {
+	background-color:#D4B7EB;
+	color:#000;
+	padding-left:10px;
+}
 /*Reports*/
 
 .grid-table-rpt {
@@ -1987,6 +2181,13 @@ cursor: pointer;
 {
   padding: 10px 0px;
   font-size: 0.813em;
+}
+.modal-dialog{
+	width:80%;
+}
+.modal {
+	width: 40%;
+	left:60%;
 }
  #inactiveid{
   cursor:pointer;
