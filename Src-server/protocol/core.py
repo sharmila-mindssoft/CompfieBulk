@@ -571,7 +571,7 @@ class Form(object):
             "parent_menu": self.parent_menu,
             "form_type": self.form_type
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 #
 # Menu
@@ -617,7 +617,7 @@ class UserGroup(object):
             "user_group_name": self.user_group_name,
             "is_active": self.is_active,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 #
 # Country
@@ -638,11 +638,12 @@ class Country(object):
         return Country(country_id, country_name, is_active)
 
     def to_structure(self):
-        return {
+        data = {
             "country_id": self.country_id,
             "country_name": self.country_name,
             "is_active": self.is_active,
         }
+        return data
 
 #
 # Domain
@@ -663,11 +664,12 @@ class Domain(object):
         return Domain(domain_id, domain_name, is_active)
 
     def to_structure(self):
-        return {
+        data = {
             "domain_id": self.domain_id,
             "domain_name": self.domain_name,
             "is_active": self.is_active,
         }
+        return data
 
 #
 # Level
@@ -688,11 +690,12 @@ class Level(object):
         return Level(level_id, level_position, level_name)
 
     def to_structure(self):
-        return {
+        data = {
             "l_id": self.level_id,
             "l_position": self.level_position,
             "l_name": self.level_name,
         }
+        return data
 
 #
 # GeographyLevel
@@ -713,11 +716,12 @@ class GeographyLevel(object):
         return GeographyLevel(level_id, level_position, level_name)
 
     def to_structure(self):
-        return {
+        data = {
             "level_id": self.level_id,
             "level_position": self.level_position,
             "level_name": self.level_name,
         }
+        return data
 
 #
 # Geography
@@ -744,7 +748,7 @@ class Geography(object):
         return Geography(geography_id, geography_name, level_id, parent_ids, parent_id, is_active)
 
     def to_structure(self):
-        return {
+        data = {
             "geography_id": self.geography_id,
             "geography_name": self.geography_name,
             "level_id": self.level_id,
@@ -752,6 +756,7 @@ class Geography(object):
             "parent_id": self.parent_id,
             "is_active": self.is_active,
         }
+        return data
 
 #
 # Geography With Mapping
@@ -770,28 +775,23 @@ class GeographyWithMapping(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["geography_id", "geography_name", "level_id", "mapping", "parent_id", "is_active"])
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         geography_name = data.get("geography_name")
-        geography_name = parse_structure_CustomTextType_50(geography_name)
         level_id = data.get("level_id")
-        level_id = parse_structure_UnsignedIntegerType_32(level_id)
         mapping = data.get("mapping")
-        mapping = parse_structure_Text(mapping)
         parent_id = data.get("parent_id")
-        parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
         return Geography(geography_id, geography_name, level_id, mapping, parent_id, is_active)
 
     def to_structure(self):
-        return {
-            "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
-            "geography_name": to_structure_CustomTextType_50(self.geography_name),
-            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
-            "mapping": to_structure_Text(self.mapping),
-            "parent_id": to_structure_UnsignedIntegerType_32(self.parent_id),
-            "is_active": to_structure_Bool(self.is_active),
+        data = {
+            "geography_id": self.geography_id,
+            "geography_name": self.geography_name,
+            "level_id": self.level_id,
+            "mapping": self.mapping,
+            "parent_id": self.parent_id,
+            "is_active": self.is_active,
         }
+        return data
 
 #
 # Industry
@@ -807,19 +807,17 @@ class Industry(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["industry_id", "industry_name", "is_active"])
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("industry_name")
-        industry_name = parse_structure_CustomTextType_50(industry_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
         return Industry(industry_id, industry_name, is_active)
 
     def to_structure(self):
-        return {
-            "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
-            "industry_name": to_structure_CustomTextType_50(self.industry_name),
-            "is_active": to_structure_Bool(self.is_active),
+        data = {
+            "industry_id": self.industry_id,
+            "industry_name": self.industry_name,
+            "is_active": self.is_active,
         }
+        return data
 
 #
 # StatutoryNature
@@ -835,19 +833,17 @@ class StatutoryNature(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_nature_id", "statutory_nature_name", "is_active"])
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
-        statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
         return StatutoryNature(statutory_nature_id, statutory_nature_name, is_active)
 
     def to_structure(self):
-        return {
-            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
-            "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
-            "is_active": to_structure_Bool(self.is_active),
+        data = {
+            "statutory_nature_id": self.statutory_nature_id,
+            "statutory_nature_name": self.statutory_nature_name,
+            "is_active": self.is_active,
         }
+        return data
 
 #
 # StatutoryLevel
@@ -863,18 +859,15 @@ class StatutoryLevel(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_id", "level_position", "level_name"])
         level_id = data.get("level_id")
-        level_id = parse_structure_UnsignedIntegerType_32(level_id)
         level_position = data.get("level_position")
-        level_position = parse_structure_CustomIntegerType_1_10(level_position)
         level_name = data.get("level_name")
-        level_name = parse_structure_CustomTextType_50(level_name)
         return StatutoryLevel(level_id, level_position, level_name)
 
     def to_structure(self):
         return {
-            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
-            "level_position": to_structure_CustomIntegerType_1_10(self.level_position),
-            "level_name": to_structure_CustomTextType_50(self.level_name),
+            "level_id": self.level_id,
+            "level_position": self.level_position,
+            "level_name": self.level_name,
         }
 
 #
@@ -890,15 +883,13 @@ class Level1Statutory(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_1_statutory_id", "level_1_statutory_name"])
         level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_CustomTextType_500(level_1_statutory_name)
         return Statutory(level_1_statutory_id, level_1_statutory_name)
 
     def to_structure(self):
         return {
-            "level_1_statutory_id": to_structure_UnsignedIntegerType_32(self.level_1_statutory_id),
-            "level_1_statutory_name": to_structure_CustomTextType_500(self.level_1_statutory_name)
+            "level_1_statutory_id": self.level_1_statutory_id,
+            "level_1_statutory_name": self.level_1_statutory_name
         }
 
 
@@ -919,27 +910,21 @@ class Statutory(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_id", "statutory_name", "level_id", "parent_ids", "parent_id", "parent_mappings"])
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_UnsignedIntegerType_32(statutory_id)
         statutory_name = data.get("statutory_name")
-        statutory_name = parse_structure_CustomTextType_100(statutory_name)
         level_id = data.get("level_id")
-        level_id = parse_structure_UnsignedIntegerType_32(level_id)
         parent_ids = data.get("parent_ids")
-        parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
         parent_id = data.get("parent_id")
-        parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
         parent_mappings = data.get("parent_mappings")
-        parent_mappings = parse_structure_Text(parent_mappings)
         return Statutory(statutory_id, statutory_name, level_id, parent_ids, parent_id, parent_mappings)
 
     def to_structure(self):
         return {
-            "statutory_id": to_structure_UnsignedIntegerType_32(self.statutory_id),
-            "statutory_name": to_structure_CustomTextType_100(self.statutory_name),
-            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
-            "parent_ids": to_structure_VectorType_UnignedIntegerType_32(self.parent_ids),
-            "parent_id": to_structure_UnsignedIntegerType_32(self.parent_id),
-            "parent_mappings": to_structure_Text(self.parent_mappings),
+            "statutory_id": self.statutory_id,
+            "statutory_name": self.statutory_name,
+            "level_id": self.level_id,
+            "parent_ids": self.parent_ids,
+            "parent_id": self.parent_id,
+            "parent_mappings": self.parent_mappings,
         }
 
 #
@@ -956,18 +941,15 @@ class FileList(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["file_size", "file_name", "file_content"])
         file_size = data.get("file_size")
-        file_size = parse_structure_UnsignedIntegerType_32(file_size)
         file_name = data.get("file_name")
-        file_name = parse_structure_Text(file_name)
         file_content = data.get("file_content")
-        file_content = parse_structure_OptionalType_Text(file_content)
         return FileList(file_size, file_name, file_content)
 
     def to_structure(self):
         return {
-            "file_size": to_structure_UnsignedIntegerType_32(self.file_size),
-            "file_name": to_structure_Text(self.file_name),
-            "file_content": to_structure_OptionalType_Text(self.file_content)
+            "file_size": self.file_size,
+            "file_name": self.file_name,
+            "file_content": self.file_content
         }
 
 #

@@ -83,6 +83,10 @@ def parse_string(x) :
     else :
         raise expectation_error("a string", x)
 
+def parse_optional_string(x, length):
+    if x is None: return None
+    return parse_string(x, length)
+
 def parse_custom_string(x, length) :
     if x is None:
         raise empty_error()
@@ -222,14 +226,16 @@ def parse_optional_int_list(x, length=0, int_length=0):
     return parse_int_list(x, length, int_length)
 
 def parse_dictionary_values(x, field_names=[]):
-    print field_names
+    print 'x'
+    print x
+    print
     for field_name in field_names:
+        val = x.get(field_name)
         param = api_params.get(field_name)
-        print param
         if param is None :
+            val = parse_vector_type_record_type(val)
             continue
 
-        val = x.get(field_name)
         if param.get('type') == 'string':
             assert param.get('length') is not None
             assert param.get('validation_method') is not None
@@ -238,9 +244,14 @@ def parse_dictionary_values(x, field_names=[]):
             else :
                 val = parse_optional_custom_string(val, param.get('length'))
 
+        if param.get('type') == 'text':
+            if param.get('optional') is False :
+                val = parse_string(val)
+            else :
+                val = parse_optional_string(val)
+
         elif param.get('type') == 'int':
             assert param.get('length') is not None
-            assert param.get('validation_method') is not None
             if param.get('optional') is False :
                 val = parse_number(val, 0, param.get('length'))
             else :
@@ -274,8 +285,25 @@ def parse_dictionary_values(x, field_names=[]):
                 val = param.get('validation_method')(val)
     return x
 
+def parse_vector_type_record_type(value):
+    print value
+    if type(value) is list :
+        if len(value) == 0 :
+            return value
+
+        if type(value[0]) is dict :
+            for v in value :
+                keys = v.keys()
+                v = parse_dictionary_values(v, keys)
+
+        return value
+    else :
+        return
+
+
 def to_structure_dictionary_values(x):
     keys = x.keys()
     if len(keys) == 0 :
         return {}
+    # print keys
     return parse_dictionary_values(x, keys)
