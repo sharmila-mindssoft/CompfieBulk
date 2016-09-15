@@ -622,7 +622,6 @@ class UserGroup(object):
 #
 # Country
 #
-
 class Country(object):
     def __init__(self, country_id, country_name, is_active):
         self.country_id = country_id
@@ -2809,24 +2808,17 @@ class ValidityDates(object):
             ]
         )
         validity_days_id = data.get("validity_days_id")
-        validity_days_id = parse_structure_OptionalType_UnsignedIntegerType_32(
-            validity_days_id)
         country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         validity_days = data.get("validity_days")
-        validity_days = parse_structure_UnsignedIntegerType_32(validity_days)
         return ValidityDates(
             validity_days_id, country_id, domain_id, validity_days
         )
 
     def to_structure(self):
         return {
-            "validity_days_id": to_structure_OptionalType_UnsignedIntegerType_32(
-                self.validity_days_id),
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "validity_days": to_structure_UnsignedIntegerType_32(
-                self.validity_days)
+            "validity_days_id": self.validity_days_id,
+            "country_id": self.country_id,
+            "domain_id": self.domain_id,
+            "validity_days": self.validity_days
         }
