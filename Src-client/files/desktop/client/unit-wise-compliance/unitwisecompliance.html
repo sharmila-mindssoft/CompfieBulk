@@ -85,38 +85,49 @@
 <input type="submit" value="Show" class="btn-submit" id="submit" tabindex="8">
 </div>
 
-
 <div class="clearfix"></div>
-<div class="grid-table-rpt" style="padding-bottom:0em;" class="default-display-none">
+
+<div class="grid-table-rpt default-display-none" style="padding-bottom:0em;" >
 <h1>Unit wise Compliances</h1>
 <table class="tbody-unit" width="100%">
 
 </table>
-
-<div align="center" style="padding-top:10px;">
-  <input type="button" value="Show more records" class="btn-submit" id="pagination">
-</div>
-<p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
-</div>
-</div>
-</div>
 </div>
 
+
+<table class="pagination-view default-display-none">
+<tr>
+<td>
+<span class="compliance_count"> </span>
+<span class="divider-view"> | </span>
+<span class="items-per-page"> 
+Show 
+<select id="items_per_page">
+</select>
+entries
+</span>
+</td>
+
+<td style="text-align:right;padding-right:10px;"> 
+<ul id="pagination-rpt"></ul>
+</td>
+</tr>
+</table>
+
+</div>
+</div>
+</div>
 
 <div id="unit-list-templates" style="display:none;" >
 <table class="table-unit-list" width="100%">
 <tr class="table-row-unit-list" >
 <td colspan="11" style="padding-top:30px;">
 <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-  <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;" class="tbl_country"></span> </div>
-
    <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Business Group:<span style="margin-left:10px; font-weight:bold;" class="tbl_businessgroup"></span> </div>
      <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Division:<span style="margin-left:10px; font-weight:bold;" class="tbl_division"></span> </div>
 
 </div>
 <div style="float:right; margin-right:20%;">
-  <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Domain:<span style="margin-left:10px; font-weight:bold;" class="tbl_domain"></span> </div>
-
  <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Legal Entity:<span style="margin-left:10px; font-weight:bold;" class="tbl_legalentity"></span> </div>
 </div>
 </td>

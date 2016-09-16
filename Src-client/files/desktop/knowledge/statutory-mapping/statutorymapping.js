@@ -37,6 +37,8 @@ var f_Size = '';
 var f_Content = null;
 var form_data = new FormData();
 var complianceid = 0;
+var isUpload = false;
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -128,6 +130,7 @@ function load_selectdomain_master() {
   }
 }
 $('.btn-statutorymapping-add').click(function () {
+  isUpload = false;
   reset_compliance();
   $('#statutorymapping-view').hide();
   $('#statutorymapping-add').show();
@@ -870,6 +873,7 @@ $('#temp_addcompliance').click(function () {
       var file_data = file_lst[0];
       form_data.append('file' + fCId, file_data, f_Name);
       form_data.append('session_token', mirror.getSessionToken());
+      isUpload = true;
     }
     /*for (var i = 0; i < file_lst.length; i++) {
       var file_data = file_lst[i];
@@ -1486,11 +1490,10 @@ function savestatutorymapping() {
     sm_id = parseInt($('#edit_sm_id').val());
   }
 
-  var isUpload = false;
-  for (var [key, value] of form_data.entries()) {
+  /*for (var [key, value] of form_data.entries()) {
     isUpload = true;
     //console.log(key, value);
-  }
+  }*/
   statutorymappingData = mirror.statutoryMapping(sm_countryid, sm_domainid, sm_industryids, sm_statutorynatureid, sm_statutoryids, compliances, sm_geographyids, disp_statutories, sm_id);
   
   if (sm_id == null) {
@@ -1749,6 +1752,7 @@ function edit_geography(country, geographyids_edit) {
 }
 //edit statutory mapping
 function displayEdit(sm_Id) {
+  isUpload = false;
   displayMessage('');
   $('#statutorymapping-view').hide();
   $('#statutorymapping-add').show();

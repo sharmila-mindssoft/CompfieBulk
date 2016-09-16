@@ -1,8 +1,8 @@
 import datetime
 import traceback
-from server.dbase import Database
+from processes.process_logger import logNotifyError, logNotifyInfo
+from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
-from server import logger
 from server.emailcontroller import EmailHandler
 from server.common import (return_hour_minute, convert_to_dict, get_current_date)
 NOTIFY_TIME = "11:52"
@@ -18,6 +18,7 @@ class AutoNotify(Database):
 
     def get_email_id_for_users(self, user_id):
         q = "SELECT employee_name, email_id from tbl_users where user_id = %s"
+        logNotifyInfo("user_email_id", q % (user_id))
         row = self.select_one(q, [user_id])
         if row :
             return row[0], row[1]
@@ -27,6 +28,7 @@ class AutoNotify(Database):
     def get_client_settings(self):
         query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder \
             FROM tbl_client_groups"
+        logNotifyInfo("client_settings", query)
         rows = self.select_all(query)
         columns = ["assignee_reminder", "escalation_reminder_in_advance", "escalation_reminder"]
         result = convert_to_dict(rows, columns)
@@ -43,7 +45,7 @@ class AutoNotify(Database):
             INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
             INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE \
             IFNULL(t1.approve_status, 0) != 1 "
-
+        logNotifyInfo("get_inprogress_compliances", query)
         rows = self.select_all(query)
         columns = [
             "compliance_history_id", "unit_id", "compliance_id", "start_date", "due_date",
@@ -63,7 +65,9 @@ class AutoNotify(Database):
             if user_id is not "NULL" and user_id is not None :
                 q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
                     VALUES (%s, %s)"
-                self.execute(q, [notification_id, user_id])
+                v = (notification_id, user_id)
+                logNotifyInfo("save_notification_users", q % v)
+                self.execute(q, v)
 
         # notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
         created_on = get_current_date()
@@ -104,7 +108,7 @@ class AutoNotify(Database):
             # client_info = get_client_settings(db)
             if client_info :
                 reminder_interval = int(client_info[0]["assignee_reminder"])
-                print reminder_interval
+                logNotifyInfo("reminder_to_assignee", reminder_interval)
                 count = 0
                 for c in compliance_info:
                     if c["due_date"] is None :
@@ -112,6 +116,7 @@ class AutoNotify(Database):
 
                     if c["due_date"].date() < current_date.date() :
                         print "skipped due_date", c["due_date"].date()
+                        logNotifyInfo("skipped due_date", c["due_date"].date())
                         continue
                     days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
 
@@ -121,9 +126,9 @@ class AutoNotify(Database):
                         compliance_name = c["compliance_task"]
                     date_diff = abs((current_date.date() - c["start_date"].date()).days)
                     if date_diff == 0:
-                        print current_date.date()
-                        print c["start_date"].date()
-                        print "skipped date_diff ", 0
+                        logNotifyInfo("skipped due_date", current_date.date())
+                        logNotifyInfo("skipped due_date", c["start_date"].date())
+                        logNotifyInfo("skipped date_diff ", 0)
                         continue
 
                     # print date_diff
@@ -144,14 +149,16 @@ class AutoNotify(Database):
                             c["unit_name"], assignee_email
                         )
                         count += 1
-                print "%s compliances remind to assignee" % (count)
+
+                logNotifyInfo("reminder_to_assignee ", "%s compliances remind to assignee" % (count))
         except Exception, e:
             print e
             print(traceback.format_exc())
 
     def reminder_before_due_date(self, client_info, compliance_info):
         current_date = get_current_date()
-        print "begin process to remind inprogress compliance task to all %s " % (current_date)
+        logNotifyInfo("before_due_date", "begin process to remind inprogress compliance task to all %s " % (current_date))
+
         reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
         cnt = 0
         for c in compliance_info:
@@ -164,7 +171,7 @@ class AutoNotify(Database):
                 compliance_name = c["compliance_task"]
 
             if c["due_date"].date() < current_date.date() :
-                print "skipped due_date", c["due_date"]
+                logNotifyInfo("skipped due_date", c["due_date"])
                 continue
 
             if c["due_date"] is None :
@@ -172,7 +179,7 @@ class AutoNotify(Database):
 
             days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
             if days_left == 0 :
-                print "skipped days_left 0",
+                logNotifyInfo("skipped days_left", 0)
                 continue
 
             notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
@@ -200,11 +207,11 @@ class AutoNotify(Database):
                     assignee_email, cc_person
                 )
                 cnt += 1
-        print "%s compliance remind before due date" % cnt
+        logNotifyInfo("before_due_date", "%s compliance remind before due date" % cnt)
 
     def notify_escalation_to_all(self, client_info, compliance_info):
         current_date = get_current_date()
-        print "begin process to notify escalations to all %s" % (current_date)
+        logNotifyInfo("escalation_to_all", "begin process to notify escalations to all %s" % (current_date))
         escalation_interval = int(client_info[0]["escalation_reminder"])
         cnt = 0
         for c in compliance_info :
@@ -212,7 +219,7 @@ class AutoNotify(Database):
                 continue
 
             if c["due_date"].date() > current_date.date() :
-                print "skipped due_date ", c["due_date"]
+                logNotifyInfo("skipped due_date ", c["due_date"])
                 continue
 
             if c["document_name"] not in (None, "None", "") :
@@ -221,7 +228,7 @@ class AutoNotify(Database):
                 compliance_name = c["compliance_task"]
             over_due_days = abs((current_date.date() - c["due_date"].date()).days) + 1
             if over_due_days == 0 :
-                print "over_due_days = 0"
+                logNotifyInfo("over_due_days", 0)
                 continue
 
             notification_text = "%s overdue by %s day(s)" % (compliance_name, over_due_days)
@@ -249,7 +256,7 @@ class AutoNotify(Database):
                     assignee_email, cc_person
                 )
                 cnt += 1
-        print cnt
+        logNotifyInfo("escalation count", cnt)
 
     def notify_task_details(self):
         client_info = self.get_client_settings()
@@ -267,7 +274,7 @@ class AutoNotify(Database):
         except Exception, e :
             print e
             print (traceback.format_exc())
-            logger.logProcessError("DailyProcess", (traceback.format_exc()))
+            logNotifyError("start_process", (traceback.format_exc()))
             self.rollback()
             self.close()
 
@@ -278,11 +285,11 @@ class NotifyProcess(KnowledgeConnect):
 
     def begin_process(self):
         current_date = datetime.datetime.now()
-        print current_date
+        logNotifyInfo("current_date", current_date)
         current_time = return_hour_minute(current_date)
         if current_time != NOTIFY_TIME :
-            print current_time
-            print NOTIFY_TIME
+            logNotifyInfo("current_time", current_time)
+            logNotifyInfo("NOTIFY_TIME", NOTIFY_TIME)
             return
 
         client_info = self.get_client_db_list()
@@ -296,8 +303,8 @@ class NotifyProcess(KnowledgeConnect):
                 task.start_process()
             except Exception, e :
                 print e
-                logger.logProcessError("DailyProcess", e)
-                logger.logProcessError("DailyProcess", (traceback.format_exc()))
+                logNotifyError("DailyProcess", e)
+                logNotifyError("DailyProcess", (traceback.format_exc()))
 
 def run_notify_process():
     np = NotifyProcess()

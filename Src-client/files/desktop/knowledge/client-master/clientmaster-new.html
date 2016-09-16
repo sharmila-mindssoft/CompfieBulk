@@ -1,0 +1,274 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<div class="content-container width80" id="clientgroup-view">
+    <div class="content-area">
+      <h1>Clients</h1>
+      <div class="filters-and-search">
+        <div class="btn-add btn-clientgroup-add" formtarget="_self">Add</div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table class="js-filtertable">
+          <thead>
+          <tr align="left">
+            <th align="center" style="width: 8%">#</th>
+            <th>Country</th>
+            <th>Group</th>
+            <th>No.of Legal Entity</th>
+            <th align="center" style="width:10" >Edit</th>
+            <th align="center" style="width:10%">Status</th>
+          </tr>
+          <tr>
+            <td align="center"></td>
+            <td><input type="text" class="filter-text-box js-filter" id="search-country-name"></td>
+            <td><input type="text" class="filter-text-box js-filter" id="search-clientgroup-name"></td>
+            <td><input type="text" class="filter-text-box js-filter" id="no-of-le"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+          </tr>
+          </thead>
+          <tbody class="tbody-clientgroup-list">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="templates">
+      <table class="table-clientgroup-list">
+        <tr class="table-row">
+          <td align="center" class="sno"></td>
+          <td class="clientgroup-name"></td>
+          <td align="center">
+            <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+          </td>
+          <td align="center">
+            <span class="status" style="width: 16px; height: 16px; display:block"> </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+<div class="content-container default-display-none" id="clientgroup-add" >
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Add Client<span class="error-message"></span></div>
+      <div class="input-row">
+        <div class="input-row-left">
+          <div class="input-row">
+            <div class="single-column-field-label">Group:
+                <span class="mandatory">*</span>
+            </div>
+            <div class="field-input">
+              <input id="group-text" type="text" class="input-box" placeholder="Group Name">
+            </div>
+          </div>
+          </div>
+          <div class="input-row-right">
+            <div class="input-row">
+                <div class="single-column-field-label">Username:
+                    <span class="mandatory">*</span>
+                </div>
+                <div class="field-input">
+                    <input type="text" class="input-box" placeholder="user@domain.com">
+                    <br><br>
+                    <span class="input-notes">
+                        [&#9658;This will be used as the username for group admin.<br>&#9658;
+                        Password will be auto-generated]
+                    </span>
+              </div>
+            </div>
+          </div>
+         <div class="clearfix"></div>
+          <div class="add-container">
+          <div class="form-sub-title">Legal Entity Configuration</div>
+          <span class="error-message"><a href="#"><img src="/images/icon-plus.png" formtarget="_self" title="Click to add Legal Entity" /></a> </span>
+          <div class="grid-table">
+          <div class="form-sub-title">Date Configuration</div>
+            <table class="letable">
+              <tr align="left">
+                <th width="25%" class="form-sub-table-th">Domain</th>
+                <th colspan="2" width="75%" align="center" class="form-sub-table-th">Timeline</th>
+              </tr>
+              <div>
+                <tbody class="tbody-dateconfiguration-list">
+                </tbody>
+              </div>
+            </table>
+          </div>
+        </div>
+         
+         <div class="clearfix"></div>
+          <div class="submit-button-container">
+            <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/clientgroup/list'" >
+            &nbsp;&nbsp;
+            <input type="submit" name="submit" value="Submit" class="btn-submit" >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="legal-entity-config-template default-display-none">
+    <div class="grid-table">
+        <table class="btable letable">
+          <tr class="form-sub-table-tr">
+            <td colspan="9" align="left">
+              <table border="1" class="form-sub-table">
+                <tr class="form-sub-table-tr">
+                    <td width="10%" class="text-right">Country:&nbsp;</td>
+                    <td width="15%">
+                        <select style="background-color: #ffffff;" placeholder="Select Country" class="testSelAll2 input-box">
+                      <option value="India" selected>India</option>
+                      <option value="Untied States">United States</option>
+                      <option value="Malaysia" >Malaysia</option>
+                        </select>
+                    </td>
+                    <td width="10%" class="text-right">Business Group:</td>
+                    <td width="27%">
+                        <div class="select_business_group">
+                            <select style="background-color:#fff;" placeholder="Select Business Group"  class="testSelAll2 input-box">
+                                <option selected>ABC Business Group</option>
+                                <option>DEF Business Group</option>
+                                <option>GHI Business Group</option>
+                            </select>
+                            <a class="cursor-poter" onclick="business_group_change(1)"><img src="/images/add.png" /></a>
+                        </div>
+                        <div class="input_business_group">
+                          <input type="text" value="ABC Business Group" class="input-box white-bg">
+                          <a class="cursor-poter" onclick="business_group_change(2)">&nbsp;<img src="/images/delete.png" /></a>
+                        </div>
+                    </td>
+                    <td width="10%" class="text-right">Legal Entity:</td>
+                    <td width="20%">
+                        <input type="text" class="input-box white-bg" value="ABC Legal Entity">
+                    </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr class="form-sub-table-tr">
+            <td colspan="9" align="left">
+              <table border="1">
+                <tr class="form-sub-table-tr">
+                  <td width="10%" class="text-right">Incharge Person:&nbsp;</td>
+                  <td width="15%">
+                    <input type="hidden" id="business-groups">
+                    <input type="text" class="input-box icon-autocomplete" id="bgroupsselected" tabindex="13" value="" readonly="readonly" onfocus="loadautobusinessgroups()" onclick="loadautobusinessgroups()">
+                    <div id="selectboxview-businessgroup" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenubgroup();">
+                        <ul id="ulist-bg" style="width:85%;"></ul>
+                    </div>
+                  </td>
+                  <td width="10%" class="text-right">Upload Logo:</td>
+                  <td width="27%">
+                    <input type="file" class="input-box white-bg">
+                  </td>
+                  <td width="10%" class="text-right">File Space:</td>
+                  <td width="20%">
+                    <input type="text" class="input-box white-bg" value="20"> GB
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr class="form-sub-table-tr">
+            <td colspan="9" align="left">
+              <table border="1">
+                <tr class="form-sub-table-tr">
+                  <td width="10%" class="text-right">Contract From:&nbsp;</td>
+                  <td width="15%"><input type="text" class="input-box white-bg" value="01-Jan-2016" ></td>
+                  <td width="10%" class="text-right">Contract To:</td>
+                  <td width="27%"><input type="text" class="input-box white-bg" value="31-Dec-2016"></td>
+                  <td width="10%" class="text-right">Total Licence(s):</td>
+                  <td width="20%"><input type="text" class="input-box white-bg" value="15"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr class="form-sub-table-tr">
+            <td colspan="9" align="left">
+              <table>
+                <tr class="form-sub-table-tr">
+                  <td width="100%" style="padding-right: 32px;" class="text-right">
+                    <input type="checkbox" checked="checked"> &nbsp;Subscribe for SMS Notification
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr align="left">
+            <th width="45%">Domain<span class="mandatory">*</span></th>
+            <th width="45%">Organization<span class="mandatory">*</span></th>
+            <th width="10%">Remove</th>
+          </tr>
+          <tbody class="domain_list">
+          </tbody>
+        </table>
+        <td>
+            <img src="/images/icon-plus.png" class="float-right" title="Click to add new domain" />
+        </td>
+      </div>
+</div>
+<div class="domain_row_template default-display-none">
+    <table>
+        <tr>
+            <td>
+                <select class="input-box">
+                    <option selected="selected">Labour Law</option>
+                    <option>Finance Law</option>
+                    <option>Industrial Law</option>
+                </select>
+            </td>
+            <td><a href="#" class="addOrganizationType float-left">Add Organization</a></td>
+            <td><img src="/images/icon-delete.png"></td>
+        </tr>
+    </table>
+</div>
+<div class="dconfig-templates default-display-none">
+  <table class="table-dconfig-list">
+    <tr class="table-dconfig-countries-row">
+      <td colspan="3"  width="100%"><span class="dconfig-country-name"></span>
+      <input type="hidden" class="inputCountry" value="">
+      </td>
+    </tr>
+    <tr class="table-dconfig-domain-row" >
+      <td style="padding-left:10px;" width="30%"><span class="dconfig-domain-name" ></span>
+        <input type="hidden" class="inputDomain" value="">
+      </td>
+      <td align="center" width="35%">
+        <select class="input-box tl-from" style="width:100px">
+        <!-- <option value="">Select</option> -->
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+        </select>
+      </td>
+      <td align="center" width="35%">
+        <select class="input-box tl-to" style="width:100px">
+        <!-- <option value="">Select</option> -->
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12" selected="selected">December</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/script/client-master/clientmaster-new.js"></script>
+{% endblock %}

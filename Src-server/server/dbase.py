@@ -193,12 +193,12 @@ class Database(object):
             # print param
             return False
 
-########################################################
-# To execute select query
-# Used to fetch multiple rows
-# select_all : query is string and param is tuple which return result in tuple of tuples
-# select_one : query is string and param is typle which return result in tuple
-########################################################
+    ########################################################
+    # To execute select query
+    # Used to fetch multiple rows
+    # select_all : query is string and param is tuple which return result in tuple of tuples
+    # select_one : query is string and param is typle which return result in tuple
+    ########################################################
     def select_all(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None

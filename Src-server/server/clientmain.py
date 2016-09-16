@@ -2,7 +2,6 @@ import os
 import json
 import time
 import traceback
-import threading
 from tornado.web import StaticFileHandler
 from tornado.httpclient import AsyncHTTPClient
 from basics.webserver import WebServer
@@ -81,9 +80,20 @@ class API(object):
         self._databases = {}
         self._replication_managers = {}
         self._ip_address = None
+        self._remove_old_session()
 
-    def _remove_old_session(self, c_db):
-        def on_session_timeout():
+    def _remove_old_session(self):
+
+        def on_return():
+            self._remove_old_session()
+
+        def _with_client_info():
+            for c_id, c_db in self._databases.iteritems() :
+                print c_id
+                on_session_timeout(c_db)
+            on_return()
+
+        def on_session_timeout(c_db):
             c_db.begin()
             try :
                 c_db.clear_session(SESSION_CUTOFF)
@@ -93,7 +103,7 @@ class API(object):
                 c_db.rollback()
 
         self._io_loop.add_timeout(
-            time.time() + 1080, on_session_timeout
+            time.time() + 1080, _with_client_info
         )
 
     def close_connection(self, db):
@@ -135,11 +145,6 @@ class API(object):
                         db.connect()
                         if db._connection is not None :
                             self._databases[company_id] = db
-                            session_callout = threading.Thread(
-                                target=self._remove_old_session,
-                                args=[db]
-                            )
-                            session_callout.start()
                     except Exception, e:
                         print e
                         print str(traceback.format_exc())
@@ -195,8 +200,7 @@ class API(object):
                 60,
                 client_added
             )
-            # print "client_manager"
-            # print _client_manager
+            _client_manager._start()
 
         except Exception, e :
             print traceback.format_exc()

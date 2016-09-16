@@ -1,6 +1,4 @@
-from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list
-)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu,
     parse_structure_CustomTextType_100,
