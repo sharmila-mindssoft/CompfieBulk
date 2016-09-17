@@ -864,9 +864,11 @@ class Industry(object):
 #
 
 class StatutoryNature(object):
-    def __init__(self, statutory_nature_id, statutory_nature_name, country_id, is_active):
+    def __init__(self, statutory_nature_id, statutory_nature_name, country_id, country_name, is_active):
         self.statutory_nature_id = statutory_nature_id
         self.statutory_nature_name = statutory_nature_name
+        self.country_id = country_id
+        self.country_name = country_name
         self.is_active = is_active
 
     @staticmethod
@@ -876,14 +878,20 @@ class StatutoryNature(object):
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        country_name = data.get("country_name")
+        country_name = parse_structure_CustomTextType_50(country_name)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        return StatutoryNature(statutory_nature_id, statutory_nature_name, is_active)
+        return StatutoryNature(statutory_nature_id, statutory_nature_name, country_id, country_name, is_active)
 
     def to_structure(self):
         return {
             "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "country_name": to_structure_CustomTextType_50(self.country_name),
             "is_active": to_structure_Bool(self.is_active),
         }
 
