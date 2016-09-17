@@ -210,7 +210,7 @@ class GetComplianceDetailsReportFilters(Request):
 class GetComplianceDetailsReport(Request):
     def __init__(
         self, country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
-        to_date, compliance_status, csv, record_count
+        to_date, compliance_status, csv, from_count, page_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -222,14 +222,15 @@ class GetComplianceDetailsReport(Request):
         self.to_date = to_date
         self.compliance_status = compliance_status
         self.csv = csv
-        self.record_count = record_count
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
                 "country_id", "domain_id", "statutory_id", "unit_id", "compliance_id", "assignee_id",
                 "from_date", "to_date", "compliance_status", "csv",
-                "record_count"
+                "from_count", "page_count"
             ]
         )
         country_id = data.get("country_id")
@@ -252,11 +253,13 @@ class GetComplianceDetailsReport(Request):
         compliance_status = parse_structure_OptionalType_CustomTextType_50(compliance_status)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
-        record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        from_count = data.get("from_count")
+        from_count = parse_structure_UnsignedIntegerType_32(from_count)
+        page_count = data.get("page_count")
+        page_count = parse_structure_UnsignedIntegerType_32(page_count)
         return GetComplianceDetailsReport(
             country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
-            to_date, compliance_status, csv, record_count
+            to_date, compliance_status, csv, from_count, page_count
         )
 
     def to_inner_structure(self):
@@ -271,7 +274,8 @@ class GetComplianceDetailsReport(Request):
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
             "compliance_status": to_structure_OptionalType_CustomTextType_50(self.compliance_status),
             "csv": to_structure_Bool(self.csv),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+            "from_count": to_structure_UnsignedIntegerType_32(self.from_count),
+            "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
         }
 
 class GetRiskReportFilters(Request):
@@ -369,19 +373,20 @@ class GetServiceProviderReportFilters(Request):
         }
 
 class GetServiceProviderWiseCompliance(Request):
-    def __init__(self, country_id, domain_id, statutory_id, unit_id, service_provider_id, record_count, csv):
+    def __init__(self, country_id, domain_id, statutory_id, unit_id, service_provider_id, from_count, page_count, csv):
         self.country_id = country_id
         self.domain_id = domain_id
         self.statutory_id = statutory_id
         self.unit_id = unit_id
         self.service_provider_id = service_provider_id
-        self.record_count = record_count
+        self.from_count = from_count
+        self.page_count = page_count
         self.csv = csv
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "domain_id", "statutory_id", "unit_id", "service_provider_id", "record_count", "csv"
+            "country_id", "domain_id", "statutory_id", "unit_id", "service_provider_id", "from_count", "page_count", "csv"
         ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -393,13 +398,15 @@ class GetServiceProviderWiseCompliance(Request):
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         service_provider_id = data.get("service_provider_id")
         service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
-        record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        from_count = data.get("from_count")
+        from_count = parse_structure_UnsignedIntegerType_32(from_count)
+        page_count = data.get("page_count")
+        page_count = parse_structure_UnsignedIntegerType_32(page_count)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetServiceProviderWiseCompliance(
             country_id, domain_id, statutory_id, unit_id,
-            service_provider_id, record_count, csv
+            service_provider_id, from_count, page_count, csv
         )
 
     def to_inner_structure(self):
@@ -409,7 +416,8 @@ class GetServiceProviderWiseCompliance(Request):
             "statutory_id": to_structure_OptionalType_CustomTextType_100(self.statutory_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count),
+            "from_count": to_structure_UnsignedIntegerType_32(self.from_count),
+            "page_count": to_structure_UnsignedIntegerType_32(self.page_count),
             "csv": to_structure_Bool(self.csv)
         }
 

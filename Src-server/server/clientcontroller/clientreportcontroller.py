@@ -371,13 +371,13 @@ def get_serviceproviderwise_compliance(db, request, session_user):
         statutory_id = request.statutory_id
         unit_id = request.unit_id
         service_provider_id = request.service_provider_id
-        from_count = request.record_count
-        to_count = RECORD_DISPLAY_COUNT
+        from_count = request.from_count
+        page_count = request.page_count
 
         data, total_count = report_serviceproviderwise_compliance(
             db, country_id, domain_id, statutory_id,
             unit_id, service_provider_id, session_user,
-            from_count, to_count
+            from_count, page_count
         )
         sp_wise_compliances_list = return_serviceprovider_report_data(data)
         return clientreport.GetServiceProviderWiseComplianceSuccess(
@@ -466,14 +466,14 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         from_date = request.from_date
         to_date = request.to_date
         compliance_status = request.compliance_status
-        from_count = request.record_count
-        to_count = RECORD_DISPLAY_COUNT
+        from_count = request.from_count
+        page_count = request.page_count
 
         compliance_details_list, total = report_compliance_details(
             db, client_id,
             country_id, domain_id, statutory_id, unit_id, compliance_id,
             assignee_id, from_date, to_date, compliance_status, session_user,
-            from_count, to_count
+            from_count, page_count
         )
         return clientreport.GetComplianceDetailsReportSuccess(
             compliance_details_list, total

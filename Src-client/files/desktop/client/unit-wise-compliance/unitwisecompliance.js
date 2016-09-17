@@ -218,10 +218,6 @@ $('#submit').click(function () {
     assignee = $('#assignee').val();
   $('.tbody-unit').find('tbody').remove();
   $('.compliance_count').text('');
-  lastUnit = '';
-  lastBG = '';
-  lastLE = '';
-  lastDv = '';
   sno = 0;
   fromCount = 0;
   clearMessage();
