@@ -888,35 +888,55 @@ function initMirror() {
   }
   // Client Group Master
   function getDateConfigurations(cId, dId, pFrom, pTo) {
+      return {
+        'c_id': cId,
+        'd_id': dId,
+        'p_from': pFrom,
+        'p_to': pTo
+      };
+  }
+
+  function getDomainRow(
+    d_id, org
+  ){
+      return {
+        "d_id": d_id,
+        "org": org
+      }
+  }
+
+  function getLegalEntityRow(
+    c_id, b_g_id, b_g_name, l_e_name,
+    inc_p, logo, n_o_l, f_s, sms, c_f, c_t, d
+  ) {
     return {
-      'c_id': cId,
-      'd_id': dId,
-      'p_from': pFrom,
-      'p_to': pTo
+        "c_id": c_id,
+        "b_g": {
+            "b_g_id": b_g_id,
+            "b_g_name": b_g_name
+        },
+        "l_e_name": l_e_name,
+        "inc_p": inc_p,
+        "logo": logo,
+        "n_o_l": n_o_l,
+        "f_s": f_s,
+        "sms": sms,
+        "c_f": c_f,
+        "c_t": c_t,
+        "d": d
     };
   }
-  function getSaveClientGroupDict(g_name, c_ids, d_ids, logo, cFrom, cTo, incharge, licence, f_space, sms, email, config, s_name) {
-    return {
-      'g_name': g_name,
-      'c_ids': c_ids,
-      'd_ids': d_ids,
-      'logo': logo,
-      'c_from': cFrom,
-      'c_to': cTo,
-      'incharge': incharge,
-      'licence': licence,
-      'f_space': f_space,
-      'sms': sms,
-      'email': email,
-      'config': config,
-      's_name': s_name
-    };
-  }
-  function saveClientGroup(clientGroupDetails, callback) {
+  function saveClientGroup(
+    g_name, u_name, les, d_cs, callback) {
     callerName = 'techno';
     var request = [
       'SaveClientGroup',
-      clientGroupDetails
+      {
+        "g_name": g_name,
+        "u_name": u_name,
+        "les": les,
+        "d_cs": d_cs
+      }
     ];
     apiRequest(callerName, request, callback);
   }
@@ -959,6 +979,14 @@ function initMirror() {
     callerName = 'techno';
     var request = [
       'GetClientGroups',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getClientGroupFormData(callback) {
+    callerName = 'techno';
+    var request = [
+      'GetClientGroupFormData',
       {}
     ];
     apiRequest(callerName, request, callback);
@@ -1335,6 +1363,40 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getValidityDateList(callback){
+    callerName = 'admin';
+    var request = [
+      'GetValidityDateList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function get_validity_day_setting(
+    validity_days_id, country_id, domain_id, validity_days
+  ){
+      if(!validity_days_id){
+        validity_days_id = null;
+      }
+      return {
+        "validity_days_id": validity_days_id,
+        "country_id": country_id,
+        "domain_id": domain_id,
+        "validity_days": validity_days 
+      }
+  }
+
+  function saveValidityDateSettings(
+    validity_date_settings, callback
+  ){
+    callerName = "admin";
+    var request = [
+      'SaveValidityDateSettings',
+      {
+        "validity_date_settings": validity_date_settings
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
 
   function progress(percent, $element) {
     var progressBarWidth = percent * $element.width() / 100;
@@ -1381,6 +1443,7 @@ function initMirror() {
       }
     });
   }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -1464,7 +1527,6 @@ function initMirror() {
     changeAdminUserStatus: changeAdminUserStatus,
     getAdminUserList: getAdminUserList,
     getDateConfigurations: getDateConfigurations,
-    getSaveClientGroupDict: getSaveClientGroupDict,
     saveClientGroup: saveClientGroup,
     getUpdateClientGroupDict: getUpdateClientGroupDict,
     updateClientGroup: updateClientGroup,
@@ -1506,7 +1568,13 @@ function initMirror() {
     updateNotificationStatus: updateNotificationStatus,
     createNewAdmin: createNewAdmin,
     getNextUnitCode: getNextUnitCode,
-    uploadFormatFile: uploadFormatFile
+    uploadFormatFile: uploadFormatFile,
+    getValidityDateList: getValidityDateList,
+    get_validity_day_setting: get_validity_day_setting,
+    saveValidityDateSettings: saveValidityDateSettings,
+    getClientGroupFormData: getClientGroupFormData,
+    getLegalEntityRow: getLegalEntityRow,
+    getDomainRow: getDomainRow
   };
 }
 var mirror = initMirror();

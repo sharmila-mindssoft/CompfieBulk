@@ -48,6 +48,11 @@ __all__ = [
 ]
 
 
+############################################################################
+# To get the details of all service providers
+# Parameter(s) - object of database
+# Return Type - returns list of object of ServiceProviderDetails
+############################################################################
 def get_service_provider_details_list(db):
     columns = [
         "service_provider_id", "service_provider_name", "address",
@@ -62,6 +67,12 @@ def get_service_provider_details_list(db):
     return return_service_provider_details(rows)
 
 
+############################################################################
+# To Structure the service provider data fetched from database
+# Parameter(s) - service provider details fetched from database in tuple of
+#                tuples format
+# Return Type - List of ServiceProviderDetails object
+############################################################################
 def return_service_provider_details(service_providers):
     results = []
     for service_provider in service_providers:
@@ -78,9 +89,14 @@ def return_service_provider_details(service_providers):
     return results
 
 
-#
-#   Service Provider
-#
+############################################################################
+# To Check whether the service provider name already exists
+# Parameter(s) - Object of database, Service provider Id,
+#                Service provider name
+# Return Type - Boolean
+#             - Returns False if data not exists
+#             - Returns True if data exists
+############################################################################
 def is_duplicate_service_provider(
     db, service_provider_id, service_provider_name
 ):
@@ -93,6 +109,13 @@ def is_duplicate_service_provider(
     return res
 
 
+############################################################################
+# To saves service provider and saves the activity
+# Parameter(s) - Object of database, Object of SaveServiceProvider
+# Return Type - int / RuntimeError
+#             - Returns service provider id on success
+#             - Returns RuntimeError on Failure
+############################################################################
 def save_service_provider(db, service_provider, session_user):
     current_time_stamp = get_date_time()
     contract_from = string_to_datetime(service_provider.contract_from)
@@ -120,6 +143,13 @@ def save_service_provider(db, service_provider, session_user):
     return service_provider_id
 
 
+############################################################################
+# To get Service provider contract status
+# Parameter(s) - Object of database, Service provider id
+# Return Type - Boolean
+#             - Returns True if service provider is in contract
+#             - Returns False if contract of service provider expired
+############################################################################
 def get_contract_status(
     db, service_provider_id
 ):
@@ -135,6 +165,14 @@ def get_contract_status(
     return contract_status
 
 
+############################################################################
+# To Update service provider and save update activity
+# Parameter(s) - Object of database, Object of UpdateServiceProvider and
+#                session user
+# Return Type - Boolean
+#             - Returns True on Successful update
+#             - Returns Runtime Error on Update failure
+############################################################################
 def update_service_provider(db, service_provider, session_user):
     contract_status_before_update = get_contract_status(
         db, service_provider.service_provider_id
@@ -186,6 +224,13 @@ def update_service_provider(db, service_provider, session_user):
     return result
 
 
+############################################################################
+# To check whether a service provider is in contract or not
+# Parameter(s) - Object of database, Service provider id
+# Return Type - Boolean
+#             - Returns True if service provider is in contract
+#             - Returns False if contract of service provider expired
+############################################################################
 def is_service_provider_in_contract(db, service_provider_id):
     column = ["count(service_provider_id) as services"]
     condition = " now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
@@ -199,6 +244,13 @@ def is_service_provider_in_contract(db, service_provider_id):
         return False
 
 
+##############################################################################
+# To check whether users exists under a service provider
+# Parameter(s) - Object of database, Service provider id
+# Return Type - Boolean
+#             - Returns True if users exists under given service provider
+#             - Returns False if users not exists under given servie provider
+##############################################################################
 def is_user_exists_under_service_provider(db, service_provider_id):
     columns = ["count(user_id) as users"]
     condition = "service_provider_id = %s "
@@ -214,6 +266,14 @@ def is_user_exists_under_service_provider(db, service_provider_id):
         return False
 
 
+##############################################################################
+# To Activate or Inactivate service provider
+# Parameter(s) - Object of database, Service provider id, active status and
+#                session user
+# Return Type - Boolean
+#             - Returns True on successfull updation of status
+#             - Returns RuntimeError on failure of updation status
+##############################################################################
 def update_service_provider_status(
     db, service_provider_id,  is_active, session_user
 ):
@@ -239,6 +299,11 @@ def update_service_provider_status(
     return result
 
 
+##############################################################################
+# To Get list of all forms
+# Parameter(s) - Object of database
+# Return Type - Tuple of form detail tuples
+##############################################################################
 def get_forms(db):
     columns = " tf.form_id, tf.form_type_id, tft.form_type, "
     columns += "tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
@@ -255,6 +320,13 @@ def get_forms(db):
     return rows
 
 
+##############################################################################
+# To check whether the user privilege already exists or not
+# Parameter(s) - Object of database, user privilege id, user privilege name
+# Return Type - Boolean
+#             - Returns True if an userprivilege with same name already exists
+#             - Returns False if a duplicate doen't exists
+##############################################################################
 def is_duplicate_user_privilege(
     db, user_group_id, user_privilege_name
 ):
@@ -266,6 +338,11 @@ def is_duplicate_user_privilege(
     return db.is_already_exists(tblUserGroups, condition, condition_val)
 
 
+##############################################################################
+# To Get All user privilege details
+# Parameter(s) - Object of database
+# Return Type - Tuple of user privilege detail tuples
+##############################################################################
 def get_user_privilege_details_list(db):
     columns = ["user_group_id", "user_group_name", "form_ids", "is_active"]
     rows = db.get_data(
@@ -274,6 +351,11 @@ def get_user_privilege_details_list(db):
     return rows
 
 
+##############################################################################
+# To Get id, name and status of user privileges
+# Parameter(s) - Object of database
+# Return Type - List of object of UserGroup
+##############################################################################
 def get_user_privileges(db):
     columns = ["user_group_id", "user_group_name", "is_active"]
     rows = db.get_data(
@@ -282,6 +364,11 @@ def get_user_privileges(db):
     return return_user_privileges(rows)
 
 
+##############################################################################
+# To convert tuple of user privileges to List of UserGroup Objects
+# Parameter(s) - Tuple of user privilege tuples
+# Return Type - List of object of UserGroup
+##############################################################################
 def return_user_privileges(user_privileges):
     results = []
     for user_privilege in user_privileges:
@@ -293,6 +380,13 @@ def return_user_privileges(user_privileges):
     return results
 
 
+##############################################################################
+# To Save user Privilege
+# Parameter(s) - Object of database, Object of User Privilege and session user
+# Return Type - Boolean
+#             - Returns True on Saving the user privilege successfully
+#             - Returns RuntimeError on Save failure
+##############################################################################
 def save_user_privilege(
     db, user_privilege, session_user
 ):
@@ -314,6 +408,13 @@ def save_user_privilege(
     return result
 
 
+##############################################################################
+# To Update user Privilege
+# Parameter(s) - Object of database, Object of User Privilege and session user
+# Return Type - Boolean
+#             - Returns True on successful updation
+#             - Returns RuntimeError on updation failure
+##############################################################################
 def update_user_privilege(db, user_privilege, session_user):
     columns = ["user_group_name", "form_ids", "updated_on", "updated_by"]
     values = [
@@ -330,6 +431,13 @@ def update_user_privilege(db, user_privilege, session_user):
     return result
 
 
+##############################################################################
+# To check whether users exists under a user group
+# Parameter(s) - Object of database, User group id
+# Return Type - Boolean
+#             - Returns True if users exists under given user group
+#             - Returns False if users not exists under given user group
+##############################################################################
 def is_user_exists_under_user_group(db, user_group_id):
     columns = "count(*) as users"
     condition = "user_group_id = %s and is_active = 1"
@@ -343,6 +451,14 @@ def is_user_exists_under_user_group(db, user_group_id):
         return False
 
 
+##############################################################################
+# To Activate or Inactivate user privilege
+# Parameter(s) - Object of database, User group id, active status and
+#                session user
+# Return Type - Boolean
+#             - Returns True on successfull updation of status
+#             - Returns RuntimeError on failure of updation status
+##############################################################################
 def update_user_privilege_status(
     db, user_group_id, is_active, session_user
 ):
@@ -368,7 +484,12 @@ def update_user_privilege_status(
     return result
 
 
-def get_user_details(db, session_user):
+############################################################################
+# To get the details of all users
+# Parameter(s) - object of database
+# Return Type - returns list of object of ClientUser
+############################################################################
+def get_user_details(db):
     user_country_columns = ["user_id", "country_id"]
     countries = db.get_data(
         tblUserCountries, user_country_columns, "1"
@@ -423,6 +544,14 @@ def get_user_details(db, session_user):
     )
 
 
+############################################################################
+# To convert the data from tuple type to Object of ClientUser
+# Parameter(s) - object of database, Tuple of user detail tuples,
+#                Dict (key: user id, value : country id),
+#                Dict (key : user id, value : domain id),
+#                Dict (key : user id, value : unit id)
+# Return Type - returns list of object of ClientUser
+############################################################################
 def return_user_details(
     db, users, user_country_mapping,
     user_domain_mapping, user_unit_mapping
@@ -451,6 +580,11 @@ def return_user_details(
     return results
 
 
+############################################################################
+# To get id, name and active status of Service providers
+# Parameter(s) - object of database
+# Return Type - returns list of object of ServiceProvider
+############################################################################
 def get_service_providers(db):
     columns = ["service_provider_id", "service_provider_name", "is_active"]
     condition = " now() between DATE_SUB(contract_from, INTERVAL 1 DAY) " + \
@@ -461,6 +595,12 @@ def get_service_providers(db):
     return return_service_providers(rows)
 
 
+############################################################################
+# To convert the Tuple of service provider tuples into list of object of
+# Service providers
+# Parameter(s) - Tuple of service provider tuples
+# Return Type - returns list of object of ServiceProvider
+############################################################################
 def return_service_providers(service_providers):
     results = []
     for service_provider in service_providers:
@@ -472,6 +612,11 @@ def return_service_providers(service_providers):
     return results
 
 
+############################################################################
+# Returns Remaining number of  licences
+# Parameter(s) - Object of database
+# Return Type - int
+############################################################################
 def get_no_of_remaining_licence(db):
     columns = ["count(0) as licence"]
     condition = "1"
@@ -486,6 +631,13 @@ def get_no_of_remaining_licence(db):
     return remaining_licence
 
 
+############################################################################
+# To check whether another user exists with the given email id
+# Parameter(s) - Object of database, email id, userid
+# Return Type - Boolean
+#             - Returns True if another user exists with the same email id
+#             - Returns False if duplicate email id doesn't exists
+############################################################################
 def is_duplicate_user_email(db, email_id, user_id=None):
     condition = "email_id = %s "
     condition_val = [email_id]
@@ -496,6 +648,13 @@ def is_duplicate_user_email(db, email_id, user_id=None):
     return flag2
 
 
+############################################################################
+# To check whether another user exists with the given employee code
+# Parameter(s) - Object of database, employee code, userid
+# Return Type - Boolean
+#             - Returns True if duplicate employee code exists
+#             - Returns False if duplicate employee code doesn't exists
+############################################################################
 def is_duplicate_employee_code(db, employee_code, user_id=None):
     condition = "employee_code = %s "
     condition_val = [employee_code]
@@ -505,17 +664,28 @@ def is_duplicate_employee_code(db, employee_code, user_id=None):
     return db.is_already_exists(tblUsers, condition, condition_val)
 
 
+############################################################################
+# To check whether another user exists with the given employee name
+# Parameter(s) - Object of database, employee name, userid
+# Return Type - Boolean
+#             - Returns True if duplicate employee name exists
+#             - Returns False if duplicate employee name doesn't exists
+############################################################################
 def is_duplicate_employee_name(db, employee_name, user_id=None):
     condition = "employee_name = %s "
     condition_val = [employee_name]
     if user_id is not None:
         condition += " AND user_id != %s"
         condition_val.append(user_id)
-    print condition
-    print condition_val
     return db.is_already_exists(tblUsers, condition, condition_val)
 
 
+############################################################################
+# To Save User countries
+# Parameter(s) - Object of database, country ids, user id
+# Return Type - None / RunTimeError
+#             - Returns RuntimeError if insertion fails
+############################################################################
 def save_user_countries(db, country_ids, user_id):
     db.delete(tblUserCountries, "user_id = %s", [user_id])
     country_columns = ["user_id", "country_id"]
@@ -529,6 +699,12 @@ def save_user_countries(db, country_ids, user_id):
         raise client_process_error("E008")
 
 
+############################################################################
+# To Save User Domains
+# Parameter(s) - Object of database, domain ids, user id
+# Return Type - None / RunTimeError
+#             - Returns RuntimeError if insertion fails
+############################################################################
 def save_user_domains(db, domain_ids, user_id):
     db.delete(tblUserDomains, "user_id = %s", [user_id])
     domain_columns = ["user_id", "domain_id"]
@@ -540,6 +716,12 @@ def save_user_domains(db, domain_ids, user_id):
         raise client_process_error("E009")
 
 
+############################################################################
+# To Save User Units
+# Parameter(s) - Object of database, unit ids, user id
+# Return Type - None / RunTimeError
+#             - Returns RuntimeError if insertion fails
+############################################################################
 def save_user_units(db, unit_ids, user_id):
     db.delete(tblUserUnits, "user_id = %s", [user_id])
     unit_columns = ["user_id", "unit_id"]
@@ -551,6 +733,14 @@ def save_user_units(db, unit_ids, user_id):
         raise client_process_error("E010")
 
 
+############################################################################
+# To Save User
+# Parameter(s) - Object of database, Object of user, session user
+# and client id
+# Return Type - True / RunTimeError
+#             - Returns True on saved Successfully
+#             - Returns RuntimeError if Save fails
+############################################################################
 def save_user(db, user, session_user, client_id):
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
@@ -599,6 +789,14 @@ def save_user(db, user, session_user, client_id):
     return True
 
 
+############################################################################
+# To Update User
+# Parameter(s) - Object of database, Object of user, session user
+# and client id
+# Return Type - True / RunTimeError
+#             - Returns True on successfull updation
+#             - Returns RuntimeError if Updation fails
+############################################################################
 def update_user(db, user, session_user, client_id):
     user_id = user.user_id
     current_time_stamp = get_date_time()
@@ -640,14 +838,31 @@ def update_user(db, user, session_user, client_id):
 
     return True
 
+
+############################################################################
+# To Check the active status of user group of given user
+# Parameter(s) - Object of database, user id
+# Return Type - None / RunTimeError
+#             - Returns RuntimeError if user group of the given user is
+#             inactive
+############################################################################
 def check_user_group_active_status(db, user_id):
-    q = "select count(ug.user_group_id) from tbl_user_groups ug \
-        inner join tbl_users u on  ug.user_group_id = u.user_group_id \
-        where u.user_id = %s and ug.is_active = 1"
+    q = "select count(ug.user_group_id) from tbl_user_groups ug " + \
+        " inner join tbl_users u on  ug.user_group_id = u.user_group_id " + \
+        " where u.user_id = %s and ug.is_active = 1 "
     row = db.select_one(q, [user_id])
-    if int(row[0]) == 0 :
+    if int(row[0]) == 0:
         raise client_process_error("E030")
 
+
+##############################################################################
+# To Activate or Inactivate user and save the activity
+# Parameter(s) - Object of database, User id, active status, employee name
+#                session user and client id
+# Return Type - Boolean
+#             - Returns True on successfull updation of status
+#             - Returns RuntimeError on failure of updation status
+##############################################################################
 def update_user_status(
     db, user_id, is_active, emp_name, session_user, client_id
 ):
@@ -676,6 +891,14 @@ def update_user_status(
     return result
 
 
+##############################################################################
+# To Promote or Demote from Admin status
+# Parameter(s) - Object of database, User id, admin status, employee name
+#                session user
+# Return Type - Boolean
+#             - Returns True on successfull updation of admin status
+#             - Returns RuntimeError on failure of updation
+##############################################################################
 def update_admin_status(
     db, user_id, is_admin, employee_name, session_user
 ):
@@ -699,6 +922,11 @@ def update_admin_status(
     return result
 
 
+##############################################################################
+# To Get List of Units
+# Parameter(s) - Object of database, Unit ids
+# Return Type - List of Object of Client Unit
+##############################################################################
 def get_units_closure_for_user(db, unit_ids):
     columns = [
         "unit_id", "unit_code", "unit_name", "address",
@@ -721,6 +949,11 @@ def get_units_closure_for_user(db, unit_ids):
     return return_units(rows)
 
 
+##############################################################################
+# To Convert tuple of unit tuples into List of object of client unit
+# Parameter(s) - Tuple of unit tuples
+# Return Type - List of Object of Client Unit
+##############################################################################
 def return_units(units):
     results = []
     for unit in units:
@@ -743,6 +976,12 @@ def return_units(units):
     return results
 
 
+##############################################################################
+# To Close a Unit
+# Parameter(s) - Object of database, Unit id, Unit name, Sesssion User
+# Return Type - None / RuntimeError
+#             - Returns Runtime Error if close unit process fails
+##############################################################################
 def close_unit(db, unit_id, unit_name, session_user):
     condition = "unit_id = %s "
     columns = ["is_closed", "is_active"]

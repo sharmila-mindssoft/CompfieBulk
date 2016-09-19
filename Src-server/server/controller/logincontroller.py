@@ -146,7 +146,7 @@ def admin_login_response(db, ip):
     email_id = None
     session_type = 1  # web
     session_token = add_session(db, user_id, session_type, ip, "Administrator")
-    menu = process_user_forms(db, "1,2,3,4")
+    menu = process_user_forms(db, "1,2,3,4,27")
     employee_name = "Administrator"
     return login.AdminLoginSuccess(
         user_id, session_token, email_id, menu,

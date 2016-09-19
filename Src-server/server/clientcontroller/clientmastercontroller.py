@@ -402,7 +402,7 @@ def process_get_client_users(db, request, session_user):
     unit_list = get_units_for_user(db, None)
     session_user_unit_list = get_units_for_user(db, unit_ids)
     user_group_list = get_user_privileges(db)
-    user_list = get_user_details(db, session_user)
+    user_list = get_user_details(db)
     service_provider_list = get_service_providers(db)
     remaining_licence = get_no_of_remaining_licence(db)
     is_primary_user = is_primary_admin(db, session_user)

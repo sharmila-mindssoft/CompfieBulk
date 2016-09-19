@@ -1,0 +1,53 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<div class='loading-indicator-spin'>
+  <span><img src='/images/loading-img.gif' alt=""></span>
+</div>
+<link href="/css/jquery-ui/jquery-ui.css" rel="stylesheet">
+  <div class="content-container width50" id="clientgroup-add" >
+    <div class="content-area">
+      <div class="add-container">
+        <div class="add-container-heading width40">Validity Date Settings<span class="error-message"></span></div>
+        <div class="grid-table valdity-config">
+          <table style="padding:20px;width:100%;">
+            <tr align="left">
+              
+            </tr>
+            <tbody class="tbody-validity-config-list">
+            </tbody>
+          </table>
+        </div>
+        <div class="clearfix"></div>
+        <div class="submit-button-container">
+          <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientgroup-submit">
+        </div>
+      </div>
+    <div class="clearfix"></div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<div id="templates">
+  <table class="table-dconfig-list">
+    <tr class="table-dconfig-countries-row">
+      <td colspan="3"  width="50%"><span class="dconfig-country-name"></span>
+        
+      </td>
+      <td align="center" width="50%">
+        <span class="pw-result" style="font-weight: bold;">Validity Before/ After</span>
+      </td>
+    </tr>
+    <tr class="table-dconfig-domain-row">
+      <td colspan="3"  width="50%"><span class="dconfig-domain-name"></span>
+        <input type="hidden" class="inputDomain" value="">
+      </td>
+      <td align="center" width="50%">
+        <input type="hidden" class="validity-day-setting-id" value="">
+        <input type="text" class="input-box dconfig-validity-days" style="width:50px" maxlength="3" />
+      </td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/script/validity-date-settings/validitydatesettings.js"></script>
+{% endblock %}

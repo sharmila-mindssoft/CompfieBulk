@@ -59,7 +59,13 @@ api_params = {
     'file_name': {'type': 'text', 'length': None, 'validation_method': None, 'is_optional': False},
     'file_content': {'type': 'text', 'length': None, 'validation_method': None, 'is_optional': True},
 
+    'validity_days_id': {'type': 'int', 'length': 10000, 'validation_method':None, 'is_optional': True},
+    'validity_days': {'type': 'int', 'length': 365, 'validation_method':None, 'is_optional': True},
 
+    'group_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'group_name': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'country_names': {'type': 'string', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'no_of_legal_entities': {'type': 'int', 'length': None, 'validation_method': None, 'is_optional': False}
 }
 
 api_params['domain_id'] = api_params.get('d_id')

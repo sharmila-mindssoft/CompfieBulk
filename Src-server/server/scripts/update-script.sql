@@ -117,3 +117,5 @@ CREATE TABLE `tbl_user_login_history` (
   `login_attempt` int(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `compfie_knowledge`.`tbl_forms` VALUES(27, 1, 1, 'Validity Date Settings', '/knowledge/validity-date-settings', 27, null);
