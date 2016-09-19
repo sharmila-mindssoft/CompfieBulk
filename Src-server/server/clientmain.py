@@ -89,7 +89,6 @@ class API(object):
 
         def _with_client_info():
             for c_id, c_db in self._databases.iteritems() :
-                print c_id
                 on_session_timeout(c_db)
             on_return()
 
@@ -321,7 +320,6 @@ class API(object):
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
-        # print self._ip_address
         logger.logLogin("info", self._ip_address, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, self._ip_address)
 

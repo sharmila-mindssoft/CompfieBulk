@@ -226,9 +226,6 @@ def parse_optional_int_list(x, length=0, int_length=0):
     return parse_int_list(x, length, int_length)
 
 def parse_dictionary_values(x, field_names=[]):
-    print 'x'
-    print x
-    print
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
@@ -286,7 +283,6 @@ def parse_dictionary_values(x, field_names=[]):
     return x
 
 def parse_vector_type_record_type(value):
-    print value
     if type(value) is list :
         if len(value) == 0 :
             return value
