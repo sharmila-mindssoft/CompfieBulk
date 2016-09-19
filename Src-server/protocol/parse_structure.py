@@ -8,6 +8,24 @@ from protocol.jsonvalidators import (
     parse_dictionary
 )
 
+
+def parse_structure_VectorType(data, fn):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(fn(item))
+    return lst
+
+
+def parse_structure_MapType(data, fn1, fn2):
+    map = {}
+    for key, value in data.items():
+        key = fn1(key)
+        value = fn2(value)
+        map[key] = value
+    return map
+
+
 def parse_structure_VectorType_RecordType_clientreport_User(data):
     data = parse_list(data, 0)
     lst = []
@@ -2239,3 +2257,48 @@ def parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(dat
         value = parse_structure_VectorType_UnsignedIntegerType_32(value)
         d[key] = value
     return d
+
+
+def parse_structure_RecordType(module, klass, data):
+    from protocol import module
+    return module.klass.parse_structure(data)
+
+
+def parse_structure_VectorType_RecordType_core_ClientGroup(data):
+    parse_structure_VectorType(
+        data, parse_structure_RecordType_core_ClientGroup)
+
+
+def parse_structure_RecordType_core_ClientGroup(data):
+    return parse_structure_RecordType(
+        "core", "ClientGroup", data
+    )
+
+
+def parse_structure_VectorType_RecordType_core_LegalEntityDetails(data):
+    parse_structure_VectorType(
+        data, parse_structure_RecordType_core_ClientGroup)
+
+
+def parse_structure_RecordType_core_LegalEntityDetails(data):
+    return parse_structure_RecordType(
+        "core", "LegalEntityDetails", data
+    )
+
+
+def parse_structure_VectorType_RecordType_core_EntityDomainDetails(data):
+    parse_structure_VectorType(
+        data, parse_structure_RecordType_core_EntityDomainDetails)
+
+
+def parse_structure_RecordType_core_EntityDomainDetails(data):
+    return parse_structure_RecordType(
+        "core", "EntityDomainDetails", data
+    )
+
+
+def parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
+    return parse_structure_MapType(
+        data, parse_structure_CustomTextType_50,
+        parse_structure_UnsignedIntegerType_32
+    )

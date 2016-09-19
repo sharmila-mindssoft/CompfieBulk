@@ -7,6 +7,20 @@ function loadItemsPerPage() {
   };
 }
 
+function validateEmail($email) {
+  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+  return emailReg.test($email);
+}
+
+function clearMessage() {
+  $('.error-message').hide();
+  $('.error-message').text('');
+}
+
+function displayMessage(message) {
+  $('.error-message').text(message);
+  $('.error-message').show();
+}
 
 //Convert Number to Srting of Month
 function getMonth_IntegettoString(intMonth) {
@@ -147,18 +161,22 @@ function checkStrength(password) {
     return 'Strong';
   }
 }
-function onArrowKey(e, ac_item, callback) {
+function onArrowKey(e, ac_item, callback, type) {
+  var selector = "#"
+  if(type="class"){
+    selector = "."
+  }
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
     chosen = '';
   }
   if (e.keyCode == 40) {
     if (chosen === '') {
       chosen = 0;
-    } else if (chosen + 1 < $('#' + ac_item + ' li').length) {
+    } else if (chosen + 1 < $(selector + ac_item + ' li').length) {
       chosen++;
     }
-    $('#' + ac_item + ' li').removeClass('auto-selected');
-    $('#' + ac_item + ' li:eq(' + chosen + ')').addClass('auto-selected');
+    $(selector + ac_item + ' li').removeClass('auto-selected');
+    $(selector + ac_item + ' li:eq(' + chosen + ')').addClass('auto-selected');
     return false;
   }
   if (e.keyCode == 38) {
@@ -167,13 +185,13 @@ function onArrowKey(e, ac_item, callback) {
     } else if (chosen > 0) {
       chosen--;
     }
-    $('#' + ac_item + ' li').removeClass('auto-selected');
-    $('#' + ac_item + ' li:eq(' + chosen + ')').addClass('auto-selected');
+    $(selector + ac_item + ' li').removeClass('auto-selected');
+    $(selector + ac_item + ' li:eq(' + chosen + ')').addClass('auto-selected');
     return false;
   }
   if (e.keyCode == 13) {
-    var ac_id = $('#' + ac_item + ' li:eq(' + chosen + ')').attr('id');
-    var ac_name = $('#' + ac_item + ' li:eq(' + chosen + ')').text();
+    var ac_id = $(selector + ac_item + ' li:eq(' + chosen + ')').attr('id');
+    var ac_name = $(selector + ac_item + ' li:eq(' + chosen + ')').text();
     activate_text_arrow(ac_id, ac_name, callback);
     return false;
   }
@@ -297,6 +315,39 @@ function getIndustryAutocomplete(e, textval, listval, callback, flag) {
     $('.ac-textbox').hide();
   }
   onArrowKey(e, 'ac-industry', callback);
+}
+
+function getOrgAutocomplete(
+  e, textval, listval, ac_class, val_class, callback, flag
+) {
+  $('.'+ac_class).show();
+  $('.'+val_class).val('');
+  var industries = listval;
+  var suggestions = [];
+  $('.'+ac_class+' ul').empty();
+  if (textval.length > 0) {
+    if (flag == undefined)
+      flag = false;
+    var isFlag = flag;
+    for (var i in industries) {
+      if (isFlag == false) {
+        isFlag = industries[i].is_active;
+      }
+      if (~industries[i].industry_name.toLowerCase().indexOf(textval.toLowerCase()) && isFlag)
+        suggestions.push([
+          industries[i].industry_id,
+          industries[i].industry_name
+        ]);
+    }
+    var str = '';
+    for (var i in suggestions) {
+      str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
+    }
+    $('.'+ac_class+' ul').append(str);  //$("#industry").val('');
+  } else {
+    $('.ac-textbox').hide();
+  }
+  onArrowKey(e, ac_class, callback, "class");
 }
 //statutorynature autocomplete function
 function getStatutoryNatureAutocomplete(e, textval, listval, callback, flag) {

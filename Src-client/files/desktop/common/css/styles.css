@@ -2047,14 +2047,20 @@ list-style-type:none; line-height:25px;
 
 
 .popup {
-  margin: 70px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 3px;
-  width: 70%;
-  position: relative;
-  transition: all 5s ease-in-out;
+  	margin: 70px auto;
+  	padding: 20px;
+	background: #fff;
+	border-radius: 3px;
+	width: 70%;
+	position: relative;
+	transition: all 5s ease-in-out;
 }
+
+.client-popup {
+    margin-left: 30%;
+    width: 40%;
+}
+
 .popup .close {
   position: absolute;
   top: 5px;
@@ -3429,4 +3435,8 @@ div.scrollable {
 }
 .items-per-page{
 	font-size: 0.813em;
+}
+
+.img-link{
+	cursor: pointer;
 }

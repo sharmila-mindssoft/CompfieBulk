@@ -79,6 +79,7 @@ var message = {
   'action_selection_success': 'Selected action has been saved successfully',
   'group_required': 'Group Required',
   'legalentity_required': 'Legal Entity Required',
+  'le_50': 'Legal Entity : Not Allowed More than 50 Characters.',
   'businessgroup_required': 'Business Group Required',
   'division_required': 'Division Required',
   'geographylevel_required': 'Geography Level Required',
@@ -236,12 +237,18 @@ var message = {
   'compliance_update_failed': 'Compliance update failed. A Compliance with same due date for same unit has already submitted.',
   'invalid_validity_days': 'Validity days must be less than 366',
   'validity_date_required': 'Validity date required',
-  'settings_save_success': 'Validity date settings saved successfully'
+  'settings_save_success': 'Validity date settings saved successfully',
+  'no_of_units_required': 'No. of units required',
+  'duplicate_industry': 'Organization already exists',
+  'organization_required': 'Organization Required',
+  'duplicate_domain': 'Duplicate domain'
 };
+
 function clearMessage() {
   $('.error-message').hide();
   $('.error-message').text('');
 }
+
 function displayMessage(message) {
   $('.error-message').text(message);
   $('.error-message').show();
