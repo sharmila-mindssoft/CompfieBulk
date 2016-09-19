@@ -1,7 +1,9 @@
+var visiblePageCount = 10;
+
 //Load count values in pagination selectbox
-var pageList = [2,10,25,50,100,500];
+var pageList = [2, 50, 100, 250, 500];
 function loadItemsPerPage() {
-  for(var i=0; i<pageList.length; i++) {
+  for(var i = 0; i < pageList.length; i++) {
     var Id = pageList[i];
     $('#items_per_page').append($('<option value="' + Id + '">' + Id + '</option>'));
   };

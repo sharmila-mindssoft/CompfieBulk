@@ -238,7 +238,7 @@ function onUserSuccess(val) {
   $('#user').val(val[1]);
   $('#userid').val(val[0]);
 }
-//load user list in autocomplete text box  
+//load user list in autocomplete text box
 $('#user').keyup(function (e) {
   var textval = $(this).val();
   getUserAutocomplete(e, textval, userList, function (val) {
@@ -250,7 +250,7 @@ function onFormSuccess(val) {
   $('#formname').val(val[1]);
   $('#formid').val(val[0]);
 }
-//load form list in autocomplete text box  
+//load form list in autocomplete text box
 $('#formname').keyup(function (e) {
   var textval = $(this).val();
   getFormAutocomplete(e, textval, formList, function (val) {

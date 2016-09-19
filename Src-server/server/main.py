@@ -87,11 +87,15 @@ class API(object):
         self._remove_old_session()
 
     def _remove_old_session(self):
+        def on_return():
+            self._remove_old_session()
+
         def on_session_timeout():
             self._db.begin()
             try :
                 self._db.clear_session(SESSION_CUTOFF)
                 self._db.commit()
+                on_return()
             except Exception, e :
                 print e
                 self._db.rollback()
@@ -363,7 +367,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
         output = template.render(**self.__parameters)
         output = self.update_static_urls(output)
         token = str(time.time())
-        print token
+        # print token
         self.set_secure_cookie("_xsrf", token)
         # self.set_cookie("_test", to)
         # if not self.get_cookie("_xsrf"):

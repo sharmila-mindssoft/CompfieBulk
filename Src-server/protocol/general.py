@@ -267,16 +267,17 @@ class UpdateNotificationStatus(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self, from_date, to_date, user_id, form_id, record_count):
+    def __init__(self, from_date, to_date, user_id, form_id, record_count, page_count):
         self.from_date = from_date
         self.to_date = to_date
         self.user_id = user_id
         self.form_id = form_id
         self.record_count = record_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id", "record_count"])
+        data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id", "record_count", "page_count"])
         from_date = data.get("from_date")
         from_date = parse_structure_CustomTextType_20(from_date)
         to_date = data.get("to_date")
@@ -287,10 +288,12 @@ class GetAuditTrails(Request):
         form_id = parse_structure_OptionalType_UnsignedIntegerType_32(form_id)
         record_count = data.get("record_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        page_count = data.get("page_count")
+        page_count = parse_structure_UnsignedIntegerType_32(page_count)
         return GetAuditTrails(
             from_date, to_date,
             user_id, form_id,
-            record_count
+            record_count, page_count
         )
 
     def to_inner_structure(self):
@@ -299,7 +302,8 @@ class GetAuditTrails(Request):
             "to_date": to_structure_CustomTextType_20(self.to_date),
             "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id),
             "form_id": to_structure_OptionalType_UnsignedIntegerType_32(self.form_id),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count),
+            "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
         }
 
 def _init_Request_class_map():
@@ -567,27 +571,31 @@ class UpdateNotificationStatusSuccess(Response):
         }
 
 class GetAuditTrailSuccess(Response):
-    def __init__(self, audit_trails, users, forms):
+    def __init__(self, audit_trails, users, forms, total_records):
         self.audit_trails = audit_trails
         self.users = users
         self.forms = forms
+        self.total_records = total_records
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["audit_trails"])
+        data = parse_dictionary(data, ["audit_trails", "users", "forms", "total_records"])
         audit_trails = data.get("audit_trails")
         audit_trails = parse_structure_VectorType_RecordType_general_AuditTrail(audit_trails)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_general_User(users)
         forms = data.get("forms")
         forms = parse_structure_VectorType_RecordType_general_AuditTrailForm(forms)
-        return GetAuditTrailSuccess(audit_trails)
+        total_records = data.get("total_records")
+        total_records = parse_structure_UnsignedIntegerType_32(total_records)
+        return GetAuditTrailSuccess(audit_trails, users, forms, total_records)
 
     def to_inner_structure(self):
         return {
             "audit_trail_details": to_structure_VectorType_RecordType_general_AuditTrail(self.audit_trails),
             "users": to_structure_VectorType_RecordType_general_User(self.users),
-            "forms": to_structure_VectorType_RecordType_general_AuditTrailForm(self.forms)
+            "forms": to_structure_VectorType_RecordType_general_AuditTrailForm(self.forms),
+            "total_records": to_structure_UnsignedIntegerType_32(self.total_records)
         }
 
 class MasterDataNotAvailableForClient(Response):

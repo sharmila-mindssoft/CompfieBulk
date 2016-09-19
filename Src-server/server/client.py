@@ -51,6 +51,8 @@ class ClientReplicationManager(object) :
             request_timeout=10
         )
         self._request_body = request
+
+    def _start(self):
         self._io_loop.add_callback(self._poll)
 
     def _poll(self) :
