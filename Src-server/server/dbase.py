@@ -656,19 +656,14 @@ class Database(object):
         if args is None:
             try:
                 cursor.callproc(procedure_name)
-            except (AttributeError, mysql.OperationalError):
-                self.reconnect()
-                self.begin()
-                cursor = self.cursor()
-                cursor.callproc(procedure_name)
+            except mysql.Error, e:
+                print e
         else:
             try:
                 cursor.callproc(procedure_name, args)
-            except (AttributeError, mysql.OperationalError):
-                self.reconnect()
-                self.begin()
-                cursor = self.cursor()
-                cursor.callproc(procedure_name, args)
+            except mysql.Error, e:
+                print e
+
         rows = cursor.fetchall()
         cursor.nextset()
         if columns is not None:
