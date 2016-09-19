@@ -174,8 +174,10 @@ def process_knowledge_master_request(request, db):
 ########################################################
 def process_get_industry(db):
     results = get_industries(db)
-    return knowledgemaster.GetIndustriesSuccess(industries=results)
+    domain_list = get_domains_for_user(db, 0)
+    country_list = get_countries_for_user(db, 0)
 
+    return knowledgemaster.GetIndustriesSuccess(industries=results, countries=country_list, domains=domain_list)
 
 ########################################################
 # save industry request
@@ -185,16 +187,18 @@ def process_get_industry(db):
     # SaveIndustrySuccess
 ########################################################
 def process_save_industry(db, request_frame, user_id):
+    country_ids = request_frame.country_id
+    domain_ids = request_frame.domain_id
     industry_name = request_frame.industry_name
     isDuplicate = check_duplicate_industry(db, industry_name, industry_id=None)
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
-    if (save_industry(db, industry_name, user_id)):
+    if (save_industry(db, country_ids, domain_ids, industry_name, user_id)):
         return knowledgemaster.SaveIndustrySuccess()
 
 
-########################################################
+    ########################################################
 # update industry request
     # request_frame will have industry_id and industry_name
     # possible returns
@@ -203,19 +207,22 @@ def process_save_industry(db, request_frame, user_id):
     # UpdateIndustrySuccess
 ########################################################
 def process_update_industry(db, request_frame, user_id):
+    country_ids = request_frame.country_id
+    domain_ids = request_frame.domain_id
+
     industry_name = request_frame.industry_name
     industry_id = request_frame.industry_id
     isDuplicate = check_duplicate_industry(db, industry_name, industry_id)
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
-    if (update_industry(db, industry_id, industry_name, user_id)):
+    if (update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id)):
         return knowledgemaster.UpdateIndustrySuccess()
     else:
         return knowledgemaster.InvalidIndustryId()
 
 
-########################################################
+    ########################################################
 # To Handle change industry request
     # request_frame will have is_active, industry_id
     # possible returns
@@ -234,8 +241,9 @@ def process_change_industry_status(db, request_frame, user_id):
 # statutory nature
 def process_get_statutory_nature(db):
     results = get_statutory_nature(db)
+    country_list = get_countries_for_user(db, 0)
     success = knowledgemaster.GetStatutoryNaturesSuccess(
-        statutory_natures=results
+        statutory_natures=results, countries=country_list
     )
     return success
 
@@ -249,16 +257,17 @@ def process_get_statutory_nature(db):
 ########################################################
 def process_save_statutory_nature(db, request_frame, user_id):
     nature_name = request_frame.statutory_nature_name
+    country_id = request_frame.country_id
     isDuplicate = check_duplicate_statutory_nature(
         db, nature_name, nature_id=None
     )
     if isDuplicate:
         return knowledgemaster.StatutoryNatureNameAlreadyExists()
-    if (save_statutory_nature(db, nature_name, user_id)):
+    if (save_statutory_nature(db, nature_name, country_id, user_id)):
         return knowledgemaster.SaveStatutoryNatureSuccess()
 
 
-########################################################
+    ########################################################
 # To Handle update_statutory_nature request
     # request_frame will have statutory_nature_name, statutory_nature_id
     # possible returns
@@ -269,10 +278,11 @@ def process_save_statutory_nature(db, request_frame, user_id):
 def process_update_statutory_nature(db, request_frame, user_id):
     nature_name = request_frame.statutory_nature_name
     nature_id = request_frame.statutory_nature_id
+    country_id = request_frame.country_id
     isDuplicate = check_duplicate_statutory_nature(db, nature_name, nature_id)
     if isDuplicate:
         return knowledgemaster.StatutoryNatureNameAlreadyExists()
-    if (update_statutory_nature(db, nature_id, nature_name, user_id)):
+    if (update_statutory_nature(db, nature_id, nature_name, country_id, user_id)):
         return knowledgemaster.UpdateStatutoryNatureSuccess()
     else:
         return knowledgemaster.InvalidStatutoryNatureId()

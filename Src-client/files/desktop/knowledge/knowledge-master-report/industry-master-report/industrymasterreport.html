@@ -8,11 +8,15 @@
       <table>
         <tr align="left">
           <th width="10%" align="center">#</th>
-          <th width="70%">Industry</th>
+          <th width="23%">Country</th>
+          <th width="23%">Domain</th>
+          <th width="24%">Industry</th>
           <th width="20%" align="center">Status</th>
         </tr>
         <tr>
           <td>&nbsp;</td>
+          <td><input type="text" id="search-country-name" class="filter-text-box"></td>
+          <td><input type="text" id="search-domain-name" class="filter-text-box"></td>
           <td><input type="text" id="search-industry-name" class="filter-text-box"></td>
           <td>&nbsp;</td>
         </tr>
@@ -29,6 +33,8 @@
 <table class="table-industry-report">
   <tr class="table-row">
     <td align="center" class="sno"></td>
+    <td class="country-name"></td>
+    <td class="domain-name"></td>
     <td class="industry-name"></td>
     <td align="center" class="is-active"></td>
   </tr>

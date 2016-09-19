@@ -333,20 +333,43 @@ function initMirror() {
     apiRequest('techno_transaction', request, callback);
   }
   //Industry Master
-  function saveIndustry(iName, callback) {
+  function getSaveIndustryDict(industryDetail) {
+    var cIds = industryDetail[0];
+    var dIds = industryDetail[1];
+    var i_name = industryDetail[2];
+    return {
+      'c_ids': cIds,
+      'd_ids': dIds,
+      'i_name': i_name
+    };
+  }
+
+  function saveIndustry(industryDetail, callback) {
     var request = [
       'SaveIndustry',
-      { 'i_name': iName }
+       industryDetail
     ];
     apiRequest('knowledge_master', request, callback);
   }
-  function updateIndustry(iId, iName, callback) {
+
+  function getUpdateIndustryDict(industryDetail) {
+    var cIds = industryDetail[0];
+    var dIds = industryDetail[1];
+    var iIds = industryDetail[2];
+    var iName = industryDetail[3];
+
+    return {
+      'c_ids': cIds,
+      'd_ids': dIds,
+      'i_ids': iIds,
+      'i_name': iName
+    };
+  }
+
+  function updateIndustry(industryDetail, callback) {
     var request = [
       'UpdateIndustry',
-      {
-        'i_id': iId,
-        'i_name': iName
-      }
+      industryDetail
     ];
     apiRequest('knowledge_master', request, callback);
   }
@@ -368,20 +391,35 @@ function initMirror() {
     apiRequest('knowledge_master', request, callback);
   }
   //Statutory Nature Master
-  function saveStatutoryNature(sNName, callback) {
+  function getSaveStatutoryNatureDict(statutoryNatureDetail) {
+    var cIds = statutoryNatureDetail[1];
+    var s_n_name = statutoryNatureDetail[0];
+    return {
+      's_n_name': s_n_name,
+      'c_ids': cIds
+    };
+  }
+  function saveStatutoryNature(statutoryNatureDetail, callback) {
     var request = [
       'SaveStatutoryNature',
-      { 's_n_name': sNName }
+       statutoryNatureDetail
     ];
     apiRequest('knowledge_master', request, callback);
   }
-  function updateStatutoryNature(sNId, sNName, callback) {
+  function getUpdateStatutoryNatureDict(statutoryNatureDetail) {
+    var snIds = statutoryNatureDetail[0];
+    var snName = statutoryNatureDetail[1];
+    var cIds = statutoryNatureDetail[2];
+    return {
+      's_n_ids': snIds,
+      's_n_name': snName,
+      'c_ids': cIds
+    };
+  }
+  function updateStatutoryNature(statutoryNatureDetail, callback) {
     var request = [
       'UpdateStatutoryNature',
-      {
-        's_n_id': sNId,
-        's_n_name': sNName
-      }
+        statutoryNatureDetail
     ];
     apiRequest('knowledge_master', request, callback);
   }
@@ -1477,11 +1515,15 @@ function initMirror() {
     getCountryListForUser: getCountryListForUser,
     getCountryReport: getCountryReport,
     getCountriesForGroup: getCountriesForGroup,
+    getSaveIndustryDict: getSaveIndustryDict,
     saveIndustry: saveIndustry,
+    getUpdateIndustryDict:getUpdateIndustryDict,
     updateIndustry: updateIndustry,
     changeIndustryStatus: changeIndustryStatus,
     getIndustryList: getIndustryList,
+    getSaveStatutoryNatureDict: getSaveStatutoryNatureDict,
     saveStatutoryNature: saveStatutoryNature,
+    getUpdateStatutoryNatureDict: getUpdateStatutoryNatureDict,
     updateStatutoryNature: updateStatutoryNature,
     changeStatutoryNatureStatus: changeStatutoryNatureStatus,
     getStatutoryNatureList: getStatutoryNatureList,
