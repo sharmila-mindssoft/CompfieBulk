@@ -2352,7 +2352,7 @@ def get_compliance_task_applicability(db, request, session_user):
 
 def get_client_details_report(
     db, country_id,  business_group_id, legal_entity_id, division_id,
-    unit_id, domain_ids, session_user, start_count, to_count
+    unit_id, domain_ids, session_user, from_count, page_count
 ):
     condition, condition_val = get_client_details_condition(
         db, country_id,  business_group_id, legal_entity_id, division_id,
@@ -2381,7 +2381,7 @@ def get_client_details_report(
         query += condition
         param.extend(condition_val)
 
-    param.extend([start_count, to_count])
+    param.extend([from_count, page_count])
     print query + order
     print param
     rows = db.select_all(query + order, param)

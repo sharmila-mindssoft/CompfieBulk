@@ -732,7 +732,6 @@ def get_client_details_report_filters(db, request, session_user, client_id):
 
 
 def get_client_details_report_data(db, request, session_user, client_id):
-    to_count = RECORD_DISPLAY_COUNT
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "ClientDetails"
@@ -744,7 +743,7 @@ def get_client_details_report_data(db, request, session_user, client_id):
         units = get_client_details_report(
             db, request.country_id, request.business_group_id,
             request.legal_entity_id, request.division_id, request.unit_id,
-            request.domain_ids, session_user, request.start_count, to_count
+            request.domain_ids, session_user, request.from_count, request.page_count
         )
         total_count = get_client_details_count(
             db, request.country_id, request.business_group_id,

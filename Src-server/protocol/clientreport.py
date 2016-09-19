@@ -631,7 +631,7 @@ class GetClientDetailsReportFilters(Request):
 class GetClientDetailsReportData(Request):
     def __init__(
         self, country_id, business_group_id, legal_entity_id, division_id,
-        unit_id, domain_ids, csv, start_count
+        unit_id, domain_ids, csv, from_count, page_count
     ):
         self.country_id = country_id
         self.business_group_id = business_group_id
@@ -640,14 +640,15 @@ class GetClientDetailsReportData(Request):
         self.unit_id = unit_id
         self.domain_ids = domain_ids
         self.csv = csv
-        self.start_count = start_count
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "country_id", "business_group_id", "legal_entity_id", "division_id",
-                "unit_id", "domain_ids", "csv", "start_count"
+                "unit_id", "domain_ids", "csv", "from_count", "page_count"
             ]
         )
         country_id = data.get("country_id")
@@ -664,11 +665,13 @@ class GetClientDetailsReportData(Request):
         domain_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(domain_ids)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
-        start_count = data.get("start_count")
-        start_count = parse_structure_UnsignedIntegerType_32(start_count)
+        from_count = data.get("from_count")
+        from_count = parse_structure_UnsignedIntegerType_32(from_count)
+        page_count = data.get("page_count")
+        page_count = parse_structure_UnsignedIntegerType_32(page_count)
         return GetClientDetailsReportData(
             country_id, business_group_id, legal_entity_id, division_id,
-            unit_id, domain_ids, csv, start_count
+            unit_id, domain_ids, csv, from_count, page_count
         )
 
     def to_inner_structure(self):
@@ -680,7 +683,8 @@ class GetClientDetailsReportData(Request):
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "domain_ids": to_structure_OptionalType_VectorType_SignedIntegerType_8(self.domain_ids),
             "csv": to_structure_Bool(self.csv),
-            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
+            "from_count": to_structure_UnsignedIntegerType_32(self.from_count),
+            "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
         }
 
 class GetTaskApplicabilityStatusFilters(Request):
