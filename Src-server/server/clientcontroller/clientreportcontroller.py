@@ -562,34 +562,34 @@ def get_risk_report(db, request, session_user, client_id):
     unit_id = request.unit_id
     level_1_statutory_name = request.level_1_statutory_name
     statutory_status = request.statutory_status
-    from_count = request.record_count
-    to_count = RECORD_DISPLAY_COUNT
+    from_count = request.from_count
+    page_count = request.page_count
     compliance_list = []
     if request.csv is False:
         if statutory_status == 1:  # Delayed compliance
             total, compliance_list = get_delayed_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         if statutory_status == 2:  # Not complied
             total, compliance_list = get_not_complied_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         if statutory_status == 3:  # Not opted
             total, compliance_list = get_not_opted_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         if statutory_status == 4:  # Unassigned
             total, compliance_list = get_unassigned_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id,
                 level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         return clientreport.GetRiskReportSuccess(
             total, compliance_list

@@ -212,6 +212,7 @@ function createPageView(total_records) {
         onPageClick: function(event, page) {
             cPage = parseInt(page);
             if (parseInt(on_current_page) != cPage) {
+                
                 on_current_page = cPage;
                 fetchData(false);
             }
@@ -263,6 +264,7 @@ function fetchData (csv) {
                   $('.no_records', clone4).text('No Compliance Found');
                   $('.tbody-unit').append(clone4);
                   $('.pagination-view').hide();
+                  hideLoader();
                 } else {
                   if(sno==0){
                     createPageView(totalRecord);
@@ -300,7 +302,6 @@ $('#submit').click(function () {
 $('#export').click(function () {
   loadCompliance(true);
 });
-
 
 
 
