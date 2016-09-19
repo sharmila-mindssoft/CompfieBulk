@@ -298,7 +298,7 @@ class API(object):
         try:
             if need_client_id :
                 response_data = unbound_method(
-                    self, request_data, db, company_id
+                    self, request_data, db, company_id, ip_address
                 )
             else :
                 response_data = unbound_method(self, request_data, db)
@@ -319,9 +319,11 @@ class API(object):
             return
 
     @api_request(login.Request, need_client_id=True)
-    def handle_login(self, request, db, client_id):
-        logger.logLogin("info", self._ip_address, "login-user", "Login process end")
-        return controller.process_login_request(request, db, client_id, self._ip_address)
+    def handle_login(self, request, db, client_id, user_ip):
+        print self._ip_address
+
+        logger.logLogin("info", user_ip, "login-user", "Login process end")
+        return controller.process_login_request(request, db, client_id, user_ip)
 
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):
