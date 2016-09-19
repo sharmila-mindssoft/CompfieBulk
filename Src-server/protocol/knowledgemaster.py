@@ -283,12 +283,12 @@ class UpdateIndustry(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "i_id", "i_name"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "i_ids", "i_name"])
         country_id = data.get("c_ids")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("d_ids")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        industry_id = data.get("i_id")
+        industry_id = data.get("i_ids")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("i_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
@@ -298,7 +298,7 @@ class UpdateIndustry(Request):
         return {
             "c_ids": to_structure_UnsignedIntegerType_32(self.country_id),
             "d_ids": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "i_id": to_structure_UnsignedIntegerType_32(self.industry_id),
+            "i_ids": to_structure_UnsignedIntegerType_32(self.industry_id),
             "i_name": to_structure_CustomTextType_50(self.industry_name),
         }
 
@@ -364,8 +364,8 @@ class UpdateStatutoryNature(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["s_n_id", "s_n_name", "c_ids"])
-        statutory_nature_id = data.get("s_n_id")
+        data = parse_dictionary(data, ["s_n_ids", "s_n_name", "c_ids"])
+        statutory_nature_id = data.get("s_n_ids")
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("s_n_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
@@ -731,19 +731,28 @@ class ChangeGeographyStatusSuccess(Response):
         }
 
 class GetIndustriesSuccess(Response):
-    def __init__(self, industries):
+    def __init__(self, industries, countries, domains):
         self.industries = industries
+        self.countries = countries
+        self.domains = domains
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["industries"])
+        data = parse_dictionary(data, ["industries", "countries", "domains"])
         industries = data.get("industries")
         industries = parse_structure_VectorType_RecordType_core_Industry(industries)
-        return GetIndustriesSuccess(industries)
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+
+        return GetIndustriesSuccess(industries, countries, domains)
 
     def to_inner_structure(self):
         return {
             "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains)
         }
 
 class SaveIndustrySuccess(Response):
@@ -812,19 +821,23 @@ class ChangeIndustryStatusSuccess(Response):
         }
 
 class GetStatutoryNaturesSuccess(Response):
-    def __init__(self, statutory_natures):
+    def __init__(self, statutory_natures, countries):
         self.statutory_natures = statutory_natures
+        self.countries = countries
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_natures"])
+        data = parse_dictionary(data, ["statutory_natures", "countries"])
         statutory_natures = data.get("statutory_natures")
         statutory_natures = parse_structure_VectorType_RecordType_core_StatutoryNature(statutory_natures)
-        return GetStatutoryNaturesSuccess(statutory_natures)
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        return GetStatutoryNaturesSuccess(statutory_natures, countries)
 
     def to_inner_structure(self):
         return {
             "statutory_natures": to_structure_VectorType_RecordType_core_StatutoryNature(self.statutory_natures),
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
         }
 
 class SaveStatutoryNatureSuccess(Response):
