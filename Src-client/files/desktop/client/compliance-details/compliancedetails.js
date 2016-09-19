@@ -297,6 +297,7 @@ function loadCompliance(csv){
 }
 
 $('#submit').click(function () {
+  on_current_page = 1;
   loadCompliance(false);
 });
 $('#export').click(function () {
