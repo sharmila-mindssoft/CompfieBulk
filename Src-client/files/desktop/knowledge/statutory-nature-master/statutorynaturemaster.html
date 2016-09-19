@@ -18,7 +18,7 @@
           </tr>
           <tr>
             <td>&nbsp;</td>
-            <td><input type="text" name="search" class="filter-country-text-box" id="search-country-name"></td>
+            <td><input type="text" name="search" class="filter-text-box" id="search-country-name"></td>
             <td><input type="text" name="search" class="filter-text-box" id="search-statutory-nature-name"></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
@@ -52,8 +52,12 @@
         <div class="single-column-input-row">
           <div class="input-row">
             <div class="single-column-field-label">Country :<span class="mandatory">*</span></div>
-            <div class="single-column-field-input"><input type="text"  class="input-box" name="country-name" autofocus="autofocus" tabindex="1" maxlength="50" id="country-name"></div>
+            <div class="single-column-field-input"><input type="text"  class="input-box" name="country-name" autofocus="autofocus" tabindex="1" maxlength="50" id="country-name">
             <input type="hidden" name="country-id" id="country-id" value="">
+            <div id="ac-country" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+          </div>
           </div>
         </div>
 

@@ -1,10 +1,13 @@
+var countriesList;
 $('#btn-statutory-nature-add').click(function () {
   $('#statutory-nature-view').hide();
   $('#statutory-nature-add').show();
   $('#statutory-nature-name').val('');
   $('#statutory-nature-id').val('');
+  $('#country-id').val('');
+  $('#country-name').val('');
   displayMessage('');
-  $('#statutory-nature-name').focus();
+  $('#country-name').focus();
 });
 $('#btn-statutory-nature-cancel').click(function () {
   $('#statutory-nature-add').hide();
@@ -15,7 +18,8 @@ function initialize() {
   $('.filter-country-text-box').val();
   $('.filter-text-box').val();
   function onSuccess(data) {
-    loadStatNatureData(data);
+    loadStatNatureData(data.statutory_natures);
+    countriesList = data.countries;
   }
   function onFailure(error) {
     custom_alert(error);
@@ -29,13 +33,16 @@ function initialize() {
   });
 }
 function loadStatNatureData(statNatureList) {
+  alert(statNatureList.length);
   $('.tbody-statutory-nature-list').find('tr').remove();
   var sno = 0;
-  for (var i in statNatureList) {
-    var statNature = statNatureList[i];
+  //for (var i in statNatureList) {
+    var statNature = statNatureList;
     $.each(statNature, function (key, value) {
       var statNatureName = value.statutory_nature_name;
       var statNatureId = value.statutory_nature_id;
+      var countryName = value.country_name;
+      var countryId = value.country_id;
       var statNatureActive = value.is_active;
       var passStatus = null;
       var classValue = null;
@@ -51,9 +58,10 @@ function loadStatNatureData(statNatureList) {
       sno = sno + 1;
       $('.sno', clone).text(sno);
       $('.statutory-nature-name', clone).text(statNatureName);
+      $('.country-name', clone).text(countryName);
       $('.edit-icon').attr('title', 'Edit');
       $('.edit-icon', clone).on('click', function () {
-        statNature_edit(statNatureId, statNatureName);
+        statNature_edit(statNatureId, statNatureName, countryId);
       });
       $('.status', clone).addClass(classValue);
       $('.active-icon').attr('title', 'Deactivate');
@@ -63,7 +71,7 @@ function loadStatNatureData(statNatureList) {
       });
       $('.tbody-statutory-nature-list').append(clone);
     });
-  }
+  //}
 }
 $('#statutory-nature-name').keypress(function (e) {
   var statutoryNatureNameVal = $('#statutory-nature-name').val().trim();
@@ -79,11 +87,17 @@ $('#btn-statutory-nature-submit').click(function () {
   clearMessage();
   var statutoryNatureIdVal = $('#statutory-nature-id').val();
   var statutoryNatureNameVal = $('#statutory-nature-name').val().trim();
+  var countryIdVal = $('#country-id').val();
+  var countryNameVal = $('#country-name').val().trim();
   var checkLength = statutoryNatureValidate();
   if (checkLength) {
+    if (countryNameVal == '') {
+      displayMessage(message.country_required);
+    }
     if (statutoryNatureNameVal == '') {
       displayMessage(message.statutorynature_required);
     } else if (statutoryNatureIdVal == '') {
+
       function onSuccess(data) {
         $('#statutory-nature-add').hide();
         $('#statutory-nature-view').show();
@@ -97,7 +111,14 @@ $('#btn-statutory-nature-submit').click(function () {
           displayMessage(error);
         }
       }
-      mirror.saveStatutoryNature(statutoryNatureNameVal, function (error, response) {
+      statutoryNatureDetail = [
+        statutoryNatureNameVal,
+        parseInt(countryIdVal)
+      ];
+
+      statutoryNatureDetailDict = mirror.getSaveStatutoryNatureDict(statutoryNatureDetail);
+
+      mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
         if (error == null) {
           onSuccess(response);
         } else {
@@ -121,7 +142,15 @@ $('#btn-statutory-nature-submit').click(function () {
           displayMessage(error);
         }
       }
-      mirror.updateStatutoryNature(parseInt(statutoryNatureIdVal), statutoryNatureNameVal, function (error, response) {
+      statutoryNatureDetail = [
+        parseInt(statutoryNatureIdVal),
+        statutoryNatureNameVal,
+        parseInt(countryIdVal)
+      ];
+
+      statutoryNatureDetailDict = mirror.getUpdateStatutoryNatureDict(statutoryNatureDetail);
+
+      mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
         if (error == null) {
           onSuccess(response);
         } else {
@@ -131,13 +160,23 @@ $('#btn-statutory-nature-submit').click(function () {
     }
   }
 });
-function statNature_edit(statNatureId, statNatureName) {
+function statNature_edit(statNatureId, statNatureName, countryId) {
   clearMessage();
   $('#statutory-nature-add').show();
   $('#statutory-nature-view').hide();
   $('#statutory-nature-name').val(statNatureName.replace(/##/gi, '"'));
   $('#statutory-nature-id').val(statNatureId);
+  $('#country-id').val(countryId);
   $('#statutory-nature-name').focus();
+  ////load country name
+  for(var i in countriesList)
+  {
+    if(countriesList[i].country_id == countryId)
+        $('#country-id').val(countryId);
+        $('#country-name').val(countriesList[i].country_name);
+        break;
+  }
+
 }
 function statNature_active(statNatureId, isActive) {
   var msgstatus = message.deactive_message;
@@ -167,6 +206,23 @@ function statNature_active(statNatureId, isActive) {
     }
   });
 }
+
+//load country list in autocomplete text box
+$('#country-name').keyup(function (e) {
+  var textval = $(this).val();
+  getCountryAutocomplete(e, textval, countriesList, function (val) {
+    onCountrynameSuccess(val);
+  });
+});
+
+//store the selected country name and id
+function onCountrynameSuccess(val)
+{
+  $('#country-name').val(val[1]);
+  $('#country-id').val(val[0]);
+  $('#country-name').focus();
+}
+
 $('#search-statutory-nature-name').keyup(function () {
   var count = 0;
   var value = this.value.toLowerCase();
@@ -174,6 +230,17 @@ $('#search-statutory-nature-name').keyup(function () {
     if (index === 0)
       return;
     var id = $(this).find('.statutory-nature-name').text().toLowerCase();
+    $(this).toggle(id.indexOf(value) !== -1);
+  });
+});
+
+$('#search-country-name').keyup(function () {
+  var count = 0;
+  var value = this.value.toLowerCase();
+  $('table').find('tr:not(:first)').each(function (index) {
+    if (index === 0)
+      return;
+    var id = $(this).find('.country-name').text().toLowerCase();
     $(this).toggle(id.indexOf(value) !== -1);
   });
 });
