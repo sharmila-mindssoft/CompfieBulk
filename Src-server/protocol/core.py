@@ -2903,8 +2903,11 @@ class LegalEntityDetails(object):
         )
         country_id = data.get("c_id")
         business_group = data.get("b_g")
+        business_group = parse_structure_RecordType_core_ClientBusinessGroup(business_group)
         legal_entity_name = data.get("l_e_name")
         incharge_persons = data.get("inc_p")
+        incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(
+            incharge_persons)
         logo = data.get("logo")
         no_of_licence = data.get("n_o_l")
         file_space = data.get("f_s")
@@ -2922,9 +2925,10 @@ class LegalEntityDetails(object):
     def to_structure(self):
         return {
             "c_id": self.country_id,
-            "b_g": self.business_group,
+            "b_g": to_structure_RecordType_core_ClientBusinessGroup(self.business_group),
             "l_e_name": self.l_e_name,
-            "inc_p": self.incharge_persons,
+            "inc_p": to_structure_VectorType_UnsignedIntegerType_32(
+                self.incharge_persons),
             "logo": self.logo,
             "n_o_l": self.no_of_licence,
             "f_s": self.file_space,
