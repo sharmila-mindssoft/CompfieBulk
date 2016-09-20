@@ -96,18 +96,14 @@ def check_duplicate_industry(db, industry_name, industry_id):
     isDuplicate = False
 
     if industry_id is not None:
-        param = [industry_name, industry_id]
+        param = [industry_id, industry_name]
     else:
-        param = [industry_name, 0]
+        param = [0, industry_name]
 
     row = db.call_proc("sp_industry_master_checkduplicateindustry", param)
     for r in row:
-        print "row"
-        print r[0]
         if r[0] > 0:
-            print r[0]
             isDuplicate = True
-    print isDuplicate
     return isDuplicate
 
 
@@ -126,11 +122,17 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
 
 
 def update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id):
+    new_id = False
     oldData = get_industry_by_id(db, industry_id)
+    print oldData
     if oldData is None:
         return False
-    values = [country_ids, domain_ids, industry_name, int(user_id), industry_id]
-    if (db.call_proc("sp_industry_master_updateindustry", values)):
+    columns = ["industry_id", "industry_name", "country_id", "domain_id", "created_by"]
+    values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
+    new_id = db.call_proc("sp_industry_master_updateindustry", values, columns)
+    print new_id
+    print "new_id"
+    if new_id is True:
         action = "Industry type %s updated" % (industry_name)
         db.save_activity(user_id, 7, action)
         return True
@@ -143,7 +145,9 @@ def update_industry_status(db, industry_id, is_active, user_id):
     if oldData is None:
         return False
     values = [is_active, user_id, industry_id]
-    if (db.call_proc("sp_industry_master_updatestatus", values)):
+    new_id = db.call_proc("sp_industry_master_updatestatus", values)
+
+    if new_id is True:
         if is_active == 0:
             status = "deactivated"
         else:
@@ -226,7 +230,9 @@ def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
         return False
 
     values = [nature_id, nature_name, country_id, user_id]
-    if (db.call_proc("sp_statutory_nature_updatestatutorynature", values)):
+    new_id = db.call_proc("sp_statutory_nature_updatestatutorynature", values)
+
+    if new_id is True:
         action = "Statutory Nature '%s' updated" % (nature_name)
         db.save_activity(user_id, 8, action)
         return True
@@ -239,7 +245,8 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
     if oldData is None:
         return False
     values = [nature_id, user_id, is_active]
-    if (db.call_proc("sp_statutory_nature_updatestatutorynaturestatus", values)):
+    new_id = db.call_proc("sp_statutory_nature_updatestatutorynaturestatus", values)
+    if new_id is True:
         if is_active == 0:
             status = "deactivated"
         else:
