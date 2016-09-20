@@ -4,8 +4,6 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
-import threading
-import re
 from protocol import technomasters
 from server.emailcontroller import EmailHandler as email
 from server import logger
@@ -20,7 +18,6 @@ from server.database.knowledgemaster import (
     get_geographies_for_user_with_mapping,
     get_active_industries
 )
-from server.database.createclientdatabase import ClientDBCreate
 
 from server.database.technomaster import *
 
@@ -86,56 +83,30 @@ def send_client_credentials(
     return True
 
 
-def save_client_group(db, request, session_user):
+def process_save_client_group(db, request, session_user):
     session_user = int(session_user)
     if is_duplicate_group_name(db, request.group_name):
         return technomasters.GroupNameAlreadyExists()
-    elif is_duplicate_short_name(db, request.short_name):
-        return technomasters.ShortNameAlreadyExists()
-    elif not is_logo_in_image_format(request.logo):
-        return technomasters.NotAnImageFile()
     else:
-        try:
-            country_ids = ",".join(str(x) for x in request.country_ids)
-            domain_ids = ",".join(str(x) for x in request.domain_ids)
-            short_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.short_name)
-            short_name = short_name.replace(" ", "")
-            client_id = save_client_group_data(
-                db, request, session_user
-            )
-            create_db = ClientDBCreate(
-                db, client_id, short_name, request.email_id,
-                country_ids, domain_ids
-            )
-            is_db_created = create_db.begin_process()
-            logger.logGroup("save_client_group", "db process end")
-            save_date_configurations(
-                db, client_id, request.date_configurations,
-                session_user
-            )
-            save_client_countries(db, client_id, request.country_ids)
-            logger.logGroup("save_client_group", "countries saved")
-            save_client_domains(db, client_id, request.domain_ids)
-            logger.logGroup("save_client_group", "domains saved")
-            save_incharge_persons(db, request, client_id)
-            logger.logGroup("save_client_group", "incharge saved")
-            save_client_user(db, request, session_user, client_id)
-            logger.logGroup("save_client_group", "client user saved")
-            notify_incharge_persons(db, request)
-            logger.logGroup("save_client_group", "notified")
-            if is_db_created[0] is True:
-                send_client_credentials_thread = threading.Thread(
-                    target=send_client_credentials, args=[
-                        request.short_name, request.email_id, is_db_created[1]
-                    ]
-                )
-                send_client_credentials_thread.start()
-                return technomasters.SaveClientGroupSuccess()
-        except Exception, e:
-            print e
-            create_db.delete_database()
-            print "Exception client_db_delete_database", str(e)
-            raise Exception(str(e))
+        group_id = save_client_group(
+            db, request.group_name, request.user_name
+        )
+        legal_entity_names = save_legal_entities(
+            db, request, group_id, session_user)
+        country_ids = save_date_configurations(
+            db, group_id, request.date_configurations, session_user
+        )
+        legal_entity_id_name_map = get_legal_entity_ids_by_name(
+            db, legal_entity_names
+        )
+        save_client_user(db, group_id, request.user_name)
+        save_client_countries(db, group_id, country_ids)
+        save_client_domains(db, group_id, request, legal_entity_id_name_map)
+        save_incharge_persons(db, group_id, request, legal_entity_id_name_map)
+        save_organization(
+            db, group_id, request, legal_entity_id_name_map, session_user
+        )
+        return technomasters.SaveClientGroupSuccess()
 
 
 ########################################################

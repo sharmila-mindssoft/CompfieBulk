@@ -3,6 +3,8 @@ var edit_id = null;
 var organization_details = {}
 var country_domain_id_map = {}
 var selected_textbox = '';
+var logoFile = {};
+var industry_id_map = {}
 
 var COUNTRIES = '';
 var DOMAINS = '';
@@ -32,6 +34,9 @@ function initialize(type_of_initialization){
             COUNTRIES = data.countries;
             DOMAINS = data.domains;
             INDUSTRIES = data.industries;
+            $.each(INDUSTRIES, function(key, value){
+                industry_id_map[value.industry_name] = parseInt(value.industry_id)
+            });
             USERS = data.users;
             addClient();
         }
@@ -173,7 +178,10 @@ function saveOrganization(){
                 displayMessage(message.duplicate_industry);
                 organization_details = {};
             }else{
-                organization_details[le_cnt][d_cnt][selected_org] = no_of_units
+                organization_details[
+                    le_cnt][d_cnt][
+                        parseInt(industry_id_map[selected_org])
+                    ] = parseInt(no_of_units)
                 clearMessage();
                 closePopup();
             }
@@ -211,6 +219,7 @@ function saveClient(){
             var le_name = le_table.find("#legal_entity_text").val();
             var inchargePersonVal = le_table.find('#users').val();
             var uploadLogoVal = le_table.find('#upload-logo').val().trim();
+            var logo = logoFile[i]
             var ext = uploadLogoVal.split('.').pop().toLowerCase();
             var licenceVal = le_table.find('#no-of-user-licence').val().trim();
             var fileSpaceVal = le_table.find('#file-space').val().trim();
@@ -245,7 +254,7 @@ function saveClient(){
             }else if (inchargePersonVal == '') {
                 displayMessage(message.inchargeperson_required);
                 break;
-            }else if(uploadLogoVal == '') {
+            }else if(logo == '') {
                 displayMessage(message.logo_required);
                 break;
             }else if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
@@ -313,7 +322,7 @@ function saveClient(){
                     domain_ids.push(domain_id);
                     domains.push(
                         mirror.getDomainRow(
-                            domain_id, organization_details[i][j]
+                            parseInt(domain_id), organization_details[i][j]
                         )
                     )
                 }
@@ -324,17 +333,24 @@ function saveClient(){
             if(i == le_count){
                 is_valid = true
             }
+            var arrayinchargePersonVal = inchargePersonVal.split(',');
+            var arrayinchargePerson = [];
+            for (var k = 0; k < arrayinchargePersonVal.length; k++) {
+                arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]);
+            }
+            inchargePersonVal = arrayinchargePerson;
+            console.log("Adding to legal entity");
+            console.log(logo);
             legal_entities.push(
                 mirror.getLegalEntityRow(
-                    country_id, business_group_id, business_group_name, le_name,
-                    inchargePersonVal, uploadLogoVal, licenceVal, fileSpaceVal,
-                    subscribeSmsVal, contractFromVal, contractToVal, domains
+                    parseInt(country_id), parseInt(business_group_id), business_group_name,
+                    le_name, inchargePersonVal, logo, parseInt(licenceVal),
+                    parseInt(fileSpaceVal), subscribeSmsVal, contractFromVal, contractToVal, domains
                 )
             )
         }
         if(is_valid == true){
             date_configurations = []
-            console.log(country_domain_id_map);
             $.each(country_domain_id_map, function (key, value) {
                 var country_id = key;
                 $.each(value["domain_names"], function (name_key, name_value) {
@@ -343,7 +359,8 @@ function saveClient(){
                     var to = $('.tl-to-' + country_id + '-' + domain_id).val();
                     date_configurations.push(
                         mirror.getDateConfigurations(
-                            country_id, domain_id, from, to
+                            parseInt(country_id), parseInt(domain_id),
+                            parseInt(from), parseInt(to)
                         )
                     )
                 });
@@ -357,14 +374,16 @@ function callSaveClientApi(
     group_name, username, legal_entities, date_configurations
 ){
     clearMessage();
-    function onSuccess(data) {
+    function onSuccess(data){
+        displayMessage(message.client_save_success);
+        initialize("list");
     }
-    function onFailure(error) {
+    function onFailure(error){
         displayMessage(error);
     }
     mirror.saveClientGroup(group_name, username, legal_entities,
         date_configurations,
-        function (error, response) {
+        function (error, response){
             if (error == null) {
                 onSuccess(response);
             }else {
@@ -471,6 +490,23 @@ function addClient(){
         loadUsers(incharge_class, user_list_class)
     });
     loadUsers(incharge_class, user_list_class);
+
+    $('#upload-logo', clone).change(function (e) {
+        console.log("uploading logo");
+        mirror.uploadFile(e, le_count, function result_data(data, le_count) {
+            if (
+                data != 'File max limit exceeded' ||
+                data != 'File content is empty' ||
+                data != 'Invalid file format'
+              ) {
+                console.log(data);
+                logoFile[le_count] = data;
+            } else {
+                alert(data);
+                custom_alert(data);
+            }
+        });
+    });
 
     var add_domain_class = "domain-"+le_count;
     var domain_list_class = "domain-list-"+le_count;

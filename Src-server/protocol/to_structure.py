@@ -1067,6 +1067,13 @@ def to_structure_RecordType_core_ClientBusinessGroup(data):
     from protocol import core
     return core.ClientBusinessGroup.to_structure(data)
 
+def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
+    if data is None:
+        return data
+    else:
+        from protocol import core
+        return core.ClientBusinessGroup.to_structure(data)
+
 def to_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
     from protocol import core
     return core.COMPLIANCE_FREQUENCY.to_structure(data)

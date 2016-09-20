@@ -37,7 +37,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_250,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_CustomTextType_50,
-    parse_structure_VectorType_RecordType_core_ClientGroup
+    parse_structure_VectorType_RecordType_core_ClientGroup,
+    parse_structure_VectorType_RecordType_core_LegalEntityDetails
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -81,7 +82,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation,
-    to_structure_VectorType_RecordType_core_ClientGroup
+    to_structure_VectorType_RecordType_core_ClientGroup,
+    to_structure_VectorType_RecordType_core_LegalEntityDetails
 )
 
 
@@ -158,7 +160,7 @@ class SaveClientGroup(Request):
         user_name = data.get("u_name")
         user_name = parse_structure_CustomTextType_100(user_name)
         legal_entities = data.get("les")
-        legal_entities = parse_structure_CustomTextType_20(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntityDetails(legal_entities)
         date_configurations = data.get("d_cs")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
         return SaveClientGroup(
@@ -169,7 +171,7 @@ class SaveClientGroup(Request):
         return {
             "g_name": to_structure_CustomTextType_50(self.group_name),
             "u_name": to_structure_CustomTextType_100(self.user_name),
-            "les": to_structure_CustomTextType_20(self.legal_entities),
+            "les": to_structure_VectorType_RecordType_core_LegalEntityDetails(self.legal_entities),
             "d_cs": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
         }
 

@@ -241,7 +241,8 @@ var message = {
   'no_of_units_required': 'No. of units required',
   'duplicate_industry': 'Organization already exists',
   'organization_required': 'Organization Required',
-  'duplicate_domain': 'Duplicate domain'
+  'duplicate_domain': 'Duplicate domain',
+  "client_save_success": "Client saved successfully"
 };
 
 function clearMessage() {

@@ -3,7 +3,7 @@ from protocol import login, technomasters
 from generalcontroller import validate_user_session, validate_user_forms
 from technomastercontroller import (
     get_client_groups,
-    save_client_group,
+    process_save_client_group,
     update_client_group,
     change_client_group_status,
     save_client,
@@ -46,7 +46,7 @@ def process_techno_request(request, db):
     if type(request_frame) is technomasters.SaveClientGroup:
         logger.logKnowledgeApi("SaveClientGroup", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = save_client_group(db, request_frame, session_user)
+        result = process_save_client_group(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveClientGroup", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 

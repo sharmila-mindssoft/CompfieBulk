@@ -97,13 +97,13 @@ CREATE TRIGGER `after_tbl_business_groups_insert` AFTER INSERT ON `tbl_business_
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
+                NEW.group_id,
                 NEW.business_group_id,
                 'business_group_name',
                 NEW.business_group_name,
                 'tbl_business_groups');
     UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = NEW.client_id;
+    WHERE client_id = NEW.group_id;
 END
 //
 DELIMITER ;
@@ -124,13 +124,13 @@ CREATE TRIGGER `after_tbl_business_groups_update` AFTER UPDATE ON `tbl_business_
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
+                NEW.group_id,
                 NEW.business_group_id,
                 'business_group_name',
                 NEW.business_group_name,
                 'tbl_business_groups');
     UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = NEW.client_id;
+    WHERE client_id = NEW.group_id;
    END IF;
 
 END
@@ -462,8 +462,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'group_name',
                 NEW.group_name,
                 'tbl_client_groups');
@@ -474,8 +474,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'logo_url',
                 concat('logoooo', NEW.logo_url),
                 'tbl_client_groups');
@@ -486,8 +486,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'logo_size',
                 NEW.logo_size,
                 'tbl_client_groups');
@@ -498,8 +498,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'contract_from',
                 NEW.contract_from,
                 'tbl_client_groups');
@@ -512,8 +512,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'contract_to',
                 NEW.contract_to,
                 'tbl_client_groups');
@@ -526,8 +526,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'no_of_user_licence',
                 NEW.no_of_user_licence,
                 'tbl_client_groups');
@@ -540,8 +540,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'total_disk_space',
                 NEW.total_disk_space,
                 'tbl_client_groups');
@@ -554,8 +554,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'total_disk_space_used',
                 NEW.total_disk_space_used,
                 'tbl_client_groups');
@@ -568,8 +568,8 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'is_sms_subscribed',
                 NEW.is_sms_subscribed,
                 'tbl_client_groups');
@@ -582,13 +582,13 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'url_short_name',
                 NEW.url_short_name,
                 'tbl_client_groups');
 
-    INSERT INTO tbl_client_replication_status (client_id, is_new_data) VALUES(NEW.client_id, 1);
+    INSERT INTO tbl_client_replication_status (client_id, is_new_data) VALUES(NEW.group_id, 1);
 END
 //
 DELIMITER ;
@@ -608,8 +608,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'group_name',
                 NEW.group_name,
                 'tbl_client_groups');
@@ -625,8 +625,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'logo_url',
                 NEW.logo_url,
                 'tbl_client_groups');
@@ -642,8 +642,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'logo_size',
                 NEW.logo_size,
                 'tbl_client_groups');
@@ -659,8 +659,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'contract_from',
                 NEW.contract_from,
                 'tbl_client_groups');
@@ -676,8 +676,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'contract_to',
                 NEW.contract_to,
                 'tbl_client_groups');
@@ -693,8 +693,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'no_of_user_licence',
                 NEW.no_of_user_licence,
                 'tbl_client_groups');
@@ -710,8 +710,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'total_disk_space',
                 NEW.total_disk_space,
                 'tbl_client_groups');
@@ -727,8 +727,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'total_disk_space_used',
                 NEW.total_disk_space_used,
                 'tbl_client_groups');
@@ -744,8 +744,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'is_sms_subscribed',
                 NEW.is_sms_subscribed,
                 'tbl_client_groups');
@@ -761,8 +761,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
-                NEW.client_id,
+                NEW.group_id,
+                NEW.group_id,
                 'url_short_name',
                 NEW.url_short_name,
                 'tbl_client_groups');
@@ -1520,7 +1520,7 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
+                NEW.group_id,
                 NEW.legal_entity_id,
                 'legal_entity_name',
                 NEW.legal_entity_name,
@@ -1533,7 +1533,7 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
+                NEW.group_id,
                 NEW.legal_entity_id,
                 'business_group_id',
                 NEW.business_group_id,
@@ -1560,13 +1560,13 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                              value,
                              tbl_name)
         VALUES (@action,
-                NEW.client_id,
+                NEW.group_id,
                 NEW.legal_entity_id,
                 'legal_entity_name',
                 NEW.legal_entity_name,
                 'tbl_legal_entities');
     UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = NEW.client_id;
+    WHERE client_id = NEW.group_id;
    END IF;
 
 END

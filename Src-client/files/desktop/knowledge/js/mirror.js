@@ -550,7 +550,7 @@ function initMirror() {
     };
     reader.readAsBinaryString(file);
   }
-  function uploadFile(fileListener, callback) {
+  function uploadFile(fileListener, le_cnt, callback) {
     var evt = fileListener;
     max_limit = 1024 * 1024 * 50;
     // file max limit 50MB
@@ -572,7 +572,7 @@ function initMirror() {
               callback('File content is empty');
             }
             result = uploadFileFormat(file_size, file_name, file_content);
-            callback(result);
+            callback(result, le_cnt);
           });
         }
       }
@@ -911,10 +911,7 @@ function initMirror() {
   ) {
     return {
         "c_id": c_id,
-        "b_g": {
-            "b_g_id": b_g_id,
-            "b_g_name": b_g_name
-        },
+        "b_g": getBusinessGroupDict(b_g_id, b_g_name),
         "l_e_name": l_e_name,
         "inc_p": inc_p,
         "logo": logo,
@@ -1061,8 +1058,8 @@ function initMirror() {
       return null;
     } else {
       return {
-        'bg_id': bgId,
-        'bg_name': bgName
+        'b_g_id': bgId,
+        'b_g_name': bgName
       };
     }
   }

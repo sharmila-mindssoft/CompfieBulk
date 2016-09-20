@@ -627,6 +627,7 @@ $('#upload-logo').on('change', function (e) {
         data != 'File content is empty' ||
         data != 'Invalid file format'
       ) {
+      console.log("inside upload File:"+data);
       uploadFile = data;
       logo_file = data;
     } else {
