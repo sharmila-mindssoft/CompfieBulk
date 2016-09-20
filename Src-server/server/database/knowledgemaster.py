@@ -108,11 +108,12 @@ def check_duplicate_industry(db, industry_name, industry_id):
 
 
 def save_industry(db, country_ids, domain_ids, industry_name, user_id):
-    table_name = "tbl_industries"
+    # table_name = "tbl_industries"
     created_on = get_date_time()
-    columns = ["country_id", "domain_id", "industry_name", "created_by", "created_on"]
+    # columns = ["country_id", "domain_id", "industry_name", "created_by", "created_on"]
     values = [country_ids, domain_ids, industry_name, str(user_id), str(created_on)]
-    new_id = db.call_proc("sp_industry_master_saveindustry", values, columns)
+    new_id = db.call_insert_proc("sp_industry_master_saveindustry", values)
+    print new_id
     if new_id is False:
         raise process_error("E001")
     else:

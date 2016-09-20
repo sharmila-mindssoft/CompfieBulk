@@ -45,7 +45,7 @@ function loadIndustryList(industriesList) {
     var country_id = value.country_id;
     var country_name = value.country_name;
     var domain_id = value.domain_id;
-    alert("domain:"+country_id);
+    // alert("domain:"+country_id);
     var domain_name = value.domain_name;
     var industryId = value.industry_id;
     var industryName = value.industry_name;
