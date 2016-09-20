@@ -1222,7 +1222,7 @@ function initClientMirror() {
     ];
     clientApiRequest(callerName, request, callback);
   }
-  function getAuditTrail(fromDate, toDate, userId, formId, recordCount, callback) {
+  function getAuditTrail(fromDate, toDate, userId, formId, recordCount, pageCount, callback) {
     callerName = 'client_masters';
     var request = [
       'GetAuditTrails',
@@ -1231,7 +1231,8 @@ function initClientMirror() {
         'to_date': toDate,
         'user_id': userId,
         'form_id': formId,
-        'record_count': recordCount
+        'record_count': recordCount,
+        'page_count': pageCount
       }
     ];
     clientApiRequest(callerName, request, callback);
