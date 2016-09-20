@@ -1,6 +1,6 @@
 function initialize() {
   function success(status, data) {
-    loadStatNatureData(data);
+    loadStatNatureData(data.statutory_natures);
   }
   function failure(status, data) {
   }
@@ -9,8 +9,8 @@ function initialize() {
 function loadStatNatureData(statNatureList) {
   var sno = 0;
   var title;
-  for (var i in statNatureList) {
-    var statNature = statNatureList[i];
+  //for (var i in statNatureList) {
+    var statNature = statNatureList;
     for (var j in statNature) {
       var isActive = statNature[j].is_active;
       if (isActive == 1) {
@@ -27,7 +27,7 @@ function loadStatNatureData(statNatureList) {
       $('.is-active', clone).text(title);
       $('.tbody-stat-nature-list').append(clone);
     }
-  }
+  //}
   $('#total-records').html('Total : ' + sno + ' records');
 }
 $('#search-stat-nature-name').keyup(function () {

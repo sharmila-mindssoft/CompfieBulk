@@ -1,6 +1,6 @@
 function initialize() {
   function success(status, data) {
-    loadIndustriesData(data);
+    loadIndustriesData(data.industries);
   }
   function failure(status, data) {
   }
@@ -9,8 +9,8 @@ function initialize() {
 function loadIndustriesData(industriesList) {
   var sno = 0;
   var title;
-  for (var i in industriesList) {    
-    var industry = industriesList[i];
+ // for (var i in industriesList) {
+    var industry = industriesList;
     for (var j in industry) {
       var isActive = industry[j].is_active;
       if (isActive == 1) {
@@ -28,7 +28,7 @@ function loadIndustriesData(industriesList) {
       $('.is-active', clone).text(title);
       $('.tbody-industry-list').append(clone);
     }
-  }
+  //}
   $('#total-records').html('Total : ' + sno + ' records');
 }
 $('#search-industry-name').keyup(function () {
