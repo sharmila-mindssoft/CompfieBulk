@@ -1,4 +1,4 @@
-from corecontroller import process_user_forms
+from corecontroller import process_user_forms, process_admin_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
@@ -11,6 +11,7 @@ from server.common import (
 )
 from server.database.tables import *
 from server.database.login import *
+from server.database.general import get_admin_forms
 
 __all__ = [
     "process_login_request",
@@ -146,7 +147,8 @@ def admin_login_response(db, ip):
     email_id = None
     session_type = 1  # web
     session_token = add_session(db, user_id, session_type, ip, "Administrator")
-    menu = process_user_forms(db, "1,2,3,4,27")
+    admin_forms = get_admin_forms(db)
+    menu = process_admin_forms(admin_forms)
     employee_name = "Administrator"
     return login.AdminLoginSuccess(
         user_id, session_token, email_id, menu,
