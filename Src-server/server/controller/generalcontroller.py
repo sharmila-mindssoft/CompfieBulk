@@ -117,32 +117,32 @@ def validate_user_session(db, session_token, client_id=None):
 
 
 def validate_user_forms(db, user_id, form_ids, requet):
-    if user_id == 0 and type(requet) in [
-        general.UpdateNotificationStatus,
-        general.UpdateUserProfile,
-        general.GetAuditTrails
-    ]:
-        return False
+    # if user_id == 0 and type(requet) in [
+    #     general.UpdateNotificationStatus,
+    #     general.UpdateUserProfile,
+    #     general.GetAuditTrails
+    # ]:
+    #     return False
 
-    if type(requet) not in [
-        general.GetNotifications,
-        general.UpdateNotificationStatus,
-        general.UpdateUserProfile,
-        general.GetAuditTrails
-    ]:
-        valid = 0
-        if user_id is not None:
-            alloted_forms = get_user_form_ids(db, user_id)
-            alloted_forms = [int(x) for x in alloted_forms.split(",")]
-            for i in alloted_forms:
-                if i in form_ids:
-                    valid += 1
-            if valid > 0:
-                return True
-        return False
+    # if type(requet) not in [
+    #     general.GetNotifications,
+    #     general.UpdateNotificationStatus,
+    #     general.UpdateUserProfile,
+    #     general.GetAuditTrails
+    # ]:
+    valid = 0
+    if user_id is not None:
+        alloted_forms = get_user_form_ids(db, user_id)
+        alloted_forms = [int(x) for x in alloted_forms.split(",")]
+        for i in alloted_forms:
+            if i in form_ids:
+                valid += 1
+        if valid > 0:
+            return True
+    return False
 
-    else:
-        return True
+    # else:
+    #     return True
 
 
 ########################################################

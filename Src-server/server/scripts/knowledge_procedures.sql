@@ -266,3 +266,35 @@ BEGIN
     VALUES
     (statutoryNatureName, countryId, createdBy, createdOn);
 END
+
+-- --------------------------------------------------------------------------------
+-- get domains data based on user domain settings
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE sp_tbl_domains_for_user;
+DELIMITER $$
+CREATE procedure `sp_tbl_domains_for_user`(IN _user_id VARCHAR(11))
+BEGIN
+	SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active FROM tbl_domains t1
+    INNER JOIN tbl_user_domains t2 on t1.domain_id = t2.domain_id WHERE
+    t1.is_active = 1 AND t2.user_id LIKE _user_id
+	ORDER BY t1.domain_name;
+
+END
+
+-- --------------------------------------------------------------------------------
+-- To Get admin forms
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE sp_tbl_forms_getadminforms;
+DELIMITER $$
+CREATE procedure `sp_tbl_forms_getadminforms`(IN _user_id VARCHAR(11))
+BEGIN
+	SELECT T01.form_id, T01.form_name, T01.form_url, T01.form_order, T01.parent_menu,
+	T02.form_category, T03.form_type FROM tbl_forms T01
+	INNER JOIN tbl_form_category T02 ON T02.form_category_id = T01.form_category_id
+	INNER JOIN tbl_form_type T03 ON T03.form_type_id = T01.form_type_id
+	WHERE T01.form_category_id = 1 ORDER BY T01.form_order;
+
+END
+

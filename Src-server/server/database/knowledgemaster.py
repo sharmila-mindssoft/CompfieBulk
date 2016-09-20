@@ -108,11 +108,12 @@ def check_duplicate_industry(db, industry_name, industry_id):
 
 
 def save_industry(db, country_ids, domain_ids, industry_name, user_id):
-    table_name = "tbl_industries"
+    # table_name = "tbl_industries"
     created_on = get_date_time()
-    columns = ["country_id", "domain_id", "industry_name", "created_by", "created_on"]
+    # columns = ["country_id", "domain_id", "industry_name", "created_by", "created_on"]
     values = [country_ids, domain_ids, industry_name, str(user_id), str(created_on)]
-    new_id = db.call_proc("sp_industry_master_saveindustry", values, columns)
+    new_id = db.call_insert_proc("sp_industry_master_saveindustry", values)
+    print new_id
     if new_id is False:
         raise process_error("E001")
     else:
@@ -129,7 +130,7 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
         return False
     columns = ["industry_id", "industry_name", "country_id", "domain_id", "created_by"]
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
-    new_id = db.call_proc("sp_industry_master_updateindustry", values, columns)
+    new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     print new_id
     print "new_id"
     if new_id is True:
@@ -145,7 +146,7 @@ def update_industry_status(db, industry_id, is_active, user_id):
     if oldData is None:
         return False
     values = [is_active, user_id, industry_id]
-    new_id = db.call_proc("sp_industry_master_updatestatus", values)
+    new_id = db.call_update_proc("sp_industry_master_updatestatus", values)
 
     if new_id is True:
         if is_active == 0:
