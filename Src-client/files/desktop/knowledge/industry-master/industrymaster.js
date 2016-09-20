@@ -189,11 +189,11 @@ function displayEdit(countryId, domainId, industryId, industryName) {
   $('#industry-add').show();
 
   //load country name
-  alert("disp:"+countriesList.length);
+  //alert("disp:"+countriesList.length);
   var i=0;
   for(i in countriesList)
   {
-    alert("disp:"+countriesList[i].country_id);
+    //alert("disp:"+countriesList[i].country_id);
     if(countriesList[i].country_id == countryId) {
       $('#countryid').val(countryId);
       $('#countryname').val(countriesList[i].country_name);
@@ -254,6 +254,55 @@ function changeStatus(industryId, isActive) {
     }
   });
 }
+
+//filter industry name
+/*$('#search-industry-name').keyup(function () {
+  var count = 0;
+  var value = this.value.toLowerCase();
+  if(this.value.length >=3)
+  {
+    $('table').find('tr:not(:first):not(:last)').each(function (index) {
+    if (index === 0)
+      return;
+    var id = $(this).find('.industry-name').text().toLowerCase();
+    $(this).toggle(id.indexOf(value) !== -1);
+    });
+  }
+});
+
+//filter country name
+$('#search-country-name').keyup(function () {
+  var count = 0;
+  var value = this.value.toLowerCase();
+  if(this.value.length >=3)
+  {
+    alert(this.value);
+    $('table').find('tr:not(:first):not(:last)').each(function (index) {
+    if (index === 0)
+      return;
+    var id = $(this).find('.country-name').text().toLowerCase();
+    $(this).toggle(id.indexOf(value) !== -1);
+    });
+  }
+});
+
+//filter domain name
+$('#search-domain-name').keyup(function () {
+  var count = 0;
+  var value = this.value.toLowerCase();
+  if(this.value.length >=3)
+  {
+    alert(this.value);
+    $('table').find('tr:not(:first):not(:last)').each(function (index) {
+    if (index === 0)
+      return;
+    var id = $(this).find('.domain-name').text().toLowerCase();
+    $(this).toggle(id.indexOf(value) !== -1);
+    });
+  }
+});*/
+
+
 //filter process - industry name
 $('#search-industry-name').keyup(function () {
   if(this.value.length >= 3) {
