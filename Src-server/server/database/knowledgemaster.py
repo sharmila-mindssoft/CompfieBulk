@@ -130,7 +130,7 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
         return False
     columns = ["industry_id", "industry_name", "country_id", "domain_id", "created_by"]
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
-    new_id = db.call_proc("sp_industry_master_updateindustry", values, columns)
+    new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     print new_id
     print "new_id"
     if new_id is True:
@@ -146,7 +146,7 @@ def update_industry_status(db, industry_id, is_active, user_id):
     if oldData is None:
         return False
     values = [is_active, user_id, industry_id]
-    new_id = db.call_proc("sp_industry_master_updatestatus", values)
+    new_id = db.call_update_proc("sp_industry_master_updatestatus", values)
 
     if new_id is True:
         if is_active == 0:
