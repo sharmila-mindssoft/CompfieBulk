@@ -216,7 +216,10 @@ def process_update_industry(db, request_frame, user_id):
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
-    if (update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id)):
+    update_status = update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id)
+    print "update_status"
+    print update_status
+    if update_status is True:
         return knowledgemaster.UpdateIndustrySuccess()
     else:
         return knowledgemaster.InvalidIndustryId()
