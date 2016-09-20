@@ -4,7 +4,7 @@ from generalcontroller import validate_user_session, validate_user_forms
 from technomastercontroller import (
     get_client_groups,
     process_save_client_group,
-    update_client_group,
+    process_update_client_group,
     change_client_group_status,
     save_client,
     update_client,
@@ -13,7 +13,8 @@ from technomastercontroller import (
     get_client_profile,
     create_new_admin_for_client,
     get_next_unit_code,
-    get_client_group_form_data
+    get_client_group_form_data,
+    get_edit_client_group_form_data
 )
 from server import logger
 
@@ -53,7 +54,7 @@ def process_techno_request(request, db):
     if type(request_frame) is technomasters.UpdateClientGroup:
         logger.logKnowledgeApi("UpdateCleintGroup", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = update_client_group(db, request_frame, session_user)
+        result = process_update_client_group(db, request_frame, session_user)
         logger.logKnowledgeApi("UpdateClientGroup", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
@@ -89,6 +90,15 @@ def process_techno_request(request, db):
         logger.logKnowledgeApi("GetClientGroupFormData", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
         result = get_client_group_form_data(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("GetClientGroupFormData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    if type(request_frame) is technomasters.GetEditClientGroupFormData:
+        logger.logKnowledgeApi("GetClientGroupFormData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = get_edit_client_group_form_data(
             db, request_frame, session_user
         )
         logger.logKnowledgeApi("GetClientGroupFormData", "process end")

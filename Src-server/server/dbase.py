@@ -467,6 +467,31 @@ class Database(object):
             return False
 
     ########################################################
+    # To form a bulk update query
+    ########################################################
+    def bulk_update(self, table, columns, values, conditions):
+        query = ""
+        for outer_index, cond in enumerate(conditions):
+            query += "UPDATE "+table+" set "
+            for index, column in enumerate(columns):
+                if index < len(columns)-1:
+                    query += column+" = %s, " % values[outer_index][index]
+                else:
+                    query += column+" = %s " % values[outer_index][index]
+            query += " WHERE " + cond
+
+        try:
+            cursor = self.cursor()
+            assert cursor is not None
+            cursor.executemany(query, ())
+            return True
+        except mysql.Error, e:
+            print e
+            logger.logKnowledgeApi("bulk_insert", query)
+            logger.logKnowledgeApi("bulk_insert", e)
+            return False
+
+    ########################################################
     # To form a update query
     ########################################################
     def update(self, table, columns, values, condition):

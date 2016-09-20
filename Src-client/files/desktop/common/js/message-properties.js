@@ -242,7 +242,9 @@ var message = {
   'duplicate_industry': 'Organization already exists',
   'organization_required': 'Organization Required',
   'duplicate_domain': 'Duplicate domain',
-  "client_save_success": "Client saved successfully"
+  "client_save_success": "Client saved successfully",
+  "client_update_success": "Client updated successfully",
+  "client_change_status_success": "Changed the status of client successfully"
 };
 
 function clearMessage() {
