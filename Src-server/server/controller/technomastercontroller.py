@@ -35,7 +35,8 @@ __all__ = [
     "change_client_status",
     "reactivate_unit",
     "get_client_profile",
-    "create_new_admin"
+    "create_new_admin",
+    "get_client_group_form_data"
 ]
 
 #
@@ -47,17 +48,24 @@ __all__ = [
 # To Get list of all clients with details
 ########################################################
 def get_client_groups(db, request, session_user):
-    domain_list = get_domains_for_user(db, session_user)
-    country_list = get_countries_for_user(db, session_user)
-    user_client_countries = get_user_client_countries(db, session_user)
-    user_client_domains = get_user_client_domains(db, session_user)
-    users = get_techno_users(db)
-    client_list = get_group_company_details(db)
+    groups = get_groups(db)
     return technomasters.GetClientGroupsSuccess(
-        countries=country_list,
-        domains=domain_list, users=users, client_list=client_list,
-        client_countries=user_client_countries,
-        client_domains=user_client_domains
+        groups=groups
+    )
+
+
+########################################################
+# To Get data to populate client group form
+########################################################
+def get_client_group_form_data(db, request, session_user):
+    countries = get_active_countries(db)
+    business_groups = None
+    users = get_techno_users(db)
+    domains = get_active_domains(db)
+    industries = get_active_industries(db)
+    return technomasters.GetClientGroupFormDataSuccess(
+        countries=countries, business_groups=business_groups,
+        users=users, domains=domains, industries=industries
     )
 
 

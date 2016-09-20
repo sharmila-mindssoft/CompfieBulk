@@ -8,7 +8,6 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_CustomTextType_100,
     parse_structure_VectorType_SignedIntegerType_8,
-    parse_structure_VectorType_RecordType_core_User,
     parse_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_ClientConfiguration,
@@ -18,7 +17,6 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_technomasters_PROFILES,
     parse_structure_VariantType_technomasters_Request,
     parse_structure_CustomTextType_20,
-    parse_structure_VectorType_RecordType_core_GroupCompanyDetail,
     parse_structure_OptionalType_RecordType_techno_master_BUSINESSGROUP,
     parse_structure_OptionalType_RecordType_techno_master_LEGALENTITY,
     parse_structure_OptionalType_RecordType_techno_master_DIVISION,
@@ -38,7 +36,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomTextType_250,
     parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_OptionalType_CustomTextType_50
+    parse_structure_OptionalType_CustomTextType_50,
+    parse_structure_VectorType_RecordType_core_ClientGroup
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -55,7 +54,6 @@ from protocol.to_structure import (
     to_structure_CustomTextType_100,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_OptionalType_RecordType_core_BusinessGroup,
-    to_structure_VectorType_RecordType_core_User,
     to_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS,
     to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_core_ClientConfiguration,
@@ -65,7 +63,6 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_technomasters_PROFILES,
     to_structure_VariantType_technomasters_Request,
     to_structure_CustomTextType_20,
-    to_structure_VectorType_RecordType_core_GroupCompanyDetail,
     to_structure_Float,
     to_structure_VectorType_RecordType_core_Industry,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
@@ -83,13 +80,14 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_250,
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation
+    to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation,
+    to_structure_VectorType_RecordType_core_ClientGroup
 )
+
 
 #
 # Request
 #
-
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
@@ -112,6 +110,7 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+
 class GetClientGroups(Request):
     def __init__(self):
         pass
@@ -125,6 +124,56 @@ class GetClientGroups(Request):
         return {
         }
 
+
+class GetClientGroupFormData(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetClientGroupFormData()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class SaveClientGroup(Request):
+    def __init__(
+        self, group_name, user_name, legal_entities, date_configurations
+    ):
+        self.group_name = group_name
+        self.user_name = user_name
+        self.legal_entities = legal_entities
+        self.date_configurations = date_configurations
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "g_name", "u_name", "les", "d_cs"
+        ])
+        group_name = data.get("g_name")
+        group_name = parse_structure_CustomTextType_50(group_name)
+        user_name = data.get("u_name")
+        user_name = parse_structure_CustomTextType_100(user_name)
+        legal_entities = data.get("les")
+        legal_entities = parse_structure_CustomTextType_20(legal_entities)
+        date_configurations = data.get("d_cs")
+        date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+        return SaveClientGroup(
+            group_name, user_name, legal_entities, date_configurations
+        )
+
+    def to_inner_structure(self):
+        return {
+            "g_name": to_structure_CustomTextType_50(self.group_name),
+            "u_name": to_structure_CustomTextType_100(self.user_name),
+            "les": to_structure_CustomTextType_20(self.legal_entities),
+            "d_cs": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
+        }
+
+
 class CreateNewAdmin(Request):
     def __init__(self, new_admin_id, client_id, old_admin_id, username):
         self.new_admin_id = new_admin_id
@@ -134,7 +183,8 @@ class CreateNewAdmin(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["new_admin_id", "client_id", "old_admin_id", "username"])
+        data = parse_dictionary(
+            data, ["new_admin_id", "client_id", "old_admin_id", "username"])
         new_admin_id = data.get("new_admin_id")
         new_admin_id = parse_structure_UnsignedIntegerType_32(new_admin_id)
         client_id = data.get("client_id")
@@ -149,87 +199,20 @@ class CreateNewAdmin(Request):
 
     def to_inner_structure(self):
         return {
-            "new_admin_id": to_structure_UnsignedIntegerType_32(self.new_admin_id),
+            "new_admin_id": to_structure_UnsignedIntegerType_32(
+                self.new_admin_id),
             "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
-            "old_admin_id": to_structure_UnsignedIntegerType_32(self.old_admin_id),
+            "old_admin_id": to_structure_UnsignedIntegerType_32(
+                self.old_admin_id),
             "username": to_structure_CustomTextType_100(self.username)
         }
 
-class SaveClientGroup(Request):
-    def __init__(self, group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, email_id, date_configurations, short_name):
-        self.group_name = group_name
-        self.country_ids = country_ids
-        self.domain_ids = domain_ids
-        self.logo = logo
-        self.contract_from = contract_from
-        self.contract_to = contract_to
-        self.incharge_persons = incharge_persons
-        self.no_of_user_licence = no_of_user_licence
-        self.file_space = file_space
-        self.is_sms_subscribed = is_sms_subscribed
-        self.email_id = email_id
-        self.date_configurations = date_configurations
-        self.short_name = short_name
-
-    @staticmethod
-    def parse_inner_structure(data):
-        print "inside save client group  parse structure"
-        data = parse_dictionary(data, [
-            "g_name", "c_ids", "d_ids", "logo", "c_from", "c_to",
-            "incharge", "licence", "f_space", "sms", "email", "config",
-            "s_name"
-        ])
-        group_name = data.get("g_name")
-        group_name = parse_structure_CustomTextType_50(group_name)
-        country_ids = data.get("c_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("d_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
-        logo = data.get("logo")
-        logo = parse_structure_RecordType_core_FileList(logo)
-        contract_from = data.get("c_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("c_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        incharge_persons = data.get("incharge")
-        incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(incharge_persons)
-        no_of_user_licence = data.get("licence")
-        no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
-        file_space = data.get("f_space")
-        file_space = parse_structure_Float(file_space)
-        is_sms_subscribed = data.get("sms")
-        is_sms_subscribed = parse_structure_Bool(is_sms_subscribed)
-        email_id = data.get("email")
-        email_id = parse_structure_CustomTextType_100(email_id)
-        date_configurations = data.get("config")
-        date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-        short_name = data.get("s_name")
-        short_name = parse_structure_CustomTextType_20(short_name)
-        return SaveClientGroup(
-            group_name, country_ids, domain_ids, logo, contract_from, contract_to,
-            incharge_persons, no_of_user_licence, file_space, is_sms_subscribed,
-            email_id, date_configurations, short_name
-        )
-
-    def to_inner_structure(self):
-        return {
-            "g_name": to_structure_CustomTextType_50(self.group_name),
-            "c_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "d_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "logo": to_structure_RecordType_core_FileList(self.logo),
-            "c_from": to_structure_CustomTextType_20(self.contract_from),
-            "c_to": to_structure_CustomTextType_20(self.contract_to),
-            "incharge": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
-            "licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
-            "f_space": to_structure_Float(self.file_space),
-            "sms": to_structure_Bool(self.is_sms_subscribed),
-            "email": to_structure_CustomTextType_100(self.email_id),
-            "config": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
-            "s_name" : to_structure_CustomTextType_20(self.short_name)
-        }
-
 class UpdateClientGroup(Request):
-    def __init__(self, client_id, group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, date_configurations):
+    def __init__(
+        self, client_id, group_name, country_ids, domain_ids, logo,
+        contract_from, contract_to, incharge_persons, no_of_user_licence,
+        file_space, is_sms_subscribed, date_configurations
+    ):
         self.client_id = client_id
         self.group_name = group_name
         self.country_ids = country_ids
@@ -638,7 +621,7 @@ def _init_Request_class_map():
         GetClientGroups, SaveClientGroup, UpdateClientGroup,
         ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient,
         ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
-        GetNextUnitCode
+        GetNextUnitCode, GetClientGroupFormData
     ]
     class_map = {}
     for c in classes:
@@ -673,50 +656,25 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+
 class GetClientGroupsSuccess(Response):
-    def __init__(
-        self, countries, domains, users, client_list, client_countries, client_domains
-    ):
-        self.countries = countries
-        self.domains = domains
-        self.users = users
-        self.client_list = client_list
-        self.client_countries = client_countries
-        self.client_domains = client_domains
+    def __init__(self, groups):
+        self.groups = groups
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "countries", "domains", "users", "client_list",
-                "client_countries", "client_domains"
-            ]
-        )
-        countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        client_countries = data.get("client_countries")
-        client_countries = parse_structure_VectorType_RecordType_core_Country(client_countries)
-        client_domains = data.get("client_domains")
-        client_domains = parse_structure_VectorType_RecordType_core_Domain(client_domains)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_core_ClientInchargePersons(users)
-        client_list = data.get("client_list")
-        client_list = parse_structure_VectorType_RecordType_core_GroupCompanyDetail(client_list)
-        return GetClientGroupsSuccess(
-            countries, domains, users, client_list, client_countries, client_domains
-        )
+        data = parse_dictionary(data, ["groups"])
+        groups = data.get("groups")
+        groups = parse_structure_VectorType_RecordType_core_ClientGroup(
+            groups)
+        return GetClientGroupsSuccess(groups)
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "client_countries": to_structure_VectorType_RecordType_core_Country(self.client_countries),
-            "client_domains": to_structure_VectorType_RecordType_core_Domain(self.client_domains),
-            "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
-            "client_list": to_structure_VectorType_RecordType_core_GroupCompanyDetail(self.client_list),
+            "groups": to_structure_VectorType_RecordType_core_ClientGroup(
+                self.groups)
         }
+
 
 class SaveClientGroupSuccess(Response):
     def __init__(self):
@@ -731,6 +689,7 @@ class SaveClientGroupSuccess(Response):
         return {
         }
 
+
 class GroupNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -743,6 +702,7 @@ class GroupNameAlreadyExists(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class UpdateClientGroupSuccess(Response):
     def __init__(self):
@@ -757,6 +717,7 @@ class UpdateClientGroupSuccess(Response):
         return {
         }
 
+
 class ChangeClientGroupStatusSuccess(Response):
     def __init__(self):
         pass
@@ -769,6 +730,7 @@ class ChangeClientGroupStatusSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class InvalidClientId(Response):
     def __init__(self):
@@ -783,6 +745,7 @@ class InvalidClientId(Response):
         return {
         }
 
+
 class InvalidPassword(Response):
     def __init__(self):
         pass
@@ -795,6 +758,7 @@ class InvalidPassword(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class InvalidBusinessGroupId(Response):
     def __init__(self):
@@ -809,6 +773,7 @@ class InvalidBusinessGroupId(Response):
         return {
         }
 
+
 class InvalidLegalEntityId(Response):
     def __init__(self):
         pass
@@ -822,6 +787,7 @@ class InvalidLegalEntityId(Response):
         return {
         }
 
+
 class InvalidDivisionId(Response):
     def __init__(self):
         pass
@@ -834,6 +800,7 @@ class InvalidDivisionId(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class InvalidUnitId(Response):
     def __init__(self):
@@ -850,7 +817,10 @@ class InvalidUnitId(Response):
 
 
 class Unit(object):
-    def __init__(self, business_group_id, legal_entity_id, division_id, client_id, units, is_active):
+    def __init__(
+        self, business_group_id, legal_entity_id, division_id,
+        client_id, units, is_active
+    ):
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.division_id = division_id
@@ -955,6 +925,46 @@ class UnitDetails(object):
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "is_active": to_structure_Bool(self.is_active),
         }
+
+class GetClientGroupFormDataSuccess(Response):
+    def __init__(
+        self, countries,  business_groups, users, domains, industries
+    ):
+        self.countries = countries
+        self.business_groups = business_groups
+        self.users = users
+        self.domains = domains
+        self.industries = industries
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "business_groups", "users",
+            "domains", "industries"
+        ])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        business_groups = data.get("business_groups")
+        business_groups = parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(business_groups)
+        users = data.get("users")
+        users = parse_structure_VectorType_RecordType_core_ClientInchargePersons(users)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        industries = data.get("industries")
+        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
+        return GetClientGroupFormDataSuccess(
+            countries, business_groups,  users, domains, industries
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
+            "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries)
+        }
+
 
 class GetClientsSuccess(Response):
     def __init__(
@@ -1400,7 +1410,7 @@ def _init_Response_class_map():
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
         InvalidNoOfLicence, InvalidFileSpace, ServerIsFull, NotAnImageFile,
-        GetNextUnitCodeSuccess
+        GetNextUnitCodeSuccess, GetClientGroupFormDataSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1409,10 +1419,10 @@ def _init_Response_class_map():
 
 _Response_class_map = _init_Response_class_map()
 
+
 #
 # RequestFormat
 #
-
 class RequestFormat(object):
     def __init__(self, session_token, request):
         self.session_token = session_token
@@ -1573,4 +1583,3 @@ class PROFILES(object):
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "profile_detail": to_structure_RecordType_technomasters_PROFILE_DETAIL(self.profile_detail),
         }
-

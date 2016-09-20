@@ -35,10 +35,12 @@
     <div id="templates">
       <table class="table-clientgroup-list">
         <tr class="table-row">
-          <td align="center" class="sno"></td>
-          <td class="clientgroup-name"></td>
+          <td align="center" class="sno">1</td>
+          <td class="country_names"></td>
+          <td class="group_name"></td>
+          <td class="no_of_entities"></td>
           <td align="center">
-            <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+            <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
           </td>
           <td align="center">
             <span class="status" style="width: 16px; height: 16px; display:block"> </span>
@@ -68,7 +70,7 @@
                     <span class="mandatory">*</span>
                 </div>
                 <div class="field-input">
-                    <input type="text" class="input-box" placeholder="user@domain.com">
+                    <input type="text" id="username" class="input-box" placeholder="user@domain.com">
                     <br><br>
                     <span class="input-notes">
                         [&#9658;This will be used as the username for group admin.<br>&#9658;
@@ -80,66 +82,68 @@
          <div class="clearfix"></div>
           <div class="add-container">
           <div class="form-sub-title">Legal Entity Configuration</div>
-          <span class="error-message"><a href="#"><img src="/images/icon-plus.png" formtarget="_self" title="Click to add Legal Entity" /></a> </span>
+          <span><a ><img src="/images/icon-plus.png" formtarget="_self" title="Click to add Legal Entity" class="add-le img-link float-right"/></a> </span>
+          <div class="le-body">
+          </div>
           <div class="grid-table">
           <div class="form-sub-title">Date Configuration</div>
             <table class="letable">
-              <tr align="left">
-                <th width="25%" class="form-sub-table-th">Domain</th>
-                <th colspan="2" width="75%" align="center" class="form-sub-table-th">Timeline</th>
-              </tr>
-              <div>
+                <thead>
+                  <tr align="left">
+                    <th width="25%" class="form-sub-table-th">Domain</th>
+                    <th colspan="2" width="75%" align="center" class="form-sub-table-th">Timeline</th>
+                  </tr>
+                </thead>
                 <tbody class="tbody-dateconfiguration-list">
                 </tbody>
-              </div>
             </table>
           </div>
         </div>
          
          <div class="clearfix"></div>
           <div class="submit-button-container">
-            <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/clientgroup/list'" >
+            <input type="reset" name="cancel" value="Cancel" class="btn-cancel cancel">
             &nbsp;&nbsp;
-            <input type="submit" name="submit" value="Submit" class="btn-submit" >
+            <input type="submit" name="submit" value="Submit" class="btn-submit save" >
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+<!--Templates-->
 <div class="legal-entity-config-template default-display-none">
     <div class="grid-table">
+        <input type="hidden" class="le-no">
         <table class="btable letable">
           <tr class="form-sub-table-tr">
             <td colspan="9" align="left">
               <table border="1" class="form-sub-table">
                 <tr class="form-sub-table-tr">
-                    <td width="10%" class="text-right">Country:&nbsp;</td>
+                    <td width="10%" vertical-align="middle" class="text-right">Country:&nbsp;</td>
                     <td width="15%">
-                        <select style="background-color: #ffffff;" placeholder="Select Country" class="testSelAll2 input-box">
-                      <option value="India" selected>India</option>
-                      <option value="Untied States">United States</option>
-                      <option value="Malaysia" >Malaysia</option>
+                        <select style="background-color: #ffffff;" placeholder="Select Country" class="testSelAll2 input-box country">
                         </select>
                     </td>
                     <td width="10%" class="text-right">Business Group:</td>
-                    <td width="27%">
+                    <td width="20%">
                         <div class="select_business_group">
-                            <select style="background-color:#fff;" placeholder="Select Business Group"  class="testSelAll2 input-box">
-                                <option selected>ABC Business Group</option>
-                                <option>DEF Business Group</option>
-                                <option>GHI Business Group</option>
+                            <select style="background-color:#fff;" placeholder="Select Business Group"  class="testSelAll2 input-box business-group">
                             </select>
-                            <a class="cursor-poter" onclick="business_group_change(1)"><img src="/images/add.png" /></a>
+                            <a class="cursor-poter add-business-group" onclick="addOrSelectBusinessGroup('add')">
+                                <img src="/images/add.png" />
+                            </a>
                         </div>
-                        <div class="input_business_group">
-                          <input type="text" value="ABC Business Group" class="input-box white-bg">
-                          <a class="cursor-poter" onclick="business_group_change(2)">&nbsp;<img src="/images/delete.png" /></a>
+                        <div class="input_business_group default-display-none">
+                          <input type="text" class="input-box white-bg business-group-text" placeholder="Enter Business Group">
+                          <a class="cursor-poter cancel-add-business-group" onclick="addOrSelectBusinessGroup('cancel')">&nbsp;
+                            <img src="/images/delete.png" />
+                        </a>
                         </div>
                     </td>
                     <td width="10%" class="text-right">Legal Entity:</td>
                     <td width="20%">
-                        <input type="text" class="input-box white-bg" value="ABC Legal Entity">
+                        <input type="text"  id="legal_entity_text" class="input-box white-bg legal-entity-text" placeholder="Enter Legal Entity">
                     </td>
                 </tr>
               </table>
@@ -151,19 +155,21 @@
                 <tr class="form-sub-table-tr">
                   <td width="10%" class="text-right">Incharge Person:&nbsp;</td>
                   <td width="15%">
-                    <input type="hidden" id="business-groups">
-                    <input type="text" class="input-box icon-autocomplete" id="bgroupsselected" tabindex="13" value="" readonly="readonly" onfocus="loadautobusinessgroups()" onclick="loadautobusinessgroups()">
-                    <div id="selectboxview-businessgroup" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenubgroup();">
-                        <ul id="ulist-bg" style="width:85%;"></ul>
+                    <input type="hidden" id="users">
+                    <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly" onclick="showmenu('user');">
+                    <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
+                      <ul id="ulist-user" onmouseleave="hidemenu('user');">
+                          
+                      </ul>
                     </div>
                   </td>
                   <td width="10%" class="text-right">Upload Logo:</td>
-                  <td width="27%">
-                    <input type="file" class="input-box white-bg">
+                  <td width="20%">
+                    <input type="file" id="upload-logo" class="input-box white-bg">
                   </td>
                   <td width="10%" class="text-right">File Space:</td>
                   <td width="20%">
-                    <input type="text" class="input-box white-bg" value="20"> GB
+                    <input type="text" id="file-space" class="input-box white-bg" placeholder="Enter File Space"> GB
                   </td>
                 </tr>
               </table>
@@ -174,11 +180,11 @@
               <table border="1">
                 <tr class="form-sub-table-tr">
                   <td width="10%" class="text-right">Contract From:&nbsp;</td>
-                  <td width="15%"><input type="text" class="input-box white-bg" value="01-Jan-2016" ></td>
+                  <td width="15%"><input type="text" readonly="readonly" class="input-box white-bg contract-from" placeholder="Select Contract From"></td>
                   <td width="10%" class="text-right">Contract To:</td>
-                  <td width="27%"><input type="text" class="input-box white-bg" value="31-Dec-2016"></td>
+                  <td width="20%"><input type="text" readonly="readonly" class="input-box white-bg contract-to" placeholder="Seelct Contract To"></td>
                   <td width="10%" class="text-right">Total Licence(s):</td>
-                  <td width="20%"><input type="text" class="input-box white-bg" value="15"></td>
+                  <td width="20%"><input type="text" id="no-of-user-licence" class="input-box white-bg" placeholder="Enter No. of Licence"></td>
                 </tr>
               </table>
             </td>
@@ -188,7 +194,7 @@
               <table>
                 <tr class="form-sub-table-tr">
                   <td width="100%" style="padding-right: 32px;" class="text-right">
-                    <input type="checkbox" checked="checked"> &nbsp;Subscribe for SMS Notification
+                    <input type="checkbox" id="subscribe-sms"> &nbsp;Subscribe for SMS Notification
                   </td>
                 </tr>
               </table>
@@ -197,28 +203,27 @@
           <tr align="left">
             <th width="45%">Domain<span class="mandatory">*</span></th>
             <th width="45%">Organization<span class="mandatory">*</span></th>
-            <th width="10%">Remove</th>
+            <th width="10%">Remove <input type="hidden" class="domain-count" value='0'/></th>
           </tr>
-          <tbody class="domain_list">
+          <tbody class="domain-list">
           </tbody>
         </table>
         <td>
-            <img src="/images/icon-plus.png" class="float-right" title="Click to add new domain" />
+            <a><img src="/images/icon-plus.png" class="float-right add-domain img-link" title="Click to add new domain" /></a>
         </td>
       </div>
 </div>
 <div class="domain_row_template default-display-none">
     <table>
-        <tr>
+        <tr class="domain_row">
             <td>
-                <select class="input-box">
-                    <option selected="selected">Labour Law</option>
-                    <option>Finance Law</option>
-                    <option>Industrial Law</option>
+                <select class="input-box domain">
                 </select>
             </td>
-            <td><a href="#" class="addOrganizationType float-left">Add Organization</a></td>
-            <td><img src="/images/icon-delete.png"></td>
+            <td>
+              <a class="addOrganizationType float-left img-link">Add Organization</a>
+            </td>
+            <td><img src="/images/icon-delete.png" class="remove-domain"></td>
         </tr>
     </table>
 </div>
@@ -269,6 +274,54 @@
       </td>
     </tr>
   </table>
+</div>
+<div class="overlay">
+    <div class="popup content-area client-popup">
+        <a class="close">x</a>
+        <input type="hidden" id="le-cnt"/>
+        <input type="hidden" id="d-cnt"/>
+        <input type="hidden" id="o-cnt"/>
+        <div>
+            <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; font-size: 0.9em;color:black">Add Organization</h1>
+            <div style="padding-top: 15px; font-weight: bold;">
+                Domain: Labour Law
+                <span class="error-message"></span>
+            </div>
+            <br>
+            <div class="grid-table">
+                <table width="100%" class="btable">
+                  <tr align="left">
+                    <th width="50%">Organization</th>
+                    <th width="30%">Unit(s).</th>
+                    <th width="10%">Remove</th>
+                  </tr>
+                  <tbody class="organization-list">
+                  </tbody>
+                </table>
+                <img src="/images/icon-plus.png" formtarget="_self"  title="Click to add new Organization" class="add-organization img-link float-right" />
+            </div>
+            <div class="submit-button-container">
+                <input type="reset" name="cancel" value="Cancel" class="btn-cancel org-cancel" >
+                &nbsp;&nbsp;
+                <input type="submit" name="submit" value="Submit" class="btn-submit org-submit" >
+            </div>
+        </div>
+    </div>
+</div>
+<div class="organization-template default-display-none">
+    <table>
+        <tr class="org-row">
+            <td>
+              <input type="text" class="input-box icon-autocomplete" id="orgselected" value="" tabindex="2">
+              <input type="hidden" id="industry">
+              <div id="ac-industry" class="ac-textbox default-display-none" width="10%">
+                <ul onmouseleave="hidemenu('org');"></ul>
+              </div>
+            </td>
+            <td><input type="text" class="input-box no-of-units"/></td>
+            <td align="center"><img src="/images/icon-delete.png"/></td>
+        </tr>
+    </table>
 </div>
 <script type="text/javascript" src="/script/client-master/clientmaster-new.js"></script>
 {% endblock %}

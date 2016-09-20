@@ -44,9 +44,6 @@ def parse_optional_bool(x):
 
 
 def parse_number(x, min_value, max_value):
-    print "x: %s, %s" % (x, type(x))
-    print "min: %s" % min_value
-    print "max: %s" % max_value
     if x is None:
         raise empty_error()
     if type(x) not in (int, long):
@@ -255,9 +252,6 @@ def parse_optional_int_list(x, length=0, int_length=0):
 
 
 def parse_dictionary_values(x, field_names=[]):
-    print 'x'
-    print x
-    print
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
@@ -318,9 +312,8 @@ def parse_dictionary_values(x, field_names=[]):
 
 
 def parse_vector_type_record_type(value):
-    print value
-    if type(value) is list:
-        if len(value) == 0:
+    if type(value) is list :
+        if len(value) == 0 :
             return value
 
         if type(value[0]) is dict:

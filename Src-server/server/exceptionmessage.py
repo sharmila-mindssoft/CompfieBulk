@@ -114,3 +114,7 @@ def fetch_error():
 
 def not_found_error(msg_code):
     return ValueError(messages.get(msg_code))
+
+def process_procedure_error(name, args, error):
+    msg = '%s- %s- %s' % (name, args, error)
+    return RuntimeError(msg)

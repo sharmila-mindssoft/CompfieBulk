@@ -12,7 +12,8 @@ from technomastercontroller import (
     reactivate_unit,
     get_client_profile,
     create_new_admin_for_client,
-    get_next_unit_code
+    get_next_unit_code,
+    get_client_group_form_data
 )
 from server import logger
 
@@ -84,12 +85,14 @@ def process_techno_request(request, db):
         logger.logKnowledgeApi("UpdateClient", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-    # if type(request_frame) is technomasters.ChangeClientStatus:
-    #     logger.logKnowledgeApi("ChangeClientStatus", "process begin")
-    #     logger.logKnowledgeApi("------", str(time.time()))
-    #     result = change_client_status(db, request_frame, session_user)
-    #     logger.logKnowledgeApi("ChangeClientStatus", "process end")
-    #     logger.logKnowledgeApi("------", str(time.time()))
+    if type(request_frame) is technomasters.GetClientGroupFormData:
+        logger.logKnowledgeApi("GetClientGroupFormData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = get_client_group_form_data(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("GetClientGroupFormData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     if type(request_frame) is technomasters.ReactivateUnit:
         logger.logKnowledgeApi("ReactivateUnit", "process begin")

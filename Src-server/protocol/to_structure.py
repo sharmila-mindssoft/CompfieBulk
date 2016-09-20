@@ -2325,3 +2325,54 @@ def to_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(
         value = to_structure_VectorType_UnsignedIntegerType_32(value)
         dict[key] = value
     return dict
+
+
+def return_import(module, class_name):
+    mod = __import__('protocol.'+module, fromlist=[class_name])
+    klass = getattr(mod, class_name)
+    return klass
+
+
+def to_structure_RecordType(module, class_name, data):
+    klass = return_import(module, class_name)
+    return klass.to_structure(data)
+
+
+def to_structure_VectorType(module, class_name, data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(
+            to_structure_RecordType(module, class_name, item)
+        )
+    return lst
+
+
+def to_structure_MapType(data, fn1, fn2):
+    map = {}
+    for key in data:
+        map[fn1(key)] = fn2(data[key])
+    return map
+
+
+def to_structure_VectorType_RecordType_core_ClientGroup(data):
+    return to_structure_VectorType("core", "ClientGroup", data)
+
+
+def to_structure_RecordType_core_ClientGroup(data):
+    return to_structure_RecordType("core", "ClientGroup", data)
+
+
+def to_structure_VectorType_RecordType_core_LegalEntityDetails(data):
+    return to_structure_VectorType("core", "LegalEntityDetails", data)
+
+
+def to_structure_VectorType_RecordType_core_EntityDomainDetails(data):
+    return to_structure_VectorType("core", "EntityDomainDetails", data)
+
+
+def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
+    return to_structure_MapType(
+        data, to_structure_CustomTextType_50,
+        to_structure_UnsignedIntegerType_32
+    )

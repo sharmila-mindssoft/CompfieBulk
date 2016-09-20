@@ -2,17 +2,59 @@ from protocol import (
     core, technomasters
 )
 from server.exceptionmessage import process_error
-from server.constants import (CLIENT_LOGO_PATH, LOGO_URL)
+from server.constants import (CLIENT_LOGO_PATH)
 from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, remove_uploaded_file,
-    convert_base64_to_file, new_uuid, convert_to_dict
+    convert_base64_to_file, new_uuid
 )
 from server.database.tables import *
 from server.database.admin import (
     get_countries_for_user, get_domains_for_user
 )
 from server.database.validateclientuserrecord import ClientAdmin
+
+
+def get_active_countries(db):
+    columns = ["country_id", "country_name", "is_active"]
+    countries = db.call_proc(
+        "sp_countries_active_list", None, columns
+    )
+    return return_countries(countries)
+
+
+def get_client_business_groups(db, client_id=None):
+    columns = ["business_group_id", "business_group_name", "client_id"]
+    business_groups = db.call_proc(
+        "sp_business_groups_list", (client_id,), columns
+    )
+    return return_business_groups(business_groups)
+
+
+def get_active_domains(db):
+    columns = ["domain_id", "domain_name", "is_active"]
+    domains = db.call_proc(
+        "sp_domains_active_list", None, columns
+    )
+    return return_domains(domains)
+
+
+def get_active_industries(db):
+    columns = ["industry_id", "industry_name", "is_active"]
+    domains = db.call_proc(
+        "sp_industries_active_list", None, columns
+    )
+    return return_industries(domains)
+
+
+def return_industries(data):
+    fn = core.Industry
+    results = [
+        fn(
+            d["industry_id"], d["industry_name"], bool(d["is_active"])
+        ) for d in data
+    ]
+    return results
 
 
 def is_duplicate_group_name(db, group_name, client_id=None):
@@ -173,43 +215,23 @@ def return_domains(data):
 
 def get_techno_users(db):
     # Getting techno user countries
-    query = " SELECT t1.country_id, t1.user_id " + \
-        " FROM tbl_user_countries t1 " + \
-        " INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id  " + \
-        " INNER JOIN tbl_user_groups t3 ON " + \
-        " t2.user_group_id = t3.user_group_id " + \
-        " AND t3.form_category_id = 3"
-    rows = db.select_all(query)
-
-    countries = []
-    if rows:
-        country_columns = [
-            "country_id", "user_id"
-        ]
-        countries = convert_to_dict(rows, country_columns)
+    country_columns = ["country_id", "user_id"]
+    countries = db.call_proc("sp_user_countries_techno", None, country_columns)
 
     # Getting techno user domains
-    query = "SELECT t1.domain_id, t1.user_id FROM tbl_user_domains t1 " + \
-            " INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id " + \
-            " INNER JOIN tbl_user_groups t3 ON " + \
-            " t2.user_group_id = t3.user_group_id AND t3.form_category_id = 3"
-    rows = db.select_all(query)
+    domain_columns = ["domain_id", "user_id"]
+    domains = db.call_proc("sp_user_domains_techno", None, domain_columns)
 
-    domains = []
-    if rows:
-        domain_columns = [
-            "domain_id", "user_id"
-        ]
-        domains = convert_to_dict(rows, domain_columns)
+    # Getting Techno users
+    user_columns = ["user_id", "e_name", "is_active"]
+    users = db.call_proc("sp_users_techno", None, user_columns)
 
     user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
         if user_id not in user_country_map:
             user_country_map[user_id] = []
-        user_country_map[user_id].append(
-            country["country_id"]
-        )
+        user_country_map[user_id].append(country["country_id"])
 
     user_domain_map = {}
     for domain in domains:
@@ -219,17 +241,7 @@ def get_techno_users(db):
         user_domain_map[user_id].append(
             domain["domain_id"]
         )
-
-    # Getting Techno users
-    columns = [
-        "user_id", "concat(employee_code,'-',employee_name) as e_name",
-        "is_active"
-    ]
-    condition = "user_group_id in (select user_group_id " + \
-        " from tbl_user_groups " + \
-        " where form_category_id = 3 )"
-    rows = db.get_data(tblUsers, columns, condition)
-    return return_techno_users(rows, user_country_map, user_domain_map)
+    return return_techno_users(users, user_country_map, user_domain_map)
 
 
 def return_techno_users(users, user_country_map, user_domain_map):
@@ -245,56 +257,25 @@ def return_techno_users(users, user_country_map, user_domain_map):
     return results
 
 
-def get_group_company_details(db):
+def get_groups(db):
     columns = [
-        "client_id", "group_name", "email_id", "logo_url",
-        "contract_from", "contract_to",
-        "no_of_user_licence", "total_disk_space",
-        "is_sms_subscribed",  "incharge_persons",
-        "is_active", "url_short_name"
+        "group_id", "group_name", "country_names",
+        "no_of_legal_entities"
     ]
-    condition = "1 ORDER BY group_name"
-    rows = db.get_data(tblClientGroups, columns, condition)
-    return return_group_company_details(db, rows)
+    groups = db.call_proc(
+        "sp_client_groups_list", None, columns
+    )
+    return return_group(groups)
 
 
-def return_group_company_details(db, result):
-    client_list = []
-    for client_row in result:
-        client_id = client_row["client_id"]
-        group_name = client_row["group_name"]
-        email_id = client_row["email_id"]
-        file_parts = client_row["logo_url"].split("-")
-        etn_parts = client_row["logo_url"].split(".")
-        original_file_name = "%s.%s" % (file_parts[0], etn_parts[1])
-        logo_url = "/%s/%s" % (LOGO_URL, client_row["logo_url"])
-        contract_from = datetime_to_string(client_row["contract_from"])
-        contract_to = datetime_to_string(client_row["contract_to"])
-        no_of_user_licence = client_row["no_of_user_licence"]
-        total_disk_space = round(
-            client_row["total_disk_space"] / (1024 * 1024 * 1024))
-        is_sms_subscribed = True if client_row[
-            "is_sms_subscribed"
-        ] == 1 else False
-        incharge_persons = [
-            int(x) for x in client_row["incharge_persons"].split(",")
-        ]
-        is_active = True if client_row["is_active"] == 1 else False
-        short_name = client_row["url_short_name"]
-
-        country_ids = get_client_countries(db, client_id)
-        domain_ids = get_client_domains(db, client_id)
-        date_configurations = get_date_configurations(db, client_id)
-        client_list.append(
-            core.GroupCompanyDetail(
-                client_id, group_name, domain_ids,
-                country_ids, incharge_persons, original_file_name,
-                logo_url, contract_from,
-                contract_to, no_of_user_licence, total_disk_space,
-                is_sms_subscribed, email_id,
-                is_active, short_name, date_configurations
-            )
-        )
+def return_group(groups):
+    fn = core.ClientGroup
+    client_list = [
+        fn(
+            group["group_id"], group["group_name"],
+            group["country_names"], group["no_of_legal_entities"]
+        ) for group in groups
+    ]
     return client_list
 
 
@@ -523,10 +504,10 @@ def save_client_logo(logo):
     exten = logo.file_name.split('.')[1]
     auto_code = new_uuid()
     file_name = "%s-%s.%s" % (name, auto_code, exten)
-    try :
+    try:
         convert_base64_to_file(file_name, logo.file_content, CLIENT_LOGO_PATH)
         return file_name
-    except Exception, e :
+    except Exception, e:
         print e
         return None
 
@@ -1232,47 +1213,6 @@ def return_unit_details(result):
                             )
                         )
     return final_list
-
-
-# def return_unit_details(result):
-#     legal_entity_wise = {}
-#     for r in result:
-#         unit = technomasters.UnitDetails(
-#             r["unit_id"], r["geography_id"],
-#             r["unit_code"], r["unit_name"],
-#             r["industry_id"], r["address"],
-#             r["postal_code"],
-#             [int(x) for x in r["domain_ids"].split(",")],
-#             bool(r["is_active"])
-#         )
-
-#         legal_wise = legal_entity_wise.get(r["legal_entity_id"])
-#         if legal_wise is None:
-#             legal_wise = technomasters.Unit(
-#                 r["business_group_id"], r["legal_entity_id"],
-#                 r["division_id"], r["client_id"],
-#                 {r["country_id"]: [unit]},
-#                 bool(1)
-#             )
-#         else:
-#             country_wise_units = legal_wise.units
-
-#             if country_wise_units is None:
-#                 country_wise_units = {}
-
-#             units = country_wise_units.get(r["country_id"])
-#             if units is None:
-#                 units = []
-#             units.append(unit)
-
-#             country_wise_units[r["country_id"]] = units
-
-#             legal_wise.units = country_wise_units
-
-#         legal_entity_wise[r["legal_entity_id"]] = legal_wise
-
-#     data = legal_entity_wise.values()
-#     return data
 
 
 def get_group_companies_for_user_with_max_unit_count(db, user_id):

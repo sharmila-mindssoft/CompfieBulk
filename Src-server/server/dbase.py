@@ -1,7 +1,7 @@
 import MySQLdb as mysql
 import logger
 from server.common import (convert_to_dict, get_date_time)
-from server.exceptionmessage import fetch_error
+from server.exceptionmessage import fetch_error, process_procedure_error
 
 
 class Database(object):
@@ -656,19 +656,18 @@ class Database(object):
         if args is None:
             try:
                 cursor.callproc(procedure_name)
-            except (AttributeError, mysql.OperationalError):
-                self.reconnect()
-                self.begin()
-                cursor = self.cursor()
-                cursor.callproc(procedure_name)
+            except mysql.Error, e:
+                print e
+                print procedure_name, args
+                raise process_procedure_error(procedure_name, args, e)
         else:
             try:
                 cursor.callproc(procedure_name, args)
-            except (AttributeError, mysql.OperationalError):
-                self.reconnect()
-                self.begin()
-                cursor = self.cursor()
-                cursor.callproc(procedure_name, args)
+            except mysql.Error, e:
+                print e
+                print procedure_name, args
+                raise process_procedure_error(procedure_name, args, e)
+
         rows = cursor.fetchall()
         cursor.nextset()
         if columns is not None:
