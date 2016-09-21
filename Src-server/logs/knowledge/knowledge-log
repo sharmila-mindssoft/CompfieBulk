@@ -1,294 +1,132 @@
-2016-09-19 08:42:58,157 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 11:15:59,976 - knowledge_logger - main.py-handle-api- : list index out of range 
 
-2016-09-19 08:42:58,190 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 11:15:59,980 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 261, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technocontroller.py", line 70, in process_techno_request
+    result = get_clients(db, request_frame, session_user)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technomastercontroller.py", line 407, in get_clients
+    db, session_user
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\database\technomaster.py", line 1225, in get_group_companies_for_user_with_max_unit_count
+    "client_id", client_ids
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 348, in generate_tuple_condition
+    condition_val = values_list[0]
+IndexError: list index out of range
  
 
-2016-09-19 11:00:17,740 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 11:31:04,214 - knowledge_logger - main.py-handle-api- : list index out of range 
 
-2016-09-19 11:00:17,740 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 11:31:04,219 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 261, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technocontroller.py", line 70, in process_techno_request
+    result = get_clients(db, request_frame, session_user)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technomastercontroller.py", line 407, in get_clients
+    db, session_user
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\database\technomaster.py", line 1225, in get_group_companies_for_user_with_max_unit_count
+    "client_id", client_ids
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 348, in generate_tuple_condition
+    condition_val = values_list[0]
+IndexError: list index out of range
  
 
-2016-09-19 11:56:18,962 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 11:46:27,155 - knowledge_logger - main.py-handle-api- : list index out of range 
 
-2016-09-19 11:56:18,963 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 11:46:27,157 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 261, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technocontroller.py", line 70, in process_techno_request
+    result = get_clients(db, request_frame, session_user)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technomastercontroller.py", line 407, in get_clients
+    db, session_user
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\database\technomaster.py", line 1225, in get_group_companies_for_user_with_max_unit_count
+    "client_id", client_ids
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 348, in generate_tuple_condition
+    condition_val = values_list[0]
+IndexError: list index out of range
  
 
-2016-09-19 12:00:01,222 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 11:48:42,134 - knowledge_logger - main.py-handle-api- :  
 
-2016-09-19 12:00:01,222 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 11:48:42,134 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 161, in handle_api_request
+    self._db.begin()
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 109, in begin
+    assert self._cursor is None
+AssertionError
  
 
-2016-09-19 12:03:01,239 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 11:48:44,371 - knowledge_logger - main.py-handle-api- :  
 
-2016-09-19 12:03:01,239 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 11:48:44,371 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 161, in handle_api_request
+    self._db.begin()
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 109, in begin
+    assert self._cursor is None
+AssertionError
  
 
-2016-09-19 12:09:30,990 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 11:49:16,772 - knowledge_logger - main.py-handle-api- :  
 
-2016-09-19 12:09:30,990 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 11:49:16,773 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 161, in handle_api_request
+    self._db.begin()
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 109, in begin
+    assert self._cursor is None
+AssertionError
  
 
-2016-09-19 12:33:57,232 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 12:04:57,127 - knowledge_logger - main.py-handle-api- : sp_client_groups_list- None- (1305, 'PROCEDURE compfie_knowledge.sp_client_groups_list does not exist') 
 
-2016-09-19 12:33:57,232 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 12:04:57,128 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 261, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technocontroller.py", line 42, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\controller\technomastercontroller.py", line 51, in get_client_groups
+    groups = get_groups(db)
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\database\technomaster.py", line 266, in get_groups
+    "sp_client_groups_list", None, columns
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 663, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_groups_list- None- (1305, 'PROCEDURE compfie_knowledge.sp_client_groups_list does not exist')
  
 
-2016-09-19 15:30:05,587 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-09-21 12:05:01,019 - knowledge_logger - main.py-handle-api- :  
 
-2016-09-19 15:30:05,588 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-09-21 12:05:01,019 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 161, in handle_api_request
+    self._db.begin()
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 109, in begin
+    assert self._cursor is None
+AssertionError
  
 
-2016-09-19 15:37:58,704 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Factory': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'} 
+2016-09-21 12:29:31,417 - knowledge_logger - main.py-handle-api- :  
 
-2016-09-19 15:37:58,704 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1479, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 275, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 111, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 205, in parse_inner_structure
-    "s_name"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 188, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Factory': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'}
+2016-09-21 12:29:31,418 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 161, in handle_api_request
+    self._db.begin()
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 109, in begin
+    assert self._cursor is None
+AssertionError
  
 
-2016-09-19 15:38:21,515 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Factory': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'} 
+2016-09-21 12:29:34,815 - knowledge_logger - main.py-handle-api- :  
 
-2016-09-19 15:38:21,515 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1479, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 275, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 111, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 205, in parse_inner_structure
-    "s_name"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 188, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Factory': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'}
- 
-
-2016-09-19 15:38:26,885 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Factory': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'} 
-
-2016-09-19 15:38:26,885 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1479, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 275, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 111, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 205, in parse_inner_structure
-    "s_name"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 188, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Factory': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'}
- 
-
-2016-09-19 15:41:15,271 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-19 15:41:15,272 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-19 15:43:10,626 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1'}, {u'd_id': u'2', u'c_id': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Plant': u'10'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'} 
-
-2016-09-19 15:43:10,626 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1479, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 275, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 111, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 205, in parse_inner_structure
-    "s_name"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 188, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1'}, {u'd_id': u'2', u'c_id': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Plant': u'10'}}], u'c_f': u'01-Sep-2016', u'sms': True, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'}
- 
-
-2016-09-19 15:45:54,941 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-19 15:45:54,942 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-19 15:47:18,487 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1'}, {u'd_id': u'2', u'c_id': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Plant': u'9'}}], u'c_f': u'01-Sep-2016', u'sms': False, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'} 
-
-2016-09-19 15:47:18,488 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1479, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 275, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 111, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 205, in parse_inner_structure
-    "s_name"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 188, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1'}, {u'd_id': u'2', u'c_id': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Plant': u'9'}}], u'c_f': u'01-Sep-2016', u'sms': False, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'}
- 
-
-2016-09-19 15:49:03,378 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-19 15:49:03,379 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-19 15:51:31,555 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}, {u'd_id': u'2', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Plant': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': False, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'} 
-
-2016-09-19 15:51:31,555 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1479, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 275, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 111, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 205, in parse_inner_structure
-    "s_name"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 188, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}, {u'd_id': u'2', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'10'}}, {u'd_id': u'2', u'org': {u'Plant': u'5'}}], u'c_f': u'01-Sep-2016', u'sms': False, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'}
- 
-
-2016-09-19 16:01:33,997 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-19 16:01:33,998 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1477, in parse_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 444, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-19 16:04:22,512 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}, {u'd_id': u'2', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'19'}}, {u'd_id': u'2', u'org': {u'Plant': u'10'}}], u'c_f': u'01-Sep-2016', u'sms': False, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'} 
-
-2016-09-19 16:04:22,513 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1479, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 275, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 111, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 205, in parse_inner_structure
-    "s_name"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 188, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_cs': [{u'd_id': u'1', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}, {u'd_id': u'2', u'c_id': u'1', u'p_to': u'12', u'p_from': u'1'}], u'g_name': u'TVS', u'les': [{u'c_id': u'1', u'n_o_l': u'10', u'd': [{u'd_id': u'1', u'org': {u'Factory': u'19'}}, {u'd_id': u'2', u'org': {u'Plant': u'10'}}], u'c_f': u'01-Sep-2016', u'sms': False, u'b_g': {u'b_g_id': u'0', u'b_g_name': None}, u'inc_p': u'2', u'c_t': u'30-Sep-2016', u'f_s': u'10', u'logo': u'achievedforinmonthlytargetentry.png', u'l_e_name': u'TVS LE 1'}], u'u_name': u'sharmila@mindssoft.com'}
+2016-09-21 12:29:34,825 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\main.py", line 161, in handle_api_request
+    self._db.begin()
+  File "C:\Users\Minds\PycharmProjects\compliance_mirror\Src-server\server\dbase.py", line 109, in begin
+    assert self._cursor is None
+AssertionError
  
 
