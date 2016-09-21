@@ -88,15 +88,25 @@ function initialize(type_of_initialization){
 }
 
 function showPage(type_of_initialization){
-  if(type_of_initialization == "list"){
-    $('.le-body').empty();
-    $('.tbody-dateconfiguration-list').empty();
-    $("#clientgroup-view").show();
-    $("#clientgroup-add").hide();
-  }else{
-    $("#clientgroup-view").hide();
-    $("#clientgroup-add").show();
-  }
+    le_count = 0;
+    organization_details = {};
+    logoFile = [];
+    country_domain_id_map = {};
+    if(type_of_initialization == "list"){
+        $('.le-body').empty();
+        $("#group-text").val("");
+        $("#username").val("");
+        $("#username").attr("readonly", false);
+        $('.tbody-dateconfiguration-list').empty();
+        $("#clientgroup-view").show();
+        $("#clientgroup-add").hide();
+    }else{
+        if(type_of_initialization == "add"){
+            $("#username").attr("readonly", false);
+        }
+        $("#clientgroup-view").hide();
+        $("#clientgroup-add").show();
+    }
 }
 
 /*
@@ -523,6 +533,7 @@ function activateUsers_user(incharge_class, user_list_class, hidden_user_class) 
 function editClient(){
     $('#group-text').val(GROUPNAME);
     $("#username").val(USERNAME);
+    $("#username").attr("readonly", "readonly");
     le_count = 0
     logoFile = [];
     legal_entity_id_map = {}
