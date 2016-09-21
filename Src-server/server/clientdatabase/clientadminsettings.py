@@ -15,10 +15,13 @@ __all__ = [
 ]
 
 
-#
-#   Client Admin Settings
-#
-def get_settings(db, client_id):
+###################################################################
+# To get settings of the client
+# Parameters - object of database
+# Return method - If data available returns tuple with data
+#                 otherwise returns None
+###################################################################
+def get_settings(db):
     columns = "two_levels_of_approval, assignee_reminder, " + \
         "escalation_reminder_in_advance, escalation_reminder," + \
         "contract_from, contract_to, no_of_user_licence, " + \
@@ -34,7 +37,12 @@ def get_settings(db, client_id):
         return None
 
 
-def get_licence_holder_details(db, client_id):
+###################################################################
+# To get all licence holder details of a client
+# Parameters - object of database
+# Return method - Tuple of tuples with user data
+###################################################################
+def get_licence_holder_details(db):
     columns = [
         "tcu.user_id", "tcu.email_id", "tcu.employee_name",
         "ifnull(tcu.employee_code, 0) as employee_code",
@@ -58,14 +66,19 @@ def get_licence_holder_details(db, client_id):
     )
 
 
+###################################################################
+# To get all licence holder details of a client
+# Parameters - Object of database, and following client profile
+# Return type - PROFILE_DETAIL Object
+###################################################################
 def get_profile(
     db, contract_from, contract_to, no_of_user_licence,
-    total_disk_space, total_disk_space_used, client_id
+    total_disk_space, total_disk_space_used
 ):
     contract_from = datetime_to_string(contract_from)
     contract_to = datetime_to_string(contract_to)
 
-    licence_holder_rows = get_licence_holder_details(db, client_id)
+    licence_holder_rows = get_licence_holder_details(db)
     licence_holders = []
     for row in licence_holder_rows:
         employee_name = None
@@ -115,9 +128,15 @@ def get_profile(
     return profile_detail
 
 
+###################################################################
+# To Update client settings
+# Parameters - Object of database and the settings fields to be
+#              updated.
+# Return type - None
+###################################################################
 def updateSettings(
     db, is_two_levels_of_approval, assignee_reminder_days,
-    escalation_reminder_In_advance_days, escalation_reminder_days, client_id
+    escalation_reminder_In_advance_days, escalation_reminder_days
 ):
     columns = [
         "two_levels_of_approval", "assignee_reminder",

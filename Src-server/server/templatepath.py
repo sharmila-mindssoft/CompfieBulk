@@ -245,6 +245,11 @@ TEMPLATE_PATHS = [
         "files/desktop/knowledge/user-master/usermaster.html",
         None, {}
     ),
+    (
+        "/knowledge/validity-date-settings",
+        "files/desktop/knowledge/validity-date-settings/validitydatesettings.html",
+        None, {}
+    ),
     # knowledge manager transaction
     (
         "/knowledge/approve-statutory-mapping",
@@ -317,7 +322,7 @@ TEMPLATE_PATHS = [
     # Techno Manager master
     (
         "/knowledge/client-master",
-        "files/desktop/knowledge/client-master/clientmaster.html",
+        "files/desktop/knowledge/client-master/clientmaster-new.html",
         None, {}
     ),
     # Techno user master

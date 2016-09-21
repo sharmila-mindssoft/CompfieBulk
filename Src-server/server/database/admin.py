@@ -24,11 +24,11 @@ __all__ = [
     "save_user_group", "update_user_group",
     "update_user_group_status",
     "get_detailed_user_list", "is_duplicate_email",
-    "is_duplicate_employee_code",
-    "save_user", "update_user",
-    "update_user_status",
-    "get_user_group_detailed_list",
-    "get_user_countries", "get_user_domains"
+    "is_duplicate_employee_code", "save_user", "update_user",
+    "update_user_status", "get_user_group_detailed_list",
+    "get_user_countries", "get_user_domains", "get_mapped_countries",
+    "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
+    "save_validity_date_settings"
 ]
 
 
@@ -37,21 +37,12 @@ __all__ = [
 #
 
 def get_domains_for_user(db, user_id):
-    query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
-        " t1.is_active FROM tbl_domains t1"
+    columns = ["domain_id", "domain_name", "is_active"]
+    procedure = 'sp_tbl_domains_for_user'
+    _user_id = '%'
     if user_id > 0:
-        query = query + " INNER JOIN tbl_user_domains t2 ON " + \
-            " t1.domain_id = t2.domain_id WHERE t2.user_id = %s " + \
-            " AND t1.is_active=1 "
-    query = query + " ORDER BY t1.domain_name"
-    if user_id > 0:
-        rows = db.select_all(query, [user_id])
-    else:
-        rows = db.select_all(query)
-    result = []
-    if rows:
-        columns = ["domain_id", "domain_name", "is_active"]
-        result = convert_to_dict(rows, columns)
+        _user_id = user_id
+    result = db.call_proc(procedure, [_user_id], columns)
     return return_domains(result)
 
 
@@ -605,13 +596,15 @@ def update_user(
 
     return (result1 and result2 and result3)
 
+
 def check_user_group_active_status(db, user_id):
-    q = "select count(ug.user_group_id) from tbl_user_groups ug \
-        inner join tbl_users u on  ug.user_group_id = u.user_group_id \
-        where u.user_id = %s and ug.is_active = 1"
+    q = "select count(ug.user_group_id) from tbl_user_groups ug " + \
+        " inner join tbl_users u on  ug.user_group_id = u.user_group_id " + \
+        " where u.user_id = %s and ug.is_active = 1 "
     row = db.select_one(q, [user_id])
-    if int(row[0]) == 0 :
+    if int(row[0]) == 0:
         raise process_error("E065")
+
 
 def update_user_status(db, user_id, is_active):
     check_user_group_active_status(db, user_id)
@@ -639,3 +632,113 @@ def update_user_status(db, user_id, is_active):
         action = "Dectivated User \"%s - %s\"" % (employee_code, employee_name)
     db.save_activity(0, 4, action)
     return result
+
+
+#####################################################################
+# To Fetch Countries which are mapped to Domains
+# Parameter(s) : Object of database
+# Return Type : List of Object of Country
+#####################################################################
+def get_mapped_countries(db):
+    columns = ["country_id", "country_name", "is_active"]
+    result = db.call_proc(
+        "sp_country_mapped_list", None, columns
+    )
+    return return_countries(result)
+
+
+#####################################################################
+# To Fetch Domains which are mapped to Country
+# Parameter(s) : Object of database
+# Return Type : List of Object of Domain
+#####################################################################
+def get_mapped_domains(db):
+    columns = ["domain_id", "domain_name", "is_active"]
+    result = db.call_proc(
+        "sp_domain_mapped_list", None, columns
+    )
+    return return_domains(result)
+
+
+#####################################################################
+# To Fetch Validity Dates from Table
+# Parameter(s) : Object of database
+# Return Type : List of Object of ValidityDates
+#####################################################################
+def get_validity_dates(db):
+    columns = [
+        "validity_days_id", "country_id", "domain_id",
+        "validity_days"
+    ]
+    result = db.call_proc(
+        "sp_validitydays_settings_list", None, columns
+    )
+    return return_validity_days(result)
+
+
+#####################################################################
+# To Structure the tuple of data into List of ValidityDates object
+# Parameter(s) : Data to be converted
+# Return Type : List of Object of ValidityDates
+#####################################################################
+def return_validity_days(data):
+    fn = core.ValidityDates
+    validity_date_list = [
+        fn(
+            datum["validity_days_id"],
+            datum["country_id"], datum["domain_id"],
+            datum["validity_days"]
+        ) for datum in data
+    ]
+    return validity_date_list
+
+
+#####################################################################
+# To Fetch country domain mappings from statutory levels table
+# Parameter(s) : Object of database
+# Return Type : Dict (key: country id, value: list of domain ids)
+#####################################################################
+def get_country_domain_mappings(db):
+    columns = ["country_id", "domain_id"]
+    result = db.call_proc(
+        "sp_statutorylevels_mappings", None, columns
+    )
+    return return_country_domain_mappings(result)
+
+
+#####################################################################
+# To convert tuple of data into dictionary
+# Parameter(s) : Data to be converted
+# Return Type : Dict (key: country id, value: list of domain ids)
+#####################################################################
+def return_country_domain_mappings(data):
+    country_domain_map = {}
+    for datum in data:
+        country_id = datum["country_id"]
+        domain_id = datum["domain_id"]
+        if country_id not in country_domain_map:
+            country_domain_map[country_id] = []
+        if domain_id not in country_domain_map[country_id]:
+            country_domain_map[country_id].append(domain_id)
+    return country_domain_map
+
+
+#####################################################################
+# To save validity date settings
+# Parameter(s) : Object of database, data to be saved, session user
+# Return Type : None
+#####################################################################
+def save_validity_date_settings(db, data, session_user):
+    current_time_stamp = get_date_time()
+    for datum in data:
+        validity_days_id = datum.validity_days_id
+        country_id = datum.country_id
+        domain_id = datum.domain_id
+        validity_days = datum.validity_days
+        db.call_proc(
+            "sp_validitydays_settings_save", (
+                validity_days_id, country_id, domain_id, validity_days,
+                session_user, current_time_stamp, session_user,
+                current_time_stamp
+            ), None
+        )

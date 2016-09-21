@@ -2,7 +2,7 @@
 {% block content %}
   <div class="content-container width60" id="industry-view">
     <div class="content-area">
-      <h1>Industries</h1>
+      <h1>Organisation(s)</h1>
       <div class="filters-and-search">
         <div class="btn-add btn-industry-add" >Add</div>
       </div>
@@ -11,12 +11,16 @@
         <table>
           <tr align="left">
             <th width="10%" align="center">#</th>
-            <th width="68%">Industry</th>
+            <th width="20%">Country</th>
+            <th width="22%">Domain</th>
+            <th width="26%">Organisation</th>
             <th width="10%" align="center" >Edit</th>
             <th width="12%" align="center">Status</th>
           </tr>
           <tr>
             <td>&nbsp;</td>
+            <td><input type="text" id="search-country-name" class="filter-text-box"></td>
+            <td><input type="text" id="search-domain-name" class="filter-text-box"></td>
             <td><input type="text" id="search-industry-name" class="filter-text-box"></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
@@ -32,9 +36,11 @@
     <table class="table-industry-master">
       <tr class="table-row">
         <td class="sno" align="center"></td>
+        <td class="country-name"></td>
+        <td class="domain-name"></td>
         <td class="industry-name"></td>
         <td align="center">
-          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
         </td>
         <td align="center">
           <span class="status" style="width: 16px; height: 16px; display:block"> </span>
@@ -45,12 +51,32 @@
   <div class="single-column-form-outer width60 default-display-none" id="industry-add">
     <div class="content-area">
       <div class="single-column-form-inner">
-        <div class="single-column-header">Industry Master<span class="error-message"></span></div>
+        <div class="single-column-header">Organisation Master<span class="error-message"></span></div>
         <div class="single-column-input-row">
           <div class="input-row">
-            <div class="single-column-field-label">Industry:<span class="mandatory">*</span></div>
+            <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <input type="text" id="industryname" class="input-box" value="" maxlength="50" tabindex="1" autofocus="autofocus">
+              <input type="text" id="countryname" class="input-box icon-autocomplete fieldvalue" value="" maxlength="50" tabindex="1" autofocus="autofocus">
+              <input type="hidden" id="countryid" value="">
+              <div id="ac-country" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <input type="text" id="domainname" class="input-box icon-autocomplete fieldvalue" value="" maxlength="50" tabindex="2" autofocus="autofocus">
+              <input type="hidden" id="domainid" value="">
+              <div id="ac-domain" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
+            </div>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Organisation:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <input type="text" id="industryname" class="input-box" value="" maxlength="50" tabindex="3" autofocus="autofocus">
               <input type="hidden" id="industryid" value="">
             </div>
           </div>
@@ -59,7 +85,7 @@
             <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
           </div>
         </div></div>
-      </div>
     </div>
+  </div>
     <script type="text/javascript" src="/script/industry-master/industrymaster.js"></script>
   {% endblock %}

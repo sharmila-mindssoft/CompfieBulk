@@ -235,6 +235,16 @@ def get_user_forms(db, form_ids):
     )
     return rows
 
+def get_admin_forms(db):
+    columns = [
+        "form_id", "form_name", "form_url", "form_order",
+        "parent_menu", "form_category", "form_type"
+    ]
+    procedure = 'sp_tbl_forms_getadminforms'
+    result = db.call_proc(procedure, None, columns)
+    return result
+
+
 #
 # general controllers methods
 #
@@ -242,15 +252,21 @@ def get_user_forms(db, form_ids):
 
 def get_user_form_ids(db, user_id):
     if user_id == 0:
-        return "1, 2, 3, 4"
-    q = "select t1.form_ids from tbl_user_groups t1 " + \
-        " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
-        " AND t2.user_id = %s"
-    row = db.select_one(q, [user_id])
-    if row:
-        return row[0]
-    else:
-        return None
+        q = "select form_id from tbl_forms where form_category_id = 1"
+        rows = db.select_all(q)
+        f_ids = []
+        for r in rows :
+            f_ids.append(str(r[0]))
+        return ','.join(f_ids)
+    else :
+        q = "select t1.form_ids from tbl_user_groups t1 " + \
+            " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
+            " AND t2.user_id = %s"
+        row = db.select_one(q, [user_id])
+        if row:
+            return row[0]
+        else:
+            return None
 
 #
 #   Notifications

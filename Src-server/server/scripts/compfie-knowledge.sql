@@ -339,25 +339,13 @@ CREATE TABLE `tbl_compliances_backup` (
 
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
-  `client_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
   `group_name` varchar(50) NOT NULL,
-  `email_id` varchar(50) NOT NULL,
-  `logo_url` varchar(200) DEFAULT NULL,
-  `logo_size` float NOT NULL,
-  `contract_from` DATE DEFAULT NULL,
-  `contract_to` DATE DEFAULT NULL,
-  `no_of_user_licence` int(11) DEFAULT NULL,
-  `total_disk_space` float DEFAULT NULL,
-  `total_disk_space_used` float(11) DEFAULT 0.0,
-  `is_sms_subscribed` tinyint(4) DEFAULT NULL,
-  `url_short_name` varchar(20) DEFAULT NULL,
-  `incharge_persons` varchar(50) NOT NULL,
-  `is_active` tinyint(4) DEFAULT '1',
-  `created_by` int(11) NOT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `group_admin` varchar(50) NOT NULL,
+  `view_licence` int(11) DEFAULT NULL,
+  KEY `index1` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_client_countries`;
 CREATE TABLE `tbl_client_countries` (
@@ -404,30 +392,67 @@ CREATE TABLE `tbl_client_configurations` (
 
 DROP TABLE IF EXISTS `tbl_business_groups`;
 CREATE TABLE `tbl_business_groups` (
-  `client_id` int(11) NOT NULL,
-  `business_group_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `business_group_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
+  `country_id` int(11) NOT NULL,
   `business_group_name` varchar(100) NOT NULL,
   `created_by` int(11) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_tbl_cg_bg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`business_group_id`),
+  KEY `fk_tbl_countries_bg` (`country_id`),
+  KEY `fk_tbl_cg_bg` (`group_id`),
+  CONSTRAINT `fk_tbl_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_cg_bg` FOREIGN KEY (`group_id`) REFERENCES `tbl_client_groups` (`group_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_legal_entities`;
 CREATE TABLE `tbl_legal_entities` (
-  `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `legal_entity_name` varchar(100) DEFAULT NULL,
+  `legal_entity_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
+  `country_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
+  `legal_entity_name` varchar(100) DEFAULT NULL,
+  `contract_from` date DEFAULT NULL,
+  `contract_to` date DEFAULT NULL,
+  `logo` varchar(200) DEFAULT NULL,
+  `file_space_limit` float DEFAULT '0',
+  `total_licence` int(11) DEFAULT '0',
+  `sms_subscription` tinyint(4) DEFAULT '0',
+  `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_legal_entities_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
-  CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`legal_entity_id`),
+  KEY `fk_tbl_cg_le` (`group_id`),
+  KEY `fk_tbl_country` (`country_id`),
+  CONSTRAINT `fk_tbl_country` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`group_id`) REFERENCES `tbl_client_groups` (`group_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_legal_entity_domain_industry`;
+CREATE TABLE `tbl_legal_entity_domain_industry` (
+  `group_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `industry_id` int(11) NOT NULL,
+  `no_of_units` int(11) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`group_id`,`legal_entity_id`,`domain_id`,`industry_id`),
+  KEY `fk_tbl_le` (`legal_entity_id`),
+  KEY `fk_tbl_domain` (`domain_id`),
+  KEY `fk_tbl_industry` (`industry_id`),
+  CONSTRAINT `fk_tbl_legal_entity_domain_industry_1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_legal_entity_domain_industry_2` FOREIGN KEY (`group_id`) REFERENCES `tbl_client_groups` (`group_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_legal_entity_domain_industry_3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_client_domains` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_legal_entity_domain_industry_4` FOREIGN KEY (`industry_id`) REFERENCES `tbl_industries` (`industry_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
@@ -669,3 +694,47 @@ CREATE TABLE `tbl_client_replication_status` (
   `domain_id` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_validity_days_settings`;
+CREATE TABLE `tbl_validity_days_settings` (
+  `validity_days_id` int(11) NOT NULL AUTO_INCREMENT,
+  `country_id` int(11) DEFAULT NULL,
+  `domain_id` int(11) DEFAULT NULL,
+  `days` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`validity_days_id`),
+  KEY `fk_tbl_validity_days_settings_1_idx` (`country_id`),
+  KEY `fk_tbl_validity_days_settings_2_idx` (`domain_id`),
+  CONSTRAINT `fk_tbl_validity_days_settings_1` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_validity_days_settings_2` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_industries`;
+CREATE TABLE `tbl_industries` (
+  `industry_id` int(11) NOT NULL AUTO_INCREMENT,
+  `industry_name` varchar(50) NOT NULL,
+  `country_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`industry_id`,`country_id`,`domain_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_statutory_natures`;
+CREATE TABLE `tbl_statutory_natures` (
+  `statutory_nature_id` int(11) NOT NULL AUTO_INCREMENT,
+  `statutory_nature_name` varchar(50) NOT NULL,
+  `country_id` int(11) NOT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`statutory_nature_id`,`country_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;

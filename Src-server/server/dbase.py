@@ -1,7 +1,7 @@
 import MySQLdb as mysql
 import logger
 from server.common import (convert_to_dict, get_date_time)
-from server.exceptionmessage import fetch_error
+from server.exceptionmessage import fetch_error, process_procedure_error
 
 
 class Database(object):
@@ -173,7 +173,6 @@ class Database(object):
                 )
                 cursor.execute(query, param)
             elif type(param) is list:
-                # print "inside elif "
                 if len(param) > 1:
                     logger.logQuery(
                         self._for_client, "execute_insert",
@@ -577,7 +576,6 @@ class Database(object):
     # given table. if a row exists this function will return
     # True otherwise returns false
     ########################################################
-
     def is_already_exists(self, table, condition, condition_val):
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
@@ -646,3 +644,61 @@ class Database(object):
         q = "delete from tbl_user_sessions where " + \
             " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
         self.execute(q, [session_cutouff])
+
+    def reconnect(self):
+        self.close()
+        self.connect()
+
+    def call_proc(self, procedure_name, args, columns=None):
+        # args is tuple e.g, (parm1, parm2)
+        cursor = self.cursor()
+        assert cursor is not None
+        try:
+            if args is None:
+                cursor.callproc(procedure_name)
+            else:
+                cursor.callproc(procedure_name, args)
+        except Exception, e:
+            print e
+            raise process_procedure_error(procedure_name, args, e)
+
+        rows = cursor.fetchall()
+        cursor.nextset()
+        if columns is not None:
+            result = convert_to_dict(rows, columns)
+            return result
+        else:
+            return rows
+
+    def call_insert_proc(self, procedure_name, args):
+        cursor = self.cursor()
+        assert cursor is not None
+        try:
+            if args is None:
+                cursor.callproc(procedure_name)
+            else:
+                cursor.callproc(procedure_name, args)
+        except Exception, e:
+            print e
+            raise process_procedure_error(procedure_name, args, e)
+
+        cursor.nextset()
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        r = cursor.fetchone()
+        new_id = r[0]
+        return new_id
+
+    def call_update_proc(self, procedure_name, args):
+        cursor = self.cursor()
+        assert cursor is not None
+        try:
+            if args is None:
+                cursor.callproc(procedure_name)
+            else:
+                cursor.callproc(procedure_name, args)
+        except Exception, e:
+            print e
+            raise process_procedure_error(procedure_name, args, e)
+
+        cursor.nextset()
+        return True
