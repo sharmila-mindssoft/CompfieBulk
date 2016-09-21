@@ -92,6 +92,7 @@ function showPage(type_of_initialization){
     organization_details = {};
     logoFile = [];
     country_domain_id_map = {};
+    clearMessage();
     if(type_of_initialization == "list"){
         $('.le-body').empty();
         $("#group-text").val("");
@@ -577,6 +578,7 @@ function editClient(){
         le_table.find('.contract-from').val(value.c_f);
         le_table.find('.contract-to').val(value.c_t);
         logoFile.push(value.logo);
+        le_table.find("#upload-logo-img").attr("src","http://"+window.location.host+"/knowledge/clientlogo/"+value.logo);
         organization_details = {}
         for(var i=1; i<=value.d.length; i++){
             var domain_list_class = "domain-list-"+le_count;
