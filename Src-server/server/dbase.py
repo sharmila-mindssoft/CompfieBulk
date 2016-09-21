@@ -106,7 +106,7 @@ class Database(object):
     ########################################################
     def begin(self):
         assert self._connection is not None
-        assert self._cursor is None
+        # assert self._cursor is None
         self._cursor = self._connection.cursor()
         return self._cursor
 
@@ -446,7 +446,6 @@ class Database(object):
     # To form a bulk insert query
     ########################################################
     def bulk_insert(self, table, columns, valueList):
-
         stringValue = []
         for i in range(len(columns)):
             stringValue.append('%s')
@@ -465,6 +464,31 @@ class Database(object):
             print e
             logger.logKnowledgeApi("bulk_insert", query)
             logger.logKnowledgeApi("bulk_insert", e)
+            return False
+
+    ########################################################
+    # To form a bulk update query
+    ########################################################
+    def bulk_update(self, table, columns, values, conditions):
+        try:
+            for outer_index, cond in enumerate(conditions):
+                query = "UPDATE "+table+" set "
+                for index, column in enumerate(columns):
+                    if values[outer_index][index] is not None:
+                        if(index < len(columns)-1):
+                            query += column+" = '%s', " % (
+                                values[outer_index][index])
+                        else:
+                            query += column+" = '%s' " % values[outer_index][index]
+                query += " WHERE " + cond + "; "
+                cursor = self.cursor()
+                assert cursor is not None
+                cursor.execute(query)
+            return True
+        except mysql.Error, e:
+            print e
+            logger.logKnowledgeApi("bulk_update", query)
+            logger.logKnowledgeApi("bulk_update", e)
             return False
 
     ########################################################
@@ -650,6 +674,7 @@ class Database(object):
         self.connect()
 
     def call_proc(self, procedure_name, args, columns=None):
+        # columns no longer need here, so remove argument once removed from the reference place
         # args is tuple e.g, (parm1, parm2)
         cursor = self.cursor()
         assert cursor is not None
@@ -662,13 +687,11 @@ class Database(object):
             print e
             raise process_procedure_error(procedure_name, args, e)
 
-        rows = cursor.fetchall()
+        cols = [x[0] for x in cursor.description]
+        rows = []
+        rows = convert_to_dict(cursor.fetchall(), cols)
         cursor.nextset()
-        if columns is not None:
-            result = convert_to_dict(rows, columns)
-            return result
-        else:
-            return rows
+        return rows
 
     def call_insert_proc(self, procedure_name, args):
         cursor = self.cursor()
@@ -699,6 +722,27 @@ class Database(object):
         except Exception, e:
             print e
             raise process_procedure_error(procedure_name, args, e)
-
         cursor.nextset()
         return True
+
+    def call_proc_with_multiresult_set(self, procedure_name, args, expected_result_count):
+        cursor = self.cursor()
+        assert cursor is not None
+        try:
+            if args is None:
+                cursor.callproc(procedure_name)
+            else:
+                cursor.callproc(procedure_name, args)
+        except Exception, e:
+            print e
+
+        rows = []
+        print type(expected_result_count)
+        assert type(expected_result_count) is int
+        for i in range(0, expected_result_count):
+            cols = [x[0] for x in cursor.description]
+            r = convert_to_dict(cursor.fetchall(), cols)
+            rows.append(r)
+            cursor.nextset()
+
+        return rows

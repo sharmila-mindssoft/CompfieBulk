@@ -1,3 +1,4 @@
+import datetime
 from collections import OrderedDict
 from protocol.api_keys_settings import api_params
 
@@ -91,14 +92,10 @@ def parse_string(x):
         raise expectation_error("a string", x)
 
 
-
-def parse_optional_string(x, length=None):
+def parse_optional_string(x):
     if x is None:
         return None
-    if length is None:
-        return parse_string(x)
-    else:
-        return parse_custom_string(x, length)
+    return parse_string(x)
 
 
 def parse_custom_string(x, length):
@@ -314,8 +311,8 @@ def parse_dictionary_values(x, field_names=[]):
 
 
 def parse_vector_type_record_type(value):
-    if type(value) is list :
-        if len(value) == 0 :
+    if type(value) is list:
+        if len(value) == 0:
             return value
 
         if type(value[0]) is dict:
@@ -332,5 +329,4 @@ def to_structure_dictionary_values(x):
     keys = x.keys()
     if len(keys) == 0:
         return {}
-    # print keys
     return parse_dictionary_values(x, keys)

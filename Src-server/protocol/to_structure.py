@@ -2371,6 +2371,10 @@ def to_structure_VectorType_RecordType_core_EntityDomainDetails(data):
     return to_structure_VectorType("core", "EntityDomainDetails", data)
 
 
+def to_structure_VectorType_RecordType_core_Industries(data):
+    return to_structure_VectorType("core", "Industries", data)
+
+
 def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
     return to_structure_MapType(
         data, to_structure_CustomTextType_50,

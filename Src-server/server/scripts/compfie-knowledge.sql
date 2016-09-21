@@ -518,6 +518,7 @@ CREATE TABLE `tbl_client_users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,

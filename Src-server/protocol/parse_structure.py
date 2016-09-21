@@ -2297,6 +2297,17 @@ def parse_structure_RecordType_core_EntityDomainDetails(data):
     )
 
 
+def parse_structure_VectorType_RecordType_core_Industries(data):
+    return parse_structure_VectorType(
+        data, parse_structure_RecordType_core_Industries)
+
+
+def parse_structure_RecordType_core_Industries(data):
+    return parse_structure_RecordType(
+        "core", "Industries", data
+    )
+
+
 def parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
     return parse_structure_MapType(
         data, parse_structure_CustomTextType_50,
