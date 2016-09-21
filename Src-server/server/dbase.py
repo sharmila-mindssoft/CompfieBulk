@@ -702,3 +702,25 @@ class Database(object):
 
         cursor.nextset()
         return True
+
+    def call_proc_with_multiresult_set(self, procedure_name, args, expected_result_count):
+        cursor = self.cursor()
+        assert cursor is not None
+        try:
+            if args is None:
+                cursor.callproc(procedure_name)
+            else:
+                cursor.callproc(procedure_name, args)
+        except Exception, e:
+            print e
+
+        rows = []
+        print type(expected_result_count)
+        assert type(expected_result_count) is int
+        for i in range(0, expected_result_count):
+            cols = [x[0] for x in cursor.description]
+            r = convert_to_dict(cursor.fetchall(), cols)
+            rows.append(r)
+            cursor.nextset()
+
+        return rows
