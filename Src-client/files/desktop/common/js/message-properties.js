@@ -250,7 +250,9 @@ var message = {
   'statutoty_nature_update_success': 'Statutory Nature Master Updated Successfully',
   'statutoty_nature_status_active_success': 'Statutory Nature Activated Successfully',
   'statutoty_nature_status_deactive_success': 'Statutory Nature Deactivated Successfully',
-
+  "client_save_success": "Client saved successfully",
+  "client_update_success": "Client updated successfully",
+  "client_change_status_success": "Changed the status of client successfully"
 };
 
 function clearMessage() {
