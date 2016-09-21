@@ -79,8 +79,10 @@ END
 -- To check duplicate industry name
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_industry_master_checkduplicateindustry;
+DELIMITER $$
 CREATE PROCEDURE `sp_industry_master_checkduplicateindustry`(
-in industryid int(11), industryname varchar(50))
+in industryid int(11), in industryname varchar(50))
 BEGIN
 	if industryid = 0 then
 		SELECT count(1) FROM tbl_industries WHERE industry_name = industryname;
@@ -95,7 +97,9 @@ END
 -- To get industry name by its id
 -- --------------------------------------------------------------------------------
 
-CREATE PROCEDURE `sp_industry_master_getindusdtrybyid`(industryid int(11))
+DROP PROCEDURE sp_industry_master_getindusdtrybyid;
+DELIMITER $$
+CREATE PROCEDURE `sp_industry_master_getindusdtrybyid`(in industryid int(11))
 BEGIN
 	SELECT industry_name FROM tbl_industries WHERE
     industry_id = industryid;
@@ -106,6 +110,8 @@ END
 -- To get industry details from its master
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_industry_master_getindustries;
+DELIMITER $$
 CREATE PROCEDURE `sp_industry_master_getindustries`()
 BEGIN
 	SELECT t1.country_id, t2.country_name, t1.domain_id, t3.domain_name,
@@ -118,9 +124,11 @@ END
 -- To save industry activity log in activity log table
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_industry_master_saveactivitylog;
+DELIMITER $$
 CREATE PROCEDURE `sp_industry_master_saveactivitylog`(
-activityLogId int(11), userId int(11), formId int(11),
-action varchar(500), createdOn timestamp)
+in activityLogId int(11), in userId int(11), in formId int(11),
+in action varchar(500), in createdOn timestamp)
 BEGIN
 	INSERT INTO tbl_activity_log
     (activity_log_id, user_id, form_id, action, created_on)
@@ -132,9 +140,11 @@ END
 -- To save industry master details
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_industry_master_saveindustry;
+DELIMITER $$
 CREATE PROCEDURE `sp_industry_master_saveindustry`(
-countryid int(11), domainid int(11), industryname varchar(50),
-createdby int(11), createdon timestamp)
+in countryid int(11), in domainid int(11), in industryname varchar(50),
+in createdby int(11), in createdon timestamp)
 BEGIN
 	INSERT INTO tbl_industries
     (industry_name, country_id, domain_id, created_by, created_on)
@@ -146,9 +156,11 @@ END
 -- To update industry master details
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_industry_master_updateindustry;
+DELIMITER $$
 CREATE PROCEDURE `sp_industry_master_updateindustry`(
-	industryId int(11), industryName varchar(50), countryId int(11),
-    domainId int(11), updatedBy int(11)
+	in industryId int(11), in industryName varchar(50), in countryId int(11),
+    in domainId int(11), in updatedBy int(11)
 )
 BEGIN
 	UPDATE tbl_industries
@@ -165,8 +177,10 @@ END
 -- To update industry master status
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_industry_master_updatestatus;
+DELIMITER $$
 CREATE PROCEDURE `sp_industry_master_updatestatus`(
-	industryId int(11), isActive tinyint(4), updatedBy int(11))
+	in industryId int(11), in isActive tinyint(4), in updatedBy int(11))
 BEGIN
 	UPDATE tbl_industries
     SET
@@ -180,9 +194,11 @@ END
 -- To check for dupliacte statutory nature name
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_statutory_nature_checkduplicatenature;
+DELIMITER $$
 CREATE PROCEDURE `sp_statutory_nature_checkduplicatenature`(
-	statutoryNatureName varchar(50),
-    statutoryNatureId int(11)
+	in statutoryNatureName varchar(50),
+    in statutoryNatureId int(11)
 )
 BEGIN
 	if statutoryNatureId = 0 then
@@ -199,6 +215,8 @@ END
 -- To -get statutory nature master details
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_statutory_nature_getstatutorynatures;
+DELIMITER $$
 CREATE PROCEDURE `sp_statutory_nature_getstatutorynatures`()
 BEGIN
 	SELECT t1.statutory_nature_id, t1.statutory_nature_name,
@@ -215,9 +233,11 @@ END
 -- To update statutory nature master details
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_statutory_nature_updatestatutorynature;
+DELIMITER $$
 CREATE PROCEDURE `sp_statutory_nature_updatestatutorynature`(
-IN statutoryNatureId int(11), statutoryNatureName varchAR(50),
-countryId int(11), updatedBy int(11))
+IN statutoryNatureId int(11), in statutoryNatureName varchAR(50),
+in countryId int(11), in updatedBy int(11))
 BEGIN
 	update tbl_statutory_natures set
     statutory_nature_name = statutoryNatureName,
@@ -231,8 +251,10 @@ END
 -- To update statutory nature status
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_statutory_nature_updatestatutorynaturestatus;
+DELIMITER $$
 CREATE PROCEDURE `sp_statutory_nature_updatestatutorynaturestatus`(
-statutoryNatureId int(11), updatedBy int(11), isActive tinyint(4))
+in statutoryNatureId int(11), in updatedBy int(11), in isActive tinyint(4))
 BEGIN
 	update tbl_statutory_natures set
     is_active = isActive,
@@ -245,8 +267,10 @@ END
 -- To get statutory nature details by its id
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_statutory_natures_getnaturebyid;
+DELIMITER $$
 CREATE PROCEDURE `sp_statutory_natures_getnaturebyid`(
-	statutoryNatureId int(11))
+	in statutoryNatureId int(11))
 BEGIN
 	SELECT statutory_nature_name FROM tbl_statutory_natures
     WHERE statutory_nature_id = statutoryNatureId;
@@ -257,9 +281,11 @@ END
 -- To save statutory nature details
 -- --------------------------------------------------------------------------------
 
+DROP PROCEDURE sp_statutorynature_savestatutorynature;
+DELIMITER $$
 CREATE PROCEDURE `sp_statutorynature_savestatutorynature`(
-statutoryNatureName varchar(50), countryId int(11),
-createdBy int(11), createdOn timestamp)
+in statutoryNatureName varchar(50), in countryId int(11),
+in createdBy int(11), in createdOn timestamp)
 BEGIN
 	INSERT INTO tbl_statutory_natures
     (statutory_nature_name, country_id, created_by, created_on)
@@ -288,7 +314,7 @@ END
 
 DROP PROCEDURE sp_tbl_forms_getadminforms;
 DELIMITER $$
-CREATE procedure `sp_tbl_forms_getadminforms`(IN _user_id VARCHAR(11))
+CREATE procedure `sp_tbl_forms_getadminforms`()
 BEGIN
 	SELECT T01.form_id, T01.form_name, T01.form_url, T01.form_order, T01.parent_menu,
 	T02.form_category, T03.form_type FROM tbl_forms T01
