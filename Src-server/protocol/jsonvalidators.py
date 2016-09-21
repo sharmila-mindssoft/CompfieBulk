@@ -92,13 +92,10 @@ def parse_string(x):
         raise expectation_error("a string", x)
 
 
-def parse_optional_string(x, length=None):
+def parse_optional_string(x):
     if x is None:
         return None
-    if length is None:
-        return parse_string(x)
-    else:
-        return parse_custom_string(x, length)
+    return parse_string(x)
 
 
 def parse_custom_string(x, length):

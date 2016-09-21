@@ -513,7 +513,7 @@ CREATE TABLE `tbl_units` (
 
 
 DROP TABLE IF EXISTS `tbl_client_users`;
-select * from tbl_client_users;CREATE TABLE `tbl_client_users` (
+CREATE TABLE `tbl_client_users` (
   `client_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -529,6 +529,7 @@ select * from tbl_client_users;CREATE TABLE `tbl_client_users` (
   KEY `fk_tbl_client_users_cg` (`client_id`),
   CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;

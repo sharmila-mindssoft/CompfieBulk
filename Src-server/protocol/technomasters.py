@@ -38,7 +38,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_VectorType_RecordType_core_ClientGroup,
-    parse_structure_VectorType_RecordType_core_LegalEntityDetails
+    parse_structure_VectorType_RecordType_core_LegalEntityDetails,
+    parse_structure_VectorType_RecordType_core_Industries
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -83,7 +84,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation,
     to_structure_VectorType_RecordType_core_ClientGroup,
-    to_structure_VectorType_RecordType_core_LegalEntityDetails
+    to_structure_VectorType_RecordType_core_LegalEntityDetails,
+    to_structure_VectorType_RecordType_core_Industries
 )
 
 
@@ -930,7 +932,7 @@ class GetClientGroupFormDataSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         industries = data.get("industries")
-        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
+        industries = parse_structure_VectorType_RecordType_core_Industries(industries)
         return GetClientGroupFormDataSuccess(
             countries, users, domains, industries
         )
@@ -940,7 +942,7 @@ class GetClientGroupFormDataSuccess(Response):
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries)
+            "industries": to_structure_VectorType_RecordType_core_Industries(self.industries)
         }
 
 
@@ -975,7 +977,7 @@ class GetEditClientGroupFormDataSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         industries = data.get("industries")
-        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
+        industries = parse_structure_VectorType_RecordType_core_Industries(industries)
         group_name = data.get("g_name")
         group_name = parse_structure_CustomTextType_50(group_name)
         user_name = data.get("u_name")
@@ -995,7 +997,7 @@ class GetEditClientGroupFormDataSuccess(Response):
             "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
+            "industries": to_structure_VectorType_RecordType_core_Industries(self.industries),
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "user_name": to_structure_CustomTextType_100(self.user_name),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),

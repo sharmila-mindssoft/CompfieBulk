@@ -552,6 +552,7 @@ function editClient(){
     le_count = 0
     logoFile = [];
     legal_entity_id_map = {}
+    organization_details = {}
     $.each(LEGALENTITIES, function(key, value){
         addClient();
         var le_table = $(".le-table-"+le_count);
@@ -562,7 +563,6 @@ function editClient(){
             le_table.find(".business-group").val(value.business_group.b_g_id);
         }
         le_table.find("#legal_entity_text").val(value.l_e_name);
-        // le_table.find('#users').val(value.inc_p);
         var incharge_class = "incharge-"+le_count;
         var user_list_class = "ulist-"+le_count;
         var hidden_user_class = "users-"+le_count
@@ -579,7 +579,6 @@ function editClient(){
         le_table.find('.contract-to').val(value.c_t);
         logoFile.push(value.logo);
         le_table.find("#upload-logo-img").attr("src","http://"+window.location.host+"/knowledge/clientlogo/"+value.logo);
-        organization_details = {}
         for(var i=1; i<=value.d.length; i++){
             var domain_list_class = "domain-list-"+le_count;
             var domain_count_class = "domain-count-"+le_count; 
@@ -587,8 +586,13 @@ function editClient(){
             addDomain(domain_list_class, domain_count_class)
             $("."+domain_class).val(value.d[i-1].d_id);
             orgs = value.d[i-1].org
+            console.log("domain_list_class: "+ domain_list_class);
+            console.log("le_count:"+le_count+", i : "+i);
+            console.log(orgs);
+            console.log(organization_details);
             organization_details[le_count] = {}
-            organization_details[le_count][i] = orgs       
+            organization_details[le_count][i] = orgs   
+            console.log(organization_details);    
         }
     });
     generateDateConfigurationList();

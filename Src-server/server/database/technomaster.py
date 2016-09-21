@@ -19,39 +19,35 @@ from server.database.validateclientuserrecord import ClientAdmin
 # Client Group List
 #
 def get_active_countries(db):
-    columns = ["country_id", "country_name", "is_active"]
     countries = db.call_proc(
-        "sp_countries_active_list", None, columns
+        "sp_countries_active_list", None
     )
     return return_countries(countries)
 
 
 def get_client_business_groups(db, client_id=None):
-    columns = ["business_group_id", "business_group_name", "client_id"]
     business_groups = db.call_proc(
-        "sp_business_groups_list", (client_id,), columns
+        "sp_business_groups_list", (client_id,)
     )
     return return_business_groups(business_groups)
 
 
 def get_active_domains(db):
-    columns = ["domain_id", "domain_name", "is_active"]
     domains = db.call_proc(
-        "sp_domains_active_list", None, columns
+        "sp_domains_active_list", None
     )
     return return_domains(domains)
 
 
 def get_active_industries(db):
-    columns = ["industry_id", "industry_name", "is_active"]
     domains = db.call_proc(
-        "sp_industries_active_list", None, columns
+        "sp_industries_active_list", None
     )
     return return_industries(domains)
 
 
 def return_industries(data):
-    fn = core.Industry
+    fn = core.Industries
     results = [
         fn(
             d["industry_id"], d["industry_name"], bool(d["is_active"])
@@ -66,25 +62,24 @@ def return_industries(data):
 
 def save_client_group(db, group_name, username):
     group_id = db.call_proc(
-        "sp_client_group_save", (group_name, username), ["group_id"]
+        "sp_client_group_save", (group_name, username)
     )
-    if group_id:
-        return group_id[0]["group_id"]
+    return group_id
+    # if group_id:
+    #     return group_id[0]["group_id"]
 
 
 def update_client_group(db, group_name, group_id):
-    group_id = db.call_proc(
-        "sp_client_group_update", (group_name, group_id), ["group_id"]
+    db.call_update_proc(
+        "sp_client_group_update", (group_name, group_id)
     )
-    if group_id:
-        return group_id[0]["group_id"]
 
 
 def save_client_user(db, client_id, username):
     current_time_stamp = get_date_time()
-    r = db.call_proc(
+    r = db.call_insert_proc(
         "sp_client_user_save_admin",
-        (client_id, username, current_time_stamp), ["group_id"]
+        (client_id, username, current_time_stamp)
     )
     if r is False:
         raise process_error("E044")
@@ -155,7 +150,6 @@ def update_legal_entities(db, request, group_id, session_user):
     for entity in request.legal_entities:
         if(entity.new_logo is not None):
             if is_logo_in_image_format(entity.new_logo):
-                print "going to save client logo"
                 file_name = save_client_logo(entity.new_logo)
             else:
                 raise process_error("E067")
@@ -244,8 +238,8 @@ def save_date_configurations(
     values_list = []
     country_ids = []
     current_time_stamp = get_date_time()
-    db.call_proc(
-        "sp_client_configurations_delete", (client_id, ), None
+    db.call_update_proc(
+        "sp_client_configurations_delete", (client_id, )
     )
     columns = [
         "client_id", "country_id", "domain_id", "period_from",
@@ -270,8 +264,8 @@ def save_date_configurations(
 
 
 def save_client_countries(db, client_id, country_ids):
-    db.call_proc(
-        "sp_client_countries_delete", (client_id, ), None
+    db.call_update_proc(
+        "sp_client_countries_delete", (client_id, )
     )
     values_list = []
     columns = ["client_id", "country_id"]
@@ -286,10 +280,8 @@ def save_client_countries(db, client_id, country_ids):
 
 def get_legal_entity_ids_by_name(db, legal_entity_names):
     legal_entity_name_id_map = {}
-    columns = ["legal_entity_id", "legal_entity_name"]
     result = db.call_proc(
-        "sp_legal_entity_id_by_name", (",".join(legal_entity_names),),
-        columns
+        "sp_legal_entity_id_by_name", (",".join(legal_entity_names),)
     )
     for row in result:
         le_name = row["legal_entity_name"]
@@ -299,8 +291,8 @@ def get_legal_entity_ids_by_name(db, legal_entity_names):
 
 
 def save_client_domains(db, client_id, request, legal_entity_name_id_map):
-    db.call_proc(
-        "sp_client_domains_delete", (client_id, ), None
+    db.call_update_proc(
+        "sp_client_domains_delete", (client_id, )
     )
     values_list = []
     columns = ["client_id", "legal_entity_id", "domain_id"]
@@ -319,8 +311,8 @@ def save_client_domains(db, client_id, request, legal_entity_name_id_map):
 
 
 def save_incharge_persons(db, client_id, request, legal_entity_id_name_map):
-    db.call_proc(
-        "sp_user_clients_delete", (client_id, ), None
+    db.call_update_proc(
+        "sp_user_clients_delete", (client_id, )
     )
     values_list = []
     columns = ["client_id", "legal_entity_id", "user_id"]
@@ -341,8 +333,8 @@ def save_organization(
     db, group_id, request, legal_entity_name_id_map, session_user
 ):
     current_time_stamp = get_date_time()
-    db.call_proc(
-        "sp_le_domain_industry_delete", (group_id, ), None
+    db.call_update_proc(
+        "sp_le_domain_industry_delete", (group_id, )
     )
     columns = [
         "group_id", "legal_entity_id", "domain_id", "industry_id",
@@ -372,7 +364,7 @@ def save_organization(
 def is_duplicate_group_name(db, group_name, client_id=None):
     count_rows = db.call_proc(
         "sp_client_group_is_duplicate_groupname",
-        (group_name, client_id), ["count"]
+        (group_name, client_id)
     )
     if count_rows[0]["count"] > 0:
         return True
@@ -385,7 +377,7 @@ def is_duplicate_business_group(
 ):
     count_rows = db.call_proc(
         "sp_businessgroup_is_duplicate_businessgroupname",
-        (business_group_name, business_group_id, client_id), ["count"]
+        (business_group_name, business_group_id, client_id)
     )
     if count_rows[0]["count"] > 0:
         return True
@@ -398,7 +390,7 @@ def is_duplicate_legal_entity(
 ):
     count_rows = db.call_proc(
         "sp_legalentity_is_duplicate_legalentityname",
-        (legal_entity_name, legal_entity_id, client_id), ["count"]
+        (legal_entity_name, legal_entity_id, client_id)
     )
     if count_rows[0]["count"] > 0:
         return True
@@ -460,36 +452,25 @@ def notify_incharge_persons(
 #
 def get_client_details(db, client_id):
     client_details = db.call_proc(
-        "sp_client_groups_details_by_id", (client_id,),
-        ["group_name", "user_name"]
+        "sp_client_groups_details_by_id", (client_id,)
     )
     legal_entities = db.call_proc(
-        "sp_legal_entity_details_by_group_id", (client_id,),
-        [
-            "legal_entity_id", "country_id", "business_group_id",
-            "business_group_name", "legal_entity_name", "contract_from",
-            "contract_to", "logo", "file_space", "no_of_licence",
-            "is_sms_subscribed"
-        ]
+        "sp_legal_entity_details_by_group_id", (client_id,)
     )
     domains = db.call_proc(
-        "sp_client_domains_by_group_id", (client_id,),
-        ["client_id", "legal_entity_id", "domain_id"]
+        "sp_client_domains_by_group_id", (client_id,)
     )
     incharge_persons = db.call_proc(
-        "sp_user_clients_by_group_id", (client_id,),
-        ["client_id", "legal_entity_id", "user_id"]
+        "sp_user_clients_by_group_id", (client_id,)
     )
     date_configurations = db.call_proc(
-        "sp_client_configuration_by_group_id", (client_id,),
-        ["country_id", "domain_id", "period_from", "period_to"]
+        "sp_client_configuration_by_group_id", (client_id,)
     )
     organizations = db.call_proc(
-        "sp_le_d_industry_by_group_id", (client_id,),
-        ["legal_entity_id", "domain_id", "industry_id", "no_of_units"]
+        "sp_le_d_industry_by_group_id", (client_id,)
     )
     group_name = client_details[0]["group_name"]
-    user_name = client_details[0]["user_name"]
+    user_name = client_details[0]["group_admin"]
     incharge_persons_map = return_incharge_persons_by_legal_entity(
         incharge_persons)
     organization_map = return_organization_by_legalentity_domain(
@@ -526,9 +507,9 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
                     legal_entity["legal_entity_id"]],
                 old_logo=legal_entity["logo"],
                 new_logo=None,
-                no_of_licence=legal_entity["no_of_licence"],
-                file_space=legal_entity["file_space"],
-                is_sms_subscribed=legal_entity["is_sms_subscribed"],
+                no_of_licence=legal_entity["total_licence"],
+                file_space=legal_entity["file_space_limit"],
+                is_sms_subscribed=legal_entity["sms_subscription"],
                 contract_from=datetime_to_string(
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
@@ -540,7 +521,6 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
 
 def return_incharge_persons_by_legal_entity(incharge_persons):
     incharge_person_map = {}
-    # ["client_id", "legal_entity_id", "user_id"]
     for icp in incharge_persons:
         legal_entity_id = icp["legal_entity_id"]
         if legal_entity_id not in incharge_person_map:
@@ -551,7 +531,6 @@ def return_incharge_persons_by_legal_entity(incharge_persons):
 
 def return_organization_by_legalentity_domain(organizations):
     organization_map = {}
-    # ["legal_entity_id", "domain_id", "industry_id", "no_of_units"]
     for row in organizations:
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
@@ -571,7 +550,6 @@ def return_organization_by_legalentity_domain(organizations):
 
 def return_domain_map_by_legal_entity_id(domains, organization_map):
     domain_map = {}
-    # ["client_id", "legal_entity_id", "domain_id"]
     print organization_map
     for domain in domains:
         legal_entity_id = domain["legal_entity_id"]
@@ -605,8 +583,7 @@ def return_date_configurations(date_configurations):
 #
 def is_invalid_group_id(db, client_id):
     count_rows = db.call_proc(
-        "sp_client_groups_is_valid_group_id",
-        (client_id,), ["count"]
+        "sp_client_groups_is_valid_group_id", (client_id,)
     )
     if count_rows[0]["count"] <= 0:
         return True
@@ -643,9 +620,8 @@ def is_deactivated_existing_domain(db, client_id, domain_ids):
 
 
 def get_client_countries(db, client_id):
-    columns = ["country_id"]
     rows = db.call_proc(
-        "sp_client_countries_by_group_id", (client_id,), columns
+        "sp_client_countries_by_group_id", (client_id,)
     )
     country_ids = [
         r["country_id"] for r in rows
@@ -726,17 +702,9 @@ def return_domains(data):
 
 
 def get_techno_users(db):
-    # Getting techno user countries
-    country_columns = ["country_id", "user_id"]
-    countries = db.call_proc("sp_user_countries_techno", None, country_columns)
-
-    # Getting techno user domains
-    domain_columns = ["domain_id", "user_id"]
-    domains = db.call_proc("sp_user_domains_techno", None, domain_columns)
-
-    # Getting Techno users
-    user_columns = ["user_id", "e_name", "is_active"]
-    users = db.call_proc("sp_users_techno", None, user_columns)
+    countries = db.call_proc("sp_user_countries_techno", None)
+    domains = db.call_proc("sp_user_domains_techno", None)
+    users = db.call_proc("sp_users_techno", None)
 
     user_country_map = {}
     for country in countries:
@@ -770,12 +738,8 @@ def return_techno_users(users, user_country_map, user_domain_map):
 
 
 def get_groups(db):
-    columns = [
-        "group_id", "group_name", "country_names",
-        "no_of_legal_entities", "is_active"
-    ]
     groups = db.call_proc(
-        "sp_client_groups_list", None, columns
+        "sp_client_groups_list", None
     )
     return return_group(groups)
 
@@ -840,7 +804,7 @@ def validate_no_of_user_licence(
     db, no_of_user_licence, client_id, legal_entity_id
 ):
     rows = db.call_proc(
-        "sp_client_users_count", (client_id, legal_entity_id), ["count"]
+        "sp_client_users_count", (client_id, legal_entity_id)
     )
     current_no_of_users = int(rows[0]["count"])
     if no_of_user_licence < current_no_of_users:
@@ -856,7 +820,6 @@ def validate_total_disk_space(
         return False
     rows = db.call_proc(
         "sp_legal_entities_space_used", (legal_entity_id,),
-        ["used_space"]
     )
     used_space = int(rows[0]["used_space"])
     if file_space < used_space:
@@ -1123,7 +1086,7 @@ def return_business_groups(business_groups):
         results.append(core.BusinessGroup(
             business_group["business_group_id"],
             business_group["business_group_name"],
-            business_group["client_id"]
+            business_group["group_id"]
         ))
     return results
 

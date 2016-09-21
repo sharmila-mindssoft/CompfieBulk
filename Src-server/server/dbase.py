@@ -470,22 +470,20 @@ class Database(object):
     # To form a bulk update query
     ########################################################
     def bulk_update(self, table, columns, values, conditions):
-        query = ""
-        for outer_index, cond in enumerate(conditions):
-            query += "UPDATE "+table+" set "
-            for index, column in enumerate(columns):
-                if values[outer_index][index] is not None:
-                    if(index < len(columns)-1):
-                        query += column+" = '%s', " % (
-                            values[outer_index][index])
-                    else:
-                        query += column+" = '%s' " % values[outer_index][index]
-            query += " WHERE " + cond
-
         try:
-            cursor = self.cursor()
-            assert cursor is not None
-            cursor.execute(query)
+            for outer_index, cond in enumerate(conditions):
+                query = "UPDATE "+table+" set "
+                for index, column in enumerate(columns):
+                    if values[outer_index][index] is not None:
+                        if(index < len(columns)-1):
+                            query += column+" = '%s', " % (
+                                values[outer_index][index])
+                        else:
+                            query += column+" = '%s' " % values[outer_index][index]
+                query += " WHERE " + cond + "; "
+                cursor = self.cursor()
+                assert cursor is not None
+                cursor.execute(query)
             return True
         except mysql.Error, e:
             print e
@@ -724,7 +722,6 @@ class Database(object):
         except Exception, e:
             print e
             raise process_procedure_error(procedure_name, args, e)
-
         cursor.nextset()
         return True
 

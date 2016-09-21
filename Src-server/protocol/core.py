@@ -847,8 +847,35 @@ class Industry(object):
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "industry_name": to_structure_CustomTextType_50(self.industry_name),
+            "is_active": to_structure_Bool(self.is_active)
+        }
+
+
+class Industries(object):
+    def __init__(self, industry_id, industry_name, is_active):
+        self.industry_id = industry_id
+        self.industry_name = industry_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["industry_id", "industry_name", "is_active"])
+        industry_id = data.get("industry_id")
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
+        industry_name = data.get("industry_name")
+        industry_name = parse_structure_CustomTextType_50(industry_name)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return Industries(industry_id, industry_name, is_active)
+
+    def to_structure(self):
+        return {
+            "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
+            "industry_name": to_structure_CustomTextType_50(self.industry_name),
             "is_active": to_structure_Bool(self.is_active),
         }
+
 
 #
 # StatutoryNature
