@@ -145,9 +145,9 @@ def update_industry_status(db, industry_id, is_active, user_id):
     oldData = get_industry_by_id(db, industry_id)
     if oldData is None:
         return False
-    values = [is_active, user_id, industry_id]
+    values = [industry_id, is_active, user_id]
     new_id = db.call_update_proc("sp_industry_master_updatestatus", values)
-
+    print new_id
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
@@ -216,7 +216,7 @@ def save_statutory_nature(db, nature_name, country_id, user_id):
     created_on = get_date_time()
     columns = ["statutory_nature_name", "country_id", "created_by", "created_on"]
     values = [nature_name, country_id, user_id, str(created_on)]
-    new_id = db.call_proc("sp_statutorynature_savestatutorynature", values)
+    new_id = db.call_insert_proc("sp_statutorynature_savestatutorynature", values)
     if new_id is False:
         raise process_error("E004")
     else:
@@ -231,7 +231,7 @@ def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
         return False
 
     values = [nature_id, nature_name, country_id, user_id]
-    new_id = db.call_proc("sp_statutory_nature_updatestatutorynature", values)
+    new_id = db.call_update_proc("sp_statutory_nature_updatestatutorynature", values)
 
     if new_id is True:
         action = "Statutory Nature '%s' updated" % (nature_name)
@@ -246,7 +246,7 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
     if oldData is None:
         return False
     values = [nature_id, user_id, is_active]
-    new_id = db.call_proc("sp_statutory_nature_updatestatutorynaturestatus", values)
+    new_id = db.call_update_proc("sp_statutory_nature_updatestatutorynaturestatus", values)
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
