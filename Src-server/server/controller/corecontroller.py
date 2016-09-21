@@ -6,7 +6,7 @@ from server.database.general import get_user_forms
 from server.clientdatabase.general import get_client_user_forms
 
 __all__ = [
-    "process_user_forms", "process_user_menus",
+    "process_user_forms", "process_user_menus", "process_admin_forms"
 ]
 
 
@@ -22,6 +22,18 @@ def process_user_forms(
         forms = get_user_forms(db, form_ids)
     form_list = []
     for f in forms:
+        form_id = int(f["form_id"])
+        form_name = f["form_name"]
+        form_url = f["form_url"]
+        form_type = f["form_type"]
+        parent_menu = f["parent_menu"]
+        form = core.Form(form_id, form_name, form_url, parent_menu, form_type)
+        form_list.append(form)
+    return process_user_menus(form_list)
+
+def process_admin_forms(data):
+    form_list = []
+    for f in data :
         form_id = int(f["form_id"])
         form_name = f["form_name"]
         form_url = f["form_url"]

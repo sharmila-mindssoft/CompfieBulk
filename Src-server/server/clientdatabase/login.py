@@ -123,8 +123,8 @@ def add_session(
         " VALUES (%s, %s, %s, %s);"
     db.execute(query, (session_id, user_id, session_type_id, updated_on))
 
-    # action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
-    action = "Log In by - \"%s\" " % (employee)
+    action = "Log In by - \"%s\" from \"%s\"" % (employee, ip)
+    # action = "Log In by - \"%s\" " % (employee)
     db.save_activity(user_id, 0, action)
 
     return session_id

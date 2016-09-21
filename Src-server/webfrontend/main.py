@@ -74,6 +74,9 @@ class Controller(object):
     def handle_post(self, request, response):
         data = None
         actual_data = None
+        print request.remote_ip()
+        print request.header('Remote_addr')
+        print request.header('X-Real_ip')
         try:
             data = json.loads(request.body())
             if type(data) is not list:

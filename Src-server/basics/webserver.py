@@ -134,7 +134,13 @@ class WebRequest(object) :
         return self._inner.request.headers.get_all()
 
     def remote_ip(self) :
-        return self._inner.request.remote_ip
+        # return self._inner.request.remote_ip
+        r_ip = self.header('X-Real_ip')
+        if r_ip is None:
+            r_ip = self.header('Remote_addr')
+            if r_ip is None :
+                r_ip = self._inner.request.remote_ip
+        return r_ip
 
     def host(self) :
         return self._inner.request.host

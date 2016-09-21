@@ -958,3 +958,73 @@ RuntimeError: Client incharge person creation failed
 RuntimeError: Save Organization failed
  
 
+2016-09-21 12:51:47,109 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-09-21 12:51:47,109 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 447, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-09-21 12:54:54,074 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-09-21 12:54:54,075 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 447, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-09-21 12:55:54,931 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-09-21 12:55:54,931 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 447, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-09-21 12:57:44,827 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-09-21 12:57:44,828 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 447, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-09-21 12:58:54,933 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-09-21 12:58:54,933 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 447, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 106, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+

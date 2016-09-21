@@ -117,12 +117,12 @@ def validate_user_session(db, session_token, client_id=None):
 
 
 def validate_user_forms(db, user_id, form_ids, requet):
-    if user_id == 0 and type(requet) in [
-        general.UpdateNotificationStatus,
-        general.UpdateUserProfile,
-        general.GetAuditTrails
-    ]:
-        return False
+    # if user_id == 0 and type(requet) in [
+    #     general.UpdateNotificationStatus,
+    #     general.UpdateUserProfile,
+    #     general.GetAuditTrails
+    # ]:
+    #     return False
 
     if type(requet) not in [
         general.GetNotifications,

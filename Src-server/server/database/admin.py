@@ -37,21 +37,12 @@ __all__ = [
 #
 
 def get_domains_for_user(db, user_id):
-    query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
-        " t1.is_active FROM tbl_domains t1"
+    columns = ["domain_id", "domain_name", "is_active"]
+    procedure = 'sp_tbl_domains_for_user'
+    _user_id = '%'
     if user_id > 0:
-        query = query + " INNER JOIN tbl_user_domains t2 ON " + \
-            " t1.domain_id = t2.domain_id WHERE t2.user_id = %s " + \
-            " AND t1.is_active=1 "
-    query = query + " ORDER BY t1.domain_name"
-    if user_id > 0:
-        rows = db.select_all(query, [user_id])
-    else:
-        rows = db.select_all(query)
-    result = []
-    if rows:
-        columns = ["domain_id", "domain_name", "is_active"]
-        result = convert_to_dict(rows, columns)
+        _user_id = user_id
+    result = db.call_proc(procedure, [_user_id], columns)
     return return_domains(result)
 
 
