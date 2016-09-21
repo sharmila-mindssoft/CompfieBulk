@@ -1,10 +1,12 @@
 var le_count = 0;
 var edit_id = null;
-var organization_details = {}
-var country_domain_id_map = {}
+var organization_details = {};
+var country_domain_id_map = {};
 var selected_textbox = '';
 var logoFile = [];
-var industry_id_map = {}
+var industry_id_map = {};
+var industry_name_map = {};
+var legal_entity_id_map = {};
 
 var COUNTRIES = '';
 var DOMAINS = '';
@@ -42,6 +44,7 @@ function initialize(type_of_initialization){
             USERS = data.users;
             $.each(INDUSTRIES, function(key, value){
                 industry_id_map[value.industry_name] = parseInt(value.industry_id)
+                industry_name_map[parseInt(value.industry_id)] = value.industry_name 
             });
             addClient();
         }
@@ -65,6 +68,7 @@ function initialize(type_of_initialization){
             BUSSINESSGROUPS = data.business_groups;
             $.each(INDUSTRIES, function(key, value){
                 industry_id_map[value.industry_name] = parseInt(value.industry_id)
+                industry_name_map[parseInt(value.industry_id)] = value.industry_name 
             });
             GROUPNAME = data.group_name
             USERNAME = data.user_name
@@ -93,6 +97,7 @@ function showPage(type_of_initialization){
     logoFile = [];
     country_domain_id_map = {};
     clearMessage();
+    edit_id = null;
     if(type_of_initialization == "list"){
         $('.le-body').empty();
         $("#group-text").val("");
@@ -171,9 +176,11 @@ $(".add-le").click(function(){
     addClient();
 });
 $(".save").click(function(){
+    closePopup();
     saveClient();
 });
 $(".cancel").click(function(){
+    closePopup();
     initialize("list");
 });
 $(".org-submit").click(function(){
@@ -381,21 +388,12 @@ function saveClient(){
                 arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]);
             }
             inchargePersonVal = arrayinchargePerson;
-            console.log("le_count:"+i);
             legal_entity_id = legal_entity_id_map[i]
             var new_logo = null;
-            console.log("legal_entity_id:"+legal_entity_id+", type:"+typeof legal_entity_id);
             if(typeof legal_entity_id == 'string' || typeof legal_entity_id == 'number'){
                 legal_entity_id = legal_entity_id;
             }else{
                 legal_entity_id = null;
-            }
-            var new_logo = null
-            if(typeof logo == 'string'){
-                new_logo = null
-            }else{
-                new_logo = logo;
-                logo = null;
             }
             if(edit_id == null){
                 legal_entities.push(
@@ -406,6 +404,13 @@ function saveClient(){
                     )
                 )    
             }else{
+                var new_logo = null
+                if(typeof logo == 'string'){
+                    new_logo = null
+                }else{
+                    new_logo = logo;
+                    logo = null;
+                }
                 legal_entities.push(
                     mirror.getLegalEntityUpdateRow(
                         parseInt(country_id), parseInt(business_group_id), 
@@ -559,8 +564,10 @@ function editClient(){
         legal_entity_id_map[parseInt(le_count)] = value.l_e_id
         var domains = [];
         le_table.find(".country").val(value.c_id);
+        addOrSelectBusinessGroup("cancel");
         if(value.b_g){
-            le_table.find(".business-group").val(value.business_group.b_g_id);
+            le_table.find(".business-group").val(
+                value.b_g.b_g_id);
         }
         le_table.find("#legal_entity_text").val(value.l_e_name);
         var incharge_class = "incharge-"+le_count;
@@ -586,13 +593,8 @@ function editClient(){
             addDomain(domain_list_class, domain_count_class)
             $("."+domain_class).val(value.d[i-1].d_id);
             orgs = value.d[i-1].org
-            console.log("domain_list_class: "+ domain_list_class);
-            console.log("le_count:"+le_count+", i : "+i);
-            console.log(orgs);
-            console.log(organization_details);
             organization_details[le_count] = {}
             organization_details[le_count][i] = orgs   
-            console.log(organization_details);    
         }
     });
     generateDateConfigurationList();
@@ -656,11 +658,7 @@ function addClient(){
                 data != 'File content is empty' ||
                 data != 'Invalid file format'
               ) {
-                console.log(le_count);
-                console.log(data);
-                console.log(logoFile);
                 logoFile[le_count-1]= data;
-                console.log(logoFile);
             } else {
                 alert(data);
                 custom_alert(data);
@@ -731,11 +729,9 @@ function addDomain(domain_list_class, domain_count_class){
     $(".domain", clone).change(function(){
         generateDateConfigurationList();
     });
-
+    $(".addOrganizationType", clone).attr("id", le_count+","+domain_count);
     $(".addOrganizationType", clone).click(function(){
-        var le_cnt = le_count;
-        var d_cnt = domain_count;
-        displayPopup(le_cnt, d_cnt);
+        displayPopup($(this).attr("id"));
     });
 
     $(".remove-domain", clone).click(function(e){
@@ -820,16 +816,12 @@ function loadDomains(domain_class){
 function loadBusinessGroups(bg_class){
     $('.' + bg_class + "  option:gt(0)").remove();
     bg_html = "<option value ='0'>(Select Business Group)</option>"
+    $.each(BUSSINESSGROUPS, function(key, value){
+        bg_html += "<option value = "+value.business_group_id+">"+value.business_group_name+"</option>"
+    });
     $('.' + bg_class).html(bg_html);
 }
 
-// function hidemenu(type) {
-//     $("#ac-org").hide();
-// }
-
-// function showmenu(type) {
-//     $("#ac-org").show();
-// }
 
 function showHideUserMenu(selectboxview_class, is_active) {
     if(is_active == true){
@@ -874,9 +866,12 @@ function addOrSelectBusinessGroup(type_of_icon){
     }
 }
 
-function displayPopup(le_cnt, d_cnt) {
+function displayPopup(counts) {
     $('.overlay').css('visibility', 'visible');
     $('.overlay').css('opacity', '1');
+    count_list = counts.split(",");
+    le_cnt = count_list[0]
+    d_cnt = count_list[1]
     $("#le-cnt").val(le_cnt);
     $("#d-cnt").val(d_cnt);
     $("#o-cnt").val(0);
@@ -887,7 +882,7 @@ function displayPopup(le_cnt, d_cnt) {
             $.each(organization_details[le_cnt][d_cnt], function(key, value){
                 ++ o_cnt;
                 addOrganization();
-                $(".org-selected-"+le_cnt+"-"+d_cnt+"-"+o_cnt).val(key);
+                $(".org-selected-"+le_cnt+"-"+d_cnt+"-"+o_cnt).val(industry_name_map[parseInt(key)]);
                 $(".no-of-units-"+le_cnt+"-"+d_cnt+"-"+o_cnt).val(value);
             });
             $("#o-cnt").val(o_cnt);

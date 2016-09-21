@@ -61,7 +61,7 @@ def return_industries(data):
 #
 
 def save_client_group(db, group_name, username):
-    group_id = db.call_proc(
+    group_id = db.call_insert_proc(
         "sp_client_group_save", (group_name, username)
     )
     return group_id
@@ -105,7 +105,7 @@ def save_legal_entities(db, request, group_id, session_user):
             db, entity, group_id, session_user, current_time_stamp
         )
         if is_duplicate_legal_entity(
-            None, entity.legal_entity_name, group_id
+            db, None, entity.legal_entity_name, group_id
         ):
             raise process_error("E068")
         legal_entity_names.append(entity.legal_entity_name)
@@ -427,13 +427,12 @@ def notify_incharge_persons(
     )
     link = "/knowledge/client-unit"
 
-    notification_id_rows = db.call_proc(
+    notification_id = db.call_insert_proc(
         "sp_notifications_notify_incharge",
-        (notification_text, link), ["notification_id"]
+        (notification_text, link)
     )
-    if notification_id_rows is False:
+    if notification_id is False:
         raise process_error("E045")
-    notification_id = notification_id_rows[0]["notification_id"]
     columns = ["notification_id", "user_id", "read_status"]
     values_list = []
     for incharge_person in incharge_persons:
@@ -497,6 +496,7 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
                 business_group_id=legal_entity["business_group_id"],
                 business_group_name=legal_entity["business_group_name"]
             )
+        print "incharge_persons: %s" % incharge_persons
         results.append(
             core.LegalEntity(
                 country_id=legal_entity["country_id"],
@@ -504,7 +504,7 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 incharge_persons=incharge_persons[
-                    legal_entity["legal_entity_id"]],
+                    int(legal_entity["legal_entity_id"])],
                 old_logo=legal_entity["logo"],
                 new_logo=None,
                 no_of_licence=legal_entity["total_licence"],
@@ -522,10 +522,10 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
 def return_incharge_persons_by_legal_entity(incharge_persons):
     incharge_person_map = {}
     for icp in incharge_persons:
-        legal_entity_id = icp["legal_entity_id"]
+        legal_entity_id = int(icp["legal_entity_id"])
         if legal_entity_id not in incharge_person_map:
             incharge_person_map[legal_entity_id] = []
-        incharge_person_map[legal_entity_id].append(icp["user_id"])
+        incharge_person_map[legal_entity_id].append(int(icp["user_id"]))
     return incharge_person_map
 
 

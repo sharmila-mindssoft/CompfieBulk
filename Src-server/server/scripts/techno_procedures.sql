@@ -444,7 +444,7 @@ BEGIN
 END
 
 -- --------------------------------------------------------------------------------
--- to Change the status of client
+-- To Change the status of client
 -- --------------------------------------------------------------------------------
 DELIMITER $$
 
@@ -456,4 +456,18 @@ BEGIN
     WHERE group_id=client_id;
     SELECT group_name FROM tbl_client_groups
     WHERE group_id=client_id;
+END
+
+-- --------------------------------------------------------------------------------
+-- To Notify the incharge person, that the legal entity is assigned to him
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE PROCEDURE `sp_notifications_notify_incharge`(
+    IN notification TEXT, url TEXT
+)
+BEGIN
+    INSERT INTO tbl_notifications 
+    (notification_text, link, created_on) VALUES
+    (notification, url, now());
 END
