@@ -288,7 +288,7 @@ END
 
 DROP PROCEDURE sp_tbl_forms_getadminforms;
 DELIMITER $$
-CREATE procedure `sp_tbl_forms_getadminforms`(IN _user_id VARCHAR(11))
+CREATE procedure `sp_tbl_forms_getadminforms`()
 BEGIN
 	SELECT T01.form_id, T01.form_name, T01.form_url, T01.form_order, T01.parent_menu,
 	T02.form_category, T03.form_type FROM tbl_forms T01
