@@ -141,11 +141,26 @@ def update_legal_entities(db, request, group_id, session_user):
         "file_space_limit", "total_licence", "sms_subscription",
         'updated_by', "updated_on"
     ]
+    insert_columns = [
+        "group_id", "country_id", "business_group_id",
+        "legal_entity_name", "contract_from", "contract_to", "logo",
+        "file_space_limit", "total_licence", "sms_subscription",
+        'is_active', "created_by", "created_on", 'updated_by', "updated_on"
+    ]
     values = []
+    insert_values = []
     conditions = []
     current_time_stamp = get_date_time()
     legal_entity_names = []
     for entity in request.legal_entities:
+        if(entity.new_logo is not None):
+            if is_logo_in_image_format(entity.new_logo):
+                print "going to save client logo"
+                file_name = save_client_logo(entity.new_logo)
+            else:
+                raise process_error("E067")
+        else:
+            file_name = entity.old_logo
         business_group_id = return_business_group_id(
             db, entity, group_id, session_user, current_time_stamp
         )
@@ -162,23 +177,41 @@ def update_legal_entities(db, request, group_id, session_user):
         ):
             raise process_error("E070")
         legal_entity_names.append(entity.legal_entity_name)
-        value_tuple = (
-            entity.country_id, business_group_id,
-            entity.legal_entity_name,
-            string_to_datetime(entity.contract_from),
-            string_to_datetime(entity.contract_to),
-            entity.logo, entity.file_space, entity.no_of_licence,
-            entity.is_sms_subscribed, 1,
-            session_user, current_time_stamp
-        )
-        values.append(value_tuple)
-        condition = "group_id=%s and legal_entity_id=%s" % (
-            group_id, entity.legal_entity_id)
-        conditions.append(condition)
-    db.bulk_update(
+        if entity.legal_entity_id is not None:
+            value_tuple = (
+                entity.country_id, business_group_id,
+                entity.legal_entity_name,
+                string_to_datetime(entity.contract_from),
+                string_to_datetime(entity.contract_to),
+                file_name, entity.file_space, entity.no_of_licence,
+                entity.is_sms_subscribed, 1,
+                session_user, current_time_stamp
+            )
+            values.append(value_tuple)
+            condition = "group_id=%s and legal_entity_id=%s" % (
+                group_id, entity.legal_entity_id)
+            conditions.append(condition)
+        else:
+            insert_value_tuple = (
+                group_id, entity.country_id, business_group_id,
+                entity.legal_entity_name,
+                string_to_datetime(entity.contract_from),
+                string_to_datetime(entity.contract_to),
+                file_name, entity.file_space, entity.no_of_licence,
+                entity.is_sms_subscribed, 1, session_user, current_time_stamp,
+                session_user, current_time_stamp
+            )
+            insert_values.append(insert_value_tuple)
+    if db.bulk_insert(
+        tblLegalEntities, insert_columns, insert_values
+    ) is False:
+        raise process_error("E052")
+    if db.bulk_update(
         tblLegalEntities, columns, values, conditions
-    )
-    return legal_entity_names
+    ) is True:
+        return legal_entity_names
+    else:
+        raise process_error("E052")
 
 
 def return_business_group_id(
@@ -332,7 +365,7 @@ def save_organization(
                 values_list.append(value_tuple)
     r = db.bulk_insert(tblLegalEntityDomainIndustry, columns, values_list)
     if r is False:
-        raise process_error("E043")
+        raise process_error("E071")
     return r
 
 
@@ -491,7 +524,8 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
                 legal_entity_name=legal_entity["legal_entity_name"],
                 incharge_persons=incharge_persons[
                     legal_entity["legal_entity_id"]],
-                logo=legal_entity["logo"],
+                old_logo=legal_entity["logo"],
+                new_logo=None,
                 no_of_licence=legal_entity["no_of_licence"],
                 file_space=legal_entity["file_space"],
                 is_sms_subscribed=legal_entity["is_sms_subscribed"],
@@ -818,6 +852,8 @@ def validate_no_of_user_licence(
 def validate_total_disk_space(
     db, file_space, client_id, legal_entity_id
 ):
+    if legal_entity_id is None:
+        return False
     rows = db.call_proc(
         "sp_legal_entities_space_used", (legal_entity_id,),
         ["used_space"]
@@ -827,6 +863,7 @@ def validate_total_disk_space(
         return True
     else:
         return False
+
 
 
 def update_client_logo(db, logo, client_id):

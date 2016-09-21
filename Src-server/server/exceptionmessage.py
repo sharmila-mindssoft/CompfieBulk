@@ -68,7 +68,8 @@ messages = {
     "E067": "Invalid Image File",
     "E068": "Legal Entity name already exists",
     "E069": "Invalid number of licence",
-    "E070": "Invalid File space"
+    "E070": "Invalid File space",
+    "E071": "Save Organization failed",
 }
 
 client_message = {

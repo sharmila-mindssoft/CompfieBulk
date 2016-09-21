@@ -925,7 +925,7 @@ function initMirror() {
   }
   function getLegalEntityUpdateRow(
     c_id, b_g_id, b_g_name, l_e_id, l_e_name,
-    inc_p, logo, n_o_l, f_s, sms, c_f, c_t, d
+    inc_p, logo, new_logo, n_o_l, f_s, sms, c_f, c_t, d
   ) {
     return {
         "c_id": c_id,
@@ -934,6 +934,7 @@ function initMirror() {
         "l_e_name": l_e_name,
         "inc_p": inc_p,
         "logo": logo,
+        "new_logo": new_logo,
         "n_o_l": n_o_l,
         "f_s": f_s,
         "sms": sms,

@@ -59,7 +59,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_EntityDomainDetails,
     parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_RecordType_core_ClientBusinessGroup,
-    parse_structure_RecordType_core_FileList
+    parse_structure_RecordType_core_FileList,
+    parse_structure_OptionalType_RecordType_core_FileList
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -125,7 +126,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_EntityDomainDetails,
     to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
     to_structure_OptionalType_RecordType_core_ClientBusinessGroup,
-    to_structure_RecordType_core_FileList
+    to_structure_RecordType_core_FileList,
+    to_structure_OptionalType_RecordType_core_FileList
 )
 
 #
@@ -2922,8 +2924,8 @@ class LegalEntityDetails(object):
 class LegalEntity(object):
     def __init__(
         self, country_id, business_group, legal_entity_id,
-        legal_entity_name, incharge_persons,
-        logo, no_of_licence, file_space, is_sms_subscribed, contract_from,
+        legal_entity_name, incharge_persons, old_logo, new_logo,
+        no_of_licence, file_space, is_sms_subscribed, contract_from,
         contract_to, domain_details
     ):
         self.country_id = country_id
@@ -2931,7 +2933,8 @@ class LegalEntity(object):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.incharge_persons = incharge_persons
-        self.logo = logo
+        self.old_logo = old_logo
+        self.new_logo = new_logo
         self.no_of_licence = no_of_licence
         self.file_space = file_space
         self.is_sms_subscribed = is_sms_subscribed
@@ -2944,19 +2947,22 @@ class LegalEntity(object):
         data = parse_dictionary(
             data, [
                 "c_id", "b_g", "l_e_id", "l_e_name", "inc_p", "logo",
-                "n_o_l", "f_s", "sms", "c_f", "c_t", "d"
+                "new_logo", "n_o_l", "f_s", "sms", "c_f", "c_t", "d"
             ]
         )
         country_id = data.get("c_id")
         business_group = data.get("b_g")
         business_group = parse_structure_OptionalType_RecordType_core_ClientBusinessGroup(business_group)
         legal_entity_id = data.get("l_e_id")
+        legal_entity_id = parse_structure_OptionalType_UnsignedIntegerType_32(legal_entity_id)
         legal_entity_name = data.get("l_e_name")
         incharge_persons = data.get("inc_p")
         incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(
             incharge_persons)
         logo = data.get("logo")
-        logo = parse_structure_CustomTextType_500(logo)
+        logo = parse_structure_OptionalType_CustomTextType_500(logo)
+        new_logo = data.get("new_logo")
+        new_logo = parse_structure_OptionalType_RecordType_core_FileList(new_logo)
         no_of_licence = data.get("n_o_l")
         file_space = data.get("f_s")
         is_sms_subscribed = data.get("sms")
@@ -2966,8 +2972,8 @@ class LegalEntity(object):
         domain_details = parse_structure_VectorType_RecordType_core_EntityDomainDetails(domain_details)
         return LegalEntity(
             country_id, business_group, legal_entity_id, legal_entity_name,
-            incharge_persons, logo, no_of_licence, file_space, is_sms_subscribed,
-            contract_from, contract_to, domain_details
+            incharge_persons, logo, new_logo, no_of_licence, file_space,
+            is_sms_subscribed, contract_from, contract_to, domain_details
         )
 
     def to_structure(self):
@@ -2975,12 +2981,16 @@ class LegalEntity(object):
             "c_id": self.country_id,
             "b_g": to_structure_OptionalType_RecordType_core_ClientBusinessGroup(
                 self.business_group),
-            "l_e_id": self.legal_entity_id,
+            "l_e_id": to_structure_OptionalType_UnsignedIntegerType_32(
+                self.legal_entity_id),
             "l_e_name": self.legal_entity_name,
             "inc_p": to_structure_VectorType_UnsignedIntegerType_32(
                 self.incharge_persons),
-            "logo": to_structure_CustomTextType_500(
-                self.logo
+            "logo": to_structure_OptionalType_CustomTextType_500(
+                self.old_logo
+            ),
+            "new_logo": to_structure_OptionalType_RecordType_core_FileList(
+                self.new_logo
             ),
             "n_o_l": self.no_of_licence,
             "f_s": self.file_space,

@@ -459,11 +459,12 @@ CREATE TABLE `tbl_legal_entity_domain_industry` (
   KEY `fk_tbl_le` (`legal_entity_id`),
   KEY `fk_tbl_domain` (`domain_id`),
   KEY `fk_tbl_industry` (`industry_id`),
+  CONSTRAINT `fk_tbl_legal_entity_domain_industry_3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_legal_entity_domain_industry_1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_legal_entity_domain_industry_2` FOREIGN KEY (`group_id`) REFERENCES `tbl_client_groups` (`group_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tbl_legal_entity_domain_industry_3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_client_domains` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_legal_entity_domain_industry_4` FOREIGN KEY (`industry_id`) REFERENCES `tbl_industries` (`industry_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
