@@ -97,8 +97,9 @@ function showPage(type_of_initialization){
     logoFile = [];
     country_domain_id_map = {};
     clearMessage();
-    edit_id = null;
+    BUSINESSGROUPS = '';
     if(type_of_initialization == "list"){
+        edit_id = null;
         $('.le-body').empty();
         $("#group-text").val("");
         $("#username").val("");
@@ -108,6 +109,7 @@ function showPage(type_of_initialization){
         $("#clientgroup-add").hide();
     }else{
         if(type_of_initialization == "add"){
+            edit_id = null;
             $("#username").attr("readonly", false);
         }
         $("#clientgroup-view").hide();

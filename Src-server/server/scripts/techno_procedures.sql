@@ -29,11 +29,16 @@ END
 -- --------------------------------------------------------------------------------
 DELIMITER $$
 
-CREATE PROCEDURE `sp_countries_active_list`()
+CREATE PROCEDURE `sp_countries_for_user`(
+    IN session_user INT(11)
+)
 BEGIN
     SELECT country_id, country_name, is_active
     FROM tbl_countries 
-    WHERE is_active=1;
+    WHERE is_active=1 and country_id in (
+        SELECT country_id FROM tbl_user_countries
+        WHERE user_id = session_user
+    );
 END
 
 -- --------------------------------------------------------------------------------
@@ -41,10 +46,16 @@ END
 -- --------------------------------------------------------------------------------
 DELIMITER $$
 
-CREATE PROCEDURE `sp_domains_active_list`()
+CREATE PROCEDURE `sp_domains_for_user`(
+    IN session_user INT(11)
+)
 BEGIN
     SELECT domain_id, domain_name, is_active
-    FROM tbl_domains WHERE is_active=1;
+    FROM tbl_domains WHERE is_active=1 
+    and domain_id in (
+        SELECT domain_id FROM tbl_user_domains
+        WHERE user_id=session_user
+    );
 END
 
 -- --------------------------------------------------------------------------------

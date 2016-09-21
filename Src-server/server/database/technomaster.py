@@ -18,9 +18,9 @@ from server.database.validateclientuserrecord import ClientAdmin
 #
 # Client Group List
 #
-def get_active_countries(db):
+def get_user_countries(db, session_user):
     countries = db.call_proc(
-        "sp_countries_active_list", None
+        "sp_countries_for_user", (session_user,)
     )
     return return_countries(countries)
 
@@ -32,9 +32,9 @@ def get_client_business_groups(db, client_id=None):
     return return_business_groups(business_groups)
 
 
-def get_active_domains(db):
+def get_user_domains(db, session_user):
     domains = db.call_proc(
-        "sp_domains_active_list", None
+        "sp_domains_for_user", (session_user,)
     )
     return return_domains(domains)
 

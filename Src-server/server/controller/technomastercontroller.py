@@ -54,9 +54,9 @@ def get_client_groups(db, request, session_user):
 # To Get data to populate client group form
 ########################################################
 def get_client_group_form_data(db, request, session_user):
-    countries = get_active_countries(db)
+    countries = get_user_countries(db, session_user)
     users = get_techno_users(db)
-    domains = get_active_domains(db)
+    domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     return technomasters.GetClientGroupFormDataSuccess(
         countries=countries, users=users, domains=domains,
@@ -97,10 +97,10 @@ def process_save_client_group(db, request, session_user):
 # To Get data to populate client group form
 ########################################################
 def get_edit_client_group_form_data(db, request, session_user):
-    countries = get_active_countries(db)
+    countries = get_user_countries(db, session_user)
     business_groups = get_client_business_groups(db, request.group_id)
     users = get_techno_users(db)
-    domains = get_active_domains(db)
+    domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     group_id = request.group_id
     (
