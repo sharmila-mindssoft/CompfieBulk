@@ -164,8 +164,9 @@ function checkStrength(password) {
   }
 }
 function onArrowKey(e, ac_item, callback, type) {
+
   var selector = "#"
-  if(type="class"){
+  if(type=="class"){
     selector = "."
   }
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
