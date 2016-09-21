@@ -650,6 +650,7 @@ class Database(object):
         self.connect()
 
     def call_proc(self, procedure_name, args, columns=None):
+        # columns no longer need here, so remove argument once removed from the reference place
         # args is tuple e.g, (parm1, parm2)
         cursor = self.cursor()
         assert cursor is not None
@@ -662,13 +663,11 @@ class Database(object):
             print e
             raise process_procedure_error(procedure_name, args, e)
 
-        rows = cursor.fetchall()
+        cols = [x[0] for x in cursor.description]
+        rows = []
+        rows = convert_to_dict(cursor.fetchall(), cols)
         cursor.nextset()
-        if columns is not None:
-            result = convert_to_dict(rows, columns)
-            return result
-        else:
-            return rows
+        return rows
 
     def call_insert_proc(self, procedure_name, args):
         cursor = self.cursor()

@@ -236,12 +236,8 @@ def get_user_forms(db, form_ids):
     return rows
 
 def get_admin_forms(db):
-    columns = [
-        "form_id", "form_name", "form_url", "form_order",
-        "parent_menu", "form_category", "form_type"
-    ]
     procedure = 'sp_tbl_forms_getadminforms'
-    result = db.call_proc(procedure, None, columns)
+    result = db.call_proc(procedure, None)
     return result
 
 
