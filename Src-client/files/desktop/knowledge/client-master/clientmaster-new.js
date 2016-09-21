@@ -491,28 +491,29 @@ function convert_date(data) {
   return new Date(date[2], date[1] - 1, date[0]);
 }
 
-function activateUsers(element) {
-  var chkstatus = $(element).attr('class');
-  if (chkstatus == 'active_selectbox_users') {
-    $(element).removeClass('active_selectbox_users');
-  } else {
-    $(element).addClass('active_selectbox_users');
-  }
-  activateUsers_user();
+function activateUsers(element, incharge_class, user_list_class, hidden_user_class) {
+    console.log("incharge_class:"+incharge_class);
+    var chkstatus = $(element).attr('class');
+    if (chkstatus == 'active_selectbox_users') {
+        $(element).removeClass('active_selectbox_users');
+    } else {
+        $(element).addClass('active_selectbox_users');
+    }
+    activateUsers_user(incharge_class, user_list_class, hidden_user_class);
 }
 
-function activateUsers_user() {
+function activateUsers_user(incharge_class, user_list_class, hidden_user_class) {
   var selids = '';
-  var totalcount = $('.active_selectbox_users').length;
-  $('.active_selectbox_users').each(function (index, el) {
+  var totalcount = $('.'+user_list_class+' .active_selectbox_users').length;
+  $('.'+user_list_class+' .active_selectbox_users').each(function (index, el) {
     if (index === totalcount - 1) {
       selids = selids + el.id;
     } else {
       selids = selids + el.id + ',';
     }
   });
-  $('#usersSelected').val(totalcount + ' Selected');
-  $('#users').val(selids);
+  $('.'+incharge_class).val(totalcount + ' Selected');
+  $('.'+hidden_user_class).val(selids);
 }
 
 /*
@@ -535,7 +536,11 @@ function editClient(){
             le_table.find(".business-group").val(value.business_group.b_g_id);
         }
         le_table.find("#legal_entity_text").val(value.l_e_name);
-        le_table.find('#users').val(value.inc_p);
+        // le_table.find('#users').val(value.inc_p);
+        var incharge_class = "incharge-"+le_count;
+        var user_list_class = "ulist-"+le_count;
+        var hidden_user_class = "users-"+le_count
+        loadUsers(incharge_class, user_list_class, hidden_user_class, value.inc_p)
         le_table.find('#usersSelected').val(value.inc_p.length + ' Selected');
         le_table.find('#no-of-user-licence').val(value.n_o_l);
         le_table.find('#file-space').val(value.f_s);
@@ -599,12 +604,19 @@ function addClient(){
 
     var incharge_class = "incharge-"+le_count;
     var user_list_class = "ulist-"+le_count;
+    var selectboxview_class = "selectboxview-users-"+le_count
+    var hidden_user_class = "users-"+le_count
     $('#usersSelected', clone).addClass(incharge_class);
     $("#ulist-user", clone).addClass(user_list_class);
+    $("#selectboxview-users", clone).addClass(selectboxview_class)
+    $("#users", clone).addClass(hidden_user_class)
     $('.'+incharge_class).click(function(){
-        loadUsers(incharge_class, user_list_class)
+        showHideUserMenu(selectboxview_class, true)
     });
-    loadUsers(incharge_class, user_list_class);
+    $("."+user_list_class).on('mouseleave', function(){
+        showHideUserMenu(selectboxview_class, false)
+    });
+    loadUsers(incharge_class, user_list_class, hidden_user_class, [])
 
     $('#upload-logo', clone).change(function (e) {
         console.log("uploading logo");
@@ -778,31 +790,41 @@ function loadBusinessGroups(bg_class){
     $('.' + bg_class).html(bg_html);
 }
 
-function hidemenu(type) {
-    if(type == "org"){
-        $("#ac-org").hide();
+// function hidemenu(type) {
+//     $("#ac-org").hide();
+// }
+
+// function showmenu(type) {
+//     $("#ac-org").show();
+// }
+
+function showHideUserMenu(selectboxview_class, is_active) {
+    if(is_active == true){
+        $("."+selectboxview_class).show();          
     }else{
-        $("#selectboxview-users").hide();      
+        $("."+selectboxview_class).hide();          
     }
 }
 
-function showmenu(type) {
-    if(type == "org"){
-        $("#ac-org").show();
-    }else{
-        $("#selectboxview-users").show();      
-    }
-}
-
-function loadUsers(incharge_class, user_list_class) {
+function loadUsers(incharge_class, user_list_class, hidden_user_class, selectedUsers) {
     $("."+ incharge_class).css("display", "block");
     $('.'+user_list_class).empty();
     var str = '';
-    var selectedUsers = [];
     $.each(USERS, function(key, value){
-        str += '<li id="' + value.user_id + '" onclick="activateUsers(this)" >' + value.employee_name + '</li> ';
+        var obj = $(".user-list-drop-down li");
+        var clone = obj.clone();
+        clone.attr("id", value.user_id);
+        clone.click(function(){
+            activateUsers(this, incharge_class, user_list_class, hidden_user_class);
+        });
+        clone.text(value.employee_name);
+        console.log(selectedUsers);
+        console.log(value.user_id);
+        if(selectedUsers.indexOf(value.user_id) > -1){
+            clone.addClass("active_selectbox_users");
+        }
+        $('.'+user_list_class).append(clone);
     });
-    $('.'+user_list_class).append(str);
     $('.'+incharge_class).val(selectedUsers.length + ' Selected');
 }
 

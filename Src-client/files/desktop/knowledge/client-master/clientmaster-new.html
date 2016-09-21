@@ -156,9 +156,9 @@
                   <td width="10%" class="text-right">Incharge Person:&nbsp;</td>
                   <td width="15%">
                     <input type="hidden" id="users">
-                    <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly" onclick="showmenu('user');">
+                    <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly">
                     <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
-                      <ul id="ulist-user" onmouseleave="hidemenu('user');">
+                      <ul id="ulist-user">
                           
                       </ul>
                     </div>
@@ -322,6 +322,9 @@
             <td align="center"><img src="/images/icon-delete.png"/></td>
         </tr>
     </table>
+</div>
+<div class="user-list-drop-down">
+  <li></li>
 </div>
 <script type="text/javascript" src="/script/client-master/clientmaster-new.js"></script>
 {% endblock %}
