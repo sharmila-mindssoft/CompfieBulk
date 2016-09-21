@@ -859,7 +859,7 @@ class StatutoryNature(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["statutory_nature_id", "statutory_nature_name", "is_active"])
+        data = parse_dictionary(data, ["statutory_nature_id", "statutory_nature_name", "country_id", "country_name", "is_active"])
         statutory_nature_id = data.get("statutory_nature_id")
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
