@@ -102,10 +102,9 @@ def check_duplicate_industry(db, industry_name, industry_id):
 
     row = db.call_proc("sp_industry_master_checkduplicateindustry", param)
     for r in row:
-        print "row"
-        print r[0]
-        if r[0] > 0:
+        if int(r["count(1)"]) > 0:
             isDuplicate = True
+
     return isDuplicate
 
 
