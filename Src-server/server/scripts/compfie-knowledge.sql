@@ -531,8 +531,6 @@ CREATE TABLE `tbl_units` (
   KEY `fk_tbl_units_1` (`client_id`),
   KEY `fk_units_countries_idx` (`category_id`),
   CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_category_master` (`category_id`),
-  CONSTRAINT `fk_business_group_id` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
-  CONSTRAINT `fk_divisions_id` FOREIGN KEY (`division_id`) REFERENCES `tbl_divisions` (`division_id`),
   CONSTRAINT `fk_legal_entities_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_units_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)

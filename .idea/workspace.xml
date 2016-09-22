@@ -2,15 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dd76ba54-58ec-4514-ad58-062ae4abb5ec" name="Default" comment="AparajithaAPIDocumentVersion1.0.4.mkd:&#10;no changes in mkd version 1.0.4 - created a new version 1.0.5&#10;&#10;industrymaster.html:&#10;design view - added controls for country, domain when clicking add button, &#10;in list view - table column added to display the country, domain and search text box for country, domain&#10;&#10;industrymaster.js:&#10;autocomplete functionality implemented for country, domain&#10;combination of search option for country, domain, organisation implemented&#10;created dict for saving, updating&#10;&#10;mirror.js&#10;included function for creating dict for saving, updating&#10;&#10;core.py&#10;altered class industry, added variables for countryid, country name, domain id, domain name&#10;&#10;knowledgemaster.py&#10;altered class save industry, update industry for adding country id, country name, domain id, domain name&#10;&#10;knowledgemaster.py in database folder&#10;altered get industries function, save indusry, update industry queries&#10;&#10;&#10;">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit-approve/clientunitapproval.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit-approve/clientunitapproval.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/._.DS_Store" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aparajitha.sublime-project" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit-approval/clientunitapproval.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Src-server/protocol/clientcoordinationmaster.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Src-server/server/database/clientcoordinationmaster.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit-approve/clientunitapproval.html" afterPath="$PROJECT_DIR$/Src-server/server/controller/clientcoordinationmastercontroller.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit-approve/clientunitapproval.js" afterPath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit-approval/clientunitapproval.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Src-server/server/database/technomaster.py" afterPath="$PROJECT_DIR$/Src-server/server/database/technomaster.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-master/clientmaster-new.html" afterPath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-master/clientmaster-new.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-master/clientmaster-new.js" afterPath="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-master/clientmaster-new.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Src-server/server/scripts/compfie-knowledge.sql" afterPath="$PROJECT_DIR$/Src-server/server/scripts/compfie-knowledge.sql" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Src-server/server/scripts/compfie-static-data.sql" afterPath="$PROJECT_DIR$/Src-server/server/scripts/compfie-static-data.sql" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Src-server/server/scripts/techno_procedures.sql" afterPath="$PROJECT_DIR$/Src-server/server/scripts/techno_procedures.sql" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Src-server/server/templatepath.py" afterPath="$PROJECT_DIR$/Src-server/server/templatepath.py" />
     </list>
     <ignored path="compliance_mirror.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,32 +34,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="usermaster.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/user-master/usermaster.html">
+      <file leaf-file-name="clientunit.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit/clientunit.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="38" column="12" selection-start-line="38" selection-start-column="12" selection-end-line="38" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="usermaster.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/user-master/usermaster.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="163" column="3" selection-start-line="163" selection-start-column="3" selection-end-line="163" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="compfie-knowledge.sql" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Src-server/server/scripts/compfie-knowledge.sql">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="503">
-              <caret line="808" column="0" selection-start-line="808" selection-start-column="0" selection-end-line="808" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="531">
+              <caret line="79" column="18" selection-start-line="79" selection-start-column="18" selection-end-line="79" selection-end-column="18" />
+              <folding>
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#1;n#div#1;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#a#1;n#span#1;n#div#1;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#1;n#div#1;n#div#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#a#1;n#span#1;n#div#1;n#div#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#1;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#1;n#div#1;n#div#1;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#a#1;n#span#1;n#div#1;n#div#1;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -65,8 +57,8 @@
       <file leaf-file-name="techno_procedures.sql" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Src-server/server/scripts/techno_procedures.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="472" column="12" selection-start-line="472" selection-start-column="12" selection-end-line="472" selection-end-column="12" />
+            <state relative-caret-position="232">
+              <caret line="256" column="0" selection-start-line="256" selection-start-column="0" selection-end-line="256" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -113,7 +105,6 @@
         <option value="$PROJECT_DIR$/Src-client/files/desktop/knowledge/industry-master/industrymaster.html" />
         <option value="$PROJECT_DIR$/Src-client/files/desktop/common/js/common-functions.js" />
         <option value="$PROJECT_DIR$/Src-client/files/desktop/knowledge/industry-master/industrymaster.js" />
-        <option value="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit/clientunit.html" />
         <option value="$PROJECT_DIR$/Src-client/files/desktop/common/js/message-properties.js" />
         <option value="$PROJECT_DIR$/Src-server/server/controller/generalcontroller.py" />
         <option value="$PROJECT_DIR$/Src-server/server/constants.py" />
@@ -125,8 +116,9 @@
         <option value="$PROJECT_DIR$/Src-server/protocol/technomasters.py" />
         <option value="$PROJECT_DIR$/Src-client/files/desktop/knowledge/user-master/usermaster.js" />
         <option value="$PROJECT_DIR$/Src-server/server/database/admin.py" />
-        <option value="$PROJECT_DIR$/Src-server/server/database/knowledgemaster.py" />
         <option value="$PROJECT_DIR$/Src-server/server/scripts/compfie-knowledge.sql" />
+        <option value="$PROJECT_DIR$/Src-server/server/database/knowledgemaster.py" />
+        <option value="$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit/clientunit.html" />
         <option value="$PROJECT_DIR$/Src-server/server/scripts/techno_procedures.sql" />
       </list>
     </option>
@@ -761,7 +753,7 @@
     <frame x="0" y="0" width="1366" height="728" extended-state="1" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2659259" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26518518" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.703937" sideWeight="0.5043924" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -946,13 +938,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Src-server/server/controller/knowledgemastercontroller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="204" column="31" selection-start-line="204" selection-start-column="6" selection-end-line="204" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/industry-master/industrymaster.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="70">
@@ -978,13 +963,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-5304">
           <caret line="6" column="5" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit/clientunit.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="82" column="75" selection-start-line="82" selection-start-column="75" selection-end-line="82" selection-end-column="75" />
         </state>
       </provider>
     </entry>
@@ -1024,13 +1002,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-master/clientmaster-new.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="505">
-          <caret line="921" column="0" selection-start-line="921" selection-start-column="0" selection-end-line="921" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Src-server/server/controller/technomastercontroller.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="573">
@@ -1059,13 +1030,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Src-server/server/database/technomaster.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Src-server/server/scripts/knowledge_procedures.sql">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="43">
@@ -1073,25 +1037,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Src-server/server/constants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="833">
-          <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Src-server/server/scripts/compfie-static-data.sql">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="245" column="0" selection-start-line="245" selection-start-column="0" selection-end-line="245" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/user-master/usermaster.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="38" column="12" selection-start-line="38" selection-start-column="12" selection-end-line="38" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1103,38 +1052,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/user-master/usermaster.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="163" column="3" selection-start-line="163" selection-start-column="3" selection-end-line="163" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/js/mirror.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="253">
           <caret line="838" column="15" selection-start-line="838" selection-start-column="7" selection-end-line="838" selection-end-column="15" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Src-server/server/dbase.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="697" column="33" selection-start-line="697" selection-start-column="33" selection-end-line="697" selection-end-column="33" />
-          <folding>
-            <marker date="1474479021812" expanded="true" signature="10530:10545" ph="SELECT missi... missing_value" />
-            <marker date="1474479021812" expanded="true" signature="14768:14783" ph="INSERT INTO missing_value... " />
-            <marker date="1474479021812" expanded="true" signature="15596:15615" ph="INSERT INTO missing_value... " />
-            <marker date="1474479021812" expanded="true" signature="18332:18358" ph="INSERT INTO missing_value... " />
-            <marker date="1474479021812" expanded="true" signature="21494:21524" ph="SELECT count... missing_value" />
-            <marker date="1474479021812" expanded="true" signature="22561:22581" ph="SELECT max(m... missing_value" />
-            <marker date="1474479021812" expanded="true" signature="22922:23074" ph="INSERT INTO tbl_activity_log... " />
-            <marker date="1474479021812" expanded="true" signature="23274:23474" ph="SELECT t01.u... tbl_user_sessions" />
-            <marker date="1474479021812" expanded="true" signature="23774:23866" ph="update tbl_u... " />
-            <marker date="1474479021812" expanded="true" signature="23976:24087" ph="delete from " />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1163,34 +1085,127 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Src-server/server/database/knowledgemaster.py">
+    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/user-master/usermaster.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="116" column="56" selection-start-line="116" selection-start-column="56" selection-end-line="116" selection-end-column="56" />
+        <state relative-caret-position="306">
+          <caret line="163" column="3" selection-start-line="163" selection-start-column="3" selection-end-line="163" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/user-master/usermaster.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="38" column="12" selection-start-line="38" selection-start-column="12" selection-end-line="38" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-server/server/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-607">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding>
-            <element signature="e#0#50#0" expanded="true" />
-            <marker date="1474538547491" expanded="true" signature="9368:9424" ph="select count... tbl_statutories" />
-            <marker date="1474538547491" expanded="true" signature="9553:9605" ph="delete from " />
-            <marker date="1474538547491" expanded="true" signature="12859:12915" ph="select count... tbl_geographies" />
-            <marker date="1474538547491" expanded="true" signature="13044:13096" ph="delete from " />
-            <marker date="1474538547491" expanded="true" signature="23279:23349" ph="select count... tbl_statutory_geographies" />
-            <marker date="1474538547491" expanded="true" signature="23518:23588" ph="select count... tbl_geographies" />
+            <element signature="e#0#9#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-server/server/dbase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13">
+          <caret line="675" column="8" selection-start-line="675" selection-start-column="8" selection-end-line="675" selection-end-column="8" />
+          <folding>
+            <marker date="1474479021812" expanded="true" signature="10530:10545" ph="SELECT missi... missing_value" />
+            <marker date="1474479021812" expanded="true" signature="14768:14783" ph="INSERT INTO missing_value... " />
+            <marker date="1474479021812" expanded="true" signature="15596:15615" ph="INSERT INTO missing_value... " />
+            <marker date="1474479021812" expanded="true" signature="18332:18358" ph="INSERT INTO missing_value... " />
+            <marker date="1474479021812" expanded="true" signature="21494:21524" ph="SELECT count... missing_value" />
+            <marker date="1474479021812" expanded="true" signature="22561:22581" ph="SELECT max(m... missing_value" />
+            <marker date="1474479021812" expanded="true" signature="22922:23074" ph="INSERT INTO tbl_activity_log... " />
+            <marker date="1474479021812" expanded="true" signature="23274:23474" ph="SELECT t01.u... tbl_user_sessions" />
+            <marker date="1474479021812" expanded="true" signature="23774:23866" ph="update tbl_u... " />
+            <marker date="1474479021812" expanded="true" signature="23976:24087" ph="delete from " />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Src-server/server/scripts/compfie-knowledge.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="503">
-          <caret line="808" column="0" selection-start-line="808" selection-start-column="0" selection-end-line="808" selection-end-column="0" />
+        <state relative-caret-position="843">
+          <caret line="366" column="81" selection-start-line="366" selection-start-column="81" selection-end-line="366" selection-end-column="81" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-server/server/database/knowledgemaster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="88" column="37" selection-start-line="88" selection-start-column="37" selection-end-line="88" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
+            <marker date="1474541831696" expanded="true" signature="9344:9400" ph="select count... tbl_statutories" />
+            <marker date="1474541831696" expanded="true" signature="9529:9581" ph="delete from " />
+            <marker date="1474541831696" expanded="true" signature="12835:12891" ph="select count... tbl_geographies" />
+            <marker date="1474541831696" expanded="true" signature="13020:13072" ph="delete from " />
+            <marker date="1474541831696" expanded="true" signature="23255:23325" ph="select count... tbl_statutory_geographies" />
+            <marker date="1474541831696" expanded="true" signature="23494:23564" ph="select count... tbl_geographies" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-master/clientmaster-new.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="272" column="0" selection-start-line="272" selection-start-column="0" selection-end-line="272" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-server/server/database/technomaster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-765">
+          <caret line="204" column="51" selection-start-line="204" selection-start-column="51" selection-end-line="204" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
+            <marker date="1474539285637" expanded="true" signature="67140:67246" ph="update tbl_c... " />
+            <marker date="1474539285637" expanded="true" signature="67368:67467" ph="update tbl_c... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-server/server/controller/knowledgemastercontroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="367">
+          <caret line="198" column="0" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#11#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Src-client/files/desktop/knowledge/client-unit/clientunit.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="531">
+          <caret line="79" column="18" selection-start-line="79" selection-start-column="18" selection-end-line="79" selection-end-column="18" />
+          <folding>
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#div#1;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#1;n#span#1;n#div#1;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#div#1;n#div#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#1;n#span#1;n#div#1;n#div#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#1;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#div#1;n#div#1;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#1;n#span#1;n#div#1;n#div#1;n#div#1;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Src-server/server/scripts/techno_procedures.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="472" column="12" selection-start-line="472" selection-start-column="12" selection-end-line="472" selection-end-column="12" />
+        <state relative-caret-position="232">
+          <caret line="256" column="0" selection-start-line="256" selection-start-column="0" selection-end-line="256" selection-end-column="0" />
           <folding />
         </state>
       </provider>

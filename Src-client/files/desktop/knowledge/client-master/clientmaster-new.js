@@ -267,11 +267,16 @@ function saveClient(){
             var le_name = le_table.find("#legal_entity_text").val();
             var inchargePersonVal = le_table.find('#users').val();
             var logo = logoFile[i-1]
-            if(typeof logo == 'string'){
-                var ext = logo.split('.').pop().toLowerCase();
+            if(logo){
+                if(typeof logo == 'string'){
+                    var ext = logo.split('.').pop().toLowerCase();
+                }else{
+                    var ext = logo.file_name.split('.').pop().toLowerCase();
+                }    
             }else{
-                var ext = logo.file_name.split('.').pop().toLowerCase();
+                displayMessage(message.logo_required);
             }
+            
             var licenceVal = le_table.find('#no-of-user-licence').val();
             var fileSpaceVal = le_table.find('#file-space').val();
             if (le_table.find('#subscribe-sms').is(':checked')) {

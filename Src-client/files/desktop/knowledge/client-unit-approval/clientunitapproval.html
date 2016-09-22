@@ -1,0 +1,65 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<div class="content-container width80" id="client-unit-approve-view">
+    <div class="content-area">
+      <h1>Client Unit Approval</h1>
+      <div class="filters-and-search">
+        <div class="btn-add btn-clientgroup-add" formtarget="_self">Add</div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table class="js-filtertable">
+          <thead>
+          <tr align="left">
+            <th align="center" style="width: 5%">#</th>
+            <th>Group</th>
+            <th>Business Group</th>
+            <th>Country</th>
+            <th>Legal Entity</th>
+            <th>No. of active units</th>
+            <th align="center" style="width: 15%">Approve</th>
+          </tr>
+          <tr>
+            <td align="center"></td>
+            <td>
+              <input type="text" class="filter-text-box js-filter" id="search-group-name">
+            </td>
+            <td>
+              <input type="text" class="filter-text-box js-filter" id="search-bg-name">
+            </td>
+            <td>
+              <input type="text" class="filter-text-box js-filter" id="search-country-name">
+            </td>
+            <td>
+              <input type="text" class="filter-text-box js-filter" id="search-le-name">
+            </td>
+            <td>
+              <input type="text" class="filter-text-box js-filter" id="search-no-of-u">
+            </td>
+            <td align="center"></td>
+          </tr>
+          </thead>
+          <tbody class="tbody-client-unit-list">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="templates">
+      <table class="table-approval-list">
+        <tr>
+          <td align="center" class="sno"></td>
+          <td class="group-name"></td>
+          <td class="bg-name"></td>
+          <td class="country-name"></td>
+          <td class="le-name"></td>
+          <td calss="no-of-units"></td>
+          <td align="center">
+            <input type="submit" value="Approve" class="btn-save">
+          </td>
+        </tr>
+      </table>
+    </div>
+</div>
+<script type="text/javascript" src="/script/client-unit-approval/clientunitapproval.js"></script>
+{% endblock %}
+

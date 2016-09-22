@@ -252,12 +252,12 @@ CREATE PROCEDURE `sp_client_group_is_duplicate_groupname`(
     IN groupname VARCHAR(50), clientid INT(11)
 )
 BEGIN
-    IF client_id IS NULL THEN
-        SELECT count(client_id) as count FROM tbl_client_groups
+    IF clientid IS NULL THEN
+        SELECT count(client_id) as count FROM tbl_client_groups 
         WHERE group_name=groupname;
     ELSE
         SELECT count(client_id) as count FROM tbl_client_groups
-        WHERE group_name=groupname and client_id!=clientid;
+        WHERE group_name=groupname and client_id != clientid;
     END IF;
 END
 
