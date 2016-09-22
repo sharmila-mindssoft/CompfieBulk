@@ -651,7 +651,7 @@ class Database(object):
 
     def call_proc(self, procedure_name, args, columns=None):
         # columns no longer need here, so remove argument once removed from the reference place
-        # args is tuple e.g, (parm1, parm2)
+        # args can be tuple/list e.g, (parm1, parm2)/[param1, param2]
         cursor = self.cursor()
         assert cursor is not None
         try:
@@ -662,8 +662,11 @@ class Database(object):
         except Exception, e:
             print e
             raise process_procedure_error(procedure_name, args, e)
-
-        cols = [x[0] for x in cursor.description]
+        cols = cursor.description
+        if cols :
+            cols = [x[0] for x in cols]
+        else :
+            cols = []
         rows = []
         rows = convert_to_dict(cursor.fetchall(), cols)
         cursor.nextset()
@@ -717,7 +720,11 @@ class Database(object):
         print type(expected_result_count)
         assert type(expected_result_count) is int
         for i in range(0, expected_result_count):
-            cols = [x[0] for x in cursor.description]
+            cols = cursor.description
+            if cols :
+                cols = [x[0] for x in cols]
+            else :
+                cols = []
             r = convert_to_dict(cursor.fetchall(), cols)
             rows.append(r)
             cursor.nextset()
