@@ -65,7 +65,14 @@ api_params = {
     'group_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'group_name': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
     'country_names': {'type': 'string', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'no_of_legal_entities': {'type': 'int', 'length': None, 'validation_method': None, 'is_optional': False}
+    'no_of_legal_entities': {'type': 'int', 'length': None, 'validation_method': None, 'is_optional': False},
+    'username': {'type': 'string', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'legal_entity_name': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'no_of_licence': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'file_space': {'type': 'int', 'length': 100000000, 'validation_method': None, 'is_optional': False},
+    'is_sms_subscribed': {'type': 'bool', 'length': None, 'validation_method': None, 'is_optional': False},
+    'contract_from': {'type': 'string', 'length': 11, 'validation_method': None, 'is_optional': False},
+    'contract_to': {'type': 'string', 'length': 11, 'validation_method': None, 'is_optional': False}
 }
 
 api_params['domain_id'] = api_params.get('d_id')
@@ -75,7 +82,15 @@ api_params['country_name'] = api_params.get('c_name')
 api_params['level_id'] = api_params.get('l_id')
 api_params['level_position'] = api_params.get('l_position')
 api_params['level_name'] = api_params.get('l_name')
+api_params['username'] = api_params.get('u_name')
+api_params['group_name'] = api_params.get('g_name')
+api_params['legal_entity_name'] = api_params.get('l_e_name')
 api_params['parent_id'] = api_params.get('geography_id')
 api_params['parent_mappings'] = api_params.get('mapping')
 api_params['level_1_statutory_id'] = api_params.get('statutory_id')
 api_params['level_1_statutory_name'] = api_params.get('statutory_name')
+api_params['no_of_licence'] = api_params.get('n_o_l')
+api_params['file_space'] = api_params.get('f_s')
+api_params['is_sms_subscribed'] = api_params.get('sms')
+api_params['contract_from'] = api_params.get('c_f')
+api_params['contract_to'] = api_params.get('c_t')

@@ -57,7 +57,10 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_VectorType_RecordType_core_LegalEntityDetails,
     parse_structure_VectorType_RecordType_core_EntityDomainDetails,
-    parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32
+    parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    parse_structure_OptionalType_RecordType_core_ClientBusinessGroup,
+    parse_structure_RecordType_core_FileList,
+    parse_structure_OptionalType_RecordType_core_FileList
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -121,7 +124,10 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_CustomTextType_500,
     to_structure_VectorType_RecordType_core_LegalEntityDetails,
     to_structure_VectorType_RecordType_core_EntityDomainDetails,
-    to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32
+    to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    to_structure_OptionalType_RecordType_core_ClientBusinessGroup,
+    to_structure_RecordType_core_FileList,
+    to_structure_OptionalType_RecordType_core_FileList
 )
 
 #
@@ -841,8 +847,35 @@ class Industry(object):
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "industry_name": to_structure_CustomTextType_50(self.industry_name),
+            "is_active": to_structure_Bool(self.is_active)
+        }
+
+
+class Industries(object):
+    def __init__(self, industry_id, industry_name, is_active):
+        self.industry_id = industry_id
+        self.industry_name = industry_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["industry_id", "industry_name", "is_active"])
+        industry_id = data.get("industry_id")
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
+        industry_name = data.get("industry_name")
+        industry_name = parse_structure_CustomTextType_50(industry_name)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return Industries(industry_id, industry_name, is_active)
+
+    def to_structure(self):
+        return {
+            "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
+            "industry_name": to_structure_CustomTextType_50(self.industry_name),
             "is_active": to_structure_Bool(self.is_active),
         }
+
 
 #
 # StatutoryNature
@@ -1463,50 +1496,19 @@ class ClientBusinessGroup(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["business_group_id", "business_group_name"])
-        business_group_id = data.get("business_group_id")
+        data = parse_dictionary(data, ["b_g_id", "b_g_name"])
+        business_group_id = data.get("b_g_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
-        business_group_name = data.get("business_group_name")
+        business_group_name = data.get("b_g_name")
         business_group_name = parse_structure_CustomTextType_50(business_group_name)
-        return BusinessGroup(business_group_id, business_group_name)
+        return ClientBusinessGroup(business_group_id, business_group_name)
 
     def to_structure(self):
         return {
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
+            "b_g_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "b_g_name": to_structure_CustomTextType_50(self.business_group_name),
         }
 
-#
-# LegalEntity
-#
-
-class LegalEntity(object):
-    def __init__(self, legal_entity_id, legal_entity_name, business_group_id, client_id):
-        self.legal_entity_id = legal_entity_id
-        self.legal_entity_name = legal_entity_name
-        self.business_group_id = business_group_id
-        self.client_id = client_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["legal_entity_id", "legal_entity_name", "business_group_id", "client_id"])
-        legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
-        legal_entity_name = data.get("legal_entity_name")
-        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
-        business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
-        client_id = data.get("client_id")
-        client_id = parse_structure_UnsignedIntegerType_32(client_id)
-        return LegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
-
-    def to_structure(self):
-        return {
-            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
-            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
-        }
 
 class ClientLegalEntity(object):
     def __init__(self, legal_entity_id, legal_entity_name, business_group_id):
@@ -2867,27 +2869,30 @@ class ValidityDates(object):
 class ClientGroup(object):
     def __init__(
         self, group_id, group_name, country_names,
-        no_of_legal_entities
+        no_of_legal_entities, is_active
     ):
         self.group_id = group_id
         self.group_name = group_name
         self.country_names = country_names
         self.no_of_legal_entities = no_of_legal_entities
+        self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "group_id", "group_name",
-                "country_names", "no_of_legal_entities"
+                "group_id", "group_name", "country_names",
+                "no_of_legal_entities", "is_active"
             ]
         )
         group_id = data.get("group_id")
         group_name = data.get("group_name")
         country_names = data.get("country_names")
         no_of_legal_entities = data.get("no_of_legal_entities")
+        is_active = data.get("is_active")
         return ClientGroup(
-            group_id, group_name, country_names, no_of_legal_entities
+            group_id, group_name, country_names, no_of_legal_entities,
+            is_active
         )
 
     def to_structure(self):
@@ -2895,7 +2900,8 @@ class ClientGroup(object):
             "group_id": self.group_id,
             "group_name": self.group_name,
             "country_names": self.country_names,
-            "no_of_legal_entities": self.no_of_legal_entities
+            "no_of_legal_entities": self.no_of_legal_entities,
+            "is_active": self.is_active
         }
 
 
@@ -2924,20 +2930,19 @@ class LegalEntityDetails(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "business_group", "legal_entity_name",
-                "incharge_persons", "logo", "no_of_licence", "file_space",
-                "is_sms_subscribed", "contract_from", "contract_to",
-                "domain_details"
+                "c_id", "b_g", "l_e_name", "inc_p", "logo",
+                "n_o_l", "f_s", "sms", "c_f", "c_t", "d"
             ]
         )
         country_id = data.get("c_id")
         business_group = data.get("b_g")
-        business_group = parse_structure_RecordType_core_ClientBusinessGroup(business_group)
+        business_group = parse_structure_OptionalType_RecordType_core_ClientBusinessGroup(business_group)
         legal_entity_name = data.get("l_e_name")
         incharge_persons = data.get("inc_p")
         incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(
             incharge_persons)
         logo = data.get("logo")
+        logo = parse_structure_RecordType_core_FileList(logo)
         no_of_licence = data.get("n_o_l")
         file_space = data.get("f_s")
         is_sms_subscribed = data.get("sms")
@@ -2945,7 +2950,7 @@ class LegalEntityDetails(object):
         contract_to = data.get("c_t")
         domain_details = data.get("d")
         domain_details = parse_structure_VectorType_RecordType_core_EntityDomainDetails(domain_details)
-        return ClientGroup(
+        return LegalEntityDetails(
             country_id, business_group, legal_entity_name, incharge_persons,
             logo, no_of_licence, file_space, is_sms_subscribed, contract_from,
             contract_to, domain_details
@@ -2954,11 +2959,14 @@ class LegalEntityDetails(object):
     def to_structure(self):
         return {
             "c_id": self.country_id,
-            "b_g": to_structure_RecordType_core_ClientBusinessGroup(self.business_group),
-            "l_e_name": self.l_e_name,
+            "b_g": to_structure_OptionalType_RecordType_core_ClientBusinessGroup(
+                self.business_group),
+            "l_e_name": self.legal_entity_name,
             "inc_p": to_structure_VectorType_UnsignedIntegerType_32(
                 self.incharge_persons),
-            "logo": self.logo,
+            "logo": to_structure_RecordType_core_FileList(
+                self.logo
+            ),
             "n_o_l": self.no_of_licence,
             "f_s": self.file_space,
             "sms": self.is_sms_subscribed,
@@ -2968,6 +2976,86 @@ class LegalEntityDetails(object):
                 self.domain_details)
         }
 
+
+class LegalEntity(object):
+    def __init__(
+        self, country_id, business_group, legal_entity_id,
+        legal_entity_name, incharge_persons, old_logo, new_logo,
+        no_of_licence, file_space, is_sms_subscribed, contract_from,
+        contract_to, domain_details
+    ):
+        self.country_id = country_id
+        self.business_group = business_group
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.incharge_persons = incharge_persons
+        self.old_logo = old_logo
+        self.new_logo = new_logo
+        self.no_of_licence = no_of_licence
+        self.file_space = file_space
+        self.is_sms_subscribed = is_sms_subscribed
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.domain_details = domain_details
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "c_id", "b_g", "l_e_id", "l_e_name", "inc_p", "logo",
+                "new_logo", "n_o_l", "f_s", "sms", "c_f", "c_t", "d"
+            ]
+        )
+        country_id = data.get("c_id")
+        business_group = data.get("b_g")
+        business_group = parse_structure_OptionalType_RecordType_core_ClientBusinessGroup(business_group)
+        legal_entity_id = data.get("l_e_id")
+        legal_entity_id = parse_structure_OptionalType_UnsignedIntegerType_32(legal_entity_id)
+        legal_entity_name = data.get("l_e_name")
+        incharge_persons = data.get("inc_p")
+        incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(
+            incharge_persons)
+        logo = data.get("logo")
+        logo = parse_structure_OptionalType_CustomTextType_500(logo)
+        new_logo = data.get("new_logo")
+        new_logo = parse_structure_OptionalType_RecordType_core_FileList(new_logo)
+        no_of_licence = data.get("n_o_l")
+        file_space = data.get("f_s")
+        is_sms_subscribed = data.get("sms")
+        contract_from = data.get("c_f")
+        contract_to = data.get("c_t")
+        domain_details = data.get("d")
+        domain_details = parse_structure_VectorType_RecordType_core_EntityDomainDetails(domain_details)
+        return LegalEntity(
+            country_id, business_group, legal_entity_id, legal_entity_name,
+            incharge_persons, logo, new_logo, no_of_licence, file_space,
+            is_sms_subscribed, contract_from, contract_to, domain_details
+        )
+
+    def to_structure(self):
+        return {
+            "c_id": self.country_id,
+            "b_g": to_structure_OptionalType_RecordType_core_ClientBusinessGroup(
+                self.business_group),
+            "l_e_id": to_structure_OptionalType_UnsignedIntegerType_32(
+                self.legal_entity_id),
+            "l_e_name": self.legal_entity_name,
+            "inc_p": to_structure_VectorType_UnsignedIntegerType_32(
+                self.incharge_persons),
+            "logo": to_structure_OptionalType_CustomTextType_500(
+                self.old_logo
+            ),
+            "new_logo": to_structure_OptionalType_RecordType_core_FileList(
+                self.new_logo
+            ),
+            "n_o_l": self.no_of_licence,
+            "f_s": self.file_space,
+            "sms": self.is_sms_subscribed,
+            "c_f": self.contract_from,
+            "c_t": self.contract_to,
+            "d": to_structure_VectorType_RecordType_core_EntityDomainDetails(
+                self.domain_details)
+        }
 
 #
 # Entity Domain Details
@@ -2981,11 +3069,11 @@ class EntityDomainDetails(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["domain_id", "organization"])
+        data = parse_dictionary(data, ["d_id", "org"])
         domain_id = data.get("d_id")
         organization = data.get("org")
         organization = parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(organization)
-        return ClientGroup(
+        return EntityDomainDetails(
             domain_id, organization
         )
 

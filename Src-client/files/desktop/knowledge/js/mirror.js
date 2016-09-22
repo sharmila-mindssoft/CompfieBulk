@@ -588,7 +588,7 @@ function initMirror() {
     };
     reader.readAsBinaryString(file);
   }
-  function uploadFile(fileListener, callback) {
+  function uploadFile(fileListener, le_cnt, callback) {
     var evt = fileListener;
     max_limit = 1024 * 1024 * 50;
     // file max limit 50MB
@@ -610,7 +610,7 @@ function initMirror() {
               callback('File content is empty');
             }
             result = uploadFileFormat(file_size, file_name, file_content);
-            callback(result);
+            callback(result, le_cnt);
           });
         }
       }
@@ -949,10 +949,7 @@ function initMirror() {
   ) {
     return {
         "c_id": c_id,
-        "b_g": {
-            "b_g_id": b_g_id,
-            "b_g_name": b_g_name
-        },
+        "b_g": getBusinessGroupDict(b_g_id, b_g_name),
         "l_e_name": l_e_name,
         "inc_p": inc_p,
         "logo": logo,
@@ -964,8 +961,27 @@ function initMirror() {
         "d": d
     };
   }
-  function saveClientGroup(
-    g_name, u_name, les, d_cs, callback) {
+  function getLegalEntityUpdateRow(
+    c_id, b_g_id, b_g_name, l_e_id, l_e_name,
+    inc_p, logo, new_logo, n_o_l, f_s, sms, c_f, c_t, d
+  ) {
+    return {
+        "c_id": c_id,
+        "b_g": getBusinessGroupDict(b_g_id, b_g_name),
+        "l_e_id": l_e_id,
+        "l_e_name": l_e_name,
+        "inc_p": inc_p,
+        "logo": logo,
+        "new_logo": new_logo,
+        "n_o_l": n_o_l,
+        "f_s": f_s,
+        "sms": sms,
+        "c_f": c_f,
+        "c_t": c_t,
+        "d": d
+    };
+  }
+  function saveClientGroup(g_name, u_name, les, d_cs, callback) {
     callerName = 'techno';
     var request = [
       'SaveClientGroup',
@@ -978,27 +994,18 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getUpdateClientGroupDict(cId, gName, cIds, dIds, logo, cFrom, cTo, incharge, licence, fSpace, sms, config) {
-    return {
-      'c_id': cId,
-      'g_name': gName,
-      'c_ids': cIds,
-      'd_ids': dIds,
-      'logo': logo,
-      'c_from': cFrom,
-      'c_to': cTo,
-      'incharge': incharge,
-      'licence': licence,
-      'f_space': fSpace,
-      'sms': sms,
-      'config': config
-    };
-  }
-  function updateClientGroup(clientGroupDetails, callback) {
+
+  function updateClientGroup(g_id, g_name, u_name, les, d_cs, callback) {
     callerName = 'techno';
     var request = [
       'UpdateClientGroup',
-      clientGroupDetails
+      {
+        "g_id": g_id,
+        "g_name": g_name,
+        "u_name": u_name,
+        "les": les,
+        "d_cs": d_cs
+      }
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1029,6 +1036,18 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+
+  function getEditClientGroupFormData(client_id, callback){
+    callerName = 'techno';
+    var request = [
+      'GetEditClientGroupFormData',
+      {
+        'group_id': client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  
   // Change Password APIs
   function changePassword(currentPassword, newPassword, callback) {
     callerName = 'login';
@@ -1099,8 +1118,8 @@ function initMirror() {
       return null;
     } else {
       return {
-        'bg_id': bgId,
-        'bg_name': bgName
+        'b_g_id': bgId,
+        'b_g_name': bgName
       };
     }
   }
@@ -1570,7 +1589,6 @@ function initMirror() {
     getAdminUserList: getAdminUserList,
     getDateConfigurations: getDateConfigurations,
     saveClientGroup: saveClientGroup,
-    getUpdateClientGroupDict: getUpdateClientGroupDict,
     updateClientGroup: updateClientGroup,
     getClientGroups: getClientGroups,
     changeClientGroupStatus: changeClientGroupStatus,
@@ -1616,7 +1634,9 @@ function initMirror() {
     saveValidityDateSettings: saveValidityDateSettings,
     getClientGroupFormData: getClientGroupFormData,
     getLegalEntityRow: getLegalEntityRow,
-    getDomainRow: getDomainRow
+    getDomainRow: getDomainRow,
+    getEditClientGroupFormData: getEditClientGroupFormData,
+    getLegalEntityUpdateRow: getLegalEntityUpdateRow
   };
 }
 var mirror = initMirror();

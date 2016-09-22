@@ -1067,6 +1067,13 @@ def to_structure_RecordType_core_ClientBusinessGroup(data):
     from protocol import core
     return core.ClientBusinessGroup.to_structure(data)
 
+def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
+    if data is None:
+        return data
+    else:
+        from protocol import core
+        return core.ClientBusinessGroup.to_structure(data)
+
 def to_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
     from protocol import core
     return core.COMPLIANCE_FREQUENCY.to_structure(data)
@@ -2369,6 +2376,10 @@ def to_structure_VectorType_RecordType_core_LegalEntityDetails(data):
 
 def to_structure_VectorType_RecordType_core_EntityDomainDetails(data):
     return to_structure_VectorType("core", "EntityDomainDetails", data)
+
+
+def to_structure_VectorType_RecordType_core_Industries(data):
+    return to_structure_VectorType("core", "Industries", data)
 
 
 def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
