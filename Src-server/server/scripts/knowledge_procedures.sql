@@ -2,7 +2,7 @@
 -- Returns Coutries that has been mapped with domain
 -- --------------------------------------------------------------------------------
 DELIMITER $$
-
+DROP PROCEDURE IF EXISTS `sp_country_mapped_list`;
 CREATE PROCEDURE `sp_country_mapped_list`()
 BEGIN
 	SELECT country_id, country_name, is_active
@@ -17,7 +17,7 @@ END
 -- Returns Domains that has been mapped with country
 -- --------------------------------------------------------------------------------
 DELIMITER $$
-
+DROP PROCEDURE IF EXISTS `sp_domain_mapped_list`;
 CREATE PROCEDURE `sp_domain_mapped_list`()
 BEGIN
 	SELECT domain_id, domain_name, is_active
@@ -32,7 +32,7 @@ END
 -- Returns Validity date for all country domain combinations
 -- --------------------------------------------------------------------------------
 DELIMITER $$
-
+DROP PROCEDURE IF EXISTS `sp_validitydays_settings_list`;
 CREATE PROCEDURE `sp_validitydays_settings_list`()
 BEGIN
 	SELECT validity_days_id, country_id, domain_id, days
@@ -44,7 +44,7 @@ END
 -- Statutory level creation
 -- --------------------------------------------------------------------------------
 DELIMITER $$
-
+DROP PROCEDURE IF EXISTS `sp_statutorylevels_mappings`;
 CREATE PROCEDURE `sp_statutorylevels_mappings`()
 BEGIN
 	SELECT country_id, domain_id
@@ -55,7 +55,7 @@ END
 -- To Save Validity date settings
 -- --------------------------------------------------------------------------------
 DELIMITER $$
-
+DROP PROCEDURE IF EXISTS `sp_validitydays_settings_save`;
 CREATE PROCEDURE `sp_validitydays_settings_save`(
 	IN validitydaysid INT(11), countryid INT(11), domainid INT(11),
 	validitydays INT(11), createdby INT(11),
@@ -78,7 +78,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To check duplicate industry name
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_industry_master_checkduplicateindustry`;
 CREATE PROCEDURE `sp_industry_master_checkduplicateindustry`(
 in industryid int(11), industryname varchar(50))
 BEGIN
@@ -94,7 +94,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To get industry name by its id
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_industry_master_getindusdtrybyid`;
 CREATE PROCEDURE `sp_industry_master_getindusdtrybyid`(industryid int(11))
 BEGIN
 	SELECT industry_name FROM tbl_industries WHERE
@@ -105,7 +105,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To get industry details from its master
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_industry_master_getindustries`;
 CREATE PROCEDURE `sp_industry_master_getindustries`()
 BEGIN
 	SELECT t1.country_id, t2.country_name, t1.domain_id, t3.domain_name,
@@ -117,7 +117,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To save industry activity log in activity log table
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_industry_master_saveactivitylog`;
 CREATE PROCEDURE `sp_industry_master_saveactivitylog`(
 activityLogId int(11), userId int(11), formId int(11),
 action varchar(500), createdOn timestamp)
@@ -131,7 +131,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To save industry master details
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_industry_master_saveindustry`;
 CREATE PROCEDURE `sp_industry_master_saveindustry`(
 countryid int(11), domainid int(11), industryname varchar(50),
 createdby int(11), createdon timestamp)
@@ -145,7 +145,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To update industry master details
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_industry_master_updateindustry`;
 CREATE PROCEDURE `sp_industry_master_updateindustry`(
 	industryId int(11), industryName varchar(50), countryId int(11),
     domainId int(11), updatedBy int(11)
@@ -164,7 +164,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To update industry master status
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_industry_master_updatestatus`;
 CREATE PROCEDURE `sp_industry_master_updatestatus`(
 	industryId int(11), isActive tinyint(4), updatedBy int(11))
 BEGIN
@@ -179,7 +179,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To check for dupliacte statutory nature name
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_statutory_nature_checkduplicatenature`;
 CREATE PROCEDURE `sp_statutory_nature_checkduplicatenature`(
 	statutoryNatureName varchar(50),
     statutoryNatureId int(11)
@@ -198,7 +198,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To -get statutory nature master details
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_statutory_nature_getstatutorynatures`;
 CREATE PROCEDURE `sp_statutory_nature_getstatutorynatures`()
 BEGIN
 	SELECT t1.statutory_nature_id, t1.statutory_nature_name,
@@ -214,7 +214,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To update statutory nature master details
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE IF EXISTS `sp_statutory_nature_updatestatutorynature`;
 CREATE PROCEDURE `sp_statutory_nature_updatestatutorynature`(
 IN statutoryNatureId int(11), statutoryNatureName varchAR(50),
 countryId int(11), updatedBy int(11))
@@ -230,7 +230,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To update statutory nature status
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE sp_statutory_nature_updatestatutorynaturestatus;
 CREATE PROCEDURE `sp_statutory_nature_updatestatutorynaturestatus`(
 statutoryNatureId int(11), updatedBy int(11), isActive tinyint(4))
 BEGIN
@@ -244,7 +244,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To get statutory nature details by its id
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE sp_statutory_natures_getnaturebyid;
 CREATE PROCEDURE `sp_statutory_natures_getnaturebyid`(
 	statutoryNatureId int(11))
 BEGIN
@@ -256,7 +256,7 @@ END
 -- --------------------------------------------------------------------------------
 -- To save statutory nature details
 -- --------------------------------------------------------------------------------
-
+DROP PROCEDURE sp_statutorynature_savestatutorynature;
 CREATE PROCEDURE `sp_statutorynature_savestatutorynature`(
 statutoryNatureName varchar(50), countryId int(11),
 createdBy int(11), createdOn timestamp)
