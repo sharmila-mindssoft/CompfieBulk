@@ -39,10 +39,7 @@ __all__ = [
 def get_domains_for_user(db, user_id):
     columns = ["domain_id", "domain_name", "is_active"]
     procedure = 'sp_tbl_domains_for_user'
-    _user_id = '%'
-    if user_id > 0:
-        _user_id = user_id
-    result = db.call_proc(procedure, [_user_id], columns)
+    result = db.call_proc(procedure, [user_id], columns)
     return return_domains(result)
 
 
