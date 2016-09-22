@@ -280,7 +280,7 @@ BEGIN
     t1.is_active = 1 AND t2.user_id LIKE _user_id
 	ORDER BY t1.domain_name;
 
-END
+END;
 
 -- --------------------------------------------------------------------------------
 -- To Get admin forms
@@ -296,5 +296,56 @@ BEGIN
 	INNER JOIN tbl_form_type T03 ON T03.form_type_id = T01.form_type_id
 	WHERE T01.form_category_id = 1 ORDER BY T01.form_order;
 
-END
+END;
 
+
+-- --------------------------------------------------------------------------------
+-- Audit trail report procedure, This has four result set which are Forms, Users, Activity-log and Activity-log total
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE sp_get_audit_trails;
+DELIMITER $$
+CREATE PROCEDURE `sp_get_audit_trails`(
+	IN _from_date varchar(10), IN _to_date varchar(10),
+	IN _user_id varchar(10), IN _form_id varchar(10),
+	IN _from_limit INT, IN _to_limit INT
+)
+BEGIN
+	SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
+	SELECT user_id, employee_name, employee_code, is_active
+	FROM tbl_users;
+	SELECT user_id, form_id, action, created_on
+	FROM tbl_activity_log
+	WHERE
+		date(created_on) >= _from_date
+		AND date(created_on) <= _to_date
+		AND user_id LIKE _user_id AND form_id LIKE _form_id
+		ORDER BY user_id ASC, DATE(created_on) DESC
+		limit _from_limit, _to_limit;
+
+	SELECT count(0) as total FROM tbl_activity_log
+	WHERE
+		date(created_on) >= _from_date
+		AND date(created_on) <= _to_date
+		AND user_id LIKE _user_id AND form_id LIKE _form_id;
+END;
+
+
+-- --------------------------------------------------------------------------------
+-- To get form_ids based on user settings
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE sp_tbl_forms_getuserformids;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
+	IN _user_id INT
+)
+BEGIN
+	if _user_id = 0 then
+		SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+	else
+		SELECT t1.form_ids as form_id from tbl_user_groups t1
+		INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id
+		AND t2.user_id = _user_id;
+	end if;
+END;
