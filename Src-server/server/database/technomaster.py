@@ -18,6 +18,11 @@ from server.database.validateclientuserrecord import ClientAdmin
 #
 # Client Group List
 #
+##########################################################################
+#  To get countries assigned to the session user
+#  Parameters : Object of database and  session user id (int)
+#  Return Type : List of object of Country
+##########################################################################
 def get_user_countries(db, session_user):
     countries = db.call_proc(
         "sp_countries_for_user", (session_user,)
@@ -25,13 +30,55 @@ def get_user_countries(db, session_user):
     return return_countries(countries)
 
 
-def get_client_business_groups(db, client_id=None):
+##########################################################################
+#  To convert the data fetched from database to list of object of country
+#  Parameters : Data fetched from database (Tuple of tuples)
+#  Return Type : List of object of Country
+##########################################################################
+def return_countries(data):
+    fn = core.Country
+    results = [
+        fn(
+           d["country_id"], d["country_name"], bool(d["is_active"])
+        ) for d in data
+    ]
+    return results
+
+
+##########################################################################
+#  To Get business groups under a client
+#  Parameters : Object of database and client id
+#  Return Type : List of object of BusinessGroup
+##########################################################################
+def get_client_business_groups(db, client_id):
     business_groups = db.call_proc(
         "sp_business_groups_list", (client_id,)
     )
     return return_business_groups(business_groups)
 
 
+##########################################################################
+#  To convert the data fetched from database to list of
+#  Object of Business group
+#  Parameters : Data fetched from database (tuple of tuples)
+#  Return Type List of object of BusinessGroup
+##########################################################################
+def return_business_groups(business_groups):
+    results = []
+    for business_group in business_groups:
+        results.append(core.BusinessGroup(
+            business_group["business_group_id"],
+            business_group["business_group_name"],
+            business_group["client_id"]
+        ))
+    return results
+
+
+##########################################################################
+#  To get domains assigned to the session user
+#  Parameters : Object of database and  session user id (int)
+#  Return Type : List of object of Domain
+##########################################################################
 def get_user_domains(db, session_user):
     domains = db.call_proc(
         "sp_domains_for_user", (session_user,)
@@ -39,6 +86,26 @@ def get_user_domains(db, session_user):
     return return_domains(domains)
 
 
+##########################################################################
+#  To convert data fetched from database into list of Object of Domain
+#  Parameters : Data fetched from database (Tuple of tuples)
+#  Return Type : List of object of Domain
+##########################################################################
+def return_domains(data):
+    fn = core.Domain
+    results = [
+        fn(
+            d["domain_id"], d["domain_name"], bool(d["is_active"])
+        ) for d in data
+    ]
+    return results
+
+
+##########################################################################
+#  To get all active industries
+#  Parameters : Object of database
+#  Return Type : List of object of Industry
+##########################################################################
 def get_active_industries(db):
     domains = db.call_proc(
         "sp_industries_active_list", None
@@ -46,6 +113,11 @@ def get_active_industries(db):
     return return_industries(domains)
 
 
+##########################################################################
+#  To convert data fetched from database into list of object of Industry
+#  Parameters : Data fetched from database
+#  Return Type List of object of Industry
+##########################################################################
 def return_industries(data):
     fn = core.Industries
     results = [
@@ -59,22 +131,34 @@ def return_industries(data):
 #
 # Client Group Save/ Update
 #
-
+##########################################################################
+#  To Save client group (name and group admin)
+#  Parameters : Object of database, group name and group admin username
+#  Return Type : client id  (Int)
+##########################################################################
 def save_client_group(db, group_name, username):
-    group_id = db.call_insert_proc(
+    client_id = db.call_insert_proc(
         "sp_client_group_save", (group_name, username)
     )
-    return group_id
-    # if group_id:
-    #     return group_id[0]["group_id"]
+    return client_id
 
 
-def update_client_group(db, group_name, group_id):
+##########################################################################
+#  To Update client group (group name)
+#  Parameters : Object of database, group name and client id
+#  Return Type : None
+##########################################################################
+def update_client_group(db, group_name, client_id):
     db.call_update_proc(
-        "sp_client_group_update", (group_name, group_id)
+        "sp_client_group_update", (group_name, client_id)
     )
 
 
+##########################################################################
+#  To Save group admin as a client user under the client
+#  Parameters : Object of database, client id, group admin username
+#  Return Type : Raises Process error if insertion fails / returns True
+##########################################################################
 def save_client_user(db, client_id, username):
     current_time_stamp = get_date_time()
     r = db.call_insert_proc(
@@ -86,9 +170,14 @@ def save_client_user(db, client_id, username):
     return r
 
 
+##########################################################################
+#  To Save List of legal entites under a Client
+#  Parameters : Object of database, Request, client id, session user id
+#  Return Type : List of legal entity names
+##########################################################################
 def save_legal_entities(db, request, group_id, session_user):
     columns = [
-        "group_id", "country_id", "business_group_id",
+        "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
         "file_space_limit", "total_licence", "sms_subscription",
         'is_active', "created_by", "created_on", 'updated_by', "updated_on"
@@ -129,6 +218,11 @@ def save_legal_entities(db, request, group_id, session_user):
     return legal_entity_names
 
 
+##########################################################################
+#  To Update List of legal entites under a Client
+#  Parameters : Object of database, Request, client id, session user id
+#  Return Type : List of legal entity names
+##########################################################################
 def update_legal_entities(db, request, group_id, session_user):
     columns = [
         "country_id", "business_group_id",
@@ -137,7 +231,7 @@ def update_legal_entities(db, request, group_id, session_user):
         'updated_by', "updated_on"
     ]
     insert_columns = [
-        "group_id", "country_id", "business_group_id",
+        "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
         "file_space_limit", "total_licence", "sms_subscription",
         'is_active', "created_by", "created_on", 'updated_by', "updated_on"
@@ -208,6 +302,12 @@ def update_legal_entities(db, request, group_id, session_user):
         raise process_error("E052")
 
 
+##########################################################################
+#  To Save / Update Business group
+#  Parameters : Object of database, Request, client id, session user id,
+#  current time stamp
+#  Return Type : Business group id (Int)
+##########################################################################
 def return_business_group_id(
     db, request, group_id, session_user, current_time_stamp
 ):
@@ -222,16 +322,21 @@ def return_business_group_id(
         ):
             raise process_error("E066")
         else:
-            business_group_id = db.call_proc(
+            business_group_id = db.call_insert_proc(
                 "sp_business_group_save", (
                     business_group_name, group_id, request.country_id,
                     session_user, current_time_stamp
-                ), ["business_group_id"]
+                )
             )
-            if business_group_id:
-                return business_group_id[0]["business_group_id"]
+            return business_group_id
 
 
+##########################################################################
+#  To Save date configurations of a client
+#  Parameters : Object of database, client id, date configurations,
+#  session user id
+#  Return Type : List of country ids under the client
+##########################################################################
 def save_date_configurations(
     db, client_id, date_configurations, session_user
 ):
@@ -263,6 +368,12 @@ def save_date_configurations(
     return country_ids
 
 
+##########################################################################
+#  To Save client countries
+#  Parameters : Object of database, client id, List of country ids
+#  Return Type : Boolean - Raises Process exception if insertion fails /
+#   returns True
+##########################################################################
 def save_client_countries(db, client_id, country_ids):
     db.call_update_proc(
         "sp_client_countries_delete", (client_id, )
@@ -278,6 +389,12 @@ def save_client_countries(db, client_id, country_ids):
     return res
 
 
+##########################################################################
+#  To Create a dict with legal entity name as key and legal entity id as
+#  value
+#  Parameters : Object of database, List of legal entity names
+#  Return Type : Dictionary
+##########################################################################
 def get_legal_entity_ids_by_name(db, legal_entity_names):
     legal_entity_name_id_map = {}
     result = db.call_proc(
@@ -290,6 +407,12 @@ def get_legal_entity_ids_by_name(db, legal_entity_names):
     return legal_entity_name_id_map
 
 
+##########################################################################
+#  To Save client domains
+#  Parameters : Object of database, client id, Request, Dictionary
+#  Return Type : Boolean - Raises Process exception if insertion fails /
+#   returns True
+##########################################################################
 def save_client_domains(db, client_id, request, legal_entity_name_id_map):
     db.call_update_proc(
         "sp_client_domains_delete", (client_id, )
@@ -310,6 +433,12 @@ def save_client_domains(db, client_id, request, legal_entity_name_id_map):
     return r
 
 
+##########################################################################
+#  To Save incharge persons
+#  Parameters : Object of database, client id, Request, Dictionary
+#  Return Type : Boolean - Raises Process exception if insertion fails /
+#   returns True
+##########################################################################
 def save_incharge_persons(db, client_id, request, legal_entity_id_name_map):
     db.call_update_proc(
         "sp_user_clients_delete", (client_id, )
@@ -329,6 +458,13 @@ def save_incharge_persons(db, client_id, request, legal_entity_id_name_map):
     return r
 
 
+##########################################################################
+#  To Save  organizations under a domain
+#  Parameters : Object of database, client id, Request, Dictionary,
+#   session user id
+#  Return Type : Boolean - Raises Process exception if insertion fails /
+#   returns True
+##########################################################################
 def save_organization(
     db, group_id, request, legal_entity_name_id_map, session_user
 ):
@@ -337,7 +473,7 @@ def save_organization(
         "sp_le_domain_industry_delete", (group_id, )
     )
     columns = [
-        "group_id", "legal_entity_id", "domain_id", "industry_id",
+        "client_id", "legal_entity_id", "domain_id", "industry_id",
         "no_of_units", "created_by", "created_on", "updated_by",
         "updated_on"
     ]
@@ -361,6 +497,12 @@ def save_organization(
     return r
 
 
+##########################################################################
+#  To Check whether the group name already exists
+#  Parameters : Object of database, group name, client id (Optional)
+#  Return Type : Boolean - Returns true if group name already exists
+#   returns False if there is no duplicates
+##########################################################################
 def is_duplicate_group_name(db, group_name, client_id=None):
     count_rows = db.call_proc(
         "sp_client_group_is_duplicate_groupname",
@@ -372,6 +514,13 @@ def is_duplicate_group_name(db, group_name, client_id=None):
         return False
 
 
+##########################################################################
+#  To Check whether the busienss group name already exists
+#  Parameters : Object of database, business group id, business group name,
+#   client id
+#  Return Type : Boolean - Returns true if business group name already exists
+#   returns False if there is no duplicates
+##########################################################################
 def is_duplicate_business_group(
     db, business_group_id, business_group_name, client_id
 ):
@@ -385,6 +534,13 @@ def is_duplicate_business_group(
         return False
 
 
+##########################################################################
+#  To Check whether the legal entity name already exists
+#  Parameters : Object of database, legal entity id, legal entity name,
+#   client id
+#  Return Type : Boolean - Returns true if legal entity name already exists
+#   returns False if there is no duplicates
+##########################################################################
 def is_duplicate_legal_entity(
     db, legal_entity_id, legal_entity_name, client_id
 ):
@@ -398,6 +554,12 @@ def is_duplicate_legal_entity(
         return False
 
 
+##########################################################################
+#  To Check whether the uploaded logo is an image or not
+#  Parameters : uploaded logo
+#  Return Type : Boolean - Returns true if legal entity name already exists
+#   returns False if there is no duplicates
+##########################################################################
 def is_logo_in_image_format(logo):
     exten = logo.file_name.split('.')[1]
     if exten in ["png", "jpg", "jpeg"]:
@@ -406,6 +568,12 @@ def is_logo_in_image_format(logo):
         return False
 
 
+##########################################################################
+#  To Save the client logo
+#  Parameters : uploaded logo
+#  Return Type : Returns File name (String) - if upload succeeds and
+#   returns None if upload fails
+##########################################################################
 def save_client_logo(logo):
     name = logo.file_name.split('.')[0]
     exten = logo.file_name.split('.')[1]
@@ -419,6 +587,13 @@ def save_client_logo(logo):
         return None
 
 
+##########################################################################
+#  To saved notifications for incharge persons
+#  Parameters : Object of database, group name, legal entity name, list of
+#   incharge persons
+#  Return Type : Raises process error if insertion failse and returns True
+#   if insertion succeeds
+##########################################################################
 def notify_incharge_persons(
     db, group_name, legal_entity_name, incharge_persons
 ):
@@ -449,6 +624,12 @@ def notify_incharge_persons(
 #
 #   Getting data for Editing Client Group
 #
+##########################################################################
+#  To get details of a client by id
+#  Parameters : Object of database, client id
+#  Return Type : Tuple with group name, username, legal entities and
+#  date configurations
+##########################################################################
 def get_client_details(db, client_id):
     client_details = db.call_proc(
         "sp_client_groups_details_by_id", (client_id,)
@@ -486,6 +667,11 @@ def get_client_details(db, client_id):
     return group_name, user_name, legal_entities, date_configuration_list
 
 
+##########################################################################
+#  To convert the data fetched from database into Legal entity object
+#  Parameters : Legal entity tuple, incharge person tuple, domain tuple
+#  Return Type : List of object of Legal entities
+##########################################################################
 def return_legal_entities(legal_entities, incharge_persons, domains):
     results = []
     for legal_entity in legal_entities:
@@ -519,6 +705,12 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
     return results
 
 
+##########################################################################
+#  To convert the data fetched from database into a dict
+#  Parameters : Incharge person details fetched from database (Tuple of
+#  tuples )
+#  Return Type : Dictionary (Legal entity id as key and User id as value)
+##########################################################################
 def return_incharge_persons_by_legal_entity(incharge_persons):
     incharge_person_map = {}
     for icp in incharge_persons:
@@ -529,6 +721,12 @@ def return_incharge_persons_by_legal_entity(incharge_persons):
     return incharge_person_map
 
 
+##########################################################################
+#  To convert the data fetched from database into a dict
+#  Parameters : Organization details fetched from database (Tuple of
+#  tuples )
+#  Return Type : Dictionary
+##########################################################################
 def return_organization_by_legalentity_domain(organizations):
     organization_map = {}
     for row in organizations:
@@ -548,6 +746,13 @@ def return_organization_by_legalentity_domain(organizations):
     return organization_map
 
 
+##########################################################################
+#  To convert the data fetched from database into a dict
+#  Parameters : Domain details fetched from database and Organization
+#   details dictionary
+#  Return Type : Dictionary (Key: Legal entity id, Value: Object of
+#   EntityDomainDetails)
+##########################################################################
 def return_domain_map_by_legal_entity_id(domains, organization_map):
     domain_map = {}
     print organization_map
@@ -566,6 +771,12 @@ def return_domain_map_by_legal_entity_id(domains, organization_map):
     return domain_map
 
 
+##########################################################################
+#  To convert data configuration details fetched from database into
+#  list of object of ClientConfiguration
+#  Parameters : Data fetched from database (Tuple of tuples)
+#  Return Type : List of object of ClientConfiguration
+##########################################################################
 def return_date_configurations(date_configurations):
     results = [
         core.ClientConfiguration(
@@ -581,6 +792,11 @@ def return_date_configurations(date_configurations):
 #
 #   To Update Client
 #
+##########################################################################
+#  To check whether the client id is valid or not
+#  Parameters : Object of database, client id
+#  Return Type : Boolean - True if client id is valid, False if invalid
+##########################################################################
 def is_invalid_group_id(db, client_id):
     count_rows = db.call_proc(
         "sp_client_groups_is_valid_group_id", (client_id,)
@@ -591,6 +807,12 @@ def is_invalid_group_id(db, client_id):
         return False
 
 
+##########################################################################
+#  To check whether a country with units is deactivated
+#  Parameters : Object of database, client id, List of country ids
+#  Return Type : Boolean - True if deactivated a country with active units,
+#   Otherwise returns false
+##########################################################################
 def is_deactivated_existing_country(db, client_id, country_ids):
     existing_country_ids = get_client_countries(db, client_id)
     current_countries = [int(x) for x in country_ids]
@@ -605,6 +827,12 @@ def is_deactivated_existing_country(db, client_id, country_ids):
     return False
 
 
+##########################################################################
+#  To check whether a domain with units is deactivated
+#  Parameters : Object of database, client id, List of domain ids
+#  Return Type : Boolean - True if deactivated a domain with active units,
+#   Otherwise returns false
+##########################################################################
 def is_deactivated_existing_domain(db, client_id, domain_ids):
     existing_domain_ids = get_client_domains(db, client_id)
     current_domains = [int(x) for x in domain_ids]
@@ -619,6 +847,11 @@ def is_deactivated_existing_domain(db, client_id, domain_ids):
     return False
 
 
+##########################################################################
+#  To get countries of  a client
+#  Parameters : Object of database, client id,
+#  Return Type : List of country ids (List of Int)
+##########################################################################
 def get_client_countries(db, client_id):
     rows = db.call_proc(
         "sp_client_countries_by_group_id", (client_id,)
@@ -627,6 +860,127 @@ def get_client_countries(db, client_id):
         r["country_id"] for r in rows
     ]
     return country_ids
+
+
+##########################################################################
+#  To get list of techno users
+#  Parameters : Object of database
+#  Return Type : List of Object of ClientInchargePersons
+##########################################################################
+def get_techno_users(db):
+    countries = db.call_proc("sp_user_countries_techno", None)
+    domains = db.call_proc("sp_user_domains_techno", None)
+    users = db.call_proc("sp_users_techno", None)
+
+    user_country_map = {}
+    for country in countries:
+        user_id = int(country["user_id"])
+        if user_id not in user_country_map:
+            user_country_map[user_id] = []
+        user_country_map[user_id].append(country["country_id"])
+
+    user_domain_map = {}
+    for domain in domains:
+        user_id = int(domain["user_id"])
+        if user_id not in user_domain_map:
+            user_domain_map[user_id] = []
+        user_domain_map[user_id].append(
+            domain["domain_id"]
+        )
+    return return_techno_users(users, user_country_map, user_domain_map)
+
+
+##########################################################################
+#  To convert Data fetched from database into list of Object of
+#   ClientInchargePersons
+#  Parameters : Data fetched from database,
+#   dict (Key: user, value: Country), dict (key: user, value: domain)
+#  Return Type : List of Object of ClientInchargePersons
+##########################################################################
+def return_techno_users(users, user_country_map, user_domain_map):
+    fn = core.ClientInchargePersons
+    results = [
+        fn(
+            int(user["user_id"]), user["e_name"],
+            bool(user["is_active"]),
+            user_country_map[int(user["user_id"])],
+            user_domain_map[int(user["user_id"])]
+        ) for user in users
+    ]
+    return results
+
+
+##########################################################################
+#  To get list of groups
+#  Parameters : Object of database
+#  Return Type : Returns List of object of ClientGroup
+##########################################################################
+def get_groups(db):
+    groups = db.call_proc(
+        "sp_client_groups_list", None
+    )
+    return return_group(groups)
+
+
+##########################################################################
+#  To get list of groups
+#  Parameters : Object of database
+#  Return Type : Returns List of object of ClientGroup
+##########################################################################
+def return_group(groups):
+    fn = core.ClientGroup
+    client_list = [
+        fn(
+            group["client_id"], group["group_name"],
+            group["country_names"], group["no_of_legal_entities"],
+            True if group["is_active"] > 0 else False
+        ) for group in groups
+    ]
+    return client_list
+
+
+##########################################################################
+#  To check Wheteher the entered no of licence is less than already
+#  existing number of users
+#  Parameters : Object of database, New no of user licence entered,
+#   client id, legal entitiy id
+#  Return Type : Returns true if entered no of licence is less than already
+#  existing number of users otherwise returns false
+##########################################################################
+def validate_no_of_user_licence(
+    db, no_of_user_licence, client_id, legal_entity_id
+):
+    rows = db.call_proc(
+        "sp_client_users_count", (client_id, legal_entity_id)
+    )
+    current_no_of_users = int(rows[0]["count"])
+    if no_of_user_licence < current_no_of_users:
+        return True
+    else:
+        return False
+
+
+##########################################################################
+#  To check Wheteher the entered file space is less than already
+#  used file space
+#  Parameters : Object of database, entered file space, client id,
+# legal entity id
+#  Return Type : Returns true if entered file space is less than already
+#  used file space
+##########################################################################
+def validate_total_disk_space(
+    db, file_space, client_id, legal_entity_id
+):
+    if legal_entity_id is None:
+        return False
+    rows = db.call_proc(
+        "sp_legal_entities_space_used", (legal_entity_id,),
+    )
+    used_space = int(rows[0]["used_space"])
+    if file_space < used_space:
+        return True
+    else:
+        return False
 
 
 def is_unit_exists_under_domain(db, domain, client_id):
@@ -650,16 +1004,6 @@ def get_client_ids(db):
     if rows:
         client_ids.append(str(rows[0]["client_id"]))
     return client_ids
-
-
-def return_countries(data):
-    fn = core.Country
-    results = [
-        fn(
-           d["country_id"], d["country_name"], bool(d["is_active"])
-        ) for d in data
-    ]
-    return results
 
 
 def get_client_domains(db, client_id):
@@ -689,71 +1033,6 @@ def get_user_client_domains(db, session_user):
         return return_domains(result)
     else:
         return get_domains_for_user(db, session_user)
-
-
-def return_domains(data):
-    fn = core.Domain
-    results = [
-        fn(
-            d["domain_id"], d["domain_name"], bool(d["is_active"])
-        ) for d in data
-    ]
-    return results
-
-
-def get_techno_users(db):
-    countries = db.call_proc("sp_user_countries_techno", None)
-    domains = db.call_proc("sp_user_domains_techno", None)
-    users = db.call_proc("sp_users_techno", None)
-
-    user_country_map = {}
-    for country in countries:
-        user_id = int(country["user_id"])
-        if user_id not in user_country_map:
-            user_country_map[user_id] = []
-        user_country_map[user_id].append(country["country_id"])
-
-    user_domain_map = {}
-    for domain in domains:
-        user_id = int(domain["user_id"])
-        if user_id not in user_domain_map:
-            user_domain_map[user_id] = []
-        user_domain_map[user_id].append(
-            domain["domain_id"]
-        )
-    return return_techno_users(users, user_country_map, user_domain_map)
-
-
-def return_techno_users(users, user_country_map, user_domain_map):
-    fn = core.ClientInchargePersons
-    results = [
-        fn(
-            int(user["user_id"]), user["e_name"],
-            bool(user["is_active"]),
-            user_country_map[int(user["user_id"])],
-            user_domain_map[int(user["user_id"])]
-        ) for user in users
-    ]
-    return results
-
-
-def get_groups(db):
-    groups = db.call_proc(
-        "sp_client_groups_list", None
-    )
-    return return_group(groups)
-
-
-def return_group(groups):
-    fn = core.ClientGroup
-    client_list = [
-        fn(
-            group["group_id"], group["group_name"],
-            group["country_names"], group["no_of_legal_entities"],
-            True if group["is_active"] > 0 else False
-        ) for group in groups
-    ]
-    return client_list
 
 
 def get_date_configurations(db, client_id):
@@ -795,34 +1074,6 @@ def is_unit_exists_under_country(db, country, client_id):
     condition_val = [country, client_id]
     rows = db.get_data(tblUnits, columns, condition, condition_val)
     if rows[0]["units"] > 0:
-        return True
-    else:
-        return False
-
-
-def validate_no_of_user_licence(
-    db, no_of_user_licence, client_id, legal_entity_id
-):
-    rows = db.call_proc(
-        "sp_client_users_count", (client_id, legal_entity_id)
-    )
-    current_no_of_users = int(rows[0]["count"])
-    if no_of_user_licence < current_no_of_users:
-        return True
-    else:
-        return False
-
-
-def validate_total_disk_space(
-    db, file_space, client_id, legal_entity_id
-):
-    if legal_entity_id is None:
-        return False
-    rows = db.call_proc(
-        "sp_legal_entities_space_used", (legal_entity_id,),
-    )
-    used_space = int(rows[0]["used_space"])
-    if file_space < used_space:
         return True
     else:
         return False
@@ -1078,17 +1329,6 @@ def get_business_groups_for_user(db, user_id):
         tblBusinessGroups, columns, condition, [condition_val], order
     )
     return return_business_groups(result)
-
-
-def return_business_groups(business_groups):
-    results = []
-    for business_group in business_groups:
-        results.append(core.BusinessGroup(
-            business_group["business_group_id"],
-            business_group["business_group_name"],
-            business_group["group_id"]
-        ))
-    return results
 
 
 def get_legal_entities_for_user(db, user_id):
