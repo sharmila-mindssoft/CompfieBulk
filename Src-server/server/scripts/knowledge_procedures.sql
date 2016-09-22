@@ -349,3 +349,33 @@ BEGIN
 		AND t2.user_id = _user_id;
 	end if;
 END;
+
+DROP PROCEDURE sp_tbl_forms_getforms;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_forms_getforms`()
+BEGIN
+	SELECT t1.form_id, t1.form_category_id, t2.form_category,
+	t1.form_type_id, t3.form_type, t1.form_name, t1.form_url,
+	t1.form_order, t1.parent_menu FROM tbl_forms t1
+	INNER JOIN tbl_form_category t2 ON t2.form_category_id = t1.form_category_id
+	INNER JOIN tbl_form_type t3 ON t3.form_type_id = t1.form_type_id WHERE
+	t1.form_category_id != 1 ORDER BY t1.form_order;
+
+END;
+
+DROP PROCEDURE sp_tbl_user_group_getusergroupdetails;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_user_group_getusergroupdetails`()
+BEGIN
+	SELECT t1.user_group_id, t1.user_group_name, t1.form_category_id,
+	t1.form_ids, t1.is_active, (select count(*) from tbl_users u where user_group_id = u.user_group_id)as count,
+	FROM tbl_user_groups t1 ORDER BY t1.user_group_name;
+
+END;
+
+DROP PROCEDURE sp_tbl_form_category_get;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_form_category_get`()
+BEGIN
+	SELECT form_category_id, form_category FROM form_category_id in (2, 3);
+END;
