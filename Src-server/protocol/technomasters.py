@@ -143,6 +143,22 @@ class GetClientGroupFormData(Request):
         }
 
 
+class GetEditClientGroupFormData(Request):
+    def __init__(self, group_id):
+        self.group_id = group_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["group_id"])
+        group_id = data.get("group_id")
+        return GetEditClientGroupFormData(group_id)
+
+    def to_inner_structure(self):
+        return {
+            "group_id": self.group_id
+        }
+
+
 class SaveClientGroup(Request):
     def __init__(
         self, group_name, user_name, legal_entities, date_configurations
@@ -162,7 +178,7 @@ class SaveClientGroup(Request):
         user_name = data.get("u_name")
         user_name = parse_structure_CustomTextType_100(user_name)
         legal_entities = data.get("les")
-        legal_entities = parse_structure_CustomTextType_20(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntityDetails(legal_entities)
         date_configurations = data.get("d_cs")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
         return SaveClientGroup(
@@ -173,7 +189,7 @@ class SaveClientGroup(Request):
         return {
             "g_name": to_structure_CustomTextType_50(self.group_name),
             "u_name": to_structure_CustomTextType_100(self.user_name),
-            "les": to_structure_CustomTextType_20(self.legal_entities),
+            "les": to_structure_VectorType_RecordType_core_LegalEntityDetails(self.legal_entities),
             "d_cs": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
         }
 
@@ -213,77 +229,41 @@ class CreateNewAdmin(Request):
 
 class UpdateClientGroup(Request):
     def __init__(
-        self, client_id, group_name, country_ids, domain_ids, logo,
-        contract_from, contract_to, incharge_persons, no_of_user_licence,
-        file_space, is_sms_subscribed, date_configurations
+        self, group_id, group_name, user_name,
+        legal_entities, date_configurations
     ):
-        self.client_id = client_id
+        self.group_id = group_id
         self.group_name = group_name
-        self.country_ids = country_ids
-        self.domain_ids = domain_ids
-        self.logo = logo
-        self.contract_from = contract_from
-        self.contract_to = contract_to
-        self.incharge_persons = incharge_persons
-        self.no_of_user_licence = no_of_user_licence
-        self.file_space = file_space
-        self.is_sms_subscribed = is_sms_subscribed
+        self.user_name = user_name
+        self.legal_entities = legal_entities
         self.date_configurations = date_configurations
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "c_id", "g_name", "c_ids", "d_ids", "logo",
-                "c_from", "c_to", "incharge",
-                "licence", "f_space", "sms",
-                "config"
+               "g_id", "g_name", "u_name", "les", "d_cs"
             ]
         )
-        client_id = data.get("c_id")
-        client_id = parse_structure_UnsignedIntegerType_32(client_id)
+        group_id = data.get("g_id")
         group_name = data.get("g_name")
-        group_name = parse_structure_CustomTextType_50(group_name)
-        country_ids = data.get("c_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("d_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
-        logo = data.get("logo")
-        logo = parse_structure_OptionalType_RecordType_core_FileList(logo)
-        contract_from = data.get("c_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("c_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        incharge_persons = data.get("incharge")
-        incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(incharge_persons)
-        no_of_user_licence = data.get("licence")
-        no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
-        file_space = data.get("f_space")
-        file_space = parse_structure_Float(file_space)
-        is_sms_subscribed = data.get("sms")
-        is_sms_subscribed = parse_structure_Bool(is_sms_subscribed)
-        date_configurations = data.get("config")
+        user_name = data.get("u_name")
+        legal_entities = data.get("les")
+        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        date_configurations = data.get("d_cs")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
         return UpdateClientGroup(
-            client_id, group_name, country_ids, domain_ids, logo, contract_from,
-            contract_to, incharge_persons, no_of_user_licence, file_space,
-            is_sms_subscribed, date_configurations
+            group_id, group_name, user_name, legal_entities, date_configurations
         )
 
     def to_inner_structure(self):
         return {
-            "c_id": to_structure_SignedIntegerType_8(self.client_id),
-            "g_name": to_structure_CustomTextType_50(self.group_name),
-            "c_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "d_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "logo": to_structure_OptionalType_RecordType_core_FileList(self.logo),
-            "c_from": to_structure_CustomTextType_20(self.contract_from),
-            "c_to": to_structure_CustomTextType_20(self.contract_to),
-            "incharge": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
-            "licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
-            "f_space": to_structure_Float(self.file_space),
-            "sms": to_structure_Bool(self.is_sms_subscribed),
-            "config": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
+            "g_id": self.group_id,
+            "g_name": self.group_name,
+            "u_name": self.user_name,
+            "les": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
+            "d_cs": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
         }
+
 
 class ChangeClientGroupStatus(Request):
     def __init__(self, client_id, is_active):
@@ -625,7 +605,7 @@ def _init_Request_class_map():
         GetClientGroups, SaveClientGroup, UpdateClientGroup,
         ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient,
         ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
-        GetNextUnitCode, GetClientGroupFormData
+        GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData
     ]
     class_map = {}
     for c in classes:
@@ -930,6 +910,7 @@ class UnitDetails(object):
             "is_active": to_structure_Bool(self.is_active),
         }
 
+
 class GetClientGroupFormDataSuccess(Response):
     def __init__(
         self, countries, users, domains, industries
@@ -975,12 +956,17 @@ class GetEditClientGroupFormDataSuccess(Response):
         self.users = users
         self.domains = domains
         self.industries = industries
+        self.group_name = group_name
+        self.user_name = user_name
+        self.legal_entities = legal_entities
+        self.date_configurations = date_configurations
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "business_groups", "users",
-            "domains", "industries"
+            "countries", "business_groups", "users", "domains", "industries",
+            "client_details", "group_name", "user_name", "legal_entities",
+            "date_configurations"
         ])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
@@ -1017,7 +1003,6 @@ class GetEditClientGroupFormDataSuccess(Response):
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
         }
-
 
 class GetClientsSuccess(Response):
     def __init__(

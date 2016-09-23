@@ -347,7 +347,7 @@ END;
 -- To get form_ids based on user settings
 -- --------------------------------------------------------------------------------
 
-DROP PROCEDURE sp_tbl_forms_getuserformids;
+DROP PROCEDURE IF EXISTS sp_tbl_forms_getuserformids;
 DELIMITER $$
 CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
 	IN _user_id INT
@@ -362,7 +362,7 @@ BEGIN
 	end if;
 END;
 
-DROP PROCEDURE sp_tbl_forms_getforms;
+DROP PROCEDURE IF EXISTS sp_tbl_forms_getforms;
 DELIMITER $$
 CREATE PROCEDURE `sp_tbl_forms_getforms`()
 BEGIN
@@ -375,7 +375,7 @@ BEGIN
 
 END;
 
-DROP PROCEDURE sp_tbl_user_group_getusergroupdetails;
+DROP PROCEDURE IF EXISTS sp_tbl_user_group_getusergroupdetails;
 DELIMITER $$
 CREATE PROCEDURE `sp_tbl_user_group_getusergroupdetails`()
 BEGIN
@@ -385,7 +385,7 @@ BEGIN
 
 END;
 
-DROP PROCEDURE sp_tbl_form_category_get;
+DROP PROCEDURE IF EXISTS sp_tbl_form_category_get;
 DELIMITER $$
 CREATE PROCEDURE `sp_tbl_form_category_get`()
 BEGIN
@@ -887,4 +887,30 @@ BEGIN
 		select user_group_id from tbl_user_groups
 		where form_category_id = 3
 	);
+END
+
+-- --------------------------------------------------------------------------------
+-- To get list of units for approval
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_units_approval_list`;
+DELIMITER $$
+CREATE PROCEDURE `sp_units_approval_list`()
+BEGIN
+	SELECT legal_entity_id, legal_entity_name,
+	(
+		SELECT country_name FROM tbl_countries tc
+		WHERE tc.country_id = tle.country_id
+	) as country_name,
+	(
+		SELECT business_group_name FROM tbl_business_groups tbg
+		WHERE tbg.business_group_id = tle.business_group_id
+	) as business_group_name,
+	(
+		SELECT group_name FROM tbl_client_groups tcg
+		WHERE tcg.client_id = tle.client_id
+	) as group_name,
+	(
+		SELECT count(unit_id) FROM tbl_units tu
+		WHERE is_active=1 and tu.legal_entity_id=tle.legal_entity_id
+	) as unit_count FROM tbl_legal_entities tle; 
 END

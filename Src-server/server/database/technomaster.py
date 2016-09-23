@@ -276,7 +276,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 session_user, current_time_stamp
             )
             values.append(value_tuple)
-            condition = "group_id=%s and legal_entity_id=%s" % (
+            condition = "client_id=%s and legal_entity_id=%s" % (
                 group_id, entity.legal_entity_id)
             conditions.append(condition)
         else:
@@ -350,6 +350,21 @@ def save_date_configurations(
         "client_id", "country_id", "domain_id", "period_from",
         "period_to", "updated_by", "updated_on"
     ]
+    for configuration in date_configurations:
+        country_id = configuration.country_id
+        if country_id not in country_ids:
+            country_ids.append(country_id)
+        value_tuple = (
+            client_id, country_id, configuration.domain_id,
+            configuration.period_from, configuration.period_to,
+            session_user, current_time_stamp
+        )
+        values_list.append(value_tuple)
+    res = db.bulk_insert(
+        tblClientConfigurations, columns, values_list
+    )
+    if res is False:
+        raise process_error("E047")
     return country_ids
 
 
@@ -1054,108 +1069,6 @@ def get_server_details(db):
     return rows
 
 
-def save_client_countries(db, client_id, country_ids):
-    values_list = []
-    columns = ["client_id", "country_id"]
-    condition = "client_id = %s "
-    db.delete(tblClientCountries, condition, [client_id])
-    for country_id in country_ids:
-        values_tuple = (client_id, country_id)
-        values_list.append(values_tuple)
-    res = db.bulk_insert(tblClientCountries, columns, values_list)
-    if res is False:
-        raise process_error("E041")
-    print "save_client_countries ", res
-    return res
-
-
-def save_client_domains(db, client_id, domain_ids):
-    old_d = get_client_domains(db, client_id)
-    new_id = []
-    values_list = []
-    columns = ["client_id", "domain_id"]
-    condition = "client_id = %s "
-    db.delete(tblClientDomains, condition, [client_id])
-    for domain_id in domain_ids:
-        if int(domain_id) not in old_d:
-            new_id.append(str(domain_id))
-        values_tuple = (client_id, domain_id)
-        values_list.append(values_tuple)
-    if len(new_id) > 0:
-        update_client_domain_status(db, client_id, new_id)
-    res = db.bulk_insert(tblClientDomains, columns, values_list)
-    if res is False:
-        raise process_error("E042")
-    print "save client domains ", res
-    return res
-
-
-def update_client_domain_status(db, client_id, domain_ids):
-    q = "update tbl_client_replication_status set is_new_data =1, " + \
-        " is_new_domain = 1, domain_id = %s where client_id = %s"
-    db.execute(q, [
-        str((','.join(domain_ids))),
-        client_id
-    ])
-
-
-def save_incharge_persons(db, client_group, client_id):
-    columns = ["client_id", "user_id"]
-    values_list = []
-    condition = "client_id= %s "
-    db.delete(tblUserClients, condition, [client_id])
-    for incharge_person in client_group.incharge_persons:
-        values_tuple = (client_id, incharge_person)
-        values_list.append(values_tuple)
-    r = db.bulk_insert(tblUserClients, columns, values_list)
-    if r is False:
-        raise process_error("E043")
-    print "save incharge_person ", r
-    return r
-
-
-def save_client_user(db, client_group, session_user, client_id=None):
-    if client_id is None:
-        client_id = client_group.client_id
-    columns = [
-        "client_id", "user_id",  "email_id",
-        "employee_name", "created_on", "is_primary_admin", "is_active"
-    ]
-    values = [
-        client_id, 0, client_group.email_id, "Admin",
-        get_date_time(), 1, 1
-    ]
-    r = db.insert(tblClientUsers, columns, values)
-    if r is False:
-        raise process_error("E044")
-    print "save client user ", r
-    return r
-
-
-def notify_incharge_persons(db, client_group):
-    notification_text = "Client %s has been assigned" % client_group.group_name
-    link = "/knowledge/client-unit"
-
-    notification_id = db.insert(
-        tblNotifications, ["notification_text", "link"],
-        [notification_text, link]
-    )
-    if notification_id is False:
-        raise process_error("E045")
-
-    columns = ["notification_id", "user_id", "read_status"]
-    values_list = []
-    for incharge_person in client_group.incharge_persons:
-        values_tuple = (notification_id, incharge_person, 0)
-        values_list.append(values_tuple)
-    r = db.bulk_insert(
-        tblNotificationsStatus, columns, values_list
-    )
-    if r is False:
-        raise process_error("E045")
-    return r
-
-
 def is_unit_exists_under_country(db, country, client_id):
     columns = "count(*) as units"
     condition = "country_id = %s and client_id = %s "
@@ -1165,6 +1078,7 @@ def is_unit_exists_under_country(db, country, client_id):
         return True
     else:
         return False
+
 
 
 def update_client_logo(db, logo, client_id):
@@ -1216,130 +1130,6 @@ def update_client_group_record(db, client_group, session_user):
         raise process_error("E046")
 
 
-def get_client_db_info(db, client_id=None):
-    columns = "database_ip, client_id, "
-    columns += " database_username, database_password, database_name"
-    condition = condition_val = None
-    if client_id is not None:
-        condition = "client_id = %s "
-        condition_val = [client_id]
-    return db.get_data(
-        "tbl_client_database", columns, condition, condition_val
-    )
-
-
-def replicate_client_countries_and_domains(
-    db, client_id, country_ids, domain_ids
-):
-    rows = get_client_db_info(db, client_id)
-    ip = rows[0]["database_ip"]
-    username = rows[0]["database_username"]
-    password = rows[0]["database_password"]
-    dbname = rows[0]["database_name"]
-
-    conn = db._db_connect(ip, username, password, dbname)
-    cursor = conn.cursor()
-
-    delete_countries_query = "delete from tbl_countries"
-    delete_domains_query = "delete from tbl_domains"
-
-    cursor.execute(delete_countries_query)
-    cursor.execute(delete_domains_query)
-    columns = "country_id, country_name, is_active"
-    condition, condition_val = db.generate_tuple_condition(
-        "country_id", country_ids)
-    country_rows = db.get_data(
-        tblCountries, columns, condition, [condition_val])
-    country_values_list = [
-        (
-            int(country["country_id"]),
-            country["country_name"],
-            country["is_active"]
-        ) for country in country_rows
-    ]
-
-    columns = "domain_id, domain_name, is_active"
-    condition, condition_val = db.generate_tuple_condition(
-        "domain_id", domain_ids)
-    domain_rows = db.get_data(tblDomains, columns, condition, [condition_val])
-    domain_values_list = [
-        (
-            int(domain["domain_id"]),
-            domain["domain_name"],
-            domain["is_active"]
-        ) for domain in domain_rows
-    ]
-
-    insert_countries_query = "INSERT INTO tbl_countries " + \
-        " VALUES %s" % ','.join(str(x) for x in country_values_list)
-
-    insert_domains_query = "INSERT INTO tbl_domains " + \
-        " VALUES %s" % ','.join(str(x) for x in domain_values_list)
-
-    cursor.execute(insert_countries_query)
-    cursor.execute(insert_domains_query)
-    conn.commit()
-    return True
-
-
-def is_combination_already_exists(
-    db, country_id, domain_id, client_id
-):
-    columns = "count(*) as v_exists"
-    condition = " client_id = %s AND country_id = %s " + \
-                " AND domain_id = %s"
-    condition_val = [client_id, country_id, domain_id]
-    rows = db.get_data(
-        tblClientConfigurations, columns, condition, condition_val
-    )
-    if rows:
-        if rows[0]["v_exists"] > 0:
-            return True
-        else:
-            return False
-    else:
-        return False
-
-
-def save_date_configurations(
-    db, client_id, date_configurations, session_user
-):
-    current_time_stamp = get_date_time()
-    insert_columns = [
-        "client_id", "country_id", "domain_id", "period_from",
-        "period_to", "updated_by", "updated_on"
-    ]
-    update_columns = ["period_from", "period_to"]
-    for configuration in date_configurations:
-        country_id = configuration.country_id
-        domain_id = configuration.domain_id
-        period_from = configuration.period_from
-        period_to = configuration.period_to
-        if is_combination_already_exists(db, country_id, domain_id, client_id):
-            update_values = [period_from, period_to]
-            update_condition = " client_id = %s AND country_id = %s " + \
-                " AND domain_id = %s"
-            update_values.extend([client_id, country_id, domain_id])
-            r = db.update(
-                tblClientConfigurations, update_columns,
-                update_values, update_condition
-            )
-            if r is False:
-                raise process_error("E048")
-
-        else:
-            insert_values = [
-                client_id, country_id,
-                domain_id, period_from, period_to,
-                session_user, current_time_stamp
-            ]
-            r = db.insert(
-                tblClientConfigurations, insert_columns, insert_values
-            )
-            if r is False:
-                raise process_error("E047")
-
-
 def is_unit_exists_under_client(db, client_id):
     column = "count(*) as units"
     condition = "client_id = %s and is_active = 1"
@@ -1352,135 +1142,22 @@ def is_unit_exists_under_client(db, client_id):
 
 
 def update_client_group_status(db, client_id, is_active, session_user):
-    is_active = 1 if is_active is not False else 0
-    columns = ["is_active", "updated_by", "updated_on"]
-    values = [is_active, int(session_user), get_date_time(), client_id]
-    condition = "client_id = %s"
-    action_columns = ["group_name"]
-    rows = db.get_data(
-        tblClientGroups, action_columns, condition, [client_id]
+    r = db.call_proc(
+        "sp_client_groups_change_status",
+        (client_id, is_active), ["group_name"]
     )
-    group_name = rows[0]["group_name"]
-    if is_active == 1:
-        action = "Activated Client \"%s\"" % group_name
-    else:
-        action = "Deactivated Client \"%s\"" % group_name
-    db.save_activity(session_user, 18, action)
-    r = db.update(tblClientGroups, columns, values, condition)
     if r is False:
         raise process_error("E049")
-
-
-def is_duplicate_business_group(
-    db, business_group_id, business_group_name, client_id
-):
-    condition = "business_group_name = %s " + \
-        " AND client_id = %s "
-    condition_val = [business_group_name, client_id]
-    if business_group_id is not None:
-        condition += " AND business_group_id != %s "
-        condition_val.append(business_group_id)
-    return db.is_already_exists(tblBusinessGroups, condition, condition_val)
-
-
-def save_business_group(db, client_id, b_name, user_id):
-    user_id = int(user_id)
-    current_time_stamp = get_date_time()
-    columns = [
-        "client_id", "business_group_name",
-        "created_by", "created_on"
-    ]
-    values = [
-        client_id, b_name,
-        user_id, current_time_stamp
-    ]
-    new_id = db.insert(tblBusinessGroups, columns, values)
-
-    if new_id is False:
-        raise process_error("E050")
     else:
-        action = "Created Business Group \"%s\"" % b_name
-        db.save_activity(user_id, 19, action)
-        return int(new_id)
+        group_name = r[0]["group_name"]
+        if is_active == 1:
+            action = "Activated Client \"%s\"" % group_name
+        else:
+            action = "Deactivated Client \"%s\"" % group_name
+        db.save_activity(session_user, 18, action)
 
-
-def update_business_group(
-    db, client_id, business_group_id, business_group_name, session_user
-):
-    current_time_stamp = get_date_time()
-    columns = [
-        "business_group_name", "updated_by", "updated_on"
-    ]
-    values = [
-        business_group_name, session_user, current_time_stamp
-    ]
-    condition = "business_group_id = %s and client_id = %s "
-    values.append(business_group_id)
-    values.append(client_id)
-    result = db.update(tblBusinessGroups, columns, values, condition)
-    if result:
-        action = "Updated Business Group \"%s\"" % business_group_name
-        db.save_activity(session_user, 19, action)
-        return result
-    else:
-        raise process_error("E051")
-
-
-def is_duplicate_legal_entity(
-    db, legal_entity_id, legal_entity_name, client_id
-):
-    condition = "legal_entity_name = %s " + \
-        "  and client_id = %s"
-    condition_val = [legal_entity_name, client_id]
-    if legal_entity_id:
-        condition += " AND legal_entity_id != %s "
-        condition_val.append(legal_entity_id)
-    return db.is_already_exists(tblLegalEntities, condition, condition_val)
-
-
-def save_legal_entity(
-    db, client_id, legal_entity_name,
-    business_group_id, session_user
-):
-    session_user = int(session_user)
-    current_time_stamp = get_date_time()
-    columns = [
-        "client_id", "legal_entity_name",
-        "created_by", "created_on", "updated_by", "updated_on"
-    ]
-    values = [
-        client_id, legal_entity_name,
-        session_user, current_time_stamp, session_user, current_time_stamp
-    ]
-
-    if business_group_id is not None:
-        columns.append("business_group_id")
-        values.append(business_group_id)
-
-    new_id = db.insert(tblLegalEntities, columns, values)
-    if new_id is False:
-        raise process_error("E052")
-    else:
-        action = "Created Legal Entity \"%s\"" % legal_entity_name
-        db.save_activity(session_user, 19, action)
-        return int(new_id)
-
-
-def update_legal_entity(
-    db, client_id, legal_entity_id, legal_entity_name,
-    session_user
-):
-    columns = ["legal_entity_name", "updated_by", "updated_on"]
-    values = [legal_entity_name, session_user, get_date_time()]
-    condition = "legal_entity_id = %s and client_id = %s"
-    values.extend([legal_entity_id, client_id])
-    result = db.update(tblLegalEntities, columns, values, condition)
-    if result:
-        action = "Updated Legal Entity \"%s\"" % legal_entity_name
-        db.save_activity(session_user, 19, action)
-        return result
-    else:
-        raise process_error("E053")
+##########################################################################
+##########################################################################
 
 
 def is_duplicate_division(db, division_id, division_name, client_id):
@@ -1672,16 +1349,6 @@ def get_legal_entities_for_user(db, user_id):
         tblLegalEntities, columns, condition, [condition_val], order
     )
     return return_legal_entities(result)
-
-
-def return_legal_entities(legal_entities):
-    results = []
-    for legal_entity in legal_entities:
-        results.append(core.LegalEntity(
-            legal_entity["legal_entity_id"], legal_entity["legal_entity_name"],
-            legal_entity["business_group_id"], legal_entity["client_id"]
-        ))
-    return results
 
 
 def get_divisions_for_user(db, user_id):
@@ -1990,58 +1657,6 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
         raise process_error("E058")
 
 
-# def get_next_unit_auto_gen_no(db, client_id):
-#     columns = "count(unit_id) as units"
-#     condition = "client_id = %s"
-#     condition_val = [client_id]
-#     rows = db.get_data(tblUnits, columns, condition, condition_val)
-#     no_of_units = rows[0]["units"]
-
-#     group_columns = ["group_name"]
-#     group_condition = "client_id = %s"
-#     group_condition_val = [client_id]
-#     group_company = db.get_data(
-#         tblClientGroups, group_columns,
-#         group_condition, group_condition_val
-#     )
-
-#     group_name = group_company[0]["group_name"].replace(" ", "")
-#     unit_code_start_letters = group_name[:2].upper()
-
-#     columns = "TRIM(LEADING '%s' FROM unit_code) as code" % (
-#         unit_code_start_letters
-#     )
-#     condition = "unit_code like binary '%s%s' and " + \
-#         " CHAR_LENGTH(unit_code) = 7 and client_id= %s"
-#     condition = condition % (unit_code_start_letters, "%", client_id)
-#     rows = db.get_data(tblUnits, columns, condition)
-#     auto_generated_unit_codes = []
-#     for row in rows:
-#         try:
-#             auto_generated_unit_codes.append(int(row["code"]))
-#         except Exception, ex:
-#             print ex
-#             continue
-#     next_auto_gen_no = 1
-#     if len(auto_generated_unit_codes) > 0:
-#         existing_max_unit_code = max(auto_generated_unit_codes)
-#         if existing_max_unit_code == no_of_units:
-#             next_auto_gen_no = no_of_units + 1
-#         else:
-#             next_auto_gen_no = existing_max_unit_code + 1
-#     unit_code = group_name[:2].upper()
-#     if len(str(next_auto_gen_no)) == 1:
-#         unit_code += "0000"
-#     elif len(str(next_auto_gen_no)) == 2:
-#         unit_code += "000"
-#     elif len(str(next_auto_gen_no)) == 3:
-#         unit_code += "00"
-#     elif len(str(next_auto_gen_no)) == 4:
-#         unit_code += "0"
-#     unit_code += "%s" % (next_auto_gen_no)
-#     return unit_code
-
-
 def get_profiles(db, client_ids_list):
     ONE_GB = 1024 * 1024 * 1024
     profiles = []
@@ -2200,3 +1815,22 @@ def create_new_admin(
         db.save_activity(session_user, 20, action)
         return True
     return result
+
+
+def get_user_client_countries(db, session_user):
+    client_ids_list = get_client_ids(db)
+    if len(client_ids_list) > 0:
+        country_ids = []
+        for client_id in client_ids_list:
+            country_ids.extend(get_client_countries(db, int(client_id)))
+        columns = "DISTINCT country_id as country_id, country_name, is_active"
+        condition = "country_id in (%s) and is_active = 1 "
+        condition_val = [",".join(str(x) for x in country_ids)]
+        order = " ORDER BY country_name "
+        result = db.get_data(
+            tblCountries, columns, condition, condition_val, order
+        )
+        if result:
+            return return_countries(result)
+    else:
+        return get_countries_for_user(db, session_user)

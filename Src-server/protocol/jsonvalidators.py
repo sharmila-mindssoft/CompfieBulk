@@ -308,8 +308,8 @@ def parse_dictionary_values(x, field_names=[]):
                     val, int_length=param.get('length'))
 
         elif param.get('type') == 'vector_type':
-            assert param.get('module_name') is None
-            assert param.get('class_name') is None
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
             val = parse_VectorType()
 
         if val is not None and param.get('validation_method') is not None:
@@ -317,20 +317,23 @@ def parse_dictionary_values(x, field_names=[]):
     return x
 
 
-def to_dictionary_values(data):
+def to_dictionary_values(data, response):
     result = {}
     for key in data:
         value = data[key]
         param = api_params.get(key)
-        print "param: %s" % param
-        print "type: %s" % param.get('type')
         if param.get('type') == 'vector_type':
-            assert param.get('module_name') is None
-            assert param.get('class_name') is None
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
             value = to_VectorType(
                 param.get('module_name'), param.get('class_name'), value
             )
             result[key] = value
+    if response is not None:
+        result = [
+            response,
+            result
+        ]
     return result
 
 

@@ -117,7 +117,7 @@ class UnitApproval(object):
             business_group_name, group_name, unit_count
         )
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
@@ -146,7 +146,7 @@ class GetClientUnitApprovalListSuccess(object):
         data = {
             "unit_approval_list": self.unit_approval_list
         }
-        return to_dictionary_values(data)
+        return to_dictionary_values(data, "GetClientUnitApprovalListSuccess")
 
 
 def _init_Response_class_map():

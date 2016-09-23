@@ -574,7 +574,7 @@ function editClient(){
         addOrSelectBusinessGroup("cancel");
         if(value.b_g){
             le_table.find(".business-group").val(
-                value.b_g.b_g_id);
+                value.b_g.bg_id);
         }
         le_table.find("#legal_entity_text").val(value.l_e_name);
         var incharge_class = "incharge-"+le_count;

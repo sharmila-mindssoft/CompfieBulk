@@ -52,3 +52,4 @@ tblUserGroups = "tbl_user_groups"
 tblUserLoginHistory = "tbl_user_login_history"
 tblUserSessions = "tbl_user_sessions"
 tblUsers = "tbl_users"
+tblLegalEntityDomainIndustry = 'tbl_legal_entity_domain_industry'
