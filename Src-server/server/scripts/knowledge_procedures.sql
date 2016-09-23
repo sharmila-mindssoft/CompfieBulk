@@ -370,6 +370,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getuserformids;
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
 	IN _user_id INT
 )
@@ -386,6 +387,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getforms;
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_forms_getforms`()
 BEGIN
 	SELECT t1.form_id, t1.form_category_id, t2.form_category,
@@ -412,6 +414,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_tbl_form_category_get;
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_form_category_get`()
 BEGIN
 	SELECT form_category_id, form_category FROM tbl_form_category in (2, 3);
@@ -945,5 +948,32 @@ BEGIN
 		select user_group_id from tbl_user_groups
 		where form_category_id = 3
 	);
+
 END //
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of units for approval
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_units_approval_list`;
+DELIMITER $$
+CREATE PROCEDURE `sp_units_approval_list`()
+BEGIN
+	SELECT legal_entity_id, legal_entity_name,
+	(
+		SELECT country_name FROM tbl_countries tc
+		WHERE tc.country_id = tle.country_id
+	) as country_name,
+	(
+		SELECT business_group_name FROM tbl_business_groups tbg
+		WHERE tbg.business_group_id = tle.business_group_id
+	) as business_group_name,
+	(
+		SELECT group_name FROM tbl_client_groups tcg
+		WHERE tcg.client_id = tle.client_id
+	) as group_name,
+	(
+		SELECT count(unit_id) FROM tbl_units tu
+		WHERE is_active=1 and tu.legal_entity_id=tle.legal_entity_id
+	) as unit_count FROM tbl_legal_entities tle;
+END

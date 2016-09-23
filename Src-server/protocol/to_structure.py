@@ -658,6 +658,10 @@ def to_structure_OptionalType_RecordType_core_BusinessGroup(data):
     if data is None: return data
     return to_structure_RecordType_core_BusinessGroup(data)
 
+def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
+    if data is None: return data
+    return to_structure_RecordType_core_ClientBusinessGroup(data)
+
 def to_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
     return to_structure_CustomTextType_20(data)
@@ -2193,6 +2197,10 @@ def to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_Com
 def to_structure_OptionalType_RecordType_core_FileList(data):
     if data is None: return data
     return to_structure_RecordType_core_FileList(data)
+
+def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
+    if data is None: return data
+    return to_structure_RecordType_core_ClientBusinessGroup(data)
 
 def to_structure_VectorType_CustomTextType_250(data):
     data = parse_list(data, 0)

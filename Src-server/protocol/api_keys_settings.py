@@ -69,7 +69,7 @@ api_params = {
     'country_names': {'type': 'string', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     'no_of_legal_entities': {'type': 'int', 'length': None, 'validation_method': None, 'is_optional': False},
-    'username': {'type': 'string', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'username': {'type': 'text', 'length': 100, 'validation_method': None, 'is_optional': False},
     'legal_entity_name': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
     'no_of_licence': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'file_space': {'type': 'int', 'length': 100000000, 'validation_method': None, 'is_optional': False},
