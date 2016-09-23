@@ -247,20 +247,18 @@ def get_admin_forms(db):
 
 
 def get_user_form_ids(db, user_id):
+    result = []
+    procedure = "sp_tbl_forms_getuserformids"
+    result = db.call_proc(procedure, [user_id])
+    print result
     if user_id == 0:
-        q = "select form_id from tbl_forms where form_category_id = 1"
-        rows = db.select_all(q)
         f_ids = []
-        for r in rows :
-            f_ids.append(str(r[0]))
+        for r in result :
+            f_ids.append(str(r["form_id"]))
         return ','.join(f_ids)
     else :
-        q = "select t1.form_ids from tbl_user_groups t1 " + \
-            " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
-            " AND t2.user_id = %s"
-        row = db.select_one(q, [user_id])
-        if row:
-            return row[0]
+        if result:
+            return result[0]["form_id"]
         else:
             return None
 

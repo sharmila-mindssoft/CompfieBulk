@@ -292,7 +292,7 @@ BEGIN
     t1.is_active = 1 AND t2.user_id LIKE _user_id
 	ORDER BY t1.domain_name;
 
-END
+END;
 
 -- --------------------------------------------------------------------------------
 -- To Get admin forms
@@ -308,9 +308,90 @@ BEGIN
 	INNER JOIN tbl_form_type T03 ON T03.form_type_id = T01.form_type_id
 	WHERE T01.form_category_id = 1 ORDER BY T01.form_order;
 
-END
+END;
+
 
 -- --------------------------------------------------------------------------------
+-- Audit trail report procedure, This has four result set which are Forms, Users, Activity-log and Activity-log total
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE sp_get_audit_trails;
+DELIMITER $$
+CREATE PROCEDURE `sp_get_audit_trails`(
+	IN _from_date varchar(10), IN _to_date varchar(10),
+	IN _user_id varchar(10), IN _form_id varchar(10),
+	IN _from_limit INT, IN _to_limit INT
+)
+BEGIN
+	SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
+	SELECT user_id, employee_name, employee_code, is_active
+	FROM tbl_users;
+	SELECT user_id, form_id, action, created_on
+	FROM tbl_activity_log
+	WHERE
+		date(created_on) >= _from_date
+		AND date(created_on) <= _to_date
+		AND user_id LIKE _user_id AND form_id LIKE _form_id
+		ORDER BY user_id ASC, DATE(created_on) DESC
+		limit _from_limit, _to_limit;
+
+	SELECT count(0) as total FROM tbl_activity_log
+	WHERE
+		date(created_on) >= _from_date
+		AND date(created_on) <= _to_date
+		AND user_id LIKE _user_id AND form_id LIKE _form_id;
+END;
+
+
+-- --------------------------------------------------------------------------------
+-- To get form_ids based on user settings
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE sp_tbl_forms_getuserformids;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
+	IN _user_id INT
+)
+BEGIN
+	if _user_id = 0 then
+		SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+	else
+		SELECT t1.form_ids as form_id from tbl_user_groups t1
+		INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id
+		AND t2.user_id = _user_id;
+	end if;
+END;
+
+DROP PROCEDURE sp_tbl_forms_getforms;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_forms_getforms`()
+BEGIN
+	SELECT t1.form_id, t1.form_category_id, t2.form_category,
+	t1.form_type_id, t3.form_type, t1.form_name, t1.form_url,
+	t1.form_order, t1.parent_menu FROM tbl_forms t1
+	INNER JOIN tbl_form_category t2 ON t2.form_category_id = t1.form_category_id
+	INNER JOIN tbl_form_type t3 ON t3.form_type_id = t1.form_type_id WHERE
+	t1.form_category_id != 1 ORDER BY t1.form_order;
+
+END;
+
+DROP PROCEDURE sp_tbl_user_group_getusergroupdetails;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_user_group_getusergroupdetails`()
+BEGIN
+	SELECT t1.user_group_id, t1.user_group_name, t1.form_category_id,
+	t1.form_ids, t1.is_active, (select count(*) from tbl_users u where user_group_id = u.user_group_id)as count,
+	FROM tbl_user_groups t1 ORDER BY t1.user_group_name;
+
+END;
+
+DROP PROCEDURE sp_tbl_form_category_get;
+DELIMITER $$
+CREATE PROCEDURE `sp_tbl_form_category_get`()
+BEGIN
+	SELECT form_category_id, form_category FROM form_category_id in (2, 3);
+END;
+-----------------------------------------------------------------------------------
 -- To get the list of groups with countries and number of legal entities
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_list`;
@@ -319,7 +400,7 @@ CREATE PROCEDURE `sp_client_groups_list`()
 BEGIN
     select client_id, group_name,
     (
-        select group_concat(country_name) from tbl_countries 
+        select group_concat(country_name) from tbl_countries
         where country_id in (
             select country_id from tbl_client_countries
             where client_id=client_id
@@ -346,7 +427,7 @@ CREATE PROCEDURE `sp_countries_for_user`(
 )
 BEGIN
     SELECT country_id, country_name, is_active
-    FROM tbl_countries 
+    FROM tbl_countries
     WHERE is_active=1 and country_id in (
         SELECT country_id FROM tbl_user_countries
         WHERE user_id = session_user
@@ -363,7 +444,7 @@ CREATE PROCEDURE `sp_domains_for_user`(
 )
 BEGIN
     SELECT domain_id, domain_name, is_active
-    FROM tbl_domains WHERE is_active=1 
+    FROM tbl_domains WHERE is_active=1
     and domain_id in (
         SELECT domain_id FROM tbl_user_domains
         WHERE user_id=session_user
@@ -403,10 +484,10 @@ DROP PROCEDURE IF EXISTS `sp_user_countries_techno`;
 DELIMITER $$
 CREATE PROCEDURE `sp_user_countries_techno`()
 BEGIN
-    SELECT t1.country_id, t1.user_id 
+    SELECT t1.country_id, t1.user_id
     FROM tbl_user_countries t1
     INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id
-    INNER JOIN tbl_user_groups t3 ON 
+    INNER JOIN tbl_user_groups t3 ON
     t2.user_group_id = t3.user_group_id
     AND t3.form_category_id = 3;
 END
@@ -419,7 +500,7 @@ DELIMITER $$
 CREATE PROCEDURE `sp_user_domains_techno`()
 BEGIN
     SELECT t1.domain_id, t1.user_id FROM tbl_user_domains t1
-    INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id 
+    INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id
     INNER JOIN tbl_user_groups t3 ON
     t2.user_group_id = t3.user_group_id AND t3.form_category_id = 3;
 END
@@ -454,7 +535,7 @@ BEGIN
         updated_by, updated_on
     ) VALUES
     (
-        groupid, countryid, businessgroupname, session_user, 
+        groupid, countryid, businessgroupname, session_user,
         current_time_stamp, session_user, current_time_stamp
     );
 END
@@ -564,8 +645,8 @@ CREATE PROCEDURE `sp_client_group_is_duplicate_groupname`(
     IN groupname VARCHAR(50), clientid INT(11)
 )
 BEGIN
-    IF clientid IS NULL THEN 
-        SELECT count(client_id) as count FROM tbl_client_groups 
+    IF clientid IS NULL THEN
+        SELECT count(client_id) as count FROM tbl_client_groups
         WHERE group_name=groupname;
     ELSE
         SELECT count(client_id) as count FROM tbl_client_groups
@@ -582,8 +663,8 @@ CREATE PROCEDURE `sp_businessgroup_is_duplicate_businessgroupname`(
     IN bg_name VARCHAR(50), bg_id INT(11), clientid INT(11)
 )
 BEGIN
-    IF bg_id IS NULL THEN 
-        SELECT count(business_group_id) as count FROM tbl_business_groups 
+    IF bg_id IS NULL THEN
+        SELECT count(business_group_id) as count FROM tbl_business_groups
         WHERE business_group_name=bg_name and client_id=clientid;
     ELSE
         SELECT count(business_group_id) as count FROM tbl_business_groups
@@ -601,7 +682,7 @@ CREATE PROCEDURE `sp_legalentity_is_duplicate_legalentityname`(
     IN le_name VARCHAR(50), le_id INT(11), clientid INT(11)
 )
 BEGIN
-    IF le_id IS NULL THEN 
+    IF le_id IS NULL THEN
         SELECT count(legal_entity_id) as count FROM tbl_legal_entities
         WHERE legal_entity_name=le_name and client_id=clientid;
     ELSE
@@ -634,7 +715,7 @@ CREATE PROCEDURE `sp_legal_entity_details_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, country_id, business_group_id, 
+    SELECT legal_entity_id, country_id, business_group_id,
     (
         SELECT business_group_name FROM tbl_business_groups tbg
         WHERE tbg.business_group_id=tle.business_group_id
@@ -684,7 +765,7 @@ BEGIN
 END
 
 -- --------------------------------------------------------------------------------
--- Get Organizations of Client 
+-- Get Organizations of Client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_le_d_industry_by_group_id`;
 DELIMITER $$
@@ -706,7 +787,7 @@ CREATE PROCEDURE `sp_client_groups_is_valid_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT count(client_id) as count FROM tbl_client_groups 
+    SELECT count(client_id) as count FROM tbl_client_groups
     WHERE client_id=clientid;
 END
 
@@ -788,7 +869,7 @@ CREATE PROCEDURE `sp_notifications_notify_incharge`(
     IN notification TEXT, url TEXT
 )
 BEGIN
-    INSERT INTO tbl_notifications 
+    INSERT INTO tbl_notifications
     (notification_text, link, created_on) VALUES
     (notification, url, now());
 END
@@ -801,7 +882,7 @@ DELIMITER $$
 CREATE PROCEDURE `sp_users_techno`()
 BEGIN
 	SELECT user_id, concat(employee_code,'-',employee_name) as e_name,
-	is_active FROM tbl_users 
+	is_active FROM tbl_users
 	WHERE user_group_id in (
 		select user_group_id from tbl_user_groups
 		where form_category_id = 3

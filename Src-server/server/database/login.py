@@ -5,6 +5,7 @@ from server.common import (
 )
 from server.constants import SESSION_CUTOFF
 from dateutil import relativedelta
+from server.database.general import get_user_form_ids
 
 __all__ = [
     "verify_login",
@@ -89,17 +90,17 @@ def add_session(
 
     return session_id
 
-def get_user_form_ids(db, user_id):
-    if user_id == 0:
-        return "1, 2, 3, 4"
-    q = "select t1.form_ids from tbl_user_groups t1 " + \
-        " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
-        " AND t2.user_id = %s"
-    row = db.select_one(q, [user_id])
-    if row:
-        return row[0]
-    else:
-        return None
+# def get_user_form_ids(db, user_id):
+#     if user_id == 0:
+#         return "1, 2, 3, 4"
+#     q = "select t1.form_ids from tbl_user_groups t1 " + \
+#         " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
+#         " AND t2.user_id = %s"
+#     row = db.select_one(q, [user_id])
+#     if row:
+#         return row[0]
+#     else:
+#         return None
 
 def verify_username(db, username, is_mobile=False):
     user_columns = ["user_id", "employee_name"]

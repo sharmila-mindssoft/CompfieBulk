@@ -96,35 +96,21 @@ def get_forms_list(db):
     for row in result_rows:
         parent_menu = None if (
             row["parent_menu"] == None) else row["parent_menu"]
+        form = core.Form(
+            form_id=row["form_id"],
+            form_name=row["form_name"],
+            form_url=row["form_url"],
+            parent_menu=parent_menu,
+            form_type=row["form_type"]
+        )
         if int(row["form_category_id"]) == 2:
-            form = core.Form(
-                form_id=row["form_id"],
-                form_name=row["form_name"],
-                form_url=row["form_url"],
-                parent_menu=parent_menu,
-                form_type=row["form_type"]
-            )
             knowledge_forms.append(form)
         elif int(row["form_category_id"]) == 3:
-            form = core.Form(
-                form_id=row["form_id"],
-                form_name=row["form_name"],
-                form_url=row["form_url"],
-                parent_menu=parent_menu,
-                form_type=row["form_type"]
-            )
             techno_forms.append(form)
-        else:
-            form = core.Form(
-                form_id=row["form_id"],
-                form_name=row["form_name"],
-                form_url=row["form_url"],
-                parent_menu=parent_menu,
-                form_type=row["form_type"]
-            )
-            knowledge_forms.append(form)
-            if form.form_name == "Audit Trail":
-                techno_forms.append(form)
+        # else:
+        #     knowledge_forms.append(form)
+        #     if form.form_name == "Audit Trail":
+        #         techno_forms.append(form)
 
     result = {}
     result[2] = process_user_menus(knowledge_forms)
