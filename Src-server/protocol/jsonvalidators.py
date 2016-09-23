@@ -1,4 +1,3 @@
-import datetime
 from collections import OrderedDict
 from protocol.api_keys_settings import api_params
 
@@ -354,6 +353,7 @@ def to_structure_dictionary_values(x):
     keys = x.keys()
     if len(keys) == 0:
         return {}
+    # print keys
     return parse_dictionary_values(x, keys)
 
 

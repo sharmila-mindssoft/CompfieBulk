@@ -359,7 +359,6 @@ CREATE TABLE `tbl_client_countries` (
 DROP TABLE IF EXISTS `tbl_client_domains`;
 CREATE TABLE `tbl_client_domains` (
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   PRIMARY KEY (`client_id`,`legal_entity_id`,`domain_id`),
   KEY `fk_tbl_domains_client_domains_id` (`domain_id`),
@@ -372,7 +371,6 @@ CREATE TABLE `tbl_client_domains` (
 DROP TABLE IF EXISTS `tbl_user_clients`;
 CREATE TABLE `tbl_user_clients` (
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`client_id`,`user_id`,`legal_entity_id`),
   KEY `fk_tbl_users_id` (`user_id`),
@@ -381,7 +379,6 @@ CREATE TABLE `tbl_user_clients` (
   CONSTRAINT `fk_tbl_client_groups_user_clients_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_users_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
@@ -428,7 +425,6 @@ CREATE TABLE `tbl_legal_entities` (
   `contract_to` date DEFAULT NULL,
   `logo` varchar(200) DEFAULT NULL,
   `file_space_limit` float DEFAULT '0',
-  `used_space` float DEFAULT '0',
   `total_licence` int(11) DEFAULT '0',
   `sms_subscription` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
@@ -459,12 +455,10 @@ CREATE TABLE `tbl_legal_entity_domain_industry` (
   KEY `fk_tbl_le` (`legal_entity_id`),
   KEY `fk_tbl_domain` (`domain_id`),
   KEY `fk_tbl_industry` (`industry_id`),
-  CONSTRAINT `fk_tbl_legal_entity_domain_industry_3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_legal_entity_domain_industry_1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_legal_entity_domain_industry_2` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_legal_entity_domain_industry_4` FOREIGN KEY (`industry_id`) REFERENCES `tbl_industries` (`industry_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
@@ -568,15 +562,14 @@ DROP TABLE IF EXISTS `tbl_client_users`;
 CREATE TABLE `tbl_client_users` (
   `client_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
-  `seating_unit_id` int(11) DEFAULT NULL,
+  `seating_unit_id` int(11) NULL DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
   `employee_name` varchar(50) NOT NULL,
-  `employee_code` varchar(50) DEFAULT NULL,
-  `contact_no` varchar(20) DEFAULT NULL,
+  `employee_code` varchar(50) NULL DEFAULT NULL,
+  `contact_no` varchar(20) NULL DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
-  `is_primary_admin` tinyint(1) NOT NULL DEFAULT '0',
+  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
+  `is_primary_admin` tinyint(1) NOT NULL DEFAULT 0,
   `is_active` tinyint(1) NOT NULL,
   KEY `fk_tbl_client_users_cg` (`client_id`),
   CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)

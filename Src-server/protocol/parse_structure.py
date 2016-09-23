@@ -33,7 +33,6 @@ def parse_structure_VectorType_RecordType_clientreport_User(data):
         lst.append(parse_structure_RecordType_clientreport_User(item))
     return lst
 
-
 def parse_structure_VectorType_RecordType_clientreport_UnitName(data):
     data = parse_list(data, 0)
     lst = []
@@ -41,14 +40,12 @@ def parse_structure_VectorType_RecordType_clientreport_UnitName(data):
         lst.append(parse_structure_RecordType_clientreport_UnitName(item))
     return lst
 
-
 def parse_structure_VectorType_RecordType_general_Notification(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(parse_structure_RecordType_general_Notification(item))
     return lst
-
 
 def parse_structure_VectorType_RecordType_general_User(data):
     data = parse_list(data, 0)
@@ -1749,20 +1746,11 @@ def parse_structure_RecordType_core_GeographyWithMapping(data):
     from protocol import core
     return core.GeographyWithMapping.parse_structure(data)
 
-
 # Client Business Group
+
 def parse_structure_RecordType_core_ClientBusinessGroup(data):
     from protocol import core
     return core.ClientBusinessGroup.parse_structure(data)
-
-
-def parse_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
-    if data is None:
-        return data
-    else:
-        from protocol import core
-        return core.ClientBusinessGroup.parse_structure(data)
-
 
 def parse_structure_VectorType_RecordType_core_ClientBusinessGroup(data):
     data = parse_list(data, 0)
@@ -2286,19 +2274,13 @@ def parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(dat
     return d
 
 
-def return_import(module, class_name):
-    mod = __import__('protocol.'+module, fromlist=[class_name])
-    klass = getattr(mod, class_name)
-    return klass
-
-
-def parse_structure_RecordType(module, class_name, data):
-    klass = return_import(module, class_name)
-    return klass.parse_structure(data)
+def parse_structure_RecordType(module, klass, data):
+    from protocol import module
+    return module.klass.parse_structure(data)
 
 
 def parse_structure_VectorType_RecordType_core_ClientGroup(data):
-    return parse_structure_VectorType(
+    parse_structure_VectorType(
         data, parse_structure_RecordType_core_ClientGroup)
 
 
@@ -2309,8 +2291,8 @@ def parse_structure_RecordType_core_ClientGroup(data):
 
 
 def parse_structure_VectorType_RecordType_core_LegalEntityDetails(data):
-    return parse_structure_VectorType(
-        data, parse_structure_RecordType_core_LegalEntityDetails)
+    parse_structure_VectorType(
+        data, parse_structure_RecordType_core_ClientGroup)
 
 
 def parse_structure_RecordType_core_LegalEntityDetails(data):
@@ -2320,7 +2302,7 @@ def parse_structure_RecordType_core_LegalEntityDetails(data):
 
 
 def parse_structure_VectorType_RecordType_core_EntityDomainDetails(data):
-    return parse_structure_VectorType(
+    parse_structure_VectorType(
         data, parse_structure_RecordType_core_EntityDomainDetails)
 
 
