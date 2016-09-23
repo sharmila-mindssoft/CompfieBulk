@@ -1029,6 +1029,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getEditClientGroupFormData(callback) {
+    callerName = 'techno';
+    var request = [
+      'GetEditClientGroupFormData',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
   // Change Password APIs
   function changePassword(currentPassword, newPassword, callback) {
     callerName = 'login';
