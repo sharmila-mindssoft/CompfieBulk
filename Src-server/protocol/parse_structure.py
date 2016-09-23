@@ -92,25 +92,40 @@ def parse_structure_VectorType_RecordType_clientreport_UserName(data):
         lst.append(parse_structure_RecordType_clientreport_UserName(item))
     return lst
 
+
 def parse_structure_OptionalType_VectorType_SignedIntegerType_8(data):
-    if data is None: return data
+    if data is None:
+        return data
     return parse_structure_VectorType_SignedIntegerType_8(data)
 
+
 def parse_structure_OptionalType_CustomTextType_50(data):
-    if data is None: return data
+    if data is None:
+        return data
     return parse_structure_CustomTextType_50(data)
+
 
 def parse_structure_VariantType_knowledgemaster_Request(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.parse_structure(data)
 
+
+def parse_structure_VariantType_clientcoordinationmaster_Request(data):
+    from protocol import clientcoordinationmaster
+    return clientcoordinationmaster.Request.parse_structure(data)
+
+
 def parse_structure_OptionalType_SignedIntegerType_8(data):
-    if data is None: return data
+    if data is None:
+        return data
     return parse_structure_SignedIntegerType_8(data)
 
+
 def parse_structure_OptionalType_UnsignedIntegerType_32(data):
-    if data is None: return None
+    if data is None:
+        return None
     return parse_structure_UnsignedIntegerType_32(data)
+
 
 def parse_structure_RecordType_clientreport_ReassignHistory(data):
     from protocol import clientreport

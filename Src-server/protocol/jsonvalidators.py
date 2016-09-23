@@ -13,7 +13,10 @@ __all__ = [
     "parse_static_list",
     "parse_dictionary",
     "parse_enum",
-    "parse_date"
+    "parse_date",
+    "parse_VariantType",
+    "to_VariantType",
+    "to_dictionary_values"
 ]
 
 
@@ -305,9 +308,31 @@ def parse_dictionary_values(x, field_names=[]):
                 val = parse_optional_int_list(
                     val, int_length=param.get('length'))
 
+        elif param.get('type') == 'vector_type':
+            assert param.get('module_name') is None
+            assert param.get('class_name') is None
+            val = parse_VectorType()
+
         if val is not None and param.get('validation_method') is not None:
                 val = param.get('validation_method')(val)
     return x
+
+
+def to_dictionary_values(data):
+    result = {}
+    for key in data:
+        value = data[key]
+        param = api_params.get(key)
+        print "param: %s" % param
+        print "type: %s" % param.get('type')
+        if param.get('type') == 'vector_type':
+            assert param.get('module_name') is None
+            assert param.get('class_name') is None
+            value = to_VectorType(
+                param.get('module_name'), param.get('class_name'), value
+            )
+            result[key] = value
+    return result
 
 
 def parse_vector_type_record_type(value):
@@ -330,3 +355,49 @@ def to_structure_dictionary_values(x):
     if len(keys) == 0:
         return {}
     return parse_dictionary_values(x, keys)
+
+
+def return_import(module, class_name):
+    mod = __import__('protocol.'+module, fromlist=[class_name])
+    klass = getattr(mod, class_name)
+    return klass
+
+
+def parse_VariantType(data, module_name, class_name):
+    klass = return_import(module_name, class_name)
+    return klass.parse_structure(data)
+
+
+def to_VariantType(data, module_name, class_name):
+    klass = return_import(module_name, class_name)
+    return klass.to_structure(data)
+
+
+def parse_RecordType(module_name, class_name, data):
+    klass = return_import(module_name, class_name)
+    return klass.parse_structure(data)
+
+
+def to_RecordType(module_name, class_name, data):
+    klass = return_import(module_name, class_name)
+    return klass.to_structure(data)
+
+
+def parse_VectorType(module_name, class_name, data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(
+            parse_RecordType(module_name, class_name, item)
+        )
+    return lst
+
+
+def to_VectorType(module_name, class_name, data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(
+            to_RecordType(module_name, class_name, item)
+        )
+    return lst

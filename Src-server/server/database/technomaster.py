@@ -414,6 +414,7 @@ def get_legal_entity_ids_by_name(db, legal_entity_names):
 #   returns True
 ##########################################################################
 def save_client_domains(db, client_id, request, legal_entity_name_id_map):
+    print legal_entity_name_id_map
     db.call_update_proc(
         "sp_client_domains_delete", (client_id, )
     )

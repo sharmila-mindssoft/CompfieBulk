@@ -1500,6 +1500,14 @@ function initMirror() {
       }
     });
   }
+  function getClientUnitApprovalList(callback){
+    callerName = 'client_coordination_master';
+    var request = [
+      'GetClientUnitApprovalList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
 
   return {
     log: log,
@@ -1636,7 +1644,8 @@ function initMirror() {
     getLegalEntityRow: getLegalEntityRow,
     getDomainRow: getDomainRow,
     getEditClientGroupFormData: getEditClientGroupFormData,
-    getLegalEntityUpdateRow: getLegalEntityUpdateRow
+    getLegalEntityUpdateRow: getLegalEntityUpdateRow,
+    getClientUnitApprovalList: getClientUnitApprovalList
   };
 }
 var mirror = initMirror();
