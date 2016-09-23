@@ -37,7 +37,9 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_250,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_CustomTextType_50,
-    parse_structure_VectorType_RecordType_core_ClientGroup
+    parse_structure_VectorType_RecordType_core_ClientGroup,
+    parse_structure_VectorType_RecordType_core_LegalEntityDetails,
+    parse_structure_VectorType_RecordType_core_Industries
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -81,7 +83,9 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation,
-    to_structure_VectorType_RecordType_core_ClientGroup
+    to_structure_VectorType_RecordType_core_ClientGroup,
+    to_structure_VectorType_RecordType_core_LegalEntityDetails,
+    to_structure_VectorType_RecordType_core_Industries
 )
 
 
@@ -928,7 +932,43 @@ class UnitDetails(object):
 
 class GetClientGroupFormDataSuccess(Response):
     def __init__(
-        self, countries,  business_groups, users, domains, industries
+        self, countries, users, domains, industries
+    ):
+        self.countries = countries
+        self.users = users
+        self.domains = domains
+        self.industries = industries
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "users", "domains", "industries"
+        ])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        users = data.get("users")
+        users = parse_structure_VectorType_RecordType_core_ClientInchargePersons(users)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        industries = data.get("industries")
+        industries = parse_structure_VectorType_RecordType_core_Industries(industries)
+        return GetClientGroupFormDataSuccess(
+            countries, users, domains, industries
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "industries": to_structure_VectorType_RecordType_core_Industries(self.industries)
+        }
+
+
+class GetEditClientGroupFormDataSuccess(Response):
+    def __init__(
+        self, countries,  business_groups, users, domains, industries,
+        group_name, user_name, legal_entities, date_configurations
     ):
         self.countries = countries
         self.business_groups = business_groups
@@ -951,9 +991,18 @@ class GetClientGroupFormDataSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         industries = data.get("industries")
-        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
-        return GetClientGroupFormDataSuccess(
-            countries, business_groups,  users, domains, industries
+        industries = parse_structure_VectorType_RecordType_core_Industries(industries)
+        group_name = data.get("g_name")
+        group_name = parse_structure_CustomTextType_50(group_name)
+        user_name = data.get("u_name")
+        user_name = parse_structure_CustomTextType_100(user_name)
+        legal_entities = data.get("les")
+        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        date_configurations = data.get("d_cs")
+        date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+        return GetEditClientGroupFormDataSuccess(
+            countries, business_groups,  users, domains, industries,
+            group_name, user_name, legal_entities, date_configurations
         )
 
     def to_inner_structure(self):
@@ -962,7 +1011,11 @@ class GetClientGroupFormDataSuccess(Response):
             "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries)
+            "industries": to_structure_VectorType_RecordType_core_Industries(self.industries),
+            "group_name": to_structure_CustomTextType_50(self.group_name),
+            "user_name": to_structure_CustomTextType_100(self.user_name),
+            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
+            "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
         }
 
 

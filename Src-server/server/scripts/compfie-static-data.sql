@@ -48,6 +48,7 @@ INSERT INTO tbl_forms VALUES(25, 3, 3, 'Statutory Notifications List', '/knowled
 -- common
 INSERT INTO tbl_forms VALUES(26, 1, 3, 'Audit Trail', '/knowledge/audit-trail', 26, null);
 INSERT INTO tbl_forms VALUES(27, 1, 1, 'Validity Date Settings', '/knowledge/validity-date-settings', 27, null);
+INSERT INTO tbl_forms VALUES(28, 3, 1, 'Client Unit Approval', '/knowledge/client-unit-approval', 28, null);
 
 -- tbl_admin
 -- username, password -- 123456

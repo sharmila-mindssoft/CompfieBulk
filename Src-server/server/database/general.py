@@ -236,12 +236,8 @@ def get_user_forms(db, form_ids):
     return rows
 
 def get_admin_forms(db):
-    columns = [
-        "form_id", "form_name", "form_url", "form_order",
-        "parent_menu", "form_category", "form_type"
-    ]
     procedure = 'sp_tbl_forms_getadminforms'
-    result = db.call_proc(procedure, None, columns)
+    result = db.call_proc(procedure, None)
     return result
 
 
@@ -251,20 +247,18 @@ def get_admin_forms(db):
 
 
 def get_user_form_ids(db, user_id):
+    result = []
+    procedure = "sp_tbl_forms_getuserformids"
+    result = db.call_proc(procedure, [user_id])
+    print result
     if user_id == 0:
-        q = "select form_id from tbl_forms where form_category_id = 1"
-        rows = db.select_all(q)
         f_ids = []
-        for r in rows :
-            f_ids.append(str(r[0]))
+        for r in result :
+            f_ids.append(str(r["form_id"]))
         return ','.join(f_ids)
     else :
-        q = "select t1.form_ids from tbl_user_groups t1 " + \
-            " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
-            " AND t2.user_id = %s"
-        row = db.select_one(q, [user_id])
-        if row:
-            return row[0]
+        if result:
+            return result[0]["form_id"]
         else:
             return None
 
@@ -403,22 +397,14 @@ def get_approval_status(db, approval_id=None):
 #
 #   Audit Trail
 #
-def return_forms(db, form_ids=None):
-    columns = "form_id, form_name"
-    condition = " form_id != 26 "
-    condition_val = None
-    if form_ids is not None:
-        condition += " AND "
-        form_ids_list = [int(x) for x in form_ids.split(",")]
-        condition, condition_val = db.generate_tuple_condition(
-            "form_id", form_ids_list)
-    forms = db.get_data(tblForms, columns, condition, [condition_val])
-    results = []
-    for form in forms:
-        results.append(
-            general.AuditTrailForm(form["form_id"], form["form_name"])
+def return_forms(forms):
+    result = []
+    for f in forms :
+        result.append(
+            general.AuditTrailForm(f["form_id"], f["form_name"])
         )
-    return results
+
+    return result
 
 
 def get_users(db, condition="1", condition_val=None):
@@ -427,72 +413,45 @@ def get_users(db, condition="1", condition_val=None):
     return rows
 
 
-def return_users(db, condition="1", condition_val=None):
-    user_rows = get_users(db, condition, condition_val)
-    results = []
-    for user in user_rows:
-        employee_name = "%s - %s" % (
-            user["employee_code"], user["employee_name"]
+def return_users(users):
+    result = []
+    for u in users :
+        employee_name = "%s - %s" % (u["employee_code"], u["employee_name"])
+        result.append(
+            core.User(
+                u["user_id"], employee_name, bool(u["is_active"])
+            )
         )
-        results.append(core.User(
-            user["user_id"], employee_name, bool(user["is_active"])
-        ))
-    return results
+    return result
 
 
 def get_audit_trails(
     db, session_user, from_count, to_count,
     from_date, to_date, user_id, form_id
 ):
-    form_column = ["form_id"]
-    form_condition = "form_type_id != 3"
-    rows = db.get_data(
-        tblForms, form_column, form_condition
-    )
-    forms = None
-    form_ids = [int(row["form_id"]) for row in rows]
-    forms = return_forms(
-        db, ",".join(str(x) for x in form_ids)
-    )
-
-    query = " SELECT user_id from tbl_users where user_group_id = ( " + \
-        " SELECT user_group_id from tbl_users where user_id = %s ) "
-    rows = db.select_all(query, [session_user])
-    result = convert_to_dict(rows, ["user_id"])
-    user_ids = []
-    for row in result:
-        user_ids.append(row["user_id"])
-    condition, condition_val = db.generate_tuple_condition("user_id", user_ids)
-    users = return_users(db, condition, [condition_val])
-
+    if user_id is None:
+        user_id = '%'
+    if form_id is None :
+        form_id = '%'
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
-    where_qry = "1"
-    where_qry_val = []
-    if from_date is not None and to_date is not None:
-        where_qry += " AND  date(created_on) between %s AND %s "
-        where_qry_val.extend([from_date, to_date])
-    if user_id is not None:
-        where_qry += " AND user_id = %s "
-        where_qry_val.append(user_id)
-    if form_id is not None:
-        where_qry += " AND form_id = %s "
-        where_qry_val.append(form_id)
-    columns = "user_id, form_id, action, created_on"
-    where_qry += " AND %s " % (condition)
-    where_qry_val.append(condition_val)
-    where_qry += " ORDER BY created_on DESC"
+    args = [from_date, to_date, user_id, form_id, from_count, to_count]
+    expected_result = 4
+    result = db.call_proc_with_multiresult_set('sp_get_audit_trails', args, expected_result)
+    '''
+        'sp_get_audit_trails' this procedure will return four result-set which are Forms, Users, Activity_log_data and Activity_log total
+    '''
 
-    c_rows = db.get_data(tblActivityLog, "count(0) as total", where_qry, where_qry_val)
-    c_total = 0
-    for c in c_rows :
-        c_total = c["total"]
+    forms = return_forms(result[0])
+    users = return_users(result[1])
+    activity_log = result[2]
+    total = result[3]
 
-    where_qry += " LIMIT %s, %s"
-    where_qry_val.extend([from_count, to_count])
-    rows = db.get_data(tblActivityLog, columns, where_qry, where_qry_val)
+    assert len(total) > 0
+    c_total = total[0]["total"]
+
     audit_trail_details = []
-    for row in rows:
+    for row in activity_log:
         user_id = row["user_id"]
         form_id = row["form_id"]
         action = row["action"]

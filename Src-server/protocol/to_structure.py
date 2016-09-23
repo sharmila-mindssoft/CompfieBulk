@@ -99,6 +99,10 @@ def to_structure_VariantType_knowledgemaster_Request(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.to_structure(data)
 
+def to_structure_VariantType_clientcoordinationmaster_Request(data):
+    from protocol import clientcoordinationmaster
+    return clientcoordinationmaster.Request.to_structure(data)
+
 def to_structure_OptionalType_SignedIntegerType_8(data):
     if data is None: return data
     return to_structure_SignedIntegerType_8(data)
@@ -2369,6 +2373,10 @@ def to_structure_VectorType_RecordType_core_LegalEntityDetails(data):
 
 def to_structure_VectorType_RecordType_core_EntityDomainDetails(data):
     return to_structure_VectorType("core", "EntityDomainDetails", data)
+
+
+def to_structure_VectorType_RecordType_core_Industries(data):
+    return to_structure_VectorType("core", "Industries", data)
 
 
 def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):

@@ -26,8 +26,10 @@ from server.database.technomaster import *
 
 __all__ = [
     "get_client_groups",
-    "save_client_group_data",
-    "update_client_group",
+    "get_client_group_form_data",
+    "process_save_client_group",
+    "get_edit_client_group_form_data"
+    "process_update_client_group",
     "change_client_group_status",
     "save_client",
     "update_client",
@@ -35,8 +37,7 @@ __all__ = [
     "change_client_status",
     "reactivate_unit",
     "get_client_profile",
-    "create_new_admin",
-    "get_client_group_form_data"
+    "create_new_admin"
 ]
 
 #
@@ -58,10 +59,9 @@ def get_client_groups(db, request, session_user):
 # To Get data to populate client group form
 ########################################################
 def get_client_group_form_data(db, request, session_user):
-    countries = get_active_countries(db)
-    business_groups = None
+    countries = get_user_countries(db, session_user)
     users = get_techno_users(db)
-    domains = get_active_domains(db)
+    domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     return technomasters.GetClientGroupFormDataSuccess(
         countries=countries, business_groups=business_groups,
@@ -95,47 +95,47 @@ def save_client_group(db, request, session_user):
     elif not is_logo_in_image_format(request.logo):
         return technomasters.NotAnImageFile()
     else:
-        try:
-            country_ids = ",".join(str(x) for x in request.country_ids)
-            domain_ids = ",".join(str(x) for x in request.domain_ids)
-            short_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.short_name)
-            short_name = short_name.replace(" ", "")
-            client_id = save_client_group_data(
-                db, request, session_user
-            )
-            create_db = ClientDBCreate(
-                db, client_id, short_name, request.email_id,
-                country_ids, domain_ids
-            )
-            is_db_created = create_db.begin_process()
-            logger.logGroup("save_client_group", "db process end")
-            save_date_configurations(
-                db, client_id, request.date_configurations,
-                session_user
-            )
-            save_client_countries(db, client_id, request.country_ids)
-            logger.logGroup("save_client_group", "countries saved")
-            save_client_domains(db, client_id, request.domain_ids)
-            logger.logGroup("save_client_group", "domains saved")
-            save_incharge_persons(db, request, client_id)
-            logger.logGroup("save_client_group", "incharge saved")
-            save_client_user(db, request, session_user, client_id)
-            logger.logGroup("save_client_group", "client user saved")
-            notify_incharge_persons(db, request)
-            logger.logGroup("save_client_group", "notified")
-            if is_db_created[0] is True:
-                send_client_credentials_thread = threading.Thread(
-                    target=send_client_credentials, args=[
-                        request.short_name, request.email_id, is_db_created[1]
-                    ]
-                )
-                send_client_credentials_thread.start()
-                return technomasters.SaveClientGroupSuccess()
-        except Exception, e:
-            print e
-            create_db.delete_database()
-            print "Exception client_db_delete_database", str(e)
-            raise Exception(str(e))
+        group_id = save_client_group(
+            db, request.group_name, request.user_name
+        )
+        legal_entity_names = save_legal_entities(
+            db, request, group_id, session_user)
+        country_ids = save_date_configurations(
+            db, group_id, request.date_configurations, session_user
+        )
+        legal_entity_id_name_map = get_legal_entity_ids_by_name(
+            db, legal_entity_names
+        )
+        save_client_user(db, group_id, request.user_name)
+        save_client_countries(db, group_id, country_ids)
+        save_client_domains(db, group_id, request, legal_entity_id_name_map)
+        save_incharge_persons(db, group_id, request, legal_entity_id_name_map)
+        save_organization(
+            db, group_id, request, legal_entity_id_name_map, session_user
+        )
+        return technomasters.SaveClientGroupSuccess()
+
+
+########################################################
+# To Get data to populate client group form
+########################################################
+def get_edit_client_group_form_data(db, request, session_user):
+    countries = get_user_countries(db, session_user)
+    business_groups = get_client_business_groups(db, request.group_id)
+    users = get_techno_users(db)
+    domains = get_user_domains(db, session_user)
+    industries = get_active_industries(db)
+    group_id = request.group_id
+    (
+        group_name, user_name, legal_entities, date_configuration_list
+    ) = get_client_details(db, group_id)
+    return technomasters.GetEditClientGroupFormDataSuccess(
+        countries=countries, users=users, domains=domains,
+        business_groups=business_groups,
+        industries=industries, group_name=group_name,
+        user_name=user_name, legal_entities=legal_entities,
+        date_configurations=date_configuration_list
+    )
 
 
 ########################################################

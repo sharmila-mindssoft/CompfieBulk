@@ -640,9 +640,8 @@ def update_user_status(db, user_id, is_active):
 # Return Type : List of Object of Country
 #####################################################################
 def get_mapped_countries(db):
-    columns = ["country_id", "country_name", "is_active"]
     result = db.call_proc(
-        "sp_country_mapped_list", None, columns
+        "sp_country_mapped_list", None
     )
     return return_countries(result)
 
@@ -653,9 +652,8 @@ def get_mapped_countries(db):
 # Return Type : List of Object of Domain
 #####################################################################
 def get_mapped_domains(db):
-    columns = ["domain_id", "domain_name", "is_active"]
     result = db.call_proc(
-        "sp_domain_mapped_list", None, columns
+        "sp_domain_mapped_list", None
     )
     return return_domains(result)
 
@@ -666,12 +664,8 @@ def get_mapped_domains(db):
 # Return Type : List of Object of ValidityDates
 #####################################################################
 def get_validity_dates(db):
-    columns = [
-        "validity_days_id", "country_id", "domain_id",
-        "validity_days"
-    ]
     result = db.call_proc(
-        "sp_validitydays_settings_list", None, columns
+        "sp_validitydays_settings_list", None
     )
     return return_validity_days(result)
 
@@ -687,7 +681,7 @@ def return_validity_days(data):
         fn(
             datum["validity_days_id"],
             datum["country_id"], datum["domain_id"],
-            datum["validity_days"]
+            datum["days"]
         ) for datum in data
     ]
     return validity_date_list
@@ -699,9 +693,8 @@ def return_validity_days(data):
 # Return Type : Dict (key: country id, value: list of domain ids)
 #####################################################################
 def get_country_domain_mappings(db):
-    columns = ["country_id", "domain_id"]
     result = db.call_proc(
-        "sp_statutorylevels_mappings", None, columns
+        "sp_statutorylevels_mappings", None
     )
     return return_country_domain_mappings(result)
 
@@ -735,10 +728,10 @@ def save_validity_date_settings(db, data, session_user):
         country_id = datum.country_id
         domain_id = datum.domain_id
         validity_days = datum.validity_days
-        db.call_proc(
+        db.call_insert_proc(
             "sp_validitydays_settings_save", (
                 validity_days_id, country_id, domain_id, validity_days,
                 session_user, current_time_stamp, session_user,
                 current_time_stamp
-            ), None
+            )
         )

@@ -1,4 +1,3 @@
-import datetime
 from collections import OrderedDict
 from protocol.api_keys_settings import api_params
 
@@ -13,7 +12,10 @@ __all__ = [
     "parse_static_list",
     "parse_dictionary",
     "parse_enum",
-    "parse_date"
+    "parse_date",
+    "parse_VariantType",
+    "to_VariantType",
+    "to_dictionary_values"
 ]
 
 
@@ -92,10 +94,10 @@ def parse_string(x):
         raise expectation_error("a string", x)
 
 
-def parse_optional_string(x, length):
+def parse_optional_string(x):
     if x is None:
         return None
-    return parse_string(x, length)
+    return parse_string(x)
 
 
 def parse_custom_string(x, length):
@@ -258,24 +260,23 @@ def parse_dictionary_values(x, field_names=[]):
         if param is None:
             val = parse_vector_type_record_type(val)
             continue
-
         if param.get('type') == 'string':
             assert param.get('length') is not None
             assert param.get('validation_method') is not None
-            if param.get('optional') is False:
+            if param.get('is_optional') is False:
                 val = parse_custom_string(val, param.get('length'))
             else:
                 val = parse_optional_custom_string(val, param.get('length'))
 
         if param.get('type') == 'text':
-            if param.get('optional') is False:
+            if param.get('is_optional') is False:
                 val = parse_string(val)
             else:
                 val = parse_optional_string(val)
 
         elif param.get('type') == 'int':
             assert param.get('length') is not None
-            if param.get('optional') is False:
+            if param.get('is_optional') is False:
                 val = parse_number(val, 0, param.get('length'))
             else:
                 val = parse_optional_number(val, 0, param.get('length'))
@@ -283,7 +284,7 @@ def parse_dictionary_values(x, field_names=[]):
         elif param.get('type') == 'bool':
             assert param.get('length') is None
             assert param.get('validation_method') is None
-            if param.get('optional') is False:
+            if param.get('is_optional') is False:
                 val = parse_bool(val)
             else:
                 val = parse_optional_bool(val)
@@ -291,7 +292,7 @@ def parse_dictionary_values(x, field_names=[]):
         elif param.get('type') == 'vector_type_string':
             # list_of_string by default support optional
             assert param.get('validation_method') is None
-            if param.get('optional') is False:
+            if param.get('is_optional') is False:
                 val = parse_string_list(val, string_length=param.get('length'))
             else:
                 val = parse_optional_string_list(
@@ -300,20 +301,42 @@ def parse_dictionary_values(x, field_names=[]):
         elif param.get('type') == 'vector_type_int':
             # list_of_int by default support optional
             assert param.get('validation_method') is None
-            if param.get('optional') is False:
+            if param.get('is_optional') is False:
                 val = parse_int_list(val, int_length=param.get('length'))
             else:
                 val = parse_optional_int_list(
                     val, int_length=param.get('length'))
+
+        elif param.get('type') == 'vector_type':
+            assert param.get('module_name') is None
+            assert param.get('class_name') is None
+            val = parse_VectorType()
 
         if val is not None and param.get('validation_method') is not None:
                 val = param.get('validation_method')(val)
     return x
 
 
+def to_dictionary_values(data):
+    result = {}
+    for key in data:
+        value = data[key]
+        param = api_params.get(key)
+        print "param: %s" % param
+        print "type: %s" % param.get('type')
+        if param.get('type') == 'vector_type':
+            assert param.get('module_name') is None
+            assert param.get('class_name') is None
+            value = to_VectorType(
+                param.get('module_name'), param.get('class_name'), value
+            )
+            result[key] = value
+    return result
+
+
 def parse_vector_type_record_type(value):
-    if type(value) is list :
-        if len(value) == 0 :
+    if type(value) is list:
+        if len(value) == 0:
             return value
 
         if type(value[0]) is dict:
@@ -332,3 +355,49 @@ def to_structure_dictionary_values(x):
         return {}
     # print keys
     return parse_dictionary_values(x, keys)
+
+
+def return_import(module, class_name):
+    mod = __import__('protocol.'+module, fromlist=[class_name])
+    klass = getattr(mod, class_name)
+    return klass
+
+
+def parse_VariantType(data, module_name, class_name):
+    klass = return_import(module_name, class_name)
+    return klass.parse_structure(data)
+
+
+def to_VariantType(data, module_name, class_name):
+    klass = return_import(module_name, class_name)
+    return klass.to_structure(data)
+
+
+def parse_RecordType(module_name, class_name, data):
+    klass = return_import(module_name, class_name)
+    return klass.parse_structure(data)
+
+
+def to_RecordType(module_name, class_name, data):
+    klass = return_import(module_name, class_name)
+    return klass.to_structure(data)
+
+
+def parse_VectorType(module_name, class_name, data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(
+            parse_RecordType(module_name, class_name, item)
+        )
+    return lst
+
+
+def to_VectorType(module_name, class_name, data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(
+            to_RecordType(module_name, class_name, item)
+        )
+    return lst

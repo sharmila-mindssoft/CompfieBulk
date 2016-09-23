@@ -31,9 +31,9 @@ var message = {
   'username_required': 'Username Required',
   'forgotpassword_success': 'Password reset link has been sent to your email Id',
   'nouser_exists': 'No such user exists',
-  'industryname_required': 'Industry Name Required',
-  'industryname_exists': 'Industry Name Already Exists',
-  'invalid_industryid': 'Invalid Industry Id',
+  'industryname_required': 'Organization Name Required',
+  'industryname_exists': 'Organization Name Already Exists',
+  'invalid_industryid': 'Invalid Organization Id',
   'levelone_title_required': 'Level one title required',
   'record_added': 'Record Added Successfully',
   'record_updated': 'Record Updated Successfully',
@@ -241,7 +241,18 @@ var message = {
   'no_of_units_required': 'No. of units required',
   'duplicate_industry': 'Organization already exists',
   'organization_required': 'Organization Required',
-  'duplicate_domain': 'Duplicate domain'
+  'duplicate_domain': 'Duplicate domain',
+  'organization_save_success': 'Organization Master Saved Successfully',
+  'organization_update_success': 'Organization Master Updated Successfully',
+  'organization_status_active_success': 'Organization Activated Successfully',
+  'organization_status_deactive_success': 'Organization Deactivated Successfully',
+  'statutoty_nature_save_success': 'Statutory Nature Master Saved Successfully',
+  'statutoty_nature_update_success': 'Statutory Nature Master Updated Successfully',
+  'statutoty_nature_status_active_success': 'Statutory Nature Activated Successfully',
+  'statutoty_nature_status_deactive_success': 'Statutory Nature Deactivated Successfully',
+  "client_save_success": "Client saved successfully",
+  "client_update_success": "Client updated successfully",
+  "client_change_status_success": "Changed the status of client successfully"
 };
 
 function clearMessage() {
