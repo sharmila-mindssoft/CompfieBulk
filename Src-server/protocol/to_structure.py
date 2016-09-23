@@ -99,6 +99,10 @@ def to_structure_VariantType_knowledgemaster_Request(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.to_structure(data)
 
+def to_structure_VariantType_clientcoordinationmaster_Request(data):
+    from protocol import clientcoordinationmaster
+    return clientcoordinationmaster.Request.to_structure(data)
+
 def to_structure_OptionalType_SignedIntegerType_8(data):
     if data is None: return data
     return to_structure_SignedIntegerType_8(data)
@@ -1066,13 +1070,6 @@ def to_structure_RecordType_core_BusinessGroup(data):
 def to_structure_RecordType_core_ClientBusinessGroup(data):
     from protocol import core
     return core.ClientBusinessGroup.to_structure(data)
-
-def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
-    if data is None:
-        return data
-    else:
-        from protocol import core
-        return core.ClientBusinessGroup.to_structure(data)
 
 def to_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
     from protocol import core

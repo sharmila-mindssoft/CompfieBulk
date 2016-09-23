@@ -13,7 +13,8 @@ from basics.ioloop import IOLoop
 from protocol import (
     admin, clientadminsettings,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
-    login, technomasters, technoreports, technotransactions
+    login, technomasters, technoreports, technotransactions,
+    clientcoordinationmaster
 )
 # from server.database import KnowledgeDatabase
 import controller
@@ -42,15 +43,15 @@ import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
-if IS_DEVELOPMENT :
+if IS_DEVELOPMENT:
     FILE_VERSION = time.time()
-else :
+else:
     FILE_VERSION = VERSION
+
 
 #
 # cors_handler
 #
-
 def cors_handler(request, response):
     response.set_header("Access-Control-Allow-Origin", "*")
     response.set_header("Access-Control-Allow-Headers", "Content-Type")
@@ -62,7 +63,6 @@ def cors_handler(request, response):
 #
 # api_request
 #
-
 def api_request(request_data_type):
     def wrapper(f):
         def wrapped(self, request, response):
@@ -73,10 +73,10 @@ def api_request(request_data_type):
         return wrapped
     return wrapper
 
+
 #
 # API
 #
-
 class API(object):
     def __init__(
         self, io_loop, db
@@ -92,11 +92,11 @@ class API(object):
 
         def on_session_timeout():
             self._db.begin()
-            try :
+            try:
                 self._db.clear_session(SESSION_CUTOFF)
                 self._db.commit()
                 on_return()
-            except Exception, e :
+            except Exception, e:
                 print e
                 self._db.rollback()
 
@@ -142,9 +142,9 @@ class API(object):
         response.set_default_header("Access-Control-Allow-Origin", "*")
         ip_address = str(request.remote_ip())
         self._ip_addess = ip_address
-        if request_data_type == "knowledgeformat" :
+        if request_data_type == "knowledgeformat":
             request_data = request
-        else :
+        else:
             request_data = self._parse_request(
                 request_data_type, request, response
             )
@@ -160,7 +160,7 @@ class API(object):
         try:
             self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
-            if response_data is None or type(response_data) is bool:
+            if response_data is None or type(response_data) is bool :
                 # print response_data
                 self._db.rollback()
             if type(response_data) != technomasters.ClientCreationFailed:
@@ -180,7 +180,7 @@ class API(object):
 
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
-            if str(e).find("expected a") is False :
+            if str(e).find("expected a") is False:
                 self._db.rollback()
             response.set_status(400)
             response.send(str(e))
@@ -194,14 +194,14 @@ class API(object):
         )
 
     @api_request(GetClientChanges)
-    def handle_client_list(self, request, db) :
+    def handle_client_list(self, request, db):
         return GetClientChangesSuccess(
             gen.get_client_replication_list(db)
         )
 
     @api_request(GetChanges)
     def handle_replication(self, request, db):
-        actual_count = gen.get_trail_id(db)
+        # actual_count = gen.get_trail_id(db)
         # print "actual_count ", actual_count
 
         client_id = request.client_id
@@ -209,7 +209,8 @@ class API(object):
         # print "received_count", received_count
         # if received_count > actual_count:
         #     return InvalidReceivedCount()
-        # print "replication client_id = %s, received_count = %s" % (client_id, received_count)
+        # print "replication client_id = %s, received_count = %s" % (
+        # client_id, received_count)
         res = GetChangesSuccess(
             gen.get_trail_log(db, client_id, received_count)
         )
@@ -223,7 +224,7 @@ class API(object):
         received_count = request.received_count
         actual_replica_count = request.actual_count
 
-        if received_count > actual_count :
+        if received_count > actual_count:
             return InvalidReceivedCount()
 
         res = GetChangesSuccess(
@@ -242,7 +243,7 @@ class API(object):
         received_count = request.received_count
         s = "%s, %s, %s " % (client_id, received_count, actual_count)
         logger.logKnowledge("info", "trail", s)
-        if actual_count >= received_count :
+        if actual_count >= received_count:
             gen.remove_trail_log(client_id, received_count)
         return GetDelReplicatedSuccess()
 
@@ -269,15 +270,15 @@ class API(object):
         return controller.process_general_request(request, db)
 
     @api_request(knowledgemaster.RequestFormat)
-    def handle_knowledge_master(self, request, db) :
+    def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
     @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_transaction(self, request, db) :
+    def handle_knowledge_transaction(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
 
     @api_request(knowledgereport.RequestFormat)
-    def handle_knowledge_report(self, request, db) :
+    def handle_knowledge_report(self, request, db):
         return controller.process_knowledge_report_request(request, db)
 
     @api_request(technotransactions.RequestFormat)
@@ -288,22 +289,27 @@ class API(object):
     def handle_techno_report(self, request, db):
         return controller.process_techno_report_request(request, db)
 
+    @api_request(clientcoordinationmaster.RequestFormat)
+    def handle_client_coordination_master(self, request, db):
+        return controller.process_client_coordination_master_request(
+            request, db)
+
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
         def validate_session_from_body(content):
             content_list = content.split("\r\n\r\n")
             session = content_list[-1].split("\r\n")[0]
             user_id = db.validate_session_token(str(session))
-            if user_id is None :
+            if user_id is None:
                 return False
-            else :
+            else:
                 return True
 
-        if (validate_session_from_body(request.body())) :
+        if (validate_session_from_body(request.body())):
             info = request.files()
             response_data = controller.process_uploaded_file(info, "knowledge")
             return response_data
-        else :
+        else:
             return login.InvalidSessionToken()
 
 template_loader = jinja2.FileSystemLoader(
@@ -311,8 +317,9 @@ template_loader = jinja2.FileSystemLoader(
 )
 template_env = jinja2.Environment(loader=template_loader)
 
-class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile, parameters) :
+
+class TemplateHandler(tornado.web.RequestHandler):
+    def initialize(self, path_desktop, path_mobile, parameters):
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
         self.__parameters = parameters
@@ -320,7 +327,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
     def set_path(self, url):
         if url.startswith("/"):
             new_url = "/knowledge" + url
-        else :
+        else:
             new_url = "/knowledge/" + url
         return new_url
 
@@ -330,35 +337,35 @@ class TemplateHandler(tornado.web.RequestHandler) :
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = self.set_path(url)
-            if node.tag == "script" :
+            if node.tag == "script":
                 new_url += "?v=%s" % (FILE_VERSION)
-            if node.tag == "img" :
+            if node.tag == "img":
                 new_url += "?v=%s" % (FILE_VERSION)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = self.set_path(url)
-                if node.tag == "link" :
+                if node.tag == "link":
                     new_url += "?v=%s" % (FILE_VERSION)
-            else :
+            else:
                 new_url = url
-                if node.tag == "link" :
+                if node.tag == "link":
                     new_url += "?v=%s" % (FILE_VERSION)
             node.set('href', new_url)
         data = etree.tostring(tree, method="html")
         return data
 
-    def get(self, url=None) :
+    def get(self, url=None):
         if url is not None:
             print "url:{}".format(url)
         path = self.__path_desktop
-        if self.__path_mobile is not None :
+        if self.__path_mobile is not None:
             useragent = self.request.headers.get("User-Agent")
             if useragent is None:
                 useragent = ""
             user_agent = parse(useragent)
-            if user_agent.is_mobile :
+            if user_agent.is_mobile:
                 path = self.__path_mobile
         mime_type, encoding = mimetypes.guess_type(path)
         self.set_header("Content-Type", mime_type)
@@ -374,24 +381,25 @@ class TemplateHandler(tornado.web.RequestHandler) :
         #     self.set_cookie("_xsrf", token)
         self.write(output)
 
+
 class TokenHandler(tornado.web.RedirectHandler):
     def initialize(self):
         pass
 
     def get(self):
         print "token handler called"
-        if not self.get_cookie("_xsrf") :
+        if not self.get_cookie("_xsrf"):
             print "not cookie"
             token = self.xsrf_token
             self.set_cookie("_xsrf", token)
             self.write(dict(xsrf=token))
-        else :
+        else:
             self.write(dict(xsrf=self.get_cookie('_xsrf')))
+
 
 #
 # run_server
 #
-
 def run_server(port):
     io_loop = IOLoop()
 
@@ -408,7 +416,7 @@ def run_server(port):
 
         # web_server.url("/", GET=handle_root)
 
-        for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS :
+        for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS:
             args = {
                 "path_desktop": path_desktop,
                 "path_mobile": path_mobile,
@@ -445,7 +453,11 @@ def run_server(port):
                 api.handle_techno_transaction
             ),
             ("/knowledge/api/techno_report", api.handle_techno_report),
-            ("/knowledge/api/files", api.handle_format_file)
+            ("/knowledge/api/files", api.handle_format_file),
+            (
+                "/knowledge/api/client_coordination_master",
+                api.handle_client_coordination_master
+            )
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

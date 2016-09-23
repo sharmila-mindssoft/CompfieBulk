@@ -156,9 +156,9 @@
                   <td width="10%" class="text-right">Incharge Person:&nbsp;</td>
                   <td width="15%">
                     <input type="hidden" id="users">
-                    <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly">
+                    <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly" onclick="showmenu('user');">
                     <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
-                      <ul id="ulist-user">
+                      <ul id="ulist-user" onmouseleave="hidemenu('user');">
                           
                       </ul>
                     </div>
@@ -166,7 +166,6 @@
                   <td width="10%" class="text-right">Upload Logo:</td>
                   <td width="20%">
                     <input type="file" id="upload-logo" class="input-box white-bg">
-                    <span ><img  id="upload-logo-img"  width="25" height="30"></span>
                   </td>
                   <td width="10%" class="text-right">File Space:</td>
                   <td width="20%">
@@ -183,7 +182,7 @@
                   <td width="10%" class="text-right">Contract From:&nbsp;</td>
                   <td width="15%"><input type="text" readonly="readonly" class="input-box white-bg contract-from" placeholder="Select Contract From"></td>
                   <td width="10%" class="text-right">Contract To:</td>
-                  <td width="20%"><input type="text" readonly="readonly" class="input-box white-bg contract-to" placeholder="Select Contract To"></td>
+                  <td width="20%"><input type="text" readonly="readonly" class="input-box white-bg contract-to" placeholder="Seelct Contract To"></td>
                   <td width="10%" class="text-right">Total Licence(s):</td>
                   <td width="20%"><input type="text" id="no-of-user-licence" class="input-box white-bg" placeholder="Enter No. of Licence"></td>
                 </tr>
@@ -323,9 +322,6 @@
             <td align="center"><img src="/images/icon-delete.png"/></td>
         </tr>
     </table>
-</div>
-<div class="user-list-drop-down">
-  <li></li>
 </div>
 <script type="text/javascript" src="/script/client-master/clientmaster-new.js"></script>
 {% endblock %}
