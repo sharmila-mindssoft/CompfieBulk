@@ -417,7 +417,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_form_category_get`()
 BEGIN
-	SELECT form_category_id, form_category FROM tbl_form_category in (2, 3);
+	SELECT form_category_id, form_category FROM tbl_form_category WHERE form_category_id in (2, 3);
 END //
 DELIMITER ;
 -----------------------------------------------------------------------------------
