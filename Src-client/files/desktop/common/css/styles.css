@@ -3440,3 +3440,10 @@ div.scrollable {
 .img-link{
 	cursor: pointer;
 }
+
+.unit-approval-table-title {
+    color: #333 !important;
+    font-size: 13px;
+    width: 100%;
+    padding-top: 20px;
+}

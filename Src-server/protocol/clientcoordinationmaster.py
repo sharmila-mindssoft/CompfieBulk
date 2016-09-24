@@ -51,8 +51,26 @@ class GetClientUnitApprovalList(Request):
         }
 
 
+class GetEntityApprovalList(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id"])
+        legal_entity_id = data["legal_entity_id"]
+        return GetEntityApprovalList(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id
+        }
+
+
 def _init_Request_class_map():
-    classes = [GetClientUnitApprovalList]
+    classes = [
+        GetClientUnitApprovalList, GetEntityApprovalList
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -149,8 +167,81 @@ class GetClientUnitApprovalListSuccess(object):
         return to_dictionary_values(data, "GetClientUnitApprovalListSuccess")
 
 
+class EntityUnitApproval(object):
+    def __init__(
+        self, unit_id, division_name, category_name, unit_code, unit_name,
+        address, postal_code, geography_name, domain_names, org_names
+    ):
+        self.unit_id = unit_id
+        self.division_name = division_name
+        self.category_name = category_name
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+        self.geography_name = geography_name
+        self.domain_names = domain_names
+        self.org_names = org_names
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "unit_id", "division_name", "category_name", "unit_code",
+            "unit_name", "address", "postal_code", "geography_name",
+            "domain_names", "org_names"
+        ])
+        unit_id = data.get("unit_id")
+        division_name = data.get("division_name")
+        category_name = data.get("category_name")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        geography_name = data.get("geography_name")
+        domain_names = data.get("domain_names")
+        org_names = data.get("org_names")
+        return EntityUnitApproval(
+            unit_id, division_name, category_name, unit_code, unit_name,
+            address, postal_code, geography_name, domain_names, org_names
+        )
+
+    def to_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "division_name": self.division_name,
+            "category_name": self.category_name,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "address": self.address,
+            "postal_code": self.postal_code,
+            "geography_name": self.geography_name,
+            "domain_names": self.domain_names,
+            "org_names": self.org_names
+        }
+        return to_dictionary_values(data)
+
+
+class GetEntityApprovalListSuccess(Request):
+    def __init__(self, entity_unit_approval_list):
+        self.entity_unit_approval_list = entity_unit_approval_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["entity_unit_approval_list"])
+        entity_unit_approval_list = data["entity_unit_approval_list"]
+        return GetEntityApprovalListSuccess(entity_unit_approval_list)
+
+    def to_inner_structure(self):
+        data = {
+            "entity_unit_approval_list": self.entity_unit_approval_list
+        }
+        return to_dictionary_values(data)
+
+
 def _init_Response_class_map():
-    classes = [GetClientUnitApprovalListSuccess]
+    classes = [
+        GetClientUnitApprovalListSuccess, GetEntityApprovalListSuccess
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
