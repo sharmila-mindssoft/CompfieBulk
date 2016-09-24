@@ -13,8 +13,7 @@ from server.database.admin import (
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
     get_geograhpy_levels_for_user,
-    get_geographies_for_user_with_mapping,
-    get_active_industries
+    get_geographies_for_user_with_mapping
 )
 
 from server.database.technomaster import *
@@ -379,7 +378,7 @@ def get_clients(db, request, session_user):
         db, session_user
     )
     if len(group_company_list) > 0:
-        country_list = get_countries_for_user(db, session_user)
+        country_list = get_user_countries(db, session_user)
         domain_list = get_domains_for_user(db, session_user)
         business_group_list = get_business_groups_for_user(db, session_user)
         legal_entity_list = get_legal_entities_for_user(db, session_user)
@@ -387,7 +386,7 @@ def get_clients(db, request, session_user):
         unit_list = get_unit_details_for_user(db, session_user)
         geography_levels = get_geograhpy_levels_for_user(db, session_user)
         geographies = get_geographies_for_user_with_mapping(db, session_user)
-        industries = get_active_industries(db)
+        industries_list = get_active_industries(db)
         client_domains = get_user_client_domains(db, session_user)
         return technomasters.GetClientsSuccess(
             countries=country_list,
@@ -396,7 +395,7 @@ def get_clients(db, request, session_user):
             legal_entities=legal_entity_list,
             divisions=division_list, units=unit_list,
             geography_levels=geography_levels,
-            geographies=geographies, industries=industries,
+            geographies=geographies, industries=industries_list,
             client_domains=client_domains
         )
     else:
