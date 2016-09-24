@@ -260,7 +260,7 @@ def parse_dictionary_values(x, field_names=[]):
         if param is None:
             val = parse_vector_type_record_type(val)
             continue
-        if param.get('type') == 'string':
+        if param.get('type') == 'STRING':
             assert param.get('length') is not None
             assert param.get('validation_method') is not None
             if param.get('is_optional') is False:
@@ -268,20 +268,20 @@ def parse_dictionary_values(x, field_names=[]):
             else:
                 val = parse_optional_custom_string(val, param.get('length'))
 
-        if param.get('type') == 'text':
+        if param.get('type') == 'TEXT':
             if param.get('is_optional') is False:
                 val = parse_string(val)
             else:
                 val = parse_optional_string(val)
 
-        elif param.get('type') == 'int':
+        elif param.get('type') == 'INT':
             assert param.get('length') is not None
             if param.get('is_optional') is False:
                 val = parse_number(val, 0, param.get('length'))
             else:
                 val = parse_optional_number(val, 0, param.get('length'))
 
-        elif param.get('type') == 'bool':
+        elif param.get('type') == 'BOOL':
             assert param.get('length') is None
             assert param.get('validation_method') is None
             if param.get('is_optional') is False:
@@ -289,7 +289,7 @@ def parse_dictionary_values(x, field_names=[]):
             else:
                 val = parse_optional_bool(val)
 
-        elif param.get('type') == 'vector_type_string':
+        elif param.get('type') == 'VECTOR_TYPE_STRING':
             # list_of_string by default support optional
             assert param.get('validation_method') is None
             if param.get('is_optional') is False:
@@ -298,7 +298,7 @@ def parse_dictionary_values(x, field_names=[]):
                 val = parse_optional_string_list(
                     val, string_length=param.get('length'))
 
-        elif param.get('type') == 'vector_type_int':
+        elif param.get('type') == 'VECTOR_TYPE_INT':
             # list_of_int by default support optional
             assert param.get('validation_method') is None
             if param.get('is_optional') is False:
@@ -307,10 +307,14 @@ def parse_dictionary_values(x, field_names=[]):
                 val = parse_optional_int_list(
                     val, int_length=param.get('length'))
 
-        elif param.get('type') == 'vector_type':
+        elif param.get('type') == 'VECTOR_TYPE':
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
             val = parse_VectorType()
+
+        elif param.get('type') == 'ENUM_TYPE':
+            assert param.get('class_name') is not None
+            # val = parse
 
         if val is not None and param.get('validation_method') is not None:
                 val = param.get('validation_method')(val)
