@@ -480,3 +480,173 @@ BEGIN
     (notification_text, link, created_on) VALUES
     (notification, url, now());
 END
+
+---sep 22
+
+-- --------------------------------------------------------------------------------
+-- To get the group of companies under user - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getuserclients`;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
+BEGIN
+	select client_id, group_name from tbl_client_groups
+    where client_id in
+	(select t1.client_id from tbl_client_groups t1
+    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
+	and t2.user_id = userId);
+END
+
+
+-- --------------------------------------------------------------------------------
+-- To get the group of units count - client unit
+-- --------------------------------------------------------------------------------
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcount`;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitcount`(in clientId INT(11))
+BEGIN
+	select count(*) as units from tbl_units
+    where client_id = clientId;
+END
+
+-- --------------------------------------------------------------------------------
+-- To generate unit codes - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcode`;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitcode`(in unit_code_start_letter varchar(50),
+			clientId INT(11))
+BEGIN
+	SELECT TRIM(LEADING unit_code_start_letter FROM unit_code) as code
+	FROM tbl_units WHERE unit_code like binary 'unit_code_start_letter%' and
+	CHAR_LENGTH(unit_code) = 7 and client_id=clientId;
+END
+
+-- --------------------------------------------------------------------------------
+-- To get business group details of all clients under userid - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientbusinessgroup`;
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
+BEGIN
+	select business_group_id, business_group_name, client_id from tbl_business_groups
+    where client_id in
+	(select t1.client_id from tbl_client_groups t1
+    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
+	and t2.user_id = userId) order by business_group_name ASC;
+END
+
+-- --------------------------------------------------------------------------------
+-- To get legal entity details of all clients under userid - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientlegalentity`;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
+BEGIN
+	select legal_entity_id, legal_entity_name, business_group_id, client_id from tbl_legal_entities
+    where client_id in
+	(select t1.client_id from tbl_client_groups t1
+    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
+	and t2.user_id = userId) order by legal_entity_name ASC;
+END
+
+-- --------------------------------------------------------------------------------
+-- To get division details of all clients under userid - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdivision`;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientdivision`(in userId INT(11))
+BEGIN
+	select division_id, division_name, legal_entity_id business_group_id, client_id from tbl_divisions
+    where client_id in
+	(select t1.client_id from tbl_client_groups t1
+    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
+	and t2.user_id = userId) order by division_name ASC;
+END
+
+-- --------------------------------------------------------------------------------
+-- To get UNIT details of all clients under userid - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser`;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitdetailsforuser`(in userId INT(11))
+BEGIN
+	select t1.unit_id, t1.client_id, t1.business_group_id,
+    t1.legal_entity_id, t1.division_id, t1.country_id,
+	t1.geography_id, t1.industry_id, t1.unit_code,
+	t1.unit_name, t1.address, t1.postal_code,
+	t1.domain_ids, t1.is_active,
+	(select business_group_name from tbl_business_groups where
+    business_group_id = t1.business_group_id) as b_group,
+    (select legal_entity_name from tbl_legal_entities where
+    legal_entity_id = t1.legal_entity_id) as l_entity,
+    (select division_name from tbl_divisions where
+    division_id = t1.division_id) as division,
+    (select group_name from tbl_client_groups where
+    client_id = t1.client_id) as group_name
+    from
+    tbl_units as t1, tbl_user_clients as t2, tbl_user_countries as t3
+    where
+    t1.client_id = t2.client_id and
+	t1.country_id = t3.country_id and
+    t3.user_id = t2.user_id and
+    t2.user_id = userId
+    order by group_name, b_group, l_entity, division;
+END
+
+
+-- --------------------------------------------------------------------------------
+-- To get geography level details of all clients under userid - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_geography_levels_getlevelsforusers`;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_geography_levels_getlevelsforusers`(in userId INT(11))
+BEGIN
+	select level_id, country_id, level_position, level_name
+    from tbl_geography_levels
+    where country_id in (select country_id from tbl_user_countries
+    where user_id = userId) order by level_position;
+END
+
+-- --------------------------------------------------------------------------------
+-- To get geography user mapping of all clients under userid - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_get_geographies_for_users_mapping`;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_geographies_for_users_mapping`(in userId INT(11))
+BEGIN
+	select t1.geography_id, t1.geography_name, t1.parent_names,
+    t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name
+    from
+    tbl_geographies as t1, tbl_geography_levels as t2,
+    tbl_countries as t3
+    where
+    t1.level_id = t2.level_id and t2.country_id = t3.country_id
+    and t2.country_id in (select country_id from tbl_user_countries
+    where user_id  = userId);
+END
+
+
+-- --------------------------------------------------------------------------------
+-- To get client domains of all clients under userid - client unit
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdomains`;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientdomains`(in userId INT(11))
+BEGIN
+	select domain_id, domain_name, is_active from tbl_domains
+    where domain_id in (select domain_id from tbl_client_domains
+    where client_id in (select client_id from tbl_user_clients
+    where user_id = userId)) and is_active =1
+    order by domain_name ASC;
+END
