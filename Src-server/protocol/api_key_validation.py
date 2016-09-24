@@ -16,7 +16,7 @@ def is_alphabet(value):
 
 def is_numeric(value):
     r = re.compile("^[0-9 ]*$")  # 0-9 with space
-    if r.match(value):
+    if r.match(str(value)):
         return value
     else:
         raise expectation_error('a numeric', value)

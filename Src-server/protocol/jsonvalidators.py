@@ -221,7 +221,7 @@ def parse_string_list(x, length=0, string_length=0):
     if type(x) is not list:
         raise expectation_error("a list ", x)
     for y in x:
-        if type(x) not in [str, unicode]:
+        if type(y) not in [str, unicode]:
             raise expectation_error("a list with string values ", x)
         else:
             y = parse_custom_string(y, string_length)
@@ -317,7 +317,8 @@ def parse_dictionary_values(x, field_names=[]):
     return x
 
 
-def to_dictionary_values(data, response):
+def to_dictionary_values(data, response=None):
+    final_result = None
     result = {}
     for key in data:
         value = data[key]
@@ -329,12 +330,18 @@ def to_dictionary_values(data, response):
                 param.get('module_name'), param.get('class_name'), value
             )
             result[key] = value
+        else:
+            x = {key: value}
+            parse_dictionary_values(x, field_names=[key])
+            result[key] = value
     if response is not None:
-        result = [
+        final_result = [
             response,
             result
         ]
-    return result
+    else:
+        final_result = result
+    return final_result
 
 
 def parse_vector_type_record_type(value):

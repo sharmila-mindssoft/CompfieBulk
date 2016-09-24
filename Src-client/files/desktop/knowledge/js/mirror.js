@@ -1509,6 +1509,18 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getEntityApprovalList(legal_entity_id, callback){
+    console.log("inside mirror: "+ legal_entity_id);
+      callerName = 'client_coordination_master';
+    var request = [
+      'GetEntityApprovalList',
+      {
+        "legal_entity_id": legal_entity_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -1645,7 +1657,8 @@ function initMirror() {
     getDomainRow: getDomainRow,
     getEditClientGroupFormData: getEditClientGroupFormData,
     getLegalEntityUpdateRow: getLegalEntityUpdateRow,
-    getClientUnitApprovalList: getClientUnitApprovalList
+    getClientUnitApprovalList: getClientUnitApprovalList,
+    getEntityApprovalList: getEntityApprovalList
   };
 }
 var mirror = initMirror();

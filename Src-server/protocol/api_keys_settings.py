@@ -76,8 +76,18 @@ api_params = {
     'is_sms_subscribed': {'type': 'bool', 'length': None, 'validation_method': None, 'is_optional': False},
     'contract_from': {'type': 'string', 'length': 11, 'validation_method': None, 'is_optional': False},
     'contract_to': {'type': 'string', 'length': 11, 'validation_method': None, 'is_optional': False},
-    
+
     'unit_approval_list': {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"UnitApproval"},
+    'unit_id': {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    'division_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'category_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'unit_code': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'unit_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'address': {'type': 'text', 'length': None, 'validation_method': None, 'is_optional': False},
+    'postal_code': {'type': 'int', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
+    'domain_names': {'type': 'vector_type_string', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'org_names': {'type': 'vector_type_string', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'entity_unit_approval_list': {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"EntityUnitApproval"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
