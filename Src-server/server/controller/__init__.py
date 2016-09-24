@@ -7,3 +7,4 @@ from knowledgetransactioncontroller import *
 from knowledgereportcontroller import *
 from technotransactioncontroller import *
 from technoreportcontroller import *
+from clientcoordinationmastercontroller import *

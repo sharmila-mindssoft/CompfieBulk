@@ -332,8 +332,8 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/client-unit-approve",
-        "files/desktop/knowledge/client-unit-approve/clientunitapproval.html",
+        "/knowledge/client-unit-approval",
+        "files/desktop/knowledge/client-unit-approval/clientunitapproval.html",
         None, {}
     ),
     (

@@ -272,11 +272,11 @@ function saveClient(){
                     var ext = logo.split('.').pop().toLowerCase();
                 }else{
                     var ext = logo.file_name.split('.').pop().toLowerCase();
-                }    
+                }
             }else{
                 displayMessage(message.logo_required);
             }
-            
+
             var licenceVal = le_table.find('#no-of-user-licence').val();
             var fileSpaceVal = le_table.find('#file-space').val();
             if (le_table.find('#subscribe-sms').is(':checked')) {
@@ -574,7 +574,7 @@ function editClient(){
         addOrSelectBusinessGroup("cancel");
         if(value.b_g){
             le_table.find(".business-group").val(
-                value.b_g.b_g_id);
+                value.b_g.bg_id);
         }
         le_table.find("#legal_entity_text").val(value.l_e_name);
         var incharge_class = "incharge-"+le_count;

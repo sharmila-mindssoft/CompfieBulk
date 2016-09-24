@@ -99,6 +99,10 @@ def to_structure_VariantType_knowledgemaster_Request(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.to_structure(data)
 
+def to_structure_VariantType_clientcoordinationmaster_Request(data):
+    from protocol import clientcoordinationmaster
+    return clientcoordinationmaster.Request.to_structure(data)
+
 def to_structure_OptionalType_SignedIntegerType_8(data):
     if data is None: return data
     return to_structure_SignedIntegerType_8(data)
@@ -653,6 +657,10 @@ def to_structure_VectorType_RecordType_core_Statutory(data):
 def to_structure_OptionalType_RecordType_core_BusinessGroup(data):
     if data is None: return data
     return to_structure_RecordType_core_BusinessGroup(data)
+
+def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
+    if data is None: return data
+    return to_structure_RecordType_core_ClientBusinessGroup(data)
 
 def to_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
@@ -2189,6 +2197,10 @@ def to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_Com
 def to_structure_OptionalType_RecordType_core_FileList(data):
     if data is None: return data
     return to_structure_RecordType_core_FileList(data)
+
+def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
+    if data is None: return data
+    return to_structure_RecordType_core_ClientBusinessGroup(data)
 
 def to_structure_VectorType_CustomTextType_250(data):
     data = parse_list(data, 0)

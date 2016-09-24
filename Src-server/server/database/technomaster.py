@@ -276,7 +276,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 session_user, current_time_stamp
             )
             values.append(value_tuple)
-            condition = "group_id=%s and legal_entity_id=%s" % (
+            condition = "client_id=%s and legal_entity_id=%s" % (
                 group_id, entity.legal_entity_id)
             conditions.append(condition)
         else:
@@ -414,6 +414,7 @@ def get_legal_entity_ids_by_name(db, legal_entity_names):
 #   returns True
 ##########################################################################
 def save_client_domains(db, client_id, request, legal_entity_name_id_map):
+    print legal_entity_name_id_map
     db.call_update_proc(
         "sp_client_domains_delete", (client_id, )
     )
@@ -1024,7 +1025,11 @@ def get_user_client_domains(db, session_user):
     if result:
         return return_domains(result)
     else:
+<<<<<<< HEAD
         return get_user_domains(db, session_user)
+=======
+        return get_domains_for_user(db, session_user)
+>>>>>>> usha/module
 
 
 def get_date_configurations(db, client_id):
@@ -1309,6 +1314,7 @@ def get_legal_entities_for_user(db, user_id):
     return return_legal_entities_for_unit(result)
 
 
+<<<<<<< HEAD
 def return_legal_entities_for_unit(legal_entities):
     results = []
     for legal_entity in legal_entities:
@@ -1322,6 +1328,8 @@ def return_legal_entities_for_unit(legal_entities):
     return results
 
 
+=======
+>>>>>>> usha/module
 def get_divisions_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientdivision", (user_id,))
     return return_divisions(result)
@@ -1735,4 +1743,8 @@ def get_user_client_countries(db, session_user):
         if result:
             return return_countries(result)
     else:
+<<<<<<< HEAD
         return get_user_countries(db, session_user)
+=======
+        return get_countries_for_user(db, session_user)
+>>>>>>> usha/module

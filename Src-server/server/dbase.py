@@ -196,8 +196,8 @@ class Database(object):
     ########################################################
     # To execute select query
     # Used to fetch multiple rows
-    # select_all : query is string and param is tuple which return result in tuple of tuples
-    # select_one : query is string and param is typle which return result in tuple
+    # select_all: query is string and param is tuple which return result in tuple of tuples
+    # select_one: query is string and param is typle which return result in tuple
     ########################################################
     def select_all(self, query, param=None):
         cursor = self.cursor()
@@ -279,7 +279,7 @@ class Database(object):
 
     ########################################################
     # To form a select query
-    # params : table_name, list of columns and where condition
+    # params: table_name, list of columns and where condition
     # returns result in list of dictionary
     ########################################################
     def get_data(
@@ -675,7 +675,7 @@ class Database(object):
 
     def call_proc(self, procedure_name, args, columns=None):
         # columns no longer need here, so remove argument once removed from the reference place
-        # args is tuple e.g, (parm1, parm2)
+        # args can be tuple/list e.g, (parm1, parm2)/[param1, param2]
         cursor = self.cursor()
         assert cursor is not None
         try:
@@ -686,8 +686,11 @@ class Database(object):
         except Exception, e:
             print e
             raise process_procedure_error(procedure_name, args, e)
-
-        cols = [x[0] for x in cursor.description]
+        cols = cursor.description
+        if cols:
+            cols = [x[0] for x in cols]
+        else:
+            cols = []
         rows = []
         rows = convert_to_dict(cursor.fetchall(), cols)
         cursor.nextset()
@@ -725,7 +728,9 @@ class Database(object):
         cursor.nextset()
         return True
 
-    def call_proc_with_multiresult_set(self, procedure_name, args, expected_result_count):
+    def call_proc_with_multiresult_set(
+        self, procedure_name, args, expected_result_count
+    ):
         cursor = self.cursor()
         assert cursor is not None
         try:
@@ -740,7 +745,11 @@ class Database(object):
         print type(expected_result_count)
         assert type(expected_result_count) is int
         for i in range(0, expected_result_count):
-            cols = [x[0] for x in cursor.description]
+            cols = cursor.description
+            if cols:
+                cols = [x[0] for x in cols]
+            else:
+                cols = []
             r = convert_to_dict(cursor.fetchall(), cols)
             rows.append(r)
             cursor.nextset()
