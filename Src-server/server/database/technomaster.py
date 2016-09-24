@@ -871,7 +871,8 @@ def get_techno_users(db):
     countries = db.call_proc("sp_user_countries_techno", None)
     domains = db.call_proc("sp_user_domains_techno", None)
     users = db.call_proc("sp_users_techno", None)
-
+    print "users"
+    print users
     user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
@@ -907,6 +908,7 @@ def return_techno_users(users, user_country_map, user_domain_map):
             user_domain_map[int(user["user_id"])]
         ) for user in users
     ]
+    print results
     return results
 
 
@@ -987,7 +989,7 @@ def is_unit_exists_under_domain(db, domain, client_id):
     columns = "count(*) as units"
     condition = " FIND_IN_SET(%s, domain_ids) and client_id = %s "
     condition_val = [domain, client_id]
-    rows = db.get_data(tblUnits, columns, condition, condition_val)
+    rows = db.get_data_data(tblUnits, columns, condition, condition_val)
     if rows[0]["units"] > 0:
         return True
     else:
@@ -1018,21 +1020,11 @@ def get_client_domains(db, client_id):
 
 
 def get_user_client_domains(db, session_user):
-    client_ids_list = get_client_ids(db)
-    if len(client_ids_list) > 0:
-        domain_ids = []
-        for client_id in client_ids_list:
-            domain_ids.extend(get_client_domains(db, int(client_id)))
-        columns = ["domain_id", "domain_name", "is_active"]
-        condition = "domain_id in (%s) and is_active = 1 "
-        condition += " ORDER BY domain_name "
-        condition_val = [",".join(str(x) for x in domain_ids)]
-        result = db.get_data(
-            tblDomains, columns, condition, condition_val
-        )
+    result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user,))
+    if result:
         return return_domains(result)
     else:
-        return get_domains_for_user(db, session_user)
+        return get_user_domains(db, session_user)
 
 
 def get_date_configurations(db, client_id):
@@ -1225,7 +1217,7 @@ def is_duplicate_unit_name(db, unit_id, unit_name, client_id):
     return db.is_already_exists(tblUnits, condition, condition_val)
 
 
-def save_unit(
+def save_unit (
     db, client_id,  units, business_group_id, legal_entity_id,
     division_id, session_user
 ):
@@ -1300,72 +1292,38 @@ def update_unit(db, client_id,  units, session_user):
 # get_clients
 #
 def get_user_clients(db, user_id):
-    q = "select t1.client_id " + \
-        " from tbl_client_groups t1 inner join " + \
-        " tbl_user_clients t2 " + \
-        " on t1.client_id = t2.client_id " + \
-        " and t1.is_active = 1 and t2.user_id = %s "
-    rows = db.select_all(q, [int(user_id)])
+    rows = db.call_proc("sp_tbl_unit_getuserclients", [int(user_id)])
     client_ids = [
-        int(r[0]) for r in rows
+        int(r["client_id"]) for r in rows
     ]
     return client_ids
 
 
 def get_business_groups_for_user(db, user_id):
-    result = {}
-    client_ids = None
-    if user_id is not None:
-        client_ids = get_user_clients(db, user_id)
-    columns = [
-        "business_group_id", "business_group_name", "client_id"
-    ]
-    condition = "1"
-    condition, condition_val = db.generate_tuple_condition(
-        "client_id", client_ids
-    )
-    order = " order by business_group_name ASC"
-    result = db.get_data(
-        tblBusinessGroups, columns, condition, [condition_val], order
-    )
+    result = db.call_proc("sp_tbl_unit_getclientbusinessgroup", (user_id,))
     return return_business_groups(result)
 
 
 def get_legal_entities_for_user(db, user_id):
-    client_ids = None
-    result = {}
-    if user_id is not None:
-        client_ids = get_user_clients(db, user_id)
-    columns = [
-        "legal_entity_id", "legal_entity_name", "business_group_id",
-        "client_id"
-    ]
-    condition, condition_val = db.generate_tuple_condition(
-        "client_id", client_ids
-    )
-    order = " order by legal_entity_name ASC"
-    result = db.get_data(
-        tblLegalEntities, columns, condition, [condition_val], order
-    )
-    return return_legal_entities(result)
+    result = db.call_proc("sp_tbl_unit_getclientlegalentity",(user_id,))
+    return return_legal_entities_for_unit(result)
+
+
+def return_legal_entities_for_unit(legal_entities):
+    results = []
+    for legal_entity in legal_entities:
+        legal_entity_obj = core.LegalEntity(
+            legal_entity["legal_entity_id"],
+            legal_entity["legal_entity_name"],
+            legal_entity["business_group_id"],
+            legal_entity["client_id"]
+        )
+        results.append(legal_entity_obj)
+    return results
 
 
 def get_divisions_for_user(db, user_id):
-    client_ids = None
-    result = {}
-    if user_id is not None:
-        client_ids = get_user_clients(db, user_id)
-    columns = [
-        "division_id", "division_name", "legal_entity_id",
-        "business_group_id", "client_id"
-    ]
-    condition, condition_val = db.generate_tuple_condition(
-        "client_id", client_ids
-    )
-    order = " order by division_name ASC "
-    result = db.get_data(
-        tblDivisions, columns, condition, [condition_val], order
-    )
+    result = db.call_proc("sp_tbl_unit_getclientdivision", (user_id,))
     return return_divisions(result)
 
 
@@ -1385,7 +1343,7 @@ def get_units_for_user(db, user_id):
     client_ids = None
     result = {}
     if user_id is not None:
-        client_ids = get_user_clients(db, user_id)
+        client_ids = get_user_clients(db, (user_id,))
     columns = [
         "unit_id", "unit_code", "unit_name",
         "address", "division_id",
@@ -1413,41 +1371,8 @@ def return_units(units):
 
 
 def get_unit_details_for_user(db, user_id):
-    business_group_column = "(select business_group_name " + \
-        " from tbl_business_groups " + \
-        " where business_group_id = t1.business_group_id) as b_group"
-    legal_entity_column = "(select legal_entity_name " + \
-        " from tbl_legal_entities " + \
-        " where legal_entity_id = t1.legal_entity_id) as l_entity"
-    division_column = "(select division_name " + \
-        " from tbl_divisions " + \
-        " where division_id = t1.division_id) as division"
-    group_column = "(select group_name " + \
-        " from tbl_client_groups " + \
-        " where client_id = t1.client_id) as group_name "
-    columns = [
-        "t1.unit_id", "t1.client_id", "t1.business_group_id",
-        "t1.legal_entity_id", "t1.division_id", "t1.country_id",
-        "t1.geography_id", "t1.industry_id", "t1.unit_code",
-        "t1.unit_name", "t1.address", "t1.postal_code",
-        "t1.domain_ids", "t1.is_active",
-        business_group_column, legal_entity_column,
-        division_column, group_column
-    ]
-    tables = [tblUnits, tblUserClients, tblUserCountries]
-    aliases = ["t1", "t2", "t3"]
-    join_type = "INNER JOIN"
-    join_condition = [
-        "t1.client_id = t2.client_id",
-        "t1.country_id = t3.country_id and t2.user_id = t3.user_id",
-    ]
-    where_condition = "t2.user_id = %s "
-    where_condition += " order by group_name, b_group, l_entity, division"
     where_condition_val = [user_id]
-    result = db.get_data_from_multiple_tables(
-        columns, tables, aliases, join_type,
-        join_condition, where_condition, where_condition_val
-    )
+    result = db.call_proc("sp_tbl_unit_getunitdetailsforuser", (where_condition_val,))
     return return_unit_details(result)
 
 
@@ -1526,69 +1451,47 @@ def return_unit_details(result):
 
 
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
-    result = {}
-    client_ids = None
-    if user_id is not None:
-        client_ids = get_user_clients(db, user_id)
-    columns = ["client_id", "group_name", "is_active"]
-    condition, condition_val = db.generate_tuple_condition(
-        "client_id", client_ids
-    )
-    condition += " AND is_active=1 "
-    order = " order by group_name ASC "
-    result = db.get_data(
-        tblClientGroups, columns, condition, [condition_val], order
-    )
+    result = db.call_proc("sp_tbl_unit_getuserclients", (user_id,))
+    print "get group"
+    print result
     return return_group_companies_with_max_unit_count(db, result)
 
 
 def return_group_companies_with_max_unit_count(db, group_companies):
     results = []
+    print "return group"
     for group_company in group_companies:
+        print group_company["client_id"]
         countries = get_client_countries(db, group_company["client_id"])
-        domains = get_client_domains(db, group_company["client_id"])
+        domain_result = db.call_proc("sp_client_domains_by_group_id", (group_company["client_id"],))
+        domain_ids = [int(r["domain_id"]) for r in domain_result]
         next_auto_gen_no = get_next_auto_gen_number(
             db, group_company["group_name"], group_company["client_id"]
         )
         results.append(core.GroupCompanyForUnitCreation(
             group_company["client_id"], group_company["group_name"],
-            bool(group_company["is_active"]), countries, domains,
-            next_auto_gen_no
+            countries, domain_ids, next_auto_gen_no
         ))
     return results
 
 
 def get_next_auto_gen_number(db, group_name=None, client_id=None):
     if group_name is None:
-        columns = ["group_name"]
-        condition = "client_id = %s "
         condition_val = [client_id]
-        rows = db.get_data(tblClientGroups, columns, condition, condition_val)
+        rows = db.call_proc("sp_client_groups_details_by_id", (condition_val,))
         if rows:
             group_name = rows[0]["group_name"]
 
-    columns = ["count(*) as units"]
-    condition = "client_id = %s "
     condition_val = [client_id]
-    rows = db.get_data(tblUnits, columns, condition, condition_val)
-    if rows:
-        no_of_units = rows[0]["units"]
+    rows = db.call_proc("sp_tbl_unit_getunitcount", (condition_val,))
+    for r in rows:
+        no_of_units = r["units"]
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
-    columns = "TRIM(LEADING '%s' FROM unit_code) as code" % (
-        unit_code_start_letters
-    )
-    condition = "unit_code like binary %s and " + \
-        " CHAR_LENGTH(unit_code) = 7 and client_id= %s "
-    # condition = condition % (
-    #     str(unit_code_start_letters + '%'), client_id
-    # )
     unit_code_start_letters = "%s%s" % (unit_code_start_letters, "%")
     condition_val = [unit_code_start_letters, client_id]
-    rows = db.get_data(
-        tblUnits, columns, condition, condition_val
-    )
+    rows = db.call_proc("sp_tbl_unit_getunitcode", condition_val)
     auto_generated_unit_codes = []
     for row in rows:
         try:
@@ -1832,4 +1735,4 @@ def get_user_client_countries(db, session_user):
         if result:
             return return_countries(result)
     else:
-        return get_countries_for_user(db, session_user)
+        return get_user_countries(db, session_user)
