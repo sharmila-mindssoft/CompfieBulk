@@ -102,8 +102,9 @@ def check_duplicate_industry(db, industry_name, industry_id):
 
     row = db.call_proc("sp_industry_master_checkduplicateindustry", param)
     for r in row:
-        if r[0] > 0:
+        if int(r["count(1)"]) > 0:
             isDuplicate = True
+
     return isDuplicate
 
 
@@ -386,15 +387,10 @@ def return_geography_levels(data):
 
 def get_geograhpy_levels_for_user(db, user_id):
     assert user_id is not None
-    columns = [
-        "level_id", "level_position", "level_name", "country_id"
-    ]
-    condition = " country_id in ( " + \
-        " select country_id from tbl_user_countries where user_id = %s)"
     condition_val = [user_id]
-    order = " ORDER BY level_position"
-    result = db.get_data(
-        "tbl_geography_levels", columns, condition, condition_val, order
+
+    result = db.call_proc(
+        "sp_geography_levels_getlevelsforusers", condition_val
     )
     return return_geography_levels(result)
 
@@ -530,27 +526,14 @@ def return_geographies(data):
 
 def get_geographies_for_user_with_mapping(db, user_id):
 
-    columns = "t1.geography_id, t1.geography_name, t1.parent_names,"
-    columns += "t1.level_id,t1.parent_ids, t1.is_active,"
-    columns += " t2.country_id, t3.country_name"
-    tables = [
-        tblGeographies, tblGeographyLevels, tblCountries
-    ]
-    aliases = ["t1", "t2", "t3"]
-    join_type = " INNER JOIN"
-    join_conditions = [
-        "t1.level_id = t2.level_id", "t2.country_id = t3.country_id"
-    ]
-    where_condition = " t2.country_id in (select country_id " + \
-        " from tbl_user_countries where user_id = %s )"
     where_condition_val = [user_id]
-    result = db.get_data_from_multiple_tables(
-        columns, tables, aliases, join_type,
-        join_conditions, where_condition, where_condition_val
-    )
+    result = db.call_proc("sp_get_geographies_for_users_mapping", (where_condition_val,))
+
     geographies = {}
     if result:
         for d in result:
+            print "parent"
+            print d["parent_ids"][:-1].split(',')
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
             geography = core.GeographyWithMapping(
                 d["geography_id"], d["geography_name"],
