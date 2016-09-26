@@ -3,12 +3,6 @@ from protocol.jsonvalidators import (
     parse_VariantType, to_VariantType,
     to_dictionary_values
 )
-# from protocol.parse_structure import (
-#     parse_structure_CustomTextType_50
-# )
-# from protocol.to_structure import (
-#     to_structure_CustomTextType_50
-# )
 
 
 #
@@ -47,8 +41,7 @@ class GetClientUnitApprovalList(Request):
         return GetClientUnitApprovalList()
 
     def to_inner_structure(self):
-        return {
-        }
+        return {}
 
 
 class GetEntityApprovalList(Request):
@@ -62,14 +55,31 @@ class GetEntityApprovalList(Request):
         return GetEntityApprovalList(legal_entity_id)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "legal_entity_id": self.legal_entity_id
         }
+        return to_dictionary_values(data)
+
+
+class ApproveUnit(Request):
+    def __init__(self, unit_approval_details):
+        self.unit_approval_details = unit_approval_details
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_approval_details"])
+        return ApproveUnit(data)
+
+    def to_inner_structure(self):
+        data = {
+            "unit_approval_details": self.unit_approval_details
+        }
+        return to_dictionary_values(data)
 
 
 def _init_Request_class_map():
     classes = [
-        GetClientUnitApprovalList, GetEntityApprovalList
+        GetClientUnitApprovalList, GetEntityApprovalList, ApproveUnit
     ]
     class_map = {}
     for c in classes:
@@ -221,7 +231,7 @@ class EntityUnitApproval(object):
         return to_dictionary_values(data)
 
 
-class GetEntityApprovalListSuccess(Request):
+class GetEntityApprovalListSuccess(Response):
     def __init__(self, entity_unit_approval_list):
         self.entity_unit_approval_list = entity_unit_approval_list
 
@@ -238,9 +248,53 @@ class GetEntityApprovalListSuccess(Request):
         return to_dictionary_values(data)
 
 
+class UnitApprovalDetails(object):
+    def __init__(
+        self, unit_id, approval_status, reason
+    ):
+        self.unit_id = unit_id
+        self.approval_status = approval_status
+        self.reason = reason
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "unit_id", "approval_status", "reason"
+        ])
+        unit_id = data.get("unit_id")
+        approval_status = data.get("approval_status")
+        reason = data.get("reason")
+        return UnitApprovalDetails(
+            unit_id, approval_status, reason
+        )
+
+    def to_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "approval_status": self.approval_status,
+            "reason": self.reason
+        }
+        return to_dictionary_values(data)
+
+
+class ApproveUnitSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ApproveUnitSuccess()
+
+    def to_inner_structure(self):
+        data = {}
+        return to_dictionary_values(data)
+
+
 def _init_Response_class_map():
     classes = [
-        GetClientUnitApprovalListSuccess, GetEntityApprovalListSuccess
+        GetClientUnitApprovalListSuccess, GetEntityApprovalListSuccess,
+        ApproveUnitSuccess
     ]
     class_map = {}
     for c in classes:

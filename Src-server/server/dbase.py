@@ -106,7 +106,7 @@ class Database(object):
     ########################################################
     def begin(self):
         assert self._connection is not None
-        assert self._cursor is None
+        # assert self._cursor is None
         self._cursor = self._connection.cursor()
         return self._cursor
 
@@ -446,7 +446,6 @@ class Database(object):
     # To form a bulk insert query
     ########################################################
     def bulk_insert(self, table, columns, valueList):
-
         stringValue = []
         for i in range(len(columns)):
             stringValue.append('%s')

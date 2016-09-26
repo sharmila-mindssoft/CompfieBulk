@@ -61,6 +61,7 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_RecordType_core_ClientBusinessGroup,
     parse_structure_RecordType_core_FileList,
     parse_structure_OptionalType_RecordType_core_FileList
+
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -1256,25 +1257,21 @@ class StatutoryMapping(object):
 #
 
 class GroupCompanyForUnitCreation(object):
-    def __init__(self, client_id, group_name, is_active, country_ids,
-        domain_ids, next_unit_code):
+    def __init__(self, client_id, group_name, country_ids, domain_ids, next_unit_code):
         self.client_id = client_id
         self.group_name = group_name
-        self.is_active = is_active
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.next_unit_code = next_unit_code
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "group_name", "is_active",
+        data = parse_dictionary(data, ["client_id", "group_name",
             "country_ids", "domain_ids", "next_unit_code"])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
-        is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
@@ -1282,15 +1279,13 @@ class GroupCompanyForUnitCreation(object):
         next_unit_code = data.get("next_unit_code")
         next_unit_code = parse_structure_UnsignedIntegerType_32(next_unit_code)
         return GroupCompanyForUnitCreation(
-            client_id, group_name, is_active, country_ids, domain_ids,
-            next_unit_code
+            client_id, group_name, country_ids, domain_ids, next_unit_code
         )
 
     def to_structure(self):
         return {
             "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
-            "is_active": to_structure_Bool(self.is_active),
             "country_ids": to_structure_VectorType_UnsignedIntegerType_32(self.country_ids),
             "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
             "next_unit_code": to_structure_UnsignedIntegerType_32(self.next_unit_code)

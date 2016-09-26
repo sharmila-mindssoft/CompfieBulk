@@ -41,8 +41,39 @@
         </table>
       </div>
     </div>
-    <div id="templates">
-      <table class="table-approval-list">
+</div>
+<div class="content-container default-display-none" id="clientunit-approve" >
+  <div class="content-area">
+    <div class="add-container">
+        <div class="add-container-heading">
+            Client Unit Approve<span class="error-message"></span>
+        </div>
+        <br>
+        <div class="input-row">
+            <table class="unit-approval-table-title">
+            <tbody>
+                <tr>
+                    <td width="25%" align="center" class="approve_group_name"></td>
+                    <td width="20%" align="center" class="approve_country_name"></td>
+                    <td width="30%" align="center" class="approve_bg_name"></td>
+                    <td width="25%" align="center" class="approve_le_name"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tbody-approval-list">
+      </div>
+          <div class="submit-button-container">
+            <input type="reset" name="cancel" value="Cancel" class="btn-cancel cancel-approval-form" >
+            &nbsp;&nbsp;
+            <input type="submit" name="Submit" value="Submit" class="btn-submit submit-approval-form" >
+        </div>
+    </div>
+    
+  </div>
+</div>
+<div id="templates">
+    <table class="table-approval-list">
         <tr>
           <td align="center" class="sno"></td>
           <td class="group-name"></td>
@@ -54,34 +85,7 @@
             <input type="submit" value="Approve" class="btn-save">
           </td>
         </tr>
-      </table>
-    </div>
-</div>
-<div class="content-container default-display-none" id="clientunit-approve" >
-  <div class="content-area">
-    <div class="add-container">
-      <div class="add-container-heading">
-        Client Unit Approve<span class="error-message"></span>
-      </div>
-      <br>
-      <div class="input-row">
-        <table class="unit-approval-table-title">
-          <tbody>
-            <tr>
-              <td width="25%" align="center" class="approve_group_name"></td>
-              <td width="20%" align="center" class="approve_country_name"></td>
-              <td width="30%" align="center" class="approve_bg_name"></td>
-              <td width="25%" align="center" class="approve_le_name"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="tbody-approval-list">
-      </div>
-    </div>
-  </div>
-</div>
-<div id="templates">
+    </table>
     <div class="add-container view-divition" style="padding-left:0px; padding-right:0px;">
         <div class="grid-table">
             <table class="btable">
@@ -121,9 +125,8 @@
                 <td class="orgs"></td>
                 <td class="approve-control"></td>
                 <td class="reason-box">
-                    <textarea class="input-box default-display-none" placeholder="Reason text here">
-                        
-                    </textarea>
+                    <textarea class="input-box default-display-none reason" 
+                    placeholder="Reason text here"></textarea>
                 </td>
             </tr>
         </table>
