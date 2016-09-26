@@ -43,6 +43,15 @@ def process_client_coordination_master_request(request, db):
         logger.logKnowledgeApi("GetEntityApprovalList", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif type(request_frame) is clientcoordinationmaster.ApproveUnit:
+        logger.logKnowledgeApi("ApproveUnit", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_approve_unit(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("ApproveUnit", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
@@ -57,3 +66,8 @@ def process_get_entity_unit_approval_list(db, request, session_user):
     return clientcoordinationmaster.GetEntityApprovalListSuccess(
         units_list
     )
+
+
+def process_approve_unit(db, request, session_user):
+    approve_unit(db, request, session_user)
+    return clientcoordinationmaster.ApproveUnitSuccess()

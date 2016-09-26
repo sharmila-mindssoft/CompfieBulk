@@ -956,7 +956,7 @@ DELIMITER ;
 -- To get list of units for approval
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_approval_list`;
-DELIMITER $$
+DELIMITER //
 CREATE PROCEDURE `sp_units_approval_list`()
 BEGIN
 	SELECT legal_entity_id, legal_entity_name,
@@ -975,5 +975,62 @@ BEGIN
 	(
 		SELECT count(unit_id) FROM tbl_units tu
 		WHERE is_active=1 and tu.legal_entity_id=tle.legal_entity_id
+		and approve_status=0
 	) as unit_count FROM tbl_legal_entities tle;
-END
+END //
+DELIMITER ;
+-- --------------------------------------------------------------------------------
+--  Get list of Units to be approved by legal entity id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_units_approval_list_by_entity_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_units_approval_list_by_entity_id`(
+	IN le_id INT(11)
+)
+BEGIN
+	SELECT 
+	(
+		SELECT division_name FROM tbl_divisions td
+		WHERE td.division_id = tu.division_id
+	) as division_name, 
+	(
+		SELECT category_name FROM tbl_category_master tcm
+		WHERE tcm.category_id = tu.category_id
+	) as category_name,
+	unit_id, unit_code, unit_name, address, postal_code,
+	(
+		SELECT geography_name FROM tbl_geographies tg
+		WHERE tg.geography_id=tu.geography_id
+	) as geography_name
+	FROM tbl_units tu
+	WHERE is_active=1 and approve_status=0
+	and legal_entity_id=le_id; 
+	
+	SELECT unit_id, (
+		SELECT domain_name FROM tbl_domains td
+		WHERE td.domain_id=tui.domain_id
+	) as domain_name, (
+		SELECT industry_name FROM tbl_industries ti
+		WHERE ti.industry_id=tui.industry_id
+	) as industry_name
+	FROM tbl_unit_industries tui WHERE unit_id in (
+		SELECT unit_id FROM tbl_units
+		WHERE legal_entity_id=le_id
+	);
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Save activities
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_activity_log_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_activity_log_save`(
+	IN userid INT(11), formid INT(11), action_performed TEXT,
+	action_performed_on TIMESTAMP
+)
+BEGIN
+	INSERT INTO tbl_activity_log (user_id, form_id, action, created_on)
+	VALUES (userid, formid, action_performed, action_performed_on);
+END //
+DELIMITER ;

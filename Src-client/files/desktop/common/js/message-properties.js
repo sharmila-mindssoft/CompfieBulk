@@ -252,7 +252,9 @@ var message = {
   'statutoty_nature_status_deactive_success': 'Statutory Nature Deactivated Successfully',
   "client_save_success": "Client saved successfully",
   "client_update_success": "Client updated successfully",
-  "client_change_status_success": "Changed the status of client successfully"
+  "client_change_status_success": "Changed the status of client successfully",
+  "unit_approve_success": "Unit approved successfully",
+  "approve_atleast_one": "Approve atleast one unit"
 };
 
 function clearMessage() {

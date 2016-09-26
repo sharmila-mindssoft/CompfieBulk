@@ -88,6 +88,9 @@ api_params = {
     'domain_names': {'type': 'vector_type_string', 'length': 50, 'validation_method': None, 'is_optional': False},
     'org_names': {'type': 'vector_type_string', 'length': 50, 'validation_method': None, 'is_optional': False},
     'entity_unit_approval_list': {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"EntityUnitApproval"},
+    "unit_approval_details": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"UnitApprovalDetails"},
+    'reason': {'type': 'text', 'length': None, 'validation_method': None, 'is_optional': False},
+    'approval_status': {'type': 'bool', 'length': None, 'validation_method': None, 'is_optional': False}
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -1,10 +1,13 @@
-from protocol import (
-    clientcoordinationmaster
-)
+from protocol import clientcoordinationmaster
+from server.common import get_date_time
+from server.exceptionmessage import process_error, return_Knowledge_message
+from tables import tblUnits
+from forms import frmClientUnitApproval
 
 __all__ = [
     "get_unit_approval_list",
-    "get_entity_units_list"
+    "get_entity_units_list",
+    "approve_unit"
 ]
 
 
@@ -82,3 +85,45 @@ def return_unit_wise_industry_domain_map(industry_domain_data):
         unit_wise_industry_domain_map[
             unit_id]["industry_names"].append(data["industry_name"])
     return unit_wise_industry_domain_map
+
+
+def approve_unit(db, request, session_user):
+    unit_approval_details = request.unit_approval_details
+    current_time_stamp = get_date_time()
+    columns = ["approve_status", "remarks", "updated_by", "updated_on"]
+    values = []
+    conditions = []
+    for detail in unit_approval_details:
+        unit_id = detail.unit_id
+        approval_status = detail.approval_status
+        reason = detail.reason
+        value_tuple = (
+           1 if approval_status is True else 0,
+           reason, session_user, current_time_stamp
+        )
+        values.append(value_tuple)
+        condition = "unit_id=%s" % (unit_id)
+        conditions.append(condition)
+    result = db.bulk_update(
+        tblUnits, columns, values, conditions
+    )
+    if result:
+        db.call_insert_proc(
+            "sp_activity_log_save",
+            (
+                session_user, frmClientUnitApproval,
+                "Approved Unit" if(
+                    approval_status is True) else "Rejected Unit",
+                current_time_stamp
+            )
+        )
+        return result
+    else:
+        db.call_insert_proc(
+            "sp_activity_log_save",
+            (
+                session_user, frmClientUnitApproval,
+                return_Knowledge_message("E072"), current_time_stamp
+            )
+        )
+        raise process_error("E072")

@@ -185,9 +185,8 @@ def parse_dictionary(x, field_names=[]):
                 field_name
             )
             raise expectation_error(msg, x)
-
     if len(field_names) > 0:
-        parse_dictionary_values(x, field_names)
+        x = parse_dictionary_values(x, field_names)
 
     return x
 
@@ -310,8 +309,10 @@ def parse_dictionary_values(x, field_names=[]):
         elif param.get('type') == 'vector_type':
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
-            val = parse_VectorType()
-
+            val = parse_VectorType(
+                param.get('module_name'), param.get('class_name'), val
+            )
+            x = val
         if val is not None and param.get('validation_method') is not None:
                 val = param.get('validation_method')(val)
     return x
