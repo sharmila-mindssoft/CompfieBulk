@@ -1025,11 +1025,7 @@ def get_user_client_domains(db, session_user):
     if result:
         return return_domains(result)
     else:
-<<<<<<< HEAD
-        return get_user_domains(db, session_user)
-=======
         return get_domains_for_user(db, session_user)
->>>>>>> usha/module
 
 
 def get_date_configurations(db, client_id):
@@ -1314,7 +1310,6 @@ def get_legal_entities_for_user(db, user_id):
     return return_legal_entities_for_unit(result)
 
 
-<<<<<<< HEAD
 def return_legal_entities_for_unit(legal_entities):
     results = []
     for legal_entity in legal_entities:
@@ -1328,8 +1323,6 @@ def return_legal_entities_for_unit(legal_entities):
     return results
 
 
-=======
->>>>>>> usha/module
 def get_divisions_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientdivision", (user_id,))
     return return_divisions(result)
@@ -1743,8 +1736,4 @@ def get_user_client_countries(db, session_user):
         if result:
             return return_countries(result)
     else:
-<<<<<<< HEAD
-        return get_user_countries(db, session_user)
-=======
         return get_countries_for_user(db, session_user)
->>>>>>> usha/module
