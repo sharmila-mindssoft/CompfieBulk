@@ -22,6 +22,11 @@ __all__ = [
 
 api_params = {
     'session_token': {'type': 'text', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'login_type': {'type': ''},
+    'username': {},
+    'password': {},
+    'short_name': {},
+    'ip': {},
 
     'd_id': {'type': 'int', 'length': 500, 'validation_method': None, 'is_optional': False},
     'd_name': {'type': 'string', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},

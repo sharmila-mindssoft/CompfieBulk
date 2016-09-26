@@ -56,9 +56,13 @@ CREATE TABLE `tbl_user_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_admin`;
+
 CREATE TABLE `tbl_admin` (
+  `email_id` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL
+  `password` varchar(50) NOT NULL,
+  `user_type` tinyint(4),
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_countries`;
@@ -669,6 +673,7 @@ CREATE TABLE `tbl_mobile_registration` (
 DROP TABLE IF EXISTS `tbl_machines`;
 CREATE TABLE `tbl_machines` (
   `machine_id` int(11) NOT NULL,
+  `machine_name` varchar(50) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
   `client_ids` varchar(100) NULL DEFAULT NULL,
@@ -696,6 +701,7 @@ CREATE TABLE `tbl_client_database` (
 
 DROP TABLE IF EXISTS `tbl_database_server`;
 CREATE TABLE `tbl_database_server` (
+  `db_server_name` varchar(50) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
   `server_username` varchar(50) NOT NULL,
