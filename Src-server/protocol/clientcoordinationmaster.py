@@ -24,7 +24,7 @@ class Request(object):
         if _Request_class_map.get(name) is None:
             msg = "invalid request: " + name
             raise ValueError(msg)
-        return _Request_class_map[name].parse_inner_structure(data)
+        return _Request_class_map[name].parse_structure(data)
 
     @staticmethod
     def parse_inner_structure(data):
@@ -36,12 +36,13 @@ class GetClientUnitApprovalList(Request):
         pass
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data)
         return GetClientUnitApprovalList()
 
     def to_inner_structure(self):
-        return {}
+        data = {}
+        return to_dictionary_values(data)
 
 
 class GetEntityApprovalList(Request):
@@ -49,7 +50,7 @@ class GetEntityApprovalList(Request):
         self.legal_entity_id = legal_entity_id
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, ["legal_entity_id"])
         legal_entity_id = data["legal_entity_id"]
         return GetEntityApprovalList(legal_entity_id)
@@ -66,7 +67,7 @@ class ApproveUnit(Request):
         self.unit_approval_details = unit_approval_details
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, ["unit_approval_details"])
         return ApproveUnit(data)
 
@@ -109,7 +110,7 @@ class Response(object):
         if _Response_class_map.get(name) is None:
             msg = "invalid request: " + name
             raise ValueError(msg)
-        return _Response_class_map[name].parse_inner_structure(data)
+        return _Response_class_map[name].parse_structure(data)
 
     @staticmethod
     def parse_inner_structure(data):
@@ -129,7 +130,7 @@ class UnitApproval(object):
         self.unit_count = unit_count
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, [
             "legal_entity_id", "legal_entity_name", "country_name",
             "business_group_name", "group_name", "unit_count"
@@ -146,7 +147,7 @@ class UnitApproval(object):
         )
 
     def to_structure(self):
-        return {
+        data = {
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
             "country_name": self.country_name,
@@ -154,6 +155,7 @@ class UnitApproval(object):
             "group_name": self.group_name,
             "unit_count": self.unit_count
         }
+        return to_dictionary_values(data)
 
 
 class GetClientUnitApprovalListSuccess(object):
@@ -163,7 +165,7 @@ class GetClientUnitApprovalListSuccess(object):
         self.unit_approval_list = unit_approval_list
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, [
             "unit_approval_list"
         ])
@@ -194,7 +196,7 @@ class EntityUnitApproval(object):
         self.org_names = org_names
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, [
             "unit_id", "division_name", "category_name", "unit_code",
             "unit_name", "address", "postal_code", "geography_name",
@@ -236,7 +238,7 @@ class GetEntityApprovalListSuccess(Response):
         self.entity_unit_approval_list = entity_unit_approval_list
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, ["entity_unit_approval_list"])
         entity_unit_approval_list = data["entity_unit_approval_list"]
         return GetEntityApprovalListSuccess(entity_unit_approval_list)
@@ -282,7 +284,7 @@ class ApproveUnitSuccess(Response):
         pass
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data)
         return ApproveUnitSuccess()
 
