@@ -1,3 +1,8 @@
+###############################################################################
+# This Controller will handle Client Coordination Manager related requests
+#
+# In this module "db" is an object of "KnowledgeDatabase"
+###############################################################################
 import time
 from server import logger
 from protocol import login, clientcoordinationmaster
@@ -11,6 +16,15 @@ __all__ = [
 forms = [28]
 
 
+###############################################################################
+# process_client_coordination_master_request will process
+# below mentioned request.
+# parameter : request type is object of request class from clientcoordination
+#   master protocol, db is database connection object.
+# return :
+#   return type is object of response class from
+#   clientcoordination master protocol.
+###############################################################################
 def process_client_coordination_master_request(request, db):
     session_token = request.session_token
     request_frame = request.request
@@ -55,12 +69,22 @@ def process_client_coordination_master_request(request, db):
     return result
 
 
+###############################################################################
+# To process the GetClientUnitApprovalList Request
+# parameter : None
+# return : GetClientUnitApprovalListSuccess Response
+###############################################################################
 def process_get_client_unit_approval_list(db):
     unit_approval_list = get_unit_approval_list(db)
     return clientcoordinationmaster.GetClientUnitApprovalListSuccess(
         unit_approval_list)
 
 
+###############################################################################
+# To process the GetEntityApprovalList Request
+# parameter : Object of database, request, and user id
+# return : GetEntityApprovalListSuccess Response
+###############################################################################
 def process_get_entity_unit_approval_list(db, request, session_user):
     units_list = get_entity_units_list(db, request.legal_entity_id)
     return clientcoordinationmaster.GetEntityApprovalListSuccess(
@@ -68,6 +92,11 @@ def process_get_entity_unit_approval_list(db, request, session_user):
     )
 
 
+###############################################################################
+# To process the ApproveUnit Request
+# parameter : Object of database, request, and user id
+# return : ApproveUnitSuccess Response
+###############################################################################
 def process_approve_unit(db, request, session_user):
     approve_unit(db, request, session_user)
     return clientcoordinationmaster.ApproveUnitSuccess()

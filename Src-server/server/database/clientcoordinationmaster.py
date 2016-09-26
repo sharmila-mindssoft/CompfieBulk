@@ -11,13 +11,28 @@ __all__ = [
 ]
 
 
+###############################################################################
+# To get List of Legal entities which has un approved units
+# Parameters : Object of database
+# Return Type : List of Object of Unit Approval
+###############################################################################
 def get_unit_approval_list(db):
+    #
+    # sp_units_approval_list
+    # Arguments : None
+    # Results : List of legal entities with no of units to be approved
+    #
     data = db.call_proc(
         "sp_units_approval_list", None
     )
     return return_unit_approval_list(data)
 
 
+###############################################################################
+# To convert Data fetched from database into list of object of Unit Approval
+# Parameters : Legal entity list fetched from database
+# Return Type : List of Object of Unit Approval
+###############################################################################
 def return_unit_approval_list(data):
     fn = clientcoordinationmaster.UnitApproval
     result = [
@@ -26,13 +41,24 @@ def return_unit_approval_list(data):
             legal_entity_name=datum["legal_entity_name"],
             country_name=datum["country_name"],
             business_group_name=datum["business_group_name"],
-            group_name=datum["group_name"], unit_count=datum["unit_count"]
+            group_name=datum["group_name"],
+            unit_count=datum["unit_count"]
         ) for datum in data
     ]
     return result
 
 
+###############################################################################
+# To get list of un approved units under a legal entity
+# Parameters : Object of database, legal entity id
+# Return Type : List of Object of EntityUnitApproval
+###############################################################################
 def get_entity_units_list(db, legal_entity_id):
+    #
+    # sp_units_approval_list_by_entity_id
+    # Arguments : legal_entity_id
+    # Results : List of units to be approved under the legal entity
+    #
     data = db.call_proc_with_multiresult_set(
         "sp_units_approval_list_by_entity_id", (legal_entity_id,), 2
     )
@@ -46,6 +72,12 @@ def get_entity_units_list(db, legal_entity_id):
     )
 
 
+###############################################################################
+# To Convert data fetched from database into list of Object
+# of EntityUnitApproval
+# Parameters : Unit Data fetched from database, dictionary
+# Return Type : List of Object of EntityUnitApproval
+###############################################################################
 def return_approval_units_under_entity(units, industry_domain_unitwise_map):
     fn = clientcoordinationmaster.EntityUnitApproval
     result = []
@@ -70,6 +102,12 @@ def return_approval_units_under_entity(units, industry_domain_unitwise_map):
     return result
 
 
+###############################################################################
+# To create a dictionary (key: unit_id,
+# value: dictionary (key: string, value:list))
+# Parameters : Data fetched from database
+# Return Type : Dictionary
+###############################################################################
 def return_unit_wise_industry_domain_map(industry_domain_data):
     unit_wise_industry_domain_map = {}
     for data in industry_domain_data:
@@ -87,6 +125,11 @@ def return_unit_wise_industry_domain_map(industry_domain_data):
     return unit_wise_industry_domain_map
 
 
+###############################################################################
+# To Approve/ Reject a multiple Units
+# Parameters : Objct of database, request, session user
+# Return Type : True if approve succeeds otherwise raises process error
+###############################################################################
 def approve_unit(db, request, session_user):
     unit_approval_details = request.unit_approval_details
     current_time_stamp = get_date_time()
@@ -107,6 +150,11 @@ def approve_unit(db, request, session_user):
     result = db.bulk_update(
         tblUnits, columns, values, conditions
     )
+    #
+    # sp_activity_log_save
+    # Arguments : user id, form id, action, time of action
+    # Results : Returns activity log id
+    #
     if result:
         db.call_insert_proc(
             "sp_activity_log_save",
