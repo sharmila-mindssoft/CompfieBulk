@@ -1,0 +1,224 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/css/client-master-approval/clientmasterapproval.css">
+<style>
+    .client-popup{
+        width:60%;
+        margin-left:260px;
+    }
+    .le{
+        background-color:#eee;
+    }
+    .domain-header td{
+        padding: 0px;
+        margin-left:0px;
+    }
+    .domain-header table {
+        cellspacing:0;
+        cellpadding:0;
+        width:100%;
+        border: 1px dotted #ccc;
+    }
+    .grid-table th {
+        text-align: left;
+    }
+    .dotted-border {
+        border: 1px dotted #ccc;
+    }
+    .width85 {
+       width:85%; 
+    }
+    .center-align {
+        text-align:center
+    }
+    textarea {
+        width:50px;
+    }
+</style>
+<div class="content-container" id="client-group-approve-list" >
+  <div class="content-area">
+    <div class="add-container">
+        <div class="add-container-heading">
+            Approve Client Group<span class="error-message"></span>
+        </div>
+        <br>
+        <div class="input-row-left">
+            <div class="input-row">
+                <div class="field-label">Country:<span class="mandatory">*</span></div>
+                <div class="field-input">
+                    <input type="hidden" id="country-id" value="">
+                    <input type="text" class="input-box icon-autocomplete" id="countryval" tabindex="1" autofocus="autofocus" value="" placeholder="Enter Country">
+                    <div id="ac-country" class="ac-textbox default-display-none">
+                      <ul class="width85"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="input-row-right">
+            <div class="input-row">
+                <div class="field-label">Client Group:</div>
+                <div class="field-input">
+                    <input type="text" class="input-box icon-autocomplete" id="groupsval" value="" tabindex="2" placeholder="Enter Client">
+                    <input type="hidden" id="group-id">
+                    <div id="ac-group" class="ac-textbox default-display-none">
+                      <ul class="width85"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="submit-button-container">
+            <input type="submit" name="cancel" value="Show" class="btn-submit btn-show">
+        </div>
+        <div class="clearfix"></div>
+        <div class="grid-table client-group-grid">
+            <table class="dotted-border">
+                <tr align="left">
+                    <th>#</th>
+                    <th>Client Group</th>
+                    <th>Short Name</th>
+                    <th>Username</th>
+                    <th class="center-align">No.of Legal Entity</th>
+                    <th>Action</th>
+                    <th>Reason</th>
+                </tr>
+                <tbody class="group-list">
+                </tbody>
+            </table>
+        </div>
+        <div class="submit-button-container default-display-none approve-group-div">
+            <input type="submit" name="cancel" value="Save" class="btn-submit approve-group">
+        </div>
+    </div>
+  </div>
+</div>
+<div id="templates">
+    <div class="group-row">
+        <table>
+            <tr>
+                <td class="sno"></td>
+                <td class="group_name"><a href="#" class="toggleModal img-link"></a></td>
+                <td class="short_name"></td>
+                <td class="email_id"></td>
+                <td class="le_count" style=""></td>
+                <td class="action">
+                    <select class="input-box">
+                        <option value="0" selected="selected">Select</option>
+                        <option value="1" >Approve</option>
+                        <option value="2">Reject</option>
+                    </select>
+                </td>
+                <td class="reason-box">
+                    <textarea class="input-box default-display-none reason" 
+                    placeholder="Reason text here"></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="no-records">
+        <table>
+            <tr>
+                <td colspan="6">
+                    No records found
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="le-row">
+        <table>
+            <tr class="le">
+                <td colspan="4">
+                    <table class="mtable">
+                        <tr>
+                            <td class="le_country"></td>
+                            <td class="le_bg"></td>
+                            <td class="le_name"></td>
+                        </tr>
+                        <tr>
+                            <td class="incharge_person"></td>
+                            <td class="logo">
+                                Logo: <img width='20px' height="20px"/>
+                            </td>
+                            <td class="file_space"></td>
+                        </tr>
+                        <tr>
+                            <td class="contract_from"></td>
+                            <td class="contract_to"></td>
+                            <td class="total_licence"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="domain-header">
+                <td colspan="3">
+                    <div class="grid-table">
+                        <table>
+                            <tr>
+                                <th>Domain </th>
+                                <th>Organization</th>
+                                <th>No. of Units</th>
+                            </tr>
+                            <tbody class="tbody-domain">
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="domain-row">
+        <table>
+            <tr>
+                <td class="domain-name"></td>
+                <td class="org-name"></td>
+                <td class="no-of-units"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="date-config-row">
+        <table>
+            <tr>
+                <td class="dconfig-country_name"></td>
+                <td class="dconfig-domain-name"></td>
+                <td class="dconfig-from"></td>
+                <td class="dconfig-to"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="overlay">
+    <div class="popup content-area client-popup">
+        <a class="close">x</a>
+        <table class="modaltable" width="100%">
+            <tr>
+                <td colspan="4">
+                    <table class="mtable">
+                        <tr>
+                            <td width="30%" align="center" class="client_name"></td>
+                            <td width="30%" align="center" class="client_short_name"></td>
+                            <td width="40%" align="center" class="admin_username"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tbody class="tbody-le">
+                <td colspan=4>
+                </td>
+            </tbody>
+        </table>
+        <div class="grid-table">
+            <table>
+                <tr>
+                    <th>Country </th>
+                    <th>Domain </th>
+                    <th>From</th>
+                    <th>To</th>
+                </tr>
+                <tbody class="date-configuration-rows">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/script/client-master-approval/clientmasterapproval.js"></script>
+{% endblock %}

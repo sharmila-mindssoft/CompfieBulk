@@ -348,13 +348,18 @@ CREATE TABLE `tbl_compliances_backup` (
 
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
-  `client_id` int(11) NOT NULL PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(50) NOT NULL,
   `group_admin` varchar(50) NOT NULL,
   `view_licence` int(11) DEFAULT NULL,
-  KEY `index1` (`client_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+  `approve_status` tinyint(4) DEFAULT '0',
+  `remarks` text,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`client_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_countries`;
 CREATE TABLE `tbl_client_countries` (

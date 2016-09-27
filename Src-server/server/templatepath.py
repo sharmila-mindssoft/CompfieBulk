@@ -325,6 +325,11 @@ TEMPLATE_PATHS = [
         "files/desktop/knowledge/client-master/clientmaster-new.html",
         None, {}
     ),
+    (
+        "/knowledge/client-master-approval",
+        "files/desktop/knowledge/client-master-approval/clientmasterapproval.html",
+        None, {}
+    ),
     # Techno user master
     (
         "/knowledge/client-unit",

@@ -2192,6 +2192,7 @@ cursor: pointer;
 	width:80%;
 }
 .modal {
+	top: 40%;
 	width: 40%;
 	left:60%;
 }
@@ -3446,4 +3447,16 @@ div.scrollable {
     font-size: 13px;
     width: 100%;
     padding-top: 50px;
+}
+
+.modaltable tr td {
+    padding-left: 5px;
+}
+
+.mtable tr td {
+    font-size: 1em;
+}
+
+.mtable {
+	width: 100%;
 }

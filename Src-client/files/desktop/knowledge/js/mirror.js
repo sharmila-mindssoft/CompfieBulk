@@ -1528,6 +1528,24 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getClientGroupApprovalList(callback){
+    callerName = 'client_coordination_master';
+    var request = [
+      'GetClientGroupApprovalList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function approveClientGroup(group_approval_details, callback){
+    callerName = 'client_coordination_master';
+    var request = [
+      'ApproveClientGroup',
+      {
+        "client_group_approval_details": group_approval_details
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
 
   return {
     log: log,
@@ -1667,7 +1685,9 @@ function initMirror() {
     getLegalEntityUpdateRow: getLegalEntityUpdateRow,
     getClientUnitApprovalList: getClientUnitApprovalList,
     getEntityApprovalList: getEntityApprovalList,
-    approveUnit: approveUnit
+    approveUnit: approveUnit,
+    getClientGroupApprovalList: getClientGroupApprovalList,
+    approveClientGroup: approveClientGroup
   };
 }
 var mirror = initMirror();

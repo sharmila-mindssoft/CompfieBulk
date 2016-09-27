@@ -70,7 +70,8 @@ messages = {
     "E069": "Invalid number of licence",
     "E070": "Invalid File space",
     "E071": "Save Organization failed",
-    "E072": "Unit Approval failed"
+    "E072": "Unit Approval failed",
+    "E073": "Client Group Approval failed"
 }
 
 client_message = {

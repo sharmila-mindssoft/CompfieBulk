@@ -895,7 +895,6 @@ function displayPopup(counts) {
             $("#o-cnt").val(o_cnt);
         }
     }
-
 }
 
 function closePopup(){

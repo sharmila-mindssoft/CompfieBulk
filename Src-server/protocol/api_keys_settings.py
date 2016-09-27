@@ -70,6 +70,7 @@ api_params = {
     'validity_days': {'type': 'int', 'length': 365, 'validation_method': None, 'is_optional': True},
 
     'group_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'client_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'group_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'country_names': {'type': 'string', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
@@ -99,7 +100,13 @@ api_params = {
     'entity_unit_approval_list': {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"EntityUnitApproval"},
     "unit_approval_details": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"UnitApprovalDetails"},
     'reason': {'type': 'text', 'length': None, 'validation_method': None, 'is_optional': False},
-    'approval_status': {'type': 'bool', 'length': None, 'validation_method': None, 'is_optional': False}
+    'approval_status': {'type': 'bool', 'length': None, 'validation_method': None, 'is_optional': False},
+
+    "group_approval_list" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"ClientGroupApproval"},
+    "countries" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"Country"},
+    'le_count': {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "country_ids": {'type': 'vector_type_int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "client_group_approval_details": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"ClientGroupApprovalDetails"},
 
 }
 

@@ -23,7 +23,7 @@ function displayMessage(message) {
 }
 
 //Convert Number to Srting of Month
-function getMonth_IntegettoString(intMonth) {
+function getMonth_IntegertoString(intMonth) {
   var stringMonth = '';
   if (intMonth == 1)
     stringMonth = 'Jan';

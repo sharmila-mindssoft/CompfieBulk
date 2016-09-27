@@ -7,6 +7,7 @@ import time
 from server import logger
 from protocol import login, clientcoordinationmaster
 from server.database.clientcoordinationmaster import *
+from server.database.technomaster import get_user_countries
 from generalcontroller import validate_user_session, validate_user_forms
 
 __all__ = [
@@ -65,6 +66,30 @@ def process_client_coordination_master_request(request, db):
         )
         logger.logKnowledgeApi("ApproveUnit", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+    elif(
+        type(
+            request_frame
+        ) is clientcoordinationmaster.GetClientGroupApprovalList
+    ):
+        logger.logKnowledgeApi("GetClientGroupApprovalList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_client_group_approval_list(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("GetClientGroupApprovalList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+    elif(
+        type(
+            request_frame
+        ) is clientcoordinationmaster.ApproveClientGroup
+    ):
+        logger.logKnowledgeApi("ApproveClientGroup", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_approve_client_group(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("ApproveClientGroup", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 
@@ -100,3 +125,16 @@ def process_get_entity_unit_approval_list(db, request, session_user):
 def process_approve_unit(db, request, session_user):
     approve_unit(db, request, session_user)
     return clientcoordinationmaster.ApproveUnitSuccess()
+
+
+def process_client_group_approval_list(db, request, session_user):
+    countries = get_user_countries(db, session_user)
+    client_groups = get_client_groups_approval_list(db, session_user)
+    return clientcoordinationmaster.GetClientGroupApprovalListSuccess(
+        countries=countries, group_approval_list=client_groups
+    )
+
+
+def process_approve_client_group(db, request, session_user):
+    approve_client_group(db, request, session_user)
+    return clientcoordinationmaster.ApproveClientGroupSuccess()
