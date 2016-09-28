@@ -305,10 +305,16 @@ DROP PROCEDURE IF EXISTS sp_tbl_domains_for_user;
 DELIMITER //
 CREATE procedure `sp_tbl_domains_for_user`(IN _user_id VARCHAR(11))
 BEGIN
-	SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active FROM tbl_domains t1
-    INNER JOIN tbl_user_domains t2 on t1.domain_id = t2.domain_id WHERE
-    t1.is_active = 1 AND t2.user_id LIKE _user_id
-	ORDER BY t1.domain_name;
+	IF _user_id > 0 THEN 
+		SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active 
+		FROM tbl_domains t1
+		INNER JOIN tbl_user_domains t2 on t1.domain_id = t2.domain_id 
+		WHERE t2.user_id LIKE _user_id
+		ORDER BY t1.domain_name;
+	ELSE
+		SELECT domain_id, domain_name, is_active FROM tbl_domains
+		ORDER BY domain_name;
+	END IF;
 END //
 DELIMITER ;
 
@@ -449,12 +455,17 @@ CREATE PROCEDURE `sp_countries_for_user`(
     IN session_user INT(11)
 )
 BEGIN
-    SELECT country_id, country_name, is_active
-    FROM tbl_countries
-    WHERE is_active=1 and country_id in (
-        SELECT country_id FROM tbl_user_countries
-        WHERE user_id = session_user
-    );
+    IF session_user > 0 THEN
+		SELECT country_id, country_name, is_active
+		FROM tbl_countries
+		WHERE country_id in (
+			SELECT country_id FROM tbl_user_countries
+			WHERE user_id = session_user
+		) ORDER BY country_name;
+	ELSE
+		SELECT country_id, country_name, is_active
+		FROM tbl_countries ORDER BY country_name;
+    END IF;
 END //
 DELIMITER ;
 -- --------------------------------------------------------------------------------
@@ -1232,3 +1243,186 @@ BEGIN
 END //
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- To check whether the country name already exissts or not
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_is_dupliacte`;
+DELIMITER //
+CREATE PROCEDURE `sp_countries_is_dupliacte`(
+	IN countryname VARCHAR(50), countryid INT(11)
+)
+BEGIN
+	IF countryid IS NULL THEN
+        SELECT count(country_id) as count FROM tbl_countries
+        WHERE country_name=countryname;
+    ELSE
+        SELECT count(country_id) as count FROM tbl_countries
+        WHERE country_name=countryname and country_id != countryid;
+    END IF;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Save / Update Country
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_countries_save`(
+	IN countryid INT(11), countryname VARCHAR(50),
+	session_user INT(11), updated_time TIMESTAMP
+)
+BEGIN
+	IF countryid IS NULL THEN
+		INSERT INTO tbl_countries 
+		(country_id, country_name, is_active, created_by,
+		created_on, updated_by, updated_on) 
+		VALUES (countryid, countryname, 1, session_user, updated_time,
+		session_user, updated_time);
+	ELSE
+		UPDATE tbl_countries SET country_name = countryname,
+		updated_by = session_user, updated_on = updated_time
+		WHERE country_id=countryid;
+	END IF;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get the country name by it's id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_by_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_countries_by_id`(
+	IN countryid INT(11)
+)
+BEGIN
+	SELECT country_name FROM tbl_countries
+	WHERE country_id = countryid;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To check whether transaction exists for a country before changing it's status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_is_transaction_exists`;
+DELIMITER //
+CREATE PROCEDURE `sp_countries_is_transaction_exists`(
+	IN countryid INT(11)
+)
+BEGIN
+	SELECT count(*) as count
+	FROM tbl_statutory_mappings 
+	WHERE country_id = countryid;
+	
+	SELECT count(*) as count
+	FROM tbl_client_countries 
+	WHERE country_id = countryid; 
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To change the status of country
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_change_status`;
+DELIMITER //
+CREATE PROCEDURE `sp_countries_change_status`(
+	IN countryid INT(11), isactive TINYINT(2), 
+	session_user INT(11), updated_time TIMESTAMP
+)
+BEGIN
+	UPDATE tbl_countries set is_active = isactive,
+	updated_by = session_user, updated_on = updated_time
+	WHERE country_id=countryid;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To save/ update domain
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domains_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_domains_save`(
+	IN domainid INT(11), domainname  VARCHAR(50),
+	session_user INT(11), updatedon TIMESTAMP
+)
+BEGIN
+	IF domainid IS NULL THEN
+		INSERT INTO tbl_domains (
+		domain_name, is_active, created_on, 
+		created_by, updated_on, updated_by) VALUES (
+		domainname, 1, updatedon, session_user, 
+		updatedon, session_user);
+	ELSE
+		UPDATE tbl_domains SET domain_name=domainname,
+		updated_on = updatedon, updated_by = session_user
+		WHERE domain_id=domainid;
+	END IF;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To check whether the domain name already exists or not
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domains_is_duplicate`;
+DELIMITER //
+CREATE PROCEDURE `sp_domains_is_duplicate`(
+	IN domainname VARCHAR(50), domainid INT(11)
+)
+BEGIN
+	IF domainid IS NULL THEN
+        SELECT count(domain_id) as count FROM tbl_domains
+        WHERE domain_name=domainname;
+    ELSE
+        SELECT count(domain_id) as count FROM tbl_domains
+        WHERE domain_name=domainname and domain_id != domainid;
+    END IF;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get domain name by it's id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domains_by_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_domains_by_id`(
+	IN domainid INT(11)
+)
+BEGIN
+	SELECT domain_name FROM tbl_domains
+	WHERE domain_id = domainid;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Check whether transaction exists for domain or not
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domains_is_transaction_exists`;
+DELIMITER //
+CREATE PROCEDURE `sp_domains_is_transaction_exists`(
+	IN domainid INT(11)
+)
+BEGIN
+	SELECT count(*) AS count 
+	FROM tbl_statutory_mappings
+	WHERE domain_id = domainid;
+
+	SELECT count(*) AS count 
+	FROM tbl_client_domains 
+	WHERE domain_id = domainid;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To change the status of domain
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domains_change_status`;
+DELIMITER //
+CREATE PROCEDURE `sp_domains_change_status`(
+	IN domainid INT(11), isactive TINYINT(2), 
+	session_user INT(11), updated_time TIMESTAMP
+)
+BEGIN
+	UPDATE tbl_domains set is_active = isactive,
+	updated_by = session_user, updated_on = updated_time
+	WHERE domain_id=domainid;
+END //
+DELIMITER ;

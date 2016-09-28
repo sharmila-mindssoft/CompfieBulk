@@ -2,7 +2,7 @@ import threading
 from protocol import core
 from server.database.tables import *
 from server.common import (
-    convert_to_dict, get_date_time,
+    get_date_time,
     generate_and_return_password
 )
 from server.emailcontroller import EmailHandler as email
@@ -11,11 +11,11 @@ from server.exceptionmessage import process_error
 __all__ = [
     "get_domains_for_user", "save_domain",
     "check_duplicate_domain", "get_domain_by_id",
-    "update_domain", "check_domain_id_to_deactivate",
+    "update_domain", "is_transaction_exists_for_domain",
     "update_domain_status",
     "get_countries_for_user", "get_country_by_id",
     "check_duplicate_country", "save_country",
-    "update_country", "check_country_id_to_deactivate",
+    "update_country", "is_transaction_exists",
     "update_country_status",
     "get_forms", "get_form_categories",
     "is_duplicate_user_group_name",
@@ -37,9 +37,8 @@ __all__ = [
 #
 
 def get_domains_for_user(db, user_id):
-    columns = ["domain_id", "domain_name", "is_active"]
     procedure = 'sp_tbl_domains_for_user'
-    result = db.call_proc(procedure, [user_id], columns)
+    result = db.call_proc(procedure, (user_id,))
     return return_domains(result)
 
 
@@ -54,13 +53,10 @@ def return_domains(data):
 
 def save_domain(db, domain_name, user_id):
     created_on = get_date_time()
-    query = "INSERT INTO tbl_domains(domain_name, " + \
-        " created_by, created_on) " + \
-        " VALUES (%s, %s, %s)"
-    res = db.execute(query, [
-        domain_name, user_id, created_on
-    ])
-    if res is False:
+    domain_id = db.call_insert_proc(
+        "sp_domains_save", (None, domain_name, user_id, created_on)
+    )
+    if domain_id is False:
         raise process_error("E024")
     action = "Add Domain - \"%s\"" % domain_name
     db.save_activity(user_id, 2, action)
@@ -69,40 +65,31 @@ def save_domain(db, domain_name, user_id):
 
 def check_duplicate_domain(db, domain_name, domain_id):
     isDuplicate = False
-    query = "SELECT count(1) FROM tbl_domains WHERE domain_name = %s "
-
-    if domain_id is not None:
-        query = query + " AND domain_id != %s"
-        param = [domain_name, domain_id]
-    else:
-        param = [domain_name]
-
-    row = db.select_one(query, param)
-
-    if row[0] > 0:
+    result = db.call_proc(
+        "sp_domains_is_duplicate", (domain_name, domain_id)
+    )
+    if (result[0]["count"]) > 0:
         isDuplicate = True
-
     return isDuplicate
 
 
 def get_domain_by_id(db, domain_id):
-    q = "SELECT domain_name FROM tbl_domains " + \
-        " WHERE domain_id=%s"
-    row = db.select_one(q, [domain_id])
-    domain_name = None
-    if row:
-        domain_name = row[0]
+    result = db.call_proc("sp_domains_by_id", (domain_id,))
+    if result:
+        domain_name = result[0]["domain_name"]
     return domain_name
 
 
 def update_domain(db, domain_id, domain_name, updated_by):
+    updated_on = get_date_time()
     oldData = get_domain_by_id(db, domain_id)
     if oldData is None:
         return False
     else:
-        query = "UPDATE tbl_domains SET domain_name = %s, " + \
-            " updated_by = %s WHERE domain_id = %s"
-        if db.execute(query, [domain_name, updated_by, domain_id]):
+        domain_id = db.call_update_proc(
+            "sp_domains_save", (domain_id, domain_name, updated_by, updated_on)
+        )
+        if domain_id:
             action = "Edit Domain - \"%s\"" % domain_name
             db.save_activity(updated_by, 2, action)
             return True
@@ -110,33 +97,33 @@ def update_domain(db, domain_id, domain_name, updated_by):
             raise process_error("E025")
 
 
-def check_domain_id_to_deactivate(db, domain_id):
-    q = "SELECT count(*) from tbl_statutory_mappings where domain_id = %s"
-    row = db.select_one(q, [domain_id])
-    if row[0] > 0:
+def is_transaction_exists_for_domain(db, domain_id):
+    result = db.call_proc_with_multiresult_set(
+        "sp_domains_is_transaction_exists", (domain_id,), 2
+    )
+    statutory_mapped = int(result[0][0]["count"])
+    client_mapped = int(result[1][0]["count"])
+    if(statutory_mapped > 0 or client_mapped > 0):
         return False
     else:
-        q = "SELECT count(*) from tbl_client_domains where domain_id = %s "
-        row = db.select_one(q, [domain_id])
-        if row[0] > 0:
-            return False
-    return True
+        return True
 
 
 def update_domain_status(db, domain_id, is_active, updated_by):
+    updated_on = get_date_time()
     oldData = get_domain_by_id(db, domain_id)
     if oldData is None:
         return False
     else:
-        query = "UPDATE tbl_domains SET is_active = %s, " + \
-            "updated_by = %s WHERE domain_id = %s"
-        if db.execute(query, [is_active, updated_by, domain_id]):
-            if is_active == 0:
-                status = "deactivated"
-            else:
-                status = "activated"
-            action = "Domain %s status  - %s" % (oldData, status)
-            db.save_activity(updated_by, 2, action)
+        result = db.call_update_proc(
+            "sp_domains_change_status",
+            (domain_id, is_active, updated_by, updated_on)
+        )
+        if result:
+            action = "Domain %s status  - %s" % (
+                oldData, "deactivated" if is_active == 0 else "activated"
+            )
+            db.save_activity(updated_by, 1, action)
             return True
         else:
             raise process_error("E026")
@@ -168,21 +155,7 @@ def get_user_domains(db, user_id):
 
 
 def get_countries_for_user(db, user_id):
-    query = "SELECT distinct t1.country_id, t1.country_name, " + \
-        " t1.is_active FROM tbl_countries t1 "
-    if user_id > 0:
-        query = query + " INNER JOIN tbl_user_countries t2 " + \
-            " ON t1.country_id = t2.country_id WHERE t2.user_id = %s " + \
-            " AND t1.is_active = 1 "
-    query = query + " ORDER BY t1.country_name"
-    if user_id > 0:
-        rows = db.select_all(query, [user_id])
-    else:
-        rows = db.select_all(query)
-    result = []
-    if rows:
-        columns = ["country_id", "country_name", "is_active"]
-        result = convert_to_dict(rows, columns)
+    result = db.call_proc("sp_countries_for_user", (user_id,))
     return return_countries(result)
 
 
@@ -196,34 +169,28 @@ def return_countries(data):
 
 
 def get_country_by_id(db, country_id):
-    q = "SELECT country_name FROM tbl_countries " + \
-        " WHERE country_id= %s "
-    row = db.select_one(q, [country_id])
-    country_name = row[0]
+    result = db.call_proc("sp_countries_by_id", (country_id,))
+    country_name = result[0]["country_name"]
     return country_name
 
 
 def check_duplicate_country(db, country_name, country_id):
     isDuplicate = False
-    query = "SELECT count(*) FROM tbl_countries WHERE country_name = %s "
-    param = [str(country_name)]
-    if country_id is not None:
-        query = query + " AND country_id != %s"
-        param = [str(country_name), str(country_id)]
-    row = db.select_one(query, param)
-    if row[0] > 0:
+    result = db.call_proc(
+        "sp_countries_is_dupliacte", (country_name, country_id)
+    )
+    count = result[0]["count"]
+    if count > 0:
         isDuplicate = True
     return isDuplicate
 
 
 def save_country(db, country_name, created_by):
     created_on = get_date_time()
-
-    query = "INSERT INTO tbl_countries(country_name, created_by, " + \
-        " created_on) VALUES (%s, %s, %s) "
-    if db.execute(query, (
-        country_name, created_by, created_on
-    )):
+    country_id = db.call_insert_proc(
+        "sp_countries_save", (None, country_name, created_by, created_on)
+    )
+    if country_id:
         action = "Add Country - \"%s\"" % country_name
         db.save_activity(created_by, 1, action)
         return True
@@ -232,15 +199,16 @@ def save_country(db, country_name, created_by):
 
 
 def update_country(db, country_id, country_name, updated_by):
+    updated_on = get_date_time()
     oldData = get_country_by_id(db, country_id)
     if oldData is None:
         return False
     else:
-        query = "UPDATE tbl_countries SET country_name = %s, " + \
-            " updated_by = %s WHERE country_id = %s"
-        if db.execute(query, (
-            country_name, updated_by, country_id
-        )):
+        result = db.call_update_proc(
+            "sp_countries_save",
+            (country_id, country_name, updated_by, updated_on)
+        )
+        if result:
             action = "Edit Country - \"%s\"" % country_name
             db.save_activity(updated_by, 1, action)
             return True
@@ -248,34 +216,32 @@ def update_country(db, country_id, country_name, updated_by):
             raise process_error("E028")
 
 
-def check_country_id_to_deactivate(db, country_id):
-    q = "SELECT count(*) from tbl_statutory_mappings where country_id = %s"
-    row = db.select_one(q, [country_id])
-    if row[0] > 0:
+def is_transaction_exists(db, country_id):
+    result = db.call_proc_with_multiresult_set(
+        "sp_countries_is_transaction_exists", (country_id,), 2
+    )
+    statutory_mapped = int(result[0][0]["count"])
+    client_mapped = int(result[1][0]["count"])
+    if(statutory_mapped > 0 or client_mapped > 0):
         return False
     else:
-        q = "SELECT count(*) from tbl_client_countries where country_id = %s "
-        row = db.select_one(q, [country_id])
-        if row[0] > 0:
-            return False
-    return True
+        return True
 
 
 def update_country_status(db, country_id, is_active, updated_by):
+    updated_on = get_date_time()
     oldData = get_country_by_id(db, country_id)
     if oldData is None:
         return False
     else:
-        query = "UPDATE tbl_countries SET is_active = %s, " + \
-            " updated_by = %s WHERE country_id = %s"
-        if is_active == 0:
-            status = "deactivated"
-        else:
-            status = "activated"
-        if db.execute(query, [
-            is_active, updated_by, country_id
-        ]):
-            action = "Country %s status  - %s" % (oldData, status)
+        result = db.call_update_proc(
+            "sp_countries_change_status",
+            (country_id, is_active, updated_by, updated_on)
+        )
+        if result:
+            action = "Country %s status  - %s" % (
+                oldData, "deactivated" if is_active == 0 else "activated"
+            )
             db.save_activity(updated_by, 1, action)
             return True
         else:

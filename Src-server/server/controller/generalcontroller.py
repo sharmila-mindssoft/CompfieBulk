@@ -2,7 +2,7 @@ import os
 from protocol import core, login, general, possiblefailure
 from server import logger
 from server.constants import (
-    RECORD_DISPLAY_COUNT, FILE_TYPES,
+    FILE_TYPES,
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
     CLIENT_DOCS_BASE_PATH
 )
@@ -117,13 +117,6 @@ def validate_user_session(db, session_token, client_id=None):
 
 
 def validate_user_forms(db, user_id, form_ids, requet):
-    # if user_id == 0 and type(requet) in [
-    #     general.UpdateNotificationStatus,
-    #     general.UpdateUserProfile,
-    #     general.GetAuditTrails
-    # ]:
-    #     return False
-
     if type(requet) not in [
         general.GetNotifications,
         general.UpdateNotificationStatus,
@@ -180,7 +173,7 @@ def process_change_domain_status(db, request, user_id):
     is_active = request.is_active
     domain_id = int(request.domain_id)
     if is_active is False:
-        if check_domain_id_to_deactivate(db, domain_id):
+        if is_transaction_exists_for_domain(db, domain_id):
             if (update_domain_status(db, domain_id, is_active, user_id)):
                 return general.ChangeDomainStatusSuccess()
             else:
@@ -248,7 +241,7 @@ def process_change_country_status(db, request, user_id):
     is_active = request.is_active
     country_id = int(request.country_id)
     if is_active is False:
-        if check_country_id_to_deactivate(db, country_id):
+        if is_transaction_exists(db, country_id):
             if (
                 update_country_status(
                     db, country_id, int(is_active), user_id
