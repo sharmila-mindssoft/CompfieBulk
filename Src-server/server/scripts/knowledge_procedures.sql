@@ -413,7 +413,7 @@ BEGIN
 	SELECT form_category_id, form_category FROM tbl_form_category WHERE form_category_id in (2, 3);
 END //
 DELIMITER ;
------------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------
 -- To get the list of groups with countries and number of legal entities
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_list`;
@@ -934,8 +934,6 @@ BEGIN
     (notification, url, now());
 END //
 DELIMITER ;
-
----sep 22
 
 -- --------------------------------------------------------------------------------
 -- To get the group of companies under user - client unit
