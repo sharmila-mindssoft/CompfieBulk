@@ -1,7 +1,13 @@
+###############################################################################
+# This Controller will handle Client Coordination Manager related requests
+#
+# In this module "db" is an object of "KnowledgeDatabase"
+###############################################################################
 import time
 from server import logger
 from protocol import login, clientcoordinationmaster
 from server.database.clientcoordinationmaster import *
+from server.database.technomaster import get_user_countries
 from generalcontroller import validate_user_session, validate_user_forms
 
 __all__ = [
@@ -11,6 +17,15 @@ __all__ = [
 forms = [28]
 
 
+###############################################################################
+# process_client_coordination_master_request will process
+# below mentioned request.
+# parameter : request type is object of request class from clientcoordination
+#   master protocol, db is database connection object.
+# return :
+#   return type is object of response class from
+#   clientcoordination master protocol.
+###############################################################################
 def process_client_coordination_master_request(request, db):
     session_token = request.session_token
     request_frame = request.request
@@ -51,16 +66,50 @@ def process_client_coordination_master_request(request, db):
         )
         logger.logKnowledgeApi("ApproveUnit", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+    elif(
+        type(
+            request_frame
+        ) is clientcoordinationmaster.GetClientGroupApprovalList
+    ):
+        logger.logKnowledgeApi("GetClientGroupApprovalList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_client_group_approval_list(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("GetClientGroupApprovalList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+    elif(
+        type(
+            request_frame
+        ) is clientcoordinationmaster.ApproveClientGroup
+    ):
+        logger.logKnowledgeApi("ApproveClientGroup", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_approve_client_group(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("ApproveClientGroup", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 
 
+###############################################################################
+# To process the GetClientUnitApprovalList Request
+# parameter : None
+# return : GetClientUnitApprovalListSuccess Response
+###############################################################################
 def process_get_client_unit_approval_list(db):
     unit_approval_list = get_unit_approval_list(db)
     return clientcoordinationmaster.GetClientUnitApprovalListSuccess(
         unit_approval_list)
 
 
+###############################################################################
+# To process the GetEntityApprovalList Request
+# parameter : Object of database, request, and user id
+# return : GetEntityApprovalListSuccess Response
+###############################################################################
 def process_get_entity_unit_approval_list(db, request, session_user):
     units_list = get_entity_units_list(db, request.legal_entity_id)
     return clientcoordinationmaster.GetEntityApprovalListSuccess(
@@ -68,6 +117,24 @@ def process_get_entity_unit_approval_list(db, request, session_user):
     )
 
 
+###############################################################################
+# To process the ApproveUnit Request
+# parameter : Object of database, request, and user id
+# return : ApproveUnitSuccess Response
+###############################################################################
 def process_approve_unit(db, request, session_user):
     approve_unit(db, request, session_user)
     return clientcoordinationmaster.ApproveUnitSuccess()
+
+
+def process_client_group_approval_list(db, request, session_user):
+    countries = get_user_countries(db, session_user)
+    client_groups = get_client_groups_approval_list(db, session_user)
+    return clientcoordinationmaster.GetClientGroupApprovalListSuccess(
+        countries=countries, group_approval_list=client_groups
+    )
+
+
+def process_approve_client_group(db, request, session_user):
+    approve_client_group(db, request, session_user)
+    return clientcoordinationmaster.ApproveClientGroupSuccess()

@@ -254,7 +254,9 @@ var message = {
   "client_update_success": "Client updated successfully",
   "client_change_status_success": "Changed the status of client successfully",
   "unit_approve_success": "Unit approved successfully",
-  "approve_atleast_one": "Approve atleast one unit"
+  "approve_atleast_one": "Approve atleast one unit",
+  "group_approve_success": "Client group approved successfully",
+  "country_or_group_required": "Country or group required"
 };
 
 function clearMessage() {

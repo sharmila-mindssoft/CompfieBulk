@@ -348,13 +348,18 @@ CREATE TABLE `tbl_compliances_backup` (
 
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
-  `client_id` int(11) NOT NULL PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(50) NOT NULL,
   `group_admin` varchar(50) NOT NULL,
   `view_licence` int(11) DEFAULT NULL,
-  KEY `index1` (`client_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+  `approve_status` tinyint(4) DEFAULT '0',
+  `remarks` text,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`client_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_countries`;
 CREATE TABLE `tbl_client_countries` (
@@ -365,36 +370,6 @@ CREATE TABLE `tbl_client_countries` (
   CONSTRAINT `fk_tbl_countries_id` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-<<<<<<< HEAD
-DROP TABLE IF EXISTS `tbl_client_domains`;
-CREATE TABLE `tbl_client_domains` (
-  `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
-  PRIMARY KEY (`client_id`,`legal_entity_id`,`domain_id`),
-  KEY `fk_tbl_domains_client_domains_id` (`domain_id`),
-  KEY `fk_tbl_domains_client_legal_entity_id` (`legal_entity_id`),
-  CONSTRAINT `fk_tbl_client_domains_1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tbl_client_groups_client_domains_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
-  CONSTRAINT `fk_tbl_domains_client_domains_id` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `tbl_user_clients`;
-CREATE TABLE `tbl_user_clients` (
-  `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`client_id`,`user_id`,`legal_entity_id`),
-  KEY `fk_tbl_users_id` (`user_id`),
-  KEY `fk_tbl_le_id` (`legal_entity_id`),
-  CONSTRAINT `fk_tbl_le_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tbl_client_groups_user_clients_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
-  CONSTRAINT `fk_tbl_users_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-=======
->>>>>>> usha/module
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
   `client_config_id` int(11) NOT NULL AUTO_INCREMENT,

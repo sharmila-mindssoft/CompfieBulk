@@ -9,11 +9,8 @@
 
 ### value_type = [STRING, TEXT, INT, BOOL, VECTOR_TYPE_STRING, VECTOR_TYPE_INT, VECTOR_TYPE, ENUM_TYPE]
 ### validation_method = [is_alphabet, is_alphanumeric, is_date, is_address ]
-example
-    {
-        'country_name': STRING, 50, is_alphabet
-    }
 '''
+
 from protocol.api_key_validation import *
 
 __all__ = [
@@ -70,12 +67,16 @@ api_params = {
     'validity_days': {'type': 'INT', 'length': 365, 'validation_method': None, 'is_optional': True},
 
     'group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'client_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'group_name': {'type': 'STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
     'country_names': {'type': 'STRING', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     'no_of_legal_entities': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'username': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
-    'legal_entity_name': {'type': 'STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'business_group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'business_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'legal_entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'legal_entity_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'no_of_licence': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'file_space': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     'is_sms_subscribed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -84,6 +85,7 @@ api_params = {
 
     'unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApproval"},
     'unit_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    'unit_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'division_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -95,7 +97,13 @@ api_params = {
     'entity_unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "EntityUnitApproval"},
     "unit_approval_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApprovalDetails"},
     'reason': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'approval_status': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False}
+    'approval_status': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+
+    "group_approval_list" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "ClientGroupApproval"},
+    "countries" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Country"},
+    'le_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "country_ids": {'type': 'VECTOR_TYPE_int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "client_group_approval_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "ClientGroupApprovalDetails"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

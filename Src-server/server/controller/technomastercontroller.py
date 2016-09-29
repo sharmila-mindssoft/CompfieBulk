@@ -7,8 +7,7 @@
 from protocol import technomasters
 
 from server.database.admin import (
-    get_domains_for_user,
-    get_countries_for_user
+    get_domains_for_user
 )
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
@@ -67,10 +66,6 @@ def get_client_group_form_data(db, request, session_user):
 # To Save Client
 ########################################################
 def process_save_client_group(db, request, session_user):
-<<<<<<< HEAD
-=======
-    print "inside process_save_client_group"
->>>>>>> usha/module
     session_user = int(session_user)
     if is_duplicate_group_name(db, request.group_name):
         return technomasters.GroupNameAlreadyExists()

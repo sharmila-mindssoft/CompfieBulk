@@ -240,7 +240,7 @@ def parse_int_list(x, length=0, int_length=0):
     if type(x) is not list:
         raise expectation_error("a list ", x)
     for y in x:
-        if type(x) is not int:
+        if type(y) is not int:
             raise expectation_error("a list with integer values ", x)
         else:
             y = parse_number(y, 0, int_length)
