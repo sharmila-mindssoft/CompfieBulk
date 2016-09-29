@@ -35,13 +35,22 @@ __all__ = [
 #
 # Domain
 #
-
+#############################################################################
+# To get domains configured under a user
+# Parameter(s) : Object of database, user id
+# Return Type : List of Object of Domain
+#############################################################################
 def get_domains_for_user(db, user_id):
     procedure = 'sp_tbl_domains_for_user'
     result = db.call_proc(procedure, (user_id,))
     return return_domains(result)
 
 
+###############################################################################
+# To convert the data fetched from database into List of object of Domain
+# Parameter(s) : Data fetched from database
+# Return Type : List of Object of Domain
+###############################################################################
 def return_domains(data):
     results = []
     for d in data:
@@ -51,6 +60,11 @@ def return_domains(data):
     return results
 
 
+###############################################################################
+# To save domain
+# Parameter(s) : Object of database, Domain name, session user
+# Return Type : Returns True on Successfull save otherwise raises process error
+###############################################################################
 def save_domain(db, domain_name, user_id):
     created_on = get_date_time()
     domain_id = db.call_insert_proc(
@@ -63,6 +77,12 @@ def save_domain(db, domain_name, user_id):
     return True
 
 
+###############################################################################
+# To Check whether the domain name already exists or not
+# Parameter(s) : Object of database, Domain name, domain id
+# Return Type : Returns True - if duplicate exists, False - If duplicate
+#               doesn't exists
+###############################################################################
 def check_duplicate_domain(db, domain_name, domain_id):
     isDuplicate = False
     result = db.call_proc(
@@ -73,6 +93,11 @@ def check_duplicate_domain(db, domain_name, domain_id):
     return isDuplicate
 
 
+###############################################################################
+# To Get the domain name  by it's id
+# Parameter(s) : Object of database, domain id
+# Return Type : Domain name (String)
+###############################################################################
 def get_domain_by_id(db, domain_id):
     result = db.call_proc("sp_domains_by_id", (domain_id,))
     if result:
@@ -80,6 +105,12 @@ def get_domain_by_id(db, domain_id):
     return domain_name
 
 
+###############################################################################
+# To Update domain
+# Parameter(s) : Object of database, domain id, domain name, session user
+# Return Type : Returns - True on Successfull update, Raises Process error
+#               When update fails
+###############################################################################
 def update_domain(db, domain_id, domain_name, updated_by):
     updated_on = get_date_time()
     oldData = get_domain_by_id(db, domain_id)
@@ -97,6 +128,11 @@ def update_domain(db, domain_id, domain_name, updated_by):
             raise process_error("E025")
 
 
+###############################################################################
+# To Check whether transactions exists under a domain or not
+# Parameter(s) : Object of database, domain id
+# Return Type : Returns - True if transaction exists otherwise return False
+###############################################################################
 def is_transaction_exists_for_domain(db, domain_id):
     result = db.call_proc_with_multiresult_set(
         "sp_domains_is_transaction_exists", (domain_id,), 2
@@ -109,6 +145,12 @@ def is_transaction_exists_for_domain(db, domain_id):
         return True
 
 
+###############################################################################
+# To Update the status of domain
+# Parameter(s) : Object of database, domain id, stauts, session user
+# Return Type : Returns - True on Successfull update, otherwise raises
+#               process error
+###############################################################################
 def update_domain_status(db, domain_id, is_active, updated_by):
     updated_on = get_date_time()
     oldData = get_domain_by_id(db, domain_id)
@@ -132,33 +174,47 @@ def update_domain_status(db, domain_id, is_active, updated_by):
 #
 # Country
 #
+#############################################################################
+# To get country ids configured under a user
+# Parameter(s) : Object of database, user id
+# Return Type : List of country ids (List of Integer)
+#############################################################################
 def get_user_countries(db, user_id):
-    columns = "country_id"
-    condition = " user_id = %s"
-    condition_val = [user_id]
-    rows = db.get_data(tblUserCountries, columns, condition, condition_val)
+    rows = db.call_proc("sp_usercountries_by_userid", (user_id,))
     country_ids = []
     for r in rows:
-        country_ids.append(r["country_id"])
+        country_ids.append(int(r["country_id"]))
     return country_ids
 
 
+#############################################################################
+# To get domain ids configured under a user
+# Parameter(s) : Object of database, user id
+# Return Type : List of domain ids (List of Integer)
+#############################################################################
 def get_user_domains(db, user_id):
-    columns = "domain_id"
-    condition = " user_id = %s"
-    condition_val = [user_id]
-    rows = db.get_data(tblUserDomains, columns, condition, condition_val)
+    rows = db.call_proc("sp_userdomains_by_userid", (user_id,))
     domain_ids = []
     for r in rows:
-        domain_ids.append(r["domain_id"])
+        domain_ids.append(int(r["domain_id"]))
     return domain_ids
 
 
+#############################################################################
+# To get countries configured under a user
+# Parameter(s) : Object of database, user id
+# Return Type : List of Object of Countries
+#############################################################################
 def get_countries_for_user(db, user_id):
     result = db.call_proc("sp_countries_for_user", (user_id,))
     return return_countries(result)
 
 
+###############################################################################
+# To convert the data fetched from database into List of object of Country
+# Parameter(s) : Data fetched from database
+# Return Type : List of Object of Country
+###############################################################################
 def return_countries(data):
     results = []
     for d in data:
@@ -168,12 +224,23 @@ def return_countries(data):
     return results
 
 
+###############################################################################
+# To Get the country name  by it's id
+# Parameter(s) : Object of database, country id
+# Return Type : Country name (String)
+###############################################################################
 def get_country_by_id(db, country_id):
     result = db.call_proc("sp_countries_by_id", (country_id,))
     country_name = result[0]["country_name"]
     return country_name
 
 
+###############################################################################
+# To Check whether the country name already exists or not
+# Parameter(s) : Object of database, Country name, country id
+# Return Type : Returns True - if duplicate exists, False - If duplicate
+#               doesn't exists
+###############################################################################
 def check_duplicate_country(db, country_name, country_id):
     isDuplicate = False
     result = db.call_proc(
@@ -185,6 +252,11 @@ def check_duplicate_country(db, country_name, country_id):
     return isDuplicate
 
 
+###############################################################################
+# To save Country
+# Parameter(s) : Object of database, Country name, session user id
+# Return Type : Returns True on Successfull save otherwise raises process error
+###############################################################################
 def save_country(db, country_name, created_by):
     created_on = get_date_time()
     country_id = db.call_insert_proc(
@@ -198,6 +270,12 @@ def save_country(db, country_name, created_by):
         raise process_error("E027")
 
 
+###############################################################################
+# To Update country
+# Parameter(s) : Object of database, country id, country name, session user id
+# Return Type : Returns - True on Successfull update, Raises Process error
+#               When update fails
+###############################################################################
 def update_country(db, country_id, country_name, updated_by):
     updated_on = get_date_time()
     oldData = get_country_by_id(db, country_id)
@@ -216,6 +294,11 @@ def update_country(db, country_id, country_name, updated_by):
             raise process_error("E028")
 
 
+###############################################################################
+# To Check whether transactions exists under a country or not
+# Parameter(s) : Object of database, country id
+# Return Type : Returns - True if transaction exists otherwise return False
+###############################################################################
 def is_transaction_exists(db, country_id):
     result = db.call_proc_with_multiresult_set(
         "sp_countries_is_transaction_exists", (country_id,), 2
@@ -228,6 +311,12 @@ def is_transaction_exists(db, country_id):
         return True
 
 
+###############################################################################
+# To Update the status of country
+# Parameter(s) : Object of database, country id, stauts, session user
+# Return Type : Returns - True on Successfull update, otherwise raises
+#               process error
+###############################################################################
 def update_country_status(db, country_id, is_active, updated_by):
     updated_on = get_date_time()
     oldData = get_country_by_id(db, country_id)
@@ -251,55 +340,51 @@ def update_country_status(db, country_id, is_active, updated_by):
 #
 #   Forms
 #
+###############################################################################
+# To get all Forms
+# Parameter(s) : Object of database
+# Return Type : Returns data fetched from database (Tuplse)
+###############################################################################
 def get_forms(db):
-    columns = " tf.form_id, tf.form_category_id, tfc.form_category, " + \
-        " tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, " + \
-        " tf.form_order, tf.parent_menu "
-    tables = [tblForms, tblFormCategory, tblFormType]
-    aliases = ["tf", "tfc", "tft"]
-    join_conditions = [
-        "tf.form_category_id = tfc.form_category_id",
-        "tf.form_type_id = tft.form_type_id"
-    ]
-    where_condition = " tf.form_category_id in (3,2,4) order by tf.form_order"
-    join_type = "left join"
-
-    rows = db.get_data_from_multiple_tables(
-        columns, tables, aliases, join_type,
-        join_conditions, where_condition
-    )
-    return rows
+    return db.call_proc("sp_forms_list", None)
 
 
+###############################################################################
+# To get all Form categories
+# Parameter(s) : Object of database
+# Return Type : Returns data fetched from database (Tuplse)
+###############################################################################
 def get_form_categories(db):
-    columns = "form_category_id, form_category"
-    condition = " form_category_id in (2,3)"
-    rows = db.get_data(tblFormCategory, columns, condition)
-    return rows
+    return db.call_proc("sp_formcategory_list", None)
 
 
 #
 #   Admin User Group
 #
+###############################################################################
+# To Check whether the user group name already exists or not
+# Parameter(s) : Object of database, user group name, user group id
+# Return Type : Returns True - if duplicate exists, False - If duplicate
+#               doesn't exists
+###############################################################################
 def is_duplicate_user_group_name(db, user_group_name, user_group_id=None):
-    if user_group_id is not None:
-        condition = "user_group_name = %s AND user_group_id != %s"
-        return db.is_already_exists(
-            tblUserGroups, condition, [user_group_name, user_group_id]
-        )
+    result = db.call_proc(
+        "sp_usergroup_is_duplicate", (user_group_id, user_group_name)
+    )
+    if result[0]["count"] > 0:
+        return True
     else:
-        condition = "user_group_name = %s"
-        return db.is_already_exists(
-            tblUserGroups, condition, [user_group_name]
-        )
+        return False
 
 
+###############################################################################
+# To Check whether users where created under the user group or not
+# Parameter(s) : Object of database, user group id
+# Return Type : Returns True - if users exists, False - If users doesn't exists
+###############################################################################
 def is_user_exists_under_user_group(db, user_group_id):
-    columns = "count(0) as count"
-    condition = "user_group_id = %s and is_active = 1"
-    condition_val = [user_group_id]
-    rows = db.get_data(
-        tblUsers, columns, condition, condition_val
+    rows = db.call_proc(
+        "sp_usergroup_is_transaction_exists", (user_group_id, )
     )
     if rows[0]["count"] > 0:
         return True
@@ -307,39 +392,42 @@ def is_user_exists_under_user_group(db, user_group_id):
         return False
 
 
+###############################################################################
+# To get List of all user groups with all details
+# Parameter(s) : Object of database
+# Return Type : Returns data fetched from database (Tuple)
+###############################################################################
 def get_user_group_detailed_list(db):
-    columns = "ug.user_group_id, user_group_name, form_category_id, " + \
-                "form_ids, is_active, (select count(*) " + \
-                " from tbl_users u where " + \
-                "ug.user_group_id = u.user_group_id) as count"
-    tables = tblUserGroups+" ug"
-    where_condition = " 1 order by user_group_name"
-    rows = db.get_data(tables, columns, where_condition)
-    return rows
+    return db.call_proc("sp_usergroup_detailed_list", None)
 
 
+###############################################################################
+# To get List of all user groups (only id, name and status)
+# Parameter(s) : Object of database
+# Return Type : Returns data fetched from database (Tuple)
+###############################################################################
 def get_user_groups_from_db(db):
-    columns = "user_group_id, user_group_name, is_active"
-    where_condition = "1 order by user_group_name"
-    rows = db.get_data(tblUserGroups, columns, where_condition)
-    return rows
+    return db.call_proc("sp_usergroup_list", None)
 
 
+###############################################################################
+# To save User group
+# Parameter(s) : Object of database, user group name (String),
+# form category id (INT), List of form ids (List of integer), session user id
+# Return Type : Returns True on Successfull save otherwise raises process error
+###############################################################################
 def save_user_group(
-    db, user_group_name,
-    form_category_id, form_ids
+    db, user_group_name, form_category_id, form_ids, session_user
 ):
     time_stamp = str(get_date_time())
-    columns = "( user_group_name, form_category_id, form_ids, " + \
-        "is_active, created_on, created_by)"
-    forms = ",".join(str(x) for x in form_ids)
-    values = [
-        user_group_name, form_category_id,
-        forms, 1, time_stamp,
-        0
-    ]
-    new_id = db.insert(tblUserGroups, columns, values)
-    if new_id:
+    ug_id = db.call_insert_proc(
+        "sp_usergroup_save",
+        (
+            None, user_group_name, form_category_id,
+            form_ids, session_user, time_stamp
+        )
+    )
+    if ug_id:
         action = "Created User Group \"%s\"" % user_group_name
         db.save_activity(0, 3, action)
         return True
@@ -347,23 +435,26 @@ def save_user_group(
         raise process_error("E030")
 
 
+###############################################################################
+# To update User group
+# Parameter(s) : Object of database, user group id, user group name (String),
+# form category id (INT), List of form ids (List of integer), session user id
+# Return Type : Returns True on Successfull update otherwise raises
+#   process error
+###############################################################################
 def update_user_group(
-    db, user_group_id, user_group_name,
-    form_category_id, form_ids
+    db, user_group_id, user_group_name, form_category_id, form_ids,
+    session_user
 ):
-
     time_stamp = get_date_time()
-    columns = [
-        "user_group_name", "form_category_id", "form_ids", "updated_on",
-        "updated_by"
-    ]
-    condition = "user_group_id= %s "
-    values = [
-        user_group_name, form_category_id,
-        ",".join(str(x) for x in form_ids), time_stamp, 0,
-        user_group_id
-    ]
-    if db.update(tblUserGroups, columns, values, condition):
+    result = db.call_update_proc(
+        "sp_usergroup_save",
+        (
+            user_group_id, user_group_name, form_category_id,
+            form_ids, session_user, time_stamp
+        )
+    )
+    if result:
         action = "Updated User Group \"%s\"" % user_group_name
         db.save_activity(0, 3, action)
         return True
@@ -371,27 +462,29 @@ def update_user_group(
         raise process_error("E031")
 
 
-def update_user_group_status(db, user_group_id, is_active):
+###############################################################################
+# To update the status of user group
+# Parameter(s) : Object of database, user group id, is_active, session user id
+# Return Type : True on Successfull update otherwise raises process error
+###############################################################################
+def update_user_group_status(db, user_group_id, is_active, session_user):
     time_stamp = get_date_time()
-    columns = ["is_active", "updated_by", "updated_on"]
-    condition = "user_group_id=%s"
-    values = [is_active, 0, time_stamp, user_group_id]
-    result = db.update(
-        tblUserGroups, columns, values, condition
+    result = db.call_update_proc(
+        "sp_usergroup_change_status",
+        (
+            user_group_id, is_active, session_user,
+            time_stamp
+        )
     )
     if result is False:
         raise process_error("E032")
-    action_columns = "user_group_name"
-    condition_val = [user_group_id]
-    rows = db.get_data(
-        tblUserGroups, action_columns, condition, condition_val
+
+    result = db.call_proc("sp_usergroup_by_id", (user_group_id,))
+    user_group_name = result[0]["user_group_name"]
+    action = "%s User Group \"%s\"" % (
+        "Deactivated" if is_active == 0 else "Activated",
+        user_group_name
     )
-    user_group_name = rows[0]["user_group_name"]
-    action = ""
-    if is_active == 0:
-        action = "Deactivated User Group \"%s\"" % user_group_name
-    else:
-        action = "Activated User Group \"%s\"" % user_group_name
     db.save_activity(0, 3, action)
     return result
 
@@ -399,89 +492,67 @@ def update_user_group_status(db, user_group_id, is_active):
 #
 # Admin User
 #
+###############################################################################
+# To get List of all users with all details
+# Parameter(s) : Object of database
+# Return Type : Returns data fetched from database (Tuple)
+###############################################################################
 def get_detailed_user_list(db):
-    columns = "user_id, email_id, user_group_id, employee_name, " + \
-        "employee_code, contact_no, address, designation, is_active"
-    condition = "1"
-    rows = db.get_data(tblUsers, columns, condition)
-    return rows
+    return db.call_proc("sp_user_detailed_list", None)
 
 
+###############################################################################
+# To Check whether the email id already exists or not
+# Parameter(s) : Object of database, email id, session user id
+# Return Type : Returns True - if duplicate exists, False - If duplicate
+#               doesn't exists
+###############################################################################
 def is_duplicate_email(db, email_id, user_id=None):
-    if user_id is not None:
-        condition = "email_id = %s AND user_id != %s"
-        condition_val = [
-            email_id, user_id
-        ]
+    rows = db.call_proc("sp_user_is_duplicate_email", (email_id, user_id))
+    if rows[0]["count"] > 0:
+        return True
     else:
-        condition = "email_id = %s "
-        condition_val = [email_id]
-    return db.is_already_exists(tblUsers, condition, condition_val)
+        return False
 
 
+###############################################################################
+# To Check whether the employee code already exists or not
+# Parameter(s) : Object of database, employee code, session user id
+# Return Type : Returns True - if duplicate exists, False - If duplicate
+#               doesn't exists
+###############################################################################
 def is_duplicate_employee_code(db, employee_code, user_id=None):
-    if user_id is not None:
-        condition = "employee_code=%s AND user_id != %s"
-        condition_val = [
-            employee_code, user_id
-        ]
+    rows = db.call_proc(
+        "sp_user_is_duplicate_employeecode", (employee_code, user_id))
+    if rows[0]["count"] > 0:
+        return True
     else:
-        condition = "employee_code=%s "
-        condition_val = [employee_code]
-    return db.is_already_exists(tblUsers, condition, condition_val)
+        return False
 
 
+###############################################################################
+# To save User
+# Parameter(s) : Object of database, email id, user group id, employee name,
+#                employee code, contact number, address, designation,
+#               list of country ids, list of domain ids, session user id
+# Return Type : Returns True on Successfull save otherwise raises process error
+###############################################################################
 def save_user(
-    db, email_id, user_group_id, employee_name,
-    employee_code, contact_no, address, designation, country_ids, domain_ids
+    db, email_id, user_group_id, employee_name, employee_code, contact_no,
+    address, designation, country_ids, domain_ids, session_user
 ):
-    result1 = False
-    result2 = False
-    result3 = False
     current_time_stamp = get_date_time()
-    user_columns = [
-        "email_id", "user_group_id", "password", "employee_name",
-        "employee_code", "contact_no", "is_active",
-        "created_on", "created_by", "updated_on", "updated_by"
-    ]
     encrypted_password, password = generate_and_return_password()
-    user_values = [
-        email_id, user_group_id, encrypted_password,
-        employee_name, employee_code, contact_no,  1,
-        current_time_stamp, 0, current_time_stamp, 0
-    ]
-    if address is not None:
-        user_columns.append("address")
-        user_values.append(address)
-    if designation is not None:
-        user_columns.append("designation")
-        user_values.append(designation)
-    new_id = db.insert(tblUsers, user_columns, user_values)
-    if new_id is False:
+    user_id = db.call_insert_proc(
+        "sp_users_save", (
+            None, email_id, user_group_id, encrypted_password,
+            employee_name, employee_code, contact_no, address,
+            designation, session_user, current_time_stamp)
+    )
+    if user_id is False:
         raise process_error("E033")
-    else:
-        user_id = new_id
-        result1 = True
-    country_columns = ["user_id", "country_id"]
-    country_values_list = []
-    for country_id in country_ids:
-        country_value_tuple = (user_id, int(country_id))
-        country_values_list.append(country_value_tuple)
-    result2 = db.bulk_insert(
-        tblUserCountries, country_columns, country_values_list
-    )
-    if result2 is False:
-        raise process_error("E034")
-    domain_columns = ["user_id", "domain_id"]
-    domain_values_list = []
-    for domain_id in domain_ids:
-        domain_value_tuple = (user_id, int(domain_id))
-        domain_values_list.append(domain_value_tuple)
-    result3 = db.bulk_insert(
-        tblUserDomains, domain_columns, domain_values_list
-    )
-    if result3 is False:
-        raise process_error("E035")
+    save_user_countries(db, country_ids, user_id)
+    save_user_domains(db, domain_ids, user_id)
     action = "Created User \"%s - %s\"" % (employee_code, employee_name)
     db.save_activity(0, 4, action)
     notify_user_thread = threading.Thread(
@@ -490,9 +561,14 @@ def save_user(
         ]
     )
     notify_user_thread.start()
-    return (result1 and result2 and result3)
+    return True
 
 
+###############################################################################
+# To Send the credentials to the user
+# Parameter(s) : email id, password, employee name, employee code
+# Return Type : if the email fails raises exception
+###############################################################################
 def notify_user(
     email_id, password, employee_name, employee_code
 ):
@@ -505,94 +581,106 @@ def notify_user(
         print e
 
 
+###############################################################################
+# To Save Countries configured for the user
+# Parameter(s) : Object of database, list of country ids, user id
+# Return Type : Returns None on Successfull save otherwise raises process error
+###############################################################################
+def save_user_countries(
+    db, country_ids, user_id
+):
+    country_columns = ["user_id", "country_id"]
+    country_values_list = [
+       (user_id, int(country_id)) for country_id in country_ids
+    ]
+    result = db.bulk_insert(
+        tblUserCountries, country_columns, country_values_list
+    )
+    if result is False:
+        raise process_error("E034")
+
+
+###############################################################################
+# To Save Domains configured for the user
+# Parameter(s) : Object of database, list of domain ids, user id
+# Return Type : Returns None on Successfull save otherwise raises process error
+###############################################################################
+def save_user_domains(
+    db, domain_ids, user_id
+):
+    domain_columns = ["user_id", "domain_id"]
+    domain_values_list = [
+        (user_id, int(domain_id)) for domain_id in domain_ids
+    ]
+    result = db.bulk_insert(
+        tblUserDomains, domain_columns, domain_values_list
+    )
+    if result is False:
+        raise process_error("E035")
+
+
+###############################################################################
+# To update User
+# Parameter(s) : Object of database, user id, user group id, employee name,
+# employee code, contact no, address, designation, List of country ids,
+# List of domain ids, session user id
+# Return Type : Returns True on Successfull update otherwise raises
+#   process error
+###############################################################################
 def update_user(
     db, user_id, user_group_id, employee_name, employee_code, contact_no,
-    address, designation, country_ids, domain_ids
+    address, designation, country_ids, domain_ids, session_user
 ):
-    result1 = False
-    result2 = False
-    result3 = False
-
     current_time_stamp = get_date_time()
-    user_columns = [
-        "user_group_id", "employee_name", "employee_code",
-        "contact_no", "address", "designation",
-        "updated_on", "updated_by"
-    ]
-    user_condition = "user_id = %s"
-    user_values = [
-        user_group_id, employee_name, employee_code, contact_no,
-        address, designation, current_time_stamp, 0, user_id
-    ]
-    result1 = db.update(
-        tblUsers, user_columns, user_values, user_condition
+    result = db.call_update_proc(
+        "sp_users_save", (
+            user_id, None, user_group_id, None,
+            employee_name, employee_code, contact_no, address,
+            designation, session_user, current_time_stamp)
     )
-    if result1 is False:
+    if result is False:
         raise process_error("E036")
-    db.delete(tblUserCountries, user_condition, [user_id])
-    db.delete(tblUserDomains, user_condition, [user_id])
-
-    country_columns = ["user_id", "country_id"]
-    country_values_list = []
-    for country_id in country_ids:
-        country_value_tuple = (user_id, int(country_id))
-        country_values_list.append(country_value_tuple)
-    result2 = db.bulk_insert(
-        tblUserCountries, country_columns,
-        country_values_list
-    )
-    if result2 is False:
-        raise process_error("E037")
-    domain_columns = ["user_id", "domain_id"]
-    domain_values_list = []
-    for domain_id in domain_ids:
-        domain_value_tuple = (user_id, int(domain_id))
-        domain_values_list.append(domain_value_tuple)
-    result3 = db.bulk_insert(
-        tblUserDomains, domain_columns,
-        domain_values_list
-    )
-    if result3 is False:
-        raise process_error("E038")
+    db.call_update_proc("sp_usercountries_delete", (user_id,))
+    db.call_update_proc("sp_userdomains_delete", (user_id,))
+    save_user_countries(db, country_ids, user_id)
+    save_user_domains(db, domain_ids, user_id)
     action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
     db.save_activity(0, 4, action)
+    return True
 
-    return (result1 and result2 and result3)
 
-
+###############################################################################
+# To Check whether the user group of user is active or not
+# Parameter(s) : Object of database, user id
+# Return Type : If the user group is inactive raises process error
+###############################################################################
 def check_user_group_active_status(db, user_id):
-    q = "select count(ug.user_group_id) from tbl_user_groups ug " + \
-        " inner join tbl_users u on  ug.user_group_id = u.user_group_id " + \
-        " where u.user_id = %s and ug.is_active = 1 "
-    row = db.select_one(q, [user_id])
+    row = db.call_proc("sp_user_usergroup_status", (user_id,))
     if int(row[0]) == 0:
         raise process_error("E065")
 
 
+###############################################################################
+# To Update the status of user
+# Parameter(s) : Object of database, user id, active status
+# Return Type : Returns True on Successfull update, Other wise raises process
+#               error
+###############################################################################
 def update_user_status(db, user_id, is_active):
     check_user_group_active_status(db, user_id)
-
-    columns = ["is_active", "updated_on", "updated_by"]
-    values = [is_active, get_date_time(), 0]
-    condition = "user_id=%s"
-    condition_val = [user_id]
-    values += condition_val
-    result = db.update(
-        tblUsers, columns, values, condition
+    result = db.call_update_proc(
+        "sp_users_change_status",
+        (user_id, is_active, session_user, get_date_time())
     )
     if result is False:
         raise process_error("E039")
-    action_columns = "employee_name, employee_code"
-    rows = db.get_data(
-        tblUsers, action_columns, condition, condition_val
-    )
-    employee_name = rows[0]["employee_name"]
-    employee_code = rows[0]["employee_code"]
+    rows = db.call_proc("sp_users_change_status", (user_id, ))
+    employee_name = rows[0]["empname"]
     action = ""
     if is_active == 1:
-        action = "Activated User \"%s - %s\"" % (employee_code, employee_name)
+        action = "Activated User \"%s\"" % employee_name
     else:
-        action = "Dectivated User \"%s - %s\"" % (employee_code, employee_name)
+        action = "Dectivated User \"%s\"" % employee_name
     db.save_activity(0, 4, action)
     return result
 

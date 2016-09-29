@@ -807,12 +807,15 @@ class GeographyWithMapping(object):
         }
         return data
 
+
 #
 # Industry
 #
-
 class Industry(object):
-    def __init__(self, country_id, country_name, domain_id, domain_name, industry_id, industry_name, is_active):
+    def __init__(
+        self, country_id, country_name, domain_id, domain_name, industry_id,
+        industry_name, is_active
+    ):
         self.country_id = country_id
         self.country_name = country_name
         self.domain_id = domain_id
@@ -823,32 +826,33 @@ class Industry(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_id", "country_name", "domain_id" "domain_name", "industry_id", "industry_name", "is_active"])
+        data = parse_dictionary(
+            data, [
+                "country_id", "country_name", "domain_id", "domain_name",
+                "industry_id", "industry_name", "is_active"
+            ]
+        )
         country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
-        country_name = parse_structure_CustomTextType_50(country_name)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50(domain_name)
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("industry_name")
-        industry_name = parse_structure_CustomTextType_50(industry_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
-        return Industry(country_id, country_name, domain_id, domain_name, industry_id, industry_name, is_active)
+        return Industry(
+            country_id, country_name, domain_id, domain_name, industry_id,
+            industry_name, is_active
+        )
 
     def to_structure(self):
         return {
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "country_name": to_structure_CustomTextType_50(self.country_name),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
-            "industry_name": to_structure_CustomTextType_50(self.industry_name),
-            "is_active": to_structure_Bool(self.is_active)
+            "country_id": self.country_id,
+            "country_name": self.country_name,
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "industry_id": self.industry_id,
+            "industry_name": self.industry_name,
+            "is_active": self.is_active
         }
 
 

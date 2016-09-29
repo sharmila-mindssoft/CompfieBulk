@@ -21,7 +21,6 @@ forms = [3, 4]
 # To Redirect Requests to Functions
 ########################################################
 def process_admin_request(request, db):
-
     session_token = request.session_token
     request_frame = request.request
     session_user = validate_user_session(db, session_token)
@@ -91,8 +90,10 @@ def process_admin_request(request, db):
 ########################################################
 def get_forms_list(db):
     result_rows = get_forms(db)
-    knowledge_forms = []
-    techno_forms = []
+    knowledge_user_forms = []
+    knowledge_manager_forms = []
+    techno_user_forms = []
+    techno_manager_forms = []
     for row in result_rows:
         parent_menu = None if (
             row["parent_menu"] == None) else row["parent_menu"]
@@ -103,18 +104,19 @@ def get_forms_list(db):
             parent_menu=parent_menu,
             form_type=row["form_type"]
         )
-        if int(row["form_category_id"]) == 2:
-            knowledge_forms.append(form)
-        elif int(row["form_category_id"]) == 3:
-            techno_forms.append(form)
-        # else:
-        #     knowledge_forms.append(form)
-        #     if form.form_name == "Audit Trail":
-        #         techno_forms.append(form)
-
+        if int(row["form_category_id"]) == 3:
+            knowledge_user_forms.append(form)
+        elif int(row["form_category_id"]) == 4:
+            knowledge_manager_forms.append(form)
+        elif int(row["form_category_id"]) == 7:
+            techno_user_forms.append(form)
+        elif int(row["form_category_id"]) == 8:
+            techno_manager_forms.append(form)
     result = {}
-    result[2] = process_user_menus(knowledge_forms)
-    result[3] = process_user_menus(techno_forms)
+    result[3] = process_user_menus(knowledge_user_forms)
+    result[4] = process_user_menus(knowledge_manager_forms)
+    result[7] = process_user_menus(techno_user_forms)
+    result[8] = process_user_menus(techno_manager_forms)
     return result
 
 
@@ -162,7 +164,6 @@ def get_user_groups(db, request_frame, session_user):
     forms = get_forms_list(db)
     form_categories = get_form_categories_db(db)
     user_group_list = process_user_group_detailed_list(db)
-
     result = admin.GetUserGroupsSuccess(
         form_categories=form_categories,
         forms=forms,
@@ -177,13 +178,11 @@ def get_user_groups(db, request_frame, session_user):
 def save_user_group_record(db, request, session_user):
     user_group_name = request.user_group_name
     form_category_id = request.form_category_id
-    form_ids = request.form_ids
+    form_ids = ",".join(str(x) for x in request.form_ids)
     if is_duplicate_user_group_name(db, user_group_name):
         return admin.GroupNameAlreadyExists()
     elif save_user_group(
-        db,
-        user_group_name,
-        form_category_id, form_ids
+        db, user_group_name, form_category_id, form_ids, session_user
     ):
         return admin.SaveUserGroupSuccess()
 
@@ -195,15 +194,14 @@ def update_user_groups(db, request, session_user):
     user_group_id = request.user_group_id
     user_group_name = request.user_group_name
     form_category_id = request.form_category_id
-    form_ids = request.form_ids
+    form_ids = ",".join(str(x) for x in request.form_ids)
     if db.is_invalid_id(tblUserGroups, "user_group_id", user_group_id):
         return admin.InvalidUserGroupId()
     elif is_duplicate_user_group_name(db, user_group_name, user_group_id):
         return admin.GroupNameAlreadyExists()
     elif update_user_group(
-        db,
-        user_group_id, user_group_name,
-        form_category_id, form_ids
+        db, user_group_id, user_group_name,
+        form_category_id, form_ids, session_user
     ):
         return admin.UpdateUserGroupSuccess()
 
@@ -220,7 +218,7 @@ def change_user_group_status(db, request, session_user):
         db, request.user_group_id
     ):
         return admin.CannotDeactivateUserExists()
-    elif update_user_group_status(db, user_group_id, is_active):
+    elif update_user_group_status(db, user_group_id, is_active, session_user):
         return admin.ChangeUserGroupStatusSuccess()
 
 
@@ -293,7 +291,7 @@ def save_user_record(db, request, session_user):
     elif save_user(
         db, email_id, user_group_id, employee_name,
         employee_code, contact_no, address, designation,
-        country_ids, domain_ids
+        country_ids, domain_ids, session_user
     ):
         return admin.SaveUserSuccess()
 
@@ -319,7 +317,8 @@ def update_user_record(db, request, session_user):
         return admin.EmployeeCodeAlreadyExists()
     elif update_user(
         db, user_id, user_group_id, employee_name, employee_code,
-        contact_no, address, designation, country_ids, domain_ids
+        contact_no, address, designation, country_ids, domain_ids,
+        session_user
     ):
         return admin.UpdateUserSuccess()
 

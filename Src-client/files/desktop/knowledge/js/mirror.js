@@ -858,15 +858,15 @@ function initMirror() {
     var cIds = userDetail[7];
     var dIds = userDetail[8];
     return {
-      'email': email,
+      'email_id': email,
       'ug_id': ugId,
-      'emp_n': empN,
-      'emp_c': empC,
-      'c_n': cNo,
-      'add': add,
-      'desig': desig,
-      'c_ids': cIds,
-      'd_ids': dIds
+      'employee_name': empN,
+      'employee_code': empC,
+      'contact_no': cNo,
+      'address': add,
+      'designation': desig,
+      'country_ids': cIds,
+      'domain_ids': dIds
     };
   }
   function saveAdminUser(userDetail, callback) {
@@ -894,15 +894,15 @@ function initMirror() {
     var cIds = userDetail[7];
     var dIds = userDetail[8];
     return {
-      'u_id': uId,
+      'user_id': uId,
       'ug_id': ugId,
-      'emp_n': empN,
-      'emp_c': empC,
-      'c_n': cn,
-      'add': add,
-      'desig': desig,
-      'c_ids': cIds,
-      'd_ids': dIds
+      'employee_name': empN,
+      'employee_code': empC,
+      'contact_no': cn,
+      'address': add,
+      'designation': desig,
+      'country_ids': cIds,
+      'domain_ids': dIds
     };
   }
   function updateAdminUser(userDetail, callback) {
@@ -918,8 +918,8 @@ function initMirror() {
     var request = [
       'ChangeUserStatus',
       {
-        'u_id': uId,
-        'active': active
+        'user_id': uId,
+        'is_active': active
       }
     ];
     apiRequest(callerName, request, callback);

@@ -187,7 +187,7 @@ def parse_dictionary(x, field_names=[]):
             )
             raise expectation_error(msg, x)
     if len(field_names) > 0:
-        x = parse_dictionary_values(x, field_names)
+        x = parse_dictionary_values(x, field_names, True)
 
     return x
 
@@ -253,10 +253,12 @@ def parse_optional_int_list(x, length=0, int_length=0):
     return parse_int_list(x, length, int_length)
 
 
-def parse_dictionary_values(x, field_names=[]):
+def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
+        print "field_name: %s" % field_name
+        print "param: %s" % param
         if param is None:
             val = parse_vector_type_record_type(val)
             continue
@@ -313,9 +315,24 @@ def parse_dictionary_values(x, field_names=[]):
             val = parse_VectorType(
                 param.get('module_name'), param.get('class_name'), val
             )
-            x = val
-        if val is not None and param.get('validation_method') is not None:
-                val = param.get('validation_method')(val)
+            if is_validation_and_parse is True:
+                x[field_name] = val
+        elif param.get('type') == 'map_type':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            assert param.get('validation_method') is not None
+            val = parse_MapType(
+                param.get('module_name'), param.get('class_name'),
+                param.get('validation_method'), val
+            )
+            if is_validation_and_parse is True:
+                x[field_name] = val
+        if(
+            val is not None and
+            param.get('validation_method') is not None and
+            param.get("type") != "map_type"
+        ):
+            val = param.get('validation_method')(val)
     return x
 
 
@@ -332,9 +349,19 @@ def to_dictionary_values(data, response=None):
                 param.get('module_name'), param.get('class_name'), value
             )
             result[key] = value
+        if param.get('type') == 'map_type':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            assert param.get('validation_method') is not None
+            value = to_MapType(
+                param.get('module_name'), param.get('class_name'),
+                param.get("validation_method"), value
+            )
+            result[key] = value
         else:
             x = {key: value}
-            parse_dictionary_values(x, field_names=[key])
+            parse_dictionary_values(
+                x, field_names=[key], is_validation_and_parse=False)
             result[key] = value
     if response is not None:
         final_result = [
@@ -354,7 +381,7 @@ def parse_vector_type_record_type(value):
         if type(value[0]) is dict:
             for v in value:
                 keys = v.keys()
-                v = parse_dictionary_values(v, keys)
+                v = parse_dictionary_values(v, keys, True)
 
         return value
     else:
@@ -365,7 +392,7 @@ def to_structure_dictionary_values(x):
     keys = x.keys()
     if len(keys) == 0:
         return {}
-    return parse_dictionary_values(x, keys)
+    return parse_dictionary_values(x, keys, False)
 
 
 def return_import(module, class_name):
@@ -412,3 +439,21 @@ def to_VectorType(module_name, class_name, data):
             to_RecordType(module_name, class_name, item)
         )
     return lst
+
+
+def parse_MapType(module_name, class_name, validation_method, data):
+    map = {}
+    for key, value in data.items():
+        key = validation_method(key)
+        parsed_value = parse_RecordType(module_name, class_name, value)
+        map[key] = parsed_value
+    return map
+
+
+def to_MapType(module_name, class_name, validation_method, data):
+    map = {}
+    for key, value in data.items():
+        key = validation_method(key)
+        dict_value = to_RecordType(module_name, class_name, value)
+        map[key] = dict_value
+    return map

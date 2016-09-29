@@ -176,8 +176,9 @@ def process_get_industry(db):
     results = get_industries(db)
     domain_list = get_domains_for_user(db, 0)
     country_list = get_countries_for_user(db, 0)
-
-    return knowledgemaster.GetIndustriesSuccess(industries=results, countries=country_list, domains=domain_list)
+    return knowledgemaster.GetIndustriesSuccess(
+        industries=results, countries=country_list, domains=domain_list
+    )
 
 ########################################################
 # save industry request

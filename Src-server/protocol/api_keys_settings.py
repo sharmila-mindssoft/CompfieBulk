@@ -41,9 +41,6 @@ api_params = {
     'parent_menu': {'type': 'string', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'form_type': {'type': 'string', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
-    'user_group_id': {'type': 'int', 'length': 1000, 'validation_method': None, 'is_optional': False},
-    'user_group_name': {'type': 'string', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
-
     'l_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'l_position' : {'type': 'int', 'length': 10, 'validation_method': None, 'is_optional': False},
     'l_name': {'type': 'string', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -68,6 +65,7 @@ api_params = {
 
     'validity_days_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'validity_days': {'type': 'int', 'length': 365, 'validation_method': None, 'is_optional': True},
+    "validity_date_settings" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"ValidityDates"},
 
     'group_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'client_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -75,7 +73,7 @@ api_params = {
     'country_names': {'type': 'string', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     'no_of_legal_entities': {'type': 'int', 'length': None, 'validation_method': None, 'is_optional': False},
-    'username': {'type': 'text', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'email_id': {'type': 'text', 'length': 100, 'validation_method': None, 'is_optional': False},
     'business_group_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'business_group_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'legal_entity_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -93,7 +91,7 @@ api_params = {
     'category_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'unit_code': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'unit_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'address': {'type': 'text', 'length': None, 'validation_method': None, 'is_optional': False},
+    'address': {'type': 'text', 'length': None, 'validation_method': None, 'is_optional': True},
     'postal_code': {'type': 'int', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
     'domain_names': {'type': 'vector_type_string', 'length': 50, 'validation_method': None, 'is_optional': False},
     'org_names': {'type': 'vector_type_string', 'length': 50, 'validation_method': None, 'is_optional': False},
@@ -104,10 +102,31 @@ api_params = {
 
     "group_approval_list" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"ClientGroupApproval"},
     "countries" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"Country"},
+    "domains" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"Domain"},
+    "industries" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"Industry"},
     'le_count': {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "country_ids": {'type': 'vector_type_int', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "client_group_approval_details": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'clientcoordinationmaster', "class_name":"ClientGroupApprovalDetails"},
 
+    "notifications" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'general', "class_name":"Notification"},
+    "audit_trail_details" : {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'general', "class_name":"AuditTrail"},
+    "form_categories":  {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"FormCategory"},
+    "user_group_details":  {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"UserGroup"},
+    'no_of_users': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "forms":  {'type':'map_type', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name':'core', "class_name":"Menu"},
+
+    "employee_name": {'type': 'string', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    "employee_code": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "contact_no": {'type': 'text', 'length': 12, 'validation_method': None, 'is_optional': True},
+    "designation": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "domain_ids": {'type': 'vector_type_int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "user_groups":  {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserGroup"},
+    "user_details":{'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserDetails"},
+
+    "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "user_group_id" : {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "form_ids": {'type': 'vector_type_int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "form_category_id" : {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
