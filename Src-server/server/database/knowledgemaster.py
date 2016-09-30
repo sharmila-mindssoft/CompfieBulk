@@ -55,7 +55,7 @@ def get_industry_by_id(db, industry_id):
 
     industry_names = []
     for r in row:
-        industry_names.append(r[0])
+        industry_names.append(r["industry_name"])
 
     return ", ".join(industry_names)
 
