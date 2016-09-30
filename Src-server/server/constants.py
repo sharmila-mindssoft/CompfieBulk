@@ -43,7 +43,7 @@ SESSION_CUTOFF = 15   # minutes
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
+KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
 
 URL = "http://localhost:8082/"
