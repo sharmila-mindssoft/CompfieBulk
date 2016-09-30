@@ -75,9 +75,50 @@ class SaveDBServer(Request):
         return to_dictionary_values(data)
 
 
+class GetClientServerList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetClientServerList()
+
+    def to_structure(self):
+        return {
+        }
+
+
+class SaveClientServer(Request):
+    def __init__(self, client_server_id, client_server_name, ip, port):
+        self.client_server_id = client_server_id
+        self.client_server_name = client_server_name
+        self.ip = ip
+        self.port = port
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["client_server_id", "client_server_name", "ip", "port"])
+        client_server_id = data.get("client_server_id")
+        client_server_name = data.get("client_server_name")
+        ip = data.get("ip")
+        port = data.get("port")
+        return SaveClientServer(client_server_id, client_server_name, ip, port)
+
+    def to_structure(self):
+        data = {
+            "client_server_id": self.client_server_id,
+            "client_server_name": self.client_server_name,
+            "ip": self.ip,
+            "port": self.port
+        }
+        return to_dictionary_values(data)
+
+
 def _init_Request_class_map():
     classes = [
-        GetDbServerList, SaveDBServer
+        GetDbServerList, SaveDBServer, GetClientServerList, SaveClientServer
     ]
     class_map = {}
     for c in classes:
@@ -181,9 +222,103 @@ class SaveDBServerSuccess(Response):
         return {}
 
 
+class DBServerNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DBServerNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class ClientServer(object):
+    def __init__(
+        self, client_server_id, client_server_name, ip, port, no_of_clients
+    ):
+        self.client_server_id = client_server_id
+        self.client_server_name = client_server_name
+        self.ip = ip
+        self.port = port
+        self.no_of_clients = no_of_clients
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+                "client_server_id", "client_server_name",
+                "ip", "port", "no_of_clients"
+            ])
+        client_server_id = data.get("client_server_id")
+        client_server_name = data.get("client_server_name")
+        ip = data.get("ip")
+        port = data.get("port")
+        no_of_clients = data.get("no_of_clients")
+        return ClientServer(
+            client_server_id, client_server_name, ip, port, no_of_clients
+        )
+
+    def to_structure(self):
+        data = {
+            "client_server_id": self.client_server_id,
+            "client_server_name": self.client_server_name,
+            "ip": self.ip,
+            "port": self.port,
+            "no_of_clients": self.no_of_clients
+        }
+        return to_dictionary_values(data)
+
+
+class GetClientServerListSuccess(Response):
+    def __init__(self, client_servers):
+        self.client_servers = client_servers
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_servers"])
+        client_servers = data.get("client_servers")
+        return GetClientServerListSuccess(client_servers)
+
+    def to_inner_structure(self):
+        data = {
+            "client_servers": self.client_servers
+        }
+        return to_dictionary_values(data)
+
+
+class SaveClientServerSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveClientServerSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class ClientServerNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ClientServerNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
-        GetDbServerListSuccess, SaveDBServerSuccess
+        GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
+        GetClientServerListSuccess, SaveClientServerSuccess,
+        ClientServerNameAlreadyExists
     ]
     class_map = {}
     for c in classes:

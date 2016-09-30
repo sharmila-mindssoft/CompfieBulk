@@ -56,6 +56,22 @@ def process_console_admin_request(request, db):
         result = process_save_db_server(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveDBServer", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(
+        type(request_frame) is consoleadmin.GetClientServerList
+    ):
+        logger.logKnowledgeApi("GetClientServerList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_client_server_list(db)
+        logger.logKnowledgeApi("GetClientServerList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(type(request_frame) is consoleadmin.SaveClientServer):
+        logger.logKnowledgeApi("SaveClientServer", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_save_client_server(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveClientServer", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
     return result
 
 
@@ -72,3 +88,19 @@ def process_save_db_server(db, request, session_user):
     else:
         save_db_server(db, request, session_user)
         return consoleadmin.SaveDBServerSuccess()
+
+
+def process_get_client_server_list(db):
+    client_servers = get_client_server_list(db)
+    return consoleadmin.GetClientServerListSuccess(
+        client_servers
+    )
+
+
+def process_save_client_server(db, request, session_user):
+    if is_duplicate_client_server_name(
+            db, request.client_server_name, request.client_server_id):
+        return consoleadmin.ClientServerNameAlreadyExists()
+    else:
+        save_client_server(db, request, session_user)
+        return consoleadmin.SaveClientServerSuccess()

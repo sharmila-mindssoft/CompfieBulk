@@ -13,6 +13,7 @@ function initialize(type_of_form){
     clearMessage();
     clearFields();
     if(type_of_form == "list"){
+        edit_ip = '';
         function onSuccess(data) {
             DBSERVERS = data.db_servers;
             FILTERED_LIST = DBSERVERS
@@ -30,16 +31,18 @@ function initialize(type_of_form){
         });
     }else if(type_of_form == "edit"){
         loadEditForm();
+    }else{
+        edit_ip = '';
     }
 }
 
 function showPage(type_of_form){
     if(type_of_form == "list"){
-        $("#country-view").show();
-        $("#country-add").hide();
+        $("#view").show();
+        $("#add").hide();
     }else{
-        $("#country-view").hide();
-        $("#country-add").show();
+        $("#view").hide();
+        $("#add").show();
     }
 }
 

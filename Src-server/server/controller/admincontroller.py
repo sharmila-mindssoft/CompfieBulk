@@ -25,7 +25,10 @@ def process_admin_request(request, db):
     request_frame = request.request
     session_user = validate_user_session(db, session_token)
     if session_user is not None:
-        is_valid = validate_user_forms(db, session_user, forms, request_frame)
+        admin_user_type = 0
+        is_valid = validate_user_forms(
+            db, session_user, forms, request_frame, admin_user_type
+        )
         if is_valid is not True:
             return login.InvalidSessionToken()
 
@@ -92,6 +95,8 @@ def get_forms_list(db):
     result_rows = get_forms(db)
     knowledge_user_forms = []
     knowledge_manager_forms = []
+    cc_user_forms = []
+    cc_manager_forms = []
     techno_user_forms = []
     techno_manager_forms = []
     for row in result_rows:
@@ -108,6 +113,10 @@ def get_forms_list(db):
             knowledge_user_forms.append(form)
         elif int(row["form_category_id"]) == 4:
             knowledge_manager_forms.append(form)
+        elif int(row["form_category_id"]) == 5:
+            cc_manager_forms.append(form)
+        elif int(row["form_category_id"]) == 6:
+            cc_user_forms.append(form)
         elif int(row["form_category_id"]) == 7:
             techno_user_forms.append(form)
         elif int(row["form_category_id"]) == 8:
@@ -115,6 +124,8 @@ def get_forms_list(db):
     result = {}
     result[3] = process_user_menus(knowledge_user_forms)
     result[4] = process_user_menus(knowledge_manager_forms)
+    result[5] = process_user_menus(cc_manager_forms)
+    result[6] = process_user_menus(cc_user_forms)
     result[7] = process_user_menus(techno_user_forms)
     result[8] = process_user_menus(techno_manager_forms)
     return result

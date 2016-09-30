@@ -1,6 +1,6 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-<div class="content-container width70" id="country-view">
+<div class="content-container width70" id="view">
     <div class="content-area">
         <h1>Configure Database Server</h1>
         <div class="filters-and-search">
@@ -8,7 +8,7 @@
         </div>
         <div class="clearfix"></div>
         <div class="grid-table" >
-            <table id="country-list">
+            <table id="config-db-server-list">
                 <thead>
                     <tr align="left">
                         <th align="center" width="10%">#</th>
@@ -51,7 +51,7 @@
         </tr>
     </table>
 </div>
-<div class="single-column-form-outer width50 default-display-none" id="country-add">
+<div class="single-column-form-outer width50 default-display-none" id="add">
     <div class="content-area">
         <div class="single-column-form-inner">
             <div class="single-column-header">
@@ -99,7 +99,7 @@
                     </div>
                 </div>
                 <div class="submit-button-container">
-                    <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-country-cancel">&nbsp;&nbsp;
+                    <input type="reset" name="cancel" value="Cancel" class="btn-cancel">&nbsp;&nbsp;
                     <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
                 </div>
             </div>

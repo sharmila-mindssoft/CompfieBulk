@@ -1445,7 +1445,7 @@ BEGIN
 	tf.form_order, tf.parent_menu FROM tbl_forms tf LEFT JOIN 
 	tbl_form_category tfc ON (tf.form_category_id = tfc.form_category_id)
 	LEFT JOIN tbl_form_type tft ON (tf.form_type_id = tft.form_type_id)
-	WHERE tf.form_category_id in (3,4,7,8) order by tf.form_order;
+	WHERE tf.form_category_id in (3,4,5,6,7,8) order by tf.form_order;
 END //
 DELIMITER ;
 
@@ -1458,7 +1458,7 @@ CREATE PROCEDURE `sp_formcategory_list` ()
 BEGIN
 	SELECT form_category_id, form_category
 	FROM tbl_form_category
-	WHERE form_category_id in (3,4,7,8);
+	WHERE form_category_id in (3,4,5,6,7,8);
 END //
 DELIMITER ;
 
@@ -1821,5 +1821,58 @@ BEGIN
 	) VALUES (dbservername, ipaddr, port_no, username, pwd) 
 	ON DUPLICATE KEY UPDATE db_server_name = dbservername,
 	server_username = username, server_password= pwd, port = port_no;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get all Machine  details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_machines_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_machines_list`()
+BEGIN
+	SELECT machine_id, machine_name, ip, port, client_ids
+	FROM tbl_machines;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Check whether the machine name already exists or not
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_machines_is_duplicate`;
+DELIMITER //
+CREATE PROCEDURE `sp_machines_is_duplicate`(
+	IN machinename VARCHAR(50), machineid INT(11)
+)
+BEGIN
+	IF machineid IS NULL THEN
+		SELECT count(machine_id) as count FROM tbl_machines
+		WHERE machine_name = machinename;
+	ELSE
+		SELECT count(machine_id) as count FROM tbl_machines
+		WHERE machine_name = machinename and machine_id != machineid;
+	END IF;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To save or update Machine
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_machines_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_machines_save`(
+	IN machineid INT(11), machinename VARCHAR(50), ipaddr VARCHAR(50),
+	port_no INT(11)
+)
+BEGIN
+	IF machineid IS NULL THEN
+		INSERT INTO tbl_machines (
+			machine_name, ip, port
+		) VALUES (machinename, ipaddr, port_no) 
+
+	ELSE
+		UPDATE tbl_machines SET machine_name = machinename, 
+		ip=ipaddr, port = port_no WHERE machine_id = machineid;
+	END IF;
 END //
 DELIMITER;

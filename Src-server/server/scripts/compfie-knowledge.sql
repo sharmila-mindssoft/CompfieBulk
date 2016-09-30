@@ -678,14 +678,15 @@ CREATE TABLE `tbl_mobile_registration` (
 
 DROP TABLE IF EXISTS `tbl_machines`;
 CREATE TABLE `tbl_machines` (
-  `machine_id` int(11) NOT NULL,
+  `machine_id` int(11) NOT NULL AUTO_INCREMENT,
   `machine_name` varchar(50) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
-  `client_ids` varchar(100) NULL DEFAULT NULL,
+  `client_ids` varchar(100) DEFAULT NULL,
   `server_full` tinyint(1) NOT NULL,
   PRIMARY KEY (`machine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_client_database`;
 CREATE TABLE `tbl_client_database` (

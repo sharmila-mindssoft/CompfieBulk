@@ -315,6 +315,8 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
+        print "field name : %s" % field_name
+        print "param : %s" % param
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 

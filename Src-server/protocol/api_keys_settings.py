@@ -24,6 +24,7 @@ api_params = {
     'password': {},
     'short_name': {},
     'ip': {},
+    "request": {},
 
     'd_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -91,7 +92,7 @@ api_params = {
     'category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'unit_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'postal_code': {'type': 'INT', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
     'domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
     'org_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
@@ -115,6 +116,7 @@ api_params = {
     'no_of_users': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "forms":  {'type':'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name':'core', "class_name":"Menu"},
 
+    'user_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
     "employee_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     "employee_code": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "contact_no": {'type': 'TEXT', 'length': 12, 'validation_method': None, 'is_optional': True},
@@ -125,13 +127,19 @@ api_params = {
 
     "user_group_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "user_group_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "ug_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_category_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "form_category": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "db_servers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"DBServer"},
     "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+
+    "client_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "client_servers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientServer"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

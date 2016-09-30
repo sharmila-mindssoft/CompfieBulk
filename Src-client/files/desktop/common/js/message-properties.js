@@ -265,7 +265,12 @@ var message = {
   "db_server_name_length_error": "DB Server name - Only 50 characters are allowed",
   "not_a_valid_ip": "Invalid IP address",
   "username_length_error": "Username - Only 50 characters are allowed",
-  "invalid_port": "Invalid Port"
+  "invalid_port": "Invalid Port",
+  "client_server_name_required": "Client server name required",
+  "client_server_name_length_error": "Client Server name - Only 50 characters are allowed",
+  "client_server_save_success": "Client server saved successfully",
+  
+
 };
 
 function clearMessage() {

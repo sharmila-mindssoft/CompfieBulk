@@ -1571,6 +1571,30 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback)
   }
+  function getClientServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetClientServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveClientServer(
+    client_server_id, client_server_name, ip, port, callback
+  ){
+    callerName = "console_admin"
+    var request = [
+      "SaveClientServer",
+      {
+        "client_server_id": client_server_id,
+        "client_server_name": client_server_name,
+        "ip": ip,
+        "port": port
+      }
+    ];
+    apiRequest(callerName, request, callback)
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1713,7 +1737,9 @@ function initMirror() {
     getClientGroupApprovalList: getClientGroupApprovalList,
     approveClientGroup: approveClientGroup,
     getDbServerList: getDbServerList,
-    saveDBServer: saveDBServer
+    saveDBServer: saveDBServer,
+    getClientServerList: getClientServerList,
+    saveClientServer: saveClientServer
   };
 }
 var mirror = initMirror();
