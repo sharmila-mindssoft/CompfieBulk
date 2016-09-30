@@ -858,15 +858,15 @@ function initMirror() {
     var cIds = userDetail[7];
     var dIds = userDetail[8];
     return {
-      'email': email,
+      'email_id': email,
       'ug_id': ugId,
-      'emp_n': empN,
-      'emp_c': empC,
-      'c_n': cNo,
-      'add': add,
-      'desig': desig,
-      'c_ids': cIds,
-      'd_ids': dIds
+      'employee_name': empN,
+      'employee_code': empC,
+      'contact_no': cNo,
+      'address': add,
+      'designation': desig,
+      'country_ids': cIds,
+      'domain_ids': dIds
     };
   }
   function saveAdminUser(userDetail, callback) {
@@ -894,15 +894,15 @@ function initMirror() {
     var cIds = userDetail[7];
     var dIds = userDetail[8];
     return {
-      'u_id': uId,
+      'user_id': uId,
       'ug_id': ugId,
-      'emp_n': empN,
-      'emp_c': empC,
-      'c_n': cn,
-      'add': add,
-      'desig': desig,
-      'c_ids': cIds,
-      'd_ids': dIds
+      'employee_name': empN,
+      'employee_code': empC,
+      'contact_no': cn,
+      'address': add,
+      'designation': desig,
+      'country_ids': cIds,
+      'domain_ids': dIds
     };
   }
   function updateAdminUser(userDetail, callback) {
@@ -918,8 +918,8 @@ function initMirror() {
     var request = [
       'ChangeUserStatus',
       {
-        'u_id': uId,
-        'active': active
+        'user_id': uId,
+        'is_active': active
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1508,14 +1508,40 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-
   function getEntityApprovalList(legal_entity_id, callback){
-    console.log("inside mirror: "+ legal_entity_id);
-      callerName = 'client_coordination_master';
+    callerName = 'client_coordination_master';
     var request = [
       'GetEntityApprovalList',
       {
         "legal_entity_id": legal_entity_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function approveUnit(unit_approval_details, callback){
+    callerName = 'client_coordination_master';
+    var request = [
+      'ApproveUnit',
+      {
+        "unit_approval_details": unit_approval_details
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getClientGroupApprovalList(callback){
+    callerName = 'client_coordination_master';
+    var request = [
+      'GetClientGroupApprovalList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function approveClientGroup(group_approval_details, callback){
+    callerName = 'client_coordination_master';
+    var request = [
+      'ApproveClientGroup',
+      {
+        "client_group_approval_details": group_approval_details
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1658,7 +1684,10 @@ function initMirror() {
     getEditClientGroupFormData: getEditClientGroupFormData,
     getLegalEntityUpdateRow: getLegalEntityUpdateRow,
     getClientUnitApprovalList: getClientUnitApprovalList,
-    getEntityApprovalList: getEntityApprovalList
+    getEntityApprovalList: getEntityApprovalList,
+    approveUnit: approveUnit,
+    getClientGroupApprovalList: getClientGroupApprovalList,
+    approveClientGroup: approveClientGroup
   };
 }
 var mirror = initMirror();

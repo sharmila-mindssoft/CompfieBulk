@@ -31,9 +31,10 @@ def process_user_forms(
         form_list.append(form)
     return process_user_menus(form_list)
 
+
 def process_admin_forms(data):
     form_list = []
-    for f in data :
+    for f in data:
         form_id = int(f["form_id"])
         form_name = f["form_name"]
         form_url = f["form_url"]

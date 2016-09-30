@@ -7,8 +7,7 @@
 from protocol import technomasters
 
 from server.database.admin import (
-    get_domains_for_user,
-    get_countries_for_user
+    get_domains_for_user
 )
 from server.database.login import verify_password
 from server.database.knowledgemaster import (

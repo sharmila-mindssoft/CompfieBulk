@@ -45,29 +45,30 @@ INSERT INTO tbl_forms VALUES(19, 4, 2, 'Approve Statutory Mapping', '/knowledge/
 INSERT INTO tbl_forms VALUES(20, 4, 3, 'Statutory Mapping Report', '/knowledge/statutory-mapping-report', 20, null);
 
 -- CC Manager
-INSERT INTO tbl_forms VALUES(21, 5, 1, 'Client Group Creation', '', 21, null);
-INSERT INTO tbl_forms VALUES(22, 5, 1, 'Client Contract Renewal', '', 22, null);
-INSERT INTO tbl_forms VALUES(23, 5, 1, 'Client Unit Approval', '', 23, null);
-INSERT INTO tbl_forms VALUES(24, 5, 1, 'Assign Client Unit - Techno Manager', '', 24, null);
-INSERT INTO tbl_forms VALUES(25, 5, 1, 'Client Unit Movement', '', 25, null);
-INSERT INTO tbl_forms VALUES(26, 5, 1, 'Client Profile', '', 26, null);
-INSERT INTO tbl_forms VALUES(27, 5, 1, 'Legal Entity Closure', '', 27, null);
+INSERT INTO tbl_forms VALUES(21, 5, 1, 'Client Group Creation', '/knowledge/client-master', 21, null);
+INSERT INTO tbl_forms VALUES(22, 5, 1, 'Approve Client Group', '/knowledge/client-master-approval', 22, null);
+INSERT INTO tbl_forms VALUES(23, 5, 1, 'Client Contract Renewal', '', 23, null);
+INSERT INTO tbl_forms VALUES(24, 5, 1, 'Client Unit Approval', '/knowledge/client-unit-approval', 24, null);
+INSERT INTO tbl_forms VALUES(25, 5, 1, 'Assign Client Unit - Techno Manager', '', 25, null);
+INSERT INTO tbl_forms VALUES(26, 5, 1, 'Client Unit Movement', '', 26, null);
+INSERT INTO tbl_forms VALUES(27, 5, 1, 'Client Profile', '', 27, null);
+INSERT INTO tbl_forms VALUES(28, 5, 1, 'Legal Entity Closure', '', 28, null);
 -- CC User
-INSERT INTO tbl_forms VALUES(28, 6, 1, 'Client Unit', '/knowledge/client-unit', 28, null);
+INSERT INTO tbl_forms VALUES(29, 6, 1, 'Client Unit', '/knowledge/client-unit', 29, null);
 
 -- Techno Manager
-INSERT INTO tbl_forms VALUES(29, 7, 2, 'Assign Client Unit - Techno User', '/knowledge/assign-statutory', 29, null);
-INSERT INTO tbl_forms VALUES(30, 7, 2, 'Approve Assigned Statutory', '/knowledge/assign-statutory', 30, null);
+INSERT INTO tbl_forms VALUES(30, 7, 2, 'Assign Client Unit - Techno User', '/knowledge/assign-statutory', 30, null);
+INSERT INTO tbl_forms VALUES(31, 7, 2, 'Approve Assigned Statutory', '/knowledge/assign-statutory', 31, null);
 -- Techno User
-INSERT INTO tbl_forms VALUES(31, 8, 2, 'Assign Statutory', '/knowledge/assign-statutory', 31, null);
+INSERT INTO tbl_forms VALUES(32, 8, 2, 'Assign Statutory', '/knowledge/assign-statutory', 32, null);
 
 
-INSERT INTO tbl_forms VALUES(32, 7, 3, 'Client Details Report', '/knowledge/client-details-report', 32, null);
-INSERT INTO tbl_forms VALUES(33, 7, 3, 'Client Contract Details', '/knowledge/client-details-report', 33, null);
+INSERT INTO tbl_forms VALUES(33, 7, 3, 'Client Details Report', '/knowledge/client-details-report', 33, null);
+INSERT INTO tbl_forms VALUES(34, 7, 3, 'Client Contract Details', '/knowledge/client-details-report', 34, null);
 
-INSERT INTO tbl_forms VALUES(34, 7, 3, 'Assigned Statutory', '/knowledge/assigned-statutory-report', 34, null);
-INSERT INTO tbl_forms VALUES(35, 7, 3, 'Compliance List', '/knowledge/compliance-task-list', 35, null);
-INSERT INTO tbl_forms VALUES(36, 7, 3, 'Statutory Notifications List', '/knowledge/statutory-notifications-list', 36, null);
+INSERT INTO tbl_forms VALUES(35, 7, 3, 'Assigned Statutory', '/knowledge/assigned-statutory-report', 35, null);
+INSERT INTO tbl_forms VALUES(36, 7, 3, 'Compliance List', '/knowledge/compliance-task-list', 36, null);
+INSERT INTO tbl_forms VALUES(37, 7, 3, 'Statutory Notifications List', '/knowledge/statutory-notifications-list', 37, null);
 -- common
 
 

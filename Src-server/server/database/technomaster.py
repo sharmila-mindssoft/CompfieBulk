@@ -1737,3 +1737,4 @@ def get_user_client_countries(db, session_user):
             return return_countries(result)
     else:
         return get_user_countries(db, session_user)
+

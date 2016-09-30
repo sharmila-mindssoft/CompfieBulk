@@ -63,7 +63,15 @@ messages = {
     "E062": "Client log save failed",
     "E063": "Geography used in statutory mapping",
     "E064": "Geography have child level entries ",
-    "E065": "User group is inactive, cannot activate user"
+    "E065": "User group is inactive, cannot activate user",
+    "E066": "Business group name already exists",
+    "E067": "Invalid Image File",
+    "E068": "Legal Entity name already exists",
+    "E069": "Invalid number of licence",
+    "E070": "Invalid File space",
+    "E071": "Save Organization failed",
+    "E072": "Unit Approval failed",
+    "E073": "Client Group Approval failed"
 }
 
 client_message = {
@@ -115,6 +123,11 @@ def fetch_error():
 def not_found_error(msg_code):
     return ValueError(messages.get(msg_code))
 
+
 def process_procedure_error(name, args, error):
     msg = '%s- %s- %s' % (name, args, error)
     return RuntimeError(msg)
+
+
+def return_Knowledge_message(code):
+    return messages[code]

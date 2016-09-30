@@ -1,0 +1,32 @@
+.client-popup{
+    width:60%;
+    margin-left:260px;
+}
+.le{
+    background-color:#eee;
+}
+.domain-header td{
+    padding: 0px;
+    margin-left:0px;
+}
+.domain-header table {
+    cellspacing:0;
+    cellpadding:0;
+    width:100%;
+    border: 1px dotted #ccc;
+}
+.grid-table th {
+    text-align: left;
+}
+.dotted-border {
+    border: 1px dotted #ccc;
+}
+.width85 {
+   width:85%; 
+}
+.center-align {
+    text-align:center
+}
+textarea {
+    width:50px;
+}
