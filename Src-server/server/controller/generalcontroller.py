@@ -116,7 +116,7 @@ def validate_user_session(db, session_token, client_id=None):
         return db.validate_session_token(session_token)
 
 
-def validate_user_forms(db, user_id, form_ids, requet):
+def validate_user_forms(db, user_id, form_ids, requet, admin_user_type=None):
     if type(requet) not in [
         general.GetNotifications,
         general.UpdateNotificationStatus,
@@ -125,8 +125,10 @@ def validate_user_forms(db, user_id, form_ids, requet):
     ]:
         valid = 0
         if user_id is not None:
-            alloted_forms = get_user_form_ids(db, user_id)
+            alloted_forms = get_user_form_ids(db, user_id, admin_user_type)
             alloted_forms = [int(x) for x in alloted_forms.split(",")]
+            print "alloted_forms : %s" % alloted_forms
+            print "form_ids : %s" % form_ids
             for i in alloted_forms:
                 if i in form_ids:
                     valid += 1

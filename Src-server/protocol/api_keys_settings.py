@@ -127,6 +127,11 @@ api_params = {
     "user_group_id" : {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_ids": {'type': 'vector_type_int', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_category_id" : {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+
+    "db_server_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "port": {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "db_servers": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"DBServer"},
+    "no_of_clients": {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -1546,7 +1546,31 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-
+  function getDbServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetDbServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveDBServer(
+    db_server_name, ip, port, username, password, callback
+  ){
+    callerName = "console_admin"
+    var request = [
+      "SaveDBServer",
+      {
+        "db_server_name": db_server_name,
+        "ip": ip,
+        "port": port,
+        "username": username,
+        "password": password
+      }
+    ];
+    apiRequest(callerName, request, callback)
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1687,7 +1711,9 @@ function initMirror() {
     getEntityApprovalList: getEntityApprovalList,
     approveUnit: approveUnit,
     getClientGroupApprovalList: getClientGroupApprovalList,
-    approveClientGroup: approveClientGroup
+    approveClientGroup: approveClientGroup,
+    getDbServerList: getDbServerList,
+    saveDBServer: saveDBServer
   };
 }
 var mirror = initMirror();

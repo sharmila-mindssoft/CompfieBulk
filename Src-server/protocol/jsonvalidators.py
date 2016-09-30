@@ -257,8 +257,6 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print "field_name: %s" % field_name
-        print "param: %s" % param
         if param is None:
             val = parse_vector_type_record_type(val)
             continue

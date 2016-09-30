@@ -69,7 +69,12 @@ INSERT INTO tbl_forms VALUES(34, 7, 3, 'Client Contract Details', '/knowledge/cl
 INSERT INTO tbl_forms VALUES(35, 7, 3, 'Assigned Statutory', '/knowledge/assigned-statutory-report', 35, null);
 INSERT INTO tbl_forms VALUES(36, 7, 3, 'Compliance List', '/knowledge/compliance-task-list', 36, null);
 INSERT INTO tbl_forms VALUES(37, 7, 3, 'Statutory Notifications List', '/knowledge/statutory-notifications-list', 37, null);
--- common
+-- Console Admin
+INSERT INTO tbl_forms VALUES(38, 2, 2, 'Configure Database Server', '/knowledge/configure-db-server', 38, null);
+INSERT INTO tbl_forms VALUES(39, 2, 2, 'Configure Client Server', '/knowledge/configure-client-server', 39, null);
+INSERT INTO tbl_forms VALUES(40, 2, 2, 'Allocate Database Environment', '/knowledge/allocate-db-env', 40, null);
+INSERT INTO tbl_forms VALUES(41, 2, 2, 'Auto Deletion', '/knowledge/auto-deletion', 41, null);
+INSERT INTO tbl_forms VALUES(42, 2, 2, 'Configure File Storage', '/knowledge/configure-file-storage', 42, null);
 
 
 

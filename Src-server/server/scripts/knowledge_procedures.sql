@@ -324,13 +324,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getadminforms;
 
 DELIMITER //
-CREATE procedure `sp_tbl_forms_getadminforms`()
+CREATE procedure `sp_tbl_forms_getadminforms`(
+	IN fc_id INT(11)
+)
 BEGIN
 	SELECT T01.form_id, T01.form_name, T01.form_url, T01.form_order, T01.parent_menu,
 	T02.form_category, T03.form_type FROM tbl_forms T01
 	INNER JOIN tbl_form_category T02 ON T02.form_category_id = T01.form_category_id
 	INNER JOIN tbl_form_type T03 ON T03.form_type_id = T01.form_type_id
-	WHERE T01.form_category_id = 1 ORDER BY T01.form_order;
+	WHERE T01.form_category_id = fc_id ORDER BY T01.form_order;
 END //
 DELIMITER ;
 
@@ -378,7 +380,11 @@ CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
 )
 BEGIN
 	if _user_id = 0 then
-		SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+		IF _user_type = 0 then
+			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+		else
+			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 2;
+		END IF;
 	else
 		SELECT t1.form_ids as form_id from tbl_user_groups t1
 		INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id
@@ -1750,5 +1756,70 @@ CREATE PROCEDURE `sp_userdomains_delete`(
 )
 BEGIN
 	DELETE FROM tbl_user_domains WHERE user_id=userid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get the form category of the admin user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_admin_getformcategory`;
+DELIMITER //
+CREATE PROCEDURE `sp_admin_getformcategory`(
+	IN uname VARCHAR(100)
+)
+BEGIN
+	DECLARE fc_id INT(11);
+	DECLARE utype INT(11);
+	SELECT user_type into utype FROM tbl_admin WHERE username = uname;
+	IF utype = 0 THEN
+		SET fc_id = 1;
+	ELSE
+		SET fc_id = 2;
+	END IF;
+	SELECT fc_id;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get all database server details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_databaseserver_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_databaseserver_list`()
+BEGIN
+	SELECT db_server_name, ip, port, server_username, server_password, length
+	FROM tbl_database_server;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Check whether the db server name already exists or not
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_databaseserver_is_duplicate`;
+DELIMITER //
+CREATE PROCEDURE `sp_databaseserver_is_duplicate`(
+	IN dbservername VARCHAR(50), ip_addr TEXT
+)
+BEGIN
+	SELECT count(ip) as count FROM tbl_database_server
+	WHERE db_server_name = dbservername and ip != ip_addr;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To save or update Database server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_databaseserver_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_databaseserver_save`(
+	IN dbservername VARCHAR(50), ipaddr VARCHAR(50),
+	port_no INT(11), username VARCHAR(50), pwd VARCHAR(50)
+)
+BEGIN
+	INSERT INTO tbl_database_server (
+		db_server_name, ip, port, server_username, server_password
+	) VALUES (dbservername, ipaddr, port_no, username, pwd) 
+	ON DUPLICATE KEY UPDATE db_server_name = dbservername,
+	server_username = username, server_password= pwd, port = port_no;
 END //
 DELIMITER;

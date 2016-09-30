@@ -71,7 +71,7 @@ def process_login(db, request, session_user_ip):
         response = verify_login(db, username, encrypt_password)
         if response is True:
             delete_login_failure_history(db, user_id)
-            return admin_login_response(db, session_user_ip)
+            return admin_login_response(db, session_user_ip, username)
         else:
             if bool(response):
                 if login_type.lower() == "web":
@@ -142,12 +142,13 @@ def user_login_response(db, data, ip):
     )
 
 
-def admin_login_response(db, ip):
+def admin_login_response(db, ip, username):
     user_id = 0
     email_id = None
     session_type = 1  # web
     session_token = add_session(db, user_id, session_type, ip, "Administrator")
-    admin_forms = get_admin_forms(db)
+    admin_forms = get_admin_forms(db, username)
+    print admin_forms
     menu = process_admin_forms(admin_forms)
     employee_name = "Administrator"
     return login.AdminLoginSuccess(
