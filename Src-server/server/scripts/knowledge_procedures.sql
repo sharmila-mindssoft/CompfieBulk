@@ -305,10 +305,10 @@ DROP PROCEDURE IF EXISTS sp_tbl_domains_for_user;
 DELIMITER //
 CREATE procedure `sp_tbl_domains_for_user`(IN _user_id VARCHAR(11))
 BEGIN
-	IF _user_id > 0 THEN 
-		SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active 
+	IF _user_id > 0 THEN
+		SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active
 		FROM tbl_domains t1
-		INNER JOIN tbl_user_domains t2 on t1.domain_id = t2.domain_id 
+		INNER JOIN tbl_user_domains t2 on t1.domain_id = t2.domain_id
 		WHERE t2.user_id LIKE _user_id
 		ORDER BY t1.domain_name;
 	ELSE
@@ -1166,11 +1166,11 @@ CREATE PROCEDURE `sp_units_approval_list_by_entity_id`(
 	IN le_id INT(11)
 )
 BEGIN
-	SELECT 
+	SELECT
 	(
 		SELECT division_name FROM tbl_divisions td
 		WHERE td.division_id = tu.division_id
-	) as division_name, 
+	) as division_name,
 	(
 		SELECT category_name FROM tbl_category_master tcm
 		WHERE tcm.category_id = tu.category_id
@@ -1182,8 +1182,8 @@ BEGIN
 	) as geography_name
 	FROM tbl_units tu
 	WHERE is_active=1 and approve_status=0
-	and legal_entity_id=le_id; 
-	
+	and legal_entity_id=le_id;
+
 	SELECT unit_id, (
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id=tui.domain_id
@@ -1273,9 +1273,9 @@ CREATE PROCEDURE `sp_countries_save`(
 )
 BEGIN
 	IF countryid IS NULL THEN
-		INSERT INTO tbl_countries 
+		INSERT INTO tbl_countries
 		(country_id, country_name, is_active, created_by,
-		created_on, updated_by, updated_on) 
+		created_on, updated_by, updated_on)
 		VALUES (countryid, countryname, 1, session_user, updated_time,
 		session_user, updated_time);
 	ELSE
@@ -1310,12 +1310,12 @@ CREATE PROCEDURE `sp_countries_is_transaction_exists`(
 )
 BEGIN
 	SELECT count(*) as count
-	FROM tbl_statutory_mappings 
+	FROM tbl_statutory_mappings
 	WHERE country_id = countryid;
-	
+
 	SELECT count(*) as count
-	FROM tbl_client_countries 
-	WHERE country_id = countryid; 
+	FROM tbl_client_countries
+	WHERE country_id = countryid;
 END //
 DELIMITER ;
 
@@ -1325,7 +1325,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_countries_change_status`;
 DELIMITER //
 CREATE PROCEDURE `sp_countries_change_status`(
-	IN countryid INT(11), isactive TINYINT(2), 
+	IN countryid INT(11), isactive TINYINT(2),
 	session_user INT(11), updated_time TIMESTAMP
 )
 BEGIN
@@ -1347,9 +1347,9 @@ CREATE PROCEDURE `sp_domains_save`(
 BEGIN
 	IF domainid IS NULL THEN
 		INSERT INTO tbl_domains (
-		domain_name, is_active, created_on, 
+		domain_name, is_active, created_on,
 		created_by, updated_on, updated_by) VALUES (
-		domainname, 1, updatedon, session_user, 
+		domainname, 1, updatedon, session_user,
 		updatedon, session_user);
 	ELSE
 		UPDATE tbl_domains SET domain_name=domainname,
@@ -1401,12 +1401,12 @@ CREATE PROCEDURE `sp_domains_is_transaction_exists`(
 	IN domainid INT(11)
 )
 BEGIN
-	SELECT count(*) AS count 
+	SELECT count(*) AS count
 	FROM tbl_statutory_mappings
 	WHERE domain_id = domainid;
 
-	SELECT count(*) AS count 
-	FROM tbl_client_domains 
+	SELECT count(*) AS count
+	FROM tbl_client_domains
 	WHERE domain_id = domainid;
 END //
 DELIMITER ;
@@ -1417,7 +1417,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_domains_change_status`;
 DELIMITER //
 CREATE PROCEDURE `sp_domains_change_status`(
-	IN domainid INT(11), isactive TINYINT(2), 
+	IN domainid INT(11), isactive TINYINT(2),
 	session_user INT(11), updated_time TIMESTAMP
 )
 BEGIN
@@ -1436,7 +1436,7 @@ CREATE PROCEDURE `sp_forms_list`()
 BEGIN
 	SELECT tf.form_id, tf.form_category_id, tfc.form_category,
 	tf.form_type_id, tft.form_type, tf.form_name, tf.form_url,
-	tf.form_order, tf.parent_menu FROM tbl_forms tf LEFT JOIN 
+	tf.form_order, tf.parent_menu FROM tbl_forms tf LEFT JOIN
 	tbl_form_category tfc ON (tf.form_category_id = tfc.form_category_id)
 	LEFT JOIN tbl_form_type tft ON (tf.form_type_id = tft.form_type_id)
 	WHERE tf.form_category_id in (3,4,7,8) order by tf.form_order;
@@ -1498,7 +1498,7 @@ CREATE PROCEDURE `sp_usergroup_is_transaction_exists`(
 	IN ug_id INT(11)
 )
 BEGIN
-	SELECT count(0) as count FROM tbl_users 
+	SELECT count(0) as count FROM tbl_users
 	WHERE user_group_id = ug_id and is_active = 1;
 END //
 DELIMITER ;
@@ -1514,10 +1514,10 @@ CREATE PROCEDURE `sp_usergroup_save`(
 )
 BEGIN
 	IF ug_id IS NULL THEN
-		INSERT INTO tbl_user_groups 
-		(form_category_id, user_group_name, is_active, 
-		form_ids, created_by, created_on, updated_by, updated_on) 
-		VALUES (frm_cat_id, ug_name, 1, frm_ids, session_user, 
+		INSERT INTO tbl_user_groups
+		(form_category_id, user_group_name, is_active,
+		form_ids, created_by, created_on, updated_by, updated_on)
+		VALUES (frm_cat_id, ug_name, 1, frm_ids, session_user,
 		updated_time, session_user, updated_time);
 	ELSE
 		UPDATE tbl_user_groups SET form_category_id = frm_cat_id,
@@ -1534,7 +1534,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_usergroup_change_status`;
 DELIMITER //
 CREATE PROCEDURE `sp_usergroup_change_status`(
-	IN ug_id INT(11), isactive TINYINT(2), 
+	IN ug_id INT(11), isactive TINYINT(2),
 	session_user INT(11), updated_time TIMESTAMP
 )
 BEGIN
@@ -1666,7 +1666,7 @@ BEGIN
 	IF userid IS NULL THEN
 		INSERT INTO tbl_users (
 			email_id, user_group_id, password, employee_name, employee_code, contact_no,
-			address, designation, is_active, created_by, created_on, 
+			address, designation, is_active, created_by, created_on,
 			updated_by, updated_on
 		)	VALUES (
 			emailid, ug_id, pwd, emp_name, emp_code, contactno, addr, desig,
@@ -1675,7 +1675,7 @@ BEGIN
 	ELSE
 		UPDATE tbl_users SET employee_name=emp_name, user_group_id=ug_id,
 		employee_code=emp_code, contact_no=contactno, address=addr,
-		designation = desig, updated_by=session_user, 
+		designation = desig, updated_by=session_user,
 		updated_on = created_time WHERE user_id=userid;
 	END IF;
 END //
@@ -1690,8 +1690,8 @@ CREATE PROCEDURE `sp_user_usergroup_status`(
 	IN userid INT(11)
 )
 BEGIN
-	select count(ug.user_group_id) from tbl_user_groups ug 
-	inner join tbl_users u on  ug.user_group_id = u.user_group_id 
+	select count(ug.user_group_id) from tbl_user_groups ug
+	inner join tbl_users u on  ug.user_group_id = u.user_group_id
 	where u.user_id = userid and ug.is_active = 1;
 END //
 DELIMITER;
