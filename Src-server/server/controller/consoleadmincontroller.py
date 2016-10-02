@@ -86,6 +86,20 @@ def process_console_admin_request(request, db):
         result = process_save_allocated_db_env(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveAllocatedDBEnv", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(type(request_frame) is consoleadmin.GetFileStorage):
+        logger.logKnowledgeApi("GetFileStorage", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_file_storage(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetFileStorage", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(type(request_frame) is consoleadmin.SaveFileStorage):
+        logger.logKnowledgeApi("SaveFileStorage", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_save_file_storage(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveFileStorage", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
     return result
 
 
@@ -136,3 +150,20 @@ def process_get_allocated_db_env(db, request, session_user):
 def process_save_allocated_db_env(db, request, session_user):
     save_allocated_db_env(db, request)
     return consoleadmin.SaveAllocatedDBEnvSuccess()
+
+
+def process_get_file_storage(db, request, session_user):
+    (
+        client_dbs_list, groups_list, les_list,
+        machines_list
+    ) = get_file_storage_form_data(db)
+    return consoleadmin.GetFileStorageSuccess(
+        file_storages=client_dbs_list, client_groups=groups_list,
+        client_legal_entities=les_list,
+        client_server_name_and_id=machines_list,
+    )
+
+
+def process_save_file_storage(db, request, session_user):
+    save_file_storage(db, request)
+    return consoleadmin.SaveFileStorageSuccess()

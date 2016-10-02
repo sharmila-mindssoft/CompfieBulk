@@ -9,7 +9,9 @@ __all__ = [
     "is_duplicate_client_server_name",
     "save_client_server",
     "get_client_database_form_data",
-    "save_allocated_db_env"
+    "save_allocated_db_env",
+    "get_file_storage_form_data",
+    "save_file_storage"
 ]
 
 
@@ -182,4 +184,43 @@ def save_allocated_db_env(db, request):
     db.call_insert_proc(
         "sp_clientdatabase_save",
         (client_id, legal_entity_id, db_server_ip, machine_id)
+    )
+
+
+def get_file_storage_form_data(db):
+    data = db.call_proc_with_multiresult_set(
+        "sp_filestorage_list", None, 4)
+    file_storages = data[0]
+    groups = data[1]
+    les = data[2]
+    machines = data[3]
+    file_storages_list = return_file_storages(file_storages)
+    groups_list = return_client_groups(groups)
+    les_list = return_legal_entites(les)
+    machines_list = return_machines(machines)
+    return (
+        file_storages_list, groups_list, les_list,
+        machines_list
+    )
+
+
+def return_file_storages(data):
+    fn = consoleadmin.FileStorage
+    file_storages = [
+        fn(
+            client_id=datum["client_id"],
+            legal_entity_id=datum["legal_entity_id"],
+            machine_id=datum["machine_id"]
+        ) for datum in data
+    ]
+    return file_storages
+
+
+def save_file_storage(db, request):
+    client_id = request.client_id
+    legal_entity_id = request.legal_entity_id
+    machine_id = request.machine_id
+    db.call_update_proc(
+        "sp_filestorage_save",
+        (client_id, legal_entity_id, machine_id)
     )

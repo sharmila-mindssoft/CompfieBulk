@@ -1616,6 +1616,26 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function getFileStorage(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetFileStorage",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveFileStorage(client_id, le_id, machine_id, callback){
+      callerName = "console_admin";
+      var request = [
+          "SaveFileStorage",
+          {
+            "client_id": client_id, 
+            "legal_entity_id": le_id,
+            "machine_id": machine_id
+          }
+      ];
+      apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1762,7 +1782,9 @@ function initMirror() {
     getClientServerList: getClientServerList,
     saveClientServer: saveClientServer,
     getAllocatedDBEnv: getAllocatedDBEnv,
-    saveDBEnv: saveDBEnv
+    saveDBEnv: saveDBEnv,
+    getFileStorage: getFileStorage,
+    saveFileStorage: saveFileStorage
   };
 }
 var mirror = initMirror();

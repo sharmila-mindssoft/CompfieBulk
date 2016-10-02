@@ -415,6 +415,7 @@ CREATE TABLE `tbl_legal_entities` (
   `contract_to` date DEFAULT NULL,
   `logo` varchar(200) DEFAULT NULL,
   `file_space_limit` float DEFAULT '0',
+  `file_storage_server` int(11) DEFAULT NULL,
   `total_licence` int(11) DEFAULT '0',
   `sms_subscription` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
@@ -428,6 +429,7 @@ CREATE TABLE `tbl_legal_entities` (
   CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_country` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+
 
 
 DROP TABLE IF EXISTS `tbl_legal_entity_domain_industry`;

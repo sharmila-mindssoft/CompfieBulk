@@ -149,6 +149,8 @@ api_params = {
     "db_server_name_and_id": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"DBServerNameAndID"},
     "machine_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "machine_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+
+    "file_storages": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"FileStorage"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

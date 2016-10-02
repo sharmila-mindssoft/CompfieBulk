@@ -1934,3 +1934,36 @@ BEGIN
 	server_port=machine_port;
 END //
 DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Configuring File Storage
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_filestorage_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_filestorage_list`()
+BEGIN
+	SELECT client_id, legal_entity_id, file_storage_server as machine_id
+	FROM tbl_legal_entities;
+
+	SELECT client_id, group_name FROM tbl_client_groups;
+
+	SELECT legal_entity_id, legal_entity_name, client_id 
+	FROM tbl_legal_entities;
+
+	SELECT machine_id, machine_name FROM tbl_machines;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Update File storage server id for a legal entity
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_filestorage_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_filestorage_save`(
+	IN clientid INT(11), le_id INT(11), machine_id INT(11)
+)
+BEGIN
+	UPDATE tbl_legal_entities SET file_storage_server=machine_id
+	WHERE client_id = clientid and legal_entity_id = le_id;
+END //
+DELIMITER;

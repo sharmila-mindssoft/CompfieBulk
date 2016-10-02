@@ -162,10 +162,53 @@ class SaveAllocatedDBEnv(Request):
         return to_dictionary_values(data)
 
 
+class GetFileStorage(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetFileStorage()
+
+    def to_structure(self):
+        return {
+        }
+
+
+class SaveFileStorage(Request):
+    def __init__(
+        self, client_id, legal_entity_id, machine_id
+    ):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.machine_id = machine_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "legal_entity_id", "machine_id"
+            ]
+        )
+        return SaveFileStorage(
+            data.get("client_id"), data.get("legal_entity_id"),
+            data.get("machine_id")
+        )
+
+    def to_structure(self):
+        data = {
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "machine_id": self.machine_id
+        }
+        return to_dictionary_values(data)
+
+
 def _init_Request_class_map():
     classes = [
         GetDbServerList, SaveDBServer, GetClientServerList, SaveClientServer,
-        GetAllocatedDBEnv, SaveAllocatedDBEnv
+        GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage
     ]
     class_map = {}
     for c in classes:
@@ -536,12 +579,95 @@ class SaveAllocatedDBEnvSuccess(Response):
         return {}
 
 
+class FileStorage(object):
+    def __init__(
+        self, client_id, legal_entity_id, machine_id
+    ):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.machine_id = machine_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data,
+            [
+                "client_id", "legal_entity_id", "machine_id"
+            ]
+        )
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        machine_id = data.get("machine_id")
+        return FileStorage(
+            client_id, legal_entity_id, machine_id
+        )
+
+    def to_structure(self):
+        data = {
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "machine_id": self.machine_id
+        }
+        return to_dictionary_values(data)
+
+
+class GetFileStorageSuccess(Response):
+    def __init__(
+        self, file_storages, client_groups, client_legal_entities,
+        client_server_name_and_id
+    ):
+        self.file_storages = file_storages
+        self.client_groups = client_groups
+        self.client_legal_entities = client_legal_entities
+        self.client_server_name_and_id = client_server_name_and_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "file_storages", "client_groups", "client_legal_entities",
+                "client_server_name_and_id"
+            ]
+        )
+        file_storages = data.get("file_storages")
+        client_groups = data.get("client_groups")
+        client_legal_entities = data.get("client_legal_entities")
+        client_server_name_and_id = data.get("client_server_name_and_id")
+        return GetFileStorageSuccess(
+            file_storages, client_groups, client_legal_entities,
+            client_server_name_and_id
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "file_storages": self.file_storages,
+            "client_groups": self.client_groups,
+            "client_legal_entities": self.client_legal_entities,
+            "client_server_name_and_id": self.client_server_name_and_id
+        }
+        return to_dictionary_values(data)
+
+
+class SaveFileStorageSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveFileStorageSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
         GetClientServerListSuccess, SaveClientServerSuccess,
         ClientServerNameAlreadyExists, GetAllocatedDBEnvSuccess,
-        GetAllocatedDBEnvSuccess, SaveAllocatedDBEnvSuccess
+        GetAllocatedDBEnvSuccess, SaveAllocatedDBEnvSuccess,
+        GetFileStorageSuccess, SaveFileStorageSuccess
     ]
     class_map = {}
     for c in classes:
