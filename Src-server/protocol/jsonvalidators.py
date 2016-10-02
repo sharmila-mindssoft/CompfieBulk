@@ -315,8 +315,6 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print "field name : %s" % field_name
-        print "param : %s" % param
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
@@ -355,6 +353,8 @@ def to_dictionary_values(data, response=None):
     for key in data:
         value = data[key]
         param = api_params.get(key)
+        print "key: %s" % key
+        print "param : %s" % param
         if param.get('type') == 'VECTOR_TYPE':
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
@@ -376,6 +376,7 @@ def to_dictionary_values(data, response=None):
             parse_dictionary_values(
                 x, field_names=[key], is_validation_and_parse=False)
             result[key] = value
+    print "response: %s" % response
     if response is not None:
         final_result = [
             response,
@@ -383,6 +384,7 @@ def to_dictionary_values(data, response=None):
         ]
     else:
         final_result = result
+    print "final_result: %s" % final_result
     return final_result
 
 

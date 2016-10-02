@@ -70,7 +70,7 @@ api_params = {
 
     'group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'client_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'group_name': {'type': 'STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'country_names': {'type': 'STRING', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     'no_of_legal_entities': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -133,6 +133,7 @@ api_params = {
     "form_category": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "db_servers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"DBServer"},
     "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -140,6 +141,14 @@ api_params = {
     "client_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "client_servers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientServer"},
+
+    "client_dbs": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientDatabase"},
+    "client_groups": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientGroup"},
+    "client_legal_entities": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"LegalEntity"},
+    "client_server_name_and_id": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientServerNameAndID"},
+    "db_server_name_and_id": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"DBServerNameAndID"},
+    "machine_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "machine_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

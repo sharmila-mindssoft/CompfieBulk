@@ -691,6 +691,7 @@ CREATE TABLE `tbl_machines` (
 DROP TABLE IF EXISTS `tbl_client_database`;
 CREATE TABLE `tbl_client_database` (
   `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) DEFAULT NULL,
   `machine_id` int(11) NOT NULL,
   `database_ip` varchar(20) NOT NULL,
   `database_port` int(11) NOT NULL,
@@ -700,7 +701,10 @@ CREATE TABLE `tbl_client_database` (
   `database_name` varchar(50) NOT NULL,
   `server_ip` varchar(20) NOT NULL,
   `server_port` int(11) NOT NULL,
-  PRIMARY KEY (`client_id`),
+  PRIMARY KEY (`client_id`,`legal_entity_id`),
+  KEY `fk_tbl_machines_id` (`machine_id`),
+  KEY `fk_tbl_le_id` (`legal_entity_id`),
+  CONSTRAINT `fk_tbl_client_database_1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_client_group_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_machines_id` FOREIGN KEY (`machine_id`) REFERENCES `tbl_machines` (`machine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

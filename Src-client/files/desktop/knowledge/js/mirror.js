@@ -1583,7 +1583,7 @@ function initMirror() {
   function saveClientServer(
     client_server_id, client_server_name, ip, port, callback
   ){
-    callerName = "console_admin"
+    callerName = "console_admin";
     var request = [
       "SaveClientServer",
       {
@@ -1593,7 +1593,28 @@ function initMirror() {
         "port": port
       }
     ];
-    apiRequest(callerName, request, callback)
+    apiRequest(callerName, request, callback);
+  }
+  function getAllocatedDBEnv(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetAllocatedDBEnv",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveDBEnv(client_id, le_id, db_server_ip, machine_id, callback){
+      callerName = "console_admin";
+      var request = [
+          "SaveAllocatedDBEnv",
+          {
+            "client_id": client_id, 
+            "legal_entity_id": le_id,
+            "database_server_ip": db_server_ip,
+            "machine_id": machine_id
+          }
+      ];
+      apiRequest(callerName, request, callback);
   }
   return {
     log: log,
@@ -1739,7 +1760,9 @@ function initMirror() {
     getDbServerList: getDbServerList,
     saveDBServer: saveDBServer,
     getClientServerList: getClientServerList,
-    saveClientServer: saveClientServer
+    saveClientServer: saveClientServer,
+    getAllocatedDBEnv: getAllocatedDBEnv,
+    saveDBEnv: saveDBEnv
   };
 }
 var mirror = initMirror();

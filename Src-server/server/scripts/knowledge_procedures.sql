@@ -1876,3 +1876,61 @@ BEGIN
 	END IF;
 END //
 DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Allocate database environment
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientdatabase_list`()
+BEGIN
+	SELECT client_id, legal_entity_id, machine_id, database_ip
+	FROM tbl_client_database;
+
+	SELECT client_id, group_name FROM tbl_client_groups;
+
+	SELECT legal_entity_id, legal_entity_name, client_id 
+	FROM tbl_legal_entities;
+
+	SELECT machine_id, machine_name FROM tbl_machines;
+
+	SELECT db_server_name, ip  FROM tbl_database_server;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Save or Update Client database details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientdatabase_save`(
+	IN clientid INT(11), le_id INT(11),
+	db_server_ip VARCHAR(20), machineid INT(11)
+)
+BEGIN
+	DECLARE port_no INT(11);
+	DECLARE username VARCHAR(50);
+	DECLARE pwd VARCHAR(50);
+	DECLARE dbservername VARCHAR(50);
+	DECLARE machine_ip VARCHAR(50);
+	DECLARE machine_port INT(4);
+	SELECT port INTO port_no FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT server_username INTO username FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT server_password INTO pwd FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT db_server_name INTO dbservername FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT ip INTO machine_ip FROM tbl_machines WHERE machine_id = machineid;
+	SELECT port INTO machine_port FROM tbl_machines WHERE machine_id = machineid;
+	INSERT INTO tbl_client_database (
+		client_id, legal_entity_id, machine_id, database_ip, 
+		database_port, database_username, database_password,
+		database_name, server_ip, server_port
+	) VALUES (
+		clientid, le_id, machineid, db_server_ip, port_no, username,
+		pwd, dbservername, machine_ip, machine_port
+	) ON DUPLICATE KEY UPDATE machine_id=machineid,
+	database_ip = db_server_ip, database_port=port_no,
+	database_username=username, database_password=pwd,
+	database_name=dbservername, server_ip=machine_ip,
+	server_port=machine_port;
+END //
+DELIMITER;

@@ -41,6 +41,57 @@
         </div>
     </div>
 </div>
+<div class="single-column-form-outer width50 default-display-none" id="add">
+    <div class="content-area">
+        <div class="single-column-form-inner">
+            <div class="single-column-header">
+                Allocate Database Environment<span class="error-message"></span>
+            </div>
+            <div class="single-column-input-row">
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Group:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <select class="input-box" id="group">
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Legal Entity:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <select class="input-box" id="legal-entity">
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Database Server:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <select class="input-box" id="db-server">
+                        </select>
+                    </div> 
+                </div>
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Client Server:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <select class="input-box" id="client-server">
+                        </select>
+                    </div> 
+                </div>
+                <div class="submit-button-container">
+                    <input type="reset" name="cancel" value="Cancel" class="btn-cancel">&nbsp;&nbsp;
+                    <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="templates">
     <table>
         <tr class="table-row">
@@ -55,45 +106,11 @@
             </td>
         </tr>
     </table>
-</div>
-<div class="single-column-form-outer width50 default-display-none" id="add">
-    <div class="content-area">
-        <div class="single-column-form-inner">
-            <div class="single-column-header">
-                Allocate Database Environment<span class="error-message"></span>
-            </div>
-            <div class="single-column-input-row">
-                <div class="input-row">
-                    <div class="single-column-field-label">
-                        Group:<span class="mandatory">*</span>
-                    </div>
-                    <div class="single-column-field-input">
-                        <input type="text" class="input-box" name="client-server-name" autofocus="autofocus" tabindex="1" id="client-server-name" maxlength="50">
-                    </div>
-                </div>
-                <div class="input-row">
-                    <div class="single-column-field-label">
-                        Legal Entity:<span class="mandatory">*</span>
-                    </div>
-                    <div class="single-column-field-input">
-                        <input type="text" class="input-box" name="ip" tabindex="1" id="ip">
-                    </div>
-                </div>
-                <div class="input-row">
-                    <div class="single-column-field-label">
-                        Database Server:<span class="mandatory">*</span>
-                    </div>
-                    <div class="single-column-field-input">
-                        <input type="number" class="input-box" name="port"  tabindex="1" id="port" maxlength="4" minlength="4">
-                    </div> 
-                </div>
-                <div class="submit-button-container">
-                    <input type="reset" name="cancel" value="Cancel" class="btn-cancel">&nbsp;&nbsp;
-                    <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
-                </div>
-            </div>
-        </div>
+    <div class="drop-down-option">
+        <select class="input-box">
+            <option></option>
+        </select>
     </div>
 </div>
-<script type="text/javascript" src="/script/configure-client-server/configure-client-server.js"></script>
+<script type="text/javascript" src="/script/allocate-db-env/allocate-db-env.js"></script>
 {% endblock %}

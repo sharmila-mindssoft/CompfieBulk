@@ -1453,8 +1453,6 @@ def return_unit_details(result):
 
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
     result = db.call_proc("sp_tbl_unit_getuserclients", (user_id,))
-    print "get group"
-    print result
     return return_group_companies_with_max_unit_count(db, result)
 
 

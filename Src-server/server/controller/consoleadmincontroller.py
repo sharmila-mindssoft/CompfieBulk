@@ -72,6 +72,20 @@ def process_console_admin_request(request, db):
         result = process_save_client_server(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveClientServer", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(type(request_frame) is consoleadmin.GetAllocatedDBEnv):
+        logger.logKnowledgeApi("GetAllocatedDBEnv", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_allocated_db_env(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetAllocatedDBEnv", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(type(request_frame) is consoleadmin.SaveAllocatedDBEnv):
+        logger.logKnowledgeApi("SaveAllocatedDBEnv", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_save_allocated_db_env(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveAllocatedDBEnv", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
     return result
 
 
@@ -104,3 +118,21 @@ def process_save_client_server(db, request, session_user):
     else:
         save_client_server(db, request, session_user)
         return consoleadmin.SaveClientServerSuccess()
+
+
+def process_get_allocated_db_env(db, request, session_user):
+    (
+        client_dbs_list, groups_list, les_list,
+        machines_list, db_servers_list
+    ) = get_client_database_form_data(db)
+    return consoleadmin.GetAllocatedDBEnvSuccess(
+        client_dbs=client_dbs_list, client_groups=groups_list,
+        client_legal_entities=les_list,
+        client_server_name_and_id=machines_list,
+        db_server_name_and_id=db_servers_list
+    )
+
+
+def process_save_allocated_db_env(db, request, session_user):
+    save_allocated_db_env(db, request)
+    return consoleadmin.SaveAllocatedDBEnvSuccess()

@@ -269,7 +269,8 @@ var message = {
   "client_server_name_required": "Client server name required",
   "client_server_name_length_error": "Client Server name - Only 50 characters are allowed",
   "client_server_save_success": "Client server saved successfully",
-  
+  "client_required": "Client Required",
+  "allocated_db_env": "Allocated Database Environment"
 
 };
 

@@ -634,6 +634,7 @@ class UserGroup(object):
         }
         return data
 
+
 #
 # Country
 #
@@ -645,7 +646,8 @@ class Country(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_id", "country_name", "is_active"])
+        data = parse_dictionary(
+            data, ["country_id", "country_name", "is_active"])
         country_id = data.get("country_id")
         country_name = data.get("country_name")
         is_active = data.get("is_active")
