@@ -679,30 +679,28 @@ class SaveFileStorageSuccess(Response):
 class EntitiesWithAutoDeletion(object):
     def __init__(
         self, legal_entity_id, legal_entity_name, client_id,
-        unit_count, deletion_period
+        unit_count
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.client_id = client_id
         self.unit_count = unit_count
-        self.deletion_period = deletion_period
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "legal_entity_id", "legal_entity_name", "client_id",
-                "unit_count", "deletion_period"
+                "unit_count"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_name = data.get("legal_entity_name")
         client_id = data.get("client_id")
         unit_count = data.get("unit_count")
-        deletion_period = data.get("deletion_period")
         return EntitiesWithAutoDeletion(
             legal_entity_id, legal_entity_name, client_id,
-            unit_count, deletion_period
+            unit_count
         )
 
     def to_structure(self):
@@ -710,8 +708,7 @@ class EntitiesWithAutoDeletion(object):
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
             "client_id": self.client_id,
-            "unit_count": self.unit_count,
-            "deletion_period": self.deletion_period
+            "unit_count": self.unit_count
         }
         return to_dictionary_values(data)
 

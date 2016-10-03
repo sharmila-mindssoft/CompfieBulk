@@ -190,7 +190,7 @@ def save_allocated_db_env(db, request):
 
 def get_file_storage_form_data(db):
     data = db.call_proc_with_multiresult_set(
-        "sp_filestorage_list", None, 4)
+        "sp_clientfilestorage_list", None, 4)
     file_storages = data[0]
     groups = data[1]
     les = data[2]
@@ -222,14 +222,14 @@ def save_file_storage(db, request):
     legal_entity_id = request.legal_entity_id
     machine_id = request.machine_id
     db.call_update_proc(
-        "sp_filestorage_save",
+        "sp_clientfilestorage_save",
         (client_id, legal_entity_id, machine_id)
     )
 
 
 def get_auto_deletion_form_data(db):
     data = db.call_proc_with_multiresult_set(
-        "sp_auto_deletion_list", None, 4)
+        "sp_unit_autodeletion_list", None, 4)
     groups = data[0]
     les = data[1]
     units = data[2]
@@ -248,8 +248,7 @@ def return_auto_deletion_legal_entites(data):
             legal_entity_id=datum["legal_entity_id"],
             legal_entity_name=datum["legal_entity_name"],
             client_id=datum["client_id"],
-            unit_count=datum["unit_count"],
-            deletion_period=datum["deletion_period"]
+            unit_count=datum["unit_count"]
         ) for datum in data
     ]
     return result

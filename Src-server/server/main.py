@@ -108,10 +108,7 @@ class API(object):
         self, response_data, response
     ):
         assert response is not None
-        print "response_data:==================> %s, %s" % (
-            response_data, type(response_data))
         data = response_data.to_structure()
-        print "sending response data:============> %s" % data
         s = json.dumps(data, indent=2)
         response.send(s)
 
@@ -262,7 +259,6 @@ class API(object):
 
     @api_request(consoleadmin.RequestFormat)
     def handle_console_admin(self, request, db):
-        print "inside handle_console_admin==========>"
         return controller.process_console_admin_request(request, db)
 
     @api_request(technomasters.RequestFormat)

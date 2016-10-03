@@ -797,3 +797,33 @@ CREATE TABLE `tbl_user_clients` (
   CONSTRAINT `fk_tbl_client_groups_user_clients_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_users_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_client_filestorage`;
+CREATE TABLE `tbl_client_filestorage` (
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `machine_id` int(11) NOT NULL,
+  PRIMARY KEY (`client_id`,`legal_entity_id`),
+  KEY `index2` (`machine_id`),
+  KEY `fk_tbl_client_filestorage_2_idx` (`legal_entity_id`),
+  CONSTRAINT `fk_tbl_client_filestorage_3` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_client_filestorage_1` FOREIGN KEY (`machine_id`) REFERENCES `tbl_machines` (`machine_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_client_filestorage_2` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_unit_autodeletion`;
+CREATE TABLE `tbl_unit_autodeletion` (
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `deletion_year` int(11) DEFAULT NULL,
+  PRIMARY KEY (`client_id`,`legal_entity_id`,`unit_id`),
+  KEY `fk_tbl_unit_autodeletion_2_idx` (`legal_entity_id`),
+  KEY `fk_tbl_unit_autodeletion_3_idx` (`unit_id`),
+  CONSTRAINT `fk_tbl_unit_autodeletion_3` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_unit_autodeletion_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_unit_autodeletion_2` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+NGINE=InnoDB DEFAULT CHARSET=latin1;
+
+

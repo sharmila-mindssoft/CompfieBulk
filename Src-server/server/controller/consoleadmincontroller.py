@@ -179,11 +179,9 @@ def process_save_file_storage(db, request, session_user):
 
 
 def process_get_auto_deletion_list(db, request, session_user):
-    print "inside process_get_auto_deletion_list"
     (
         groups_list, les_list, units_list
     ) = get_auto_deletion_form_data(db)
-    print "returning GetAutoDeletionListSuccess"
     return consoleadmin.GetAutoDeletionListSuccess(
         client_groups=groups_list, auto_deletion_entities=les_list,
         auto_deletion_units=units_list

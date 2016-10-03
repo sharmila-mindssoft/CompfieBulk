@@ -1934,3 +1934,62 @@ BEGIN
 	server_port=machine_port;
 END //
 DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Configuring File Storage
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientfilestorage_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientfilestorage_list`()
+BEGIN
+	SELECT client_id, legal_entity_id, machine_id
+	FROM tbl_client_filestorage;
+
+	SELECT client_id, group_name FROM tbl_client_groups;
+
+	SELECT legal_entity_id, legal_entity_name, client_id 
+	FROM tbl_legal_entities;
+
+	SELECT machine_id, machine_name FROM tbl_machines;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Update File storage server id for a legal entity
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientfilestorage_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientfilestorage_save`(
+	IN clientid INT(11), le_id INT(11), machineid INT(11)
+)
+BEGIN
+	INSERT INTO tbl_client_filestorage
+	(client_id, legal_entity_id, machine_id) VALUES
+	(clientid, le_id, machineid) ON DUPLICATE KEY UPDATE
+	machine_id=machineid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Auto deletion form
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_unit_autodeletion_list`()
+BEGIN
+	SELECT client_id, group_name FROM tbl_client_groups;
+	
+	SELECT legal_entity_id, legal_entity_name, client_id,
+	(
+		SELECT count(unit_id) FROM tbl_units tu
+		WHERE tu.legal_entity_id=tl.legal_entity_id
+	) as unit_count
+	FROM tbl_legal_entities tl;
+
+	SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
+	(
+		SELECT deletion_year FROM tbl_unit_autodeletion tua 
+		WHERE tua.client_id=tu.client_id
+		and tua.legal_entity_id = tu.legal_entity_id
+	) as deletion_year FROM tbl_units tu;
+END //
+DELIMITER;

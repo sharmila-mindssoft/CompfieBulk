@@ -148,7 +148,6 @@ def admin_login_response(db, ip, username):
     session_type = 1  # web
     session_token = add_session(db, user_id, session_type, ip, "Administrator")
     admin_forms = get_admin_forms(db, username)
-    print admin_forms
     menu = process_admin_forms(admin_forms)
     employee_name = "Administrator"
     return login.AdminLoginSuccess(

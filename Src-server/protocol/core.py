@@ -796,7 +796,10 @@ class GeographyWithMapping(object):
         mapping = data.get("mapping")
         parent_id = data.get("parent_id")
         is_active = data.get("is_active")
-        return Geography(geography_id, geography_name, level_id, mapping, parent_id, is_active)
+        return Geography(
+            geography_id, geography_name, level_id,
+            mapping, parent_id, is_active
+        )
 
     def to_structure(self):
         data = {
