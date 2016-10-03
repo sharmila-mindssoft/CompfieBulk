@@ -1967,3 +1967,23 @@ BEGIN
 	WHERE client_id = clientid and legal_entity_id = le_id;
 END //
 DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Auto deletion form
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_auto_deletion_list`()
+BEGIN
+	SELECT client_id, group_name FROM tbl_client_groups;
+	
+	SELECT legal_entity_id, legal_entity_name, client_id, deletion_period,
+	(
+		SELECT count(unit_id) FROM tbl_units tu
+		WHERE tu.legal_entity_id=tl.legal_entity
+	) as unit_count
+	FROM tbl_legal_entities tl;
+
+	SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
+	deletion_year FROM tbl_units;
+END //
+DELIMITER;

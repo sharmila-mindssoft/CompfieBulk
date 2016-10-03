@@ -11,7 +11,8 @@ __all__ = [
     "get_client_database_form_data",
     "save_allocated_db_env",
     "get_file_storage_form_data",
-    "save_file_storage"
+    "save_file_storage",
+    "get_auto_deletion_form_data"
 ]
 
 
@@ -224,3 +225,44 @@ def save_file_storage(db, request):
         "sp_filestorage_save",
         (client_id, legal_entity_id, machine_id)
     )
+
+
+def get_auto_deletion_form_data(db):
+    data = db.call_proc_with_multiresult_set(
+        "sp_auto_deletion_list", None, 4)
+    groups = data[0]
+    les = data[1]
+    units = data[2]
+    groups_list = return_client_groups(groups)
+    les_list = return_auto_deletion_legal_entites(les)
+    units_list = return_units(units)
+    return (
+        groups_list, les_list, units_list
+    )
+
+
+def return_auto_deletion_legal_entites(data):
+    fn = consoleadmin.EntitiesWithAutoDeletion
+    result = [
+        fn(
+            legal_entity_id=datum["legal_entity_id"],
+            legal_entity_name=datum["legal_entity_name"],
+            client_id=datum["client_id"],
+            unit_count=datum["unit_count"],
+            deletion_period=datum["deletion_period"]
+        ) for datum in data
+    ]
+    return result
+
+
+def return_units(data):
+    fn = consoleadmin.Unit
+    result = [
+        fn(
+            unit_id=datum["unit_id"], client_id=datum["client_id"],
+            legal_entity_id=datum["legal_entity_id"],
+            unit_code=datum["unit_code"],
+            unit_name=datum["unit_name"], deletion_year=datum["deletion_year"]
+        ) for datum in data
+    ]
+    return result

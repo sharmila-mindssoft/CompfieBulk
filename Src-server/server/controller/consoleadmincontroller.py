@@ -100,6 +100,15 @@ def process_console_admin_request(request, db):
         result = process_save_file_storage(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveFileStorage", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(type(request_frame) is consoleadmin.GetAutoDeletionList):
+        logger.logKnowledgeApi("GetAutoDeletionList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_auto_deletion_list(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("GetAutoDeletionList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
@@ -167,3 +176,15 @@ def process_get_file_storage(db, request, session_user):
 def process_save_file_storage(db, request, session_user):
     save_file_storage(db, request)
     return consoleadmin.SaveFileStorageSuccess()
+
+
+def process_get_auto_deletion_list(db, request, session_user):
+    print "inside process_get_auto_deletion_list"
+    (
+        groups_list, les_list, units_list
+    ) = get_auto_deletion_form_data(db)
+    print "returning GetAutoDeletionListSuccess"
+    return consoleadmin.GetAutoDeletionListSuccess(
+        client_groups=groups_list, auto_deletion_entities=les_list,
+        auto_deletion_units=units_list
+    )

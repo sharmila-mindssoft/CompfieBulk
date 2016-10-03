@@ -151,6 +151,12 @@ api_params = {
     "machine_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     "file_storages": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"FileStorage"},
+
+    "auto_deletion_entities": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"EntitiesWithAutoDeletion"},
+    "auto_deletion_units": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"Unit"},
+    "deletion_period": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "deletion_year": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')

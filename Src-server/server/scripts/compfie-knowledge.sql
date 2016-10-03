@@ -418,6 +418,7 @@ CREATE TABLE `tbl_legal_entities` (
   `file_storage_server` int(11) DEFAULT NULL,
   `total_licence` int(11) DEFAULT '0',
   `sms_subscription` tinyint(4) DEFAULT '0',
+  `deletion_period` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
@@ -429,6 +430,7 @@ CREATE TABLE `tbl_legal_entities` (
   CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_country` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+
 
 
 
@@ -503,6 +505,7 @@ CREATE TABLE `tbl_units` (
   `unit_name` varchar(50) NOT NULL,
   `address` varchar(250) NOT NULL,
   `postal_code` int(11) NOT NULL,
+  `deletion_year` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `approve_status` tinyint(4) DEFAULT NULL,
   `remarks` text,
@@ -517,11 +520,12 @@ CREATE TABLE `tbl_units` (
   KEY `fk_units_geographies` (`geography_id`),
   KEY `fk_tbl_units_1` (`client_id`),
   KEY `fk_units_countries_idx` (`category_id`),
-  CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_category_master` (`category_id`),
   CONSTRAINT `fk_legal_entities_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_units_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_category_master` (`category_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+
 
 
 DROP TABLE IF EXISTS `tbl_unit_approval_history`;

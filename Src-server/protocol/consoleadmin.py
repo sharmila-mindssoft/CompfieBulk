@@ -205,10 +205,25 @@ class SaveFileStorage(Request):
         return to_dictionary_values(data)
 
 
+class GetAutoDeletionList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetAutoDeletionList()
+
+    def to_structure(self):
+        return {
+        }
+
+
 def _init_Request_class_map():
     classes = [
         GetDbServerList, SaveDBServer, GetClientServerList, SaveClientServer,
-        GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage
+        GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
+        GetAutoDeletionList
     ]
     class_map = {}
     for c in classes:
@@ -661,13 +676,129 @@ class SaveFileStorageSuccess(Response):
         return {}
 
 
+class EntitiesWithAutoDeletion(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, client_id,
+        unit_count, deletion_period
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.client_id = client_id
+        self.unit_count = unit_count
+        self.deletion_period = deletion_period
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "legal_entity_id", "legal_entity_name", "client_id",
+                "unit_count", "deletion_period"
+            ]
+        )
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        client_id = data.get("client_id")
+        unit_count = data.get("unit_count")
+        deletion_period = data.get("deletion_period")
+        return EntitiesWithAutoDeletion(
+            legal_entity_id, legal_entity_name, client_id,
+            unit_count, deletion_period
+        )
+
+    def to_structure(self):
+        data = {
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "client_id": self.client_id,
+            "unit_count": self.unit_count,
+            "deletion_period": self.deletion_period
+        }
+        return to_dictionary_values(data)
+
+
+class Unit(object):
+    def __init__(
+        self, unit_id, client_id, legal_entity_id, unit_code, unit_name,
+        deletion_year
+    ):
+        self.unit_id = unit_id
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.deletion_year = deletion_year
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "unit_id", "client_id", "legal_entity_id", "unit_code",
+                "unit_name", "deletion_year"
+            ]
+        )
+        unit_id = data.get("unit_id")
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        deletion_year = data.get("deletion_year")
+        return Unit(
+            unit_id, client_id, legal_entity_id, unit_code, unit_name,
+            deletion_year
+        )
+
+    def to_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "deletion_year": self.deletion_year
+        }
+        return to_dictionary_values(data)
+
+
+class GetAutoDeletionListSuccess(Response):
+    def __init__(
+        self, client_groups, auto_deletion_entities, auto_deletion_units
+    ):
+        self.client_groups = client_groups
+        self.auto_deletion_entities = auto_deletion_entities
+        self.auto_deletion_units = auto_deletion_units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_groups", "auto_deletion_entities",
+                "auto_deletion_units"
+            ]
+        )
+        client_groups = data.get("client_groups")
+        auto_deletion_entities = data.get("auto_deletion_entities")
+        auto_deletion_units = data.get("auto_deletion_units")
+        return GetAutoDeletionListSuccess(
+            client_groups, auto_deletion_entities, auto_deletion_units
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "client_groups": self.client_groups,
+            "auto_deletion_entities": self.auto_deletion_entities,
+            "auto_deletion_units": self.auto_deletion_units
+        }
+        return to_dictionary_values(data)
+
+
 def _init_Response_class_map():
     classes = [
         GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
         GetClientServerListSuccess, SaveClientServerSuccess,
         ClientServerNameAlreadyExists, GetAllocatedDBEnvSuccess,
         GetAllocatedDBEnvSuccess, SaveAllocatedDBEnvSuccess,
-        GetFileStorageSuccess, SaveFileStorageSuccess
+        GetFileStorageSuccess, SaveFileStorageSuccess,
+        GetAutoDeletionListSuccess
     ]
     class_map = {}
     for c in classes:

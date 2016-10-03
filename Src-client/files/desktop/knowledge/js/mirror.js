@@ -1636,6 +1636,14 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function getAutoDeletionList(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetAutoDeletionList",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1784,7 +1792,8 @@ function initMirror() {
     getAllocatedDBEnv: getAllocatedDBEnv,
     saveDBEnv: saveDBEnv,
     getFileStorage: getFileStorage,
-    saveFileStorage: saveFileStorage
+    saveFileStorage: saveFileStorage,
+    getAutoDeletionList: getAutoDeletionList
   };
 }
 var mirror = initMirror();
