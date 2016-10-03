@@ -872,18 +872,16 @@ class Industries(object):
         data = parse_dictionary(
             data, ["industry_id", "industry_name", "is_active"])
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("industry_name")
-        industry_name = parse_structure_CustomTextType_50(industry_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
+
         return Industries(industry_id, industry_name, is_active)
 
     def to_structure(self):
         return {
-            "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
-            "industry_name": to_structure_CustomTextType_50(self.industry_name),
-            "is_active": to_structure_Bool(self.is_active),
+            "industry_id": self.industry_id,
+            "industry_name": elf.industry_name,
+            "is_active": self.is_active,
         }
 
 
@@ -902,26 +900,26 @@ class StatutoryNature(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["statutory_nature_id", "statutory_nature_name", "is_active"])
+        data = parse_dictionary(
+            data, [
+                "statutory_nature_id", "statutory_nature_name", "is_active"
+                ]
+            )
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
-        statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
-        country_name = parse_structure_CustomTextType_50(country_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
+
         return StatutoryNature(statutory_nature_id, statutory_nature_name, country_id, country_name, is_active)
 
     def to_structure(self):
         return {
-            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
-            "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "country_name": to_structure_CustomTextType_50(self.country_name),
-            "is_active": to_structure_Bool(self.is_active),
+            "statutory_nature_id": self.statutory_nature_id,
+            "statutory_nature_name": self.statutory_nature_name,
+            "country_id": self.country_id,
+            "country_name": self.country_name,
+            "is_active": self.is_active,
         }
 
 #

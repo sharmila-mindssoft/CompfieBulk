@@ -1025,7 +1025,7 @@ def get_user_client_domains(db, session_user):
     if result:
         return return_domains(result)
     else:
-        return get_domains_for_user(db, session_user)
+        return get_user_domains(db, session_user)
 
 
 def get_date_configurations(db, client_id):
@@ -1734,4 +1734,5 @@ def get_user_client_countries(db, session_user):
         if result:
             return return_countries(result)
     else:
-        return get_countries_for_user(db, session_user)
+        return get_user_countries(db, session_user)
+
