@@ -156,6 +156,7 @@ api_params = {
     "auto_deletion_units": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"Unit"},
     "deletion_period": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "deletion_year": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "auto_deletion_details": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"AutoDeletionDetail"},
 
 }
 

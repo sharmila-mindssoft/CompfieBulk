@@ -109,6 +109,14 @@ def process_console_admin_request(request, db):
         logger.logKnowledgeApi("GetAutoDeletionList", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif(type(request_frame) is consoleadmin.SaveAutoDeletion):
+        logger.logKnowledgeApi("SaveAutoDeletion", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_save_auto_deletion(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveAutoDeletion", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
@@ -186,3 +194,8 @@ def process_get_auto_deletion_list(db, request, session_user):
         client_groups=groups_list, auto_deletion_entities=les_list,
         auto_deletion_units=units_list
     )
+
+
+def process_save_auto_deletion(db, request, session_user):
+    save_auto_deletion_details(db, request, session_user)
+    return consoleadmin.SaveAutoDeletionSuccess()

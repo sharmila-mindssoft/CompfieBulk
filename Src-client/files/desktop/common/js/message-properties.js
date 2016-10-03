@@ -271,7 +271,9 @@ var message = {
   "client_server_save_success": "Client server saved successfully",
   "client_required": "Client Required",
   "allocated_db_env": "Allocated Database Environment",
-  "file_storage_saved": "Configured File Storage"
+  "file_storage_saved": "Configured File Storage",
+  "save_auto_deletion_success": "Auto Deletion Saved Successfully",
+  "deletion_year_required": "Deletion year required"
 };
 
 function clearMessage() {

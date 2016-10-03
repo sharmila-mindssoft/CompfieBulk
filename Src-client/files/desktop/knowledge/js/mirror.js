@@ -1644,6 +1644,16 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function saveAutoDeletion(auto_deletion_details, callback){
+      callerName = "console_admin";
+      var request = [
+        "SaveAutoDeletion",
+        {
+          "auto_deletion_details": auto_deletion_details
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1793,7 +1803,8 @@ function initMirror() {
     saveDBEnv: saveDBEnv,
     getFileStorage: getFileStorage,
     saveFileStorage: saveFileStorage,
-    getAutoDeletionList: getAutoDeletionList
+    getAutoDeletionList: getAutoDeletionList,
+    saveAutoDeletion: saveAutoDeletion
   };
 }
 var mirror = initMirror();

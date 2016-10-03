@@ -1,5 +1,6 @@
 from protocol import consoleadmin
 from forms import *
+from tables import *
 
 __all__ = [
     "get_db_server_list",
@@ -12,7 +13,8 @@ __all__ = [
     "save_allocated_db_env",
     "get_file_storage_form_data",
     "save_file_storage",
-    "get_auto_deletion_form_data"
+    "get_auto_deletion_form_data",
+    "save_auto_deletion_details"
 ]
 
 
@@ -248,7 +250,8 @@ def return_auto_deletion_legal_entites(data):
             legal_entity_id=datum["legal_entity_id"],
             legal_entity_name=datum["legal_entity_name"],
             client_id=datum["client_id"],
-            unit_count=datum["unit_count"]
+            unit_count=datum["unit_count"],
+            deletion_period=datum["deletion_period"]
         ) for datum in data
     ]
     return result
@@ -264,4 +267,28 @@ def return_units(data):
             unit_name=datum["unit_name"], deletion_year=datum["deletion_year"]
         ) for datum in data
     ]
+    return result
+
+
+def save_auto_deletion_details(db, request, session_user):
+    auto_deletion_details = request.auto_deletion_details
+    unit_ids = []
+    insert_columns = [
+        "client_id", "legal_entity_id", "unit_id", "deletion_year"
+    ]
+    insert_values = []
+    legal_entity_id = None
+    for detail in auto_deletion_details:
+        unit_ids.append(detail.unit_id)
+        legal_entity_id = detail.legal_entity_id
+        insert_values.append(
+            (
+                detail.client_id, detail.legal_entity_id,
+                detail.unit_id, detail.deletion_year
+            )
+        )
+    db.call_update_proc("sp_unitautodeletion_delete", (legal_entity_id,))
+    result = db.bulk_insert(
+        tblUnitAutoDeletion, insert_columns, insert_values
+    )
     return result

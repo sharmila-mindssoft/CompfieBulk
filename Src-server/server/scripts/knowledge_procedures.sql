@@ -1973,6 +1973,7 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- To Get data for Auto deletion form
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_unit_autodeletion_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_unit_autodeletion_list`()
 BEGIN
@@ -1982,7 +1983,12 @@ BEGIN
 	(
 		SELECT count(unit_id) FROM tbl_units tu
 		WHERE tu.legal_entity_id=tl.legal_entity_id
-	) as unit_count
+	) as unit_count,
+	(
+		SELECT max(deletion_year) FROM tbl_unit_autodeletion tua 
+		WHERE tua.client_id=tl.client_id
+		and tua.legal_entity_id = tl.legal_entity_id
+	) as deletion_period
 	FROM tbl_legal_entities tl;
 
 	SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
@@ -1991,5 +1997,19 @@ BEGIN
 		WHERE tua.client_id=tu.client_id
 		and tua.legal_entity_id = tu.legal_entity_id
 	) as deletion_year FROM tbl_units tu;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To delete Auto deletion details of all units under a legal entity
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_unitautodeletion_delete`;
+DELIMITER //
+CREATE PROCEDURE `sp_unitautodeletion_delete`(
+	IN le_id INT(11)
+)
+BEGIN
+	DELETE FROM tbl_unit_autodeletion
+	WHERE legal_entity_id=le_id;
 END //
 DELIMITER;

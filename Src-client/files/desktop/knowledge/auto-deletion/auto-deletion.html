@@ -41,7 +41,7 @@
         </div>
     </div>
 </div>
-<div class="content-container default-display-none" id="add" >
+<div class="content-container default-display-none width60" id="add" >
     <div class="content-area">
         <div class="add-container">
             <div class="add-container-heading">
@@ -63,7 +63,7 @@
                             Legal Entity:<span class="mandatory">*</span>
                         </div>
                         <div class="single-column-field-input">
-                            <select class="input-box" id="group">
+                            <select class="input-box" id="legal-entity">
                             </select>
                         </div>
                     </div>
@@ -74,20 +74,24 @@
                             Deletion Period:<span class="mandatory">*</span>
                         </div>
                         <div class="single-column-field-input">
-                            <input type="text-box" class="input-box"/>
+                            <input type="text-box" class="input-box numeric"/>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="grid-table">
+            <div class="grid-table default-display-none">
                 <table>
                     <tr>
                         <th width="80%">Unit</th>
                         <th width="20%">Deletion Year</th>
                     </tr>
-                    <tbody class="tbody-auto-deletion">
+                    <tbody class="tbody-unit-auto-deletion">
                     </tbody>
                 </table>
+            </div>
+            <div class="submit-button-container default-display-none">
+                <input type="reset" name="cancel" value="Cancel" class="btn-cancel">&nbsp;&nbsp;
+                <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
             </div>
         </div>
     </div>
@@ -98,7 +102,8 @@
             <td class="sno" align="center"></td>
             <td class="group"></td>
             <td class="le"></td>
-            <td class="client-server"></td>
+            <td class="no-of-units"></td>
+            <td class="deletion-period"></td>
             <td align="center">
                 <span class="edit-icon" style="width: 16px; height: 16px; display:block">
                 </span> 
