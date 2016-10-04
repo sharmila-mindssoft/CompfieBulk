@@ -1988,7 +1988,7 @@ BEGIN
 		SELECT max(deletion_year) FROM tbl_unit_autodeletion tua 
 		WHERE tua.client_id=tl.client_id
 		and tua.legal_entity_id = tl.legal_entity_id
-	) as deletion_period
+	) as deletion_period, is_active
 	FROM tbl_legal_entities tl;
 
 	SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
@@ -1996,7 +1996,7 @@ BEGIN
 		SELECT deletion_year FROM tbl_unit_autodeletion tua 
 		WHERE tua.client_id=tu.client_id
 		and tua.legal_entity_id = tu.legal_entity_id
-	) as deletion_year FROM tbl_units tu;
+	) as deletion_year, address FROM tbl_units tu;
 END //
 DELIMITER;
 

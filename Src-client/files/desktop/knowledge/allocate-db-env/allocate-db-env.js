@@ -3,6 +3,7 @@ var CLIENT_DBS = '';
 var CLIENT_SERVER_NAME_AND_ID = '';
 var CLIENT_GROUPS = '';
 var DB_SERVER_NAME_AND_ID = '';
+var FILTERED_LIST = [];
 
 var legal_entities_map = {};
 var client_server_map = {};
@@ -26,6 +27,7 @@ function initialize(type_of_form){
             CLIENT_GROUPS = data.client_groups;
             DB_SERVER_NAME_AND_ID = data.db_server_name_and_id;
             generateMaps();
+            FILTERED_LIST = CLIENT_DBS;
             loadClientDatabaseList();
         }
         function onFailure(error) {
@@ -87,7 +89,7 @@ function loadClientDatabaseList(){
     $(".tbody-client-server-list").empty();
     var table_row = $("#templates .table-row");
     var sno = 0;
-    $.each(CLIENT_DBS, function(key, value){
+    $.each(FILTERED_LIST, function(key, value){
         ++ sno;
         var clone = table_row.clone();
         $(".sno", clone).text(sno);
@@ -216,6 +218,29 @@ function loadEditForm(
     $("#db-server").val(database_server_ip);
     $("#client-server").val(machine_id);
 }
+
+$(".filter-text-box").keyup(function(){
+    var client_group_filter = $('#search-group').val().toLowerCase();
+    var legal_entity_filter = $('#search-legal-entity').val().toLowerCase();
+    var db_server_filter = $('#search-db-server').val().toLowerCase();
+    var client_server_filter = $('#search-client-server').val().toLowerCase();
+    FILTERED_LIST = [];
+    $.each(CLIENT_DBS, function(key, value){
+        var client_group_name = client_group_map[value.client_id].toLowerCase();
+        var legal_entity_name = legal_entities_map[value.legal_entity_id].toLowerCase();
+        var db_server_name = db_server_map[value.database_server_ip].toLowerCase();
+        var client_server_name = client_server_map[value.machine_id].toLowerCase();
+        if (
+            ~client_group_name.indexOf(client_group_filter) && 
+            ~legal_entity_name.indexOf(legal_entity_filter) &&
+            ~db_server_name.indexOf(db_server_filter) && 
+            ~client_server_name.indexOf(client_server_filter) 
+        ){
+            FILTERED_LIST.push(value);
+      }
+    });
+    loadClientDatabaseList();
+});
 
 
 //initialization

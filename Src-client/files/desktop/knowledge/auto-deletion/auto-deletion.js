@@ -3,6 +3,7 @@ var CLIENT_GROUPS = '';
 var UNITS = '';
 var edit_client_id = '';
 var edit_legal_entity_id = '';
+var FILTERED_LIST = [];
 
 var client_map = {};
 var entity_map = {};
@@ -20,6 +21,7 @@ function initialize(type_of_form){
             LEGAL_ENTITIES = data.auto_deletion_entities;
             CLIENT_GROUPS = data.client_groups;
             UNITS = data.auto_deletion_units;
+            FILTERED_LIST = LEGAL_ENTITIES;
             generateMaps();
             loadList();
         }
@@ -117,10 +119,15 @@ function loadList(){
     $(".tbody-auto-deletion").empty();
     var row = $("#templates .table-row");
     var sno = 0;
-    $.each(LEGAL_ENTITIES, function(key, value){
+    $.each(FILTERED_LIST, function(key, value){
         if(value.deletion_period != null){
             ++ sno;
             var clone = row.clone();
+            if (value.is_active == true) {
+                classValue = 'active-icon';
+            } else {
+                classValue = 'inactive-icon';
+            }
             $(".sno", clone).text(sno);
             $(".group", clone).text(client_map[value.client_id]);
             $(".le", clone).text(value.legal_entity_name);
@@ -131,6 +138,9 @@ function loadList(){
                 edit_legal_entity_id = value.legal_entity_id;
                 initialize("edit");
             });
+            $('.status', clone).addClass(classValue);
+            $('.active-icon').attr('title', 'Deactivate');
+            $('.inactive-icon').attr('title', 'Activate');
             $(".tbody-auto-deletion").append(clone);
         }
     });
@@ -185,7 +195,9 @@ function loadUnits(){
         if(value.legal_entity_id == selected_entity){
             ++ count;
             var clone = unit_row.clone();
-            $(".unit-name", clone).text(unit_map[value.unit_id]);
+            $(".unit-name span", clone).text(unit_map[value.unit_id]);
+            var abbr_class = "abbr-"+value.unit_id;
+            $(".unit-name abbr", clone).addClass(abbr_class);
             var deletion_year_class = "deletion-year-"+value.unit_id;
             $(".deletion-year input", clone).addClass(deletion_year_class);
             $(".deletion-year", clone).keypress(function (e) {
@@ -198,9 +210,9 @@ function loadUnits(){
                 e.preventDefault();
                 return false;
             });
-            console.log("deletion year:"+value.deletion_year);
             $(".deletion-year input", clone).val(value.deletion_year);
-            $(".tbody-unit-auto-deletion").append(clone);    
+            $(".tbody-unit-auto-deletion").append(clone);  
+            $("."+abbr_class).attr("title",value.address);  
         }
     });
     if(count == 0){
@@ -258,6 +270,52 @@ function saveAutoDeletion(){
             }
         });
     }
+}
+$(".filter-text-box").change(function(){
+    loadFilteredList();
+});
+
+$(".filter-text-box").keyup(function(){
+    loadFilteredList();
+});
+
+function loadFilteredList(){
+    var group_filter = $('#search-group').val().toLowerCase();
+    var legal_entity_filter = $('#search-legal-entity').val().toLowerCase();
+    var no_of_units_filter = $('#search-no-of-units').val().toLowerCase();
+    var deletion_period_filter = $('#search-deletion-period').val().toLowerCase();
+    var status_filter = parseInt($("#search-status").val());
+    FILTERED_LIST = [];
+    $.each(LEGAL_ENTITIES, function(key, value){
+        var group_name = client_map[value.client_id].toLowerCase();
+        var legal_entity_name = value.legal_entity_name.toLowerCase();
+        var no_of_units = value.unit_count+"";
+        var deletion_period = value.deletion_period+"";
+        var status = null;
+        if(value.is_active == true){
+            status = 1
+        }else if(value.is_active == false){
+            status = 2
+        }
+        var status_condition = true
+        if(status_filter == 0){
+            status_condition = true;
+        }else{
+            status_condition = (status_filter == status)
+        }
+        console.log("status_filter:"+status_filter+", status:"+status);
+        console.log("status_condition:"+status_condition);
+        if (
+            ~group_name.indexOf(group_filter) && 
+            ~legal_entity_name.indexOf(legal_entity_filter) &&
+            ~no_of_units.indexOf(no_of_units_filter) && 
+            ~deletion_period.indexOf(deletion_period_filter) && 
+            status_condition
+        ){
+            FILTERED_LIST.push(value);
+      }
+    });
+    loadList();
 }
 
 //initialization

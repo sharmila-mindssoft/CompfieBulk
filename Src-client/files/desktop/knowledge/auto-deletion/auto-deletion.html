@@ -17,6 +17,7 @@
                         <th>No. of Units</th>
                         <th>Deletion Period</th>
                         <th align="center" width="10%">Edit</th>
+                        <th align="center" width="10%">Status</th>
                     </tr>
                     <tr>
                         <td width="10%">&nbsp;</td>
@@ -33,6 +34,17 @@
                             <input type="text" class="filter-text-box" id="search-deletion-period" >
                         </td>
                         <td width="10%">&nbsp;</td>
+                        <td width="15%">
+                            <select class="filter-text-box" id="search-status" >
+                                <option value='0'>All</option>
+                                <option value='1'>
+                                    Active
+                                </option>
+                                <option value='2'>
+                                    Inactive
+                                </option>
+                            </select>
+                        </td>
                     </tr>
                 </thead>
                 <tbody class="tbody-auto-deletion">
@@ -108,6 +120,10 @@
                 <span class="edit-icon" style="width: 16px; height: 16px; display:block">
                 </span> 
             </td>
+            <td align="center">
+                <span class="status" style="width: 16px; height: 16px; display:block">
+                </span> 
+            </td>
         </tr>
     </table>
     <div class="drop-down-option">
@@ -118,7 +134,12 @@
     <div class="unit_row">
         <table>
             <tr>
-                <td class="unit-name"></td>
+                <td class="unit-name">
+                    <abbr class="page-load tipso_style">
+                    <img src="/images/icon-info.png" style="padding-right: 3px;">
+                        <span></span>
+                    </abbr>
+                </td>
                 <td class="deletion-year">
                     <input type="text-box" class="input-box"/>
                 </td>

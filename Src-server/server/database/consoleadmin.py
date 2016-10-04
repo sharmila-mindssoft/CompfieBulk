@@ -448,7 +448,8 @@ def return_auto_deletion_legal_entites(data):
             legal_entity_name=datum["legal_entity_name"],
             client_id=datum["client_id"],
             unit_count=datum["unit_count"],
-            deletion_period=datum["deletion_period"]
+            deletion_period=datum["deletion_period"],
+            is_active=bool(datum["is_active"])
         ) for datum in data
     ]
     return result
@@ -465,7 +466,7 @@ def return_units(data):
         fn(
             unit_id=datum["unit_id"], client_id=datum["client_id"],
             legal_entity_id=datum["legal_entity_id"],
-            unit_code=datum["unit_code"],
+            unit_code=datum["unit_code"], address=datum["address"],
             unit_name=datum["unit_name"], deletion_year=datum["deletion_year"]
         ) for datum in data
     ]

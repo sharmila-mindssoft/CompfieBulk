@@ -728,20 +728,21 @@ class SaveFileStorageSuccess(Response):
 class EntitiesWithAutoDeletion(object):
     def __init__(
         self, legal_entity_id, legal_entity_name, client_id,
-        unit_count, deletion_period
+        unit_count, deletion_period, is_active
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.client_id = client_id
         self.unit_count = unit_count
         self.deletion_period = deletion_period
+        self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "legal_entity_id", "legal_entity_name", "client_id",
-                "unit_count", "deletion_period"
+                "unit_count", "deletion_period", "is_active"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
@@ -749,9 +750,10 @@ class EntitiesWithAutoDeletion(object):
         client_id = data.get("client_id")
         unit_count = data.get("unit_count")
         deletion_period = data.get("deletion_period")
+        is_active = data.get("is_active")
         return EntitiesWithAutoDeletion(
             legal_entity_id, legal_entity_name, client_id,
-            unit_count, deletion_period
+            unit_count, deletion_period, is_active
         )
 
     def to_structure(self):
@@ -760,7 +762,8 @@ class EntitiesWithAutoDeletion(object):
             "legal_entity_name": self.legal_entity_name,
             "client_id": self.client_id,
             "unit_count": self.unit_count,
-            "deletion_period": self.deletion_period
+            "deletion_period": self.deletion_period,
+            "is_active": self.is_active
         }
         return to_dictionary_values(data)
 
@@ -768,7 +771,7 @@ class EntitiesWithAutoDeletion(object):
 class Unit(object):
     def __init__(
         self, unit_id, client_id, legal_entity_id, unit_code, unit_name,
-        deletion_year
+        deletion_year, address
     ):
         self.unit_id = unit_id
         self.client_id = client_id
@@ -776,13 +779,14 @@ class Unit(object):
         self.unit_code = unit_code
         self.unit_name = unit_name
         self.deletion_year = deletion_year
+        self.address = address
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "unit_id", "client_id", "legal_entity_id", "unit_code",
-                "unit_name", "deletion_year"
+                "unit_name", "deletion_year", "address"
             ]
         )
         unit_id = data.get("unit_id")
@@ -791,9 +795,10 @@ class Unit(object):
         unit_code = data.get("unit_code")
         unit_name = data.get("unit_name")
         deletion_year = data.get("deletion_year")
+        address = data.get("address")
         return Unit(
             unit_id, client_id, legal_entity_id, unit_code, unit_name,
-            deletion_year
+            deletion_year, address
         )
 
     def to_structure(self):
@@ -803,7 +808,8 @@ class Unit(object):
             "legal_entity_id": self.legal_entity_id,
             "unit_code": self.unit_code,
             "unit_name": self.unit_name,
-            "deletion_year": self.deletion_year
+            "deletion_year": self.deletion_year,
+            "address": self.address
         }
         return to_dictionary_values(data)
 
