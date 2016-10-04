@@ -376,7 +376,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getuserformids;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
-	IN _user_id INT
+	IN _user_id INT, IN _user_type INT
 )
 BEGIN
 	if _user_id = 0 then
