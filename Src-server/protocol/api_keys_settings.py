@@ -24,6 +24,7 @@ api_params = {
     'password': {},
     'short_name': {},
     'ip': {},
+    "request": {},
 
     'd_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -65,14 +66,15 @@ api_params = {
 
     'validity_days_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'validity_days': {'type': 'INT', 'length': 365, 'validation_method': None, 'is_optional': True},
+    "validity_date_settings" : {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"ValidityDates"},
 
     'group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'client_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'group_name': {'type': 'STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'country_names': {'type': 'STRING', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     'no_of_legal_entities': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'username': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
     'business_group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'business_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'legal_entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -90,7 +92,7 @@ api_params = {
     'category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'unit_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'postal_code': {'type': 'INT', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
     'domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
     'org_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
@@ -101,9 +103,61 @@ api_params = {
 
     "group_approval_list" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "ClientGroupApproval"},
     "countries" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Country"},
+    "domains" : {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"Domain"},
+    "industries" : {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"Industry"},
     'le_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    "country_ids": {'type': 'VECTOR_TYPE_int', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "country_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "client_group_approval_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "ClientGroupApprovalDetails"},
+
+    "notifications" : {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'general', "class_name":"Notification"},
+    "audit_trail_details" : {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'general', "class_name":"AuditTrail"},
+    "form_categories":  {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"FormCategory"},
+    "user_group_details":  {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"UserGroup"},
+    'no_of_users': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "forms":  {'type':'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name':'core', "class_name":"Menu"},
+
+    'user_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
+    "employee_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    "employee_code": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "contact_no": {'type': 'TEXT', 'length': 12, 'validation_method': None, 'is_optional': True},
+    "designation": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "domain_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "user_groups":  {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserGroup"},
+    "user_details":{'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserDetails"},
+
+    "user_group_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "user_group_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "ug_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "form_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "form_category_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "form_category": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+
+    "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
+    "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "db_servers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"DBServer"},
+    "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+
+    "client_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "client_servers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientServer"},
+
+    "client_dbs": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientDatabase"},
+    "client_groups": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientGroup"},
+    "client_legal_entities": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"LegalEntity"},
+    "client_server_name_and_id": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"ClientServerNameAndID"},
+    "db_server_name_and_id": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"DBServerNameAndID"},
+    "machine_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "machine_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+
+    "file_storages": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"FileStorage"},
+
+    "auto_deletion_entities": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"EntitiesWithAutoDeletion"},
+    "auto_deletion_units": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"Unit"},
+    "deletion_period": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "deletion_year": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "auto_deletion_details": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"AutoDeletionDetail"},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')

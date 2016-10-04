@@ -384,5 +384,30 @@ TEMPLATE_PATHS = [
         "files/desktop/knowledge/audit-trail/audittrail.html",
         None, {}
     ),
-
+    # Console Admin
+    (
+        "/knowledge/configure-db-server",
+        "files/desktop/knowledge/configure-db-server/configure-db-server.html",
+        None, {}
+    ),
+    (
+        "/knowledge/configure-client-server",
+        "files/desktop/knowledge/configure-client-server/configure-client-server.html",
+        None, {}
+    ),
+    (
+        "/knowledge/allocate-db-env",
+        "files/desktop/knowledge/allocate-db-env/allocate-db-env.html",
+        None, {}
+    ),
+    (
+        "/knowledge/auto-deletion",
+        "files/desktop/knowledge/auto-deletion/auto-deletion.html",
+        None, {}
+    ),
+    (
+        "/knowledge/configure-file-storage",
+        "files/desktop/knowledge/configure-file-storage/configure-file-storage.html",
+        None, {}
+    )
 ]

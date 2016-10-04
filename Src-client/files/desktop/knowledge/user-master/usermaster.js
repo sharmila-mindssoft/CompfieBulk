@@ -157,7 +157,7 @@ function loadUserList(usersList) {
 // get users list from api
 function getUsers() {
   function onSuccess(data) {
-    usersList = data.users;
+    usersList = data.user_details;
     domainsList = data.domains;
     userGroupsList = data.user_groups;
     countriesList = data.countries;

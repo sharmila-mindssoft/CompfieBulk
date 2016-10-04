@@ -1,4 +1,7 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
+from protocol.jsonvalidators import (
+    parse_dictionary, parse_static_list, to_structure_dictionary_values,
+    to_dictionary_values
+)
 from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_VectorType_RecordType_core_Level,
@@ -46,16 +49,16 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_knowledgemaster_Level
 )
 
+
 #
 # Request
 #
-
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        if type(inner) is dict :
-            inner = to_structure_dictionary_values(inner)
+        if type(inner) is dict:
+            to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -236,6 +239,7 @@ class ChangeGeographyStatus(Request):
             "is_active": to_structure_Bool(self.is_active),
         }
 
+
 class GetIndustries(Request):
     def __init__(self):
         pass
@@ -248,6 +252,7 @@ class GetIndustries(Request):
     def to_inner_structure(self):
         return {
         }
+
 
 class SaveIndustry(Request):
     def __init__(self, country_id, domain_id, industry_name):
@@ -532,8 +537,10 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        if type(inner) is dict :
-            inner = to_structure_dictionary_values(inner)
+        print "inne: %s" % inner
+        if type(inner) is dict:
+            to_structure_dictionary_values(inner)
+        print "inner : %s " %  inner
         return [name, inner]
 
     def to_inner_structure(self):
@@ -730,6 +737,7 @@ class ChangeGeographyStatusSuccess(Response):
         return {
         }
 
+
 class GetIndustriesSuccess(Response):
     def __init__(self, industries, countries, domains):
         self.industries = industries
@@ -740,20 +748,19 @@ class GetIndustriesSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["industries", "countries", "domains"])
         industries = data.get("industries")
-        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-
         return GetIndustriesSuccess(industries, countries, domains)
 
     def to_inner_structure(self):
-        return {
-            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains)
+        data = {
+            "industries": self.industries,
+            "countries": self.countries,
+            "domains": self.domains
         }
+        print to_dictionary_values(data)
+        return to_dictionary_values(data)
+
 
 class SaveIndustrySuccess(Response):
     def __init__(self):

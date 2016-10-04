@@ -858,15 +858,15 @@ function initMirror() {
     var cIds = userDetail[7];
     var dIds = userDetail[8];
     return {
-      'email': email,
+      'email_id': email,
       'ug_id': ugId,
-      'emp_n': empN,
-      'emp_c': empC,
-      'c_n': cNo,
-      'add': add,
-      'desig': desig,
-      'c_ids': cIds,
-      'd_ids': dIds
+      'employee_name': empN,
+      'employee_code': empC,
+      'contact_no': cNo,
+      'address': add,
+      'designation': desig,
+      'country_ids': cIds,
+      'domain_ids': dIds
     };
   }
   function saveAdminUser(userDetail, callback) {
@@ -894,15 +894,15 @@ function initMirror() {
     var cIds = userDetail[7];
     var dIds = userDetail[8];
     return {
-      'u_id': uId,
+      'user_id': uId,
       'ug_id': ugId,
-      'emp_n': empN,
-      'emp_c': empC,
-      'c_n': cn,
-      'add': add,
-      'desig': desig,
-      'c_ids': cIds,
-      'd_ids': dIds
+      'employee_name': empN,
+      'employee_code': empC,
+      'contact_no': cn,
+      'address': add,
+      'designation': desig,
+      'country_ids': cIds,
+      'domain_ids': dIds
     };
   }
   function updateAdminUser(userDetail, callback) {
@@ -918,8 +918,8 @@ function initMirror() {
     var request = [
       'ChangeUserStatus',
       {
-        'u_id': uId,
-        'active': active
+        'user_id': uId,
+        'is_active': active
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1546,7 +1546,114 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-
+  function getDbServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetDbServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveDBServer(
+    db_server_name, ip, port, username, password, callback
+  ){
+    callerName = "console_admin"
+    var request = [
+      "SaveDBServer",
+      {
+        "db_server_name": db_server_name,
+        "ip": ip,
+        "port": port,
+        "username": username,
+        "password": password
+      }
+    ];
+    apiRequest(callerName, request, callback)
+  }
+  function getClientServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetClientServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveClientServer(
+    client_server_id, client_server_name, ip, port, callback
+  ){
+    callerName = "console_admin";
+    var request = [
+      "SaveClientServer",
+      {
+        "client_server_id": client_server_id,
+        "client_server_name": client_server_name,
+        "ip": ip,
+        "port": port
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAllocatedDBEnv(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetAllocatedDBEnv",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveDBEnv(client_id, le_id, db_server_ip, machine_id, callback){
+      callerName = "console_admin";
+      var request = [
+          "SaveAllocatedDBEnv",
+          {
+            "client_id": client_id, 
+            "legal_entity_id": le_id,
+            "database_server_ip": db_server_ip,
+            "machine_id": machine_id
+          }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function getFileStorage(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetFileStorage",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveFileStorage(client_id, le_id, machine_id, callback){
+      callerName = "console_admin";
+      var request = [
+          "SaveFileStorage",
+          {
+            "client_id": client_id, 
+            "legal_entity_id": le_id,
+            "machine_id": machine_id
+          }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function getAutoDeletionList(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetAutoDeletionList",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveAutoDeletion(auto_deletion_details, callback){
+      callerName = "console_admin";
+      var request = [
+        "SaveAutoDeletion",
+        {
+          "auto_deletion_details": auto_deletion_details
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1687,7 +1794,17 @@ function initMirror() {
     getEntityApprovalList: getEntityApprovalList,
     approveUnit: approveUnit,
     getClientGroupApprovalList: getClientGroupApprovalList,
-    approveClientGroup: approveClientGroup
+    approveClientGroup: approveClientGroup,
+    getDbServerList: getDbServerList,
+    saveDBServer: saveDBServer,
+    getClientServerList: getClientServerList,
+    saveClientServer: saveClientServer,
+    getAllocatedDBEnv: getAllocatedDBEnv,
+    saveDBEnv: saveDBEnv,
+    getFileStorage: getFileStorage,
+    saveFileStorage: saveFileStorage,
+    getAutoDeletionList: getAutoDeletionList,
+    saveAutoDeletion: saveAutoDeletion
   };
 }
 var mirror = initMirror();

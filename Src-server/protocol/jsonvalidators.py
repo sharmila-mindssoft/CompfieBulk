@@ -187,7 +187,7 @@ def parse_dictionary(x, field_names=[]):
             )
             raise expectation_error(msg, x)
     if len(field_names) > 0:
-        x = parse_dictionary_values(x, field_names)
+        x = parse_dictionary_values(x, field_names, True)
 
     return x
 
@@ -252,6 +252,7 @@ def parse_optional_int_list(x, length=0, int_length=0):
         return None
     return parse_int_list(x, length, int_length)
 
+
 def parse_values(field_name, param, val):
     # if param is None:
     #     val = parse_vector_type_record_type(val)
@@ -310,11 +311,11 @@ def parse_values(field_name, param, val):
     return val
 
 
-def parse_dictionary_values(x, field_names=[]):
+def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        if param is None :
+        if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
         if param.get('type') == 'VECTOR_TYPE':
@@ -323,78 +324,81 @@ def parse_dictionary_values(x, field_names=[]):
             val = parse_VectorType(
                 param.get('module_name'), param.get('class_name'), val
             )
-        else :
+            if is_validation_and_parse is True:
+                x[field_name] = val
+        elif param.get('type') == 'MAP_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            assert param.get('validation_method') is not None
+            val = parse_MapType(
+                param.get('module_name'), param.get('class_name'),
+                param.get('validation_method'), val
+            )
+            if is_validation_and_parse is True:
+                x[field_name] = val
+        else:
             val = parse_values(field_name, param, val)
-
-        if val is not None and param.get('validation_method') is not None:
+        if(
+            val is not None and
+            param.get('validation_method') is not None and
+            param.get("type") != "map_type"
+        ):
             val = param.get('validation_method')(val)
-
-        x[field_name] = val
     return x
 
+
 def to_dictionary_values(data, response=None):
-    return data
-# def to_dictionary_values(data, response=None):
-#     final_result = None
-#     result = {}
-#     for key in data:
-#         value = data[key]
-#         param = api_params.get(key)
-#         if param.get('type') == 'vector_type':
-#             assert param.get('module_name') is not None
-#             assert param.get('class_name') is not None
-#             value = to_VectorType(
-#                 param.get('module_name'), param.get('class_name'), value
-#             )
-#             result[key] = value
-#         else:
-#             x = {key: value}
-#             parse_dictionary_values(x, field_names=[key])
-#             result[key] = value
-#     if response is not None:
-#         final_result = [
-#             response,
-#             result
-#         ]
-#     else:
-#         final_result = result
-#     return final_result
+    final_result = None
+    result = {}
+    for key in data:
+        value = data[key]
+        param = api_params.get(key)
+        if param.get('type') == 'VECTOR_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            value = to_VectorType(
+                param.get('module_name'), param.get('class_name'), value
+            )
+            result[key] = value
+        if param.get('type') == 'MAP_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            assert param.get('validation_method') is not None
+            value = to_MapType(
+                param.get('module_name'), param.get('class_name'),
+                param.get("validation_method"), value
+            )
+            result[key] = value
+        else:
+            x = {key: value}
+            parse_dictionary_values(
+                x, field_names=[key], is_validation_and_parse=False)
+            result[key] = value
+    if response is not None:
+        final_result = [
+            response,
+            result
+        ]
+    else:
+        final_result = result
+    return final_result
 
 
 def to_vector_type_record_type(value):
     final_list = []
     if type(value) is list:
-        for v in value :
+        for v in value:
             v = to_structure_dictionary_values(v)
             final_list.append(v)
     return final_list
+
 
 def to_structure_dictionary_values(x):
     keys = x.keys()
     if len(keys) == 0:
         return {}
-    for field_name in keys:
-        val = x.get(field_name)
-        param = api_params.get(field_name)
-        if param is None :
-            raise ValueError('%s is not configured in settings' % (field_name))
+    return parse_dictionary_values(x, keys, False)
 
-        if param.get('type') == 'VECTOR_TYPE':
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
-            val = to_VectorType(
-                param.get('module_name'), param.get('class_name'), val
-            )
-            val = to_vector_type_record_type(val)
-
-        else :
-            val = parse_values(field_name, param, val)
-
-        if val is not None and param.get('validation_method') is not None:
-            val = param.get('validation_method')(val)
-
-        x[field_name] = val
-    return x
 
 def return_import(module, class_name):
     mod = __import__('protocol.'+module, fromlist=[class_name])
@@ -440,3 +444,21 @@ def to_VectorType(module_name, class_name, data):
             to_RecordType(module_name, class_name, item)
         )
     return lst
+
+
+def parse_MapType(module_name, class_name, validation_method, data):
+    map = {}
+    for key, value in data.items():
+        key = validation_method(key)
+        parsed_value = parse_RecordType(module_name, class_name, value)
+        map[key] = parsed_value
+    return map
+
+
+def to_MapType(module_name, class_name, validation_method, data):
+    map = {}
+    for key, value in data.items():
+        key = validation_method(key)
+        dict_value = to_RecordType(module_name, class_name, value)
+        map[key] = dict_value
+    return map

@@ -12,6 +12,7 @@ $('.btn-industry-add').click(function () {
   $('#industryname').val('');
   $('#industryid').val('');
   $('.error-message').html('');
+  $('.fieldvalue').val('');
   $('#industryname').focus();
 });
 $('.btn-industry-cancel').click(function () {
@@ -145,6 +146,7 @@ $('#submit').click(function () {
       industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
       mirror.saveIndustry(industryDetailDict, function (error, response) {
         if (error == null) {
+          alert(message.organization_save_success);
           onSuccess(response);
         } else {
           onFailure(error);
@@ -174,6 +176,7 @@ $('#submit').click(function () {
 
       mirror.updateIndustry(industryDetailDict, function (error, response) {
         if (error == null) {
+          alert(message.organization_update_success)
           onSuccess(response);
         } else {
           onFailure(error);
@@ -239,6 +242,13 @@ function changeStatus(industryId, isActive) {
         }
         mirror.changeIndustryStatus(industryId, isActive, function (error, response) {
           if (error == null) {
+            if (isActive) {
+              alert(message.organization_status_active_success);
+            }
+            else
+            {
+              alert(message.organization_status_deactive_success);
+            }
             onSuccess(response);
           } else {
             onFailure(error);
