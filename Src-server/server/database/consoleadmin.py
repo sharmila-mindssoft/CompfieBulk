@@ -1,3 +1,4 @@
+from server.exceptionmessage import process_error
 from protocol import consoleadmin
 from forms import *
 from tables import *
@@ -18,13 +19,28 @@ __all__ = [
 ]
 
 
+###############################################################################
+# To get list of database servers
+# parameter : Object of database
+# return type : Returns List of object of DBServer
+###############################################################################
 def get_db_server_list(db):
+    #
+    #  To get list of all database servers
+    #  Parameters : None
+    #  Return : Returns all database servers
+    #
     data = db.call_proc(
         "sp_databaseserver_list", None
     )
     return return_database_servers(data)
 
 
+###############################################################################
+# To convert data fetched from database into a list of Object of DBServer
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of DBServer
+###############################################################################
 def return_database_servers(data):
     fn = consoleadmin.DBServer
     result = [
@@ -37,7 +53,18 @@ def return_database_servers(data):
     return result
 
 
+###############################################################################
+# To check whether the db server name already exists or not
+# parameter : Object of database, db server name, ip
+# return type : Returns True if db server name already exists otherwise returns
+#               False
+###############################################################################
 def is_duplicate_db_server_name(db, db_server_name, ip):
+    #
+    #  To check whether db server name already exists or not
+    #  Parameters : Db server name, ip
+    #  Return : returns count of db servers exists with the save name
+    #
     result = db.call_proc(
         "sp_databaseserver_is_duplicate", (db_server_name, ip))
     if result[0]["count"] > 0:
@@ -46,24 +73,53 @@ def is_duplicate_db_server_name(db, db_server_name, ip):
         return False
 
 
+###############################################################################
+# To save db server
+# parameter : Object of database, Save DB server request, session user
+# return type : Returns True if db server name already exists otherwise returns
+#               False
+###############################################################################
 def save_db_server(db, request, session_user):
-    db.call_insert_proc(
+    #
+    #  To save database server
+    #  Parameters : Db server name, ip, port, username, password
+    #  Return : returns last inserted row id
+    #
+    db_server_id = db.call_insert_proc(
         "sp_databaseserver_save", (
             request.db_server_name, request.ip, request.port,
             request.username, request.password
         )
     )
-    action = "New Database server %s added" % (request.db_server_name)
-    db.save_activity(session_user,  frmConfigureDBServer, action)
+    if db_server_id:
+        action = "New Database server %s added" % (request.db_server_name)
+        db.save_activity(session_user,  frmConfigureDBServer, action)
+    else:
+        raise process_error("E074")
 
 
+###############################################################################
+# To Get list of client servers
+# parameter : Object of database
+# return type : Returns list of object of ClientServer
+###############################################################################
 def get_client_server_list(db):
+    #
+    #  To get list of client servers
+    #  Parameters : None
+    #  Return : Returns all client servers
+    #
     data = db.call_proc(
         "sp_machines_list", None
     )
     return return_client_servers(data)
 
 
+###############################################################################
+# To convert data fetched from database into list of Object of Client Server
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns list of object of ClientServer
+###############################################################################
 def return_client_servers(data):
     fn = consoleadmin.ClientServer
     result = []
@@ -81,7 +137,18 @@ def return_client_servers(data):
     return result
 
 
+###############################################################################
+# To check whether the client server name already exists or not
+# parameter : Object of database, client server name, client server id
+# return type : Returns True if a duplicate cilent server name already exists
+#               Otherwise returns False
+###############################################################################
 def is_duplicate_client_server_name(db, client_server_name, client_server_id):
+    #
+    #  To check whether the client server name already exists or not
+    #  Parameters : Client server name, client server id
+    #  Return : Returns count of client server with the same name
+    #
     result = db.call_proc(
         "sp_machines_is_duplicate", (client_server_name, client_server_id))
     if result[0]["count"] > 0:
@@ -90,20 +157,46 @@ def is_duplicate_client_server_name(db, client_server_name, client_server_id):
         return False
 
 
+###############################################################################
+# To Save Client server
+# parameter : Object of database, Save Client server request, session user
+# return type : Raises process error if saving client server fails otherwise
+#                returns None
+###############################################################################
 def save_client_server(db, request, session_user):
-    db.call_insert_proc(
+    #
+    #  To save client server
+    #  Parameters : Client server id, Client server name, ip, port
+    #  Return : returns last inserted id
+    #
+    machine_id = db.call_insert_proc(
         "sp_machines_save", (
             request.client_server_id, request.client_server_name,
             request.ip, request.port
         )
     )
-    action = "New Machine %s added" % (request.client_server_name)
-    if request.client_server_id is not None:
-        action = "Machine %s updated" % (request.client_server_name)
-    db.save_activity(session_user,  frmConfigureClientServer, action)
+    if machine_id:
+        action = "New Machine %s added" % (request.client_server_name)
+        if request.client_server_id is not None:
+            action = "Machine %s updated" % (request.client_server_name)
+        db.save_activity(session_user,  frmConfigureClientServer, action)
+    else:
+        raise process_error("E075")
 
 
+###############################################################################
+# To Get data required for allocating database environment
+# parameter : Object of database
+# return type : Returns tuple of Lists. List contains client databases,
+#               Client groups, Legal entities, Client Servers, DB Servers
+###############################################################################
 def get_client_database_form_data(db):
+    #
+    #  To get data required for allocating database environment
+    #  Parameters : None
+    #  Return : returns list of Client db environments, Client groups,
+    #   Legal entities, Client servers and Database servers
+    #
     data = db.call_proc_with_multiresult_set(
         "sp_clientdatabase_list", None, 5)
     client_dbs = data[0]
@@ -122,6 +215,11 @@ def get_client_database_form_data(db):
     )
 
 
+###############################################################################
+# Convert data fetched from database into List of object of ClientDatabase
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of ClientDatabase
+###############################################################################
 def return_client_dbs(data):
     fn = consoleadmin.ClientDatabase
     client_dbs = [
@@ -135,6 +233,11 @@ def return_client_dbs(data):
     return client_dbs
 
 
+###############################################################################
+# Convert data fetched from database into List of object of ClientGroup
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of ClientGroup
+###############################################################################
 def return_client_groups(data):
     fn = consoleadmin.ClientGroup
     client_groups = [
@@ -146,6 +249,11 @@ def return_client_groups(data):
     return client_groups
 
 
+###############################################################################
+# Convert data fetched from database into List of object of LegalEntity
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of LegalEntity
+###############################################################################
 def return_legal_entites(data):
     fn = consoleadmin.LegalEntity
     legal_entites = [
@@ -158,6 +266,11 @@ def return_legal_entites(data):
     return legal_entites
 
 
+###############################################################################
+# Convert data fetched from database into List of object of Machines
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of ClientServerNameAndID
+###############################################################################
 def return_machines(data):
     fn = consoleadmin.ClientServerNameAndID
     client_server_name_and_id = [
@@ -169,6 +282,11 @@ def return_machines(data):
     return client_server_name_and_id
 
 
+###############################################################################
+# Convert data fetched from database into List of object of DBServerNameAndID
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of DBServerNameAndID
+###############################################################################
 def return_db_servers(data):
     fn = consoleadmin.DBServerNameAndID
     db_servers_name_and_id = [
@@ -179,18 +297,52 @@ def return_db_servers(data):
     return db_servers_name_and_id
 
 
+###############################################################################
+# To Save allocated databse environment
+# parameter : Object of database, Save Allocated database environment request
+# return type : Raises process error if save fails otherwise returns None
+###############################################################################
 def save_allocated_db_env(db, request):
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     db_server_ip = request.database_server_ip
     machine_id = request.machine_id
-    db.call_insert_proc(
+    #
+    #  To save allocated database environment
+    #  Parameters : client id, legal entity id, database ip, client server id
+    #  Return : List of allocated database environment details
+    #
+    result = db.call_insert_proc(
         "sp_clientdatabase_save",
         (client_id, legal_entity_id, db_server_ip, machine_id)
     )
+    if result:
+        #
+        #  To get legal entity name by it's id to save activity
+        #  Parameters : legal entity id
+        #  Return : Returns legal entity name
+        #
+        data = db.call_proc("sp_legal_entity_id_by_name", (legal_entity_id,))
+        action = "Allocated database environment for %s " % (
+            data[0]["legal_entity_name"])
+        db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
+    else:
+        raise process_error("E076")
 
 
+###############################################################################
+# To Get data required for Configuring file storage
+# parameter : Object of database
+# return type : Tuple of Lists. List contains File Storage details list,
+#  Client Group list, Legal entities list and Client servers list
+###############################################################################
 def get_file_storage_form_data(db):
+    #
+    #  To get list of form data for configuring file storage
+    #  Parameters : None
+    #  Return : Returns file storage details, Client group details,
+    #   Legal entity details, Client server details
+    #
     data = db.call_proc_with_multiresult_set(
         "sp_clientfilestorage_list", None, 4)
     file_storages = data[0]
@@ -207,6 +359,11 @@ def get_file_storage_form_data(db):
     )
 
 
+###############################################################################
+# To convert data fetched from database into List of object of FileStorage
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of FileStorage
+###############################################################################
 def return_file_storages(data):
     fn = consoleadmin.FileStorage
     file_storages = [
@@ -219,17 +376,51 @@ def return_file_storages(data):
     return file_storages
 
 
+###############################################################################
+# To Save File storage configuration
+# parameter : Object of database, Save file storage request
+# return type : Returns List of object of FileStorage
+###############################################################################
 def save_file_storage(db, request):
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     machine_id = request.machine_id
-    db.call_update_proc(
+    #
+    #  To save file storage configuration
+    #  Parameters : Client id, Legal entity id, Clietn server id
+    #  Return : Returns last inserted id
+    #
+    result = db.call_update_proc(
         "sp_clientfilestorage_save",
         (client_id, legal_entity_id, machine_id)
     )
+    if result:
+        #
+        #  To get legal entity name by it's id to save activity
+        #  Parameters : legal entity id
+        #  Return : Returns legal entity name
+        #
+        data = db.call_proc("sp_legal_entity_id_by_name", (legal_entity_id,))
+        action = "Configured file storage for %s " % (
+            data[0]["legal_entity_name"])
+        db.save_activity(session_user, frmConfigureFileStorage, action)
+    else:
+        raise process_error("E077")
 
 
+###############################################################################
+# To get data required for Auto deletion form
+# parameter : Object of database
+# return type : Returns Tuple of lists. List contains Client Groups list,
+#  Legal entities list, Units List
+###############################################################################
 def get_auto_deletion_form_data(db):
+    #
+    #  To get data required for auto deletion form
+    #  Parameters : None
+    #  Return : Returns Client group details, Legal entity details and
+    #   Unit details
+    #
     data = db.call_proc_with_multiresult_set(
         "sp_unit_autodeletion_list", None, 4)
     groups = data[0]
@@ -243,6 +434,12 @@ def get_auto_deletion_form_data(db):
     )
 
 
+###############################################################################
+# To convert data fetched from database into List of object of
+# EntitiesWithAutoDeletion
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of EntitiesWithAutoDeletion
+###############################################################################
 def return_auto_deletion_legal_entites(data):
     fn = consoleadmin.EntitiesWithAutoDeletion
     result = [
@@ -257,6 +454,11 @@ def return_auto_deletion_legal_entites(data):
     return result
 
 
+###############################################################################
+# To convert data fetched from database into List of object of Unit
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of Unit
+###############################################################################
 def return_units(data):
     fn = consoleadmin.Unit
     result = [
@@ -270,6 +472,12 @@ def return_units(data):
     return result
 
 
+###############################################################################
+# To save auto deletion details
+# parameter : Object of databse, Save Auto deletion request, session user
+# return type : Returns True on success full save. Otherwise raises
+#   process error
+###############################################################################
 def save_auto_deletion_details(db, request, session_user):
     auto_deletion_details = request.auto_deletion_details
     unit_ids = []
@@ -287,8 +495,24 @@ def save_auto_deletion_details(db, request, session_user):
                 detail.unit_id, detail.deletion_year
             )
         )
+    #
+    #  To delete all auto deletion details under the legal entity
+    #  Parameters : Legal entity id
+    #  Return : True on successfull deletion otherwise returns False
+    #
     db.call_update_proc("sp_unitautodeletion_delete", (legal_entity_id,))
     result = db.bulk_insert(
         tblUnitAutoDeletion, insert_columns, insert_values
     )
-    return result
+    if result:
+        #
+        #  To get legal entity name by it's id to save activity
+        #  Parameters : legal entity id
+        #  Return : Returns legal entity name
+        #
+        data = db.call_proc("sp_legal_entity_id_by_name", (legal_entity_id,))
+        action = "Configured auto deletion for %s " % (
+            data[0]["legal_entity_name"])
+        db.save_activity(session_user, frmAutoDeletion, action)
+    else:
+        raise process_error("E078")
