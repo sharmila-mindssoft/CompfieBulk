@@ -348,40 +348,42 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
 
 
 def to_dictionary_values(data, response=None):
-    final_result = None
-    result = {}
-    for key in data:
-        value = data[key]
-        param = api_params.get(key)
-        if param.get('type') == 'VECTOR_TYPE':
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
-            value = to_VectorType(
-                param.get('module_name'), param.get('class_name'), value
-            )
-            result[key] = value
-        if param.get('type') == 'MAP_TYPE':
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
-            assert param.get('validation_method') is not None
-            value = to_MapType(
-                param.get('module_name'), param.get('class_name'),
-                param.get("validation_method"), value
-            )
-            result[key] = value
-        else:
-            x = {key: value}
-            parse_dictionary_values(
-                x, field_names=[key], is_validation_and_parse=False)
-            result[key] = value
-    if response is not None:
-        final_result = [
-            response,
-            result
-        ]
-    else:
-        final_result = result
-    return final_result
+    return data
+
+    # final_result = None
+    # result = {}
+    # for key in data:
+    #     value = data[key]
+    #     param = api_params.get(key)
+    #     if param.get('type') == 'VECTOR_TYPE':
+    #         assert param.get('module_name') is not None
+    #         assert param.get('class_name') is not None
+    #         value = to_VectorType(
+    #             param.get('module_name'), param.get('class_name'), value
+    #         )
+    #         result[key] = value
+    #     if param.get('type') == 'MAP_TYPE':
+    #         assert param.get('module_name') is not None
+    #         assert param.get('class_name') is not None
+    #         assert param.get('validation_method') is not None
+    #         value = to_MapType(
+    #             param.get('module_name'), param.get('class_name'),
+    #             param.get("validation_method"), value
+    #         )
+    #         result[key] = value
+    #     else:
+    #         x = {key: value}
+    #         parse_dictionary_values(
+    #             x, field_names=[key], is_validation_and_parse=False)
+    #         result[key] = value
+    # if response is not None:
+    #     final_result = [
+    #         response,
+    #         result
+    #     ]
+    # else:
+    #     final_result = result
+    # return final_result
 
 
 def to_vector_type_record_type(value):
@@ -395,9 +397,49 @@ def to_vector_type_record_type(value):
 
 def to_structure_dictionary_values(x):
     keys = x.keys()
+    print keys
     if len(keys) == 0:
         return {}
-    return parse_dictionary_values(x, keys, False)
+    for field_name in keys:
+        print field_name
+        val = x.get(field_name)
+        param = api_params.get(field_name)
+        print param
+        if param is None :
+            raise ValueError('%s is not configured in settings' % (field_name))
+
+        if param.get('type') == 'VECTOR_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            val = to_VectorType(
+                param.get('module_name'), param.get('class_name'), val
+            )
+            val = to_vector_type_record_type(val)
+
+        elif param.get('type') == 'MAP_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            assert param.get('validation_method') is not None
+            value = to_MapType(
+                param.get('module_name'), param.get('class_name'),
+                param.get("validation_method"), val
+            )
+            x[field_name] = value
+
+        else :
+            val = parse_values(field_name, param, val)
+
+        if val is not None and param.get('validation_method') is not None:
+            val = param.get('validation_method')(val)
+
+        x[field_name] = val
+
+    return x
+
+    # if klass is not None :
+    #     return [
+    #         klass, x
+    #     ]
 
 
 def return_import(module, class_name):
