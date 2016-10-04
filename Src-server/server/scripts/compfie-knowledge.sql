@@ -694,7 +694,7 @@ CREATE TABLE `tbl_machines` (
 DROP TABLE IF EXISTS `tbl_client_database`;
 CREATE TABLE `tbl_client_database` (
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) DEFAULT NULL,
+  `legal_entity_id` int(11) NOT NULL,
   `machine_id` int(11) NOT NULL,
   `database_ip` varchar(20) NOT NULL,
   `database_port` int(11) NOT NULL,
@@ -824,6 +824,5 @@ CREATE TABLE `tbl_unit_autodeletion` (
   CONSTRAINT `fk_tbl_unit_autodeletion_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_unit_autodeletion_2` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-NGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
