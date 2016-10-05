@@ -158,7 +158,6 @@ def get_legal_entities_for_mobile(db):
                 r["business_group_id"]
             )
         )
-    print legal_entity_list
     return legal_entity_list
 
 

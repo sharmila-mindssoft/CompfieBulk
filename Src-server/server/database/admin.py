@@ -1,6 +1,7 @@
 import threading
-from protocol import core
+from protocol import core, admin
 from server.database.tables import *
+from server.database.forms import *
 from server.common import (
     get_date_time,
     generate_and_return_password
@@ -28,7 +29,8 @@ __all__ = [
     "update_user_status", "get_user_group_detailed_list",
     "get_user_countries", "get_user_domains", "get_mapped_countries",
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
-    "save_validity_date_settings"
+    "save_validity_date_settings", "get_user_mapping_form_data",
+    "save_user_mappings"
 ]
 
 
@@ -786,3 +788,143 @@ def save_validity_date_settings(db, data, session_user):
                 current_time_stamp
             )
         )
+
+
+def get_user_mappings(db):
+    data = db.call_proc_with_multiresult_set(
+        "sp_usermappings_list", None, 2)
+    user_mappings = data[0]
+    user_mapping_users = data[1]
+    return (
+        return_user_mappings(user_mappings),
+        return_user_mapping_users(user_mapping_users)
+    )
+
+
+def return_user_mappings(data):
+    fn = admin.UserMapping
+    result = [
+        fn(
+            user_mapping_id=datum["user_mapping_id"],
+            cc_manager_id=datum["cc_manager_id"],
+            is_active=datum["is_active"]
+        ) for datum in data
+    ]
+    return result
+
+
+def return_user_mapping_users(data):
+    mapping_users = {}
+    for datum in data:
+        user_mapping_id = int(datum["user_mapping_id"])
+        if user_mapping_id not in mapping_users:
+            mapping_users[user_mapping_id] = {}
+            mapping_users[user_mapping_id]["cc_user_ids"] = []
+            mapping_users[user_mapping_id]["techno_manager_ids"] = []
+        if int(datum["form_category_id"]) == 6:
+            mapping_users[user_mapping_id]["cc_user_ids"].append(
+                int(datum["user_id"])
+            )
+        else:
+            mapping_users[user_mapping_id]["techno_manager_ids"].append(
+                int(datum["user_id"])
+            )
+    result = []
+    for key, value in mapping_users:
+        fn = admin.UserMappingUsers
+        result = [
+            fn(
+                user_mapping_id=key,
+                cc_user_id=value["cc_user_ids"],
+                techno_manager_ids=value["techno_manager_ids"]
+            )
+        ]
+    return result
+
+
+def return_users(data, country_map, domain_map):
+    fn = admin.User
+    result = []
+    for datum in data:
+        user_id = int(datum["user_id"])
+        user = fn(
+            user_id=user_id, employee_name=datum["employee_name"],
+            is_active=bool(datum["is_active"]),
+            country_ids=country_map[user_id],
+            domain_ids=domain_map[user_id]
+        )
+        result.append(user)
+    return result
+
+
+def generate_country_map(countries):
+    country_map = {}
+    for country in countries:
+        user_id = country["user_id"]
+        if user_id not in country_map:
+            country_map[user_id] = []
+        country_map[user_id].append(
+            int(country["country_id"])
+        )
+    return country_map
+
+
+def generate_domain_map(domains):
+    domain_map = {}
+    for domain in domains:
+        user_id = domain["user_id"]
+        if user_id not in domain_map:
+            domain_map[user_id] = []
+        domain_map[user_id].append(
+            int(domain["domain_id"])
+        )
+    return domain_map
+
+
+def get_user_mapping_form_data(db, session_user):
+    countries = get_countries_for_user(db, session_user)
+    domains = get_domains_for_user(db, session_user)
+    result = db.call_proc_with_multiresult_set("sp_users_type_wise", None, 5)
+    user_countries = result[3]
+    user_domains = result[4]
+    user_countries_map = generate_country_map(user_countries)
+    user_domains_map = generate_domain_map(user_domains)
+    cc_managers_result = result[0]
+    cc_users_result = result[1]
+    techno_managers_result = result[2]
+    cc_managers = return_users(
+        cc_managers_result, user_countries_map, user_domains_map)
+    cc_users = return_users(
+        cc_users_result, user_countries_map, user_domains_map)
+    techno_managers = return_users(
+        techno_managers_result, user_countries_map, user_domains_map)
+    user_mappings, user_mapping_users = get_user_mappings(db)
+    return (
+        countries, domains, cc_managers, cc_users, techno_managers,
+        user_mappings, user_mapping_users
+    )
+
+
+def save_user_mappings(db, request, session_user):
+    cc_manager_id = request.user_id
+    cc_users_list = request.cc_user_ids
+    techno_managers = request.techno_manager_ids
+    insert_columns = [
+        "cc_manager_id", "user_id", "form_category_id", "is_active"
+    ]
+    cc_user_list = [
+        (cc_manager_id, user, 6, 1) for user in cc_users_list
+    ]
+    techno_managers_list = [
+        (cc_manager_id, user, 7, 1) for user in techno_managers
+    ]
+    insert_values = cc_user_list + techno_managers_list
+    result = db.bulk_insert(
+        tblUserMapping, insert_columns, insert_values
+    )
+    if result:
+        name_rows = db.call_proc("sp_empname_by_id", (cc_manager_id,))
+        action = "Users mapped for - \"%s\"" % name_rows[0]["empname"]
+        db.save_activity(session_user, frmUserMapping, action)
+    else:
+        raise process_error("E079")

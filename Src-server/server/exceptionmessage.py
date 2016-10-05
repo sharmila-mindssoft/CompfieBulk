@@ -77,6 +77,7 @@ messages = {
     "E076": "Allocating Database environment failed",
     "E077": "Configuring File Storage failed",
     "E078": "Configuring auto deletion failed",
+    "E079": "Save User Mapping Failed"
 }
 
 client_message = {

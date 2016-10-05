@@ -1953,9 +1953,6 @@ def get_assigneewise_compliance_count(db, session_user):
             " from tbl_user_domains where user_id like %s)"
         param.extend([session_user, session_user])
         q += user_qry
-    print '-----------------'
-    print q
-    print param
 
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
     rows = db.select_all(q + order, param)

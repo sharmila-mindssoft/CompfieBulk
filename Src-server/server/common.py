@@ -141,15 +141,11 @@ def convert_to_key_dict(data_list, columns):
 
 def time_convertion(time_zone):
     current_time = datetime.datetime.utcnow()
-    print "current_time"
-    print current_time
     CT_TIMEZONE = pytz.timezone(str(time_zone))
-    print CT_TIMEZONE
     dt = CT_TIMEZONE.localize(current_time)
     tzoffset = dt.utcoffset()
     dt = dt.replace(tzinfo=None)
     dt = dt+tzoffset
-    print dt
     return dt
 
 

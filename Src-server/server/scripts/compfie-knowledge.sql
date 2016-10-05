@@ -826,4 +826,23 @@ CREATE TABLE `tbl_unit_autodeletion` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 NGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_user_mapping`;
+CREATE TABLE `tbl_user_mapping` (
+  `user_mapping_id` int(11) NOT NULL AUTO_INCREMENT,
+  `cc_manager_id` int(11) DEFAULT '0',
+  `is_active` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`user_mapping_id`),
+  KEY `index2` (`cc_manager_id`),
+  CONSTRAINT `fk_tbl_user_mapping_1` FOREIGN KEY (`user_mapping_id`) REFERENCES `tbl_users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_user_mapping_users`;
+CREATE TABLE `tbl_user_mapping_users` (
+  `user_mapping_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `form_category_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`user_mapping_id`),
+  CONSTRAINT `fk_tbl_user_mapping_users_1` FOREIGN KEY (`user_mapping_id`) REFERENCES `tbl_user_mapping` (`user_mapping_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 

@@ -273,7 +273,11 @@ var message = {
   "allocated_db_env": "Allocated Database Environment",
   "file_storage_saved": "Configured File Storage",
   "save_auto_deletion_success": "Auto Deletion Saved Successfully",
-  "deletion_year_required": "Deletion year required"
+  "deletion_year_required": "Deletion year required",
+  "cc_manager_required": "CC Manager Required",
+  "cc_user_required": "CC User Required",
+  "techno_manager_required": "Techno manager required",
+  "mapping_save_success": "User mapping saved successfully"
 };
 
 function clearMessage() {

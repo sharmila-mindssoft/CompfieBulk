@@ -1412,10 +1412,6 @@ def get_not_complied_compliances_count(
         q_count += where_qry
         param += where_qry_val
 
-    print q_count
-    print where_qry
-    print where_qry_val
-    print param
     c_row = db.select_one(q_count, param)
     if c_row:
         total = int(c_row[0])
@@ -1955,7 +1951,6 @@ def get_compliance_activity_report(
             db, [country_id], [domain_id],
             [get_date_time_in_date().year]
         )
-        print timeline
         year_start_date = timeline[0][1][0][1][0]["start_date"]
         year_end_date = timeline[0][1][0][1][0]["end_date"]
         if from_date is not None and to_date is not None:
@@ -2013,8 +2008,6 @@ def get_compliance_activity_report(
         if conditions != "":
             query += conditions
             param.extend(condition_val)
-        print query + order
-        print param
         result = db.select_all(query + order, param)
         columns = [
             "activity_date", "activity_status", "compliance_status", "remarks",
@@ -2382,8 +2375,6 @@ def get_client_details_report(
         param.extend(condition_val)
 
     param.extend([start_count, to_count])
-    print query + order
-    print param
     rows = db.select_all(query + order, param)
 
     columns_list = columns.replace(" ", "").split(",")

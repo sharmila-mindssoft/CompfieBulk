@@ -289,11 +289,50 @@ class SaveValidityDateSettings(Request):
         return to_dictionary_values(data)
 
 
+class GetUserMappings(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetUserMappings()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class SaveUserMappings(Request):
+    def __init__(self, user_id, cc_user_ids, techno_manager_ids):
+        self.user_id = user_id
+        self.cc_user_ids = cc_user_ids
+        self.techno_manager_ids = techno_manager_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["user_id", "cc_user_ids", "techno_manager_ids"])
+        user_id = data.get("user_id")
+        cc_user_ids = data.get("cc_user_ids")
+        techno_manager_ids = data.get("techno_manager_ids")
+        return SaveUserMappings(user_id, cc_user_ids, techno_manager_ids)
+
+    def to_inner_structure(self):
+        data = {
+            "user_id": self.user_id,
+            "cc_user_ids": self.cc_user_ids,
+            "techno_manager_ids": self.techno_manager_ids
+        }
+        return to_dictionary_values(data)
+
+
 def _init_Request_class_map():
     classes = [
         GetUserGroups, SaveUserGroup, UpdateUserGroup,
         ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser,
-        ChangeUserStatus, GetValidityDateList, SaveValidityDateSettings
+        ChangeUserStatus, GetValidityDateList, SaveValidityDateSettings,
+        GetUserMappings, SaveUserMappings
     ]
     class_map = {}
     for c in classes:
@@ -653,6 +692,160 @@ class GetValidityDateListSuccess(Response):
         return to_dictionary_values(data)
 
 
+class UserMapping(object):
+    def __init__(
+        self, usermapping_id, cc_manager_id, is_active
+    ):
+        self.usermapping_id = usermapping_id
+        self.cc_manager_id = cc_manager_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "usermapping_id", "cc_manager_id", "is_active"
+            ])
+        usermapping_id = data.get("usermapping_id")
+        cc_manager_id = data.get("cc_manager_id")
+        is_active = data.get("is_active")
+        return UserMapping(
+            usermapping_id, cc_manager_id, is_active
+        )
+
+    def to_structure(self):
+        data = {
+            "usermapping_id": self.usermapping_id,
+            "cc_manager_id": self.cc_manager_id,
+            "is_active": self.is_active
+        }
+        return to_dictionary_values(data)
+
+
+class UserMappingUsers(object):
+    def __init__(
+        self, usermapping_id, user_id, form_category_id
+    ):
+        self.usermapping_id = usermapping_id
+        self.user_id = user_id
+        self.form_category_id = form_category_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "usermapping_id", "user_id", "form_category_id"
+            ])
+        usermapping_id = data.get("usermapping_id")
+        user_id = data.get("user_id")
+        form_category_id = data.get("form_category_id")
+        return UserMappingUsers(
+            usermapping_id, user_id, form_category_id
+        )
+
+    def to_structure(self):
+        data = {
+            "usermapping_id": self.usermapping_id,
+            "user_id": self.user_id,
+            "form_category_id": self.form_category_id
+        }
+        return to_dictionary_values(data)
+
+
+class User(object):
+    def __init__(
+        self, user_id, employee_name, is_active, country_ids, domain_ids
+    ):
+        self.user_id = user_id
+        self.employee_name = employee_name
+        self.is_active = is_active
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "user_id", "employee_name", "is_active",
+                "country_ids", "domain_ids"
+            ]
+        )
+        user_id = data.get("user_id")
+        employee_name = data.get("employee_name")
+        is_active = data.get("is_active")
+        country_ids = data.get("country_ids")
+        domain_ids = data.get("domain_ids")
+        return User(user_id, employee_name, is_active, country_ids, domain_ids)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "employee_name": self.employee_name,
+            "is_active": self.is_active,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids
+        }
+
+
+class GetUserMappingsSuccess(Response):
+    def __init__(
+        self, countries, domains, cc_managers, cc_users, techno_managers,
+        user_mappings, user_mapping_users
+    ):
+        self.countries = countries
+        self.domains = domains
+        self.cc_managers = cc_managers
+        self.cc_users = cc_users
+        self.techno_managers = techno_managers
+        self.user_mappings = user_mappings
+        self.user_mapping_users = user_mapping_users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "countries", "domains", "cc_managers", "cc_users",
+                "techno_managers", "user_mappings", "user_mapping_users"
+            ])
+        countries = data.get("countries")
+        domains = data.get("domains")
+        cc_managers = data.get("cc_managers")
+        cc_users = data.get("cc_users")
+        techno_managers = data.get("techno_managers")
+        user_mappings = data.get("user_mappings")
+        user_mapping_users = data.get("user_mapping_users")
+        return GetUserMappingsSuccess(
+            countries, domains, cc_managers, cc_users, techno_managers,
+            user_mappings, user_mapping_users
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "countries": self.countries,
+            "domains": self.domains,
+            "cc_managers": self.cc_managers,
+            "cc_users": self.cc_users,
+            "techno_managers": self.techno_managers,
+            "user_mappings": self.user_mappings,
+            "user_mapping_users": self.user_mapping_users
+        }
+        return to_dictionary_values(data)
+
+
+class SaveUserMappingsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveUserMappingsSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetUserGroupsSuccess, SaveUserGroupSuccess,
@@ -661,7 +854,9 @@ def _init_Response_class_map():
         EmailIDAlreadyExists, ContactNumberAlreadyExists,
         EmployeeCodeAlreadyExists, InvalidUserId, UpdateUserSuccess,
         ChangeUserStatusSuccess, CannotDeactivateUserExists,
-        GetValidityDateListSuccess, SaveValidityDateSettingsSuccess
+        GetValidityDateListSuccess, SaveValidityDateSettingsSuccess,
+        GetUserMappingsSuccess, GetUserMappingsSuccess,
+        SaveUserMappingsSuccess
     ]
     class_map = {}
     for c in classes:

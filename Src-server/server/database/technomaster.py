@@ -414,7 +414,6 @@ def get_legal_entity_ids_by_name(db, legal_entity_names):
 #   returns True
 ##########################################################################
 def save_client_domains(db, client_id, request, legal_entity_name_id_map):
-    print legal_entity_name_id_map
     db.call_update_proc(
         "sp_client_domains_delete", (client_id, )
     )
@@ -683,7 +682,6 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
                 business_group_id=legal_entity["business_group_id"],
                 business_group_name=legal_entity["business_group_name"]
             )
-        print "incharge_persons: %s" % incharge_persons
         results.append(
             core.LegalEntity(
                 country_id=legal_entity["country_id"],
@@ -756,7 +754,6 @@ def return_organization_by_legalentity_domain(organizations):
 ##########################################################################
 def return_domain_map_by_legal_entity_id(domains, organization_map):
     domain_map = {}
-    print organization_map
     for domain in domains:
         legal_entity_id = domain["legal_entity_id"]
         domain_id = domain["domain_id"]
@@ -872,8 +869,6 @@ def get_techno_users(db):
     countries = db.call_proc("sp_user_countries_techno", None)
     domains = db.call_proc("sp_user_domains_techno", None)
     users = db.call_proc("sp_users_techno", None)
-    print "users"
-    print users
     user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
@@ -909,7 +904,6 @@ def return_techno_users(users, user_country_map, user_domain_map):
             user_domain_map[int(user["user_id"])]
         ) for user in users
     ]
-    print results
     return results
 
 
@@ -1458,9 +1452,7 @@ def get_group_companies_for_user_with_max_unit_count(db, user_id):
 
 def return_group_companies_with_max_unit_count(db, group_companies):
     results = []
-    print "return group"
     for group_company in group_companies:
-        print group_company["client_id"]
         countries = get_client_countries(db, group_company["client_id"])
         domain_result = db.call_proc("sp_client_domains_by_group_id", (group_company["client_id"],))
         domain_ids = [int(r["domain_id"]) for r in domain_result]

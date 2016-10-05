@@ -27,7 +27,6 @@ forms = [38, 39, 40, 41, 42]
 #   clientcoordination master protocol.
 ###############################################################################
 def process_console_admin_request(request, db):
-    print "inside process console admin"
     session_token = request.session_token
     request_frame = request.request
     session_user = validate_user_session(db, session_token)

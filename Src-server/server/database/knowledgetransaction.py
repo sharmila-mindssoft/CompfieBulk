@@ -711,7 +711,6 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
             continue
         else:
             saved_file = get_saved_format_file(db, compliance_id)
-        print saved_file
         provision = data.statutory_provision
         compliance_task = data.compliance_task
         description = data.description
@@ -721,8 +720,6 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
         file_size = 0
         # file_content = ""
         saved_file_name = saved_file[0]
-        print file_list
-        print saved_file_name
         if len(saved_file_name) == 0:
             saved_file_name = None
         if file_list is None:
@@ -735,12 +732,10 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
             # file_content = file_list.file_content
 
             if saved_file_name is not None:
-                print saved_file_name
-                print file_name
                 if len(file_name) == 0:
                     file_name = None
                     remove_uploaded_file(file_path + "/" + saved_file_name)
-                elif file_name != saved_file_name :
+                elif file_name != saved_file_name:
                     remove_uploaded_file(file_path + "/" + saved_file_name)
 
         penal_consequences = data.penal_consequences

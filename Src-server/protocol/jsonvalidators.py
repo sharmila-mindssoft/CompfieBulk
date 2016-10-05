@@ -353,6 +353,9 @@ def to_dictionary_values(data, response=None):
     for key in data:
         value = data[key]
         param = api_params.get(key)
+        print "key: %s" % key
+        print "value : %s " % value
+        print "param : %s" % param
         if param.get('type') == 'VECTOR_TYPE':
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None

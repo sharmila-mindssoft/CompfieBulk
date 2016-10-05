@@ -537,10 +537,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        print "inne: %s" % inner
         if type(inner) is dict:
             to_structure_dictionary_values(inner)
-        print "inner : %s " %  inner
         return [name, inner]
 
     def to_inner_structure(self):
@@ -758,7 +756,6 @@ class GetIndustriesSuccess(Response):
             "countries": self.countries,
             "domains": self.domains
         }
-        print to_dictionary_values(data)
         return to_dictionary_values(data)
 
 

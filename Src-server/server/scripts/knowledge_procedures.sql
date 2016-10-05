@@ -1721,7 +1721,7 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- To Get the name of employee by id
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_users_change_status`;
+DROP PROCEDURE IF EXISTS `sp_empname_by_id`;
 DELIMITER //
 CREATE PROCEDURE `sp_empname_by_id`(
 	IN userid INT(11)
@@ -2011,5 +2011,52 @@ CREATE PROCEDURE `sp_unitautodeletion_delete`(
 BEGIN
 	DELETE FROM tbl_unit_autodeletion
 	WHERE legal_entity_id=le_id;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get the users under following type CC Managers, CC Users, Techno managers
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_type_wise`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_type_wise`()
+BEGIN 
+	SELECT user_id,
+	concat(employee_code," - ", employee_name) as employee_name,
+	is_active
+	FROM tbl_users WHERE user_group_id in (
+		SELECT user_group_id FROM tbl_user_groups 
+		WHERE form_category_id=5
+	);
+	SELECT user_id,
+	concat(employee_code," - ", employee_name) as employee_name,
+	is_active
+	FROM tbl_users WHERE user_group_id in (
+		SELECT user_group_id FROM tbl_user_groups 
+		WHERE form_category_id=6
+	);
+	SELECT user_id,
+	concat(employee_code," - ", employee_name) as employee_name,
+	is_active
+	FROM tbl_users WHERE user_group_id in (
+		SELECT user_group_id FROM tbl_user_groups 
+		WHERE form_category_id=7
+	);
+	SELECT user_id, country_id FROM tbl_user_countries;
+	SELECT user_id, domain_id FROM tbl_user_domains;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get User mappings
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermappings_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_usermappings_list`()
+BEGIN
+	SELECT user_mapping_id, cc_manager_id, is_active
+	FROM tbl_user_mapping;
+	SELECT user_mapping_id, user_id, form_category_id
+	FROM tbl_user_mapping_users;
 END //
 DELIMITER;

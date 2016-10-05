@@ -30,7 +30,7 @@ INSERT INTO tbl_forms VALUES(6, 1, 1, 'Statutory Nature Master', '/knowledge/sta
 INSERT INTO tbl_forms VALUES(7, 1, 1, 'Statutory Level Master', '/knowledge/statutory-level-master', 7, 'Statutory');
 INSERT INTO tbl_forms VALUES(8, 1, 1,  'User Group', '/knowledge/user-group-master', 8, null);
 INSERT INTO tbl_forms VALUES(9, 1, 1,  'User', '/knowledge/user-master', 9, null);
-INSERT INTO tbl_forms VALUES(10, 1, 1,  'Techno User Mapping', '/knowledge/user-master', 10, null);
+INSERT INTO tbl_forms VALUES(10, 1, 1,  'User Mapping - Techno', '/knowledge/user-mapping-techno', 10, null);
 INSERT INTO tbl_forms VALUES(11, 1, 4, 'Validity Date Settings', '/knowledge/validity-date-settings', 11, null);
 
 INSERT INTO tbl_forms VALUES(12, 1, 3, 'Country Report', '/knowledge/country-report', 12, 'Master');
@@ -75,6 +75,7 @@ INSERT INTO tbl_forms VALUES(39, 2, 2, 'Configure Client Server', '/knowledge/co
 INSERT INTO tbl_forms VALUES(40, 2, 2, 'Allocate Database Environment', '/knowledge/allocate-db-env', 40, null);
 INSERT INTO tbl_forms VALUES(41, 2, 2, 'Auto Deletion', '/knowledge/auto-deletion', 41, null);
 INSERT INTO tbl_forms VALUES(42, 2, 2, 'Configure File Storage', '/knowledge/configure-file-storage', 42, null);
+INSERT INTO tbl_forms VALUES(43, 1, 1, 'User Mapping', '/knowledge/user-mapping', 43, null);
 
 
 

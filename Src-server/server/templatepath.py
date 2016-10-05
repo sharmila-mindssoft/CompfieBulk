@@ -409,5 +409,10 @@ TEMPLATE_PATHS = [
         "/knowledge/configure-file-storage",
         "files/desktop/knowledge/configure-file-storage/configure-file-storage.html",
         None, {}
+    ),
+    (
+        "/knowledge/user-mapping",
+        "files/desktop/knowledge/user-mapping/usermapping.html",
+        None, {}
     )
 ]
