@@ -40,7 +40,7 @@ api_params = {
     'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
     'user_group_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
-    'user_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'user_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     'l_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'l_position' : {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
@@ -117,7 +117,7 @@ api_params = {
     "forms":  {'type':'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name':'core', "class_name":"Menu"},
 
     'user_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
-    "employee_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    "employee_name": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "employee_code": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "contact_no": {'type': 'TEXT', 'length': 12, 'validation_method': None, 'is_optional': True},
     "designation": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -125,11 +125,13 @@ api_params = {
     "user_groups":  {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserGroup"},
     "user_details":{'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserDetails"},
 
-    "user_group_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "ug_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "user_group_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "ug_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "f_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_category_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "fc_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_category": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -158,6 +160,15 @@ api_params = {
     "deletion_year": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "auto_deletion_details": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'consoleadmin', "class_name":"AutoDeletionDetail"},
 
+    "cc_managers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"User"},
+    "cc_users": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"User"},
+    "techno_managers": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"User"},
+    "user_mappings": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"UserMapping"},
+    "cc_user_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "techno_manager_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "cc_manager_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "user_mapping_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "user_mapping_users": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"UserMappingUsers"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -241,7 +241,6 @@ def get_admin_forms(db, username):
        "sp_admin_getformcategory", (username,)
     )
     form_category_id = result[0]["fc_id"]
-    print "form_category_id:  %s" % form_category_id
     return db.call_proc(
         "sp_tbl_forms_getadminforms", (form_category_id,))
 

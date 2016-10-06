@@ -2,6 +2,7 @@ var CLIENT_LEGAL_ENTITIES = '';
 var FILESTORAGES = '';
 var CLIENT_SERVER_NAME_AND_ID = '';
 var CLIENT_GROUPS = '';
+var FILTERED_LIST = [];
 
 var legal_entities_map = {};
 var client_server_map = {};
@@ -22,6 +23,7 @@ function initialize(type_of_form){
             CLIENT_SERVER_NAME_AND_ID = data.client_server_name_and_id;
             CLIENT_GROUPS = data.client_groups;
             generateMaps();
+            FILTERED_LIST = FILESTORAGES;
             loadFileStorageList();
         }
         function onFailure(error) {
@@ -79,7 +81,7 @@ function loadFileStorageList(){
     $(".tbody-client-server-list").empty();
     var table_row = $("#templates .table-row");
     var sno = 0;
-    $.each(FILESTORAGES, function(key, value){
+    $.each(FILTERED_LIST, function(key, value){
         ++ sno;
         var clone = table_row.clone();
         $(".sno", clone).text(sno);
@@ -189,6 +191,25 @@ function loadEditForm(
     $("#client-server").val(machine_id);
 }
 
+$(".filter-text-box").keyup(function(){
+    var client_group_filter = $('#search-group').val().toLowerCase();
+    var legal_entity_filter = $('#search-legal-entity').val().toLowerCase();
+    var client_server_filter = $('#search-client-server').val().toLowerCase();
+    FILTERED_LIST = [];
+    $.each(FILESTORAGES, function(key, value){
+        var client_group_name = client_group_map[value.client_id].toLowerCase();
+        var legal_entity_name = legal_entities_map[value.legal_entity_id].toLowerCase();
+        var client_server_name = client_server_map[value.machine_id].toLowerCase();
+        if (
+            ~client_group_name.indexOf(client_group_filter) && 
+            ~legal_entity_name.indexOf(legal_entity_filter) &&
+            ~client_server_name.indexOf(client_server_filter) 
+        ){
+            FILTERED_LIST.push(value);
+      }
+    });
+    loadFileStorageList();
+});
 
 //initialization
 $(function () {

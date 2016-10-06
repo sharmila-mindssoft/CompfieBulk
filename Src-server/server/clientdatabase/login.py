@@ -85,7 +85,6 @@ def verify_login(db, username, password):
         " WHERE t1.password= %s and t1.email_id= %s and t1.is_active=1"
 
     data_list = db.select_one(query, [password, username])
-    print data_list
     if data_list is None:
         return False
     else:
@@ -212,7 +211,6 @@ def delete_login_failure_history(db, user_id):
 
 
 def get_login_attempt_and_time(db, user_id):
-    print "user_id ", user_id
     columns = ["login_attempt", "login_time"]
     condition = " user_id = %s "
     condition_val = [user_id]

@@ -385,7 +385,6 @@ def to_dictionary_values(data, response=None):
     #     final_result = result
     # return final_result
 
-
 def to_vector_type_record_type(value):
     final_list = []
     if type(value) is list:

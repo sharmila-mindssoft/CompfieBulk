@@ -54,3 +54,5 @@ tblUsers = "tbl_users"
 tblLegalEntityDomainIndustry = 'tbl_legal_entity_domain_industry'
 tblClientFileStorage = "tbl_client_filestorage"
 tblUnitAutoDeletion = "tbl_unit_autodeletion"
+tblUserMapping = "tbl_user_mapping"
+tblUserMappingUsers = "tbl_user_mapping_users"

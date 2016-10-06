@@ -3359,6 +3359,12 @@ div.scrollable {
 	left:-12px;
 }
 
+.icon-style {
+	width: 16px;
+	height: 16px;
+	display:block
+}
+
 .edit-icon {
 	background:  url(../images/icon-edit.png) no-repeat center;
 	border: none;

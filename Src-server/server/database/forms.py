@@ -40,3 +40,4 @@ frmConfigureClientServer = 39
 frmAllocateDatabaseEnvironment = 40
 frmAutoDeletion = 41
 frmConfigureFileStorage = 42
+frmUserMapping = 43

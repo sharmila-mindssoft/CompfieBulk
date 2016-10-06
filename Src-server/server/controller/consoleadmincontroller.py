@@ -27,7 +27,6 @@ forms = [38, 39, 40, 41, 42]
 #   clientcoordination master protocol.
 ###############################################################################
 def process_console_admin_request(request, db):
-    print "inside process console admin"
     session_token = request.session_token
     request_frame = request.request
     session_user = validate_user_session(db, session_token)
@@ -76,7 +75,7 @@ def process_console_admin_request(request, db):
     elif(type(request_frame) is consoleadmin.GetAllocatedDBEnv):
         logger.logKnowledgeApi("GetAllocatedDBEnv", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_allocated_db_env(db, request_frame, session_user)
+        result = process_get_allocated_db_env(db)
         logger.logKnowledgeApi("GetAllocatedDBEnv", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
@@ -90,7 +89,7 @@ def process_console_admin_request(request, db):
     elif(type(request_frame) is consoleadmin.GetFileStorage):
         logger.logKnowledgeApi("GetFileStorage", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_file_storage(db, request_frame, session_user)
+        result = process_get_file_storage(db)
         logger.logKnowledgeApi("GetFileStorage", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
@@ -120,6 +119,11 @@ def process_console_admin_request(request, db):
     return result
 
 
+###############################################################################
+# To get Database servers List
+# parameter : Object of database
+# return type : Returns Success response
+###############################################################################
 def process_get_db_server_list(db):
     db_servers = get_db_server_list(db)
     return consoleadmin.GetDbServerListSuccess(
@@ -127,6 +131,12 @@ def process_get_db_server_list(db):
     )
 
 
+###############################################################################
+# To save a database server
+# parameter : Object of database, SaveDBServer Request, session user
+# return type : Raises process error if save fails otherwise returns success
+#               response
+###############################################################################
 def process_save_db_server(db, request, session_user):
     if is_duplicate_db_server_name(db, request.db_server_name, request.ip):
         return consoleadmin.DBServerNameAlreadyExists()
@@ -135,6 +145,11 @@ def process_save_db_server(db, request, session_user):
         return consoleadmin.SaveDBServerSuccess()
 
 
+###############################################################################
+# To get client servers list
+# parameter : Object of database
+# return type : Returns success response
+###############################################################################
 def process_get_client_server_list(db):
     client_servers = get_client_server_list(db)
     return consoleadmin.GetClientServerListSuccess(
@@ -142,6 +157,12 @@ def process_get_client_server_list(db):
     )
 
 
+###############################################################################
+# To save client servers
+# parameter : Object of database, Save Client server request
+# return type : Raises process error if save fails otherwise returns success
+#               response
+###############################################################################
 def process_save_client_server(db, request, session_user):
     if is_duplicate_client_server_name(
             db, request.client_server_name, request.client_server_id):
@@ -151,7 +172,12 @@ def process_save_client_server(db, request, session_user):
         return consoleadmin.SaveClientServerSuccess()
 
 
-def process_get_allocated_db_env(db, request, session_user):
+###############################################################################
+# To get list of all allocated database environments
+# parameter : Object of database
+# return type : Returns success response
+###############################################################################
+def process_get_allocated_db_env(db):
     (
         client_dbs_list, groups_list, les_list,
         machines_list, db_servers_list
@@ -164,12 +190,22 @@ def process_get_allocated_db_env(db, request, session_user):
     )
 
 
+###############################################################################
+# To save allocated database environment
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
 def process_save_allocated_db_env(db, request, session_user):
     save_allocated_db_env(db, request)
     return consoleadmin.SaveAllocatedDBEnvSuccess()
 
 
-def process_get_file_storage(db, request, session_user):
+###############################################################################
+# To get all file storage details
+# parameter : Object of database
+# return type : Returns success response
+###############################################################################
+def process_get_file_storage(db):
     (
         client_dbs_list, groups_list, les_list,
         machines_list
@@ -181,11 +217,21 @@ def process_get_file_storage(db, request, session_user):
     )
 
 
+###############################################################################
+# To save file storage details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
 def process_save_file_storage(db, request, session_user):
     save_file_storage(db, request)
     return consoleadmin.SaveFileStorageSuccess()
 
 
+###############################################################################
+# To get auto deletion details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
 def process_get_auto_deletion_list(db, request, session_user):
     (
         groups_list, les_list, units_list
@@ -196,6 +242,11 @@ def process_get_auto_deletion_list(db, request, session_user):
     )
 
 
+###############################################################################
+# To save auto deletion details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
 def process_save_auto_deletion(db, request, session_user):
     save_auto_deletion_details(db, request, session_user)
     return consoleadmin.SaveAutoDeletionSuccess()

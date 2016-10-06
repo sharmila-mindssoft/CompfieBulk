@@ -1654,6 +1654,26 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function getUserMappings(callback){
+    callerName = "admin";
+      var request = [
+        "GetUserMappings",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveUserMappings(cc_manager_id, cc_users, techno_managers, callback){
+    callerName = "admin";
+    var request = [
+      "SaveUserMappings",
+      {
+        "user_id": cc_manager_id,
+        "cc_user_ids": cc_users,
+        "techno_manager_ids": techno_managers
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1804,7 +1824,9 @@ function initMirror() {
     getFileStorage: getFileStorage,
     saveFileStorage: saveFileStorage,
     getAutoDeletionList: getAutoDeletionList,
-    saveAutoDeletion: saveAutoDeletion
+    saveAutoDeletion: saveAutoDeletion,
+    getUserMappings: getUserMappings,
+    saveUserMappings: saveUserMappings
   };
 }
 var mirror = initMirror();
