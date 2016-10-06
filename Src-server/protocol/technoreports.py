@@ -1,4 +1,3 @@
-
 from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Domain,

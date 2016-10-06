@@ -40,7 +40,7 @@ function initialize() {
   $('.js-filter').val('');
   function onSuccess(data) {
     categoryList = data.form_categories;
-    uglist = data.user_groups;
+    uglist = data.user_group_details;
     loadUserGroupdata(uglist);
   }
   function onFailure(error) {
@@ -287,7 +287,7 @@ function userGroupEdit(userGroupId, userGroupName, catgid) {
   $('#categoryName option[value = ' + catgid + ']').attr('selected', 'selected');
   //$("#tempcatgid").val(catgid);
   function onSuccess(data) {
-    loadFormListUpdate(data.forms, data.user_groups, catgid, userGroupId);
+    loadFormListUpdate(data.forms, data.user_group_details, catgid, userGroupId);
   }
   function onFailure(error) {
     displayMessage(error);

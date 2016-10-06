@@ -1,8 +1,9 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
+from protocol.jsonvalidators import (
+    parse_dictionary, parse_static_list, to_structure_dictionary_values,
+    to_dictionary_values
+)
 from protocol.parse_structure import (
-    parse_structure_VectorType_RecordType_general_Notification,
     parse_structure_CustomTextType_250,
-    parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_VariantType_general_Request, parse_structure_Bool,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_500,
@@ -10,20 +11,16 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_general_AuditTrail,
     parse_structure_VectorType_RecordType_general_User,
     parse_structure_VectorType_RecordType_general_AuditTrailForm,
-    parse_structure_VectorType_RecordType_core_Country,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_Text,
     parse_structure_VectorType_RecordType_core_FileLst
 )
 from protocol.to_structure import (
-    to_structure_VectorType_RecordType_general_Notification,
     to_structure_CustomTextType_250,
-    to_structure_VectorType_RecordType_core_Domain,
     to_structure_SignedIntegerType_8,
     to_structure_VariantType_general_Request, to_structure_Bool,
     to_structure_CustomTextType_20, to_structure_CustomTextType_500,
     to_structure_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_general_AuditTrail,
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_general_User,
@@ -41,7 +38,7 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        if type(inner) is dict :
+        if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
@@ -60,6 +57,7 @@ class Request(object):
     @staticmethod
     def parse_inner_structure(data):
         raise NotImplementedError
+
 
 class UpdateUserProfile(Request):
     def __init__(self, contact_no, address):
@@ -81,6 +79,7 @@ class UpdateUserProfile(Request):
             "address": to_structure_CustomTextType_250(self.address),
         }
 
+
 class GetDomains(Request):
     def __init__(self):
         pass
@@ -94,6 +93,7 @@ class GetDomains(Request):
         return {
         }
 
+
 class SaveDomain(Request):
     def __init__(self, domain_name):
         self.domain_name = domain_name
@@ -105,9 +105,11 @@ class SaveDomain(Request):
         return SaveDomain(domain_name)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "d_name": self.domain_name,
         }
+        return to_dictionary_values(data)
+
 
 class UpdateDomain(Request):
     def __init__(self, domain_id, domain_name):
@@ -122,10 +124,12 @@ class UpdateDomain(Request):
         return UpdateDomain(domain_id, domain_name)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "d_id": self.domain_id,
             "d_name": self.domain_name,
         }
+        return to_dictionary_values(data)
+
 
 class ChangeDomainStatus(Request):
     def __init__(self, domain_id, is_active):
@@ -140,10 +144,12 @@ class ChangeDomainStatus(Request):
         return ChangeDomainStatus(domain_id, is_active)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "d_id": self.domain_id,
             "is_active": self.is_active,
         }
+        return to_dictionary_values(data)
+
 
 class GetCountriesForUser(Request):
     def __init__(self):
@@ -158,6 +164,7 @@ class GetCountriesForUser(Request):
         return {
         }
 
+
 class GetCountries(Request):
     def __init__(self):
         pass
@@ -171,6 +178,7 @@ class GetCountries(Request):
         return {
         }
 
+
 class SaveCountry(Request):
     def __init__(self, country_name):
         self.country_name = country_name
@@ -182,9 +190,11 @@ class SaveCountry(Request):
         return SaveCountry(country_name)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "c_name": self.country_name,
         }
+        return to_dictionary_values(data)
+
 
 class UpdateCountry(Request):
     def __init__(self, country_id, country_name):
@@ -199,10 +209,12 @@ class UpdateCountry(Request):
         return UpdateCountry(country_id, country_name)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "c_id": self.country_id,
             "c_name": self.country_name,
         }
+        return to_dictionary_values(data)
+
 
 class ChangeCountryStatus(Request):
     def __init__(self, country_id, is_active):
@@ -217,10 +229,12 @@ class ChangeCountryStatus(Request):
         return ChangeCountryStatus(country_id, is_active)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "c_id": self.country_id,
             "is_active": self.is_active,
         }
+        return to_dictionary_values(data)
+
 
 class GetNotifications(Request):
     def __init__(self, notification_type):
@@ -312,15 +326,15 @@ def _init_Request_class_map():
 
 _Request_class_map = _init_Request_class_map()
 
+
 #
 # Response
 #
-
 class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        if type(inner) is dict :
+        if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
@@ -339,6 +353,7 @@ class Response(object):
     @staticmethod
     def parse_inner_structure(data):
         raise NotImplementedError
+
 
 class UpdateUserProfileSuccess(Response):
     def __init__(self, contact_no, address):
@@ -360,6 +375,7 @@ class UpdateUserProfileSuccess(Response):
             "address": to_structure_CustomTextType_250(self.address),
         }
 
+
 class ContactNumberAlreadyExists(Response):
     def __init__(self):
         pass
@@ -373,6 +389,7 @@ class ContactNumberAlreadyExists(Response):
         return {
         }
 
+
 class GetDomainsSuccess(Response):
     def __init__(self, domains):
         self.domains = domains
@@ -381,13 +398,14 @@ class GetDomainsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["domains"])
         domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         return GetDomainsSuccess(domains)
 
     def to_inner_structure(self):
-        return {
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+        data = {
+            "domains": self.domains
         }
+        return data
+
 
 class SaveDomainSuccess(Response):
     def __init__(self):
@@ -401,6 +419,7 @@ class SaveDomainSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class DomainNameAlreadyExists(Response):
     def __init__(self):
@@ -441,6 +460,7 @@ class InvalidDomainId(Response):
         return {
         }
 
+
 class ChangeDomainStatusSuccess(Response):
     def __init__(self):
         pass
@@ -454,6 +474,7 @@ class ChangeDomainStatusSuccess(Response):
         return {
         }
 
+
 class GetCountriesSuccess(Response):
     def __init__(self, countries):
         self.countries = countries
@@ -462,13 +483,15 @@ class GetCountriesSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["countries"])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
         return GetCountriesSuccess(countries)
 
     def to_inner_structure(self):
-        return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+
+        data = {
+            "countries": self.countries
         }
+        return data
+
 
 class SaveCountrySuccess(Response):
     def __init__(self):
@@ -483,6 +506,7 @@ class SaveCountrySuccess(Response):
         return {
         }
 
+
 class CountryNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -495,6 +519,7 @@ class CountryNameAlreadyExists(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class UpdateCountrySuccess(Response):
     def __init__(self):
@@ -509,6 +534,7 @@ class UpdateCountrySuccess(Response):
         return {
         }
 
+
 class InvalidCountryId(Response):
     def __init__(self):
         pass
@@ -521,6 +547,7 @@ class InvalidCountryId(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class ChangeCountryStatusSuccess(Response):
     def __init__(self):
@@ -535,6 +562,7 @@ class ChangeCountryStatusSuccess(Response):
         return {
         }
 
+
 class GetNotificationsSuccess(Response):
     def __init__(self, notifications):
         self.notifications = notifications
@@ -543,13 +571,14 @@ class GetNotificationsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["notifications"])
         notifications = data.get("notifications")
-        notifications = parse_structure_VectorType_RecordType_general_Notification(notifications)
         return GetNotificationsSuccess(notifications)
 
     def to_inner_structure(self):
-        return {
-            "notifications": to_structure_VectorType_RecordType_general_Notification(self.notifications),
+        data = {
+            "notifications": self.notifications
         }
+        return to_dictionary_values(data)
+
 
 class UpdateNotificationStatusSuccess(Response):
     def __init__(self):
@@ -563,6 +592,7 @@ class UpdateNotificationStatusSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class GetAuditTrailSuccess(Response):
     def __init__(self, audit_trails, users, forms, total_records):
@@ -591,6 +621,7 @@ class GetAuditTrailSuccess(Response):
             "forms": to_structure_VectorType_RecordType_general_AuditTrailForm(self.forms),
             "total_records": to_structure_UnsignedIntegerType_32(self.total_records)
         }
+
 
 class MasterDataNotAvailableForClient(Response):
     def __init__(self):

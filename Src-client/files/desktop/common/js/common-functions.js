@@ -14,6 +14,22 @@ function validateEmail($email) {
   return emailReg.test($email);
 }
 
+function ValidateIPaddress(ipaddress) 
+{
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)){
+        return true;
+    }
+    return false;
+}
+
+function validateLength(value, len){
+    if(value.length > len){
+        return false
+    }else{
+        return true
+    }
+}
+
 function clearMessage() {
   $('.error-message').hide();
   $('.error-message').text('');
@@ -25,7 +41,7 @@ function displayMessage(message) {
 }
 
 //Convert Number to Srting of Month
-function getMonth_IntegettoString(intMonth) {
+function getMonth_IntegertoString(intMonth) {
   var stringMonth = '';
   if (intMonth == 1)
     stringMonth = 'Jan';

@@ -252,7 +252,32 @@ var message = {
   'statutoty_nature_status_deactive_success': 'Statutory Nature Deactivated Successfully',
   "client_save_success": "Client saved successfully",
   "client_update_success": "Client updated successfully",
-  "client_change_status_success": "Changed the status of client successfully"
+  "client_change_status_success": "Changed the status of client successfully",
+  "unit_approve_success": "Unit approved successfully",
+  "approve_atleast_one": "Approve atleast one unit",
+  "group_approve_success": "Client group approved successfully",
+  "country_or_group_required": "Country or group required",
+  "db_server_save_success": "Database server saved successfully",
+  "password_required": "Password Required",
+  "port_required": "Port Required",
+  "ip_required": "IP Required",
+  "db_server_name_required": "DB Server name required",
+  "db_server_name_length_error": "DB Server name - Only 50 characters are allowed",
+  "not_a_valid_ip": "Invalid IP address",
+  "username_length_error": "Username - Only 50 characters are allowed",
+  "invalid_port": "Invalid Port",
+  "client_server_name_required": "Client server name required",
+  "client_server_name_length_error": "Client Server name - Only 50 characters are allowed",
+  "client_server_save_success": "Client server saved successfully",
+  "client_required": "Client Required",
+  "allocated_db_env": "Allocated Database Environment",
+  "file_storage_saved": "Configured File Storage",
+  "save_auto_deletion_success": "Auto Deletion Saved Successfully",
+  "deletion_year_required": "Deletion year required",
+  "cc_manager_required": "CC Manager Required",
+  "cc_user_required": "CC User Required",
+  "techno_manager_required": "Techno manager required",
+  "mapping_save_success": "User mapping saved successfully"
 };
 
 function clearMessage() {

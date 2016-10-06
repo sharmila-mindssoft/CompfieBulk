@@ -1,4 +1,3 @@
-
 tblActivityLog = "tbl_activity_log"
 tblAdmin = "tbl_admin"
 tblBusinessGroups = "tbl_business_groups"
@@ -52,3 +51,8 @@ tblUserGroups = "tbl_user_groups"
 tblUserLoginHistory = "tbl_user_login_history"
 tblUserSessions = "tbl_user_sessions"
 tblUsers = "tbl_users"
+tblLegalEntityDomainIndustry = 'tbl_legal_entity_domain_industry'
+tblClientFileStorage = "tbl_client_filestorage"
+tblUnitAutoDeletion = "tbl_unit_autodeletion"
+tblUserMapping = "tbl_user_mapping"
+tblUserMappingUsers = "tbl_user_mapping_users"

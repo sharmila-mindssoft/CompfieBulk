@@ -73,43 +73,48 @@
               <div class="single-column-field-label">Group<span class="mandatory">*</span>:</div>
               <div class="single-column-field-input">
                 <input type="hidden" id="client-unit-id" value=""><span class="labelgroup"></span>
-                <Select id="group-select" class="input-box" onchange="loadBusinessGroups();loadLegalEntity();" >
+                <Select id="group-select" class="input-box" onchange="loadBusinessGroups();loadLegalEntity();" tabindex="1" >
                   <option value="">Select</option>
                 </Select>
               </div>
             </div>
-            <div class="input-row">
+              <div class="input-row">
+                  <div class="single-column-field-label">Country<span class="mandatory">*</span>:</div>
+                  <div class="single-column-field-input">
+                  <input type="text" class="input-box icon-autocomplete textbox" value="" tabindex="3" onkeyup="loadauto_countrytext(this.value, this.className, event)"
+                   style="width:150px !important; background-color:#fff;">
+              <input type="hidden" class="country">
+              <div class="autocompleteview ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
+              <ul class="ulist-text" style="width:195px;">
+
+              </ul>
+            </div>
+                      </div>
+                  </div>
+            </div>
+            <div class="input-row-right">
+                <div class="input-row">
               <input type="hidden" id="businessgroup-update-id" value="">
               <div class="single-column-field-label">Business Group :</div>
               <div class="single-column-field-input"><span class="labelbusinessgroup"></span>
-                <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity();">
+                <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity();" tabindex="2">
                   <option value="">Select</option>
                 </Select>
                 <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name" maxlength="100">
-                <span style="font-size:10px"><a class="popup-link" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a class="popup-link" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
+                <span style="font-size:10px"><a class="popup-link" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a>
+                    <a class="popup-link" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
               </div>
-            </div>
-            <div class="input-row-right">
               <div class="input-row">
                <input type="hidden" id="legalentity-update-id" value="">
                 <div class="single-column-field-label">Legal Entity <span class="mandatory">*</span>:</div>
                 <div class="single-column-field-input"><span class="labelentity"></span>
-                  <Select id="entity-select" class="input-box" onchange="loadDivision(this.value);">
+                  <Select id="entity-select" class="input-box" onchange="loadDivision(this.value);" tabindex="4">
                     <option value="">Select</option>
                   </Select>
-                  <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name" maxlength="100">
+                  <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name" maxlength="100" tabindex="5">
                   <span style="font-size:10px"><a class="popup-link" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a class="popup-link" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
-                <div class="input-row">
-                 <input type="hidden" id="division-update-id" value="">
-                  <div class="single-column-field-label">Division :</div>
-                  <div class="single-column-field-input"><span class="labeldivision"></span>
-                    <Select id="division-select" class="input-box">
-                      <option value="">Select</option>
-                    </Select>
-                    <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name"maxlength="100" >
-                    <span style="font-size:10px"><a class="popup-link" id="division-new" onclick="divisionExistingChecking('New')">New</a><a class="popup-link" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
-                  </div>
+
                 </div>
                 <input type="hidden" id="countrycount" value="">
                 <input type="hidden" id="unitcount" value="">
@@ -147,32 +152,43 @@
       <div class="grid-table">
         <table class="btable">
           <tr style="background-color:#CCC;border-radius:5px;">
-            <td  align="left">Country : </td>
+            <td  align="left">Division : </td>
             <td>
-              <input type="text" class="input-box icon-autocomplete countryval" value=""  onkeyup="loadauto_countrytext(this.value, this.className, event)" style="width:150px !important; background-color:#fff;">
-              <input type="hidden" class="country">
-              <div class="autocompleteview ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
-              <ul class="ulist-text" style="width:195px;"></ul>
-            </div>
-          </td>
-          <td colspan="7"><div style="text-align:right;" class="unit-error-msg"></div></td>
+                <Select id="division-select" class="input-box"  tabindex="6">
+                      <option value="">Select</option>
+                    </Select>
+                    <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name" maxlength="100" tabindex="7" >
+                    <span style="font-size:10px"><a class="popup-link" id="division-new" onclick="divisionExistingChecking('New')">New</a>
+                        <a class="popup-link" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span>
+            </td>
+              <td style="width:2%;"></td>
+          <td  align="left">Category : </td>
+            <td>
+                <input id="category-text" type="text" class="input-box" style="width:190px;display:block" placeholder="Category Name" maxlength="100"  tabindex="8">
+            </td>
+          <td colspan="6"><div style="text-align:right;" class="unit-error-msg"></div></td>
         </tr>
         <tr align="left">
-          <th width="11%">Geography Level</th>
-          <th width="17%">Unit Location</th>
-          <th width="10%"><span style="float:left; padding-top:3px;">Unit Code</span>
+          <th width="1%">#</th>
+            <th width="10%">Geography Level</th>
+          <th width="10%">Unit Location</th>
+          <th width="12%"><span style="float:left; padding-top:3px;">Unit Code</span>
           <span style="float:left;"><input type="checkbox" class="unitcode-checkbox" onclick="autoGenerateUnitCode()"  title="Unit Code Auto Generate" ></span>
           </th>
           <!-- onclick="autoGenerateUnitCode();"-->
-          <th width="13%">Unit Name</th>
-          <th width="10%">Type</th>
-          <th width="15%">Unit Address</th>
-          <th width="7%">Postal Code</th>
-          <th width="10%">Domain</th>
+          <th width="10%">Unit Name</th>
+          <th width="11%">Unit Address</th>
+          <th width="11%">Postal Code</th>
+          <th width="12%">Domain</th>
+            <th width="13%">Organization</th>
           <th width="5%" style="padding-right:5px">Status</th>
+            <th width="5%" style="padding-right:5px">Approve</th>
         </tr>
         <tbody class="tbody-unit-list">
           <tr class="table-row" style="vertical-align:top;">
+              <td>
+                  <span class="unit-sno"></span>
+              </td>
             <td><input type="hidden" class="no-of-units">
             
             <select class="input-box geography-levels" onfocus="loadglevels(this.className);"  onchange="changelocation(this.className);">
@@ -198,7 +214,8 @@
       </td>
       <td><input type="text" class="input-box unit-address" maxlength="250" /></td>
       <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
-      <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onkeyup="loaddomain_ms(event, this.className)" onclick="loaddomain(this.className)">
+      <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onkeyup="loaddomain_ms(event, this.className)"
+                  onclick="loaddomain(this.className)">
       <input type="hidden" class="domain">
       <div class="domain-selectbox-view ac-selectbox" style="display:none;">
       <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>

@@ -106,7 +106,7 @@ class Database(object):
     ########################################################
     def begin(self):
         assert self._connection is not None
-        assert self._cursor is None
+        # assert self._cursor is None
         self._cursor = self._connection.cursor()
         return self._cursor
 
@@ -196,8 +196,8 @@ class Database(object):
     ########################################################
     # To execute select query
     # Used to fetch multiple rows
-    # select_all : query is string and param is tuple which return result in tuple of tuples
-    # select_one : query is string and param is typle which return result in tuple
+    # select_all: query is string and param is tuple which return result in tuple of tuples
+    # select_one: query is string and param is typle which return result in tuple
     ########################################################
     def select_all(self, query, param=None):
         cursor = self.cursor()
@@ -279,7 +279,7 @@ class Database(object):
 
     ########################################################
     # To form a select query
-    # params : table_name, list of columns and where condition
+    # params: table_name, list of columns and where condition
     # returns result in list of dictionary
     ########################################################
     def get_data(
@@ -446,7 +446,6 @@ class Database(object):
     # To form a bulk insert query
     ########################################################
     def bulk_insert(self, table, columns, valueList):
-
         stringValue = []
         for i in range(len(columns)):
             stringValue.append('%s')
@@ -688,9 +687,9 @@ class Database(object):
             print e
             raise process_procedure_error(procedure_name, args, e)
         cols = cursor.description
-        if cols :
+        if cols:
             cols = [x[0] for x in cols]
-        else :
+        else:
             cols = []
         rows = []
         rows = convert_to_dict(cursor.fetchall(), cols)
@@ -729,7 +728,9 @@ class Database(object):
         cursor.nextset()
         return True
 
-    def call_proc_with_multiresult_set(self, procedure_name, args, expected_result_count):
+    def call_proc_with_multiresult_set(
+        self, procedure_name, args, expected_result_count
+    ):
         cursor = self.cursor()
         assert cursor is not None
         try:
@@ -745,9 +746,9 @@ class Database(object):
         assert type(expected_result_count) is int
         for i in range(0, expected_result_count):
             cols = cursor.description
-            if cols :
+            if cols:
                 cols = [x[0] for x in cols]
-            else :
+            else:
                 cols = []
             r = convert_to_dict(cursor.fetchall(), cols)
             rows.append(r)

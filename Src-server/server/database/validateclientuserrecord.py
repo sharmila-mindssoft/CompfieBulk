@@ -47,7 +47,6 @@ class ClientAdmin(ClientdbConnect):
         # Assigned to 1 if received old_admin_id is 0
         # because the corresponding admin id in client database is 1
         self._old_admin_id = 1 if old_admin_id == 0 else old_admin_id
-        print "init"
 
     def get_admin_compliances(self):
         q = "select count(compliance_id) from tbl_assigned_compliances " + \

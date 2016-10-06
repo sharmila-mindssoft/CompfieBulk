@@ -4,23 +4,16 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
-import threading
-import re
 from protocol import technomasters
-from server.emailcontroller import EmailHandler as email
-from server import logger
 
 from server.database.admin import (
-    get_domains_for_user,
-    get_countries_for_user
+    get_domains_for_user
 )
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
     get_geograhpy_levels_for_user,
-    get_geographies_for_user_with_mapping,
-    get_active_industries
+    get_geographies_for_user_with_mapping
 )
-from server.database.createclientdatabase import ClientDBCreate
 
 from server.database.technomaster import *
 
@@ -64,36 +57,18 @@ def get_client_group_form_data(db, request, session_user):
     domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     return technomasters.GetClientGroupFormDataSuccess(
-        countries=countries, business_groups=business_groups,
-        users=users, domains=domains, industries=industries
+        countries=countries, users=users, domains=domains,
+        industries=industries
     )
 
 
 ########################################################
-# To send the credentials of the created client to
-# the same
+# To Save Client
 ########################################################
-def send_client_credentials(
-    short_name, email_id, password
-):
-    try:
-        email().send_client_credentials(short_name, email_id, password)
-    except Exception, e:
-        print "Error while sending email: {}".format(e)
-        logger.logKnowledge(
-            "error", "technomastercontroller.py-send_client_credentials", e
-        )
-    return True
-
-
-def save_client_group(db, request, session_user):
+def process_save_client_group(db, request, session_user):
     session_user = int(session_user)
     if is_duplicate_group_name(db, request.group_name):
         return technomasters.GroupNameAlreadyExists()
-    elif is_duplicate_short_name(db, request.short_name):
-        return technomasters.ShortNameAlreadyExists()
-    elif not is_logo_in_image_format(request.logo):
-        return technomasters.NotAnImageFile()
     else:
         group_id = save_client_group(
             db, request.group_name, request.user_name
@@ -141,41 +116,38 @@ def get_edit_client_group_form_data(db, request, session_user):
 ########################################################
 # To Validate and Update Client Group
 ########################################################
-def update_client_group(db, request, session_user):
+def process_update_client_group(db, request, session_user):
     session_user = int(session_user)
-    if db.is_invalid_id(tblClientGroups, "client_id", request.client_id):
+    if is_invalid_group_id(db, request.group_id):
         return technomasters.InvalidClientId()
-    elif is_duplicate_group_name(db, request.group_name, request.client_id):
+    elif is_duplicate_group_name(db, request.group_name, request.group_id):
         return technomasters.GroupNameAlreadyExists()
-    elif is_deactivated_existing_country(
-        db, request.client_id, request.country_ids
+    country_ids = save_date_configurations(
+        db, request.group_id, request.date_configurations, session_user
+    )
+    if is_deactivated_existing_country(
+        db, request.group_id, country_ids
     ):
         return technomasters.CannotDeactivateCountry()
-    elif is_deactivated_existing_domain(
-        db, request.client_id, request.domain_ids
-    ):
-        return technomasters.CannotDeactivateDomain()
-    elif validate_no_of_user_licence(
-        db, request.no_of_user_licence, request.client_id
-    ):
-        return technomasters.InvalidNoOfLicence()
-    elif validate_total_disk_space(
-        db, request.file_space * (1024 * 1024 * 1024), request.client_id
-    ):
-        return technomasters.InvalidFileSpace()
     else:
-        update_client_group_record(db, request, session_user)
-        save_client_countries(db, request.client_id, request.country_ids)
-        save_client_domains(db, request.client_id, request.domain_ids)
-        save_incharge_persons(db, request, request.client_id)
-        replicate_client_countries_and_domains(
-            db, request.client_id, request.country_ids, request.domain_ids
+        update_client_group(
+            db, request.group_name, request.group_id
         )
-        save_date_configurations(
-            db, request.client_id, request.date_configurations,
-            session_user
+        legal_entity_names = update_legal_entities(
+            db, request, request.group_id, session_user)
+        legal_entity_id_name_map = get_legal_entity_ids_by_name(
+            db, legal_entity_names
         )
-        return technomasters.UpdateClientSuccess()
+        save_client_countries(db, request.group_id, country_ids)
+        save_client_domains(
+            db, request.group_id, request, legal_entity_id_name_map)
+        save_incharge_persons(
+            db, request.group_id, request, legal_entity_id_name_map)
+        save_organization(
+            db, request.group_id, request,
+            legal_entity_id_name_map, session_user
+        )
+        return technomasters.UpdateClientGroupSuccess()
 
 
 ########################################################
@@ -185,10 +157,8 @@ def change_client_group_status(db, request, session_user):
     session_user = int(session_user)
     client_id = request.client_id
     is_active = request.is_active
-    if db.is_invalid_id(tblClientGroups, "client_id", client_id):
+    if is_invalid_group_id(db, client_id):
         return technomasters.InvalidClientId()
-    elif is_unit_exists_under_client(db, client_id):
-        return technomasters.CannotDeactivateClient()
     else:
         update_client_group_status(db, client_id, is_active, session_user)
         return technomasters.ChangeClientStatusSuccess()
@@ -273,19 +243,11 @@ def validate_duplicate_data(db, request, session_user):
 
 
 def save_client(db, request, session_user):
-    print "inside save client==================>"
     client_id = request.client_id
     business_group = request.business_group
-    print
-    print business_group
     legal_entity = request.legal_entity
-    print
-    print legal_entity
     division = request.division
-    print
-    print division
     is_valid = validate_duplicate_data(db, request, session_user)
-    print "isvalid : %s" % is_valid
     if type(is_valid) is not list:
         return is_valid
     else:
@@ -296,25 +258,19 @@ def save_client(db, request, session_user):
         leg_id = None
         div_id = None
         if business_group is not None:
-            print "inside business group is not None"
             b_group_name = business_group.business_group_name
             b_group_id = business_group.business_group_id
             if b_group_id is None:
-                print "inside business group id is None"
                 b_group_id = save_business_group(
                     db, client_id, b_group_name, session_user
                 )
-                print "b_group_id : %s" % b_group_id
             if b_group_id is False:
                 return False
 
         if legal_entity is not None:
-            print "inside legal entity is not None"
             leg_name = legal_entity.legal_entity_name
             leg_id = legal_entity.legal_entity_id
-            print "leg_id : %s " % leg_id
             if leg_id is None:
-                print "inside legal entity id is none"
                 leg_id = save_legal_entity(
                     db, client_id, leg_name, b_group_id, session_user
                 )
@@ -322,12 +278,9 @@ def save_client(db, request, session_user):
                 return False
 
         if division is not None:
-            print "inside division is not None"
             div_name = division.division_name
             div_id = division.division_id
-            print "div_id : %s " % div_id
             if div_id is None:
-                print "inside div id is None"
                 div_id = save_division(
                     db, client_id, div_name, b_group_id, leg_id, session_user
                 )
@@ -407,7 +360,7 @@ def get_clients(db, request, session_user):
         db, session_user
     )
     if len(group_company_list) > 0:
-        country_list = get_countries_for_user(db, session_user)
+        country_list = get_user_countries(db, session_user)
         domain_list = get_domains_for_user(db, session_user)
         business_group_list = get_business_groups_for_user(db, session_user)
         legal_entity_list = get_legal_entities_for_user(db, session_user)
@@ -415,7 +368,7 @@ def get_clients(db, request, session_user):
         unit_list = get_unit_details_for_user(db, session_user)
         geography_levels = get_geograhpy_levels_for_user(db, session_user)
         geographies = get_geographies_for_user_with_mapping(db, session_user)
-        industries = get_active_industries(db)
+        industries_list = get_active_industries(db)
         client_domains = get_user_client_domains(db, session_user)
         return technomasters.GetClientsSuccess(
             countries=country_list,
@@ -424,7 +377,7 @@ def get_clients(db, request, session_user):
             legal_entities=legal_entity_list,
             divisions=division_list, units=unit_list,
             geography_levels=geography_levels,
-            geographies=geographies, industries=industries,
+            geographies=geographies, industries=industries_list,
             client_domains=client_domains
         )
     else:
@@ -459,7 +412,6 @@ def reactivate_unit(db, request, session_user):
 # To Get the Profile of all clients
 ########################################################
 def get_client_profile(db, request, session_user):
-    print "inside get client profile"
     client_ids = get_user_clients(db, session_user)
     if client_ids is None:
         return technomasters.UserIsNotResponsibleForAnyClient()

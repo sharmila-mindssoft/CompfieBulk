@@ -55,7 +55,7 @@ def get_industry_by_id(db, industry_id):
 
     industry_names = []
     for r in row:
-        industry_names.append(r[0])
+        industry_names.append(r["industry_name"])
 
     return ", ".join(industry_names)
 
@@ -71,8 +71,6 @@ def get_active_industries(db):
     result = db.get_data_from_multiple_tables(
         columns, tables, aliases, condition, condition_val=[1], order=order
     )
-    print "result"
-    print result
     return return_industry(result)
 
 
@@ -102,8 +100,9 @@ def check_duplicate_industry(db, industry_name, industry_id):
 
     row = db.call_proc("sp_industry_master_checkduplicateindustry", param)
     for r in row:
-        if r[0] > 0:
+        if int(r["count(1)"]) > 0:
             isDuplicate = True
+
     return isDuplicate
 
 
@@ -113,7 +112,6 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     # columns = ["country_id", "domain_id", "industry_name", "created_by", "created_on"]
     values = [country_ids, domain_ids, industry_name, str(user_id), str(created_on)]
     new_id = db.call_insert_proc("sp_industry_master_saveindustry", values)
-    print new_id
     if new_id is False:
         raise process_error("E001")
     else:
@@ -125,14 +123,11 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
 def update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id):
     new_id = False
     oldData = get_industry_by_id(db, industry_id)
-    print oldData
     if oldData is None:
         return False
     columns = ["industry_id", "industry_name", "country_id", "domain_id", "created_by"]
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
-    print new_id
-    print "new_id"
     if new_id is True:
         action = "Industry type %s updated" % (industry_name)
         db.save_activity(user_id, 7, action)
@@ -147,7 +142,6 @@ def update_industry_status(db, industry_id, is_active, user_id):
         return False
     values = [industry_id, is_active, user_id]
     new_id = db.call_update_proc("sp_industry_master_updatestatus", values)
-    print new_id
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
@@ -170,7 +164,6 @@ def get_nature_by_id(db, nature_id):
     nature_name = None
     for r in row:
         nature_name = r[0]
-        print nature_name
     return nature_name
 
 
@@ -386,15 +379,10 @@ def return_geography_levels(data):
 
 def get_geograhpy_levels_for_user(db, user_id):
     assert user_id is not None
-    columns = [
-        "level_id", "level_position", "level_name", "country_id"
-    ]
-    condition = " country_id in ( " + \
-        " select country_id from tbl_user_countries where user_id = %s)"
     condition_val = [user_id]
-    order = " ORDER BY level_position"
-    result = db.get_data(
-        "tbl_geography_levels", columns, condition, condition_val, order
+
+    result = db.call_proc(
+        "sp_geography_levels_getlevelsforusers", condition_val
     )
     return return_geography_levels(result)
 
@@ -530,24 +518,9 @@ def return_geographies(data):
 
 def get_geographies_for_user_with_mapping(db, user_id):
 
-    columns = "t1.geography_id, t1.geography_name, t1.parent_names,"
-    columns += "t1.level_id,t1.parent_ids, t1.is_active,"
-    columns += " t2.country_id, t3.country_name"
-    tables = [
-        tblGeographies, tblGeographyLevels, tblCountries
-    ]
-    aliases = ["t1", "t2", "t3"]
-    join_type = " INNER JOIN"
-    join_conditions = [
-        "t1.level_id = t2.level_id", "t2.country_id = t3.country_id"
-    ]
-    where_condition = " t2.country_id in (select country_id " + \
-        " from tbl_user_countries where user_id = %s )"
     where_condition_val = [user_id]
-    result = db.get_data_from_multiple_tables(
-        columns, tables, aliases, join_type,
-        join_conditions, where_condition, where_condition_val
-    )
+    result = db.call_proc("sp_get_geographies_for_users_mapping", (where_condition_val,))
+
     geographies = {}
     if result:
         for d in result:
