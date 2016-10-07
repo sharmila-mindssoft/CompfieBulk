@@ -1563,9 +1563,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To Get countries configured  for a user
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_usercountries_by_userd`;
+DROP PROCEDURE IF EXISTS `sp_usercountries_by_userid`;
 DELIMITER //
-CREATE PROCEDURE `sp_usercountries_by_userd`(
+CREATE PROCEDURE `sp_usercountries_by_userid`(
 	IN userid INT(11)
 )
 BEGIN
