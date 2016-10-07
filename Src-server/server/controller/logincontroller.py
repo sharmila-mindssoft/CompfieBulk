@@ -62,9 +62,10 @@ def process_login(db, request, session_user_ip):
     username = request.username
     password = request.password
     encrypt_password = encrypt(password)
-    user_id, employee_name = verify_username(
+    user_id, employee_name, user_type = verify_username(
         db, username
     )
+    print user_id, employee_name, password
     if user_id is None:
         return login.InvalidUserName()
     else:

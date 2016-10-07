@@ -335,7 +335,7 @@ class Response(object):
         name = type(self).__name__
         inner = self.to_inner_structure()
         if type(inner) is dict:
-            to_structure_dictionary_values(inner)
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -404,7 +404,7 @@ class GetDomainsSuccess(Response):
         data = {
             "domains": self.domains
         }
-        return to_dictionary_values(data)
+        return data
 
 
 class SaveDomainSuccess(Response):
@@ -480,16 +480,17 @@ class GetCountriesSuccess(Response):
         self.countries = countries
 
     @staticmethod
-    def parse_structure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["countries"])
         countries = data.get("countries")
         return GetCountriesSuccess(countries)
 
-    def to_structure(self):
+    def to_inner_structure(self):
+
         data = {
             "countries": self.countries
         }
-        return to_dictionary_values(data, "GetCountriesSuccess")
+        return data
 
 
 class SaveCountrySuccess(Response):

@@ -380,11 +380,7 @@ CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
 )
 BEGIN
 	if _user_id = 0 then
-		IF _user_type = 0 then
-			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
-		else
-			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 2;
-		END IF;
+		SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
 	else
 		SELECT t1.form_ids as form_id from tbl_user_groups t1
 		INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id

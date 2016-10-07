@@ -36,7 +36,7 @@ def process_general_request(request, db):
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
     if user_id is not None:
-        is_valid = validate_user_forms(db, user_id, forms, request_frame)
+        is_valid = validate_user_forms(db, user_id, forms, request_frame, admin_user_type=0)
         if is_valid is not True:
             return login.InvalidSessionToken()
     if user_id is None:
@@ -128,6 +128,7 @@ def validate_user_forms(db, user_id, form_ids, requet, admin_user_type=None):
             if user_id == 0 and admin_user_type is None:
                 admin_user_type = 0  # compfie admin
             alloted_forms = get_user_form_ids(db, user_id, admin_user_type)
+            print alloted_forms
             alloted_forms = [int(x) for x in alloted_forms.split(",")]
             for i in alloted_forms:
                 if i in form_ids:
