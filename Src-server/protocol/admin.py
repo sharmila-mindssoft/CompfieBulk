@@ -1,6 +1,6 @@
 from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list, to_dictionary_values,
-    parse_VariantType, to_VariantType, to_structure_dictionary_values
+    parse_dictionary, parse_static_list, parse_VariantType,
+    to_VariantType, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
     parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32
@@ -67,12 +67,11 @@ class SaveUserGroup(Request):
         return SaveUserGroup(user_group_name, form_category_id, form_ids)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "ug_name": self.user_group_name,
             "fc_id": self.form_category_id,
             "f_ids": self.form_ids
         }
-        return to_dictionary_values(data)
 
 
 class UpdateUserGroup(Request):
@@ -95,13 +94,12 @@ class UpdateUserGroup(Request):
             user_group_id, user_group_name, form_category_id, form_ids)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "ug_id": self.user_group_id,
             "ug_name": self.user_group_name,
             "fc_id": self.form_category_id,
             "f_ids": self.form_ids
         }
-        return to_dictionary_values(data)
 
 
 class ChangeUserGroupStatus(Request):
@@ -117,11 +115,10 @@ class ChangeUserGroupStatus(Request):
         return ChangeUserGroupStatus(user_group_id, is_active)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "ug_id": self.user_group_id,
             "active": self.is_active
         }
-        return to_dictionary_values(data)
 
 
 class GetUsers(Request):
@@ -175,7 +172,7 @@ class SaveUser(Request):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "email_id": self.email_id,
             "ug_id": self.user_group_id,
             "employee_name": self.employee_name,
@@ -186,7 +183,6 @@ class SaveUser(Request):
             "country_ids": self.country_ids,
             "domain_ids": self.domain_ids
         }
-        return to_dictionary_values(data)
 
 
 class UpdateUser(Request):
@@ -226,7 +222,7 @@ class UpdateUser(Request):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "user_id": self.user_id,
             "ug_id": self.user_group_id,
             "employee_name": self.employee_name,
@@ -237,7 +233,6 @@ class UpdateUser(Request):
             "country_ids": self.country_ids,
             "domain_ids": self.domain_ids
         }
-        return to_dictionary_values(data)
 
 
 class ChangeUserStatus(Request):
@@ -253,11 +248,10 @@ class ChangeUserStatus(Request):
         return ChangeUserStatus(user_id, is_active)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "user_id": self.user_id,
             "is_active": self.is_active,
         }
-        return to_dictionary_values(data)
 
 
 class GetValidityDateList(Request):
@@ -285,10 +279,9 @@ class SaveValidityDateSettings(Request):
         return SaveValidityDateSettings(validity_date_settings)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "validity_date_settings": self.validity_date_settings
         }
-        return to_dictionary_values(data)
 
 
 class GetUserMappings(Request):
@@ -321,12 +314,11 @@ class SaveUserMappings(Request):
         return SaveUserMappings(user_id, cc_user_ids, techno_manager_ids)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "user_id": self.user_id,
             "cc_user_ids": self.cc_user_ids,
             "techno_manager_ids": self.techno_manager_ids
         }
-        return to_dictionary_values(data)
 
 
 def _init_Request_class_map():
@@ -351,15 +343,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        print
-        print "inner: %s, %s" % (inner, type(inner))
         if type(inner) is dict:
-            print "inside if====>"
             inner = to_structure_dictionary_values(inner)
-            print
-            print "after to_structure_dictionary_values inner: %s" % inner
-        else:
-            print "inside else"
         return [name, inner]
 
     def to_inner_structure(self):
@@ -409,7 +394,7 @@ class UserGroup(object):
             form_ids, is_active, no_of_users)
 
     def to_structure(self):
-        data = {
+        return {
             "user_group_id": self.user_group_id,
             "user_group_name": self.user_group_name,
             "form_category_id": self.form_category_id,
@@ -417,7 +402,6 @@ class UserGroup(object):
             "is_active": self.is_active,
             "no_of_users": self.no_of_users
         }
-        return to_dictionary_values(data)
 
 
 class GetUserGroupsSuccess(Response):
@@ -436,14 +420,11 @@ class GetUserGroupsSuccess(Response):
         return GetUserGroupsSuccess(form_categories, forms, user_groups)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "form_categories": self.form_categories,
             "forms": self.forms,
             "user_group_details": self.user_groups
         }
-        print "data: %s" % data
-        print "to dict: %s" % to_dictionary_values(data)
-        return to_dictionary_values(data)
 
 
 class SaveUserGroupSuccess(Response):
@@ -534,13 +515,12 @@ class GetUsersSuccess(Response):
         return GetUsersSuccess(user_groups, domains, countries, users)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "user_groups": self.user_groups,
             "domains": self.domains,
             "countries": self.countries,
             "user_details": self.users
         }
-        return to_dictionary_values(data)
 
 
 class SaveUserSuccess(Response):
@@ -695,14 +675,13 @@ class GetValidityDateListSuccess(Response):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "countries": self.countries,
             "domains": self.domains,
             "validity_date_settings": self.validity_dates,
             "country_domain_mappings": to_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(
                 self.country_domain_mappings)
         }
-        return to_dictionary_values(data)
 
 
 class UserMapping(object):
@@ -727,12 +706,11 @@ class UserMapping(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "usermapping_id": self.usermapping_id,
             "cc_manager_id": self.cc_manager_id,
             "is_active": self.is_active
         }
-        return to_dictionary_values(data)
 
 
 class UserMappingUsers(object):
@@ -757,12 +735,11 @@ class UserMappingUsers(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "usermapping_id": self.usermapping_id,
             "user_id": self.user_id,
             "form_category_id": self.form_category_id
         }
-        return to_dictionary_values(data)
 
 
 class User(object):
@@ -833,7 +810,7 @@ class GetUserMappingsSuccess(Response):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "countries": self.countries,
             "domains": self.domains,
             "cc_managers": self.cc_managers,
@@ -842,7 +819,6 @@ class GetUserMappingsSuccess(Response):
             "user_mappings": self.user_mappings,
             "user_mapping_users": self.user_mapping_users
         }
-        return to_dictionary_values(data)
 
 
 class SaveUserMappingsSuccess(Response):
