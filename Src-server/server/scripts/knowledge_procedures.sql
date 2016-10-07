@@ -1864,7 +1864,7 @@ BEGIN
 	IF machineid IS NULL THEN
 		INSERT INTO tbl_machines (
 			machine_name, ip, port
-		) VALUES (machinename, ipaddr, port_no) 
+		) VALUES (machinename, ipaddr, port_no) ;
 
 	ELSE
 		UPDATE tbl_machines SET machine_name = machinename, 
