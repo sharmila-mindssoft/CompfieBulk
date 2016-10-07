@@ -34,6 +34,7 @@ from protocol.to_structure import (
 # Request
 #
 
+
 class Request(object):
     def to_structure(self):
         name = type(self).__name__

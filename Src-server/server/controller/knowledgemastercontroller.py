@@ -180,6 +180,7 @@ def process_get_industry(db):
         industries=results, countries=country_list, domains=domain_list
     )
 
+
 ########################################################
 # save industry request
     # request_frame will have industry_name
