@@ -385,6 +385,7 @@ def to_dictionary_values(data, response=None):
     #     final_result = result
     # return final_result
 
+
 def to_vector_type_record_type(value):
     final_list = []
     if type(value) is list:
@@ -396,15 +397,12 @@ def to_vector_type_record_type(value):
 
 def to_structure_dictionary_values(x):
     keys = x.keys()
-    print keys
     if len(keys) == 0:
         return {}
     for field_name in keys:
-        print field_name
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print param
-        if param is None :
+        if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
         if param.get('type') == 'VECTOR_TYPE':
@@ -419,23 +417,23 @@ def to_structure_dictionary_values(x):
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
             assert param.get('validation_method') is not None
-            value = to_MapType(
+            val = to_MapType(
                 param.get('module_name'), param.get('class_name'),
                 param.get("validation_method"), val
             )
-            x[field_name] = value
-
-        else :
+        else:
             val = parse_values(field_name, param, val)
 
-        if val is not None and param.get('validation_method') is not None:
+        if(
+            val is not None and param.get('validation_method') is not None and
+            param.get('type') != 'MAP_TYPE'
+        ):
             val = param.get('validation_method')(val)
 
         x[field_name] = val
-
     return x
 
-    # if klass is not None :
+    # if klass is not None:
     #     return [
     #         klass, x
     #     ]

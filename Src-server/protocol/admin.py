@@ -1,6 +1,6 @@
 from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list, to_dictionary_values,
-    parse_VariantType, to_VariantType
+    parse_VariantType, to_VariantType, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
     parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32
@@ -17,6 +17,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -349,6 +351,15 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        print
+        print "inner: %s, %s" % (inner, type(inner))
+        if type(inner) is dict:
+            print "inside if====>"
+            inner = to_structure_dictionary_values(inner)
+            print
+            print "after to_structure_dictionary_values inner: %s" % inner
+        else:
+            print "inside else"
         return [name, inner]
 
     def to_inner_structure(self):
@@ -430,6 +441,8 @@ class GetUserGroupsSuccess(Response):
             "forms": self.forms,
             "user_group_details": self.user_groups
         }
+        print "data: %s" % data
+        print "to dict: %s" % to_dictionary_values(data)
         return to_dictionary_values(data)
 
 
