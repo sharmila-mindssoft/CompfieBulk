@@ -1563,9 +1563,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To Get countries configured  for a user
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_usercountries_by_userd`;
+DROP PROCEDURE IF EXISTS `sp_usercountries_by_userid`;
 DELIMITER //
-CREATE PROCEDURE `sp_usercountries_by_userd`(
+CREATE PROCEDURE `sp_usercountries_by_userid`(
 	IN userid INT(11)
 )
 BEGIN
@@ -1864,7 +1864,7 @@ BEGIN
 	IF machineid IS NULL THEN
 		INSERT INTO tbl_machines (
 			machine_name, ip, port
-		) VALUES (machinename, ipaddr, port_no) 
+		) VALUES (machinename, ipaddr, port_no) ;
 
 	ELSE
 		UPDATE tbl_machines SET machine_name = machinename, 

@@ -1,7 +1,6 @@
 from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list,
-    parse_VariantType, to_VariantType,
-    to_dictionary_values
+    parse_dictionary, parse_static_list, parse_VariantType,
+    to_VariantType, to_structure_dictionary_values
 )
 
 
@@ -12,6 +11,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -65,14 +66,13 @@ class SaveDBServer(Request):
         return SaveDBServer(db_server_name, ip, port, username, password)
 
     def to_structure(self):
-        data = {
+        return {
             "db_server_name": self.db_server_name,
             "ip": self.ip,
             "port": self.port,
             "username": self.username,
             "password": self.password
         }
-        return to_dictionary_values(data)
 
 
 class GetClientServerList(Request):
@@ -107,13 +107,12 @@ class SaveClientServer(Request):
         return SaveClientServer(client_server_id, client_server_name, ip, port)
 
     def to_structure(self):
-        data = {
+        return {
             "client_server_id": self.client_server_id,
             "client_server_name": self.client_server_name,
             "ip": self.ip,
             "port": self.port
         }
-        return to_dictionary_values(data)
 
 
 class GetAllocatedDBEnv(Request):
@@ -153,13 +152,12 @@ class SaveAllocatedDBEnv(Request):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
             "database_server_ip": self.database_server_ip,
             "machine_id": self.machine_id
         }
-        return to_dictionary_values(data)
 
 
 class GetFileStorage(Request):
@@ -197,12 +195,11 @@ class SaveFileStorage(Request):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
             "machine_id": self.machine_id
         }
-        return to_dictionary_values(data)
 
 
 class GetAutoDeletionList(Request):
@@ -239,13 +236,12 @@ class AutoDeletionDetail(Request):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
             "unit_id": self.unit_id,
             "deletion_year": self.deletion_year
         }
-        return to_dictionary_values(data)
 
 
 class SaveAutoDeletion(Request):
@@ -262,10 +258,9 @@ class SaveAutoDeletion(Request):
         return SaveAutoDeletion(data.get("auto_deletion_details"))
 
     def to_structure(self):
-        data = {
+        return {
             "auto_deletion_details": self.auto_deletion_details
         }
-        return to_dictionary_values(data)
 
 
 def _init_Request_class_map():
@@ -289,6 +284,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -335,7 +332,7 @@ class DBServer(object):
             db_server_name, ip, port, username, password, no_of_clients)
 
     def to_structure(self):
-        data = {
+        return {
             "db_server_name": self.db_server_name,
             "ip": self.ip,
             "port": self.port,
@@ -343,7 +340,6 @@ class DBServer(object):
             "password": self.password,
             "no_of_clients": self.no_of_clients
         }
-        return to_dictionary_values(data)
 
 
 class GetDbServerListSuccess(Response):
@@ -357,10 +353,9 @@ class GetDbServerListSuccess(Response):
         return GetDbServerListSuccess(db_servers)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "db_servers": self.db_servers
         }
-        return to_dictionary_values(data)
 
 
 class SaveDBServerSuccess(Response):
@@ -415,14 +410,13 @@ class ClientServer(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_server_id": self.client_server_id,
             "client_server_name": self.client_server_name,
             "ip": self.ip,
             "port": self.port,
             "no_of_clients": self.no_of_clients
         }
-        return to_dictionary_values(data)
 
 
 class GetClientServerListSuccess(Response):
@@ -436,10 +430,9 @@ class GetClientServerListSuccess(Response):
         return GetClientServerListSuccess(client_servers)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "client_servers": self.client_servers
         }
-        return to_dictionary_values(data)
 
 
 class SaveClientServerSuccess(Response):
@@ -495,13 +488,12 @@ class ClientDatabase(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
             "machine_id": self.machine_id,
             "database_server_ip": self.database_server_ip
         }
-        return to_dictionary_values(data)
 
 
 class ClientGroup(object):
@@ -517,11 +509,10 @@ class ClientGroup(object):
         return ClientGroup(client_id, group_name)
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "group_name": self.group_name
         }
-        return to_dictionary_values(data)
 
 
 class LegalEntity(object):
@@ -540,12 +531,11 @@ class LegalEntity(object):
         return LegalEntity(legal_entity_id, legal_entity_name, client_id)
 
     def to_structure(self):
-        data = {
+        return {
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
             "client_id": self.client_id
         }
-        return to_dictionary_values(data)
 
 
 class ClientServerNameAndID(object):
@@ -562,11 +552,10 @@ class ClientServerNameAndID(object):
         return ClientServerNameAndID(machine_id, machine_name)
 
     def to_structure(self):
-        data = {
+        return {
             "machine_id": self.machine_id,
             "machine_name": self.machine_name
         }
-        return to_dictionary_values(data)
 
 
 class DBServerNameAndID(object):
@@ -583,11 +572,10 @@ class DBServerNameAndID(object):
         return DBServerNameAndID(db_server_name, ip)
 
     def to_structure(self):
-        data = {
+        return {
             "db_server_name": self.db_server_name,
             "ip": self.ip
         }
-        return to_dictionary_values(data)
 
 
 class GetAllocatedDBEnvSuccess(Response):
@@ -620,14 +608,13 @@ class GetAllocatedDBEnvSuccess(Response):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "client_dbs": self.client_dbs,
             "client_groups": self.client_groups,
             "client_legal_entities": self.client_legal_entities,
             "client_server_name_and_id": self.client_server_name_and_id,
             "db_server_name_and_id": self.db_server_name_and_id
         }
-        return to_dictionary_values(data)
 
 
 class SaveAllocatedDBEnvSuccess(Response):
@@ -667,12 +654,11 @@ class FileStorage(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
             "machine_id": self.machine_id
         }
-        return to_dictionary_values(data)
 
 
 class GetFileStorageSuccess(Response):
@@ -703,13 +689,12 @@ class GetFileStorageSuccess(Response):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "file_storages": self.file_storages,
             "client_groups": self.client_groups,
             "client_legal_entities": self.client_legal_entities,
             "client_server_name_and_id": self.client_server_name_and_id
         }
-        return to_dictionary_values(data)
 
 
 class SaveFileStorageSuccess(Response):
@@ -757,7 +742,7 @@ class EntitiesWithAutoDeletion(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
             "client_id": self.client_id,
@@ -765,7 +750,6 @@ class EntitiesWithAutoDeletion(object):
             "deletion_period": self.deletion_period,
             "is_active": self.is_active
         }
-        return to_dictionary_values(data)
 
 
 class Unit(object):
@@ -802,7 +786,7 @@ class Unit(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "unit_id": self.unit_id,
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
@@ -811,7 +795,6 @@ class Unit(object):
             "deletion_year": self.deletion_year,
             "address": self.address
         }
-        return to_dictionary_values(data)
 
 
 class GetAutoDeletionListSuccess(Response):
@@ -838,12 +821,11 @@ class GetAutoDeletionListSuccess(Response):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "client_groups": self.client_groups,
             "auto_deletion_entities": self.auto_deletion_entities,
             "auto_deletion_units": self.auto_deletion_units
         }
-        return to_dictionary_values(data)
 
 
 class SaveAutoDeletionSuccess(Response):

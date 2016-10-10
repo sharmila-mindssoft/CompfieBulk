@@ -1,6 +1,5 @@
 from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values,
-    to_dictionary_values
 )
 from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
@@ -751,12 +750,11 @@ class GetIndustriesSuccess(Response):
         return GetIndustriesSuccess(industries, countries, domains)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "industries": self.industries,
             "countries": self.countries,
             "domains": self.domains
         }
-        return to_dictionary_values(data)
 
 
 class SaveIndustrySuccess(Response):
