@@ -1,5 +1,5 @@
 from protocol.jsonvalidators import (
-    parse_enum, parse_dictionary
+    parse_enum, parse_dictionary, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Compliance,
@@ -57,7 +57,6 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_RecordType_core_ClientBusinessGroup,
     parse_structure_RecordType_core_FileList,
     parse_structure_OptionalType_RecordType_core_FileList,
-    parse_structure_OptionalType_VectorType_UnignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_ClientConfiguration
 
 )
@@ -584,7 +583,7 @@ class Form(object):
             "parent_menu": self.parent_menu,
             "form_type": self.form_type
         }
-        return data
+        return to_structure_dictionary_values(data)
 
 #
 # Menu
@@ -598,11 +597,13 @@ class Menu(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["menus"])
         menus = data.get("menus")
+        menus = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(menus)
         return Menu(menus)
 
     def to_structure(self):
+        print self.menus
         return {
-            "menus": self.menus,
+            "menus": to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(self.menus),
         }
 
 #
@@ -1339,7 +1340,6 @@ class GroupCompanyDetail(object):
         client_name = data.get("client_name")
         client_name = parse_structure_CustomTextType_50(client_name)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_OptionalType_VectorType_UnignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
         country_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(country_ids)
         incharge_persons = data.get("incharge_persons")

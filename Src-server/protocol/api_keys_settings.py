@@ -18,13 +18,20 @@ __all__ = [
 ]
 
 api_params = {
+    'request': {},
     'session_token': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
-    'login_type': {'type': ''},
-    'username': {},
-    'password': {},
-    'short_name': {},
-    'ip': {},
-    "request": {},
+    'reset_token': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
+
+    'new_password' : {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': False},
+    'current_password' : {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': False},
+
+    'login_type': {'type': 'ENUM_TYPE', 'length': None,  'validation_method': None, 'module_name': 'core', 'class_name': 'SESSION_TYPE'},
+    'username': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'password': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': False},
+    'short_name': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    'ip': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'user_client_id': {'type': 'INT', 'length': 500, 'validation_methods': None, 'is_optional': True},
+    'captcha_text': {'type': 'STRING', 'length': 10, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
     'd_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -34,7 +41,7 @@ api_params = {
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
-    'form_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},
     'form_url': {'type': 'STRING', 'length': 250, 'validation_method': is_url, 'is_optional': False},
     'parent_menu': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -122,10 +129,10 @@ api_params = {
     'client_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'country_names': {'type': 'STRING', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'next_unit_code': {'type': 'INT', 'length': 1000000, 'validation_method': None, is_optional: False},
+    'next_unit_code': {'type': 'INT', 'length': 1000000, 'validation_method': None, 'is_optional': False},
 
     'no_of_legal_entities': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'business_group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'business_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'legal_entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -172,7 +179,8 @@ api_params = {
     "user_group_details":  {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserGroup"},
     'no_of_users': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "forms":  {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name': 'core', "class_name": "Menu"},
-    "menus":  {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_alphabet, 'is_optional': False, 'module_name': 'core', "class_name": "Form"},
+    "menus":  {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False, 'module_name': 'core', "class_name": "Form"},
+    "menu": {'type': 'RECORD_TYPE', 'length': None, 'validation_method': None, 'module_name': 'core', 'class_name': 'Menu'},
 
     'user_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
     "employee_name": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
@@ -238,6 +246,7 @@ api_params['level_position'] = api_params.get('l_position')
 api_params['level_name'] = api_params.get('l_name')
 api_params['is_remove'] = api_params.get('is_active')
 api_params['is_exists'] = api_params.get('is_active')
+api_params['is_admin'] = api_params.get('is_active')
 api_params['parent_id'] = api_params.get('geography_id')
 api_params['parent_mappings'] = api_params.get('mapping')
 api_params['level_1_statutory_id'] = api_params.get('statutory_id')
