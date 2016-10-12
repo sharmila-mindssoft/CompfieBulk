@@ -59,7 +59,7 @@ def get_industry_by_id(db, industry_id):
 
     return ", ".join(industry_names)
 
-## stored procedure not created
+# stored procedure not created
 def get_active_industries(db):
     columns = ["country_id", "country_name", "domain_id", "domain_name", "industry_id", "industry_name", "is_active"]
     tables = [
@@ -163,7 +163,8 @@ def get_nature_by_id(db, nature_id):
     row = db.call_proc("sp_statutory_natures_getnaturebyid", values_list)
     nature_name = None
     for r in row:
-        nature_name = r[0]
+        nature_name = r["statutory_nature_name"]
+        print nature_name
     return nature_name
 
 
@@ -173,7 +174,7 @@ def get_statutory_nature(db):
         "is_active"
     ]
 
-    result = db.call_proc("sp_statutory_nature_getstatutorynatures",(), columns)
+    result = db.call_proc("sp_statutory_nature_getstatutorynatures", (), columns)
     return return_statutory_nature(result)
 
 
@@ -200,14 +201,14 @@ def check_duplicate_statutory_nature(db, nature_name, nature_id):
     row = db.call_proc("sp_statutory_nature_checkduplicatenature", param)
 
     for r in row:
-        if r[0] > 0:
+        if r["cnt"] > 0:
             isDuplicate = True
     return isDuplicate
 
 
 def save_statutory_nature(db, nature_name, country_id, user_id):
     created_on = get_date_time()
-    columns = ["statutory_nature_name", "country_id", "created_by", "created_on"]
+    # columns = ["statutory_nature_name", "country_id", "created_by", "created_on"]
     values = [nature_name, country_id, user_id, str(created_on)]
     new_id = db.call_insert_proc("sp_statutorynature_savestatutorynature", values)
     if new_id is False:
@@ -363,17 +364,18 @@ def get_geography_levels(db):
 
 
 def return_geography_levels(data):
-    geography_levels = {}
+    geography_levels = []
     for d in data:
-        country_id = d["country_id"]
-        level = core.Level(
-            d["level_id"], d["level_position"], d["level_name"]
+        #country_id = d["country_id"]
+        level = core.UnitGeographyLevel(
+            d["level_id"], d["level_position"], d["level_name"], d["country_id"]
         )
-        _list = geography_levels.get(country_id)
-        if _list is None:
-            _list = []
-        _list.append(level)
-        geography_levels[country_id] = _list
+        #_list = geography_levels.get(country_id)
+        #if _list is None:
+        #    _list = []
+        #_list.append(level)
+        #geography_levels[country_id] = _list
+        geography_levels.append(level)
     return geography_levels
 
 
@@ -382,7 +384,7 @@ def get_geograhpy_levels_for_user(db, user_id):
     condition_val = [user_id]
 
     result = db.call_proc(
-        "sp_geography_levels_getlevelsforusers", condition_val
+        "sp_geography_levels_getlevelsforusers", (condition_val,)
     )
     return return_geography_levels(result)
 
@@ -521,22 +523,25 @@ def get_geographies_for_user_with_mapping(db, user_id):
     where_condition_val = [user_id]
     result = db.call_proc("sp_get_geographies_for_users_mapping", (where_condition_val,))
 
-    geographies = {}
+    geographies = []
     if result:
         for d in result:
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
-            geography = core.GeographyWithMapping(
+            geography = core.UnitGeographyMapping(
                 d["geography_id"], d["geography_name"],
                 d["level_id"],
                 d["parent_names"],
-                parent_ids[-1], bool(d["is_active"])
+                parent_ids,
+                d["country_id"],
+                bool(d["is_active"])
             )
-            country_id = d["country_id"]
-            _list = geographies.get(country_id)
-            if _list is None:
-                _list = []
-            _list.append(geography)
-            geographies[country_id] = _list
+            #country_id = d["country_id"]
+            #_list = geographies.get(country_id)
+            #if _list is None:
+            #    _list = []
+            #_list.append(geography)
+            #geographies[country_id] = _list
+            geographies.append(geography)
     return geographies
 
 

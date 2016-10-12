@@ -278,6 +278,8 @@ var message = {
   "cc_user_required": "CC User Required",
   "techno_manager_required": "Techno manager required",
   "mapping_save_success": "User mapping saved successfully"
+  "unit_saved": "Unit(s) Saved successfully",
+  "unit_updated": "Units(s) Updated Successfully"
 };
 
 function clearMessage() {
