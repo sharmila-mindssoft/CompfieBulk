@@ -33,7 +33,7 @@ function initialize() {
   });
 }
 function loadStatNatureData(statNatureList) {
-  alert(statNatureList.length);
+alert("inside load")
   $('.tbody-statutory-nature-list').find('tr').remove();
   var sno = 0;
   //for (var i in statNatureList) {
@@ -120,6 +120,7 @@ $('#btn-statutory-nature-submit').click(function () {
 
       mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
         if (error == null) {
+          alert(message.statutoty_nature_save_success);
           onSuccess(response);
         } else {
           onFailure(error);
@@ -152,6 +153,7 @@ $('#btn-statutory-nature-submit').click(function () {
 
       mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
         if (error == null) {
+          alert(message.statutoty_nature_update_success);
           onSuccess(response);
         } else {
           onFailure(error);
@@ -172,9 +174,11 @@ function statNature_edit(statNatureId, statNatureName, countryId) {
   for(var i in countriesList)
   {
     if(countriesList[i].country_id == countryId)
+    {
         $('#country-id').val(countryId);
         $('#country-name').val(countriesList[i].country_name);
         break;
+      }
   }
 
 }
@@ -189,13 +193,40 @@ function statNature_active(statNatureId, isActive) {
       Ok: function () {
         $(this).dialog('close');
         function success(status, data) {
+            if (status == null)
+            {
+              if (isActive) {
+                alert(message.statutoty_nature_status_active_success);
+              }
+              else
+              {
+                alert(message.statutoty_nature_status_deactive_success);
+              }
+            }
           $('#search-statutory-nature-name').val('');
           initialize();
         }
         function failure(error) {
-          custom_alert(error);
+          if (error == 'TransactionExists') {
+            custom_alert(message.trasaction_exists);
+          } else {
+            custom_alert(error);
+          }
         }
-        mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
+        mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure)
+          /*{if (error == null) {
+            if (isActive) {
+              alert(message.statutoty_nature_status_active_success);
+            }
+            else
+            {
+              alert(message.statutoty_nature_status_deactive_success);
+            }
+            onSuccess(response);
+          } else {
+            onFailure(error);
+          }
+        });*/
       },
       Cancel: function () {
         $(this).dialog('close');
