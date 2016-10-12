@@ -2017,27 +2017,24 @@ DROP PROCEDURE IF EXISTS `sp_users_type_wise`;
 DELIMITER //
 CREATE PROCEDURE `sp_users_type_wise`()
 BEGIN 
-	SELECT user_id,
-	concat(employee_code," - ", employee_name) as employee_name,
-	is_active
-	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
-		WHERE form_category_id=5
-	);
-	SELECT user_id,
-	concat(employee_code," - ", employee_name) as employee_name,
-	is_active
-	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
-		WHERE form_category_id=6
-	);
-	SELECT user_id,
-	concat(employee_code," - ", employee_name) as employee_name,
-	is_active
-	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
-		WHERE form_category_id=7
-	);
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=4;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=3;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=5;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=6;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=7;
+	SELECT user_id, is_active, 
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=8;
 	SELECT user_id, country_id FROM tbl_user_countries;
 	SELECT user_id, domain_id FROM tbl_user_domains;
 END //
@@ -2050,9 +2047,33 @@ DROP PROCEDURE IF EXISTS `sp_usermappings_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_usermappings_list`()
 BEGIN
-	SELECT user_mapping_id, cc_manager_id, is_active
-	FROM tbl_user_mapping;
-	SELECT user_mapping_id, user_id, form_category_id
-	FROM tbl_user_mapping_users;
+	select user_mapping_id, user_category_id, country_id, domain_id,
+	parent_user_id, child_user_id from tbl_user_mapping;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get user category by user id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_category_by_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_category_by_id`(
+	IN userid INT(11)
+)
+BEGIN
+	SELECT user_category_id FROM tbl_users WHERE user_id=userid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Delete Mappings under a parent user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_delete`;
+DELIMITER //
+CREATE PROCEDURE `sp_usermapping_delete`(
+	IN parent_userid INT(11)
+)
+BEGIN
+	DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
 END //
 DELIMITER;

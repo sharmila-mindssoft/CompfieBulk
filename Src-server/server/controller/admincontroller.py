@@ -384,13 +384,16 @@ def process_save_validity_date_settings(db, request, session_user):
 
 def process_get_user_mappings(db, session_user):
     (
-        countries, domains, cc_managers, cc_users,
-        technomanagers, user_mappings, user_mapping_users
+        countries, domains, knowledge_managers, knowledge_users,
+        techno_managers, techno_users, domain_managers, domain_users,
+        user_mappings
     ) = get_user_mapping_form_data(db, session_user)
     return admin.GetUserMappingsSuccess(
-        countries=countries, domains=domains, cc_managers=cc_managers,
-        cc_users=cc_users, techno_managers=technomanagers,
-        user_mappings=user_mappings, user_mapping_users=user_mapping_users
+        countries=countries, domains=domains,
+        knowledge_managers=knowledge_managers, knowledge_users=knowledge_users,
+        techno_managers=techno_managers, techno_users=techno_users,
+        domain_managers=domain_managers, domain_users=domain_users,
+        user_mappings=user_mappings
     )
 
 

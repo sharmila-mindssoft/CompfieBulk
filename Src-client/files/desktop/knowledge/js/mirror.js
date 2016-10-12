@@ -1662,14 +1662,15 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function saveUserMappings(cc_manager_id, cc_users, techno_managers, callback){
+  function saveUserMappings(country_id, domain_id, parent_user_id, child_users, callback){
     callerName = "admin";
     var request = [
       "SaveUserMappings",
       {
-        "user_id": cc_manager_id,
-        "cc_user_ids": cc_users,
-        "techno_manager_ids": techno_managers
+        "country_id": country_id,
+        "domain_id": domain_id,
+        "parent_user_id": parent_user_id,
+        "child_users": child_users
       }
     ];
     apiRequest(callerName, request, callback);
