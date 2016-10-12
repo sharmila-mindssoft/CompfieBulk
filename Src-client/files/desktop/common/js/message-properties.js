@@ -256,7 +256,9 @@ var message = {
   "unit_approve_success": "Unit approved successfully",
   "approve_atleast_one": "Approve atleast one unit",
   "group_approve_success": "Client group approved successfully",
-  "country_or_group_required": "Country or group required"
+  "country_or_group_required": "Country or group required",
+  "unit_saved": "Unit(s) Saved successfully",
+  "unit_updated": "Units(s) Updated Successfully"
 };
 
 function clearMessage() {
