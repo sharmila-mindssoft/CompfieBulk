@@ -135,6 +135,7 @@ def user_login_response(db, data, ip):
     user_group_name = data["user_group_name"]
     form_ids = data["form_ids"]
     menu = process_user_forms(db, form_ids)
+    print "menu before user login success: %s" % menu
     # db.save_user_login_history(user_id)
     return login.UserLoginSuccess(
         int(user_id), session_token, email_id, user_group_name,

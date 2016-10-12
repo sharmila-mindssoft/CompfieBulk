@@ -335,6 +335,14 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
             )
             if is_validation_and_parse is True:
                 x[field_name] = val
+        elif param.get('type') == 'RECORD_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            val = parse_RecordType(
+                param.get('module_name'), param.get('class_name'), val
+            )
+            if is_validation_and_parse is True:
+                x[field_name] = val
         else:
             val = parse_values(field_name, param, val)
         if(
@@ -362,6 +370,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
+        print "field_name: %s, val: %s" % (field_name, val)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
@@ -380,6 +389,14 @@ def to_structure_dictionary_values(x):
             val = to_MapType(
                 param.get('module_name'), param.get('class_name'),
                 param.get("validation_method"), val
+            )
+
+        elif param.get('type') == 'RECORD_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            print val
+            val = to_RecordType(
+                param.get('module_name'), param.get('class_name'), val
             )
         else:
             val = parse_values(field_name, param, val)
@@ -422,7 +439,8 @@ def parse_RecordType(module_name, class_name, data):
 
 def to_RecordType(module_name, class_name, data):
     klass = return_import(module_name, class_name)
-    return klass.to_structure(data)
+    data = klass.to_structure(data)
+    return to_structure_dictionary_values(data)
 
 
 def parse_VectorType(module_name, class_name, data):
@@ -449,8 +467,14 @@ def parse_MapType(module_name, class_name, validation_method, data):
     map = {}
     for key, value in data.items():
         key = validation_method(key)
-        parsed_value = parse_RecordType(module_name, class_name, value)
-        map[key] = parsed_value
+        if type(value) == list:
+            val_list = [
+               parse_RecordType(module_name, class_name, val) for val in value
+            ]
+            map[key] = val_list
+        else:
+            parsed_value = parse_RecordType(module_name, class_name, value)
+            map[key] = parsed_value
     return map
 
 
@@ -458,6 +482,12 @@ def to_MapType(module_name, class_name, validation_method, data):
     map = {}
     for key, value in data.items():
         key = validation_method(key)
-        dict_value = to_RecordType(module_name, class_name, value)
-        map[key] = dict_value
+        if type(value) == list:
+            val_list = [
+               to_RecordType(module_name, class_name, val) for val in value
+            ]
+            map[key] = val_list
+        else:
+            dict_value = to_RecordType(module_name, class_name, value)
+            map[key] = dict_value
     return map

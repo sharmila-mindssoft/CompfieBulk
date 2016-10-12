@@ -22,7 +22,7 @@ __all__ = [
     "process_techno_request",
 ]
 
-forms = [18, 19, 20]
+forms = [18, 19, 20, 21]
 
 
 def process_techno_request(request, db):

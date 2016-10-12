@@ -1,5 +1,7 @@
 from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list, parse_bool)
+    parse_dictionary, parse_static_list, parse_bool,
+    to_structure_dictionary_values
+)
 from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
@@ -36,6 +38,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -235,7 +239,12 @@ _Request_class_map = _init_Request_class_map()
 class Response(object):
     def to_structure(self):
         name = type(self).__name__
+        print "inside response to_structure"
         inner = self.to_inner_structure()
+        print "inner before: %s " % inner
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
+            print "inner after: %s " % inner
         return [name, inner]
 
     def to_inner_structure(self):
@@ -259,6 +268,7 @@ class UserLoginSuccess(Response):
         employee_name, employee_code, contact_no, address, designation, client_id,
         is_admin
     ):
+        print "inside init: %s" % menu
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
@@ -274,51 +284,42 @@ class UserLoginSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id",
-            "user_group_name", "menu", "employee_name", "employee_code",
-            "contact_no", "address", "designation", "client_id", "is_admin"])
+        data = parse_dictionary(data, [
+                "user_id", "session_token", "email_id",
+                "user_group_name", "menu", "employee_name", "employee_code",
+                "contact_no", "address", "designation", "client_id", "is_admin"
+            ])
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         session_token = data.get("session_token")
-        session_token = parse_structure_CustomTextType_50(session_token)
         email_id = data.get("email_id")
-        email_id = parse_structure_CustomTextType_100(email_id)
         user_group_name = data.get("user_group_name")
-        user_group_name = parse_structure_CustomTextType_50(user_group_name)
         menu = data.get("menu")
-        menu = parse_structure_RecordType_core_Menu(menu)
         employee_name = data.get("employee_name")
-        employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("employee_code")
-        employee_code = parse_structure_OptionalType_CustomTextType_50(employee_code)
         contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("designation")
-        designation = parse_structure_OptionalType_CustomTextType_50(designation)
         client_id = data.get("client_id")
-        client_id = parse_structure_OptionalType_UnsignedIntegerType_32(client_id)
         is_admin = data.get("is_admin")
-        is_admin = parse_bool(is_admin)
         return UserLoginSuccess(
-            user_id, session_token, email_id, user_group_name, menu, employee_name,
-            employee_code, contact_no, address, designation, client_id, is_admin)
+            user_id, session_token, email_id, user_group_name, menu,
+            employee_name, employee_code, contact_no, address,
+            designation, client_id, is_admin)
 
     def to_inner_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "session_token": to_structure_CustomTextType_50(self.session_token),
-            "email_id": to_structure_CustomTextType_100(self.email_id),
-            "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
-            "menu": to_structure_RecordType_core_Menu(self.menu),
-            "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_OptionalType_CustomTextType_500(self.address),
-            "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
-            "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id),
-            "is_admin": to_structure_Bool(self.is_admin)
+            "user_id": self.user_id,
+            "session_token": self.session_token,
+            "email_id": self.email_id,
+            "user_group_name": self.user_group_name,
+            "menu": self.menu,
+            "employee_name": self.employee_name,
+            "employee_code": self.employee_code,
+            "contact_no": self.contact_no,
+            "address": self.address,
+            "designation": self.designation,
+            "client_id": self.client_id,
+            "is_admin": self.is_admin
         }
 
 class AdminLoginSuccess(Response):

@@ -57,7 +57,6 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_RecordType_core_ClientBusinessGroup,
     parse_structure_RecordType_core_FileList,
     parse_structure_OptionalType_RecordType_core_FileList,
-    parse_structure_OptionalType_VectorType_UnignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_ClientConfiguration
 
 )
@@ -1339,7 +1338,6 @@ class GroupCompanyDetail(object):
         client_name = data.get("client_name")
         client_name = parse_structure_CustomTextType_50(client_name)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_OptionalType_VectorType_UnignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
         country_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(country_ids)
         incharge_persons = data.get("incharge_persons")

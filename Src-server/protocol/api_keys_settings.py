@@ -12,6 +12,7 @@
 '''
 
 from protocol.api_key_validation import *
+from server.constants import CAPTCHA_LENGTH
 
 __all__ = [
     'api_params'
@@ -19,6 +20,7 @@ __all__ = [
 
 api_params = {
     'session_token': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'captcha_text': {'type': 'TEXT', 'length': CAPTCHA_LENGTH, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'login_type': {'type': ''},
     'username': {},
     'password': {},
@@ -29,12 +31,13 @@ api_params = {
     'd_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'is_active': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    'is_admin': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'c_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
-    'form_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'form_name': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     'form_url': {'type': 'STRING', 'length': 250, 'validation_method': is_url, 'is_optional': False},
     'parent_menu': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -107,10 +110,10 @@ api_params = {
     "validity_date_settings" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ValidityDates"},
 
     'group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'client_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'client_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'country_names': {'type': 'STRING', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'next_unit_code': {'type': 'INT', 'length': 1000000, 'validation_method': None, is_optional: False},
+    'next_unit_code': {'type': 'INT', 'length': 1000000, 'validation_method': None, "is_optional": False},
 
     'no_of_legal_entities': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
@@ -155,6 +158,7 @@ api_params = {
     'no_of_users': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "forms":  {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name': 'core', "class_name": "Menu"},
     "menus":  {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_alphabet, 'is_optional': False, 'module_name': 'core', "class_name": "Form"},
+    "menu":  {'type': 'RECORD_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Menu"},
 
     'user_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
     "employee_name": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
