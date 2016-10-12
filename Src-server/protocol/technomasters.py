@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list, parse_VariantType, to_VariantType, to_dictionary_values)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list, parse_VariantType, to_VariantType, to_structure_dictionary_values)
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_GroupCompany,
     parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
@@ -96,6 +96,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -605,6 +607,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -1063,7 +1067,7 @@ class GetClientsSuccess(Response):
             "unit_geographies_list": self.unit_geographies_list,
             "client_domains": self.client_domains
         }
-        return to_dictionary_values(data)
+        return data
 
 class SaveClientSuccess(Response):
     def __init__(self):
