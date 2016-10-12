@@ -170,7 +170,7 @@ def get_nature_by_id(db, nature_id):
     row = db.call_proc("sp_statutory_natures_getnaturebyid", values_list)
     nature_name = None
     for r in row:
-        nature_name = r[0]
+        nature_name = r["statutory_nature_name"]
         print nature_name
     return nature_name
 
@@ -208,7 +208,7 @@ def check_duplicate_statutory_nature(db, nature_name, nature_id):
     row = db.call_proc("sp_statutory_nature_checkduplicatenature", param)
 
     for r in row:
-        if r[0] > 0:
+        if r["cnt"] > 0:
             isDuplicate = True
     return isDuplicate
 
@@ -371,17 +371,18 @@ def get_geography_levels(db):
 
 
 def return_geography_levels(data):
-    geography_levels = {}
+    geography_levels = []
     for d in data:
-        country_id = d["country_id"]
-        level = core.Level(
-            d["level_id"], d["level_position"], d["level_name"]
+        #country_id = d["country_id"]
+        level = core.UnitGeographyLevel(
+            d["level_id"], d["level_position"], d["level_name"], d["country_id"]
         )
-        _list = geography_levels.get(country_id)
-        if _list is None:
-            _list = []
-        _list.append(level)
-        geography_levels[country_id] = _list
+        #_list = geography_levels.get(country_id)
+        #if _list is None:
+        #    _list = []
+        #_list.append(level)
+        #geography_levels[country_id] = _list
+        geography_levels.append(level)
     return geography_levels
 
 
@@ -390,7 +391,7 @@ def get_geograhpy_levels_for_user(db, user_id):
     condition_val = [user_id]
 
     result = db.call_proc(
-        "sp_geography_levels_getlevelsforusers", condition_val
+        "sp_geography_levels_getlevelsforusers", (condition_val,)
     )
     return return_geography_levels(result)
 
@@ -529,24 +530,25 @@ def get_geographies_for_user_with_mapping(db, user_id):
     where_condition_val = [user_id]
     result = db.call_proc("sp_get_geographies_for_users_mapping", (where_condition_val,))
 
-    geographies = {}
+    geographies = []
     if result:
         for d in result:
-            print "parent"
-            print d["parent_ids"][:-1].split(',')
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
-            geography = core.GeographyWithMapping(
+            geography = core.UnitGeographyMapping(
                 d["geography_id"], d["geography_name"],
                 d["level_id"],
                 d["parent_names"],
-                parent_ids[-1], bool(d["is_active"])
+                parent_ids,
+                d["country_id"],
+                bool(d["is_active"])
             )
-            country_id = d["country_id"]
-            _list = geographies.get(country_id)
-            if _list is None:
-                _list = []
-            _list.append(geography)
-            geographies[country_id] = _list
+            #country_id = d["country_id"]
+            #_list = geographies.get(country_id)
+            #if _list is None:
+            #    _list = []
+            #_list.append(geography)
+            #geographies[country_id] = _list
+            geographies.append(geography)
     return geographies
 
 
