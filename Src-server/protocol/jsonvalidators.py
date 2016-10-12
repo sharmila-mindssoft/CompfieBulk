@@ -152,9 +152,14 @@ def parse_bytes(x):
 
 
 def parse_list(x, length=0):
+    print "x"
+    print x
+    print type(x)
+    #print len(x)
     if x is None:
         raise empty_error()
     if type(x) is not list:
+        print "yes list"
         raise expectation_error("a list", x)
     if len(x) <= length or length == 0:
         return x
@@ -179,6 +184,7 @@ def parse_dictionary(x, field_names=[]):
     if x is None:
         raise empty_error()
     if (type(x) is not dict) and (type(x) is not OrderedDict):
+        print "parse bg"
         raise expectation_error("a dict", x)
     for field_name in field_names:
         if field_name not in x.keys():
@@ -293,9 +299,12 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
 
         elif param.get('type') == 'vector_type_string':
             # list_of_string by default support optional
-            assert param.get('validation_method') is None
+            print "inside vector type string"
+            assert param.get('validation_method') is not None
             if param.get('is_optional') is False:
                 val = parse_string_list(val, string_length=param.get('length'))
+                print "inside vector type string is optional"
+                print val
             else:
                 val = parse_optional_string_list(
                     val, string_length=param.get('length'))
@@ -342,7 +351,14 @@ def to_dictionary_values(data, response=None):
     for key in data:
         value = data[key]
         param = api_params.get(key)
+        print "a"
+        print key
+        print value
+        print param
+        if param is None:
+            continue
         if param.get('type') == 'vector_type':
+            print "vector"
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
             value = to_VectorType(
@@ -424,7 +440,9 @@ def to_RecordType(module_name, class_name, data):
 def parse_VectorType(module_name, class_name, data):
     data = parse_list(data, 0)
     lst = []
+    print "inside item"
     for item in data:
+        print item
         lst.append(
             parse_RecordType(module_name, class_name, item)
         )
