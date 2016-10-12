@@ -262,21 +262,19 @@ class SaveIndustry(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "i_name"])
-        country_id = data.get("c_ids")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("d_ids")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        data = parse_dictionary(data, ["c_id", "d_id", "i_name"])
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
         industry_name = data.get("i_name")
-        industry_name = parse_structure_CustomTextType_50(industry_name)
         return SaveIndustry(country_id, domain_id, industry_name)
 
     def to_inner_structure(self):
-        return {
-            "c_ids": to_structure_UnsignedIntegerType_32(self.country_id),
-            "d_ids": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "i_name": to_structure_CustomTextType_50(self.industry_name),
+        data = {
+            "c_id": self.country_id,
+            "d_id": self.domain_id,
+            "i_name": self.industry_name,
         }
+        return data
 
 
 class UpdateIndustry(Request):
@@ -288,12 +286,12 @@ class UpdateIndustry(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "i_ids", "i_name"])
-        country_id = data.get("c_ids")
+        data = parse_dictionary(data, ["c_id", "d_id", "i_id", "i_name"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("d_ids")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        industry_id = data.get("i_ids")
+        industry_id = data.get("i_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("i_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
@@ -301,9 +299,9 @@ class UpdateIndustry(Request):
 
     def to_inner_structure(self):
         return {
-            "c_ids": to_structure_UnsignedIntegerType_32(self.country_id),
-            "d_ids": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "i_ids": to_structure_UnsignedIntegerType_32(self.industry_id),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "d_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "i_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "i_name": to_structure_CustomTextType_50(self.industry_name),
         }
 
@@ -348,17 +346,17 @@ class SaveStatutoryNature(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["s_n_name", "c_ids"])
+        data = parse_dictionary(data, ["s_n_name", "c_id"])
         statutory_nature_name = data.get("s_n_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
-        country_id = data.get("c_ids")
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         return SaveStatutoryNature(statutory_nature_name, country_id)
 
     def to_inner_structure(self):
         return {
             "s_n_name": to_structure_CustomTextType_50(self.statutory_nature_name),
-            "c_ids": to_structure_UnsignedIntegerType_32(self.country_id),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id),
         }
 
 class UpdateStatutoryNature(Request):
@@ -369,12 +367,12 @@ class UpdateStatutoryNature(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["s_n_ids", "s_n_name", "c_ids"])
-        statutory_nature_id = data.get("s_n_ids")
+        data = parse_dictionary(data, ["s_n_id", "s_n_name", "c_id"])
+        statutory_nature_id = data.get("s_n_id")
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("s_n_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
-        country_id = data.get("c_ids")
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         return UpdateStatutoryNature(statutory_nature_id, statutory_nature_name, country_id)
 
@@ -382,7 +380,7 @@ class UpdateStatutoryNature(Request):
         return {
             "s_n_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "s_n_name": to_structure_CustomTextType_50(self.statutory_nature_name),
-            "c_ids": to_structure_UnsignedIntegerType_32(self.country_id),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id),
         }
 
 class ChangeStatutoryNatureStatus(Request):
