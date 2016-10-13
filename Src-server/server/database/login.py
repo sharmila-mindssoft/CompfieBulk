@@ -46,7 +46,8 @@ def verify_login(db, username, password):
         if data_list is None:
             return False
         else:
-            return convert_to_dict(data_list, data_columns)
+            result = convert_to_dict(data_list, data_columns)
+            return result
     else:
         return True
 

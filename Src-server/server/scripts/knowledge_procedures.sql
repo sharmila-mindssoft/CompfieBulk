@@ -443,7 +443,7 @@ BEGIN
     (
         select sum(is_active) from tbl_legal_entities tle
         WHERE tle.client_id=tcg.client_id
-    ) as is_active
+    ) as is_active, is_approved
     FROM tbl_client_groups tcg;
 END //
 DELIMITER ;
@@ -559,8 +559,11 @@ CREATE PROCEDURE `sp_client_group_save`(
     IN groupname VARCHAR(50), email_id VARCHAR(100)
 )
 BEGIN
-    INSERT INTO tbl_client_groups (group_name, group_admin)
-    VALUES (groupname, email_id);
+    INSERT INTO tbl_client_groups (
+	group_name, short_name, email_id, total_view_licence, 
+	is_active, status_changed_on, is_approved, created_by, 
+	created_on) VALUES (groupname, shortname, emailid, 
+	no_of_view_licence, 1, now(), 0, session_user, now());
 END //
 DELIMITER ;
 
@@ -680,10 +683,10 @@ CREATE PROCEDURE `sp_client_user_save_admin`(
 )
 BEGIN
     INSERT INTO tbl_client_users (
-        client_id, legal_entity_id, user_id,  email_id, employee_name, created_on,
+        client_id, user_id,  email_id, employee_name, created_on,
         is_primary_admin, is_active
     ) VALUES (
-        clientid, 0, 0, username, "Admin", current_time_stamp, 1, 1
+        clientid, 0, username, "Admin", current_time_stamp, 1, 1
     );
 END //
 DELIMITER ;
@@ -759,8 +762,8 @@ CREATE PROCEDURE `sp_client_groups_details_by_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT group_name, group_admin FROM tbl_client_groups
-    WHERE client_id=clientid;
+    SELECT group_name, short_name, email_id, total_view_licence
+    FROM tbl_client_groups WHERE client_id=clientid;
 END //
 DELIMITER ;
 
@@ -779,7 +782,7 @@ BEGIN
         WHERE tbg.business_group_id=tle.business_group_id
     ) as business_group_name,
     legal_entity_name, contract_from, contract_to, logo,
-    file_space_limit, total_licence, sms_subscription
+    file_space_limit, total_licence
     FROM tbl_legal_entities tle WHERE client_id=clientid;
 END //
 DELIMITER ;
@@ -798,19 +801,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- --------------------------------------------------------------------------------
--- To get incharge persons by group id
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_user_clients_by_group_id`;
-DELIMITER //
-CREATE PROCEDURE `sp_user_clients_by_group_id`(
-    IN clientid INT(11)
-)
-BEGIN
-    SELECT client_id, legal_entity_id, user_id
-    FROM tbl_user_clients WHERE client_id = clientid;
-END //
-DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- to get configurations of Client by group id
@@ -2024,27 +2014,24 @@ DROP PROCEDURE IF EXISTS `sp_users_type_wise`;
 DELIMITER //
 CREATE PROCEDURE `sp_users_type_wise`()
 BEGIN 
-	SELECT user_id,
-	concat(employee_code," - ", employee_name) as employee_name,
-	is_active
-	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
-		WHERE form_category_id=5
-	);
-	SELECT user_id,
-	concat(employee_code," - ", employee_name) as employee_name,
-	is_active
-	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
-		WHERE form_category_id=6
-	);
-	SELECT user_id,
-	concat(employee_code," - ", employee_name) as employee_name,
-	is_active
-	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
-		WHERE form_category_id=7
-	);
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=4;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=3;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=5;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=6;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=7;
+	SELECT user_id, is_active, 
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=8;
 	SELECT user_id, country_id FROM tbl_user_countries;
 	SELECT user_id, domain_id FROM tbl_user_domains;
 END //
@@ -2057,10 +2044,34 @@ DROP PROCEDURE IF EXISTS `sp_usermappings_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_usermappings_list`()
 BEGIN
-	SELECT user_mapping_id, cc_manager_id, is_active
-	FROM tbl_user_mapping;
-	SELECT user_mapping_id, user_id, form_category_id
-	FROM tbl_user_mapping_users;
+	select user_mapping_id, user_category_id, country_id, domain_id,
+	parent_user_id, child_user_id from tbl_user_mapping;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get user category by user id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_category_by_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_category_by_id`(
+	IN userid INT(11)
+)
+BEGIN
+	SELECT user_category_id FROM tbl_users WHERE user_id=userid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Delete Mappings under a parent user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_delete`;
+DELIMITER //
+CREATE PROCEDURE `sp_usermapping_delete`(
+	IN parent_userid INT(11)
+)
+BEGIN
+	DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
 END //
 DELIMITER;
 

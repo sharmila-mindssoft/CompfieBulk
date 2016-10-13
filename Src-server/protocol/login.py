@@ -1,10 +1,10 @@
 from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values)
 
+
 #
 # Request
 #
-
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
@@ -29,6 +29,7 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+
 class Login(Request):
     def __init__(self, login_type, username, password, short_name, ip):
         self.login_type = login_type
@@ -39,7 +40,8 @@ class Login(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["login_type", "username", "password", "ip"])
+        data = parse_dictionary(
+            data, ["login_type", "username", "password", "ip"])
         login_type = data.get("login_type")
         username = data.get("username")
         password = data.get("password")
@@ -55,6 +57,7 @@ class Login(Request):
             "short_name": self.short_name,
             "ip": self.ip
         }
+
 
 class ForgotPassword(Request):
     def __init__(self, username, short_name, login_type):
@@ -219,6 +222,7 @@ class UserLoginSuccess(Response):
         employee_name, employee_code, contact_no, address, designation, client_id,
         is_admin
     ):
+        print "inside init: %s" % menu
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
@@ -251,8 +255,9 @@ class UserLoginSuccess(Response):
         client_id = data.get("client_id")
         is_admin = data.get("is_admin")
         return UserLoginSuccess(
-            user_id, session_token, email_id, user_group_name, menu, employee_name,
-            employee_code, contact_no, address, designation, client_id, is_admin)
+            user_id, session_token, email_id, user_group_name, menu,
+            employee_name, employee_code, contact_no, address,
+            designation, client_id, is_admin)
 
     def to_inner_structure(self):
         return {
@@ -260,7 +265,6 @@ class UserLoginSuccess(Response):
             "session_token": self.session_token,
             "email_id": self.email_id,
             "user_group_name": self.user_group_name,
-            # "menu": to_structure_RecordType_core_Menu(self.menu),
             "menu": self.menu,
             "employee_name": self.employee_name,
             "employee_code": self.employee_code,
@@ -271,8 +275,12 @@ class UserLoginSuccess(Response):
             "is_admin": self.is_admin
         }
 
+
 class AdminLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, menu, employee_name, client_id):
+    def __init__(
+        self, user_id, session_token, email_id,
+        menu, employee_name, client_id
+    ):
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id

@@ -274,10 +274,15 @@ var message = {
   "file_storage_saved": "Configured File Storage",
   "save_auto_deletion_success": "Auto Deletion Saved Successfully",
   "deletion_year_required": "Deletion year required",
+  "parent_user_required": "Parent User Required",
+  "child_user_required": "Select atleast one child user",
+  "mapping_save_success": "User mapping saved successfully",
+  "short_name_required": "Short Name Required",
+  "shortname_20": "Username - Only 20 characters are allowed",
+  "no_of_view_licence_required": "Number of View Licence Required",
   "cc_manager_required": "CC Manager Required",
   "cc_user_required": "CC User Required",
   "techno_manager_required": "Techno manager required",
-  "mapping_save_success": "User mapping saved successfully"
   "unit_saved": "Unit(s) Saved successfully",
   "unit_updated": "Units(s) Updated Successfully"
 };

@@ -299,25 +299,32 @@ class GetUserMappings(Request):
 
 
 class SaveUserMappings(Request):
-    def __init__(self, user_id, cc_user_ids, techno_manager_ids):
-        self.user_id = user_id
-        self.cc_user_ids = cc_user_ids
-        self.techno_manager_ids = techno_manager_ids
+    def __init__(self, country_id, domain_id, parent_user_id, child_users):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.parent_user_id = parent_user_id
+        self.child_users = child_users
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["user_id", "cc_user_ids", "techno_manager_ids"])
-        user_id = data.get("user_id")
-        cc_user_ids = data.get("cc_user_ids")
-        techno_manager_ids = data.get("techno_manager_ids")
-        return SaveUserMappings(user_id, cc_user_ids, techno_manager_ids)
+            data, [
+                "country_id", "domain_id", "parent_user_id", "child_users"
+            ])
+        country_id = data.get("country_id")
+        domain_id = data.get("domain_id")
+        parent_user_id = data.get("parent_user_id")
+        child_users = data.get("child_users")
+        return SaveUserMappings(
+            country_id, domain_id, parent_user_id, child_users
+        )
 
     def to_inner_structure(self):
         return {
-            "user_id": self.user_id,
-            "cc_user_ids": self.cc_user_ids,
-            "techno_manager_ids": self.techno_manager_ids
+            "country_id": self.country_id,
+            "domain_id": self.domain_id,
+            "parent_user_id": self.parent_user_id,
+            "child_users": self.child_users
         }
 
 
@@ -686,59 +693,30 @@ class GetValidityDateListSuccess(Response):
 
 class UserMapping(object):
     def __init__(
-        self, usermapping_id, cc_manager_id, is_active
+        self, user_mapping_id, parent_user_id, child_user_id
     ):
-        self.usermapping_id = usermapping_id
-        self.cc_manager_id = cc_manager_id
-        self.is_active = is_active
+        self.user_mapping_id = user_mapping_id
+        self.parent_user_id = parent_user_id
+        self.child_user_id = child_user_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "usermapping_id", "cc_manager_id", "is_active"
+                "user_mapping_id", "parent_user_id", "child_user_id"
             ])
-        usermapping_id = data.get("usermapping_id")
-        cc_manager_id = data.get("cc_manager_id")
-        is_active = data.get("is_active")
+        user_mapping_id = data.get("user_mapping_id")
+        parent_user_id = data.get("parent_user_id")
+        child_user_id = data.get("child_user_id")
         return UserMapping(
-            usermapping_id, cc_manager_id, is_active
+            user_mapping_id, parent_user_id, child_user_id
         )
 
     def to_structure(self):
         return {
-            "usermapping_id": self.usermapping_id,
-            "cc_manager_id": self.cc_manager_id,
-            "is_active": self.is_active
-        }
-
-
-class UserMappingUsers(object):
-    def __init__(
-        self, usermapping_id, user_id, form_category_id
-    ):
-        self.usermapping_id = usermapping_id
-        self.user_id = user_id
-        self.form_category_id = form_category_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(
-            data, [
-                "usermapping_id", "user_id", "form_category_id"
-            ])
-        usermapping_id = data.get("usermapping_id")
-        user_id = data.get("user_id")
-        form_category_id = data.get("form_category_id")
-        return UserMappingUsers(
-            usermapping_id, user_id, form_category_id
-        )
-
-    def to_structure(self):
-        return {
-            "usermapping_id": self.usermapping_id,
-            "user_id": self.user_id,
-            "form_category_id": self.form_category_id
+            "user_mapping_id": self.user_mapping_id,
+            "parent_user_id": self.parent_user_id,
+            "child_user_id": self.child_user_id
         }
 
 
@@ -779,45 +757,54 @@ class User(object):
 
 class GetUserMappingsSuccess(Response):
     def __init__(
-        self, countries, domains, cc_managers, cc_users, techno_managers,
-        user_mappings, user_mapping_users
+        self, countries, domains, knowledge_managers, knowledge_users,
+        techno_managers, techno_users, domain_managers, domain_users,
+        user_mappings
     ):
         self.countries = countries
         self.domains = domains
-        self.cc_managers = cc_managers
-        self.cc_users = cc_users
+        self.knowledge_managers = knowledge_managers
+        self.knowledge_users = knowledge_users
         self.techno_managers = techno_managers
+        self.techno_users = techno_users
+        self.domain_managers = domain_managers
+        self.domain_users = domain_users
         self.user_mappings = user_mappings
-        self.user_mapping_users = user_mapping_users
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "countries", "domains", "cc_managers", "cc_users",
-                "techno_managers", "user_mappings", "user_mapping_users"
+                "countries", "domains", "knowledge_managers",
+                "knowledge_users", "techno_managers", "techno_users",
+                "domain_managers", "domain_users", "user_mappings"
             ])
         countries = data.get("countries")
         domains = data.get("domains")
-        cc_managers = data.get("cc_managers")
-        cc_users = data.get("cc_users")
+        knowledge_managers = data.get("knowledge_managers")
+        knowledge_users = data.get("knowledge_users")
         techno_managers = data.get("techno_managers")
+        techno_users = data.get("techno_users")
+        domain_managers = data.get("domain_managers")
+        domain_users = data.get("domain_users")
         user_mappings = data.get("user_mappings")
-        user_mapping_users = data.get("user_mapping_users")
         return GetUserMappingsSuccess(
-            countries, domains, cc_managers, cc_users, techno_managers,
-            user_mappings, user_mapping_users
+            countries, domains, knowledge_managers, knowledge_users,
+            techno_managers, techno_users, domain_managers, domain_users,
+            user_mappings
         )
 
     def to_inner_structure(self):
         return {
             "countries": self.countries,
             "domains": self.domains,
-            "cc_managers": self.cc_managers,
-            "cc_users": self.cc_users,
+            "knowledge_managers": self.knowledge_managers,
+            "knowledge_users": self.knowledge_users,
             "techno_managers": self.techno_managers,
-            "user_mappings": self.user_mappings,
-            "user_mapping_users": self.user_mapping_users
+            "techno_users": self.techno_users,
+            "domain_managers": self.domain_managers,
+            "domain_users": self.domain_users,
+            "user_mappings": self.user_mappings
         }
 
 

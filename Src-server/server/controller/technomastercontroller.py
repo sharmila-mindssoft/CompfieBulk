@@ -53,12 +53,11 @@ def get_client_groups(db, request, session_user):
 ########################################################
 def get_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
-    users = get_techno_users(db)
     domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     return technomasters.GetClientGroupFormDataSuccess(
-        countries=countries, users=users, domains=domains,
-        industries=industries
+        countries=countries, domains=domains,
+        industry_name_id=industries
     )
 
 
@@ -71,7 +70,8 @@ def process_save_client_group(db, request, session_user):
         return technomasters.GroupNameAlreadyExists()
     else:
         group_id = save_client_group(
-            db, request.group_name, request.user_name
+            db, request.group_name, request.email_id,
+            request.short_name, request.no_of_view_licence, session_user
         )
         legal_entity_names = save_legal_entities(
             db, request, group_id, session_user)
@@ -81,10 +81,9 @@ def process_save_client_group(db, request, session_user):
         legal_entity_id_name_map = get_legal_entity_ids_by_name(
             db, legal_entity_names
         )
-        save_client_user(db, group_id, request.user_name)
+        save_client_user(db, group_id, request.email_id)
         save_client_countries(db, group_id, country_ids)
         save_client_domains(db, group_id, request, legal_entity_id_name_map)
-        save_incharge_persons(db, group_id, request, legal_entity_id_name_map)
         save_organization(
             db, group_id, request, legal_entity_id_name_map, session_user
         )
@@ -97,18 +96,20 @@ def process_save_client_group(db, request, session_user):
 def get_edit_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
     business_groups = get_client_business_groups(db, request.group_id)
-    users = get_techno_users(db)
     domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     group_id = request.group_id
     (
-        group_name, user_name, legal_entities, date_configuration_list
+        group_name, user_name, short_name, total_view_licence,
+        legal_entities, date_configuration_list
     ) = get_client_details(db, group_id)
     return technomasters.GetEditClientGroupFormDataSuccess(
-        countries=countries, users=users, domains=domains,
+        countries=countries, domains=domains,
         business_groups=business_groups,
-        industries=industries, group_name=group_name,
-        user_name=user_name, legal_entities=legal_entities,
+        industry_name_id=industries, group_name=group_name,
+        email_id=user_name, short_name=short_name,
+        no_of_licence=total_view_licence,
+        legal_entities=legal_entities,
         date_configurations=date_configuration_list
     )
 
@@ -118,33 +119,31 @@ def get_edit_client_group_form_data(db, request, session_user):
 ########################################################
 def process_update_client_group(db, request, session_user):
     session_user = int(session_user)
-    if is_invalid_group_id(db, request.group_id):
+    if is_invalid_group_id(db, request.client_id):
         return technomasters.InvalidClientId()
-    elif is_duplicate_group_name(db, request.group_name, request.group_id):
+    elif is_duplicate_group_name(db, request.group_name, request.client_id):
         return technomasters.GroupNameAlreadyExists()
     country_ids = save_date_configurations(
-        db, request.group_id, request.date_configurations, session_user
+        db, request.client_id, request.date_configurations, session_user
     )
     if is_deactivated_existing_country(
-        db, request.group_id, country_ids
+        db, request.client_id, country_ids
     ):
         return technomasters.CannotDeactivateCountry()
     else:
         update_client_group(
-            db, request.group_name, request.group_id
+            db, request.group_name, request.client_id
         )
         legal_entity_names = update_legal_entities(
-            db, request, request.group_id, session_user)
+            db, request, request.client_id, session_user)
         legal_entity_id_name_map = get_legal_entity_ids_by_name(
             db, legal_entity_names
         )
-        save_client_countries(db, request.group_id, country_ids)
+        save_client_countries(db, request.client_id, country_ids)
         save_client_domains(
-            db, request.group_id, request, legal_entity_id_name_map)
-        save_incharge_persons(
-            db, request.group_id, request, legal_entity_id_name_map)
+            db, request.client_id, request, legal_entity_id_name_map)
         save_organization(
-            db, request.group_id, request,
+            db, request.client_id, request,
             legal_entity_id_name_map, session_user
         )
         return technomasters.UpdateClientGroupSuccess()

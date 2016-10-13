@@ -136,9 +136,12 @@ def return_industries(data):
 #  Parameters : Object of database, group name and group admin username
 #  Return Type : client id  (Int)
 ##########################################################################
-def save_client_group(db, group_name, username):
+def save_client_group(
+    db, group_name, username, short_name, no_of_view_licence, session_user
+):
     client_id = db.call_insert_proc(
-        "sp_client_group_save", (group_name, username)
+        "sp_client_group_save",
+        (group_name, username, short_name, no_of_view_licence, session_user)
     )
     return client_id
 
@@ -179,13 +182,13 @@ def save_legal_entities(db, request, group_id, session_user):
     columns = [
         "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence", "sms_subscription",
+        "file_space_limit", "total_licence",
         'is_active', "created_by", "created_on", 'updated_by', "updated_on"
     ]
     values = []
     current_time_stamp = get_date_time()
     legal_entity_names = []
-    for entity in request.legal_entities:
+    for entity in request.legal_entity_details:
         if is_logo_in_image_format(entity.logo):
             file_name = save_client_logo(entity.logo)
         else:
@@ -204,14 +207,10 @@ def save_legal_entities(db, request, group_id, session_user):
             string_to_datetime(entity.contract_from),
             string_to_datetime(entity.contract_to),
             file_name, entity.file_space, entity.no_of_licence,
-            entity.is_sms_subscribed, 1, session_user, current_time_stamp,
+            1, session_user, current_time_stamp,
             session_user, current_time_stamp
         )
         values.append(value_tuple)
-        notify_incharge_persons(
-            db, request.group_name, entity.legal_entity_name,
-            entity.incharge_persons
-        )
     db.bulk_insert(
         tblLegalEntities, columns, values
     )
@@ -233,7 +232,7 @@ def update_legal_entities(db, request, group_id, session_user):
     insert_columns = [
         "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence", "sms_subscription",
+        "file_space_limit", "total_licence",
         'is_active', "created_by", "created_on", 'updated_by', "updated_on"
     ]
     values = []
@@ -271,8 +270,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 entity.legal_entity_name,
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
-                file_name, entity.file_space, entity.no_of_licence,
-                entity.is_sms_subscribed, 1,
+                file_name, entity.file_space, entity.no_of_licence, 1,
                 session_user, current_time_stamp
             )
             values.append(value_tuple)
@@ -286,7 +284,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
-                entity.is_sms_subscribed, 1, session_user, current_time_stamp,
+                1, session_user, current_time_stamp,
                 session_user, current_time_stamp
             )
             insert_values.append(insert_value_tuple)
@@ -419,7 +417,12 @@ def save_client_domains(db, client_id, request, legal_entity_name_id_map):
     )
     values_list = []
     columns = ["client_id", "legal_entity_id", "domain_id"]
-    for entity in request.legal_entities:
+
+    if hasattr(request, "legal_entity_details"):
+        entity_details = request.legal_entity_details
+    else:
+        entity_details = request.legal_entities
+    for entity in entity_details:
         for domain in entity.domain_details:
             value_tuple = (
                 client_id, legal_entity_name_id_map[
@@ -478,7 +481,11 @@ def save_organization(
         "updated_on"
     ]
     values_list = []
-    for entity in request.legal_entities:
+    if hasattr(request, "legal_entity_details"):
+        entity_details = request.legal_entity_details
+    else:
+        entity_details = request.legal_entities
+    for entity in entity_details:
         legal_entity_name = entity.legal_entity_name
         domain_details = entity.domain_details
         for domain in domain_details:
@@ -594,31 +601,31 @@ def save_client_logo(logo):
 #  Return Type : Raises process error if insertion failse and returns True
 #   if insertion succeeds
 ##########################################################################
-def notify_incharge_persons(
-    db, group_name, legal_entity_name, incharge_persons
-):
-    notification_text = "Legal entity %s of Client %s has been assigned" % (
-        legal_entity_name, group_name
-    )
-    link = "/knowledge/client-unit"
+# def notify_incharge_persons(
+#     db, group_name, legal_entity_name, incharge_persons
+# ):
+#     notification_text = "Legal entity %s of Client %s has been assigned" % (
+#         legal_entity_name, group_name
+#     )
+#     link = "/knowledge/client-unit"
 
-    notification_id = db.call_insert_proc(
-        "sp_notifications_notify_incharge",
-        (notification_text, link)
-    )
-    if notification_id is False:
-        raise process_error("E045")
-    columns = ["notification_id", "user_id", "read_status"]
-    values_list = []
-    for incharge_person in incharge_persons:
-        values_tuple = (notification_id, incharge_person, 0)
-        values_list.append(values_tuple)
-    r = db.bulk_insert(
-        tblNotificationsStatus, columns, values_list
-    )
-    if r is False:
-        raise process_error("E045")
-    return r
+#     notification_id = db.call_insert_proc(
+#         "sp_notifications_notify_incharge",
+#         (notification_text, link)
+#     )
+#     if notification_id is False:
+#         raise process_error("E045")
+#     columns = ["notification_id", "user_id", "read_status"]
+#     values_list = []
+#     for incharge_person in incharge_persons:
+#         values_tuple = (notification_id, incharge_person, 0)
+#         values_list.append(values_tuple)
+#     r = db.bulk_insert(
+#         tblNotificationsStatus, columns, values_list
+#     )
+#     if r is False:
+#         raise process_error("E045")
+#     return r
 
 
 #
@@ -640,9 +647,6 @@ def get_client_details(db, client_id):
     domains = db.call_proc(
         "sp_client_domains_by_group_id", (client_id,)
     )
-    incharge_persons = db.call_proc(
-        "sp_user_clients_by_group_id", (client_id,)
-    )
     date_configurations = db.call_proc(
         "sp_client_configuration_by_group_id", (client_id,)
     )
@@ -650,21 +654,24 @@ def get_client_details(db, client_id):
         "sp_le_d_industry_by_group_id", (client_id,)
     )
     group_name = client_details[0]["group_name"]
-    user_name = client_details[0]["group_admin"]
-    incharge_persons_map = return_incharge_persons_by_legal_entity(
-        incharge_persons)
+    user_name = client_details[0]["email_id"]
+    short_name = client_details[0]["short_name"]
+    total_view_licence = client_details[0]["total_view_licence"]
     organization_map = return_organization_by_legalentity_domain(
         organizations
     )
     domain_map = return_domain_map_by_legal_entity_id(
         domains, organization_map)
     legal_entities = return_legal_entities(
-        legal_entities, incharge_persons_map, domain_map
+        legal_entities, domain_map
     )
     date_configuration_list = return_date_configurations(
         date_configurations
     )
-    return group_name, user_name, legal_entities, date_configuration_list
+    return (
+        group_name, user_name, short_name, total_view_licence,
+        legal_entities, date_configuration_list
+    )
 
 
 ##########################################################################
@@ -672,8 +679,9 @@ def get_client_details(db, client_id):
 #  Parameters : Legal entity tuple, incharge person tuple, domain tuple
 #  Return Type : List of object of Legal entities
 ##########################################################################
-def return_legal_entities(legal_entities, incharge_persons, domains):
+def return_legal_entities(legal_entities, domains):
     results = []
+    print "domains: %s" % domains
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
             business_group = None
@@ -688,13 +696,10 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
                 business_group=business_group,
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
-                incharge_persons=incharge_persons[
-                    int(legal_entity["legal_entity_id"])],
                 old_logo=legal_entity["logo"],
                 new_logo=None,
                 no_of_licence=legal_entity["total_licence"],
-                file_space=legal_entity["file_space_limit"],
-                is_sms_subscribed=legal_entity["sms_subscription"],
+                file_space=int(legal_entity["file_space_limit"]),
                 contract_from=datetime_to_string(
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
@@ -710,14 +715,14 @@ def return_legal_entities(legal_entities, incharge_persons, domains):
 #  tuples )
 #  Return Type : Dictionary (Legal entity id as key and User id as value)
 ##########################################################################
-def return_incharge_persons_by_legal_entity(incharge_persons):
-    incharge_person_map = {}
-    for icp in incharge_persons:
-        legal_entity_id = int(icp["legal_entity_id"])
-        if legal_entity_id not in incharge_person_map:
-            incharge_person_map[legal_entity_id] = []
-        incharge_person_map[legal_entity_id].append(int(icp["user_id"]))
-    return incharge_person_map
+# def return_incharge_persons_by_legal_entity(incharge_persons):
+#     incharge_person_map = {}
+#     for icp in incharge_persons:
+#         legal_entity_id = int(icp["legal_entity_id"])
+#         if legal_entity_id not in incharge_person_map:
+#             incharge_person_map[legal_entity_id] = []
+#         incharge_person_map[legal_entity_id].append(int(icp["user_id"]))
+#     return incharge_person_map
 
 
 ##########################################################################
@@ -928,7 +933,8 @@ def return_group(groups):
         fn(
             group["client_id"], group["group_name"],
             group["country_names"], group["no_of_legal_entities"],
-            True if group["is_active"] > 0 else False
+            True if group["is_active"] > 0 else False,
+            int(group["is_approved"]), group["remarks"]
         ) for group in groups
     ]
     return client_list
