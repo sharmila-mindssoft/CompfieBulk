@@ -279,7 +279,12 @@ var message = {
   "mapping_save_success": "User mapping saved successfully",
   "short_name_required": "Short Name Required",
   "shortname_20": "Username - Only 20 characters are allowed",
-  "no_of_view_licence_required": "Number of View Licence Required"
+  "no_of_view_licence_required": "Number of View Licence Required",
+  "cc_manager_required": "CC Manager Required",
+  "cc_user_required": "CC User Required",
+  "techno_manager_required": "Techno manager required",
+  "unit_saved": "Unit(s) Saved successfully",
+  "unit_updated": "Units(s) Updated Successfully"
 };
 
 function clearMessage() {

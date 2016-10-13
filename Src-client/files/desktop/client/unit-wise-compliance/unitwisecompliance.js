@@ -180,7 +180,7 @@ function createPageView(perPage){
   $('#pagination-rpt').unbind('page');
   $('#pagination-rpt').twbsPagination({
     totalPages: Math.ceil(totalRecord / perPage),
-    visiblePages: "5",
+    visiblePages: visiblePageCount,
     onPageClick: function (event, page) {
         cPage = parseInt(page);
         paginationLoad(cPage);
@@ -218,10 +218,6 @@ $('#submit').click(function () {
     assignee = $('#assignee').val();
   $('.tbody-unit').find('tbody').remove();
   $('.compliance_count').text('');
-  lastUnit = '';
-  lastBG = '';
-  lastLE = '';
-  lastDv = '';
   sno = 0;
   fromCount = 0;
   clearMessage();

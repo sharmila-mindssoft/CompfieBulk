@@ -64,12 +64,12 @@ __all__ = [
 def report_unitwise_compliance(
     db, country_id, domain_id, business_group_id,
     legal_entity_id, division_id, unit_id, assignee,
-    session_user, from_count, to_count
+    session_user, from_count, page_count
 ):
     data, total = report_assigneewise_compliance(
         db, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, assignee,
-        session_user, from_count, to_count
+        session_user, from_count, page_count
     )
     return data, total
 
@@ -362,7 +362,7 @@ def return_assignee_report_data(data):
 
 def report_serviceproviderwise_compliance(
     db, country_id, domain_id, statutory_id, unit_id,
-    service_provider_id, session_user, from_count, to_count
+    service_provider_id, session_user, from_count, page_count
 ):
     columns = [
         "country_id", "unit_id", "compliance_id", "statutory_dates",
@@ -455,7 +455,7 @@ def report_serviceproviderwise_compliance(
         q += qry_where
         param.extend(qry_where_val)
 
-    param.extend([from_count, to_count])
+    param.extend([from_count, page_count])
     rows = db.select_all(q + order, param)
     data = convert_to_dict(rows, columns)
     return data, count
@@ -661,7 +661,7 @@ def report_compliance_details(
     db, client_id, country_id, domain_id, statutory_id,
     unit_id, compliance_id, assignee,
     from_date, to_date, compliance_status,
-    session_user, from_count, to_count
+    session_user, from_count, page_count
 ):
 
     qry_where, qry_where_val = get_where_query_for_compliance_details_report(
@@ -677,7 +677,7 @@ def report_compliance_details(
 
     result = get_compliance_details(
         db, country_id, domain_id, statutory_id,
-        qry_where, qry_where_val, from_count, to_count
+        qry_where, qry_where_val, from_count, page_count
     )
 
     return return_cmopliance_details_report(
@@ -2345,7 +2345,7 @@ def get_compliance_task_applicability(db, request, session_user):
 
 def get_client_details_report(
     db, country_id,  business_group_id, legal_entity_id, division_id,
-    unit_id, domain_ids, session_user, start_count, to_count
+    unit_id, domain_ids, session_user, from_count, page_count
 ):
     condition, condition_val = get_client_details_condition(
         db, country_id,  business_group_id, legal_entity_id, division_id,
@@ -2373,8 +2373,8 @@ def get_client_details_report(
     if condition is not None:
         query += condition
         param.extend(condition_val)
-
-    param.extend([start_count, to_count])
+    param.extend([from_count, page_count])
+    
     rows = db.select_all(query + order, param)
 
     columns_list = columns.replace(" ", "").split(",")

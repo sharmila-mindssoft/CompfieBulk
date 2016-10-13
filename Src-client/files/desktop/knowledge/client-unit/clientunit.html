@@ -27,7 +27,7 @@
             <th>Group</th>
             <th>Business Group</th>
             <th>Legal Entity</th>
-            <th>Division</th>
+            <th>Country</th>
             <th align="center" style="width: 12%;">Edit</th>
           <!--   <th align="center" style="padding-right:5px;">Status</th> -->
           </tr>
@@ -54,9 +54,9 @@
         <td class="group-name"></td>
         <td class="business-group-name"></td>
         <td class="legal-entity-name"></td>
-        <td class="division-name"></td>
+        <td class="Country-name"></td>
         <td align="center">
-          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
         </td>
         <!-- <td align="center" class="is-active"></td> -->
       </tr>
@@ -66,7 +66,7 @@
   <div class="content-container default-display-none" id="clientunit-add">
     <div class="content-area">
       <div class="add-container">
-        <div class="add-container-heading">Client Unit<span class=""></span></div>
+        <div class="add-container-heading">Client Unit<div style="text-align:right;" class="unit-error-msg"></div></div>
         <div class="input-row">
           <div class="input-row-left">
             <div class="input-row">
@@ -81,15 +81,12 @@
               <div class="input-row">
                   <div class="single-column-field-label">Country<span class="mandatory">*</span>:</div>
                   <div class="single-column-field-input">
-                  <input type="text" class="input-box icon-autocomplete textbox" value="" tabindex="3" onkeyup="loadauto_countrytext(this.value, this.className, event)"
-                   style="width:150px !important; background-color:#fff;">
-              <input type="hidden" class="country">
-              <div class="autocompleteview ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
-              <ul class="ulist-text" style="width:195px;">
-
-              </ul>
-            </div>
-                      </div>
+                  <input type="text"  class="input-box" name="country-name" autofocus="autofocus" tabindex="1" maxlength="50" id="country-name">
+                  <input type="hidden" name="country-id" id="country-id" value="">
+                  <div id="ac-country" class="ac-textbox default-display-none">
+                    <ul style="width:85%;"></ul>
+                  </div>
+                       </div>
                   </div>
             </div>
             <div class="input-row-right">
@@ -116,11 +113,12 @@
                 </div>
 
                 </div>
-                <input type="hidden" id="countrycount" value="">
-                <input type="hidden" id="unitcount" value="">
+                <!--<input type="hidden" id="countrycount" value="">
+                <input type="hidden" id="unitcount" value="">-->
+
                 <div class="clearfix"></div>
                 <div class="add-container" style="padding-left:0px; padding-right:0px;">
-                  <a style="float:right;" onclick="addcountryrow()" style="cursor: pointer;"><img src="/images/icon-plus.png" formtarget="_self" id="add-country-row"  alt="Add New Country List Unit"  /></a>
+                  <a style="float:right;" onclick="addcountryrow()" style="cursor: pointer;"><img src="/images/icon-plus.png" formtarget="_self" id="add-country-row"  alt="Add New Country List Unit"  /><span style="font-size: smaller; vertical-align: text-top;">Add Division / Category</span></a>
                   <div class="add-country-unit-list">  <!-- Add Country Wise Load List -->
                 </div>
               </div>
@@ -152,21 +150,29 @@
       <div class="grid-table">
         <table class="btable">
           <tr style="background-color:#CCC;border-radius:5px;">
+          <td></td>
             <td  align="left">Division : </td>
-            <td>
-                <Select id="division-select" class="input-box"  tabindex="6">
+            <td align="left"  colspan="2">
+                <Select id="division-select" class="input-box"  tabindex="6" width="150px">
                       <option value="">Select</option>
                     </Select>
                     <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name" maxlength="100" tabindex="7" >
                     <span style="font-size:10px"><a class="popup-link" id="division-new" onclick="divisionExistingChecking('New')">New</a>
                         <a class="popup-link" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span>
             </td>
-              <td style="width:2%;"></td>
           <td  align="left">Category : </td>
             <td>
-                <input id="category-text" type="text" class="input-box" style="width:190px;display:block" placeholder="Category Name" maxlength="100"  tabindex="8">
+                <input id="category-text" type="text" class="input-box-category-name" style="width:190px;display:block" placeholder="Category Name" maxlength="100"  tabindex="8">
             </td>
-          <td colspan="6"><div style="text-align:right;" class="unit-error-msg"></div></td>
+            <td colspan="4" style="">
+              <div class="active_cnt" style="text-align: right; font-size: small; display: none;">
+              Active Units :</div>
+              <input type="hidden" id="divisioncount" value="" class="divisioncnt">
+                <input type="hidden" id="unitcount" value="" class="unitcnt">
+            </td>
+          <td colspan="3"></div>
+
+          </td>
         </tr>
         <tr align="left">
           <th width="1%">#</th>
@@ -186,11 +192,11 @@
         </tr>
         <tbody class="tbody-unit-list">
           <tr class="table-row" style="vertical-align:top;">
-              <td>
-                  <span class="unit-sno"></span>
+              <td class="sno">
+
               </td>
             <td><input type="hidden" class="no-of-units">
-            
+
             <select class="input-box geography-levels" onfocus="loadglevels(this.className);"  onchange="changelocation(this.className);">
               <option value="">Select</option>
             </select>
@@ -208,10 +214,6 @@
         <span class="unit-code-lbl"></span>
         </td>
         <td><input type="text" class="input-box unit-name" maxlength="50"  ></td>
-        <td><select class="input-box industry" > <!-- onfocus="industrytype(this.className);"  -->
-       <!--  <option value="">Select</option> -->
-        </select>
-      </td>
       <td><input type="text" class="input-box unit-address" maxlength="250" /></td>
       <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
       <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onkeyup="loaddomain_ms(event, this.className)"
@@ -221,8 +223,19 @@
       <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>
     </div>
   </td>
+  <td>
+      <input type="text" class="input-box icon-autocomplete orgtypeselected" value="" readonly="readonly" onkeyup="loadorgtype_ms(event, this.className)"
+                  onclick="industrytype(this.className)">
+      <input type="hidden" class="orgtype">
+      <div class="orgtype-selectbox-view ac-selectbox" style="display:none;">
+      <ul class="ul-orgtype-list" style="width:170px;" onmouseleave="hideorgtype(this.className);"></ul>
+    </div>
+  <!--<select class="input-box industry" onfocus="industrytype(this.className);">
+         <option value="">Select</option>
+        </select>-->
+      </td>
  <td align="center" class="activedclass"></td>
-  
+ <td align="center" class="approveclass"></td>
 </tr>
 </tbody>
 <tr>
@@ -235,38 +248,60 @@
 <div id="templatesUnitRow" style="display:none;">
 <table class="table-UnitRow-list">
     <tr class="table-row" style="vertical-align:top;">
-        <td><select class="input-box geography-levels" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);">
-            <option value="">Select</option>
-        </select>
-        </td>
-        <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className, event);" style="width:150px;"  value="">
-        <input type="hidden" class="unit-location-ids">
-        <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
-            <ul class="unitlocationlist-text" style="width:195px;"></ul>
+        <td class="sno">
+
+              </td>
+            <td><input type="hidden" class="no-of-units">
+
+            <select class="input-box geography-levels" onfocus="loadglevels(this.className);"  onchange="changelocation(this.className);">
+              <option value="">Select</option>
+            </select>
+          </td>
+          <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className, event);" style="width:150px;" value="">
+          <input type="hidden" class="unit-location-ids">
+          <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
+          <ul class="unitlocationlist-text" style="width:170px;"></ul>
         </div>
+        <div class="clearfix"></div>
         <span class="full-location-list"></span></td>
         <td>
         <input type="hidden" class="unit-id">
-        <input type="text" class="input-box unit-code" maxlength="20">
+        <input type="text" class="input-box unit-code" maxlength="20" >
         <span class="unit-code-lbl"></span>
         </td>
-        <td><input type="text" class="input-box unit-name"  maxlength="50" ></td>
-        <td><select class="input-box industry" ><!-- onfocus="industrytype(this.className);" -->
-        <!--   <option value="">Select</option> -->
-        </select>
-        </td>
-        <td><input type="text" class="input-box unit-address"  maxlength="250" /></td>
-        <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
-        <td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onkeyup="loaddomain_ms(event, this.className)" onclick="loaddomain(this.className)">
-        <input type="hidden" class="domain">
-        <div class="domain-selectbox-view ac-selectbox" style="display:none;">
-        <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>
-        </div>
-        </td>
-        <td align="center" class="activedclass"></td>
+        <td><input type="text" class="input-box unit-name" maxlength="50"  ></td>
+      <td><input type="text" class="input-box unit-address" maxlength="250" /></td>
+      <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
+      <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onkeyup="loaddomain_ms(event, this.className)"
+                  onclick="loaddomain(this.className)">
+      <input type="hidden" class="domain">
+      <div class="domain-selectbox-view ac-selectbox" style="display:none;">
+      <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>
+    </div>
+  </td>
+  <td>
+      <input type="text" class="input-box icon-autocomplete orgtypeselected" value="" readonly="readonly" onkeyup="loadorgtype_ms(event, this.className)"
+                  onclick="industrytype(this.className)">
+      <input type="hidden" class="orgtype">
+      <div class="orgtype-selectbox-view ac-selectbox" style="display:none;">
+      <ul class="ul-orgtype-list" style="width:170px;" onmouseleave="hideorgtype(this.className);"></ul>
+    </div>
+  <!--<select class="input-box industry" onfocus="industrytype(this.className);">
+         <option value="">Select</option>
+        </select>-->
+      </td>
+ <td align="center" class="activedclass"></td>
+ <td align="center" class="approveclass"></td>
     </tr>
 </table>
 
 </div>
-<script type="text/javascript" src="/script/client-unit/clientunit.js"></script>
+<div class="country-list-drop-down">
+  <li></li>
+</div>
+<div class="location-list-drop-down">
+  <li></li>
+</div>
+
+<script type="text/javascript" src="/script/client-unit/clientunit-new.js"></script>
 {% endblock %}

@@ -943,7 +943,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getuserclients`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
 	select client_id, group_name from tbl_client_groups
     where client_id in
@@ -959,7 +959,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcount`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitcount`(in clientId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getunitcount`(in clientId INT(11))
 BEGIN
 	select count(*) as units from tbl_units
     where client_id = clientId;
@@ -971,7 +971,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcode`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitcode`(in unit_code_start_letter varchar(50),
+CREATE PROCEDURE `sp_tbl_unit_getunitcode`(in unit_code_start_letter varchar(50),
 			clientId INT(11))
 BEGIN
 	SELECT TRIM(LEADING unit_code_start_letter FROM unit_code) as code
@@ -985,7 +985,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientbusinessgroup`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
 BEGIN
 	select business_group_id, business_group_name, client_id from tbl_business_groups
     where client_id in
@@ -1001,7 +1001,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientlegalentity`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
 	select legal_entity_id, legal_entity_name, business_group_id, client_id from tbl_legal_entities
     where client_id in
@@ -1016,7 +1016,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdivision`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientdivision`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getclientdivision`(in userId INT(11))
 BEGIN
 	select division_id, division_name, legal_entity_id, business_group_id, client_id from tbl_divisions
     where client_id in
@@ -1096,14 +1096,21 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdomains`;
 DELIMITER //
-CREATE PROCEDURE `sp_tbl_unit_getclientdomains`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getclientdomains`(in userId INT(11),
+	user_res int(11))
 BEGIN
-	select domain_id, domain_name, is_active from tbl_domains
-    where domain_id in (select domain_id from tbl_client_domains
-    where client_id in (select client_id from tbl_user_clients
-    where user_id = userId)) and is_active =1
-    order by domain_name ASC;
-END //
+	if(user_res > 0)then
+		select domain_id, domain_name, is_active from tbl_domains
+		where domain_id in (select domain_id from tbl_client_domains
+		where client_id in (select client_id from tbl_user_clients
+		where user_id = userId)) and is_active =1
+		order by domain_name ASC;
+	else
+		SELECT domain_id, domain_name, is_active FROM tbl_domains
+		where domain_id in (select domain_id from tbl_user_domains
+		WHERE user_id = userid) and is_active =1 order by domain_name asc;
+	end if;
+END
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2067,3 +2074,129 @@ BEGIN
 	DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
 END //
 DELIMITER;
+
+-- To get list of countries under client master group
+-- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_countries_for_unit`(IN session_user INT(11))
+BEGIN
+	IF session_user > 0 THEN
+		SELECT country_id, country_name, is_active FROM tbl_countries
+		WHERE country_id in (
+			SELECT country_id FROM tbl_client_countries
+			where client_id in (
+				select user_id from tbl_user_countries
+				WHERE user_id = session_user))
+					ORDER BY country_name;
+	ELSE
+		SELECT country_id, country_name, is_active
+		FROM tbl_countries ORDER BY country_name;
+    END IF;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get list of industries for client id for client unit
+-- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_getindustries_for_legalentity`(IN session_user INT(11))
+BEGIN
+	IF session_user > 0 THEN
+		select t3.industry_id, t3.industry_name, t3.country_id, t3.domain_id,
+				t3.is_active, t2.client_id, t2.no_of_units, t2.legal_entity_id
+			from tbl_client_users as t1, tbl_legal_entity_domain_industry as t2,
+					tbl_industries as t3
+			where
+				t3.industry_id = t2.industry_id and
+				t2.client_id = t1.client_id and
+				t1.user_id = session_user
+			order by industry_name;
+	ELSE
+		select t3.industry_id, t3.industry_name, t3.country_id, t3.domain_id,
+				t3.is_active, t2.client_id, t2.no_of_units, t2.legal_entity_id
+			from tbl_legal_entity_domain_industry as t2,
+					tbl_industries as t3
+			where
+				t3.industry_id = t2.industry_id and
+				t2.client_id in (select client_id from tbl_client_users)
+			order by industry_name;
+   END IF;
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To check dupliaction of unit code and unit name
+-- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_checkduplication`(in unitId int(11), unitCode varchar(50),
+		unitName varchar(50), clientId int(11))
+BEGIN
+	if unitCode is not null then
+		select count(*) as unit_code_cnt from
+		tbl_units where
+		unit_code = unitCode and
+		client_id = clientId and
+		unit_id != unitId;
+	else
+		select count(*) as unit_name_cnt from
+		tbl_units where
+		unit_name = unitName and
+		client_id = clientId and
+		unit_id != unitId;
+	end if;
+END
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_check_unitId`(in unitId int(11))
+BEGIN
+	select count(*) as unit_id_cnt from
+	tbl_units where
+	unit_id = unitId;
+END
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- check dupliaction of id for save units
+-- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_check_unitgroupid`(
+in tableName varchar(50), param int(11))
+BEGIN
+	if tableName = 'client_id' then
+		select count(0) as client_cnt from
+		tbl_client_groups where client_id = param;
+	end if;
+	if tableName = 'bg_id' then
+		select count(0) as bg_cnt from
+		tbl_business_groups where business_group_id = param;
+	end if;
+	if tableName = 'legal_entity_id' then
+		select count(0) as le_cnt from
+		tbl_legal_entities where legal_entity_id = param;
+	end if;
+	if tableName = 'division_id' then
+		select count(0) as divi_cnt from
+		tbl_divisions where division_id = param;
+	end if;
+END
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get unit max id
+-- -- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_max_unitid`()
+BEGIN
+	select max(unit_id) as max_id from
+	tbl_units;
+END

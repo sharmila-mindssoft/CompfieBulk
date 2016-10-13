@@ -56,7 +56,6 @@ CREATE TABLE `tbl_user_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_admin`;
-
 CREATE TABLE `tbl_admin` (
   `email_id` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -302,7 +301,7 @@ CREATE TABLE `tbl_compliances` (
   `duration` int(11) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp DEFAULT '0000-00-00 00:00:00',
+  `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `fk_compliances_statutory_mappings` (`statutory_mapping_id`),
@@ -524,7 +523,6 @@ CREATE TABLE `tbl_units` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 
-
 DROP TABLE IF EXISTS `tbl_unit_approval_history`;
 CREATE TABLE `tbl_unit_approval_history` (
   `unit_id` int(11) NOT NULL,
@@ -653,9 +651,9 @@ CREATE TABLE `tbl_client_compliances` (
   `compliance_applicable` tinyint(4) DEFAULT NULL,
   `compliance_opted` tinyint(4) DEFAULT NULL,
   `compliance_remarks` varchar(500) DEFAULT NULL,
-  `submitted_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `submitted_on` timestamp NULL DEFAULT NULL,
   `created_by` int(11) NOT NULL,
-  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`client_statutory_id`, `compliance_id`),

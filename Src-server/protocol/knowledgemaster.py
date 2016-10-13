@@ -211,11 +211,12 @@ class SaveIndustry(Request):
         return SaveIndustry(country_id, domain_id, industry_name)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "c_id": self.country_id,
             "d_id": self.domain_id,
             "i_name": self.industry_name,
         }
+        return data
 
 
 class UpdateIndustry(Request):

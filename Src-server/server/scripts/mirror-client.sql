@@ -228,9 +228,9 @@ CREATE TABLE `tbl_client_compliances` (
   `compliance_applicable` tinyint(4) DEFAULT NULL,
   `compliance_opted` tinyint(4) DEFAULT NULL,
   `compliance_remarks` varchar(250) DEFAULT NULL,
-  `submitted_on` timestamp NULL DEFAULT '0000-00-00 00:00:00',
+  `submitted_on` timestamp NULL DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`client_compliance_id`)
@@ -253,7 +253,7 @@ CREATE TABLE `tbl_assigned_compliances` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`unit_id`, `compliance_id`)
+  UNIQUE (`unit_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_reassigned_compliances_history` (
   `unit_id` int(11) NOT NULL,

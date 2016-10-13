@@ -859,9 +859,7 @@ def get_client_countries(db, client_id):
     rows = db.call_proc(
         "sp_client_countries_by_group_id", (client_id,)
     )
-    country_ids = [
-        r["country_id"] for r in rows
-    ]
+    country_ids = [int(r["country_id"]) for r in rows]
     return country_ids
 
 
@@ -1021,11 +1019,12 @@ def get_client_domains(db, client_id):
 
 
 def get_user_client_domains(db, session_user):
-    result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user,))
+    result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user,0))
     if result:
         return return_domains(result)
     else:
-        return get_user_domains(db, session_user)
+        result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user,1))
+        return return_domains(result)
 
 
 def get_date_configurations(db, client_id):
@@ -1207,43 +1206,92 @@ def update_division(db, client_id, division_id, division_name, session_user):
 
 
 def is_duplicate_unit_code(db, unit_id, unit_code, client_id):
-    condition = "unit_code = %s AND unit_id != %s and client_id = %s"
-    condition_val = [unit_code, unit_id, client_id]
-    return db.is_already_exists(tblUnits, condition, condition_val)
+    params =[unit_id, unit_code, None, client_id]
+    rows = db.call_proc("sp_tbl_units_checkduplication", params)
+    for d in rows:
+        if(int(d["unit_code_cnt"]) > 0):
+            return True
+        else:
+            return False
 
 
 def is_duplicate_unit_name(db, unit_id, unit_name, client_id):
-    condition = "unit_name = %s AND unit_id != %s and client_id = %s"
-    condition_val = [unit_name, unit_id, client_id]
-    return db.is_already_exists(tblUnits, condition, condition_val)
+    params =[unit_id, None, unit_name, client_id]
+    rows = db.call_proc("sp_tbl_units_checkduplication", params)
+    for d in rows:
+        if(int(d["unit_name_cnt"]) > 0):
+            return True
+        else:
+            return False
+
+def is_invalid_id(db, check_mode, val):
+    print "inside valid checking"
+    print check_mode
+
+    if check_mode == "unit_id":
+        params =[val,]
+        rows = db.call_proc("sp_tbl_units_check_unitId", params)
+        for d in rows:
+            if(int(d["unit_id_cnt"]) > 0):
+                return True
+            else:
+                return False
+    else:
+        params = [check_mode, val]
+        rows = db.call_proc("sp_tbl_units_check_unitgroupid", params)
+        for r in rows:
+            if check_mode == "client_id":
+                if(int(r["client_cnt"]) > 0):
+                    return True
+                else:
+                    return False
+            if check_mode == "bg_id":
+                if(int(r["bg_cnt"]) > 0):
+                    return True
+                else:
+                    return False
+            if check_mode == "legal_entity_id":
+                if(int(r["le_cnt"]) > 0):
+                    return True
+                else:
+                    return False
+            if check_mode == "division_id":
+                if(int(r["divi_cnt"]) > 0):
+                    return True
+                else:
+                    return False
 
 
 def save_unit (
     db, client_id,  units, business_group_id, legal_entity_id,
-    division_id, session_user
+    country_id, division_id, category_name, session_user
 ):
     current_time_stamp = str(get_date_time())
     columns = [
-        "client_id", "legal_entity_id", "country_id", "geography_id",
-        "industry_id", "domain_ids", "unit_code", "unit_name",
-        "address", "postal_code", "is_active", "created_by", "created_on"
+        "client_id", "category_name", "geography_id", "unit_code", "unit_name",
+        "address", "postal_code", "country_id", "is_active", "created_by", "created_on",
     ]
     if business_group_id is not None:
         columns.append("business_group_id")
+    if legal_entity_id is not None:
+        columns.append("legal_entity_id")
     if division_id is not None:
         columns.append("division_id")
     values_list = []
     unit_names = []
     for unit in units:
         domain_ids = ",".join(str(x) for x in unit.domain_ids)
+        industry_ids = ",".join(str(x) for x in unit.industry_ids)
         vals = [
-            client_id, legal_entity_id, unit.country_id,
-            unit.geography_id, unit.industry_id, domain_ids,
-            unit.unit_code.upper(), unit.unit_name, unit.unit_address,
-            unit.postal_code, 1, session_user, current_time_stamp
+            client_id, category_name,
+            unit.geography_id, unit.unit_code.upper(), unit.unit_name,
+            unit.unit_address, unit.postal_code, country_id,
+            1, session_user, current_time_stamp,
         ]
         if business_group_id is not None:
             vals.append(business_group_id)
+        if legal_entity_id is not None:
+            vals.append(legal_entity_id)
         if division_id is not None:
             vals.append(division_id)
         values_list.append(vals)
@@ -1258,7 +1306,35 @@ def save_unit (
     action = "Created following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, 19, action)
 
-    return result
+    max_unit_id = None
+    rows = db.call_proc("sp_tbl_units_max_unitid",())
+    for id in rows:
+        if(int(id["max_id"]) > 0):
+            max_unit_id = int(id["max_id"])
+    columns = ["unit_id", "domain_id", "industry_id"]
+    unit_id_start = len(units)
+    print "unit length"
+    print unit_id_start
+    print max_unit_id
+    values_list = []
+    unit_id = None
+    i = 1
+    for unit in units:
+        domain_ids = ",".join(str(x) for x in unit.domain_ids)
+        industry_ids = ",".join(str(x) for x in unit.industry_ids)
+        if unit_id_start == 1:
+            unit_id = max_unit_id
+        else :
+            unit_id = (max_unit_id - unit_id_start) + i
+            i = i +1
+        print"unit_id"
+        print unit_id
+        vals = [unit_id, domain_ids, industry_ids]
+        values_list.append(vals)
+
+    result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
+    if result == True and result_1 == True:
+        return True
 
 
 def update_unit(db, client_id,  units, session_user):
@@ -1299,6 +1375,17 @@ def get_user_clients(db, user_id):
     ]
     return client_ids
 
+def get_countries_for_unit(db, user_id):
+    rows = db.call_proc("sp_countries_for_unit", (user_id,))
+
+    fn = core.Country
+    results = [
+        fn(
+           d["country_id"], d["country_name"], bool(d["is_active"])
+        ) for d in rows
+    ]
+    return results
+
 
 def get_business_groups_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientbusinessgroup", (user_id,))
@@ -1312,12 +1399,15 @@ def get_legal_entities_for_user(db, user_id):
 
 def return_legal_entities_for_unit(legal_entities):
     results = []
+    print "inside get lagal entity"
+    print legal_entities
+
     for legal_entity in legal_entities:
-        legal_entity_obj = core.LegalEntity(
-            legal_entity["legal_entity_id"],
-            legal_entity["legal_entity_name"],
-            legal_entity["business_group_id"],
-            legal_entity["client_id"]
+        legal_entity_obj = core.UnitLegalEntity(
+            legal_entity_id = legal_entity["legal_entity_id"],
+            legal_entity_name = legal_entity["legal_entity_name"],
+            business_group_id = legal_entity["business_group_id"],
+            client_id = legal_entity["client_id"]
         )
         results.append(legal_entity_obj)
     return results
@@ -1338,6 +1428,35 @@ def return_divisions(divisions):
         )
         results.append(division_obj)
     return results
+
+
+def get_client_industries(db, user_id,):
+    columns = [
+        "country_id", "country_name",
+        "domain_id", "domain_name",
+        "industry_id", "industry_name",
+        "is_active"
+    ]
+    result = db.call_proc("sp_tbl_units_getindustries_for_legalentity", (user_id,))
+    return return_unit_industry(result)
+
+
+def return_unit_industry(data):
+    results = []
+    for d in data:
+        industry_id = d["industry_id"]
+        industry_name = d["industry_name"]
+        country_id = d["country_id"]
+        domain_id = d["domain_id"]
+        client_id = d["client_id"]
+        unit_count = d["no_of_units"]
+        legal_entity_id = d["legal_entity_id"]
+        is_active = bool(d["is_active"])
+        results.append(core.UnitIndustries(
+            industry_id, industry_name, country_id,  domain_id, client_id, unit_count, legal_entity_id, is_active
+        ))
+    return results
+
 
 
 def get_units_for_user(db, user_id):
@@ -1372,86 +1491,32 @@ def return_units(units):
 
 
 def get_unit_details_for_user(db, user_id):
-    where_condition_val = [user_id]
+    where_condition_val = [user_id,]
     result = db.call_proc("sp_tbl_unit_getunitdetailsforuser", (where_condition_val,))
     return return_unit_details(result)
 
 
 def return_unit_details(result):
-    unit_details = {}
-    country_unit_map = {}
-    unit_client_map = {}
+    unitdetails = []
+
     for r in result:
-        business_group_id = int(r["business_group_id"]) if(
-            r["business_group_id"] is not None) else 0
-        legal_entity_id = int(r["legal_entity_id"])
-        division_id = int(r["division_id"]) if(
-            r["division_id"] is not None) else 0
-        unit_id = int(r["unit_id"])
-        country_id = int(r["country_id"])
-        client_id = int(r["client_id"])
-
-        unit = technomasters.UnitDetails(
-            r["unit_id"], r["geography_id"],
-            r["unit_code"], r["unit_name"],
-            r["industry_id"], r["address"],
-            r["postal_code"],
-            [int(x) for x in r["domain_ids"].split(",")],
-            bool(r["is_active"])
-        )
-        if country_id not in country_unit_map:
-            country_unit_map[country_id] = []
-        country_unit_map[country_id].append(unit_id)
-        unit_client_map[unit_id] = client_id
-        if business_group_id not in unit_details:
-            unit_details[business_group_id] = {}
-        if legal_entity_id not in unit_details[business_group_id]:
-            unit_details[business_group_id][legal_entity_id] = {}
-        if division_id not in unit_details[business_group_id][legal_entity_id]:
-            unit_details[
-                business_group_id][legal_entity_id][division_id] = {}
-        if country_id not in unit_details[
-                business_group_id][legal_entity_id][division_id]:
-            unit_details[business_group_id][
-                    legal_entity_id][division_id][country_id] = {}
-        if client_id not in unit_details[
-                business_group_id][legal_entity_id][division_id][country_id]:
-            unit_details[business_group_id][
-                legal_entity_id][division_id][country_id][client_id] = []
-        unit_details[business_group_id][
-            legal_entity_id][division_id][country_id][client_id].append(unit)
-
-    final_list = []
-    for business_group_id in unit_details:
-        for legal_entity_id in unit_details[business_group_id]:
-            for division_id in unit_details[
-                    business_group_id][legal_entity_id]:
-                for country_id in unit_details[
-                        business_group_id][legal_entity_id][division_id]:
-                    for client_id in unit_details[
-                            business_group_id][
-                            legal_entity_id][division_id][country_id]:
-                        units = unit_details[
-                            business_group_id
-                        ][legal_entity_id][division_id][country_id][client_id]
-                        is_active = False
-                        for unit in units:
-                            is_active = is_active and unit.is_active
-                        final_list.append(
-                            technomasters.Unit(
-                                None if(
-                                    business_group_id == 0
-                                ) else business_group_id,
-                                legal_entity_id,
-                                None if(division_id == 0) else division_id,
-                                client_id, {country_id: units},
-                                is_active
-                            )
-                        )
-    return final_list
-
+        unitdetails.append(core.Unit(
+                int(r["unit_id"]), int(r["client_id"]),
+                int(r["business_group_id"]), int(r["legal_entity_id"]),
+                int(r["country_id"]), int(r["division_id"]),
+                r["category_name"], int(r["geography_id"]),
+                r["unit_code"], r["unit_name"],
+                r["address"], r["postal_code"],
+                [int(x) for x in r["domain_ids"].split(",")],
+                [int(y) for y in r["i_ids"].split(",")],
+                bool(r["is_active"]),
+                bool(r["approve_status"])
+            ))
+    return unitdetails
 
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
+    print "inside max unit count"
+    print user_id
     result = db.call_proc("sp_tbl_unit_getuserclients", (user_id,))
     return return_group_companies_with_max_unit_count(db, result)
 
