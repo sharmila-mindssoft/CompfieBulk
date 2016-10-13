@@ -338,8 +338,8 @@ function initMirror() {
     var dIds = industryDetail[1];
     var i_name = industryDetail[2];
     return {
-      'c_ids': cIds,
-      'd_ids': dIds,
+      'c_id': cIds,
+      'd_id': dIds,
       'i_name': i_name
     };
   }
@@ -359,9 +359,9 @@ function initMirror() {
     var iName = industryDetail[3];
 
     return {
-      'c_ids': cIds,
-      'd_ids': dIds,
-      'i_ids': iIds,
+      'c_id': cIds,
+      'd_id': dIds,
+      'i_id': iIds,
       'i_name': iName
     };
   }
@@ -396,8 +396,8 @@ function initMirror() {
     var s_n_name = statutoryNatureDetail[0];
     return {
       's_n_name': s_n_name,
-      'c_ids': cIds
-    };
+      'c_id': cIds
+      };
   }
   function saveStatutoryNature(statutoryNatureDetail, callback) {
     var request = [
@@ -413,7 +413,7 @@ function initMirror() {
     return {
       's_n_ids': snIds,
       's_n_name': snName,
-      'c_ids': cIds
+      'c_id': cIds
     };
   }
   function updateStatutoryNature(statutoryNatureDetail, callback) {
@@ -1047,7 +1047,7 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  
+
   // Change Password APIs
   function changePassword(currentPassword, newPassword, callback) {
     callerName = 'login';
@@ -1117,10 +1117,10 @@ function initMirror() {
     if (bgName == null || bgName == '') {
       return null;
     } else {
-      return {
-        'b_g_id': bgId,
-        'b_g_name': bgName
-      };
+      return [{
+        'bg_id': bgId,
+        'bg_name': bgName
+      }];
     }
   }
   function getLegalEntityDict(leId, leName) {
@@ -1139,7 +1139,7 @@ function initMirror() {
       };
     }
   }
-  function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, uLoc, iId, iName, dIds) {
+  /*function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, uLoc, iId, iName, dIds) {
     return {
       'u_id': uId,
       'u_name': uName,
@@ -1152,6 +1152,18 @@ function initMirror() {
       'i_name': iName,
       'd_ids': dIds
     };
+  }old*/
+  function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds) {
+    return {
+      'u_id': uId,
+      'u_name': uName,
+      'u_code': uCode,
+      'u_add': uAdd,
+      'p_code': pCode,
+      'geo_id': geoId,
+      'd_ids': dIds,
+      'i_ids': iIds
+    };
   }
   function mapUnitsToCountry(cId, units) {
     return {
@@ -1159,18 +1171,21 @@ function initMirror() {
       'units': units
     };
   }
-  function saveClient(cId, bg, le, d, cw_units, callback) {
+  function saveClient(cId, bg_id, le_id, c_id, dv_id, cg, cw_units, callback) {
     callerName = 'techno';
     var request = [
       'SaveClient',
       {
-        'c_id': cId,
-        'bg': bg,
-        'le': le,
-        'd': d,
-        'cw_units': cw_units
+        'cl_id': cId,
+        'bg_id': bg_id,
+        'le_id': le_id,
+        'c_id': c_id,
+        'dv_id': dv_id,
+        'cg': cg,
+        'units': cw_units
       }
     ];
+    console.log("req:"+request)
     apiRequest(callerName, request, callback);
   }
   function updateClient(cId, bg, le, d, cwUnits, callback) {
@@ -1438,7 +1453,7 @@ function initMirror() {
         "validity_days_id": validity_days_id,
         "country_id": country_id,
         "domain_id": domain_id,
-        "validity_days": validity_days 
+        "validity_days": validity_days
       }
   }
 

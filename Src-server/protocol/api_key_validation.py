@@ -6,6 +6,13 @@ def expectation_error(expected, received):
     return ValueError(msg % (expected, str(received)))
 
 
+def allow_specialchar(value):
+    r = re.compile("^[a-zA-Z-_ ]*$")
+    if r.match(value):
+        return value
+    else :
+        raise expectation_error('a string ', value)
+
 def is_alphabet(value):
     r = re.compile("^[a-zA-Z ]*$")  # a-z with space
     if r.match(value):

@@ -1,6 +1,5 @@
 from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list, to_structure_dictionary_values,
-    to_dictionary_values
+    parse_dictionary, parse_static_list, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
     parse_structure_CustomTextType_250,
@@ -106,10 +105,9 @@ class SaveDomain(Request):
         return SaveDomain(domain_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "d_name": self.domain_name,
         }
-        return to_dictionary_values(data)
 
 
 class UpdateDomain(Request):
@@ -125,11 +123,10 @@ class UpdateDomain(Request):
         return UpdateDomain(domain_id, domain_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "d_id": self.domain_id,
             "d_name": self.domain_name,
         }
-        return to_dictionary_values(data)
 
 
 class ChangeDomainStatus(Request):
@@ -145,11 +142,10 @@ class ChangeDomainStatus(Request):
         return ChangeDomainStatus(domain_id, is_active)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "d_id": self.domain_id,
             "is_active": self.is_active,
         }
-        return to_dictionary_values(data)
 
 
 class GetCountriesForUser(Request):
@@ -191,10 +187,9 @@ class SaveCountry(Request):
         return SaveCountry(country_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "c_name": self.country_name,
         }
-        return to_dictionary_values(data)
 
 
 class UpdateCountry(Request):
@@ -210,11 +205,10 @@ class UpdateCountry(Request):
         return UpdateCountry(country_id, country_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "c_id": self.country_id,
             "c_name": self.country_name,
         }
-        return to_dictionary_values(data)
 
 
 class ChangeCountryStatus(Request):
@@ -230,11 +224,10 @@ class ChangeCountryStatus(Request):
         return ChangeCountryStatus(country_id, is_active)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "c_id": self.country_id,
             "is_active": self.is_active,
         }
-        return to_dictionary_values(data)
 
 
 class GetNotifications(Request):
@@ -575,10 +568,9 @@ class GetNotificationsSuccess(Response):
         return GetNotificationsSuccess(notifications)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "notifications": self.notifications
         }
-        return to_dictionary_values(data)
 
 
 class UpdateNotificationStatusSuccess(Response):

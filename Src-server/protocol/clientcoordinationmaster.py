@@ -1,7 +1,6 @@
 from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list,
-    parse_VariantType, to_VariantType,
-    to_dictionary_values
+    parse_dictionary, parse_static_list, parse_VariantType,
+    to_VariantType, to_structure_dictionary_values
 )
 
 
@@ -12,6 +11,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -41,8 +42,7 @@ class GetClientUnitApprovalList(Request):
         return GetClientUnitApprovalList()
 
     def to_inner_structure(self):
-        data = {}
-        return to_dictionary_values(data)
+        return {}
 
 
 class GetEntityApprovalList(Request):
@@ -56,10 +56,9 @@ class GetEntityApprovalList(Request):
         return GetEntityApprovalList(legal_entity_id)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "legal_entity_id": self.legal_entity_id
         }
-        return to_dictionary_values(data)
 
 
 class ApproveUnit(Request):
@@ -72,10 +71,9 @@ class ApproveUnit(Request):
         return ApproveUnit(data)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "unit_approval_details": self.unit_approval_details
         }
-        return to_dictionary_values(data)
 
 
 class GetClientGroupApprovalList(Request):
@@ -88,8 +86,7 @@ class GetClientGroupApprovalList(Request):
         return GetClientGroupApprovalList()
 
     def to_inner_structure(self):
-        data = {}
-        return to_dictionary_values(data)
+        return {}
 
 
 class ApproveClientGroup(Request):
@@ -102,10 +99,9 @@ class ApproveClientGroup(Request):
         return ApproveClientGroup(data)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "client_group_approval_details": self.client_group_approval_details
         }
-        return to_dictionary_values(data)
 
 
 def _init_Request_class_map():
@@ -129,6 +125,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -178,7 +176,7 @@ class UnitApproval(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
             "country_name": self.country_name,
@@ -186,7 +184,6 @@ class UnitApproval(object):
             "group_name": self.group_name,
             "unit_count": self.unit_count
         }
-        return to_dictionary_values(data)
 
 
 class GetClientUnitApprovalListSuccess(object):
@@ -204,10 +201,9 @@ class GetClientUnitApprovalListSuccess(object):
         return GetClientUnitApprovalListSuccess(unit_approval_list)
 
     def to_structure(self):
-        data = {
+        return {
             "unit_approval_list": self.unit_approval_list
         }
-        return to_dictionary_values(data, "GetClientUnitApprovalListSuccess")
 
 
 class EntityUnitApproval(object):
@@ -249,7 +245,7 @@ class EntityUnitApproval(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "unit_id": self.unit_id,
             "division_name": self.division_name,
             "category_name": self.category_name,
@@ -261,7 +257,6 @@ class EntityUnitApproval(object):
             "domain_names": self.domain_names,
             "org_names": self.org_names
         }
-        return to_dictionary_values(data)
 
 
 class GetEntityApprovalListSuccess(Response):
@@ -275,10 +270,9 @@ class GetEntityApprovalListSuccess(Response):
         return GetEntityApprovalListSuccess(entity_unit_approval_list)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "entity_unit_approval_list": self.entity_unit_approval_list
         }
-        return to_dictionary_values(data)
 
 
 class UnitApprovalDetails(object):
@@ -302,12 +296,11 @@ class UnitApprovalDetails(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "unit_id": self.unit_id,
             "approval_status": self.approval_status,
             "reason": self.reason
         }
-        return to_dictionary_values(data)
 
 
 class ApproveUnitSuccess(Response):
@@ -320,8 +313,7 @@ class ApproveUnitSuccess(Response):
         return ApproveUnitSuccess()
 
     def to_inner_structure(self):
-        data = {}
-        return to_dictionary_values(data)
+        return {}
 
 
 class ClientGroupApproval(object):
@@ -354,7 +346,7 @@ class ClientGroupApproval(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "group_name": self.group_name,
             "username": self.username,
@@ -362,7 +354,6 @@ class ClientGroupApproval(object):
             "is_active": self.is_active,
             "country_ids": self.country_ids
         }
-        return to_dictionary_values(data)
 
 
 class GetClientGroupApprovalListSuccess(Response):
@@ -382,11 +373,10 @@ class GetClientGroupApprovalListSuccess(Response):
         )
 
     def to_inner_structure(self):
-        data = {
+        return {
             "countries": self.countries,
             "group_approval_list": self.group_approval_list
         }
-        return to_dictionary_values(data)
 
 
 class ClientGroupApprovalDetails(object):
@@ -410,12 +400,11 @@ class ClientGroupApprovalDetails(object):
         )
 
     def to_structure(self):
-        data = {
+        return {
             "client_id": self.client_id,
             "approval_status": self.approval_status,
             "reason": self.reason
         }
-        return to_dictionary_values(data)
 
 
 class ApproveClientGroupSuccess(Response):
@@ -428,8 +417,7 @@ class ApproveClientGroupSuccess(Response):
         return ApproveClientGroupSuccess()
 
     def to_inner_structure(self):
-        data = {}
-        return to_dictionary_values(data)
+        return {}
 
 
 def _init_Response_class_map():

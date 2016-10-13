@@ -1,5 +1,5 @@
 from protocol.jsonvalidators import (
-    parse_enum, parse_dictionary
+    parse_enum, parse_dictionary, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Compliance,
@@ -18,7 +18,6 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_50,
     parse_structure_VectorType_RecordType_core_StatutoryDate,
     parse_structure_OptionalType_SignedIntegerType_8,
-    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_ComplianceApplicability,
     parse_structure_Text,
@@ -30,20 +29,17 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
-    parse_structure_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomIntegerType_1_100,
     parse_structure_OptionalType_CustomIntegerType_1_12,
     parse_structure_OptionalType_CustomIntegerType_1_31,
     parse_structure_Float,
-    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability,
     parse_structure_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_VectorType_CustomTextType_100,
     parse_structure_EnumType_core_NOT_COMPLIED_TYPE,
-    parse_structure_OptionalType_Text,
     parse_structure_VectorType_RecordType_core_Compliance_Download,
     parse_structure_CustomTextType_200,
     parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
@@ -60,7 +56,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_RecordType_core_ClientBusinessGroup,
     parse_structure_RecordType_core_FileList,
-    parse_structure_OptionalType_RecordType_core_FileList
+    parse_structure_OptionalType_RecordType_core_FileList,
+    parse_structure_VectorType_RecordType_core_ClientConfiguration
 
 )
 from protocol.to_structure import (
@@ -586,7 +583,7 @@ class Form(object):
             "parent_menu": self.parent_menu,
             "form_type": self.form_type
         }
-        return data
+        return to_structure_dictionary_values(data)
 
 #
 # Menu
@@ -604,6 +601,7 @@ class Menu(object):
         return Menu(menus)
 
     def to_structure(self):
+        print self.menus
         return {
             "menus": to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(self.menus),
         }
@@ -779,22 +777,22 @@ class Geography(object):
 #
 
 class GeographyWithMapping(object):
-    def __init__(self, geography_id, geography_name, level_id, mapping, parent_id, is_active):
+    def __init__(self, geography_id, geography_name, level_id, mapping, parent_ids, is_active):
         self.geography_id = geography_id
         self.geography_name = geography_name
         self.level_id = level_id
         self.mapping = mapping
-        self.parent_id = parent_id
+        self.parent_ids = parent_ids
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["geography_id", "geography_name", "level_id", "mapping", "parent_id", "is_active"])
+        data = parse_dictionary(data, ["geography_id", "geography_name", "level_id", "mapping", "parent_ids", "is_active"])
         geography_id = data.get("geography_id")
         geography_name = data.get("geography_name")
         level_id = data.get("level_id")
         mapping = data.get("mapping")
-        parent_id = data.get("parent_id")
+        parent_ids = data.get("parent_ids")
         is_active = data.get("is_active")
         return Geography(
             geography_id, geography_name, level_id,
@@ -807,8 +805,76 @@ class GeographyWithMapping(object):
             "geography_name": self.geography_name,
             "level_id": self.level_id,
             "mapping": self.mapping,
-            "parent_id": self.parent_id,
+            "parent_ids": self.parent_ids,
             "is_active": self.is_active,
+        }
+        return to_dictionary_values(data)
+
+#
+# Geography With Mapping & country for unit
+#
+
+
+class UnitGeographyMapping(object):
+    def __init__(self, geography_id, geography_name, level_id, mapping, parent_ids, country_id, is_active):
+        self.geography_id = geography_id
+        self.geography_name = geography_name
+        self.level_id = level_id
+        self.mapping = mapping
+        self.parent_ids = parent_ids
+        self.country_id = country_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["geography_id", "geography_name", "level_id", "mapping", "parent_ids", "country_id", "is_active"])
+        geography_id = data.get("geography_id")
+        geography_name = data.get("geography_name")
+        level_id = data.get("level_id")
+        mapping = data.get("mapping")
+        parent_ids = data.get("parent_ids")
+        country_id = data.get("country_id")
+        is_active = data.get("is_active")
+        return UnitGeographyMapping(geography_id, geography_name, level_id, mapping, parent_ids, country_id, is_active)
+
+    def to_structure(self):
+        data = {
+            "geography_id": self.geography_id,
+            "geography_name": self.geography_name,
+            "level_id": self.level_id,
+            "mapping": self.mapping,
+            "parent_ids": self.parent_ids,
+            "country_id": self.country_id,
+            "is_active": self.is_active,
+        }
+        return to_dictionary_values(data)
+
+#
+# Geography level & country for unit
+#
+
+class UnitGeographyLevel(object):
+    def __init__(self, level_id, level_position, level_name, country_id):
+        self.level_id = level_id
+        self.level_position = level_position
+        self.level_name = level_name
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["l_id", "l_position", "l_name", "c_id"])
+        level_id = data.get("l_id")
+        level_position = data.get("l_position")
+        level_name = data.get("l_name")
+        country_id = data.get("c_id")
+        return UnitGeographyLevel(level_id, level_position, level_name, country_id)
+
+    def to_structure(self):
+        data = {
+            "l_id": self.level_id,
+            "l_position": self.level_position,
+            "l_name": self.level_name,
+            "c_id": self.country_id,
         }
         return data
 
@@ -850,7 +916,7 @@ class Industry(object):
         )
 
     def to_structure(self):
-        return {
+        data = {
             "country_id": self.country_id,
             "country_name": self.country_name,
             "domain_id": self.domain_id,
@@ -859,6 +925,7 @@ class Industry(object):
             "industry_name": self.industry_name,
             "is_active": self.is_active
         }
+        return data
 
 
 class Industries(object):
@@ -878,11 +945,52 @@ class Industries(object):
         return Industries(industry_id, industry_name, is_active)
 
     def to_structure(self):
-        return {
+        data = {
             "industry_id": self.industry_id,
-            "industry_name": elf.industry_name,
+            "industry_name": self.industry_name,
             "is_active": self.is_active,
         }
+        return data
+
+
+class UnitIndustries(object):
+    def __init__(self, industry_id, industry_name, country_id, domain_id, client_id, unit_count, legal_entity_id, is_active):
+        self.industry_id = industry_id
+        self.industry_name = industry_name
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.client_id = client_id
+        self.unit_count = unit_count
+        self.legal_entity_id = legal_entity_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["industry_id", "industry_name", "country_id", "domain_id", "client_id", "unit_count", "legal_entity_id", "is_active"])
+        industry_id = data.get("industry_id")
+        industry_name = data.get("industry_name")
+        country_id = data.get("country_id")
+        domain_id = data.get("domain_id")
+        client_id = data.get("client_id")
+        unit_count = data.get("unit_count")
+        legal_entity_id = data.get("legal_entity_id")
+        is_active = data.get("is_active")
+
+        return UnitIndustries(industry_id, industry_name, country_id, domain_id, client_id, unit_count, legal_entity_id, is_active)
+
+    def to_structure(self):
+        data = {
+            "industry_id": self.industry_id,
+            "industry_name": self.industry_name,
+            "country_id": self.country_id,
+            "domain_id": self.domain_id,
+            "client_id": self.client_id,
+            "unit_count": self.unit_count,
+            "legal_entity_id": self.legal_entity_id,
+            "is_active": self.is_active,
+        }
+        return data
 
 
 #
@@ -914,13 +1022,14 @@ class StatutoryNature(object):
         return StatutoryNature(statutory_nature_id, statutory_nature_name, country_id, country_name, is_active)
 
     def to_structure(self):
-        return {
+        data = {
             "statutory_nature_id": self.statutory_nature_id,
             "statutory_nature_name": self.statutory_nature_name,
             "country_id": self.country_id,
             "country_name": self.country_name,
             "is_active": self.is_active,
         }
+        return data
 
 #
 # StatutoryLevel
@@ -1042,14 +1151,13 @@ class Compliance_Download(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_name", 'url'])
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
         url = data.get("url")
-        url = parse_structure_OptionalType_CustomTextType_500(url)
+        return Compliance_Download(compliance_name, url)
 
     def to_structure(self):
         return {
-            "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
-            "url": to_structure_OptionalType_CustomTextType_500(self.url)
+            "compliance_name": self.compliance_name,
+            "url": self.url
         }
 
 class Compliance(object):
@@ -1082,7 +1190,7 @@ class Compliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "s_provision",
+            "comp_id", "s_provision",
             "c_task", "description",
             "doc_name", "f_f_list",
             "p_consequences", "f_id",
@@ -1091,38 +1199,22 @@ class Compliance(object):
             "duration", "is_active",
             "frequency", "summary"
         ])
-        compliance_id = data.get("c_id")
-        compliance_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_id)
+        compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_provision")
-        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
         compliance_task = data.get("c_task")
-        compliance_task = parse_structure_CustomTextType_100(compliance_task)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
         document_name = data.get("doc_name")
-        document_name = parse_structure_OptionalType_CustomTextType_50(document_name)
         format_file_list = data.get("f_f_list")
-        format_file_list = parse_structure_OptionalType_VectorType_RecordType_core_FileList(format_file_list)
         penal_consequences = data.get("p_consequences")
-        penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         frequency_id = data.get("f_id")
-        frequency_id = parse_structure_OptionalType_SignedIntegerType_8(frequency_id)
         statutory_dates = data.get("statu_dates")
-        statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         repeats_type_id = data.get("r_type_id")
-        repeats_type_id = parse_structure_OptionalType_UnsignedIntegerType_32(repeats_type_id)
         repeats_every = data.get("r_every")
-        repeats_every = parse_structure_OptionalType_UnsignedIntegerType_32(repeats_every)
         duration_type_id = data.get("d_type_id")
-        duration_type_id = parse_structure_OptionalType_UnsignedIntegerType_32(duration_type_id)
         duration = data.get("duration")
-        duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
         frequency = data.get("frequency")
-        frequency = parse_structure_OptionalType_CustomTextType_50(frequency)
         summary = data.get("summary")
-        summary = parse_structure_OptionalType_CustomTextType_500(summary)
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -1136,22 +1228,22 @@ class Compliance(object):
 
     def to_structure(self):
         return {
-            "c_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
-            "s_provision": to_structure_CustomTextType_500(self.statutory_provision),
-            "c_task": to_structure_CustomTextType_100(self.compliance_task),
-            "description": to_structure_CustomTextType_500(self.description),
-            "doc_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
-            "f_f_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
-            "p_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
-            "f_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
-            "statu_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "r_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_type_id),
-            "r_every": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_every),
-            "d_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.duration_type_id),
-            "duration": to_structure_OptionalType_UnsignedIntegerType_32(self.duration),
-            "is_active": to_structure_Bool(self.is_active),
-            "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),
-            "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
+            "comp_id": self.compliance_id,
+            "s_provision": self.statutory_provision,
+            "c_task": self.compliance_task,
+            "description": self.description,
+            "doc_name": self.document_name,
+            "f_f_list": self.format_file_list,
+            "p_consequences": self.penal_consequences,
+            "f_id": self.frequency_id,
+            "statu_dates": self.statutory_dates,
+            "r_type_id": self.repeats_type_id,
+            "r_every": self.repeats_every,
+            "d_type_id": self.duration_type_id,
+            "duration": self.duration,
+            "is_active": self.is_active,
+            "frequency": self.frequency,
+            "summary": self.summary
         }
 
 #
@@ -1197,39 +1289,23 @@ class StatutoryMapping(object):
             "approval_status_text"
         ])
         country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
-        country_name = parse_structure_CustomTextType_50(country_name)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50(domain_name)
         industry_ids = data.get("industry_ids")
-        industry_ids = parse_structure_VectorType_UnsignedIntegerType_32(industry_ids)
         industry_names = data.get("industry_names")
-        industry_names = parse_structure_Text(industry_names)
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
-        statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         statutory_ids = data.get("statutory_ids")
-        statutory_ids = parse_structure_VectorType_UnsignedIntegerType_32(statutory_ids)
         statutory_mappings = data.get("statutory_mappings")
-        statutory_mappings = parse_structure_VectorType_Text(statutory_mappings)
         compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         compliance_names = data.get("compliance_names")
-        compliance_names = parse_structure_VectorType_RecordType_core_Compliance_Download(compliance_names)
         geography_ids = data.get("geography_ids")
-        geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
         geography_mappings = data.get("geography_mappings")
-        geography_mappings = parse_structure_VectorType_Text(geography_mappings)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_SignedIntegerType_8(approval_status)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         approval_status_text = data.get("approval_status_text")
-        approval_status_text = parse_structure_CustomTextType_100(approval_status_text)
         return StatutoryMapping(
             country_id, country_name, domain_id, domain_name,
             industry_ids, industry_names, statutory_nature_id,
@@ -1240,23 +1316,23 @@ class StatutoryMapping(object):
 
     def to_structure(self):
         return {
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "country_name": to_structure_CustomTextType_50(self.country_name),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "industry_ids": to_structure_VectorType_UnsignedIntegerType_32(self.industry_ids),
-            "industry_names": to_structure_Text(self.industry_names),
-            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
-            "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
-            "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),
-            "statutory_mappings": to_structure_VectorType_Text(self.statutory_mappings),
-            "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
-            "compliance_names": to_structure_VectorType_RecordType_core_Compliance_Download(self.compliance_names),
-            "geography_ids": to_structure_VectorType_UnsignedIntegerType_32(self.geography_ids),
-            "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
-            "approval_status": to_structure_UnsignedIntegerType_32(self.approval_status),
-            "is_active": to_structure_Bool(self.is_active),
-            "approval_status_text": to_structure_CustomTextType_100(self.approval_status_text)
+            "country_id": self.country_id,
+            "country_name": self.country_name,
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "industry_ids": self.industry_ids,
+            "industry_names": self.industry_names,
+            "statutory_nature_id": self.statutory_nature_id,
+            "statutory_nature_name": self.statutory_nature_name,
+            "statutory_ids": self.statutory_ids,
+            "statutory_mappings": self.statutory_mappings,
+            "compliances": self.compliances,
+            "compliance_names": self.compliance_names,
+            "geography_ids": self.geography_ids,
+            "geography_mappings": self.geography_mappings,
+            "approval_status": self.approval_status,
+            "is_active": self.is_active,
+            "approval_status_text": self.approval_status_text
         }
 
 #
@@ -1273,30 +1349,28 @@ class GroupCompanyForUnitCreation(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "group_name",
-            "country_ids", "domain_ids", "next_unit_code"])
+        data = parse_dictionary(data, [
+            "client_id", "group_name",
+            "country_ids", "domain_ids", "next_unit_code"
+        ])
         client_id = data.get("client_id")
-        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         group_name = data.get("group_name")
-        group_name = parse_structure_CustomTextType_50(group_name)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_UnsignedIntegerType_32(country_ids)
         next_unit_code = data.get("next_unit_code")
-        next_unit_code = parse_structure_UnsignedIntegerType_32(next_unit_code)
         return GroupCompanyForUnitCreation(
             client_id, group_name, country_ids, domain_ids, next_unit_code
         )
 
     def to_structure(self):
-        return {
-            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
-            "group_name": to_structure_CustomTextType_50(self.group_name),
-            "country_ids": to_structure_VectorType_UnsignedIntegerType_32(self.country_ids),
-            "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
-            "next_unit_code": to_structure_UnsignedIntegerType_32(self.next_unit_code)
+        data = {
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "next_unit_code": self.next_unit_code
         }
+        return data
 
 #
 # GroupCompany
@@ -1312,7 +1386,8 @@ class GroupCompany(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "group_name", "is_active",
+        data = parse_dictionary(data, [
+            "client_id", "group_name", "is_active",
             "country_ids", "domain_ids"])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
@@ -1328,23 +1403,26 @@ class GroupCompany(object):
         return GroupCompany(client_id, group_name, is_active, country_ids, domain_ids)
 
     def to_structure(self):
-        return {
+        data = {
             "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "is_active": to_structure_Bool(self.is_active),
             "country_ids": to_structure_VectorType_UnsignedIntegerType_32(self.country_ids),
             "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
         }
+        return data
 
 #
 # GroupCompanyDetail
 #
 
 class GroupCompanyDetail(object):
-    def __init__(self, client_id, client_name, domain_ids, country_ids,
+    def __init__(
+        self, client_id, client_name, domain_ids, country_ids,
         incharge_persons, file_name, logo, contract_from, contract_to, no_of_user_licence,
         total_disk_space, is_sms_subscribed, username, is_active, short_name,
-        date_configurations):
+        date_configurations
+    ):
         self.client_id = client_id
         self.client_name = client_name
         self.domain_ids = domain_ids
@@ -1364,16 +1442,17 @@ class GroupCompanyDetail(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids",
+        data = parse_dictionary(data, [
+            "client_id", "client_name", "domain_ids",
             "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to",
             "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username",
-            "is_active", "short_name"])
+            "is_active", "short_name"
+        ])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
         client_name = data.get("client_name")
         client_name = parse_structure_CustomTextType_50(client_name)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_OptionalType_VectorType_UnignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
         country_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(country_ids)
         incharge_persons = data.get("incharge_persons")
@@ -1400,10 +1479,12 @@ class GroupCompanyDetail(object):
         short_name = parse_structure_CustomTextType_100(short_name)
         date_configurations = data.get("date_configurations")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-        return GroupCompanyDetail(client_id, client_name, domain_ids,
+        return GroupCompanyDetail(
+            client_id, client_name, domain_ids,
             country_ids, incharge_persons, file_name, logo, contract_from, contract_to,
             no_of_user_licence, total_disk_space, is_sms_subscribed,
-            username, is_active, short_name, date_configurations)
+            username, is_active, short_name, date_configurations
+        )
 
     def to_structure(self):
         return {
@@ -1477,19 +1558,17 @@ class BusinessGroup(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["business_group_id", "business_group_name", "client_id"])
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_50(business_group_name)
         client_id = data.get("client_id")
-        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         return BusinessGroup(business_group_id, business_group_name, client_id)
 
     def to_structure(self):
-        return {
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
-            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
+        data = {
+            "business_group_id": self.business_group_id,
+            "business_group_name": self.business_group_name,
+            "client_id": self.client_id,
         }
+        return data
 
 class ClientBusinessGroup(object):
     def __init__(self, business_group_id, business_group_name):
@@ -1552,25 +1631,22 @@ class Division(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["division_id", "division_name", "legal_entity_id", "business_group_id", "client_id"])
         division_id = data.get("division_id")
-        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_50(division_name)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
         client_id = data.get("client_id")
-        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         return Division(division_id, division_name, legal_entity_id, business_group_id, client_id)
 
     def to_structure(self):
-        return {
-            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "division_name": to_structure_CustomTextType_50(self.division_name),
-            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
-            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
+        data = {
+            "division_id": self.division_id,
+            "division_name": self.division_name,
+            "legal_entity_id": self.legal_entity_id,
+            "business_group_id": self.business_group_id,
+            "client_id": self.client_id,
         }
+        return data
+
 
 class ClientDivision(object):
     def __init__(self, division_id, division_name, legal_entity_id, business_group_id):
@@ -1605,52 +1681,75 @@ class ClientDivision(object):
 #
 
 class Unit(object):
-    def __init__(self, unit_id, division_id, legal_entity_id, business_group_id, client_id, unit_code, unit_name, unit_address, is_active):
+    def __init__(
+        self, unit_id, client_id, business_group_id, legal_entity_id, country_id,
+        division_id, category_name, geography_id, unit_code, unit_name, unit_address,
+        postal_code, domain_ids, i_ids, is_active, approve_status
+    ):
         self.unit_id = unit_id
-        self.division_id = division_id
-        self.legal_entity_id = legal_entity_id
-        self.business_group_id = business_group_id
         self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.division_id = division_id
+        self.category_name = category_name
+        self.geography_id = geography_id
         self.unit_code = unit_code
         self.unit_name = unit_name
         self.unit_address = unit_address
+        self.postal_code = postal_code
+        self.domain_ids = domain_ids
+        self.i_ids = i_ids
         self.is_active = is_active
+        self.approve_status = approve_status
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "division_id", "legal_entity_id", "business_group_id", "client_id", "unit_code", "unit_name", "unit_address", "is_active"])
+        data = parse_dictionary(data, [
+                "unit_id", "client_id", "business_group_id", "legal_entity_id", "country_id", "division_id", "category_name",
+                "geography_id", "unit_code", "unit_name", "unit_address",
+                "postal_code", "domain_ids", "i_ids", "is_active", "approve_status"])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
-        division_id = data.get("division_id")
-        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
-        legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
-        business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         client_id = data.get("client_id")
-        client_id = parse_structure_UnsignedIntegerType_32(client_id)
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        country_id = data.get("country_id")
+        division_id = data.get("division_id")
+        category_name = data.get("category_name")
+        geography_id = data.get("geography_id")
         unit_code = data.get("unit_code")
-        unit_code = parse_structure_CustomTextType_20(unit_code)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
         unit_address = data.get("unit_address")
-        unit_address = parse_structure_CustomTextType_250(unit_address)
+        postal_code = data.get("postal_code")
+        domain_ids = data.get("domain_ids")
+        i_ids = data.get("i_ids")
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
-        return Unit(unit_id, division_id, legal_entity_id, business_group_id, client_id, unit_code, unit_name, unit_address, is_active)
+        approve_status = data.get("approve_status")
+        return Unit(
+            unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name,
+            geography_id, unit_code, unit_name, unit_address, postal_code, domain_ids, i_ids, is_active, approve_status
+        )
 
     def to_structure(self):
-        return {
-            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
-            "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
-            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
-            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
-            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
-            "unit_code": to_structure_CustomTextType_20(self.unit_code),
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "unit_address": to_structure_CustomTextType_250(self.unit_address),
-            "is_active": to_structure_Bool(self.is_active)
+        data = {
+            "unit_id": self.unit_id,
+            "client_id": self.client_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "country_id": self.country_id,
+            "division_id": self.division_id,
+            "category_name": self.category_name,
+            "geography_id": self.geography_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "unit_address": self.unit_address,
+            "postal_code": self.postal_code,
+            "domain_ids": self.domain_ids,
+            "i_ids": self.i_ids,
+            "is_active": self.is_active,
+            "approve_status": self.approve_status,
         }
+        return data
 
 class ClientUnit(object):
     def __init__(
@@ -1790,9 +1889,48 @@ class UnitDetails(object):
             "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
             "postal_code": to_structure_UnsignedIntegerType_32(self.postal_code),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "domain_ids": to_structure_VectorType_TexttorType_SignedIntegerType_8(self.domain_ids),
             "is_active": to_structure_Bool(self.is_active),
         }
+
+
+#
+#   Units - legal Entity details
+#
+
+class UnitLegalEntity(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, business_group_id, client_id
+        ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+            "legal_entity_id", "legal_entity_name", "business_group_id", "client_id"
+            ]
+        )
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_id = data.get("business_group_id")
+        client_id = data.get("client_id")
+        return UnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
+
+    def to_structure(self):
+        data = {
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id,
+            "client_id": self.client_id,
+        }
+        print "UnitLegalEntity"
+        print data
+        return to_dictionary_values(data)
+
 
 #
 # ServiceProvider
@@ -1871,10 +2009,12 @@ class ServiceProviderDetails(object):
 #
 
 class ClientUser(object):
-    def __init__(self, user_id, email_id, user_group_id, employee_name,
+    def __init__(
+        self, user_id, email_id, user_group_id, employee_name,
         employee_code, contact_no, seating_unit_id, user_level, country_ids,
         domain_ids, unit_ids, is_admin, is_service_provider,
-        service_provider_id, is_active, is_primary_admin):
+        service_provider_id, is_active, is_primary_admin
+    ):
         self.user_id = user_id
         self.email_id = email_id
         self.user_group_id = user_group_id
@@ -1927,11 +2067,13 @@ class ClientUser(object):
         is_active = parse_structure_Bool(is_active)
         is_primary_admin = data.get("is_primary_admin")
         is_primary_admin = parse_structure_Bool(is_primary_admin)
-        return ClientUser(user_id, email_id, user_group_id, employee_name,
-            employee_code, contact_no, seating_unit_id, seating_unit_name,
+        return ClientUser(
+            user_id, email_id, user_group_id, employee_name,
+            employee_code, contact_no, seating_unit_id,
             user_level, country_ids, domain_ids, unit_ids, is_admin,
             is_service_provider, service_provider_id, is_active,
-            is_primary_admin)
+            is_primary_admin
+        )
 
     def to_structure(self):
         return {
@@ -1998,7 +2140,8 @@ class AssignedStatutory(object):
 #
 
 class ActiveCompliance(object):
-    def __init__(self, compliance_history_id, compliance_name, compliance_frequency,
+    def __init__(
+        self, compliance_history_id, compliance_name, compliance_frequency,
         domain_name, start_date, due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
         compliance_description, remarks, compliance_id, file_names, download_url
@@ -2025,7 +2168,8 @@ class ActiveCompliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
-            data, ["compliance_history_id", "compliance_name",
+            data, [
+                "compliance_history_id", "compliance_name",
                 "compliance_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "format_file_name", "unit_name", "address", "compliance_description",
@@ -2103,8 +2247,10 @@ class ActiveCompliance(object):
 #
 
 class UpcomingCompliance(object):
-    def __init__(self, compliance_name, domain_name, start_date, due_date,
-        format_file_name, unit_name, address, compliance_description):
+    def __init__(
+        self, compliance_name, domain_name, start_date, due_date,
+        format_file_name, unit_name, address, compliance_description
+    ):
         self.compliance_name = compliance_name
         self.domain_name = domain_name
         self.start_date = start_date
@@ -2116,9 +2262,11 @@ class UpcomingCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name","domain_name", "start_date",
-         "due_date", "format_file_name", "unit_name", "address",
-         "compliance_description"])
+        data = parse_dictionary(data, [
+            "compliance_name", "domain_name", "start_date",
+            "due_date", "format_file_name", "unit_name", "address",
+            "compliance_description"
+        ])
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         domain_name = data.get("domain_name")
@@ -2135,8 +2283,10 @@ class UpcomingCompliance(object):
         address = parse_structure_CustomTextType_500(address)
         compliance_description = data.get("compliance_description")
         compliance_description = parse_structure_CustomTextType_500(compliance_description)
-        return UpcomingCompliance(compliance_name, domain_name, start_date, due_date,
-            format_file_name, unit_name, address, compliance_description)
+        return UpcomingCompliance(
+            compliance_name, domain_name, start_date, due_date,
+            format_file_name, unit_name, address, compliance_description
+        )
 
     def to_structure(self):
         return {
