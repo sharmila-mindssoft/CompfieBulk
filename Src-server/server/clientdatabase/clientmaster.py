@@ -1077,6 +1077,12 @@ def get_audit_trails(
     rows = db.get_data(
         tblActivityLog, columns, where_qry, where_qry_val
     )
+
+    c_rows = db.get_data(tblActivityLog, "count(0) as total", where_qry, where_qry_val)
+    c_total = 0
+    for c in c_rows :
+        c_total = c["total"]
+
     audit_trail_details = []
     for row in rows:
         user_id = row["user_id"]
@@ -1086,7 +1092,7 @@ def get_audit_trails(
         audit_trail_details.append(
             general.AuditTrail(user_id, form_id, action, date)
         )
-    return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
+    return general.GetAuditTrailSuccess(audit_trail_details, users, forms, c_total)
 
 
 def return_forms(db, form_ids=None):

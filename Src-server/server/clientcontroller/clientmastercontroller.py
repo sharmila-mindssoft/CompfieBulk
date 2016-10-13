@@ -560,7 +560,7 @@ def process_close_unit(db, request, session_user):
 ########################################################
 def process_get_audit_trails(db, request, session_user):
     from_count = request.record_count
-    to_count = RECORD_DISPLAY_COUNT
+    to_count = request.page_count
     from_date = request.from_date
     to_date = request.to_date
     user_id = request.user_id
