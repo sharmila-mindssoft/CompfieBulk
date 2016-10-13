@@ -96,7 +96,8 @@ class ApproveClientGroup(Request):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["client_group_approval_details"])
-        return ApproveClientGroup(data)
+        client_group_approval_details = data.get("client_group_approval_details")
+        return ApproveClientGroup(client_group_approval_details)
 
     def to_inner_structure(self):
         return {

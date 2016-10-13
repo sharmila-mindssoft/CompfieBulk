@@ -638,8 +638,11 @@ CREATE PROCEDURE `sp_le_domain_industry_delete`(
     IN clientid INT(11)
 )
 BEGIN
-    DELETE FROM tbl_legal_entity_domain_industry
-    WHERE client_id=clientid;
+    DELETE FROM tbl_legal_entity_domains
+    WHERE legal_entity_id in (
+    	select legal_entity_id from tbl_legal_entities
+    	where client_id = clientid
+    );
 END //
 DELIMITER ;
 
@@ -825,8 +828,11 @@ CREATE PROCEDURE `sp_le_d_industry_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, domain_id, industry_id, no_of_units
-    FROM tbl_legal_entity_domain_industry WHERE client_id = clientid;
+    SELECT legal_entity_id, domain_id, organization_id, count
+    FROM tbl_legal_entity_domains WHERE legal_entity_id in (
+    	select legal_entity_id from tbl_legal_entities 
+    	where client_id = clientid
+    );
 END //
 DELIMITER ;
 
@@ -1222,9 +1228,9 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
 	IN session_user INT(11)
 )
 BEGIN
-	SELECT client_id, group_name, group_admin, count, client_countries
+	SELECT client_id, group_name, email_id, count, client_countries
 	FROM (
-		SELECT client_id, group_name, group_admin,
+		SELECT client_id, group_name, email_id,
 		(
 			SELECT count(legal_entity_id) FROM tbl_legal_entities tle
 			WHERE tle.client_id = tcg.client_id and is_active=1
@@ -1237,7 +1243,7 @@ BEGIN
 			)
 		) as client_countries
 		FROM tbl_client_groups tcg
-		WHERE approve_status != 1
+		WHERE is_approved != 1
 	) a WHERE count > 0;
 END //
 DELIMITER ;

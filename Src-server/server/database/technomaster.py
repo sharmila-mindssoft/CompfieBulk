@@ -9,9 +9,6 @@ from server.common import (
     convert_base64_to_file, new_uuid
 )
 from server.database.tables import *
-from server.database.admin import (
-    get_countries_for_user, get_domains_for_user
-)
 from server.database.validateclientuserrecord import ClientAdmin
 
 
@@ -476,9 +473,8 @@ def save_organization(
         "sp_le_domain_industry_delete", (group_id, )
     )
     columns = [
-        "client_id", "legal_entity_id", "domain_id", "industry_id",
-        "no_of_units", "created_by", "created_on", "updated_by",
-        "updated_on"
+        "legal_entity_id", "domain_id", "organization_id",
+        "count", "created_by", "created_on"
     ]
     values_list = []
     if hasattr(request, "legal_entity_details"):
@@ -493,12 +489,12 @@ def save_organization(
             organization = domain.organization
             for org in organization:
                 value_tuple = (
-                    group_id, legal_entity_name_id_map[legal_entity_name],
+                    legal_entity_name_id_map[legal_entity_name],
                     domain_id, org, organization[org], session_user,
-                    current_time_stamp, session_user, current_time_stamp
+                    current_time_stamp
                 )
                 values_list.append(value_tuple)
-    r = db.bulk_insert(tblLegalEntityDomainIndustry, columns, values_list)
+    r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
     return r
@@ -644,9 +640,6 @@ def get_client_details(db, client_id):
     legal_entities = db.call_proc(
         "sp_legal_entity_details_by_group_id", (client_id,)
     )
-    domains = db.call_proc(
-        "sp_client_domains_by_group_id", (client_id,)
-    )
     date_configurations = db.call_proc(
         "sp_client_configuration_by_group_id", (client_id,)
     )
@@ -657,11 +650,9 @@ def get_client_details(db, client_id):
     user_name = client_details[0]["email_id"]
     short_name = client_details[0]["short_name"]
     total_view_licence = client_details[0]["total_view_licence"]
-    organization_map = return_organization_by_legalentity_domain(
+    domain_map = return_organization_by_legalentity_domain(
         organizations
     )
-    domain_map = return_domain_map_by_legal_entity_id(
-        domains, organization_map)
     legal_entities = return_legal_entities(
         legal_entities, domain_map
     )
@@ -681,7 +672,7 @@ def get_client_details(db, client_id):
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
     results = []
-    print "domains: %s" % domains
+    print "domains : %s" % domains
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
             business_group = None
@@ -733,11 +724,14 @@ def return_legal_entities(legal_entities, domains):
 ##########################################################################
 def return_organization_by_legalentity_domain(organizations):
     organization_map = {}
+    domain_map = {}
     for row in organizations:
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
-        industry_id = row["industry_id"]
-        no_of_units = row["no_of_units"]
+        industry_id = row["organization_id"]
+        no_of_units = row["count"]
+        if legal_entity_id not in domain_map:
+            domain_map[legal_entity_id] = []
         if legal_entity_id not in organization_map:
             organization_map[legal_entity_id] = {}
         if domain_id not in organization_map[legal_entity_id]:
@@ -747,23 +741,6 @@ def return_organization_by_legalentity_domain(organizations):
                 legal_entity_id][domain_id][str(industry_id)] = no_of_units
         organization_map[
             legal_entity_id][domain_id][str(industry_id)] = no_of_units
-    return organization_map
-
-
-##########################################################################
-#  To convert the data fetched from database into a dict
-#  Parameters : Domain details fetched from database and Organization
-#   details dictionary
-#  Return Type : Dictionary (Key: Legal entity id, Value: Object of
-#   EntityDomainDetails)
-##########################################################################
-def return_domain_map_by_legal_entity_id(domains, organization_map):
-    domain_map = {}
-    for domain in domains:
-        legal_entity_id = domain["legal_entity_id"]
-        domain_id = domain["domain_id"]
-        if legal_entity_id not in domain_map:
-            domain_map[legal_entity_id] = []
         domain_map[legal_entity_id].append(
             core.EntityDomainDetails(
                 domain_id=domain_id,
