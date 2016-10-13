@@ -314,6 +314,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
+        print "field_name: %s, val: %s" % (field_name, val)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
@@ -338,9 +339,12 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         elif param.get('type') == 'RECORD_TYPE':
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
-            val = parse_RecordType(
-                param.get('module_name'), param.get('class_name'), val
-            )
+            if param.get('is_optional') is True and val is None:
+                val = None
+            else:
+                val = parse_RecordType(
+                    param.get('module_name'), param.get('class_name'), val
+                )
             if is_validation_and_parse is True:
                 x[field_name] = val
         else:
@@ -380,7 +384,6 @@ def to_structure_dictionary_values(x):
             val = to_VectorType(
                 param.get('module_name'), param.get('class_name'), val
             )
-            val = to_vector_type_record_type(val)
 
         elif param.get('type') == 'MAP_TYPE':
             assert param.get('module_name') is not None
@@ -394,10 +397,12 @@ def to_structure_dictionary_values(x):
         elif param.get('type') == 'RECORD_TYPE':
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
-            print val
-            val = to_RecordType(
-                param.get('module_name'), param.get('class_name'), val
-            )
+            if param.get('is_optional') is True and val is None:
+                val = None
+            else:
+                val = to_RecordType(
+                    param.get('module_name'), param.get('class_name'), val
+                )
         else:
             val = parse_values(field_name, param, val)
 

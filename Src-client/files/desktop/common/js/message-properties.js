@@ -276,7 +276,10 @@ var message = {
   "deletion_year_required": "Deletion year required",
   "parent_user_required": "Parent User Required",
   "child_user_required": "Select atleast one child user",
-  "mapping_save_success": "User mapping saved successfully"
+  "mapping_save_success": "User mapping saved successfully",
+  "short_name_required": "Short Name Required",
+  "shortname_20": "Username - Only 20 characters are allowed",
+  "no_of_view_licence_required": "Number of View Licence Required"
 };
 
 function clearMessage() {

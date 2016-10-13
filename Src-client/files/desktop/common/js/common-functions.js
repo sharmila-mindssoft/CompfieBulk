@@ -865,3 +865,18 @@ function activate_text_arrow(ac_id, ac_name, callback) {
   ];
   callback(ac_result);
 }
+
+var month_id_name_map = {} 
+month_id_name_map[1] = "January"
+month_id_name_map[2] = "February"
+month_id_name_map[3] = "March"
+month_id_name_map[4] = "April"
+month_id_name_map[5] = "May"
+month_id_name_map[6] = "June"
+month_id_name_map[7] = "July"
+month_id_name_map[8] = "August"
+month_id_name_map[9] = "September"
+month_id_name_map[10] = "October"
+month_id_name_map[11] = "Novemeber"
+month_id_name_map[12] = "December"
+

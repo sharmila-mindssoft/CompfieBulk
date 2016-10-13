@@ -322,8 +322,12 @@ class UserLoginSuccess(Response):
             "is_admin": self.is_admin
         }
 
+
 class AdminLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, menu, employee_name, client_id):
+    def __init__(
+        self, user_id, session_token, email_id,
+        menu, employee_name, client_id
+    ):
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
@@ -333,29 +337,27 @@ class AdminLoginSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id", "menu", "employee_name"])
+        data = parse_dictionary(
+            data, [
+                "user_id", "session_token", "email_id",
+                "menu", "employee_name"]
+        )
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         session_token = data.get("session_token")
-        session_token = parse_structure_CustomTextType_50(session_token)
         email_id = data.get("email_id")
-        email_id = parse_structure_OptionalType_CustomTextType_100(email_id)
         menu = data.get("menu")
-        menu = parse_structure_RecordType_core_Menu(menu)
         employee_name = data.get("employee_name")
-        employee_name = parse_structure_CustomTextType_50(employee_name)
-        client_id = data.get("client_id")
-        client_id = parse_structure_OptionalType_UnsignedIntegerType_32(client_id)
-        return AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
+        return AdminLoginSuccess(
+            user_id, session_token, email_id, menu, employee_name)
 
     def to_inner_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "session_token": to_structure_CustomTextType_50(self.session_token),
-            "email_id": to_structure_OptionalType_CustomTextType_100(self.email_id),
-            "menu": to_structure_RecordType_core_Menu(self.menu),
-            "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id)
+            "user_id": self.user_id,
+            "session_token": self.session_token,
+            "email_id": self.email_id,
+            "menu": self.menu,
+            "employee_name": self.employee_name,
+            "client_id": self.client_id
         }
 
 
