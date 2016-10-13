@@ -83,15 +83,6 @@ CREATE TABLE `tbl_user_group_forms` (
   PRIMARY KEY (`user_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_admin`;
-CREATE TABLE `tbl_admin` (
-  `email_id` varchar(100) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
-  `user_type` tinyint(4),
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `tbl_countries`;
 CREATE TABLE `tbl_countries` (
   `country_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -132,8 +123,6 @@ CREATE TABLE `tbl_users` (
   `user_group_id` int(11) NOT NULL,
   `address` varchar(250) DEFAULT NULL,
   `designation` varchar(50) DEFAULT NULL,
-  `username` varchar(20) DEFAULT NULL,
-  `password` varchar(50) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
@@ -146,7 +135,22 @@ CREATE TABLE `tbl_users` (
   KEY `fk_tbl_users_user_group_id` (`user_group_id`),
   CONSTRAINT `fk_tbl_users_user_category_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_category` (`user_category_id`),
   CONSTRAINT `fk_tbl_users_user_group_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- user_login_details
+DROP TABLE IF EXISTS `tbl_user_login_details`;
+CREATE TABLE `tbl_user_login_details` (
+  `user_id` int(11) NOT NULL,
+  `user_category_id` int(11) NOT NULL,
+  `username` varchar(20) DEFAULT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_user_countries`;
 CREATE TABLE `tbl_user_countries` (
@@ -259,7 +263,7 @@ CREATE TABLE `tbl_statutory_natures` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`statutory_nature_id`,`country_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 DROP TABLE IF EXISTS `tbl_geography_levels`;
@@ -501,7 +505,7 @@ CREATE TABLE `tbl_client_groups` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_business_groups`;
 CREATE TABLE `tbl_business_groups` (

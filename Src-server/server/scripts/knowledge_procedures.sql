@@ -1,3 +1,38 @@
+DROP PROCEDURE IF EXISTS `sp_verify_login`;
+DELIMITER //
+CREATE PROCEDURE `sp_verify_login`(
+	IN uname VARCHAR(100), IN pword VARCHAR(100)
+)
+BEGIN
+	SELECT user_id, username from tbl_user_login_details where username = uname and is_active = 1;
+	SELECT @_user_id := user_id as user_id, @_user_category_id := user_category_id as user_category_id
+    FROM tbl_user_login_details WHERE username = uname AND PASSWORD = pword AND is_active = 1;
+
+	if @_user_category_id = 1 THEN
+		SELECT T1.form_id, T1.form_type_id, T1.form_name, T1.form_url,
+		T1.form_order, T1.parent_menu FROM tbl_forms as T1
+		INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+		WHERE T2.category_id_1 = 1 ;
+
+    elseif @_user_category_id = 2 THEN
+		SELECT T1.form_id, T1.form_type_id, T1.form_name, T1.form_url,
+		T1.form_order, T1.parent_menu FROM tbl_forms as T1
+		INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+		WHERE T2.category_id_2 = 1 ;
+
+    elseif @_user_category_id > 2 then
+		SELECT user_id, user_category_id, employee_code, employee_name, email_id, contact_no, mobile_no,
+		address, designation, @_user_group_id := user_group_id as user_group_id
+		FROM tbl_users WHERE user_id = @_user_id;
+
+        SELECT T1.form_id, T1.form_type_id, T1.form_name, T1.form_url, T1.form_order, T1.parent_menu
+		FROM tbl_forms as T1 INNER JOIN tbl_user_group_forms as T2
+		ON T2.user_group_id = @_usser_group_id;
+    end if;
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Returns Coutries that has been mapped with domain
 -- --------------------------------------------------------------------------------
@@ -1821,7 +1856,7 @@ CREATE PROCEDURE `sp_databaseserver_save`(
 BEGIN
 	INSERT INTO tbl_database_server (
 		db_server_name, ip, port, server_username, server_password
-	) VALUES (dbservername, ipaddr, port_no, username, pwd) 
+	) VALUES (dbservername, ipaddr, port_no, username, pwd)
 	ON DUPLICATE KEY UPDATE db_server_name = dbservername,
 	server_username = username, server_password= pwd, port = port_no;
 END //
@@ -1874,7 +1909,7 @@ BEGIN
 		) VALUES (machinename, ipaddr, port_no) ;
 
 	ELSE
-		UPDATE tbl_machines SET machine_name = machinename, 
+		UPDATE tbl_machines SET machine_name = machinename,
 		ip=ipaddr, port = port_no WHERE machine_id = machineid;
 	END IF;
 END //
@@ -1892,7 +1927,7 @@ BEGIN
 
 	SELECT client_id, group_name FROM tbl_client_groups;
 
-	SELECT legal_entity_id, legal_entity_name, client_id 
+	SELECT legal_entity_id, legal_entity_name, client_id
 	FROM tbl_legal_entities;
 
 	SELECT machine_id, machine_name FROM tbl_machines;
@@ -1924,7 +1959,7 @@ BEGIN
 	SELECT ip INTO machine_ip FROM tbl_machines WHERE machine_id = machineid;
 	SELECT port INTO machine_port FROM tbl_machines WHERE machine_id = machineid;
 	INSERT INTO tbl_client_database (
-		client_id, legal_entity_id, machine_id, database_ip, 
+		client_id, legal_entity_id, machine_id, database_ip,
 		database_port, database_username, database_password,
 		database_name, server_ip, server_port
 	) VALUES (
@@ -1950,7 +1985,7 @@ BEGIN
 
 	SELECT client_id, group_name FROM tbl_client_groups;
 
-	SELECT legal_entity_id, legal_entity_name, client_id 
+	SELECT legal_entity_id, legal_entity_name, client_id
 	FROM tbl_legal_entities;
 
 	SELECT machine_id, machine_name FROM tbl_machines;
@@ -1981,14 +2016,14 @@ DELIMITER //
 CREATE PROCEDURE `sp_unit_autodeletion_list`()
 BEGIN
 	SELECT client_id, group_name FROM tbl_client_groups;
-	
+
 	SELECT legal_entity_id, legal_entity_name, client_id,
 	(
 		SELECT count(unit_id) FROM tbl_units tu
 		WHERE tu.legal_entity_id=tl.legal_entity_id
 	) as unit_count,
 	(
-		SELECT max(deletion_year) FROM tbl_unit_autodeletion tua 
+		SELECT max(deletion_year) FROM tbl_unit_autodeletion tua
 		WHERE tua.client_id=tl.client_id
 		and tua.legal_entity_id = tl.legal_entity_id
 	) as deletion_period, is_active
@@ -1996,7 +2031,7 @@ BEGIN
 
 	SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
 	(
-		SELECT deletion_year FROM tbl_unit_autodeletion tua 
+		SELECT deletion_year FROM tbl_unit_autodeletion tua
 		WHERE tua.client_id=tu.client_id
 		and tua.legal_entity_id = tu.legal_entity_id
 	) as deletion_year, address FROM tbl_units tu;
@@ -2023,26 +2058,26 @@ DELIMITER;
 DROP PROCEDURE IF EXISTS `sp_users_type_wise`;
 DELIMITER //
 CREATE PROCEDURE `sp_users_type_wise`()
-BEGIN 
+BEGIN
 	SELECT user_id,
 	concat(employee_code," - ", employee_name) as employee_name,
 	is_active
 	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
+		SELECT user_group_id FROM tbl_user_groups
 		WHERE form_category_id=5
 	);
 	SELECT user_id,
 	concat(employee_code," - ", employee_name) as employee_name,
 	is_active
 	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
+		SELECT user_group_id FROM tbl_user_groups
 		WHERE form_category_id=6
 	);
 	SELECT user_id,
 	concat(employee_code," - ", employee_name) as employee_name,
 	is_active
 	FROM tbl_users WHERE user_group_id in (
-		SELECT user_group_id FROM tbl_user_groups 
+		SELECT user_group_id FROM tbl_user_groups
 		WHERE form_category_id=7
 	);
 	SELECT user_id, country_id FROM tbl_user_countries;
