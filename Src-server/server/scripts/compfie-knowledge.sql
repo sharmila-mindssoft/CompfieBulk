@@ -56,7 +56,6 @@ CREATE TABLE `tbl_user_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_admin`;
-
 CREATE TABLE `tbl_admin` (
   `email_id` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -522,7 +521,6 @@ CREATE TABLE `tbl_units` (
   CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_category_master` (`category_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
-
 
 
 DROP TABLE IF EXISTS `tbl_unit_approval_history`;
