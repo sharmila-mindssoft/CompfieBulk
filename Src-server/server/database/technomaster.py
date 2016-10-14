@@ -1260,44 +1260,93 @@ def is_invalid_id(db, check_mode, val):
                     return True
                 else:
                     return False
+def is_invalid_name(db, check_mode, val):
+    params = [check_mode, val]
+    rows = db.call_proc("sp_tbl_units_check_unitgroupname", params)
+    for r in rows:
+        if check_mode == "div_name":
+            if(int(r["div_name_cnt"]) > 0):
+                return True
+            else:
+                return False
+        if check_mode == "catg_name":
+            if(int(r["catg_cnt"]) > 0):
+                return True
+            else:
+                return False
 
+
+def save_division(db, client_id, div_name, business_group_id, legal_entity_id, session_user):
+    current_time_stamp = str(get_date_time())
+    values = [client_id, business_group_id, legal_entity_id, div_name, session_user, current_time_stamp]
+
+    div_id = db.call_insert_proc("sp_tbl_units_save_division", values)
+    return div_id
+
+def save_category(db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user):
+    current_time_stamp = str(get_date_time())
+    values = [client_id, business_group_id, legal_entity_id, div_id, category_name, session_user, current_time_stamp]
+    print "inside category saving"
+    print values
+    catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
+    return catg_id
 
 def save_unit (
-    db, client_id,  units, business_group_id, legal_entity_id,
-    country_id, division_id, category_name, session_user
+    db, client_id, units, business_group_id, legal_entity_id,
+    country_id, session_user
 ):
+    print "inside save db"
+    print units
+    print type(units)
+    print units[0]
     current_time_stamp = str(get_date_time())
     columns = [
-        "client_id", "category_name", "geography_id", "unit_code", "unit_name",
+        "client_id", "geography_id", "unit_code", "unit_name",
         "address", "postal_code", "country_id", "is_active", "created_by", "created_on",
+        "division_id", "category_id"
     ]
     if business_group_id is not None:
         columns.append("business_group_id")
     if legal_entity_id is not None:
         columns.append("legal_entity_id")
-    if division_id is not None:
-        columns.append("division_id")
+
     values_list = []
     unit_names = []
-    for unit in units:
-        domain_ids = ",".join(str(x) for x in unit.domain_ids)
-        industry_ids = ",".join(str(x) for x in unit.industry_ids)
+    int_i = 0
+    while int_i < len(units):
+        #domain_ids = ",".join(str(x) for x in units[int_i].domain_ids)
+        #industry_ids = ",".join(str(x) for x in unit[int_i].industry_ids)
+        print int_i
         vals = [
-            client_id, category_name,
-            unit.geography_id, unit.unit_code.upper(), unit.unit_name,
-            unit.unit_address, unit.postal_code, country_id,
+            client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
+            units[int_i].unit_address, units[int_i].postal_code, country_id,
             1, session_user, current_time_stamp,
         ]
+        unit_names.append("\"%s - %s\"" % (
+            str(units[int_i].unit_code).upper(), units[int_i].unit_name)
+        )
+
+        int_i = int_i + 1
+        if units[int_i].get("div_id") is not None:
+            print units[int_i].get("div_id")
+            vals.append(units[int_i].get("div_id"))
+        else:
+            vals.append(None)
+        int_i = int_i +1
+
+        if units[int_i].get("catg_id") is not None:
+            vals.append(units[int_i].get("catg_id"))
+        else:
+            vals.append(None)
+        int_i = int_i +1
+
         if business_group_id is not None:
             vals.append(business_group_id)
         if legal_entity_id is not None:
             vals.append(legal_entity_id)
-        if division_id is not None:
-            vals.append(division_id)
+
         values_list.append(vals)
-        unit_names.append("\"%s - %s\"" % (
-            str(unit.unit_code).upper(), unit.unit_name)
-        )
+        print vals
 
     result = db.bulk_insert(tblUnits, columns, values_list)
     if result is False:
@@ -1319,9 +1368,11 @@ def save_unit (
     values_list = []
     unit_id = None
     i = 1
-    for unit in units:
-        domain_ids = ",".join(str(x) for x in unit.domain_ids)
-        industry_ids = ",".join(str(x) for x in unit.industry_ids)
+    j = 0
+    while j < len(units):
+        domain_ids = ",".join(str(x) for x in units[j].domain_ids)
+        industry_ids = ",".join(str(x) for x in units[j].industry_ids)
+        j = j + 3
         if unit_id_start == 1:
             unit_id = max_unit_id
         else :
