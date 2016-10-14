@@ -414,5 +414,10 @@ TEMPLATE_PATHS = [
         "/knowledge/user-mapping",
         "files/desktop/knowledge/user-mapping/usermapping.html",
         None, {}
+    ),
+    (
+        "/knowledge/assign-client-unit",
+        "files/desktop/knowledge/assign-client-unit/assign-client-unit.html",
+        None, {}
     )
 ]
