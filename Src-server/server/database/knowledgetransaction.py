@@ -210,7 +210,7 @@ def return_statutory_mappings(db, data, is_report=None):
         compliance_names = compliances_data[0]
         compliances = compliances_data[1]
         geography_ids = [
-            int(x) for x in d["geography_ids"][:-1].split(',')
+            int(x) for x in d["geography_ids"].split(',') if x != ''
         ]
         geography_mapping_list = []
         for g_id in geography_ids:
@@ -811,11 +811,12 @@ def save_statutory_backup(db, statutory_mapping_id, created_by):
     mappings = ','.join(provision)
 
     geo_map = []
-    for gid in old_record["geography_ids"][:-1].split(','):
+    for gid in [int(x) for x in old_record["geography_ids"].split(',') if x != '']:
         data = get_geography_by_id(db, gid)
-        if data is not None:
+        print data
+        if type(data) is dict :
             data = data["parent_names"]
-        geo_map.append(data)
+            geo_map.append(data)
     geo_mappings = ','.join(geo_map)
 
     tbl_statutory_backup = "tbl_statutories_backup"
@@ -991,7 +992,7 @@ def save_statutory_notifications(db, mapping_id, notification_text):
     industry_ids = ','.join(industry_ids)
     mappings = old_record["statutory_mapping"]
     geo_map = []
-    for gid in old_record["geography_ids"][:-1].split(','):
+    for gid in [int(x) for x in old_record["geography_ids"].split(',') if x != '']:
         data = get_geography_by_id(db, int(gid))
         if data is not None:
             names = data["parent_names"]
