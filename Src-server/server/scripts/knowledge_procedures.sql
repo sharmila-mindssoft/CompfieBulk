@@ -9,13 +9,15 @@ BEGIN
     FROM tbl_user_login_details WHERE username = uname AND PASSWORD = pword AND is_active = 1;
 
 	if @_user_category_id = 1 THEN
-		SELECT T1.form_id, T1.form_type_id, T1.form_name, T1.form_url,
+		SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+        T1.form_name, T1.form_url,
 		T1.form_order, T1.parent_menu FROM tbl_forms as T1
 		INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
 		WHERE T2.category_id_1 = 1 ;
 
     elseif @_user_category_id = 2 THEN
-		SELECT T1.form_id, T1.form_type_id, T1.form_name, T1.form_url,
+		SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+        T1.form_name, T1.form_url,
 		T1.form_order, T1.parent_menu FROM tbl_forms as T1
 		INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
 		WHERE T2.category_id_2 = 1 ;
@@ -25,7 +27,8 @@ BEGIN
 		address, designation, @_user_group_id := user_group_id as user_group_id
 		FROM tbl_users WHERE user_id = @_user_id;
 
-        SELECT T1.form_id, T1.form_type_id, T1.form_name, T1.form_url, T1.form_order, T1.parent_menu
+        SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+        T1.form_name, T1.form_url, T1.form_order, T1.parent_menu
 		FROM tbl_forms as T1 INNER JOIN tbl_user_group_forms as T2
 		ON T2.user_group_id = @_usser_group_id;
     end if;

@@ -67,10 +67,10 @@ INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/assigned-statutory-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail', 43, null);
 -- My Account
-INSERT INTO tbl_forms VALUES(44, 3, 'View Profile', '/knowledge/audit-trail', 44, null);
-INSERT INTO tbl_forms VALUES(45, 3, 'Change Password', '/knowledge/audit-trail', 45, null);
+INSERT INTO tbl_forms VALUES(44, 3, 'View Profile', '/knowledge/profile', 44, null);
+INSERT INTO tbl_forms VALUES(45, 3, 'Change Password', '/knowledge/change-password', 45, null);
 INSERT INTO tbl_forms VALUES(46, 3, 'Messages', '/knowledge/messages', 46, null);
-INSERT INTO tbl_forms VALUES(47, 3, 'Statutory Notification', '/knowledge/statutory-notifications-list', 47, null);
+INSERT INTO tbl_forms VALUES(47, 3, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
 
 -- form_id, category_id_1, category_id_2, category_id_3, category_id_4, category_id_5, category_id_6, category_id_7, category_id_8
 -- Masters
@@ -131,8 +131,8 @@ INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
 
 -- tbl_user_login_details
 -- user_id, user_category_id, username, password, is_active --- p@$$word@123
-INSERT INTO tbl_user_login_details (user_id, user_category_id, username, password, is_active) VALUES(1, 1, "compfieadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
-INSERT INTO tbl_user_login_details (user_id, user_category_id, username, password, is_active) VALUES(2, 2, "consoleadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
+INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(1, 1, "compfieadmin@compfie.com", "compfieadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
+INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(2, 2, "consoleadmin@comfpie.com", "consoleadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
 
 -- tbl_session_types
 INSERT INTO tbl_session_types VALUES(1, "web");

@@ -142,6 +142,7 @@ DROP TABLE IF EXISTS `tbl_user_login_details`;
 CREATE TABLE `tbl_user_login_details` (
   `user_id` int(11) NOT NULL,
   `user_category_id` int(11) NOT NULL,
+  `email_id` varchar(100) NOT NULL,
   `username` varchar(20) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
