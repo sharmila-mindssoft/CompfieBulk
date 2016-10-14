@@ -361,6 +361,35 @@ class DIVISION(Request):
         }
 
 
+class UnitDivision(Request):
+    def __init__(self, division_id, division_name, category_name, division_cnt, unit_cnt):
+        self.division_id = division_id
+        self.division_name = division_name
+        self.category_name = category_name
+        self.division_cnt = division_cnt
+        self.unit_cnt = unit_cnt
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["dv_id", "dv_name", "cg", "div_cnt", "unit_cnt"])
+        division_id = data.get("dv_id")
+        division_name = data.get("dv_name")
+        category_name = data.get("cg")
+        division_cnt = data.get("div_cnt")
+        unit_cnt = data.get("unit_cnt")
+
+        return UnitDivision(division_id, division_name, category_name, division_cnt, unit_cnt)
+
+    def to_inner_structure(self):
+        data =  {
+            "division_id": self.division_id,
+            "division_name": self.division_name,
+            "category_name": self.category_name,
+            "division_cnt": self.division_cnt,
+            "unit_cnt": self.unit_cnt,
+        }
+        return data
+
 class UNIT(object):
     def __init__(
         self, unit_id, geography_id, unit_code, unit_name,unit_address,
@@ -383,6 +412,7 @@ class UNIT(object):
                 "i_ids"
             ]
         )
+        print "inside class uint after append"
         unit_id = data.get("u_id")
         geography_id = data.get("geo_id")
         unit_code = data.get("u_code")
@@ -429,30 +459,28 @@ class COUNTRYWISEUNITS(object):
         }
 
 class SaveClient(Request):
-    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name, units):
+    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, division_units, units):
         self.client_id = client_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
-        self.division_id = division_id
-        self.category_name = category_name
+        self.division_units = division_units
         self.units = units
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "cl_id", "bg_id", "le_id", "c_id", "dv_id", "cg", "units"
+                "cl_id", "bg_id", "le_id", "c_id", "div_dict", "units"
             ]
         )
         client_id = data.get("cl_id")
         business_group_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         country_id = data.get("c_id")
-        division_id = data.get("dv_id")
-        category_name = data.get("cg")
+        division_units = data.get("div_dict")
         units = data.get("units")
         return SaveClient(
-            client_id, business_group_id, legal_entity_id, country_id, division_id, category_name, units
+            client_id, business_group_id, legal_entity_id, country_id, division_units, units
         )
 
     def to_inner_structure(self):
@@ -461,8 +489,7 @@ class SaveClient(Request):
             "business_group_id": self.business_group_id,
             "legal_entity_id": self.legal_entity_id,
             "country_id": self.country_id,
-            "division_id": self.division_id,
-            "category_name": self.category_name,
+            "division_units": self.division_units,
             "units": self.units,
         }
         return data
@@ -768,6 +795,31 @@ class InvalidDivisionId(Response):
         return {
         }
 
+class InvalidDivisionName(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidDivisionName()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class InvalidCategoryName(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCategoryName()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class InvalidUnitId(Response):
     def __init__(self):
@@ -1436,6 +1488,7 @@ def _init_Response_class_map():
         UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
         ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
         InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId,
+        InvalidDivisionName, InvalidCategoryName,
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
