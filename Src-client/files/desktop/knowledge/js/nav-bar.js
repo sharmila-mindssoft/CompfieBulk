@@ -29,19 +29,13 @@ function initializeNavBar() {
   if (navBarItems === null || navBarItems == undefined)
     return;
   var menus = null;
-  if (window.localStorage.shortName != null) {
-    menus = [
-      'Master',
-      'Transaction',
-      'Report'
-    ];
-  } else {
-    menus = [
-      'Master',
-      'Transaction',
-      'Report'
-    ];
-  }
+  menus = [
+    'Master',
+    'Transaction',
+    'Report',
+    'My Accounts'
+  ];
+
   var homeMenu = $('#cssmenu .menu-ul .home-menu');
   if ('Home' in navBarItems) {
     homeMenu.attr('href', '/dashboard');
@@ -53,6 +47,8 @@ function initializeNavBar() {
   }
   for (var i = 0; i < menus.length; i++) {
     var key = menus[i];
+    if (key == "My Accounts")
+      continue;
     if (!(key in navBarItems))
       continue;
     var liObject = $('#nav-bar-templates .sub-menu-name li').clone();
@@ -88,31 +84,48 @@ function initializeNavBar() {
     $('#cssmenu .menu-ul').append(liObject);
   }
   var user = mirror.getUserInfo();
-  var settingsMenu = navBarItems.Settings;
+  // console.log(navBarItems["My Accounts"])
+  var settingsMenu = navBarItems["My Accounts"];
   var settingsMenuObject = $('#nav-bar-templates .settings-menu .user-icon').clone();
   $('.username', settingsMenuObject).text(user.employee_name);
   for (var form_key in settingsMenu) {
-    var form = navBarItems.Settings[form_key];
-    var item = getItemObject(form.form_url, form.form_name);
-    $('ul', settingsMenuObject).append(item);
+    var form = navBarItems["My Accounts"][form_key];
+    if (form.form_name != "Messages" &&  form.form_name != "Statutory Notification") {
+      var item = getItemObject(form.form_url, form.form_name);
+      $('ul', settingsMenuObject).append(item);
+    }
   }
   var employee_name = mirror.getEmployeeName();
-  profile_url = '/knowledge/profile';
-  change_password_url = '/knowledge/change-password';
-  if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
-    var item = getItemObject(profile_url, 'View Profile');
-    $('ul', settingsMenuObject).append(item);
-  }
-  var item = getItemObject(change_password_url, 'Change Password');
-  $('ul', settingsMenuObject).append(item);
+  // profile_url = '/knowledge/profile';
+  // change_password_url = '/knowledge/change-password';
+  // if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
+  //   var item = getItemObject(profile_url, 'View Profile');
+  //   $('ul', settingsMenuObject).append(item);
+  // }
+  // var item = getItemObject(change_password_url, 'Change Password');
+  // $('ul', settingsMenuObject).append(item);
+
   var item = getItemObject(null, 'Logout');
   item.on('click', function () {
     mirror.logout(function (args) {
       custom_alert(args);
     });
   });
+
   $('ul', settingsMenuObject).append(item);
+
   $('#cssmenu .menu-ul').append(settingsMenuObject);
+  for (var form_key in settingsMenu) {
+    var form = navBarItems["My Accounts"][form_key];
+    if (form.form_name == "Messages") {
+      var liObject = $('#nav-bar-templates .messages li').clone();
+      $('#cssmenu .menu-ul').append(liObject);
+    }
+    else if (form.form_name == "Statutory Notification") {
+      var liObject = $('#nav-bar-templates .notifications li').clone();
+      $('#cssmenu .menu-ul').append(liObject);
+    }
+  }
 }
 function showDeletionPopup(notification_text) {
   $('.overlay-nav-bar').css('visibility', 'visible');

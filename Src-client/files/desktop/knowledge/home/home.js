@@ -36,7 +36,8 @@ function loadNotificationList(list) {
   }
 }
 $(function () {
-  initialize();
+  // initialize();
+  $('.notification-container').hide();
 });
 function initializeUI() {
   var windowHeight = $(window).height();

@@ -68,4 +68,6 @@ def reorder_menu(menus):
         new_menu["Transaction"] = menus["Transaction"]
     if "Report" in menus:
         new_menu["Report"] = menus["Report"]
+    if "My Accounts" in menus:
+        new_menu["My Accounts"] = menus["My Accounts"]
     return new_menu

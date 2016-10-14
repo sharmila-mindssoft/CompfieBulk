@@ -22,33 +22,66 @@ __all__ = [
 # To Check Login credentials
 ########################################################
 def verify_login(db, username, password):
-    tblAdminCondition = "password=%s and username=%s"
-    admin_details = db.get_data(
-        "tbl_admin", ["username", "password"],
-        tblAdminCondition,
-        (password, username)
+
+    args = [username, password]
+    expected_result = 3
+    result = db.call_proc_with_multiresult_set(
+       "sp_verify_login", args, expected_result
     )
-    if (len(admin_details) == 0):
-        data_columns = [
-            "user_id", "user_group_id", "email_id",
-            "employee_name", "employee_code",
-            "contact_no", "address",
-            "designation", "user_group_name", "form_ids"
-        ]
-        query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, " + \
-            " t1.employee_name, t1.employee_code, t1.contact_no, " + \
-            " t1.address, t1.designation, " + \
-            " t2.user_group_name, t2.form_ids " + \
-            " FROM tbl_users t1 INNER JOIN tbl_user_groups t2 " + \
-            " ON t1.user_group_id = t2.user_group_id " + \
-            " WHERE t1.password=%s and t1.email_id=%s and t1.is_active=1"
-        data_list = db.select_one(query, [password, username])
-        if data_list is None:
-            return False
-        else:
-            return convert_to_dict(data_list, data_columns)
-    else:
-        return True
+    '''
+        'sp_verify_login' this procedure will return
+        3 result-set which are validation-result, Users info and User's Forms.
+    '''
+    uname = res = user_info = forms = response = {}
+
+    # print uname
+    if (len(result[1]) == 0) :
+        return (uname, response, user_info, forms)
+
+    if (len(result[0]) == 0) :
+        return (uname, response, user_info, forms)
+
+    res = result[1]
+    response = res[0]
+    uname = result[0][0]
+    if res[0]['user_id'] is None :
+        user_info = None
+        forms = None
+    elif res[0]['user_category_id'] <= 2 :
+        user_info = None
+        forms = result[2]
+    elif res[0]['user_category_id'] > 2 :
+        user_info = result[2]
+        forms = result[3]
+
+    return (uname, response, user_info, forms)
+    # tblAdminCondition = "password=%s and username=%s"
+    # admin_details = db.get_data(
+    #     "tbl_admin", ["username", "password"],
+    #     tblAdminCondition,
+    #     (password, username)
+    # )
+    # if (len(admin_details) == 0):
+    #     data_columns = [
+    #         "user_id", "user_group_id", "email_id",
+    #         "employee_name", "employee_code",
+    #         "contact_no", "address",
+    #         "designation", "user_group_name", "form_ids"
+    #     ]
+    #     query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, " + \
+    #         " t1.employee_name, t1.employee_code, t1.contact_no, " + \
+    #         " t1.address, t1.designation, " + \
+    #         " t2.user_group_name, t2.form_ids " + \
+    #         " FROM tbl_users t1 INNER JOIN tbl_user_groups t2 " + \
+    #         " ON t1.user_group_id = t2.user_group_id " + \
+    #         " WHERE t1.password=%s and t1.email_id=%s and t1.is_active=1"
+    #     data_list = db.select_one(query, [password, username])
+    #     if data_list is None:
+    #         return False
+    #     else:
+    #         return convert_to_dict(data_list, data_columns)
+    # else:
+    #     return True
 
 
 ########################################################
@@ -103,44 +136,45 @@ def add_session(
 #         return None
 
 def verify_username(db, username, is_mobile=False):
-    user_columns = ["user_id", "employee_name"]
-    param = [username]
-    # checking in tbl_users
-    user_query = "SELECT user_id, employee_name  FROM tbl_users " + \
-        " WHERE email_id = %s and is_active = 1"
-    user_rows = db.select_all(user_query, param)
-    if user_rows:
-        result = convert_to_dict(user_rows, user_columns)
-        if is_mobile is True :
-                forms = get_user_form_ids(db, int(result[0]["user_id"]), None)
-                form_ids = [int(x) for x in forms.split(",")]
-                if 11 in form_ids :
-                    return (
-                        result[0]["user_id"],
-                        result[0]["employee_name"],
-                        None
-                    )
-                else :
-                    return None
-        else :
-            return (
-                result[0]["user_id"],
-                result[0]["employee_name"],
-                None
-            )
-    else:  # checking in tbl_admin
-        admin_query = " SELECT count(username) as count, user_type FROM tbl_admin " + \
-            " WHERE username = %s"
-        admin_rows = db.select_all(admin_query, param)
-        count = admin_rows[0][0]
-        user_type = admin_rows[0][1]
-        if count > 0:
-            if user_type == 0 :
-                return (0, "Administrator", user_type)
-            else :
-                return (1, "ConsoleAdmin", user_type)
-        else:
-            return (None, None)
+    pass
+#     user_columns = ["user_id", "employee_name"]
+#     param = [username]
+#     # checking in tbl_users
+#     user_query = "SELECT user_id, employee_name  FROM tbl_users " + \
+#         " WHERE email_id = %s and is_active = 1"
+#     user_rows = db.select_all(user_query, param)
+#     if user_rows:
+#         result = convert_to_dict(user_rows, user_columns)
+#         if is_mobile is True :
+#                 forms = get_user_form_ids(db, int(result[0]["user_id"]), None)
+#                 form_ids = [int(x) for x in forms.split(",")]
+#                 if 11 in form_ids :
+#                     return (
+#                         result[0]["user_id"],
+#                         result[0]["employee_name"],
+#                         None
+#                     )
+#                 else :
+#                     return None
+#         else :
+#             return (
+#                 result[0]["user_id"],
+#                 result[0]["employee_name"],
+#                 None
+#             )
+#     else:  # checking in tbl_admin
+#         admin_query = " SELECT count(username) as count, user_type FROM tbl_admin " + \
+#             " WHERE username = %s"
+#         admin_rows = db.select_all(admin_query, param)
+#         count = admin_rows[0][0]
+#         user_type = admin_rows[0][1]
+#         if count > 0:
+#             if user_type == 0 :
+#                 return (0, "Administrator", user_type)
+#             else :
+#                 return (1, "ConsoleAdmin", user_type)
+#         else:
+#             return (None, None)
 
 
 def verify_password(db, password, user_id):

@@ -1,3 +1,4 @@
+
 var landingPage = null;
 var captchaStatus = false;
 var captchaText = null;
