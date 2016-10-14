@@ -42,7 +42,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_VectorType_RecordType_core_ClientGroup,
     parse_structure_VectorType_RecordType_core_LegalEntityDetails,
-    parse_structure_VectorType_RecordType_core_Industries
+    parse_structure_VectorType_RecordType_core_Industries,
+    parse_structure_VectorType_RecordType_core_AssignLegalEntity
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -88,7 +89,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation,
     to_structure_VectorType_RecordType_core_ClientGroup,
     to_structure_VectorType_RecordType_core_LegalEntityDetails,
-    to_structure_VectorType_RecordType_core_Industries
+    to_structure_VectorType_RecordType_core_Industries,
+    to_structure_VectorType_RecordType_core_AssignLegalEntity
 )
 
 
@@ -601,12 +603,25 @@ class GetNextUnitCode(Request):
             "client_id" : to_structure_UnsignedIntegerType_32(self.client_id)
         }
 
+class GetLegalEntities(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetLegalEntities()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Request_class_map():
     classes = [
         GetClientGroups, SaveClientGroup, UpdateClientGroup,
         ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient,
         ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
-        GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData
+        GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData, GetLegalEntities
     ]
     class_map = {}
     for c in classes:
@@ -799,6 +814,20 @@ class InvalidUnitId(Response):
         return {
         }
 
+class GetLegalEntitiesSuccess(Response):
+    def __init__(self, groups):
+        self.groups = groups
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["groups"])
+        groups = data.get("groups")
+        return GetLegalEntitiesSuccess(groups)
+
+    def to_inner_structure(self):
+        return {
+            "groups": self.groups
+        }
 
 class Unit(object):
     def __init__(
@@ -1448,7 +1477,7 @@ def _init_Response_class_map():
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
         InvalidNoOfLicence, InvalidFileSpace, ServerIsFull, NotAnImageFile,
-        GetNextUnitCodeSuccess, GetClientGroupFormDataSuccess
+        GetNextUnitCodeSuccess, GetClientGroupFormDataSuccess, GetLegalEntitiesSuccess
     ]
     class_map = {}
     for c in classes:

@@ -30,7 +30,8 @@ __all__ = [
     "change_client_status",
     "reactivate_unit",
     "get_client_profile",
-    "create_new_admin"
+    "create_new_admin",
+    "get_legal_entities"
 ]
 
 #
@@ -493,3 +494,17 @@ def get_next_unit_code(db, request, session_user):
     client_id = request.client_id
     next_unit_code = get_next_auto_gen_number(db, client_id=client_id)
     return technomasters.GetNextUnitCodeSuccess(next_unit_code)
+
+#
+# Assign Legal Entity
+#
+
+
+########################################################
+# To Get list of all legal entity
+########################################################
+def get_legal_entities(db, request, session_user):
+    legal_entities = get_legalentities(db)
+    return technomasters.GetLegalEntitiesSuccess(
+        legal_entities=legal_entities
+    )

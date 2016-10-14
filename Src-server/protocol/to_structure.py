@@ -2392,3 +2392,9 @@ def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(dat
         data, to_structure_CustomTextType_50,
         to_structure_UnsignedIntegerType_32
     )
+def to_structure_VectorType_RecordType_core_AssignLegalEntity(data):
+    return to_structure_VectorType("core", "AssignLegalEntity", data)
+
+
+def to_structure_RecordType_core_ClientGroup(data):
+    return to_structure_RecordType("core", "AssignLegalEntity", data)

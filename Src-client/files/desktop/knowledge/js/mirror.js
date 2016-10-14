@@ -1050,6 +1050,16 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  // Assign Legal Entity
+  function getLegalEntities(callback) {
+    callerName = 'techno';
+    var request = [
+      'GetLegalEntities',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   // Change Password APIs
   function changePassword(currentPassword, newPassword, callback) {
     callerName = 'login';
@@ -1784,6 +1794,7 @@ function initMirror() {
     updateClientGroup: updateClientGroup,
     getClientGroups: getClientGroups,
     changeClientGroupStatus: changeClientGroupStatus,
+    getLegalEntities: getLegalEntities,
     changePassword: changePassword,
     forgotPassword: forgotPassword,
     validateResetToken: validateResetToken,

@@ -14,7 +14,8 @@ from technomastercontroller import (
     create_new_admin_for_client,
     get_next_unit_code,
     get_client_group_form_data,
-    get_edit_client_group_form_data
+    get_edit_client_group_form_data,
+    get_legal_entities
 )
 from server import logger
 
@@ -22,7 +23,7 @@ __all__ = [
     "process_techno_request",
 ]
 
-forms = [18, 19, 20, 21]
+forms = [18, 19, 20, 21, 44]
 
 
 def process_techno_request(request, db):
@@ -130,6 +131,13 @@ def process_techno_request(request, db):
         logger.logKnowledgeApi("------", str(time.time()))
         result = get_next_unit_code(db, request_frame, session_user)
         logger.logKnowledgeApi("GetNextUnitCode", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    if type(request_frame) is technomasters.GetLegalEntities:
+        logger.logKnowledgeApi("GetLegalEntities", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = get_legal_entities(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetLegalEntities", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     return result

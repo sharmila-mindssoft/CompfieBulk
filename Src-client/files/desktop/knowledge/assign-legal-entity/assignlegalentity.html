@@ -1,0 +1,55 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+  <div class="content-container width80">
+    <div class="content-area">
+      <h1>Assign Legal Entity</h1>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+      <table>
+        <tr align="left">
+          <th align="center" width="3%">#</th>
+          <th width="15%">Country</th>
+          <th width="13%">Group</th>
+          <th width="13%" align="center">Unassigned Legal Entity</th>
+          <th width="5%" align="center">Assign</th>
+          <th width="10%" align="center">Techno Executive</th>
+        </tr>
+        <tr>
+          <td align="center"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td></td>
+          <td align="center"></td>
+          <td align="center"></td>
+        </tr>
+        <tr>
+          <td align="center">1</td>
+          <td>India</td>
+          <td>RG Group</td>
+          <td align="center">5 / 10</td>
+          <td align="center"><input type="button" class="btn-submit" value="Assign" onclick="location.href='/legalentityAssign/edit'" /> </td>
+          <td align="center"><input type="button" class="btn-submit" value="View" onclick="location.href='/legalentityunAssign/edit'" /> </td>
+        </tr>
+        <tr>
+          <td align="center">2</td>
+          <td>India, Singapore</td>
+          <td>PRG Group</td>
+          <td align="center">2 / 6</td>
+          <td align="center"><input type="button" class="btn-submit" value="Assign"  /></td>
+          <td align="center"><input type="button" class="btn-submit" value="View"  /></td>
+        </tr>
+        <tr>
+          <td align="center">3</td>
+          <td>India</td>
+          <td>ABC Group</td>
+          <td align="center">5 / 8</td>
+          <td align="center"><input type="button" class="btn-submit" value="Assign" /></td>
+          <td align="center"><input type="button" class="btn-submit" value="View"  /></td>
+        </tr>
+          
+      </table>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/script/assign-legal-entity/assignlegalentity.js"></script>
+{% endblock %} 
