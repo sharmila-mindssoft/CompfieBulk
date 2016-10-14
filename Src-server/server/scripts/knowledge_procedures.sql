@@ -1042,10 +1042,12 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser`(in userId INT(11))
 BEGIN
 	select t1.unit_id, t1.client_id, t1.business_group_id,
-    t1.legal_entity_id, t1.division_id, t1.country_id,
-	t1.geography_id, t1.industry_id, t1.unit_code,
+    t1.legal_entity_id, t1.division_id,
+	t1.geography_id, t1.unit_code,t1.country_id,
 	t1.unit_name, t1.address, t1.postal_code,
-	t1.domain_ids, t1.is_active,
+	t1.approve_status, t1.is_active,
+	t4.category_name,
+	t6.domain_id as domain_ids, t6.industry_id as i_ids,
 	(select business_group_name from tbl_business_groups where
     business_group_id = t1.business_group_id) as b_group,
     (select legal_entity_name from tbl_legal_entities where
@@ -1055,12 +1057,19 @@ BEGIN
     (select group_name from tbl_client_groups where
     client_id = t1.client_id) as group_name
     from
-    tbl_units as t1, tbl_user_clients as t2, tbl_user_countries as t3
+    tbl_units as t1, tbl_user_clients as t2, tbl_user_countries as t3,
+	tbl_category_master as t4,
+	tbl_user_domains as t5, tbl_unit_industries as t6
     where
-    t1.client_id = t2.client_id and
+	t6.domain_id = t5.domain_id and
+	t5.user_id = t2.user_id and
+	t4.category_id = t1.category_id and
+	t4.client_id = t1.client_id and
 	t1.country_id = t3.country_id and
     t3.user_id = t2.user_id and
+	t1.client_id = t2.client_id and
     t2.user_id = userId
+	group by t1.unit_id
     order by group_name, b_group, l_entity, division;
 END //
 DELIMITER ;
