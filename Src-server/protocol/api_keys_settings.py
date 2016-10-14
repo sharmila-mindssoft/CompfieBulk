@@ -227,7 +227,6 @@ api_params = {
     "cg": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     "cl_id": {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "d": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DIVISION"},
-    "business_group": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "BUSINESS_GROUP"},
     "le": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "LEGAL_ENTITY"},
     "units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UNIT"},
 

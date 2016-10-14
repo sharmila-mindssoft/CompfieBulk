@@ -1,6 +1,6 @@
 from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list,
-    to_structure_dictionary_values
+    to_structure_dictionary_values, parse_VariantType
 )
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_GroupCompany,
@@ -999,6 +999,7 @@ class GetEditClientGroupFormDataSuccess(Response):
         )
 
     def to_inner_structure(self):
+        print "self.business_groups: %s" % self.business_groups
         return {
             "countries": self.countries,
             "business_groups": self.business_groups,

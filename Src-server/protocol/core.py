@@ -597,13 +597,11 @@ class Menu(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["menus"])
         menus = data.get("menus")
-        menus = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(menus)
         return Menu(menus)
 
     def to_structure(self):
-        print self.menus
         return {
-            "menus": to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(self.menus),
+            "menus": self.menus,
         }
 
 #

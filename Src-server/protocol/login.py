@@ -176,6 +176,7 @@ class Logout(Request):
             "session_token": self.session_token,
         }
 
+
 def _init_Request_class_map():
     classes = [
         Login, ForgotPassword, ResetTokenValidation, ResetPassword,
@@ -188,14 +189,15 @@ def _init_Request_class_map():
 
 _Request_class_map = _init_Request_class_map()
 
+
 #
 # Response
 #
-
 class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        print "inner before: %s " % inner
         if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
@@ -222,7 +224,6 @@ class UserLoginSuccess(Response):
         employee_name, employee_code, contact_no, address, designation, client_id,
         is_admin
     ):
-        print "inside init: %s" % menu
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
@@ -290,22 +291,33 @@ class AdminLoginSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id", "menu", "employee_name", "user_client_id"])
+        data = parse_dictionary(
+            data, [
+                "user_id", "session_token", "email_id", "menu",
+                "employee_name", "user_client_id"
+            ])
         user_id = data.get("user_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
         menu = data.get("menu")
-        # menu = parse_structure_RecordType_core_Menu(menu)
         employee_name = data.get("employee_name")
         client_id = data.get("user_client_id")
-        return AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, client_id)
+        return AdminLoginSuccess(
+            user_id, session_token, email_id, menu, employee_name, client_id)
 
     def to_inner_structure(self):
+        print {
+            "user_id": self.user_id,
+            "session_token": self.session_token,
+            "email_id": self.email_id,
+            "menu": self.menu,
+            "employee_name": self.employee_name,
+            "user_client_id": self.client_id
+        }
         return {
             "user_id": self.user_id,
             "session_token": self.session_token,
             "email_id": self.email_id,
-            # "menu": to_structure_RecordType_core_Menu(self.menu),
             "menu": self.menu,
             "employee_name": self.employee_name,
             "user_client_id": self.client_id
