@@ -939,6 +939,7 @@ function initMirror() {
   ){
       return {
         "d_id": d_id,
+        "activation_date": null,
         "org": org
       }
   }

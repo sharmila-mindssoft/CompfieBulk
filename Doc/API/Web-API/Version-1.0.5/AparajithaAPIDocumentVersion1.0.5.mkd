@@ -1,0 +1,301 @@
+<h1> COMPFIE - API Document </h1>
+
+[TOC]
+
+# Request Format
+
+    {
+        "session_token": SESSION_TOKEN,
+        "request": will be any of the following requests
+    }
+
+    Possible Errors
+
+    [
+        "InvalidSessionToken",
+        {}  
+    ]
+
+    Note : All the following Requests will be in the above format
+
+# Validity Date Settings
+
+## List
+
+    [ 
+        "GetValidityDateList", 
+        {} 
+    ]
+
+    Success Response
+
+    [
+        "GetValidityDateListSuccess", 
+        {
+            "domains": [DOMAIN,], 
+            "validity_date_settings": [VALIDITY_DATE_SETTINGS,], 
+            "country_domain_mappings": {
+                COUNTRY_ID : [DOMAIN_ID,],
+            }, 
+            "countries": [COUNTRY,]
+        }
+    ]
+
+## Save / Update
+
+    [
+        "SaveValidityDateSettings", 
+        { 
+            "validity_date_settings": [VALIDITY_DATE_SETTINGS,]
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveValidityDateSettingsSuccess", 
+        {}
+    ]
+
+# Client Group Creation
+
+## List
+    
+    [ "GetClientGroups", {} ]
+    
+    Success Response
+
+    [
+        "GetClientGroupsSuccess", 
+        {
+            "groups": [
+                {
+                    "country_names": STRING, 
+                    "is_approved": INT, 
+                    "is_active": BOOL, 
+                    "group_name": STRING, 
+                    "no_of_legal_entities": INT, 
+                    "remarks": STRING, 
+                    "group_id": INT
+                },
+            ]
+        }
+    ]
+
+## Form Data
+
+    [ "GetClientGroupFormData", {} ]
+
+    Success Response
+
+    [
+        "GetClientGroupFormDataSuccess", 
+        {
+            "domains": [DOMAIN,], 
+            "industry_name_id": [INDUSTRY,], 
+            "countries": [COUNTRY,]
+        }
+    ]
+
+## Save
+
+    [ 
+        "SaveClientGroup", 
+        { 
+            "group_name": STRING,
+            "email_id": STRING,
+            "short_name": STRING,
+            "no_of_view_licence": INT,
+            "legal_entity_details": [ 
+                { 
+                    "country_id": INT, 
+                    "business_group": BUSINESS_GROUP, 
+                    "legal_entity_name": "Samsung LE 1", 
+                    "logo": FILE, 
+                    "no_of_licence": 10, 
+                    "file_space": 8,
+                    "contract_from": "01-Oct-2016",
+                    "contract_to": "31-Oct-2016",
+                    "domain_details": [ 
+                        { 
+                            "d_id": INT,
+                            "activation_date": DATE,
+                            "org": {
+                                ORGANIZATION_ID: INT 
+                            } 
+                        },
+                    ] 
+                },
+            ], 
+            "date_configurations": [DATE_CONFIG,] 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveClientGroupSuccess", 
+        {}
+    ]
+
+## Edit Form Data
+
+    [ 
+        "GetEditClientGroupFormData", 
+        { 
+            "group_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "GetEditClientGroupFormDataSuccess", 
+        {
+            "industry_name_id": [INDUSTRY], 
+            "date_configurations": [DATE_CONFIG,], 
+            "business_groups": [CLIENT_BUSINESS_GROUP,], 
+            "countries": [COUNTRY,], 
+            "domains": [DOMAIN,], 
+            "legal_entities": [
+                {
+                    "old_logo": STRING
+                    "legal_entity_id": INT, 
+                    "legal_entity_name": STRING, 
+                    "new_logo": NONE, 
+                    "file_space": INT, 
+                    "no_of_licence": INT, 
+                    "country_id": INT, 
+                    "contract_from": STRING,
+                    "domain_details": [
+                        {
+                            "d_id": INT, 
+                            "org": {
+                                ORGANIZATION_ID: INT,
+                            }, 
+                            "activation_date": STRING
+                        },
+                    ],
+                    "business_group": BUSINESS_GROUP, 
+                    "contract_to": STRING
+                },
+            ], 
+            "email_id": STRING, 
+            "no_of_licence": INT, 
+            "group_name": STRING,
+            "short_name": STRING, 
+        } 
+    ]
+
+## Update
+
+    [ 
+        "UpdateClientGroup", 
+        { 
+            "client_id": INT,
+            "group_name": STRING,
+            "email_id": STRING,
+            "short_name": STRING,
+            "no_of_view_licence": INT,
+            "legal_entities": [ 
+                { 
+                    "country_id": 1, 
+                    "business_group": BUSINESS_GROUP, 
+                    "legal_entity_id": INT,
+                    "legal_entity_name": STRING,
+                    "old_logo": STRING,
+                    "new_logo": FILE, 
+                    "no_of_licence": INT,
+                    "file_space": INT, 
+                    "contract_from": STRING,
+                    "contract_to": STRING, 
+                    "domain_details": [ 
+                        { 
+                            "d_id": INT, 
+                            "activation_date": STRING, 
+                            "org": { 
+                                ORGANIZATION_ID: INT 
+                            } 
+                        } 
+                    ] 
+                },
+            ], 
+            "date_configurations": [DATE_CONFIG,] 
+        }
+    ]
+
+    Success Response
+
+    [
+        "UpdateClientGroupSuccess", 
+        {}
+    ]
+
+## Status Change
+
+    [ 
+        "ChangeClientGroupStatus", 
+        { 
+            "client_id": INT, 
+            "is_active": BOOL 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "ChangeClientStatusSuccess", 
+        {}
+    ]
+
+# Approve Client Group
+
+## List
+
+    [ "GetClientGroupApprovalList", {} ]
+
+    Success Response
+
+    [
+        "GetClientGroupApprovalListSuccess", 
+        {
+            "group_approval_list": [
+                {
+                    "username": STRING
+                    "country_ids": [INT,], 
+                    "is_active": BOOL, 
+                    "group_name": STRING, 
+                    "le_count": INT, 
+                    "client_id": INT
+                },
+            ], 
+            "countries": [COUNTRY,]
+        }
+    ]
+
+## Popup
+
+    - Same as Client Group --> Edit Form data
+
+## Approve / Reject
+
+    [
+        "ApproveClientGroup",
+        {
+            "client_group_approval_details": [
+                {
+                    "client_id": INT,
+                    "approval_status": BOOL,
+                    "reason": STRING
+                } 
+            ] 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "ApproveClientGroupSuccess", 
+        {}
+    ]
+

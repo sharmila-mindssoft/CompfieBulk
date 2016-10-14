@@ -1,478 +1,542 @@
-2016-09-30 10:37:55,913 - knowledge_logger - main.py-parse-request : expected a list, but received: {} 
+2016-10-14 11:51:36,854 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 10:37:55,914 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 11:51:36,855 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 161, in parse_structure
-    request, "consoleadmin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 406, in parse_VariantType
-    return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 27, in parse_structure
-    return _Request_class_map[name].parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 22, in parse_structure
-    data = parse_static_list(data, 2)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 170, in parse_static_list
-    raise expectation_error("a list", x)
-ValueError: expected a list, but received: {}
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
  
 
-2016-09-30 10:51:27,631 - knowledge_logger - main.py-parse-request : expected a list, but received: {} 
+2016-10-14 11:51:54,462 - knowledge_logger - main.py-handle-api- : sp_admin_getformcategory- (u'admin',)- (1305, 'PROCEDURE compfie_knowledge.sp_admin_getformcategory does not exist') 
 
-2016-09-30 10:51:27,632 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 161, in parse_structure
-    request, "consoleadmin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 406, in parse_VariantType
-    return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 27, in parse_structure
-    return _Request_class_map[name].parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 22, in parse_structure
-    data = parse_static_list(data, 2)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 170, in parse_static_list
-    raise expectation_error("a list", x)
-ValueError: expected a list, but received: {}
- 
-
-2016-09-30 11:01:56,412 - knowledge_logger - main.py-parse-request : expected a list, but received: {} 
-
-2016-09-30 11:01:56,412 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 163, in parse_structure
-    request, "consoleadmin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 406, in parse_VariantType
-    return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 29, in parse_structure
-    return _Request_class_map[name].parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 22, in parse_structure
-    data = parse_static_list(data, 2)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 170, in parse_static_list
-    raise expectation_error("a list", x)
-ValueError: expected a list, but received: {}
- 
-
-2016-09-30 11:02:35,570 - knowledge_logger - main.py-handle-api- : 'module' object has no attribute 'process_console_admin_request' 
-
-2016-09-30 11:02:35,570 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 11:51:54,462 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 263, in handle_console_admin
-    return controller.process_console_admin_request(request, db)
-AttributeError: 'module' object has no attribute 'process_console_admin_request'
- 
-
-2016-09-30 11:26:29,846 - knowledge_logger - main.py-handle-api- : 'username' 
-
-2016-09-30 11:26:29,846 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 263, in handle_console_admin
-    return controller.process_console_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 49, in process_console_admin_request
-    result = process_get_db_server_list(db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 56, in process_get_db_server_list
-    db_servers = get_db_server_list(db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/consoleadmin.py", line 12, in get_db_server_list
-    return return_database_servers(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/consoleadmin.py", line 22, in return_database_servers
-    ) for datum in data
-KeyError: 'username'
- 
-
-2016-09-30 11:29:58,009 - knowledge_logger - main.py-handle-api- : __init__() got an unexpected keyword argument 'ussername' 
-
-2016-09-30 11:29:58,009 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 263, in handle_console_admin
-    return controller.process_console_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 49, in process_console_admin_request
-    result = process_get_db_server_list(db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 56, in process_get_db_server_list
-    db_servers = get_db_server_list(db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/consoleadmin.py", line 12, in get_db_server_list
-    return return_database_servers(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/consoleadmin.py", line 22, in return_database_servers
-    ) for datum in data
-TypeError: __init__() got an unexpected keyword argument 'ussername'
- 
-
-2016-09-30 11:30:16,310 - knowledge_logger - main.py-handle-api- : 'NoneType' object has no attribute 'get' 
-
-2016-09-30 11:30:16,311 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 171, in handle_api_request
-    respond(response_data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 157, in respond
-    response_data, response
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 111, in _send_response
-    data = response_data.to_structure()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 66, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 132, in to_inner_structure
-    return to_dictionary_values(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 349, in to_dictionary_values
-    param.get('module_name'), param.get('class_name'), value
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 439, in to_VectorType
-    to_RecordType(module_name, class_name, item)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 421, in to_RecordType
-    return klass.to_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 115, in to_structure
-    return to_dictionary_values(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 345, in to_dictionary_values
-    if param.get('type') == 'vector_type':
-AttributeError: 'NoneType' object has no attribute 'get'
- 
-
-2016-09-30 11:34:25,493 - knowledge_logger - main.py-handle-api- : 'NoneType' object has no attribute 'get' 
-
-2016-09-30 11:34:25,494 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 171, in handle_api_request
-    respond(response_data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 157, in respond
-    response_data, response
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 111, in _send_response
-    data = response_data.to_structure()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 66, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 132, in to_inner_structure
-    return to_dictionary_values(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 352, in to_dictionary_values
-    param.get('module_name'), param.get('class_name'), value
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 442, in to_VectorType
-    to_RecordType(module_name, class_name, item)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 424, in to_RecordType
-    return klass.to_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 115, in to_structure
-    return to_dictionary_values(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 348, in to_dictionary_values
-    if param.get('type') == 'vector_type':
-AttributeError: 'NoneType' object has no attribute 'get'
- 
-
-2016-09-30 12:19:54,687 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-30 12:19:54,687 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 275, in parse_dictionary_values
-    val = parse_optional_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-30 12:38:50,106 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-30 12:38:50,106 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-30 13:29:29,109 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-30 13:29:29,109 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-30 13:35:56,261 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-30 13:35:56,262 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-30 13:44:06,822 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-30 13:44:06,822 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-30 15:18:40,518 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-30 15:18:40,518 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-30 15:25:40,305 - knowledge_logger - main.py-parse-request : expected a number, but received: 8080 
-
-2016-09-30 15:25:40,306 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 204, in parse_structure
-    request, "consoleadmin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 404, in parse_VariantType
-    return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 27, in parse_structure
-    return _Request_class_map[name].parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 59, in parse_structure
-    data, ["db_server_name", "ip", "port", "username", "password"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 280, in parse_dictionary_values
-    val = parse_number(val, 0, param.get('length'))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 53, in parse_number
-    raise expectation_error("a number", x)
-ValueError: expected a number, but received: 8080
- 
-
-2016-09-30 15:26:50,945 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-09-30 15:26:50,945 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-09-30 15:27:49,662 - knowledge_logger - main.py-parse-request : __init__() takes exactly 1 argument (6 given) 
-
-2016-09-30 15:27:49,663 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 204, in parse_structure
-    request, "consoleadmin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 404, in parse_VariantType
-    return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 27, in parse_structure
-    return _Request_class_map[name].parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/consoleadmin.py", line 65, in parse_structure
-    return GetDbServerList(db_server_name, ip, port, username, password)
-TypeError: __init__() takes exactly 1 argument (6 given)
- 
-
-2016-09-30 15:29:31,652 - knowledge_logger - main.py-handle-api- : global name 'is_duplicate_db_server_name' is not defined 
-
-2016-09-30 15:29:31,653 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 263, in handle_console_admin
-    return controller.process_console_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 56, in process_console_admin_request
-    result = process_save_db_server(db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 70, in process_save_db_server
-    if is_duplicate_db_server_name(db, request.db_server_name, request.ip):
-NameError: global name 'is_duplicate_db_server_name' is not defined
- 
-
-2016-09-30 15:29:58,829 - knowledge_logger - main.py-handle-api- : sp_databaseserver_is_duplicate- (u'DB Server 1', u'127.0.0.1')- (1305, 'PROCEDURE compfie_knowledge.sp_databaseserver_is_duplicate does not exist') 
-
-2016-09-30 15:29:58,829 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 263, in handle_console_admin
-    return controller.process_console_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 56, in process_console_admin_request
-    result = process_save_db_server(db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 70, in process_save_db_server
-    if is_duplicate_db_server_name(db, request.db_server_name, request.ip):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/consoleadmin.py", line 32, in is_duplicate_db_server_name
-    "sp_databaseserver_is_duplicate", (db_server_name, ip))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 75, in process_login
+    return admin_login_response(db, session_user_ip, username)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 152, in admin_login_response
+    admin_forms = get_admin_forms(db, username)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/general.py", line 241, in get_admin_forms
+    "sp_admin_getformcategory", (username,)
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 688, in call_proc
     raise process_procedure_error(procedure_name, args, e)
-RuntimeError: sp_databaseserver_is_duplicate- (u'DB Server 1', u'127.0.0.1')- (1305, 'PROCEDURE compfie_knowledge.sp_databaseserver_is_duplicate does not exist')
+RuntimeError: sp_admin_getformcategory- (u'admin',)- (1305, 'PROCEDURE compfie_knowledge.sp_admin_getformcategory does not exist')
  
 
-2016-09-30 16:07:36,526 - knowledge_logger - main.py-handle-api- : global name 'reqeust' is not defined 
+2016-10-14 11:53:04,767 - knowledge_logger - main.py-handle-api- : sp_tbl_forms_getadminforms- (1L,)- (1054, "Unknown column 'T02.form_category' in 'field list'") 
 
-2016-09-30 16:07:36,526 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 11:53:04,767 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 263, in handle_console_admin
-    return controller.process_console_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 56, in process_console_admin_request
-    result = process_save_db_server(db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 73, in process_save_db_server
-    save_db_server(db, request, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/consoleadmin.py", line 46, in save_db_server
-    action = "New Database server %s added" % (reqeust.db_server_name)
-NameError: global name 'reqeust' is not defined
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 75, in process_login
+    return admin_login_response(db, session_user_ip, username)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 152, in admin_login_response
+    admin_forms = get_admin_forms(db, username)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/general.py", line 245, in get_admin_forms
+    "sp_tbl_forms_getadminforms", (form_category_id,))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 688, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_forms_getadminforms- (1L,)- (1054, "Unknown column 'T02.form_category' in 'field list'")
  
 
-2016-09-30 16:07:45,557 - knowledge_logger - main.py-handle-api- : global name 'reqeust' is not defined 
+2016-10-14 12:25:03,220 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 16:07:45,557 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 12:25:03,221 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1475, in parse_structure
+    request, "technomasters", "Request"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 470, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 116, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 259, in parse_inner_structure
+    "date_configurations"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 328, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 480, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 3162, in parse_structure
+    "file_space", "contract_from", "contract_to", "domain_details"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 279, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 12:32:36,842 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 12:32:36,843 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1475, in parse_structure
+    request, "technomasters", "Request"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 470, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 116, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 259, in parse_inner_structure
+    "date_configurations"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 328, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 480, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 3162, in parse_structure
+    "file_space", "contract_from", "contract_to", "domain_details"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 279, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 12:42:23,284 - knowledge_logger - main.py-handle-api- : 'activation_date' 
+
+2016-10-14 12:42:23,284 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 263, in handle_console_admin
-    return controller.process_console_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 56, in process_console_admin_request
-    result = process_save_db_server(db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/consoleadmincontroller.py", line 73, in process_save_db_server
-    save_db_server(db, request, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/consoleadmin.py", line 46, in save_db_server
-    action = "New Database server %s added" % (reqeust.db_server_name)
-NameError: global name 'reqeust' is not defined
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 266, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 102, in process_techno_request
+    db, request_frame, session_user
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 103, in get_edit_client_group_form_data
+    ) = get_client_details(db, group_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/technomaster.py", line 595, in get_client_details
+    organizations
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/technomaster.py", line 658, in return_organization_by_legalentity_domain
+    activation_date = row["activation_date"]
+KeyError: 'activation_date'
  
 
-2016-09-30 16:26:59,794 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-14 12:43:37,258 - knowledge_logger - main.py-handle-api- : global name 'activation_date' is not defined 
 
-2016-09-30 16:26:59,795 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 12:43:37,258 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 171, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 157, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 111, in _send_response
+    data = response_data.to_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 627, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 415, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 504, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 486, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 415, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 504, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 485, in to_RecordType
+    data = klass.to_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 3225, in to_structure
+    "activation_date": activation_date
+NameError: global name 'activation_date' is not defined
+ 
+
+2016-10-14 13:09:31,324 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 13:09:31,324 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
     data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
     x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
     val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
     raise empty_error()
 ValueError: null is not allowed
  
 
-2016-09-30 16:30:39,363 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-14 13:11:19,536 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 16:30:39,364 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 13:11:19,537 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
     data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
     x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
     val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
     raise empty_error()
 ValueError: null is not allowed
  
 
-2016-09-30 17:00:51,303 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-14 13:13:19,038 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 17:00:51,304 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 13:13:19,039 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
     data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
     x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
     val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
     raise empty_error()
 ValueError: null is not allowed
  
 
-2016-09-30 17:02:45,760 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-14 13:14:12,647 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 17:02:45,761 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 13:14:12,648 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
     data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
     x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
     val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
     raise empty_error()
 ValueError: null is not allowed
  
 
-2016-09-30 17:03:53,471 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-14 13:15:52,729 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 17:03:53,472 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 13:15:52,729 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
     data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
     x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
     val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
     raise empty_error()
 ValueError: null is not allowed
  
 
-2016-09-30 17:04:34,000 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-14 13:16:28,404 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 17:04:34,000 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 13:16:28,405 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
     data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
     x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
     val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
     raise empty_error()
 ValueError: null is not allowed
  
 
-2016-09-30 17:05:59,677 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-14 13:18:38,718 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-09-30 17:05:59,677 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-10-14 13:18:38,718 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1471, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
     data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 190, in parse_dictionary
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
     x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_dictionary_values
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
     val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 80, in parse_string
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
     raise empty_error()
 ValueError: null is not allowed
+ 
+
+2016-10-14 13:19:28,805 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 13:19:28,805 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 13:21:01,480 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 13:21:01,481 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 13:22:56,795 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 13:22:56,795 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 13:25:06,043 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 13:25:06,044 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 373, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 14:28:19,802 - knowledge_logger - main.py-handle-api- : country_domain_mappings is not configured in settings 
+
+2016-10-14 14:28:19,803 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 171, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 157, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 111, in _send_response
+    data = response_data.to_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 354, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 399, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: country_domain_mappings is not configured in settings
+ 
+
+2016-10-14 14:35:24,522 - knowledge_logger - main.py-handle-api- : unbound method to_structure() must be called with Level instance as first argument (got dict instance instead) 
+
+2016-10-14 14:35:24,522 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 171, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 157, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 111, in _send_response
+    data = response_data.to_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/knowledgemaster.py", line 455, in to_structure
+    to_structure_dictionary_values(inner)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 419, in to_structure_dictionary_values
+    _validation_method, val
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 529, in to_MapType
+    dict_value = to_RecordType(module_name, class_name, value)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 480, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with Level instance as first argument (got dict instance instead)
+ 
+
+2016-10-14 14:46:21,117 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 14:46:21,118 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 370, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 16:40:41,264 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 16:40:41,265 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 370, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 16:41:44,034 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 16:41:44,034 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 370, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 16:46:46,576 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-10-14 16:46:46,576 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 855, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 370, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-14 16:49:53,558 - knowledge_logger - main.py-parse-request : expected key "activation_date" is missing in the dictionary, but received: {u'd_id': 1, u'org': {u'1': 10}} 
+
+2016-10-14 16:49:53,559 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1475, in parse_structure
+    request, "technomasters", "Request"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 465, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 116, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 183, in parse_inner_structure
+    "legal_entity_details", "date_configurations"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 327, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 489, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 475, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 3100, in parse_structure
+    "contract_to", "domain_details"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 327, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 489, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 475, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 3210, in parse_structure
+    data = parse_dictionary(data, ["d_id", "org", "activation_date"])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "activation_date" is missing in the dictionary, but received: {u'd_id': 1, u'org': {u'1': 10}}
+ 
+
+2016-10-14 18:04:56,624 - knowledge_logger - main.py-handle-api- : <protocol.clientcoordinationmaster.UnitApproval object at 0xb53bcbec> is not JSON serializable 
+
+2016-10-14 18:04:56,624 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 171, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 157, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 112, in _send_response
+    s = json.dumps(data, indent=2)
+  File "/usr/lib/python2.7/json/__init__.py", line 250, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "/usr/lib/python2.7/json/encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "/usr/lib/python2.7/json/encoder.py", line 434, in _iterencode
+    for chunk in _iterencode_dict(o, _current_indent_level):
+  File "/usr/lib/python2.7/json/encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "/usr/lib/python2.7/json/encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "/usr/lib/python2.7/json/encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "/usr/lib/python2.7/json/encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.clientcoordinationmaster.UnitApproval object at 0xb53bcbec> is not JSON serializable
  
 

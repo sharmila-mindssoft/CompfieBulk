@@ -54,11 +54,13 @@ def get_domains_for_user(db, user_id):
 # Return Type : List of Object of Domain
 ###############################################################################
 def return_domains(data):
+    print "domais: %s" % data
     results = []
     for d in data:
         results.append(core.Domain(
             d["domain_id"], d["domain_name"], bool(d["is_active"])
         ))
+    print "results: %s" % results
     return results
 
 

@@ -1,0 +1,68 @@
+[TOC]
+
+# Background Info
+
+#### ORGANIZATION_ID
+
+## COUNTRY
+        
+    {
+        "country_id": COUNTRY_ID,
+        "country_name": String,
+        "is_active": IS_ACTIVE
+    }    
+
+## DOMAIN
+    
+    {
+        "domain_id": DOMAIN_ID,
+        "domain_name": String,
+        "is_active": IS_ACTIVE
+    }
+
+## VALIDITY_DATE_SETTINGS
+
+	{ 
+		"validity_days_id": INT,
+		"country_id": INT,
+		"domain_id": INT,
+		"validity_days": INT
+	}
+
+## BUSINESS_GROUP
+	{
+		"business_group_id": INT, 
+		"business_group_name": STRING 
+	}
+
+## CLIENT_BUSINESS_GROUP
+	{
+		"business_group_id": INT, 
+		"client_id": INT,
+		"business_group_name": STRING 
+	}
+
+## FILE
+
+	{ 
+		"file_size": INT, 
+		"file_name": STRING
+		"file_content": STRING
+	}
+
+## DATE_CONFIG
+
+	{
+		"country_id": INT, 
+        "domain_id": INT, 
+        "period_from": INT, 
+        "period_to": INT
+	}
+
+## INDUSTRY
+
+	{
+        "industry_id": INT, 
+        "is_active": BOOL, 
+        "industry_name": STRING
+    }

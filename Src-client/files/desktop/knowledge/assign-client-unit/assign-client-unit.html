@@ -1,1 +1,55 @@
-assign-client-unit.html
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<style>
+.width10Percent {
+    width:10%;
+}
+</style>
+<div class="content-container width80" id="clientgroup-view">
+    <div class="content-area">
+        <h1>Assign Client Unit</h1>
+        <div class="clearfix"></div>
+        <div class="grid-table">
+            <table>
+                <tr align="left">
+                    <th align="center" width="5%">#</th>
+                    <th>Domain</th>
+                    <th>Group</th>
+                    <th>Unassigned Unit(s)</th>
+                    <th class="width10Percent" align="center">Assign</th>
+                    <th class="width10Percent" align="center">View</th>
+                </tr>
+                <tr>
+                    <td align="center"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <tbody class="unassign-list">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="templates">
+    <div class="unassign-row default-display-none">
+        <table>
+            <tr>
+                <td class="sno"></td>
+                <td class="domain-name"></td>
+                <td class="group-name"></td>
+                <td class="unassigned-units"></td>
+                <td class="assign"> 
+                    <input type="button" name="assign" value="Assign" class="btn-cancel"> 
+                </td>
+                <td align="view"> 
+                    <input type="button" name="assign" value="View" class="btn-cancel"" >
+                </td>
+            </tr>
+        </table>        
+    </div>
+</div>
+<script type="text/javascript" src="/script/assign-client-unit/assign-client-unit.js"></script>
+{% endblock %}

@@ -433,12 +433,15 @@ function saveClient(){
                         displayMessage(message.domain_required + " for "+le_name);
                         break;
                     }else if(!(i in organization_details)){
+                        console.log(i+"-> i not in "+ organization_details);
                         displayMessage(message.organization_required + " for "+le_name);
                         break;
                     }else if(!(j in organization_details[i])){
+                        console.log(j+"->j not in "+ organization_details[i]);
                         displayMessage(message.organization_required + " for "+le_name);
                         break;
                     }else if(Object.keys(organization_details[i][j]).length <= 0 ){
+                        console.log(organization_details[i][j].length+" <= 0");
                         displayMessage(message.organization_required + " for "+le_name);
                         break;
                     }else if(j == domain_count){
@@ -1080,7 +1083,7 @@ function addOrSelectBusinessGroup(type_of_icon){
 function displayPopup(counts) {
     $('.overlay').css('visibility', 'visible');
     $('.overlay').css('opacity', '1');
-    count_list = counts.split(",");
+    count_list = counts.split("-");
     le_cnt = count_list[0]
     d_cnt = count_list[1]
     $("#le-cnt").val(le_cnt);

@@ -320,7 +320,6 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
         _validation_method = param.get('validation_method')
-        print "field_name: %s, val: %s" % (field_name, val)
         if _type == 'VECTOR_TYPE':
             assert _module_name is not None
             assert _class_name is not None
@@ -344,11 +343,9 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
             map = {}
             for key, value in val.items():
                 key = _validation_method(key)
-                vals = []
-                if type(value) is list:
-                    for l in value:
-                        vals.append(
-                            to_RecordType(_module_name, _class_name, value))
+                vals = parse_VectorType(
+                    _module_name, _class_name, val
+                )
                 map[key] = vals
                 val = map
 
@@ -396,8 +393,6 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print "field_name: %s, val: %s" % (field_name, val)
-        print "param: %s" % param
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
