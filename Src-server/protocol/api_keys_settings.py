@@ -56,6 +56,10 @@ api_params = {
     'bg_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'bg_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'dv_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'division_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'dv_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'div_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'unit_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'le_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     'statutory_nature_id': {'type': 'int', 'length': 500, 'validation_method': None, 'is_optional': False},
@@ -145,6 +149,7 @@ api_params = {
     "business_group": {'type': 'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"BUSINESS_GROUP"},
     "le": {'type': 'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"LEGAL_ENTITY"},
     "units": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"UNIT"},
+    "division_units": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"UnitDivision"},
 
     "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "user_group_id" : {'type': 'int', 'length': 100000, 'validation_method': None, 'is_optional': False},
