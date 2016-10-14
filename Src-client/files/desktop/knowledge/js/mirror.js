@@ -1129,15 +1129,14 @@ function initMirror() {
       'le_name': leName
     };
   }
-  function getDivisionDict(dId, dName) {
-    if (dName == null || dName == '') {
-      return null;
-    } else {
-      return {
-        'd_id': dId,
-        'd_name': dName
-      };
-    }
+  function getDivisionDict(dv_id, dv_name, cg, div_cnt, unit_cnt) {
+    return {
+      'dv_id': dv_id,
+      'dv_name': dv_name,
+      'cg': cg,
+      'div_cnt': div_cnt,
+      'unit_cnt': unit_cnt
+    };
   }
   /*function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, uLoc, iId, iName, dIds) {
     return {
@@ -1171,7 +1170,7 @@ function initMirror() {
       'units': units
     };
   }
-  function saveClient(cId, bg_id, le_id, c_id, dv_id, cg, cw_units, callback) {
+  function saveClient(cId, bg_id, le_id, c_id, div_dict, cw_units, callback) {
     callerName = 'techno';
     var request = [
       'SaveClient',
@@ -1180,8 +1179,7 @@ function initMirror() {
         'bg_id': bg_id,
         'le_id': le_id,
         'c_id': c_id,
-        'dv_id': dv_id,
-        'cg': cg,
+        'div_dict': div_dict,
         'units': cw_units
       }
     ];
