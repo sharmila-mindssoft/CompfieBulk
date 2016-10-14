@@ -223,8 +223,7 @@ def update_legal_entities(db, request, group_id, session_user):
     columns = [
         "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence", "sms_subscription",
-        'updated_by', "updated_on"
+        "file_space_limit", "total_licence", 'updated_by', "updated_on"
     ]
     insert_columns = [
         "client_id", "country_id", "business_group_id",
@@ -336,7 +335,6 @@ def save_date_configurations(
     db, client_id, date_configurations, session_user
 ):
     values_list = []
-    country_ids = []
     current_time_stamp = get_date_time()
     db.call_update_proc(
         "sp_client_configurations_delete", (client_id, )
@@ -346,11 +344,8 @@ def save_date_configurations(
         "period_to", "updated_by", "updated_on"
     ]
     for configuration in date_configurations:
-        country_id = configuration.country_id
-        if country_id not in country_ids:
-            country_ids.append(country_id)
         value_tuple = (
-            client_id, country_id, configuration.domain_id,
+            client_id, configuration.country_id, configuration.domain_id,
             configuration.period_from, configuration.period_to,
             session_user, current_time_stamp
         )
@@ -360,27 +355,6 @@ def save_date_configurations(
     )
     if res is False:
         raise process_error("E047")
-    return country_ids
-
-
-##########################################################################
-#  To Save client countries
-#  Parameters : Object of database, client id, List of country ids
-#  Return Type : Boolean - Raises Process exception if insertion fails /
-#   returns True
-##########################################################################
-def save_client_countries(db, client_id, country_ids):
-    db.call_update_proc(
-        "sp_client_countries_delete", (client_id, )
-    )
-    values_list = []
-    columns = ["client_id", "country_id"]
-    for country_id in country_ids:
-        values_tuple = (client_id, country_id)
-        values_list.append(values_tuple)
-    res = db.bulk_insert(tblClientCountries, columns, values_list)
-    if res is False:
-        raise process_error("E041")
     return res
 
 
@@ -474,7 +448,7 @@ def save_organization(
     )
     columns = [
         "legal_entity_id", "domain_id", "organization_id",
-        "count", "created_by", "created_on"
+        "activation_date", "count", "created_by", "created_on"
     ]
     values_list = []
     if hasattr(request, "legal_entity_details"):
@@ -490,7 +464,8 @@ def save_organization(
             for org in organization:
                 value_tuple = (
                     legal_entity_name_id_map[legal_entity_name],
-                    domain_id, org, organization[org], session_user,
+                    domain_id, org, current_time_stamp,
+                    organization[org], session_user,
                     current_time_stamp
                 )
                 values_list.append(value_tuple)
@@ -590,40 +565,6 @@ def save_client_logo(logo):
         return None
 
 
-##########################################################################
-#  To saved notifications for incharge persons
-#  Parameters : Object of database, group name, legal entity name, list of
-#   incharge persons
-#  Return Type : Raises process error if insertion failse and returns True
-#   if insertion succeeds
-##########################################################################
-# def notify_incharge_persons(
-#     db, group_name, legal_entity_name, incharge_persons
-# ):
-#     notification_text = "Legal entity %s of Client %s has been assigned" % (
-#         legal_entity_name, group_name
-#     )
-#     link = "/knowledge/client-unit"
-
-#     notification_id = db.call_insert_proc(
-#         "sp_notifications_notify_incharge",
-#         (notification_text, link)
-#     )
-#     if notification_id is False:
-#         raise process_error("E045")
-#     columns = ["notification_id", "user_id", "read_status"]
-#     values_list = []
-#     for incharge_person in incharge_persons:
-#         values_tuple = (notification_id, incharge_person, 0)
-#         values_list.append(values_tuple)
-#     r = db.bulk_insert(
-#         tblNotificationsStatus, columns, values_list
-#     )
-#     if r is False:
-#         raise process_error("E045")
-#     return r
-
-
 #
 #   Getting data for Editing Client Group
 #
@@ -702,22 +643,6 @@ def return_legal_entities(legal_entities, domains):
 
 ##########################################################################
 #  To convert the data fetched from database into a dict
-#  Parameters : Incharge person details fetched from database (Tuple of
-#  tuples )
-#  Return Type : Dictionary (Legal entity id as key and User id as value)
-##########################################################################
-# def return_incharge_persons_by_legal_entity(incharge_persons):
-#     incharge_person_map = {}
-#     for icp in incharge_persons:
-#         legal_entity_id = int(icp["legal_entity_id"])
-#         if legal_entity_id not in incharge_person_map:
-#             incharge_person_map[legal_entity_id] = []
-#         incharge_person_map[legal_entity_id].append(int(icp["user_id"]))
-#     return incharge_person_map
-
-
-##########################################################################
-#  To convert the data fetched from database into a dict
 #  Parameters : Organization details fetched from database (Tuple of
 #  tuples )
 #  Return Type : Dictionary
@@ -730,6 +655,7 @@ def return_organization_by_legalentity_domain(organizations):
         domain_id = row["domain_id"]
         industry_id = row["organization_id"]
         no_of_units = row["count"]
+        activation_date = row["activation_date"]
         if legal_entity_id not in domain_map:
             domain_map[legal_entity_id] = []
         if legal_entity_id not in organization_map:
@@ -744,6 +670,7 @@ def return_organization_by_legalentity_domain(organizations):
         domain_map[legal_entity_id].append(
             core.EntityDomainDetails(
                 domain_id=domain_id,
+                activation_date=datetime_to_string(activation_date),
                 organization=organization_map[
                     int(legal_entity_id)][int(domain_id)]
             )
@@ -785,26 +712,6 @@ def is_invalid_group_id(db, client_id):
         return True
     else:
         return False
-
-
-##########################################################################
-#  To check whether a country with units is deactivated
-#  Parameters : Object of database, client id, List of country ids
-#  Return Type : Boolean - True if deactivated a country with active units,
-#   Otherwise returns false
-##########################################################################
-def is_deactivated_existing_country(db, client_id, country_ids):
-    existing_country_ids = get_client_countries(db, client_id)
-    current_countries = [int(x) for x in country_ids]
-    for country in existing_country_ids:
-        if country not in current_countries:
-            if is_unit_exists_under_country(db, country, client_id):
-                return True
-            else:
-                continue
-        else:
-            continue
-    return False
 
 
 ##########################################################################
@@ -1237,7 +1144,6 @@ def is_invalid_id(db, check_mode, val):
                     return True
                 else:
                     return False
-
 
 def save_unit (
     db, client_id,  units, business_group_id, legal_entity_id,

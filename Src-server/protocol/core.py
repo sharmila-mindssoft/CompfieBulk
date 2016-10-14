@@ -3199,19 +3199,21 @@ class LegalEntity(object):
 #
 class EntityDomainDetails(object):
     def __init__(
-        self, domain_id, organization
+        self, domain_id, organization, activation_date
     ):
         self.domain_id = domain_id
         self.organization = organization
+        self.activation_date = activation_date
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["d_id", "org"])
+        data = parse_dictionary(data, ["d_id", "org", "activation_date"])
         domain_id = data.get("d_id")
         organization = data.get("org")
         organization = parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(organization)
+        activation_date = data.get("activation_date")
         return EntityDomainDetails(
-            domain_id, organization
+            domain_id, organization, activation_date
         )
 
     def to_structure(self):
@@ -3219,5 +3221,6 @@ class EntityDomainDetails(object):
             "d_id": self.domain_id,
             "org": to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(
                     self.organization
-                )
+                ),
+            "activation_date": self.activation_date
         }

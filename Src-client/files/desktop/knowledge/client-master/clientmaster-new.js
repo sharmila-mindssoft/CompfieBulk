@@ -710,6 +710,9 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
         showNonEditable(
             $("."+domain_list_class).find(".remove-domain"), null, organization_text
         );
+        var add_org_class = le_count+"-"+i;
+        le_table.find("."+add_org_class).text(value.domain_details[i-1].activation_date);
+        le_table.find("."+add_org_class).val(value.domain_details[i-1].activation_date);
     }
     le_table.find('.org-header').text("Activation Date");
     le_table.find('.org-header').attr("width", "20%");
@@ -957,7 +960,8 @@ function addDomain(domain_list_class, domain_count_class){
     $(".domain", clone).change(function(){
         generateDateConfigurationList();
     });
-    $(".addOrganizationType", clone).attr("id", le_count+","+domain_count);
+    $(".addOrganizationType", clone).attr("id", le_count+"-"+domain_count);
+    $(".addOrganizationType", clone).addClass(le_count+"-"+domain_count);
     $(".addOrganizationType", clone).click(function(){
         displayPopup($(this).attr("id"));
     });

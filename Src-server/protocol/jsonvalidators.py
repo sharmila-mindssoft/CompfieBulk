@@ -320,7 +320,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
         _validation_method = param.get('validation_method')
-
+        print "field_name: %s, val: %s" % (field_name, val)
         if _type == 'VECTOR_TYPE':
             assert _module_name is not None
             assert _class_name is not None

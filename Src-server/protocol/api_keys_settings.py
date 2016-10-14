@@ -143,11 +143,12 @@ api_params = {
     "new_logo": {'type': 'RECORD_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "FileList"},
     'old_logo': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'no_of_legal_entities': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "activation_date": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
 
     'email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'business_group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'business_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'legal_entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'legal_entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'legal_entity_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'no_of_licence': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'no_of_view_licence': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},

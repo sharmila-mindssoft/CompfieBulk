@@ -828,7 +828,8 @@ CREATE PROCEDURE `sp_le_d_industry_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, domain_id, organization_id, count
+    SELECT legal_entity_id, domain_id, organization_id, count,
+    activation_date
     FROM tbl_legal_entity_domains WHERE legal_entity_id in (
     	select legal_entity_id from tbl_legal_entities 
     	where client_id = clientid
