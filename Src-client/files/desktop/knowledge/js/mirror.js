@@ -1051,10 +1051,10 @@ function initMirror() {
   }
 
   // Assign Legal Entity
-  function getLegalEntities(callback) {
+  function getAssignLegalEntityList(callback) {
     callerName = 'techno';
     var request = [
-      'GetLegalEntities',
+      'GetAssignLegalEntityList',
       {}
     ];
     apiRequest(callerName, request, callback);
@@ -1794,7 +1794,7 @@ function initMirror() {
     updateClientGroup: updateClientGroup,
     getClientGroups: getClientGroups,
     changeClientGroupStatus: changeClientGroupStatus,
-    getLegalEntities: getLegalEntities,
+    getAssignLegalEntityList: getAssignLegalEntityList,
     changePassword: changePassword,
     forgotPassword: forgotPassword,
     validateResetToken: validateResetToken,

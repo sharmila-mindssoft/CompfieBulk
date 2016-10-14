@@ -1,5 +1,5 @@
 var legalEntitiesList;
-$('.btn-domain-add').click(function () {
+/*$('.btn-domain-add').click(function () {
   $('#domain-view').hide();
   $('#domain-add').show();
   $('#domainname').val('');
@@ -10,7 +10,7 @@ $('.btn-domain-add').click(function () {
 $('.btn-domain-cancel').click(function () {
   $('#domain-add').hide();
   $('#domain-view').show();
-});
+});*/
 //get domains list from api
 function getAllLegalEntities() {
   function onSuccess(data) {
@@ -20,7 +20,7 @@ function getAllLegalEntities() {
   function onFailure(error) {
     custom_alert(error);
   }
-  mirror.getLegalEntities(function (error, response) {
+  mirror.getAssignLegalEntityList(function (error, response) {
     if (error == null) {
       onSuccess(response);
     } else {
@@ -31,9 +31,9 @@ function getAllLegalEntities() {
 //display domains list in view page
 function loadLegalEntitiesList(legalEntitiesList) {
   var j = 1;
-/*  $('.tbody-domain-list1').find('tr').remove();
+  $('.table-assign-le-list').find('tr').remove();
   $.each(legalEntitiesList, function (key, value) {
-    var domainName = value.domain_name;
+    /*var domainName = value.domain_name;
     var domainId = value.domain_id;
     var isActive = value.is_active;
     var passStatus = null;
@@ -59,12 +59,12 @@ function loadLegalEntitiesList(legalEntitiesList) {
     $('.status', clone).on('click', function () {
       changeStatus(domainId, passStatus);
     });
-    $('.tbody-domain-list1').append(clone);
+    $('.table-assign-le-list').append(clone);*/
     j = j + 1;
-  });*/
+  });
 }
 //validation
-function validate() {
+/*function validate() {
   var checkLength = domainValidate();
   if (checkLength) {
     if ($('#domainname').val().trim().length == 0) {
@@ -74,9 +74,9 @@ function validate() {
       return true;
     }
   }
-}
+}*/
 //save or update domain master
-$('#submit').click(function () {
+/*$('#submit').click(function () {
   var domainId = $('#domainid').val();
   var domainName = $('#domainname').val().trim();
   if (validate()) {
@@ -126,25 +126,25 @@ $('#submit').click(function () {
       });
     }
   }
-});
+});*/
 //save or update domain master when press enter key
-$('#domainname').keypress(function (e) {
+/*$('#domainname').keypress(function (e) {
   if (e.which == 13) {
     if (validate()) {
       jQuery('#submit').focus().click();
     }
   }
-});
+});*/
 //edit domain master
-function displayEdit(domainId, domainName) {
+/*function displayEdit(domainId, domainName) {
   $('.error-message').text('');
   $('#domain-view').hide();
   $('#domain-add').show();
   $('#domainname').val(domainName.replace(/##/gi, '"'));
   $('#domainid').val(domainId);
-}
+}*/
 //activate/deactivate domain master
-function changeStatus(domainId, isActive) {
+/*function changeStatus(domainId, isActive) {
   var msgstatus = message.deactive_message;
   if (isActive) {
     msgstatus = message.active_message;
@@ -181,9 +181,9 @@ function changeStatus(domainId, isActive) {
       $('.warning-message').html(msgstatus);
     }
   });
-}
+}*/
 //filter process
-$('#search-domain-name').keyup(function () {
+/*$('#search-domain-name').keyup(function () {
   var filterkey = this.value.toLowerCase();
   var filteredList = [];
   for (var entity in domainsList) {
@@ -192,7 +192,7 @@ $('#search-domain-name').keyup(function () {
       filteredList.push(domainsList[entity]);
   }
   loadDomainList(filteredList);
-});
+});*/
 //initialization
 $(document).ready(function () {
   getAllLegalEntities();

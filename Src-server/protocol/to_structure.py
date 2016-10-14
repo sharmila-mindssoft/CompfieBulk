@@ -2396,5 +2396,5 @@ def to_structure_VectorType_RecordType_core_AssignLegalEntity(data):
     return to_structure_VectorType("core", "AssignLegalEntity", data)
 
 
-def to_structure_RecordType_core_ClientGroup(data):
+def to_structure_RecordType_core_AssignLegalEntity(data):
     return to_structure_RecordType("core", "AssignLegalEntity", data)

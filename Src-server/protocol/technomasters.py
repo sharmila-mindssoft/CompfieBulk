@@ -603,14 +603,14 @@ class GetNextUnitCode(Request):
             "client_id" : to_structure_UnsignedIntegerType_32(self.client_id)
         }
 
-class GetLegalEntities(Request):
+class GetAssignLegalEntityList(Request):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return GetLegalEntities()
+        return GetAssignLegalEntityList()
 
     def to_inner_structure(self):
         return {
@@ -621,7 +621,7 @@ def _init_Request_class_map():
         GetClientGroups, SaveClientGroup, UpdateClientGroup,
         ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient,
         ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
-        GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData, GetLegalEntities
+        GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData, GetAssignLegalEntityList
     ]
     class_map = {}
     for c in classes:
@@ -814,19 +814,19 @@ class InvalidUnitId(Response):
         return {
         }
 
-class GetLegalEntitiesSuccess(Response):
+class GetAssignLegalEntityListSuccess(Response):
     def __init__(self, groups):
         self.groups = groups
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["groups"])
-        groups = data.get("groups")
-        return GetLegalEntitiesSuccess(groups)
+        data = parse_dictionary(data, ["assign_le_list"])
+        assign_le_list = data.get("assign_le_list")
+        return GetAssignLegalEntityListSuccess(assign_le_list)
 
     def to_inner_structure(self):
         return {
-            "groups": self.groups
+            "assign_le_list": self.assign_le_list
         }
 
 class Unit(object):
@@ -1477,7 +1477,7 @@ def _init_Response_class_map():
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
         InvalidNoOfLicence, InvalidFileSpace, ServerIsFull, NotAnImageFile,
-        GetNextUnitCodeSuccess, GetClientGroupFormDataSuccess, GetLegalEntitiesSuccess
+        GetNextUnitCodeSuccess, GetClientGroupFormDataSuccess, GetAssignLegalEntityListSuccess
     ]
     class_map = {}
     for c in classes:

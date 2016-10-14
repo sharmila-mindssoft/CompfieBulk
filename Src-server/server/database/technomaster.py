@@ -1782,24 +1782,24 @@ def get_user_client_countries(db, session_user):
 #  Parameters : Object of database
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
-def get_legalentities(db):
+def get_assign_legalentities(db):
     legalentities = db.call_proc(
-        "sp_legal_entities_list", None
+        "sp_assign_legal_entities_list", None
     )
-    return return_legalentities(legalentities)
+    return return_assign_legalentities(legalentities)
 
 ##########################################################################
 #  To get list of groups
 #  Parameters : Object of database
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
-def return_legalentities(legalentities):
+def return_assign_legalentities(assign_legalentities_list):
     fn = core.AssignLegalEntity
-    legalentities_list = [
+    assign_legalentities_list = [
         fn(
             legalentity["client_id"], legalentity["group_name"],
-            legalentity["country_names"], legalentity["no_of_legal_entities"],
+            legalentity["country_names"], legalentity["no_of_legal_entities"]
             
-        ) for legalentity in legalentities_list
+        ) for legalentity in assign_legalentities_list
     ]
-    return client_legalentities
+    return assign_legalentities_list

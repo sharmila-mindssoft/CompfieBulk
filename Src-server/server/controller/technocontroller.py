@@ -15,7 +15,7 @@ from technomastercontroller import (
     get_next_unit_code,
     get_client_group_form_data,
     get_edit_client_group_form_data,
-    get_legal_entities
+    get_assign_legal_entity_list
 )
 from server import logger
 
@@ -133,11 +133,11 @@ def process_techno_request(request, db):
         logger.logKnowledgeApi("GetNextUnitCode", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-    if type(request_frame) is technomasters.GetLegalEntities:
-        logger.logKnowledgeApi("GetLegalEntities", "process begin")
+    if type(request_frame) is technomasters.GetAssignLegalEntityList:
+        logger.logKnowledgeApi("GetAssignLegalEntityList", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = get_legal_entities(db, request_frame, session_user)
-        logger.logKnowledgeApi("GetLegalEntities", "process end")
+        result =  get_assign_legal_entity_list(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetAssignLegalEntityList", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     return result

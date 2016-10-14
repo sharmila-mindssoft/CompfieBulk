@@ -3224,10 +3224,10 @@ class EntityDomainDetails(object):
 
 class AssignLegalEntity(object):
     def __init__(
-        self, country_id, group_id, country_name,
+        self, client_id, group_id, country_name,
         group_name,no_of_legal_entities
     ):
-        self.country_id = country_id
+        self.client_id = client_id
         self.group_id = group_id
         self.country_name = country_name
         self.group_name = group_name
@@ -3236,30 +3236,25 @@ class AssignLegalEntity(object):
 
     @staticmethod
     def parse_structure(data):
-        print
-        print
-        print "inside Assign legal entity parse structure:  =======================>"
-        print
-        print
         data = parse_dictionary(
             data, [
-                "country_id", "group_id", "country_name", "group_name"
+                "client_id", "group_id", "country_name", "group_name"
                 "no_of_legal_entities"
             ]
         )
-        country_id = data.get("country_id")
+        client_id = data.get("client_id")
         group_id = data.get("group_id")
         country_name = data.get("country_name")
         group_name = data.get("group_name")
         no_of_legal_entities = data.get("no_of_legal_entities")
         
-        return LegalEntity(
-            country_id, group_id, country_name, group_name, no_of_legal_entities
+        return AssignLegalEntity(
+            client_id, group_id, country_name, group_name, no_of_legal_entities
         )
 
     def to_structure(self):
         return {
-            "country_id": self.country_id,
+            "client_id": self.client_id,
             "group_id": self.group_id,
             "country_name": self.country_name,
             "group_name": self.group_name,
