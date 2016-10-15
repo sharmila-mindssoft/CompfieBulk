@@ -196,7 +196,7 @@ def process_get_allocated_db_env(db):
 # return type : Returns success response
 ###############################################################################
 def process_save_allocated_db_env(db, request, session_user):
-    save_allocated_db_env(db, request)
+    save_allocated_db_env(db, request, session_user)
     return consoleadmin.SaveAllocatedDBEnvSuccess()
 
 
@@ -223,7 +223,7 @@ def process_get_file_storage(db):
 # return type : Returns success response
 ###############################################################################
 def process_save_file_storage(db, request, session_user):
-    save_file_storage(db, request)
+    save_file_storage(db, request, session_user)
     return consoleadmin.SaveFileStorageSuccess()
 
 

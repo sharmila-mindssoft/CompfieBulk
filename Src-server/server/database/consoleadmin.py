@@ -85,16 +85,16 @@ def save_db_server(db, request, session_user):
     #  Parameters : Db server name, ip, port, username, password
     #  Return : returns last inserted row id
     #
-    db_server_id = db.call_insert_proc(
-        "sp_databaseserver_save", (
-            request.db_server_name, request.ip, request.port,
-            request.username, request.password
+    try:
+        db.call_insert_proc(
+            "sp_databaseserver_save", (
+                request.db_server_name, request.ip, request.port,
+                request.username, request.password
+            )
         )
-    )
-    if db_server_id:
         action = "New Database server %s added" % (request.db_server_name)
-        db.save_activity(session_user,  frmConfigureDBServer, action)
-    else:
+        db.save_activity(session_user, frmConfigureDBServer, action)
+    except:
         raise process_error("E074")
 
 
@@ -169,18 +169,18 @@ def save_client_server(db, request, session_user):
     #  Parameters : Client server id, Client server name, ip, port
     #  Return : returns last inserted id
     #
-    machine_id = db.call_insert_proc(
-        "sp_machines_save", (
-            request.client_server_id, request.client_server_name,
-            request.ip, request.port
+    try:
+        db.call_insert_proc(
+            "sp_machines_save", (
+                request.client_server_id, request.client_server_name,
+                request.ip, request.port
+            )
         )
-    )
-    if machine_id:
         action = "New Machine %s added" % (request.client_server_name)
         if request.client_server_id is not None:
             action = "Machine %s updated" % (request.client_server_name)
         db.save_activity(session_user,  frmConfigureClientServer, action)
-    else:
+    except:
         raise process_error("E075")
 
 
@@ -302,7 +302,7 @@ def return_db_servers(data):
 # parameter : Object of database, Save Allocated database environment request
 # return type : Raises process error if save fails otherwise returns None
 ###############################################################################
-def save_allocated_db_env(db, request):
+def save_allocated_db_env(db, request, session_user):
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     db_server_ip = request.database_server_ip
@@ -312,22 +312,25 @@ def save_allocated_db_env(db, request):
     #  Parameters : client id, legal entity id, database ip, client server id
     #  Return : List of allocated database environment details
     #
-    result = db.call_insert_proc(
+    # try:
+    db.call_insert_proc(
         "sp_clientdatabase_save",
         (client_id, legal_entity_id, db_server_ip, machine_id)
     )
-    if result:
-        #
-        #  To get legal entity name by it's id to save activity
-        #  Parameters : legal entity id
-        #  Return : Returns legal entity name
-        #
-        data = db.call_proc("sp_legal_entity_id_by_name", (legal_entity_id,))
-        action = "Allocated database environment for %s " % (
-            data[0]["legal_entity_name"])
-        db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
-    else:
-        raise process_error("E076")
+    #
+    #  To get legal entity name by it's id to save activity
+    #  Parameters : legal entity id
+    #  Return : Returns legal entity name
+    #
+    print "legal_entity_id : %s" % legal_entity_id
+    data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
+    print "data: %s" % data
+    action = "Allocated database environment for %s " % (
+        data[0]["legal_entity_name"])
+    db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
+    # except Exception, e:
+    #     print e
+    #     raise process_error("E076")
 
 
 ###############################################################################
@@ -381,7 +384,7 @@ def return_file_storages(data):
 # parameter : Object of database, Save file storage request
 # return type : Returns List of object of FileStorage
 ###############################################################################
-def save_file_storage(db, request):
+def save_file_storage(db, request, session_user):
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     machine_id = request.machine_id
@@ -400,7 +403,7 @@ def save_file_storage(db, request):
         #  Parameters : legal entity id
         #  Return : Returns legal entity name
         #
-        data = db.call_proc("sp_legal_entity_id_by_name", (legal_entity_id,))
+        data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
         action = "Configured file storage for %s " % (
             data[0]["legal_entity_name"])
         db.save_activity(session_user, frmConfigureFileStorage, action)
@@ -511,7 +514,7 @@ def save_auto_deletion_details(db, request, session_user):
         #  Parameters : legal entity id
         #  Return : Returns legal entity name
         #
-        data = db.call_proc("sp_legal_entity_id_by_name", (legal_entity_id,))
+        data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
         action = "Configured auto deletion for %s " % (
             data[0]["legal_entity_name"])
         db.save_activity(session_user, frmAutoDeletion, action)

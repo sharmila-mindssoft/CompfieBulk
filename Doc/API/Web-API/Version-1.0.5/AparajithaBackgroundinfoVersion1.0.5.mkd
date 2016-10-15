@@ -29,6 +29,13 @@
 		"validity_days": INT
 	}
 
+## CLIENT_GROUP
+	
+	{
+        "client_id": INT, 
+        "group_name": STRING
+    }
+
 ## BUSINESS_GROUP
 	{
 		"business_group_id": INT, 
@@ -41,6 +48,14 @@
 		"client_id": INT,
 		"business_group_name": STRING 
 	}
+
+## LEGAL_ENTITY
+
+	{
+        "legal_entity_id": INT, 
+        "legal_entity_name": STRING, 
+        "client_id": INT
+    }
 
 ## FILE
 
@@ -65,4 +80,14 @@
         "industry_id": INT, 
         "is_active": BOOL, 
         "industry_name": STRING
+    }
+
+## USER_CONFIG
+
+	{
+		"user_id": INT,
+		"employee_name": STRING
+        "is_active": BOOL, 
+        "country_ids": [INT,], 
+        "domain_ids": [INT,],     
     }

@@ -18,9 +18,59 @@
 
     Note : All the following Requests will be in the above format
 
-# Validity Date Settings
+## User Mapping
 
-## List
+### List
+
+   [ "GetUserMappings", {} ]
+
+   Success Response
+
+    [
+        "GetUserMappingsSuccess", 
+        {
+            "countries": [COUNTRY,], 
+            "domains": [DOMAIN], 
+            "knowledge_managers": [USER_CONFIG,], 
+            "knowledge_users": [USER_CONFIG,], 
+            "techno_managers": [USER_CONFIG,], 
+            "techno_users": [USER_CONFIG,],
+            "domain_managers": [USER_CONFIG,], 
+            "domain_users": [USER_CONFIG,], 
+            "user_mappings": [
+                {
+                    "parent_user_id": INT, 
+                    "user_mapping_id": INT, 
+                    "child_user_id": INT
+                }
+            ]
+        }
+    ]
+
+### Save
+    
+    [
+        "SaveUserMappings", 
+        {
+            "country_id": INT,
+            "domain_id": INT,
+            "parent_user_id": INT,
+            "child_users": [INT,] 
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveUserMappingsSuccess", 
+        {}
+    ]
+
+# Compfie Admin
+
+## Validity Date Settings
+
+### List
 
     [ 
         "GetValidityDateList", 
@@ -41,7 +91,7 @@
         }
     ]
 
-## Save / Update
+### Save / Update
 
     [
         "SaveValidityDateSettings", 
@@ -57,9 +107,261 @@
         {}
     ]
 
-# Client Group Creation
+# Console Admin
 
-## List
+## Configure Database Server
+
+### List
+
+    [ "GetDbServerList", {} ]
+
+    Success Response
+
+    [
+        "GetDbServerListSuccess", 
+        {
+            "db_servers": [
+                {
+                    "db_server_name": STRING, 
+                    "username": STRING, 
+                    "no_of_clients": INT, 
+                    "ip": STRING, 
+                    "password": STRING, 
+                    "port": STRING
+                }
+            ]
+        }
+    ]
+
+### Save
+
+    [ 
+        "SaveDBServer", 
+        {
+            "db_server_name": STRING,
+            "ip": STRING,
+            "port": STRING,
+            "username": STRING,
+            "password": STRING
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveDBServerSuccess", 
+        {}
+    ]
+
+## Configure Client Server
+
+### List
+
+    [ "GetClientServerList", {} ]
+
+    Success Response
+
+    [
+        "GetClientServerListSuccess", 
+        {
+            "client_servers": [
+                {
+                    "no_of_clients": INT, 
+                    "ip": STRING, 
+                    "client_server_id": INT, 
+                    "port": INT, 
+                    "client_server_name": STRING
+                }
+            ]
+        }
+    ]
+
+### Save
+
+    [ 
+        "SaveClientServer", 
+        {
+            "client_server_id": INT,
+            "client_server_name": STRING,
+            "ip": STRING,
+            "port": INT 
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveClientServerSuccess", 
+        {}
+    ]  
+
+## Allocate DB Environment
+
+### List
+
+    [ "GetAllocatedDBEnv", {} ]
+
+    Success Response
+
+    [
+        "GetAllocatedDBEnvSuccess", 
+        {
+            "client_groups": [CLIENT_GROUP,], 
+            "client_legal_entities": [LEGAL_ENTITY,], 
+            "client_dbs": [
+                {
+                    "legal_entity_id": INT, 
+                    "machine_id": INT, 
+                    "database_server_ip": STRING, 
+                    "client_id": INT
+                },
+            ], 
+            "client_server_name_and_id": [
+                {
+                    "machine_id": INT, 
+                    "machine_name": STRING
+                },
+            ], 
+            "db_server_name_and_id": [
+                {
+                    "db_server_name": STRING, 
+                    "ip": STRING
+                }, 
+      
+            ]
+        }
+    ]
+
+### Save
+    [ 
+        "SaveAllocatedDBEnv", 
+        {
+            "client_id": INT,
+            "legal_entity_id": INT,
+            "database_server_ip": STRING,
+            "machine_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveAllocatedDBEnvSuccess", 
+        {}
+    ]
+
+## Auto Deletion
+
+### List
+
+    [ "GetAutoDeletionList", {} ]
+
+    Success Response
+
+    [
+        "GetAutoDeletionListSuccess", 
+        {
+            "client_groups": [CLIENT_GROUP,], 
+            "auto_deletion_entities": [
+                {
+                    "deletion_period": INT, 
+                    "legal_entity_id": INT, 
+                    "is_active": BOOL, 
+                    "legal_entity_name": STRING, 
+                    "client_id": INT, 
+                    "unit_count": INT
+                }, 
+      
+            ], 
+            "auto_deletion_units": [
+                {
+                    "unit_id": INT,
+                    "unit_code": STRING, 
+                    "unit_name": STRING,
+                    "address": STRING 
+                    "legal_entity_id": INT,
+                    "client_id": INT,
+                    "deletion_year": INT, 
+                },
+            ]
+        }
+    ]
+
+### Save
+
+    [
+        "SaveAutoDeletion", 
+        {
+            "auto_deletion_details": [ 
+                { 
+                    "client_id": INT,
+                    "legal_entity_id": INTT,
+                    "unit_id": INT,
+                    "deletion_year": INT
+                } 
+            ] 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveAutoDeletionSuccess", 
+        {}
+    ]
+
+## Configure File Storage
+
+### List
+
+    [ "GetFileStorage", {} ]
+
+    Success Response
+
+    [
+        "GetFileStorageSuccess", 
+        {
+            "client_groups": [CLIENT_GROUP,], 
+            "client_legal_entities": [ LEGAL_ENTITY,], 
+            "client_server_name_and_id": [
+                {
+                    "machine_id": INT, 
+                    "machine_name": STRING
+                }
+            ], 
+            "file_storages": [
+                {
+                    "legal_entity_id": INT, 
+                    "machine_id": INT, 
+                    "client_id": INT
+                }
+            ]
+        }
+    ]
+
+### Save
+
+    [
+        "SaveFileStorage", 
+        { 
+            "client_id": INT, 
+            "legal_entity_id": INT, 
+            "machine_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveFileStorageSuccess", 
+        {}
+    ]
+
+# Techno Functional - Manager
+
+## Client Group Creation
+
+### List
     
     [ "GetClientGroups", {} ]
     
@@ -82,7 +384,7 @@
         }
     ]
 
-## Form Data
+### Form Data
 
     [ "GetClientGroupFormData", {} ]
 
@@ -97,7 +399,7 @@
         }
     ]
 
-## Save
+### Save
 
     [ 
         "SaveClientGroup", 
@@ -138,7 +440,7 @@
         {}
     ]
 
-## Edit Form Data
+### Edit Form Data
 
     [ 
         "GetEditClientGroupFormData", 
@@ -187,7 +489,7 @@
         } 
     ]
 
-## Update
+### Update
 
     [ 
         "UpdateClientGroup", 
@@ -231,7 +533,7 @@
         {}
     ]
 
-## Status Change
+### Status Change
 
     [ 
         "ChangeClientGroupStatus", 
@@ -248,9 +550,9 @@
         {}
     ]
 
-# Approve Client Group
+## Approve Client Group
 
-## List
+### List
 
     [ "GetClientGroupApprovalList", {} ]
 
@@ -273,11 +575,11 @@
         }
     ]
 
-## Popup
+### Popup
 
     - Same as Client Group --> Edit Form data
 
-## Approve / Reject
+### Approve / Reject
 
     [
         "ApproveClientGroup",
@@ -296,6 +598,80 @@
 
     [
         "ApproveClientGroupSuccess", 
+        {}
+    ]
+
+## Client Unit Approval
+
+### List
+
+    [ "GetClientUnitApprovalList", {} ]
+
+    Success Response
+
+    [
+        "GetClientUnitApprovalListSuccess", 
+        {
+            "unit_approval_list": [
+                {
+                    "legal_entity_id": INT, 
+                    "group_name": STRING, 
+                    "legal_entity_name": STRING, 
+                    "business_group_name": STRING, 
+                    "country_name": STRING, 
+                    "unit_count": INT
+                }, 
+            ]
+        }
+    ]
+
+
+### Units List
+
+    [ "GetEntityApprovalList", { "legal_entity_id": 6 } ]
+
+    Success Response
+
+    [
+        "GetEntityApprovalListSuccess", 
+        {
+            "entity_unit_approval_list": [
+                {
+                    "unit_id": INT, 
+                    "unit_code": STRING,
+                    "unit_name": STRING, 
+                    "category_name": STRING,
+                    "division_name": STRING, 
+                    "geography_name": STRING, 
+                    "org_names": [STRING,], 
+                    "domain_names": [STRING,], 
+                    "address": STRING, 
+                    "postal_code": STRING, 
+                    
+                }
+            ]
+        }
+    ]
+
+### Approve Unit
+
+    [ 
+        "ApproveUnit", 
+        { 
+            "unit_approval_details": [ 
+                {
+                    "unit_id": INT,
+                    "approval_status": BOOL,
+                    "reason": STRING
+                },
+            ] 
+        }
+    ]
+
+    Success Response
+
+    [
+        "ApproveUnitSuccess", 
         {}
     ]
 

@@ -68,7 +68,8 @@ class ApproveUnit(Request):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_approval_details"])
-        return ApproveUnit(data)
+        unit_approval_details = data.get("unit_approval_details")
+        return ApproveUnit(unit_approval_details)
 
     def to_inner_structure(self):
         return {
@@ -126,6 +127,7 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        print "inner : %s" % inner
         if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
@@ -187,21 +189,22 @@ class UnitApproval(object):
         }
 
 
-class GetClientUnitApprovalListSuccess(object):
+class GetClientUnitApprovalListSuccess(Response):
     def __init__(
         self, unit_approval_list
     ):
         self.unit_approval_list = unit_approval_list
 
     @staticmethod
-    def parse_structure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "unit_approval_list"
         ])
         unit_approval_list = data.get("unit_approval_list")
         return GetClientUnitApprovalListSuccess(unit_approval_list)
 
-    def to_structure(self):
+    def to_inner_structure(self):
+        print "self.unit_approval_list: %s" % self.unit_approval_list
         return {
             "unit_approval_list": self.unit_approval_list
         }

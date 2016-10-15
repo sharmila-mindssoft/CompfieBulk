@@ -251,9 +251,7 @@ def get_admin_forms(db, username):
 def get_user_form_ids(db, user_id, admin_user_type=None):
     result = []
     procedure = "sp_tbl_forms_getuserformids"
-    print "admin_user_type: %s" % admin_user_type
-    result = db.call_proc(procedure, [user_id])
-    print "result : %s " % result
+    result = db.call_proc(procedure, [user_id, admin_user_type])
     if user_id == 0:
         f_ids = []
         for r in result:

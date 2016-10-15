@@ -1705,7 +1705,6 @@ def return_assign_legalentities(assign_legalentities_list):
         fn(
             legalentity["client_id"], legalentity["group_name"],
             legalentity["country_names"], legalentity["no_of_legal_entities"]
-            
         ) for legalentity in assign_legalentities_list
     ]
     return assign_legalentities_list

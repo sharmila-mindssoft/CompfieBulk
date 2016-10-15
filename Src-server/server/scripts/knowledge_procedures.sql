@@ -376,11 +376,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getuserformids;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
-	IN _user_id INT
+	IN _user_id INT, admin_user_type INT
 )
 BEGIN
 	if _user_id = 0 then
-		SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+		if admin_user_type == 0 then
+			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+		else
+			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 2;
+		end if;
 	else
 		SELECT t1.form_ids as form_id from tbl_user_groups t1
 		INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id
@@ -659,6 +663,22 @@ BEGIN
     SELECT legal_entity_id, legal_entity_name
     FROM tbl_legal_entities
     WHERE find_in_set(legal_entity_name, legal_entity_names);
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get ids of legal entities which were inserted
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_name_by_id`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_legal_entity_name_by_id`(
+    IN entity_id INT(11)
+)
+BEGIN
+    SELECT legal_entity_name
+    FROM tbl_legal_entities
+    WHERE legal_entity_id=entity_id;
 END //
 DELIMITER ;
 
@@ -1914,19 +1934,21 @@ BEGIN
 	DECLARE dbservername VARCHAR(50);
 	DECLARE machine_ip VARCHAR(50);
 	DECLARE machine_port INT(4);
+	DECLARE shortname VARCHAR(20);
 	SELECT port INTO port_no FROM tbl_database_server WHERE ip = db_server_ip;
 	SELECT server_username INTO username FROM tbl_database_server WHERE ip = db_server_ip;
 	SELECT server_password INTO pwd FROM tbl_database_server WHERE ip = db_server_ip;
 	SELECT db_server_name INTO dbservername FROM tbl_database_server WHERE ip = db_server_ip;
 	SELECT ip INTO machine_ip FROM tbl_machines WHERE machine_id = machineid;
 	SELECT port INTO machine_port FROM tbl_machines WHERE machine_id = machineid;
+	SELECT short_name INTO shortname FROM tbl_client_groups WHERE client_id=clientid;
 	INSERT INTO tbl_client_database (
 		client_id, legal_entity_id, machine_id, database_ip, 
 		database_port, database_username, database_password,
-		database_name, server_ip, server_port
+		database_name, server_ip, server_port, client_short_name
 	) VALUES (
 		clientid, le_id, machineid, db_server_ip, port_no, username,
-		pwd, dbservername, machine_ip, machine_port
+		pwd, dbservername, machine_ip, machine_port, shortname
 	) ON DUPLICATE KEY UPDATE machine_id=machineid,
 	database_ip = db_server_ip, database_port=port_no,
 	database_username=username, database_password=pwd,
