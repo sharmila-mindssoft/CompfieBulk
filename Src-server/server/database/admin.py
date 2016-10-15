@@ -68,9 +68,8 @@ def return_domains(data):
 # Return Type : Returns True on Successfull save otherwise raises process error
 ###############################################################################
 def save_domain(db, domain_name, user_id):
-    created_on = get_date_time()
     domain_id = db.call_insert_proc(
-        "sp_domains_save", (None, domain_name, user_id, created_on)
+        "sp_domains_save", (None, 1, domain_name, user_id)
     )
     if domain_id is False:
         raise process_error("E024")
@@ -348,7 +347,7 @@ def update_country_status(db, country_id, is_active, updated_by):
 # Return Type : Returns data fetched from database (Tuplse)
 ###############################################################################
 def get_forms(db):
-    return db.call_proc("sp_forms_list", None)
+    return db.call_proc_with_multiresult_set("sp_categorywise_forms_list", None, 6)
 
 
 ###############################################################################
