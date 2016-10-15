@@ -1388,20 +1388,20 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_domains_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_domains_save`(
-	IN domainid INT(11), domainname  VARCHAR(50),
-	session_user INT(11), updatedon TIMESTAMP
+	IN domainid INT(11), countryid INT(11), domainname  VARCHAR(50),
+	session_user INT(11)
 )
 BEGIN
 	IF domainid IS NULL THEN
 		INSERT INTO tbl_domains (
-		domain_name, is_active, created_on,
-		created_by, updated_on, updated_by) VALUES (
-		domainname, 1, updatedon, session_user,
-		updatedon, session_user);
+		country_id, domain_name, is_active,
+		created_by, created_on) VALUES (
+		countryid, domainname, 1, session_user, now());
 	ELSE
-		UPDATE tbl_domains SET domain_name=domainname,
-		updated_on = updatedon, updated_by = session_user
-		WHERE domain_id=domainid;
+		UPDATE tbl_domains SET  country_id = countryid,
+		domain_name = domainname,
+		updated_on = now(), updated_by = session_user
+		WHERE domain_id = domainid;
 	END IF;
 END //
 DELIMITER ;
@@ -1477,29 +1477,59 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- to get list of forms for User Group creation
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_forms_list`;
+DROP PROCEDURE IF EXISTS `sp_categorywise_forms_list`;
 DELIMITER //
-CREATE PROCEDURE `sp_forms_list`()
+CREATE PROCEDURE `sp_categorywise_forms_list`()
 BEGIN
-	SELECT tf.form_id, tf.form_category_id, tfc.form_category,
-	tf.form_type_id, tft.form_type, tf.form_name, tf.form_url,
-	tf.form_order, tf.parent_menu FROM tbl_forms tf LEFT JOIN
-	tbl_form_category tfc ON (tf.form_category_id = tfc.form_category_id)
-	LEFT JOIN tbl_form_type tft ON (tf.form_type_id = tft.form_type_id)
-	WHERE tf.form_category_id in (3,4,5,6,7,8) order by tf.form_order;
+
+	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+    T1.form_name, T1.form_url,
+	T1.form_order, T1.parent_menu FROM tbl_forms as T1
+	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+	WHERE T2.category_id_3 = 3 ;
+
+	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+    T1.form_name, T1.form_url,
+	T1.form_order, T1.parent_menu FROM tbl_forms as T1
+	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+	WHERE T2.category_id_4 = 4 ;
+
+	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+    T1.form_name, T1.form_url,
+	T1.form_order, T1.parent_menu FROM tbl_forms as T1
+	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+	WHERE T2.category_id_5 = 5 ;
+
+	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+    T1.form_name, T1.form_url,
+	T1.form_order, T1.parent_menu FROM tbl_forms as T1
+	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+	WHERE T2.category_id_6 = 6 ;
+
+	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+    T1.form_name, T1.form_url,
+	T1.form_order, T1.parent_menu FROM tbl_forms as T1
+	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+	WHERE T2.category_id_7 = 7 ;
+
+	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
+    T1.form_name, T1.form_url,
+	T1.form_order, T1.parent_menu FROM tbl_forms as T1
+	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
+	WHERE T2.category_id_8 = 8 ;
+
 END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get Knowledge and Techno form categories
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_formcategory_list`;
+DROP PROCEDURE IF EXISTS `sp_usercategory_list`;
 DELIMITER //
-CREATE PROCEDURE `sp_formcategory_list` ()
+CREATE PROCEDURE `sp_usercategory_list` ()
 BEGIN
-	SELECT form_category_id, form_category
-	FROM tbl_form_category
-	WHERE form_category_id in (3,4,5,6,7,8);
+	SELECT user_category_id, user_category
+	FROM tbl_user_category;
 END //
 DELIMITER ;
 
@@ -1510,8 +1540,8 @@ DROP PROCEDURE IF EXISTS `sp_usergroup_detailed_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_usergroup_detailed_list` ()
 BEGIN
-	SELECT ug.user_group_id, user_group_name, form_category_id,
-	form_ids, is_active, (SELECT count(user_id) FROM tbl_users u WHERE
+	SELECT ug.user_group_id, user_group_name, user_category_id,
+	is_active, (SELECT count(user_id) FROM tbl_users u WHERE
 	ug.user_group_id = u.user_group_id) AS count
 	FROM tbl_user_groups ug ORDER BY user_group_name;
 END //
@@ -1556,20 +1586,18 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_usergroup_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_usergroup_save`(
-	IN ug_id INT(11), ug_name VARCHAR(50), frm_cat_id INT(11),
-	frm_ids TEXT, session_user INT(11), updated_time TIMESTAMP
+	IN ug_id INT(11), u_cat_id INT(11), ug_name VARCHAR(50),
+	session_user INT(11)
 )
 BEGIN
 	IF ug_id IS NULL THEN
 		INSERT INTO tbl_user_groups
-		(form_category_id, user_group_name, is_active,
-		form_ids, created_by, created_on, updated_by, updated_on)
-		VALUES (frm_cat_id, ug_name, 1, frm_ids, session_user,
-		updated_time, session_user, updated_time);
+		(user_category_id, user_group_name, is_active, created_by, created_on)
+		VALUES (u_cat_id, ug_name, 1, session_user, now());
 	ELSE
-		UPDATE tbl_user_groups SET form_category_id = frm_cat_id,
-		user_group_name = ug_name, form_ids= frm_ids,
-		updated_by = session_user, updated_on = updated_time
+		UPDATE tbl_user_groups SET user_category_id = u_cat_id,
+		user_group_name = ug_name,
+		updated_by = session_user, updated_on = now()
 		WHERE user_group_id=ug_id;
 	END IF;
 END //
@@ -1582,11 +1610,11 @@ DROP PROCEDURE IF EXISTS `sp_usergroup_change_status`;
 DELIMITER //
 CREATE PROCEDURE `sp_usergroup_change_status`(
 	IN ug_id INT(11), isactive TINYINT(2),
-	session_user INT(11), updated_time TIMESTAMP
+	session_user INT(11)
 )
 BEGIN
 	UPDATE tbl_user_groups set is_active = isactive,
-	updated_by = session_user, updated_on = updated_time
+	updated_by = session_user, updated_on = now()
 	WHERE user_group_id=ug_id;
 END //
 DELIMITER ;
@@ -1677,12 +1705,14 @@ BEGIN
         WHERE email_id=emailid and user_id != userid;
     END IF;
 END //
+
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
 -- To check whether the employee code already exists or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_is_duplicate_employeecode`;
+
 DELIMITER //
 CREATE PROCEDURE `sp_user_is_duplicate_employeecode`(
 	IN empcode VARCHAR(20), userid INT(11)
@@ -1702,7 +1732,9 @@ DELIMITER;
 -- To save / update user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_save`(
 	IN userid INT(11), emailid VARCHAR(100), ug_id INT(11),
 	pwd VARCHAR(50), emp_name VARCHAR(50), emp_code VARCHAR(20),
@@ -2104,8 +2136,8 @@ DELIMITER;
 
 -- To get list of countries under client master group
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_for_unit`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_countries_for_unit`(IN session_user INT(11))
 BEGIN
 	IF session_user > 0 THEN
@@ -2126,8 +2158,8 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- To get list of industries for client id for client unit
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_getindustries_for_legalentity`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_getindustries_for_legalentity`(IN session_user INT(11))
 BEGIN
 	IF session_user > 0 THEN
@@ -2155,8 +2187,8 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- To check dupliaction of unit code and unit name
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_checkduplication`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_checkduplication`(in unitId int(11), unitCode varchar(50),
 		unitName varchar(50), clientId int(11))
 BEGIN
@@ -2180,8 +2212,8 @@ DELIMITER;
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitId`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_check_unitId`(in unitId int(11))
 BEGIN
 	select count(*) as unit_id_cnt from
@@ -2193,8 +2225,8 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- check dupliaction of id for save units
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitgroupid`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_check_unitgroupid`(
 in tableName varchar(50), param int(11))
 BEGIN
@@ -2220,8 +2252,9 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- Get unit max id
 -- -- --------------------------------------------------------------------------------
-DELIMITER //
+DROP PROCEDURE IF EXISTS `sp_tbl_units_max_unitid`;
 
+DELIMITER //
 CREATE PROCEDURE `sp_tbl_units_max_unitid`()
 BEGIN
 	select max(unit_id) as max_id from

@@ -124,18 +124,20 @@ def validate_user_forms(db, user_id, form_ids, requet, admin_user_type=None):
         general.GetAuditTrails
     ]:
         valid = 0
-        if user_id is not None:
-            if user_id == 0 and admin_user_type is None:
-                admin_user_type = 0  # compfie admin
-            alloted_forms = get_user_form_ids(db, user_id, admin_user_type)
-            print alloted_forms
-            alloted_forms = [int(x) for x in alloted_forms.split(",")]
-            for i in alloted_forms:
-                if i in form_ids:
-                    valid += 1
-            if valid > 0:
-                return True
-        return False
+        # if user_id is not None:
+        #     if user_id == 0 and admin_user_type is None:
+        #         admin_user_type = 0  # compfie admin
+        #     # alloted_forms = get_user_form_ids(db, user_id, admin_user_type)
+        #     alloted_forms = ""
+        #     print alloted_forms
+        #     alloted_forms = [int(x) for x in alloted_forms.split(",")]
+        #     for i in alloted_forms:
+        #         if i in form_ids:
+        #             valid += 1
+        #     if valid > 0:
+        #         return True
+        # return False
+        return True
 
     else:
         return True
