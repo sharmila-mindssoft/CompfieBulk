@@ -613,7 +613,6 @@ def get_client_details(db, client_id):
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
     results = []
-    print "domains : %s" % domains
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
             business_group = None
@@ -1282,8 +1281,6 @@ def get_legal_entities_for_user(db, user_id):
 
 def return_legal_entities_for_unit(legal_entities):
     results = []
-    print "inside get lagal entity"
-    print legal_entities
 
     for legal_entity in legal_entities:
         legal_entity_obj = core.UnitLegalEntity(
@@ -1336,30 +1333,10 @@ def return_unit_industry(data):
         legal_entity_id = d["legal_entity_id"]
         is_active = bool(d["is_active"])
         results.append(core.UnitIndustries(
-            industry_id, industry_name, country_id,  domain_id, client_id, unit_count, legal_entity_id, is_active
+            industry_id, industry_name, country_id,  domain_id,
+            client_id, unit_count, legal_entity_id, is_active
         ))
     return results
-
-
-
-def get_units_for_user(db, user_id):
-    client_ids = None
-    result = {}
-    if user_id is not None:
-        client_ids = get_user_clients(db, (user_id,))
-    columns = [
-        "unit_id", "unit_code", "unit_name",
-        "address", "division_id",
-        "legal_entity_id", "business_group_id",
-        "client_id", "is_active", "geography_id",
-        "industry_id", "domain_ids"
-    ]
-    condition, condition_val = db.generate_tuple_condition(
-        "client_id", client_ids
-    )
-    order = " order by unit_name ASC "
-    result = db.get_data(tblUnits, columns, condition, [condition_val], order)
-    return return_units(result)
 
 
 def return_units(units):
@@ -1374,8 +1351,9 @@ def return_units(units):
 
 
 def get_unit_details_for_user(db, user_id):
-    where_condition_val = [user_id,]
-    result = db.call_proc("sp_tbl_unit_getunitdetailsforuser", (where_condition_val,))
+    where_condition_val = [user_id, ]
+    result = db.call_proc(
+        "sp_tbl_unit_getunitdetailsforuser", (where_condition_val,))
     return return_unit_details(result)
 
 
@@ -1694,6 +1672,7 @@ def get_assign_legalentities(db):
     )
     return return_assign_legalentities(legalentities)
 
+
 ##########################################################################
 #  To get list of groups
 #  Parameters : Object of database
@@ -1708,3 +1687,174 @@ def return_assign_legalentities(assign_legalentities_list):
         ) for legalentity in assign_legalentities_list
     ]
     return assign_legalentities_list
+
+
+def get_unassigned_units_list(db):
+    units = db.call_proc(
+        "sp_userunits_list", None
+    )
+    return return_unassigned_units(units)
+
+
+def return_unassigned_units(data):
+    fn = technomasters.UnassignedUnit
+    result = [
+        fn(
+            domain_name=datum["domain_name"],
+            group_name=datum["client_name"],
+            unassigned_units="%s / %s" % (
+                datum["total_units"] - datum["assigned_units"],
+                datum["total_units"]
+            ),
+            domain_id=datum["domain_id"],
+            client_id=datum["client_id"]
+        ) for datum in data
+    ]
+    return result
+
+
+def get_assigned_units_list(db, request):
+    domain_id = request.domain_id
+    client_id = request.client_id
+    units = db.call_proc(
+        "sp_userunits_assigned_list", (client_id, domain_id)
+    )
+    return return_assigned_units(units)
+
+
+def return_assigned_units(data):
+    fn = technomasters.AssignedUnit
+    result = [
+        fn(
+            user_id=datum["user_id"], employee_name=datum["employee_name"],
+            business_group_name=datum["business_group_name"],
+            legal_entity_id=datum["legal_entity_id"],
+            legal_entity_name=datum["legal_entity_name"],
+            unit_count=datum["no_of_units"]
+        ) for datum in data
+    ]
+    return result
+
+
+def get_assigned_unit_details_list(db, request):
+    legal_entity_id = request.legal_entity_id
+    user_id = request.user_id
+    units, industry_details = db.call_proc_with_multiresult_set(
+        "sp_userunits_assigned_details_list", (user_id, legal_entity_id), 2
+    )
+    unit_industry_name_map = generate_unit_domain_industry_map(
+        industry_details)
+    return return_assigned_unit_details(units, unit_industry_name_map)
+
+
+def return_assigned_unit_details(units, unit_industry_name_map):
+    fn = technomasters.AssignedUnitDetails
+    result = [
+        fn(
+            unit_id=unit["unit_id"],
+            legal_entity_name=unit["legal_entity_name"],
+            division_name=unit["division_name"],
+            category_name=unit["category_name"],
+            unit_code=unit["unit_code"], unit_name=unit["unit_name"],
+            address=unit["address"],
+            domain_names=unit_industry_name_map[unit["unit_id"]].keys(),
+            org_names_list=unit_industry_name_map[unit["unit_id"]].values(),
+            geography_name=unit["geography_name"]
+        ) for unit in units
+    ]
+    return result
+
+
+def get_data_for_assign_unit(db, request, session_user):
+    business_groups = get_business_groups_for_client(db, request.client_id)
+    legal_entities = get_legal_entities_for_client(db, request.client_id)
+    units = get_units_of_client(db, request.client_id, request.domain_id)
+    domain_managers = get_domain_managers_for_user(db, session_user)
+    return business_groups, legal_entities, units, domain_managers
+
+
+def get_business_groups_for_client(db, client_id):
+    data = db.call_proc(
+        "sp_business_groups_by_client", (client_id,)
+    )
+    return return_business_groups(data)
+
+
+def get_legal_entities_for_client(db, client_id):
+    data = db.call_proc(
+        "sp_legal_entities_by_client", (client_id,)
+    )
+    return return_legal_entities_for_unit(data)
+
+
+def get_domain_managers_for_user(db, session_user):
+    users = db.call_proc(
+        "sp_users_domain_managers", (session_user,)
+    )
+    return return_domain_managers(users)
+
+
+def return_domain_managers(data):
+    fn = core.User
+    result = [
+        fn(
+            user_id=datum["user_id"], employee_name=datum["employee_name"],
+            is_active=bool(datum["is_active"])
+        ) for datum in data
+    ]
+    return result
+
+
+def get_units_of_client(db, client_id, domain_id):
+    result = db.call_proc_with_multiresult_set(
+        "sp_units_list", (client_id, domain_id), 2)
+    units = result[0]
+    industry_details = result[1]
+    domain_industry_map = generate_unit_domain_industry_map(industry_details)
+    return return_assigned_unit_details(units, domain_industry_map)
+
+
+def generate_unit_domain_industry_map(industry_details):
+    detail_map = {}
+    for detail in industry_details:
+        unit_id = detail["unit_id"]
+        domain_name = detail["domain_name"]
+        industry_name = detail["industry_name"]
+        if unit_id not in detail_map:
+            detail_map[unit_id] = {}
+        if domain_name not in detail_map[unit_id]:
+            detail_map[unit_id][domain_name] = []
+        detail_map[unit_id][domain_name].append(industry_name)
+    return detail_map
+
+
+def save_assigned_units(db, request, session_user):
+    domain_manager_id = request.user_id
+    client_id = request.client_id
+    active_units = request.active_units
+    values_list = []
+    current_time_stamp = get_date_time()
+    domains = get_user_domains(db, session_user)
+    domain_name_id_map = {}
+    for domain in domains:
+        domain_name_id_map[domain.domain_name] = domain.domain_id
+    columns = [
+        "user_id", "user_category_id", "client_id", "legal_entity_id",
+        "unit_id", "domain_id", "assigned_by", "assigned_on"
+    ]
+    for unit in active_units:
+        value_tuple = (
+            domain_manager_id, 7, client_id,  unit.legal_entity_id,
+            unit.unit_id, domain_name_id_map[unit.domain_name],
+            session_user, current_time_stamp
+        )
+        values_list.append(value_tuple)
+    db.call_update_proc(
+        "sp_userunits_delete", (domain_manager_id, )
+    )
+    res = db.bulk_insert(
+        tblUserUnits, columns, values_list
+    )
+    if res is False:
+        raise process_error("E080")
+    return res

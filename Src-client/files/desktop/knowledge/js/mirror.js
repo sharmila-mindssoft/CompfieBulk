@@ -1704,6 +1704,59 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getUnassignedUnitsList(callback){
+    callerName = "techno";
+    var request = [
+      "GetUnassignedUnits",
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedUnitsList(domain_id, client_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignedUnits",
+      {
+        "domain_id": domain_id,
+        "client_id": client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedUnitDetails(legal_entity_id, domain_manager_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignedUnitDetails",
+      {
+        "legal_entity_id": legal_entity_id,
+        "user_id": domain_manager_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignUnitFormData(domain_id, client_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignUnitFormData",
+      {
+        "domain_id": domain_id,
+        "client_id": client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveAssignedUnits(client_id, user_id, active_units, callback){
+      callerName = "techno";
+      var request = [
+        "SaveAsssignedUnits",
+        {
+          "user_id": user_id,
+          "active_units": active_units,
+          "client_id": client_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1857,7 +1910,12 @@ function initMirror() {
     getAutoDeletionList: getAutoDeletionList,
     saveAutoDeletion: saveAutoDeletion,
     getUserMappings: getUserMappings,
-    saveUserMappings: saveUserMappings
+    saveUserMappings: saveUserMappings,
+    getUnassignedUnitsList: getUnassignedUnitsList,
+    getAssignedUnitsList: getAssignedUnitsList,
+    getAssignedUnitDetails: getAssignedUnitDetails,
+    getAssignUnitFormData: getAssignUnitFormData,
+    saveAssignedUnits: saveAssignedUnits
   };
 }
 var mirror = initMirror();

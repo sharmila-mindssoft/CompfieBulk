@@ -176,6 +176,7 @@ api_params = {
     'postal_code': {'type': 'INT', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
     'domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
     'org_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'org_names_list': {},
     'entity_unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "EntityUnitApproval"},
     "unit_approval_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApprovalDetails"},
     'reason': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -285,12 +286,19 @@ api_params = {
     "child_users": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "parent_user_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "child_user_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-    "remarks":{'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    "remarks": {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
 
     'bg_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'bg_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'dv_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'le_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+
+    "unassigned_units": {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    "unassigned_units_list": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"UnassignedUnit"},
+    "assigned_units_list": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"AssignedUnit"},
+    "assigned_unit_details_list": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"AssignedUnitDetails"},
+    "domain_manager_users": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"User"},
+    "active_units": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"ActiveUnit"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

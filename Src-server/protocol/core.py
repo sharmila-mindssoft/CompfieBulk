@@ -1929,15 +1929,12 @@ class UnitLegalEntity(object):
         return UnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
 
     def to_structure(self):
-        data = {
+        return {
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
             "business_group_id": self.business_group_id,
             "client_id": self.client_id,
         }
-        print "UnitLegalEntity"
-        print data
-        return to_dictionary_values(data)
 
 
 #

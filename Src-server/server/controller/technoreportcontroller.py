@@ -14,7 +14,6 @@ from server.database.technomaster import (
     get_business_groups_for_user,
     get_legal_entities_for_user,
     get_divisions_for_user,
-    get_units_for_user,
 )
 from server.database.knowledgemaster import (
     get_country_wise_level_1_statutoy,

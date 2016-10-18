@@ -31,7 +31,10 @@ __all__ = [
     "reactivate_unit",
     "get_client_profile",
     "create_new_admin",
-    "get_assign_legal_entity_list"
+    "get_assign_legal_entity_list",
+    "get_unassigned_units",
+    "get_assigned_units",
+    "process_save_assigned_units_request"
 ]
 
 #
@@ -495,3 +498,53 @@ def get_assign_legal_entity_list(db, request, session_user):
     return technomasters.GetAssignLegalEntityListSuccess(
         legal_entities=legal_entities
     )
+
+
+############################################################
+# To Get Unassigned units list
+############################################################
+def get_unassigned_units(db):
+    units_list = get_unassigned_units_list(db)
+    return technomasters.GetUnassignedUnitsSuccess(
+        unassigned_units_list=units_list
+    )
+
+
+############################################################
+# To Get assigned units list
+############################################################
+def get_assigned_units(db, request):
+    units_list = get_assigned_units_list(db, request)
+    return technomasters.GetAssignedUnitsSuccess(
+        assigned_units_list=units_list
+    )
+
+
+############################################################
+# To Get assigned unit details list
+############################################################
+def get_assigned_unit_details(db, request):
+    units_list = get_assigned_unit_details_list(db, request)
+    return technomasters.GetAssignedUnitDetailsSuccess(
+        assigned_unit_details_list=units_list
+    )
+
+
+############################################################
+# To Get assign unit form data
+############################################################
+def get_assign_unit_form_data(db, request, session_user):
+    (
+        business_groups, legal_entities, units, domain_managers
+    ) = get_data_for_assign_unit(db, request, session_user)
+    return technomasters.GetAssignUnitFormDataSuccess(
+        business_groups=business_groups,
+        unit_legal_entity=legal_entities,
+        assigned_unit_details_list=units,
+        domain_manager_users=domain_managers
+    )
+
+
+def process_save_assigned_units_request(db, request, session_user):
+    save_assigned_units(db, request, session_user)
+    return technomasters.SaveAsssignedUnitsSuccess()

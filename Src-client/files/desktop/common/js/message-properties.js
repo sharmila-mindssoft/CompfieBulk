@@ -284,7 +284,10 @@ var message = {
   "cc_user_required": "CC User Required",
   "techno_manager_required": "Techno manager required",
   "unit_saved": "Unit(s) Saved successfully",
-  "unit_updated": "Units(s) Updated Successfully"
+  "unit_updated": "Units(s) Updated Successfully",
+  "domain_manager_required": "Domain Manager required",
+  "atleast_one_unit_required": "Select atleast one unit to assign",
+  "assign_success": "Assigned successfully"
 };
 
 function clearMessage() {

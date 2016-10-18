@@ -4,8 +4,36 @@
 .width10Percent {
     width:10%;
 }
+.padding0px{
+    padding-left:0px;
+    padding-right:0px;
+}
+.padding3px{
+    padding-right: 3px;
+}
+.header-row{
+    margin-bottom:1em;
+    border:1px solid #ccc;
+    height:30px
+}
+.header-column{
+    background-color:#eae8e8;
+    color:#000000;
+    font-size: 0.813em;
+    font-weight: bold;
+    text-align: left;
+}
+.header-column-span{
+    background-color:#eae8e8;
+    color:#000000; font-size: 0.9em;
+    font-weight: bold;margin-top:7px;
+    text-align: left;
+}
+.bold-text {
+    font-weight: bold;
+}
 </style>
-<div class="content-container width80" id="clientgroup-view">
+<div class="content-container width80" id="unassigned_units">
     <div class="content-area">
         <h1>Assign Client Unit</h1>
         <div class="clearfix"></div>
@@ -17,7 +45,7 @@
                     <th>Group</th>
                     <th>Unassigned Unit(s)</th>
                     <th class="width10Percent" align="center">Assign</th>
-                    <th class="width10Percent" align="center">View</th>
+                    <th class="width10Percent" align="center">Domain Manager</th>
                 </tr>
                 <tr>
                     <td align="center"></td>
@@ -33,6 +61,197 @@
         </div>
     </div>
 </div>
+<div class="content-container width80 default-display-none" id="assigned_units">
+    <div class="content-area">
+        <h1>Assign Client Unit</h1>
+        <div style="float: right;margin-bottom:20px">
+            <input type="reset" name="cancel" value="Back" class="btn-back">
+        </div>
+        <div class="clearfix"></div>
+        <div class="grid-table">
+            <table>
+                <tr align="left">
+                    <th align="center" width="5%">#</th>
+                    <th>Domain Manager</th>
+                    <th>Domain</th>
+                    <th>Group</th>
+                    <th>Business Group</th>
+                    <th>Legal Entity</th>
+                    <th>No of Unit(s)</th>
+                    <th class="width10Percent" align="center">View</th>
+                </tr>
+                <tr>
+                    <td align="center"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td><input type="text" class="filter-text-box"></td>
+                    <td align="center"></td>
+                </tr>
+                <tbody class="assigned-list">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="content-container  default-display-none" id="view-details">
+    <div class="content-area">
+        <div class="add-container">
+            <div class="add-container-heading">
+                Assign Client Unit<span class="error-message"></span>
+            </div>
+            <div class="input-row">
+                <div class="input-row-left">
+                    <div class="input-row">
+                        <div class="field-label">Group:</div>
+                        <div class="input-label view-grop-name"></div>
+                    </div> 
+                    <div class="input-row">
+                        <div class="field-label">Business Group:</div>
+                        <div class="field-label view-bg-name"></div>
+                    </div>            
+                </div>
+                <div class="input-row-right">
+                    <div class="input-row">
+                        <div class="field-label">Domain:</div>
+                        <div class="field-label view-domain-name"></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="field-label">Legal Entity:</div>
+                        <div class="field-label le-name"></div>
+                    </div> 
+                </div>
+                <div class="view-divition view_legal_entity" id="view-legal-entity">
+                    <div class="add-container padding0px">
+                        <div class="grid-table">
+                            <table class="font1">
+                                <tr align="left">
+                                    <th width="10%">Unit Code</th>
+                                    <th width="10%">Unit Name</th>
+                                    <th width="10%">Organization Type</th>
+                                    <th width="12%">Unit Location</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" class="filter-text-box"></td>
+                                    <td><input type="text" class="filter-text-box"></td>
+                                    <td><input type="text" class="filter-text-box"></td>
+                                    <td><input type="text" class="filter-text-box"></td> 
+                                </tr>
+                                <tbody class="assigned-unit-view-list">
+                                </tbody>  
+                            </table>
+                        </div>
+                    </div>        
+                    <div class="clear"></div>
+                    <div class="submit-button-container padding0px">
+                        <input type="submit" name="Submit" value="Cancel" class="btn-submit cancel-view-details" >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="content-container" id="assign">
+    <div class="content-area">
+        <div class="add-container">
+            <div class="add-container-heading">
+                Assign Client Unit<span class="error-message"></span>
+            </div>
+            <div class="input-row">
+                <div class="input-row-left">
+                    <div class="input-row">
+                        <div class="field-label">Group:</div>
+                        <div class="input-label edit-group-name"></div>
+                    </div> 
+                    <div class="input-row">
+                        <div class="field-label">Business Group:</div>
+                        <div class="field-input">
+                            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" placeholder="Enter Business Group">
+                            <input type="hidden" id="businessgroupid">
+                            <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row-right">
+                    <div class="input-row">
+                        <div class="field-label">Domain:</div>
+                        <div class="input-label edit-domain-name"></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="field-label">Legal Entity:</div>
+                        <div class="field-input">
+                            <input type="text" class="input-box icon-autocomplete" id="legalentityval" value=""  placeholder="Enter Legal Entity">
+                            <input type="hidden" id="legalentityid">
+                            <div id="ac-legalentity" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="submit-button-container padding0px">
+                    <input type="submit" name="Submit" value="Show" class="btn-submit show-units" >
+                </div>
+            </div>
+            <div class="edit-divition view_legal_entity default-display-none" id="edit-legal-entity">
+                <div class="add-container padding0px">
+                    <div class="grid-table">
+                        <table class="font1">
+                            <tr align="left">
+                                <th></th>
+                                <th width="10%">Unit Code</th>
+                                <th width="10%">Unit Name</th>
+                                <th width="10%">Organization Type</th>
+                                <th width="12%">Unit Location</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="text" class="filter-text-box"></td>
+                                <td><input type="text" class="filter-text-box"></td>
+                                <td><input type="text" class="filter-text-box"></td>
+                                <td><input type="text" class="filter-text-box"></td> 
+                            </tr>
+                            <tbody class="assigned-unit-edit-list">
+                            </tbody>  
+                        </table>
+                    </div>
+                </div>        
+                <div class="clear"></div>
+                <div class="edit-note" style="border-top: 1px dashed #ccc;">
+                    <div >
+                        <div class="selected_checkbox">Selected Unit : <span class="selected_checkbox_count"></span></div>
+                    </div>
+                    <div>
+                        <div style="width: 46%; margin: auto;">
+                            <div class="input-row">
+                                <div class="field-label" style="width: 37%">
+                                    Assign To Domain Manager:<span class="mandatory">*</span>
+                                </div>
+                                <div class="field-input">
+                                    <input type="text" class="input-box icon-autocomplete" id="assinee" value="" placeholder="Enter User">
+                                    <input type="hidden" id="userid">
+                                    <div id="ac-user" class="ac-textbox default-display-none">
+                                      <ul style="width:85%;"></ul>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="input-row-right">
+                        </div>
+                    </div>
+                    <div class="submit-button-container padding0px">
+                        <input type="submit" name="Submit" value="Cancel" class="btn-submit cancel-assign-unit" >
+                        <input type="submit" name="Submit" value="Submit" class="btn-submit save-assign-unit" >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="templates">
     <div class="unassign-row default-display-none">
         <table>
@@ -42,13 +261,115 @@
                 <td class="group-name"></td>
                 <td class="unassigned-units"></td>
                 <td class="assign"> 
-                    <input type="button" name="assign" value="Assign" class="btn-cancel"> 
+                    <input type="button" name="assign" value="Assign" class="btn-cancel assign">
                 </td>
                 <td align="view"> 
-                    <input type="button" name="assign" value="View" class="btn-cancel"" >
+                    <input type="button" name="assign" value="View" class="btn-cancel view" >
                 </td>
             </tr>
         </table>        
+    </div>
+    <div class="assigned-row default-display-none">
+        <table>
+            <tr>
+                <td class="sno"></td>
+                <td class="domain-manager"></td>
+                <td class="domain-name"></td>
+                <td class="group-name"></td>
+                <td class="business-group-name"></td>
+                <td class="legal-entity-name"></td>
+                <td class="no-of-units"></td>
+                <td align="view"> 
+                    <input type="button" name="assign" value="View" class="btn-cancel view" >
+                </td>
+            </tr>
+        </table>        
+    </div>
+    <div class="assigned-unit-view-row default-display-none">
+        <table>
+            <tr>                          
+                <td class="unit-code"></td>
+                <td class="unit-name">
+                    <abbr class="page-load tipso_style address-title" title="Address goes here">
+                        <img src="/images/icon-info.png" class="padding3px"/>
+                        <span class="address">
+                            
+                        </span>
+                    </abbr>
+                </td>
+                <td class="organization-type">
+                    <span class="bold-text">
+                    </span>
+                </td>
+                <td class="location"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="assigned-unit-edit-row default-display-none">
+        <table>
+            <tr>   
+                <td align="center">
+                    <input type="checkbox" class="form_checkbox select-unit">
+                </td>                       
+                <td class="unit-code"></td>
+                <td class="unit-name">
+                    <abbr class="page-load tipso_style address-title" title="Address goes here">
+                        <img src="/images/icon-info.png" class="padding3px"/>
+                        <span class="address">
+                            
+                        </span>
+                    </abbr>
+                </td>
+                <td class="organization-type">
+                    <span class="bold-text">
+                    </span>
+                </td>
+                <td class="location"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="assigned-unit-view-row-header default-display-none">
+        <table>
+            <tr style="margin-bottom:1em;border:1px solid #ccc;height:30px">
+                <th style="background-color:#eae8e8;color:#000000;font-size: 0.813em;font-weight: bold;text-align: left;">
+                    <span class="header-column-span view-le-name">
+                    </span>
+                </th>
+                <th style="background-color:#eae8e8;color:#000000;font-size: 0.813em;font-weight: bold;text-align: left;">
+                    <span class="header-column-span view-div-name">
+                    </span>
+                </th>
+                <th style="background-color:#eae8e8;color:#000000;font-size: 0.813em;font-weight: bold;text-align: left;">
+                    <span class="header-column-span view-category-name">
+                    </span>
+                </th>
+                <th style="background-color:#eae8e8;color:#000000;font-size: 0.813em;font-weight: bold;text-align: left;"> </th>
+            </tr>
+        </table>
+    </div>
+    <div  class="assign-unit-edit-row-header default-display-none">
+        <table>
+            <tr style="margin-bottom:1em; border:1px solid #ccc;height:30px">
+                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="2%">
+                    <input type="checkbox" class=" form_checkbox select-all-units">
+                </th>
+                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; text-align: left;">
+                    <span class="header-column-span edit-le-name"></span>
+                </th>
+                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; text-align: left;">
+                    <span class="header-column-span edit-div-name"></span>
+                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; text-align: left;">
+                    <span class="header-column-span edit-category-name">Category : -</span>
+                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; text-align: left;"> </th>
+                </th>
+            </tr>
+        </table>
+    </div>
+    <div class="bold-text">
+        <b></b><br>
+    </div>
+    <div>
+        <span class="normal-text"></span>
     </div>
 </div>
 <script type="text/javascript" src="/script/assign-client-unit/assign-client-unit.js"></script>
