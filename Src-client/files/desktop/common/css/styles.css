@@ -933,6 +933,10 @@ textarea.input-box{
 	background: #dadada url(../images/auto-complete-arrow.png) no-repeat 95% center;
 	padding-right: 1.5em;
 }
+.icon-dropdown {
+	background: #dadada url(../images/dropdown-arrow.png) no-repeat 95% center;
+	padding-right: 1.5em;
+}
 .filter-text-box {
 	width: 95%;
 	height: 25px;
