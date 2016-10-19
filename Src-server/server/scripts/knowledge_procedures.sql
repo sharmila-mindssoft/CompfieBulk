@@ -1486,37 +1486,37 @@ BEGIN
     T1.form_name, T1.form_url,
 	T1.form_order, T1.parent_menu FROM tbl_forms as T1
 	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
-	WHERE T2.category_id_3 = 3 ;
+	WHERE T2.category_id_3 = 1 and T1.form_type_id != 4 ;
 
 	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
     T1.form_name, T1.form_url,
 	T1.form_order, T1.parent_menu FROM tbl_forms as T1
 	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
-	WHERE T2.category_id_4 = 4 ;
+	WHERE T2.category_id_4 = 1 and T1.form_type_id != 4 ;
 
 	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
     T1.form_name, T1.form_url,
 	T1.form_order, T1.parent_menu FROM tbl_forms as T1
 	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
-	WHERE T2.category_id_5 = 5 ;
+	WHERE T2.category_id_5 = 1 and T1.form_type_id != 4 ;
 
 	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
     T1.form_name, T1.form_url,
 	T1.form_order, T1.parent_menu FROM tbl_forms as T1
 	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
-	WHERE T2.category_id_6 = 6 ;
+	WHERE T2.category_id_6 = 1 and T1.form_type_id != 4 ;
 
 	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
     T1.form_name, T1.form_url,
 	T1.form_order, T1.parent_menu FROM tbl_forms as T1
 	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
-	WHERE T2.category_id_7 = 7 ;
+	WHERE T2.category_id_7 = 1 and T1.form_type_id != 4 ;
 
 	SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
     T1.form_name, T1.form_url,
 	T1.form_order, T1.parent_menu FROM tbl_forms as T1
 	INNER JOIN tbl_form_category as T2 ON T2.form_id = T1.form_id
-	WHERE T2.category_id_8 = 8 ;
+	WHERE T2.category_id_8 = 1 and T1.form_type_id != 4 ;
 
 END //
 DELIMITER ;
@@ -1529,7 +1529,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_usercategory_list` ()
 BEGIN
 	SELECT user_category_id, user_category
-	FROM tbl_user_category;
+	FROM tbl_user_category where user_category_id > 2;
 END //
 DELIMITER ;
 
@@ -1543,7 +1543,10 @@ BEGIN
 	SELECT ug.user_group_id, user_group_name, user_category_id,
 	is_active, (SELECT count(user_id) FROM tbl_users u WHERE
 	ug.user_group_id = u.user_group_id) AS count
-	FROM tbl_user_groups ug ORDER BY user_group_name;
+	FROM tbl_user_groups ug ORDER BY user_category_id, user_group_name;
+
+	SELECT T1.user_group_id, T1.form_id from tbl_user_group_forms as T1 INNER JOIN tbl_user_groups as T2
+	ON T2.user_group_id = T1.user_group_id ;
 END //
 DELIMITER ;
 
@@ -1669,8 +1672,10 @@ DROP PROCEDURE IF EXISTS `sp_usergroup_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_usergroup_list`()
 BEGIN
-	SELECT user_group_id, user_group_name, is_active
+	SELECT user_group_id, user_category_id, user_group_name, is_active
 	FROM tbl_user_groups ORDER BY user_group_name;
+
+	SELECT user_category_id, user_category_name FROM tbl_user_category where user_category_id > 2;
 END //
 DELIMITER ;
 
@@ -1681,10 +1686,18 @@ DROP PROCEDURE IF EXISTS `sp_user_detailed_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_user_detailed_list`()
 BEGIN
-	SELECT user_id, email_id, user_group_id, employee_name,
-	employee_code, contact_no, address, designation, is_active
-	FROM tbl_users
-	ORDER BY employee_name;
+	SELECT T1.user_id, T1.user_category_id,
+	T1.employee_name, T1.employee_code, T1.email_id,
+    T1.user_group_id,
+	T1.contact_no, T1.mobile_no, T1.address, T1.designation, T1.is_active, T1.is_disable,
+    T2.username
+	FROM tbl_users T1
+    LEFT JOIN tbl_user_login_details T2 ON T1.user_id = T2.user_id
+	ORDER BY T1.employee_name;
+
+    SELECT user_id, domain_id from tbl_user_domains;
+    SELECT user_id, country_id from tbl_user_countries;
+
 END //
 DELIMITER ;
 
@@ -1736,26 +1749,32 @@ DROP PROCEDURE IF EXISTS `sp_users_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_users_save`(
-	IN userid INT(11), emailid VARCHAR(100), ug_id INT(11),
+	IN u_cat_id INT(11), userid INT(11), emailid VARCHAR(100), ug_id INT(11),
 	pwd VARCHAR(50), emp_name VARCHAR(50), emp_code VARCHAR(20),
-	contactno VARCHAR(12), addr TEXT, desig VARCHAR(50),
-	session_user INT(11), created_time TIMESTAMP
+	contactno VARCHAR(12), mobileno VARCHAR(15), addr TEXT, desig VARCHAR(50),
+	session_user INT(11)
 )
 BEGIN
 	IF userid IS NULL THEN
 		INSERT INTO tbl_users (
-			email_id, user_group_id, password, employee_name, employee_code, contact_no,
-			address, designation, is_active, created_by, created_on,
-			updated_by, updated_on
+			user_category_id, employee_name, employee_code, email_id,
+			contact_no, mobile_no, user_group_id, address, designation,
+			is_active, created_by, created_on
 		)	VALUES (
-			emailid, ug_id, pwd, emp_name, emp_code, contactno, addr, desig,
-			1, session_user, created_time, session_user, created_time
+			u_cat_id, emp_name, emp_code, emailid,
+			contactno, mobileno, ug_id, addr, desig, 1, session_user, now()
 		);
 	ELSE
-		UPDATE tbl_users SET employee_name=emp_name, user_group_id=ug_id,
-		employee_code=emp_code, contact_no=contactno, address=addr,
+		UPDATE tbl_users SET user_category_id=u_cat_id, email_id=emailid,
+		employee_name=emp_name, user_group_id=ug_id,
+		employee_code=emp_code, contact_no=contactno,
+		mobile_no=mobileno, address=addr,
 		designation = desig, updated_by=session_user,
-		updated_on = created_time WHERE user_id=userid;
+		updated_on = now() WHERE user_id=userid;
+
+		UPDATE tbl_user_login_details set email_id = emailid,
+		user_category_id=u_cat_id where user_id = userid;
+
 	END IF;
 END //
 DELIMITER;

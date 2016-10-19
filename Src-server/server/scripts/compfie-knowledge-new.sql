@@ -78,9 +78,8 @@ CREATE TABLE `tbl_user_groups` (
 
 DROP TABLE IF EXISTS `tbl_user_group_forms`;
 CREATE TABLE `tbl_user_group_forms` (
-  `user_group_id` int(11) NOT NULL AUTO_INCREMENT,
-  `form_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`user_group_id`)
+  `user_group_id` int(11) NOT NULL,
+  `form_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_countries`;

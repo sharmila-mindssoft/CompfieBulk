@@ -1607,15 +1607,15 @@ textarea.heightsmall{ height: 40px; }
 }
 .countrycode
 {
-	width: 25% !important;
+	width: 20% !important;
 }
 .areacode
 {
-	width: 25% !important;
+	width: 20% !important;
 }
 .mobile
 {
-	width: 45% !important;
+	width: 41% !important;
 }
 .grid-table-rpt p
 {
@@ -3340,15 +3340,15 @@ div.scrollable {
     z-index:10;
     font-size: 12px;
     padding:14px 20px;
-    margin-top:-30px; 
+    margin-top:-30px;
     margin-left:28px;
-    width:300px; 
+    width:300px;
     line-height:16px;
     border-radius:4px;
-     
-    position:absolute; 
+
+    position:absolute;
     color:#111;
-    border:1px solid #DCA; 
+    border:1px solid #DCA;
     background:#fffAF0;
 }
 .pw-callout {
@@ -3390,6 +3390,19 @@ div.scrollable {
 	cursor: pointer;
 }
 
+.enable-icon {
+	background:  url(../images/icon-enable.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.disable-icon {
+	background:  url(../images/icon-disable.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
 .back-to-top {
     position: fixed;
     bottom: 2em;
@@ -3401,7 +3414,7 @@ div.scrollable {
     border-radius: 25px;
 }
 
-.back-to-top:hover {    
+.back-to-top:hover {
     background-color: #fc9b01;
 }
 
@@ -3437,7 +3450,7 @@ div.scrollable {
 }
 .divider-view{
 	font-size: 0.813em;
-	padding-left:10px; 
+	padding-left:10px;
 	padding-right:10px;
 }
 .items-per-page{

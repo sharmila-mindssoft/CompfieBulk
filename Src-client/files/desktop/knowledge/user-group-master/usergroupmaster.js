@@ -59,7 +59,7 @@ function loadUserGroupdata(userGroupList) {
   $('.tbody-usergroups-list').find('tr').remove();
   var sno = 0;
   $.each(userGroupList, function (key, value) {
-    var catgid = value.form_category_id;
+    var catgid = value.user_category_id;
     var userGroupName = value.user_group_name;
     var isActive = value.is_active;
     var userGroupId = value.user_group_id;
@@ -96,7 +96,7 @@ function loadUserGroupdata(userGroupList) {
     $('.active-icon').attr('title', 'Deactivate');
     $('.inactive-icon').attr('title', 'Activate');
     $('.status', clone).on('click', function () {
-      userGroupActive(userGroupId, passStatus);
+      userGroupActive(userGroupId, userGroupName, passStatus);
     });
     $('.tbody-usergroups-list').append(clone);
   });
@@ -300,7 +300,7 @@ function userGroupEdit(userGroupId, userGroupName, catgid) {
     }
   });
 }
-function userGroupActive(userGroupId, isActive) {
+function userGroupActive(userGroupId, userGroupName, isActive) {
   $('#userGroupId').val(userGroupId);
   var msgstatus = message.deactive_message;
   if (isActive) {
@@ -321,7 +321,7 @@ function userGroupActive(userGroupId, isActive) {
             custom_alert(error);
           }
         }
-        mirror.changeAdminUserGroupStatus(userGroupId, isActive, function (error, response) {
+        mirror.changeAdminUserGroupStatus(userGroupId, userGroupName, isActive, function (error, response) {
           if (error == null) {
             onSuccess(response);
           } else {

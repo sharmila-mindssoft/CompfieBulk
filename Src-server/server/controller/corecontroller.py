@@ -47,6 +47,7 @@ def process_admin_forms(data):
 
 def process_user_menus(form_list):
     menus = {}
+    print form_list
     for form in form_list:
         form_type = form.form_type
         _forms = menus.get(form_type)

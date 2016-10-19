@@ -259,6 +259,7 @@ def parse_optional_int_list(x, length=0, int_length=0):
 
 
 def parse_values(field_name, param, val):
+    print field_name, param, val
     _type = param.get('type')
     _length = param.get('length')
     _is_optional = param.get('is_optional')

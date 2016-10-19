@@ -347,6 +347,7 @@ def update_country_status(db, country_id, is_active, updated_by):
 # Return Type : Returns data fetched from database (Tuplse)
 ###############################################################################
 def get_forms(db):
+    # Category wise forms list result set
     return db.call_proc_with_multiresult_set("sp_categorywise_forms_list", None, 6)
 
 
@@ -356,7 +357,7 @@ def get_forms(db):
 # Return Type : Returns data fetched from database (Tuplse)
 ###############################################################################
 def get_form_categories(db):
-    return db.call_proc("sp_formcategory_list", None)
+    return db.call_proc("sp_usercategory_list", None)
 
 
 #
@@ -399,7 +400,7 @@ def is_user_exists_under_user_group(db, user_group_id):
 # Return Type : Returns data fetched from database (Tuple)
 ###############################################################################
 def get_user_group_detailed_list(db):
-    return db.call_proc("sp_usergroup_detailed_list", None)
+    return db.call_proc_with_multiresult_set("sp_usergroup_detailed_list", None, 2)
 
 
 ###############################################################################
@@ -408,7 +409,7 @@ def get_user_group_detailed_list(db):
 # Return Type : Returns data fetched from database (Tuple)
 ###############################################################################
 def get_user_groups_from_db(db):
-    return db.call_proc("sp_usergroup_list", None)
+    return db.call_proc_with_multiresult_set("sp_usergroup_list", None, 2)
 
 
 ###############################################################################
@@ -417,21 +418,32 @@ def get_user_groups_from_db(db):
 # form category id (INT), List of form ids (List of integer), session user id
 # Return Type : Returns True on Successfull save otherwise raises process error
 ###############################################################################
+def user_group_forms(db, user_group_id, form_ids):
+    table = "tbl_user_group_forms"
+    db.delete(table, "user_group_id = %s", [user_group_id])
+    column = ["user_group_id", "form_id"]
+    value_list = []
+    for f in form_ids:
+        value_list.append((user_group_id, f))
+    return db.bulk_insert(table, column, value_list)
+
+
 def save_user_group(
-    db, user_group_name, form_category_id, form_ids, session_user
+    db, user_group_name, user_category_id, form_ids, session_user
 ):
-    time_stamp = str(get_date_time())
     ug_id = db.call_insert_proc(
         "sp_usergroup_save",
         (
-            None, user_group_name, form_category_id,
-            form_ids, session_user, time_stamp
+            None, user_category_id, user_group_name, session_user
         )
     )
     if ug_id:
-        action = "Created User Group \"%s\"" % user_group_name
-        db.save_activity(0, 3, action)
-        return True
+        if user_group_forms(db, ug_id, form_ids) is True :
+            action = "Created User Group \"%s\"" % user_group_name
+            db.save_activity(0, 3, action)
+            return True
+        else :
+            return False
     else:
         raise process_error("E030")
 
@@ -444,21 +456,23 @@ def save_user_group(
 #   process error
 ###############################################################################
 def update_user_group(
-    db, user_group_id, user_group_name, form_category_id, form_ids,
+    db, user_group_id, user_group_name, user_category_id, form_ids,
     session_user
 ):
-    time_stamp = get_date_time()
     result = db.call_update_proc(
         "sp_usergroup_save",
         (
-            user_group_id, user_group_name, form_category_id,
-            form_ids, session_user, time_stamp
+            user_group_id, user_category_id, user_group_name,
+            session_user
         )
     )
     if result:
-        action = "Updated User Group \"%s\"" % user_group_name
-        db.save_activity(0, 3, action)
-        return True
+        if user_group_forms(db, user_group_id, form_ids) is True :
+            action = "Updated User Group \"%s\"" % user_group_name
+            db.save_activity(0, 3, action)
+            return True
+        else :
+            return False
     else:
         raise process_error("E031")
 
@@ -468,23 +482,19 @@ def update_user_group(
 # Parameter(s) : Object of database, user group id, is_active, session user id
 # Return Type : True on Successfull update otherwise raises process error
 ###############################################################################
-def update_user_group_status(db, user_group_id, is_active, session_user):
-    time_stamp = get_date_time()
+def update_user_group_status(db, user_group_id, ug_name, is_active, session_user):
     result = db.call_update_proc(
         "sp_usergroup_change_status",
         (
-            user_group_id, is_active, session_user,
-            time_stamp
+            user_group_id, is_active, session_user
         )
     )
     if result is False:
         raise process_error("E032")
 
-    result = db.call_proc("sp_usergroup_by_id", (user_group_id,))
-    user_group_name = result[0]["user_group_name"]
     action = "%s User Group \"%s\"" % (
         "Deactivated" if is_active == 0 else "Activated",
-        user_group_name
+        ug_name
     )
     db.save_activity(0, 3, action)
     return result
@@ -499,7 +509,7 @@ def update_user_group_status(db, user_group_id, is_active, session_user):
 # Return Type : Returns data fetched from database (Tuple)
 ###############################################################################
 def get_detailed_user_list(db):
-    return db.call_proc("sp_user_detailed_list", None)
+    return db.call_proc_with_multiresult_set("sp_user_detailed_list", None, 3)
 
 
 ###############################################################################
@@ -539,8 +549,10 @@ def is_duplicate_employee_code(db, employee_code, user_id=None):
 # Return Type : Returns True on Successfull save otherwise raises process error
 ###############################################################################
 def save_user(
-    db, email_id, user_group_id, employee_name, employee_code, contact_no,
-    address, designation, country_ids, domain_ids, session_user
+    db, user_category_id, email_id, user_group_id, employee_name,
+    employee_code, contact_no, mobile_no,
+    address, designation, country_ids, domain_ids,
+    session_user
 ):
     current_time_stamp = get_date_time()
     encrypted_password, password = generate_and_return_password()

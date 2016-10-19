@@ -350,3 +350,30 @@ function clientUserValidate() {
     return true;
   }
 }
+
+
+///////////////////////////
+
+var max_length = {
+  'employeename': 50,
+  'employeeid': 50,
+  'email_id': 50,
+  'mcountrycode': 5,
+  'mobileno': 10,
+  'address': 250,
+  'designation': 50
+}
+
+function expectationError(expected, received){
+  msg = "expected " + expected + ", but received : " + received
+  return msg
+}
+
+function validateLength(key_name, value) {
+  v = max_length(key_name);
+  if (!length(value) <= v) {
+    msg = "a " + key_name + " with max length " + v
+    return expectationError(msg, value)
+  }
+  return true
+}

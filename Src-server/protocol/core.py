@@ -611,22 +611,25 @@ class Menu(object):
 #
 
 class UserGroup(object):
-    def __init__(self, user_group_id, user_group_name, is_active):
+    def __init__(self, user_group_id, user_category_id, user_group_name, is_active):
         self.user_group_id = user_group_id
+        self.user_category_id = user_category_id
         self.user_group_name = user_group_name
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_group_id", "user_group_name", "is_active"])
+        data = parse_dictionary(data, ["user_group_id", "user_category_id", "user_group_name", "is_active"])
         user_group_id = data.get("user_group_id")
+        user_category_id = data.get("user_category_id")
         user_group_name = data.get("user_group_name")
         is_active = data.get("is_active")
-        return UserGroup(user_group_id, user_group_name, is_active)
+        return UserGroup(user_group_id, user_category_id, user_group_name, is_active)
 
     def to_structure(self):
         data = {
             "user_group_id": self.user_group_id,
+            "user_category_id": self.user_category_id,
             "user_group_name": self.user_group_name,
             "is_active": self.is_active,
         }
@@ -2564,59 +2567,80 @@ class ClientInchargePersons(object):
 #
 
 class UserDetails(object):
-    def __init__(self, user_id, email_id, user_group_id, employee_name, employee_code, contact_no, address, designation, country_ids, domain_ids, is_active):
+    def __init__(
+        self, user_id, user_category_id, employee_name,
+        employee_code,  email_id, user_group_id,
+        contact_no, mobile_no, address, designation, country_ids,
+        domain_ids, is_active, is_disable, username
+    ):
         self.user_id = user_id
-        self.email_id = email_id
-        self.user_group_id = user_group_id
+        self.user_category_id = user_category_id
         self.employee_name = employee_name
         self.employee_code = employee_code
+        self.email_id = email_id
+        self.user_group_id = user_group_id
         self.contact_no = contact_no
+        self.mobile_no = mobile_no
         self.address = address
         self.designation = designation
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.is_active = is_active
+        self.is_disable = is_disable
+        self.username = username
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "email_id", "user_group_id", "employee_name", "employee_code", "contact_no", "address", "designation", "country_ids", "domain_ids", "is_active"])
+        data = parse_dictionary(data, [
+            "user_id", "user_category_id",
+            "employee_name", "employee_code",
+            "email_id", "user_group_id",
+            "contact_no", "mobile_no",
+            "address", "designation",
+            "country_ids", "domain_ids",
+            "is_active", "is_disable", "username_id"
+        ])
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        email_id = data.get("email_id")
-        email_id = parse_structure_CustomTextType_100(email_id)
-        user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
+        user_category_id = data.get("user_category-id")
         employee_name = data.get("employee_name")
-        employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("employee_code")
-        employee_code = parse_structure_CustomTextType_50(employee_code)
+        email_id = data.get("email_id")
+        user_group_id = data.get("user_group_id")
         contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
+        mobile_no = data.get("mobile_no")
         address = data.get("address")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("designation")
-        designation = parse_structure_OptionalType_CustomTextType_50(designation)
         country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
-        return UserDetails(user_id, email_id, user_group_id, employee_name, employee_code, contact_no, address, designation, country_ids, domain_ids, is_active)
+        is_disable = data.get("is_disable")
+        username = data.get("username_id")
+        return UserDetails(
+            user_id, user_category_id,
+            employee_name, employee_code,
+            email_id, user_group_id,
+            contact_no, mobile_no, address, designation,
+            country_ids, domain_ids,
+            is_active, is_disable, username
+        )
 
     def to_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "email_id": to_structure_CustomTextType_100(self.email_id),
-            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
-            "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_CustomTextType_50(self.employee_code),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_OptionalType_CustomTextType_250(self.address),
-            "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "is_active": to_structure_Bool(self.is_active),
+            "user_id" : self.user_id,
+            "user_category_id": self.user_category_id,
+            "employee_name": self.employee_name,
+            "employee_code": self.employee_code,
+            "email_id": self.email_id,
+            "user_group_id": self.user_group_id,
+            "contact_no": self.contact_no,
+            "mobile_no": self.mobile_no,
+            "address": self.address,
+            "designation": self.designation,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "is_active": self.is_active,
+            "is_disable": self.is_disable,
+            "username_id": self.username
         }
 
 #
@@ -2781,6 +2805,24 @@ class FormCategory(object):
         return {
             "form_category_id": to_structure_UnsignedIntegerType_32(self.form_category_id),
             "form_category": to_structure_CustomTextType_50(self.form_category),
+        }
+
+class UserCategory(object):
+    def __init__(self, user_category_id, user_category_name):
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
+        user_category_id = data.get("user_category_id")
+        user_category_name = data.get("user_category_name")
+        return UserCategory(user_category_id, user_category_name)
+
+    def to_structure(self):
+        return {
+            "user_category_id": self.user_category_id,
+            "user_category_name": self.user_category_name,
         }
 
 #

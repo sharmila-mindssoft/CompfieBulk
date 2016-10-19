@@ -821,12 +821,13 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function changeAdminUserGroupStatus(ugId, active, callback) {
+  function changeAdminUserGroupStatus(ugId, ugName, active, callback) {
     callerName = 'admin';
     var request = [
       'ChangeUserGroupStatus',
       {
         'ug_id': ugId,
+        'ug_name': ugName,
         'active': active
       }
     ];
@@ -842,27 +843,31 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
   function getSaveAdminUserDict(userDetail) {
-    var email = userDetail[0];
-    var ugId = userDetail[1];
-    var empN = userDetail[2];
-    var empC = userDetail[3];
-    var cNo = userDetail[4];
-    var add = userDetail[5];
-    if (userDetail[5] == '') {
+    var catId = userDetail[0];
+    var email = userDetail[1];
+    var ugId = userDetail[2];
+    var empN = userDetail[3];
+    var empC = userDetail[4];
+    var cNo = userDetail[5];
+    var mNo = userDetail[6];
+    var add = userDetail[7];
+    if (userDetail[7] == '') {
       add = null;
     }
-    var desig = userDetail[6];
-    if (userDetail[6] == '') {
+    var desig = userDetail[8];
+    if (userDetail[8] == '') {
       desig = null;
     }
-    var cIds = userDetail[7];
-    var dIds = userDetail[8];
+    var cIds = userDetail[9];
+    var dIds = userDetail[10];
     return {
-      'email_id': email,
-      'ug_id': ugId,
+      'u_cat_id': catId,
       'employee_name': empN,
       'employee_code': empC,
+      'email_id': email,
       'contact_no': cNo,
+      'mobile_no': mNo,
+      'ug_id': ugId,
       'address': add,
       'designation': desig,
       'country_ids': cIds,
@@ -1623,7 +1628,7 @@ function initMirror() {
       var request = [
           "SaveAllocatedDBEnv",
           {
-            "client_id": client_id, 
+            "client_id": client_id,
             "legal_entity_id": le_id,
             "database_server_ip": db_server_ip,
             "machine_id": machine_id
@@ -1644,7 +1649,7 @@ function initMirror() {
       var request = [
           "SaveFileStorage",
           {
-            "client_id": client_id, 
+            "client_id": client_id,
             "legal_entity_id": le_id,
             "machine_id": machine_id
           }

@@ -220,6 +220,8 @@ var message = {
   'password_weak': 'Password should not be Weak',
   'active_message': 'Are you sure want to activate?',
   'deactive_message': 'Are you sure want to deactivate?',
+  'disable_message': 'Are you sure want to disable?',
+  'enable_message': 'Are you sure want to enable?',
   'title_status_change': 'Change Status',
   'title_promote_admin': 'Promote Admin',
   'cannot_promote_sp_admin': 'Cannot promote a service provider as admin',

@@ -160,7 +160,6 @@ api_params = {
     "unit_approval_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApprovalDetails"},
     'reason': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approval_status': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
-
     'message': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
     'extra_details': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
 
@@ -174,6 +173,7 @@ api_params = {
     "group_company_list" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "GroupCompanyForUnitCreation"},
     "business_group_list" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "BusinessGroup"},
     "divisions" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "Division"},
+    "user_categories" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "UserCategory"},
 
     'le_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "country_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
@@ -190,9 +190,11 @@ api_params = {
     "menu": {'type': 'RECORD_TYPE', 'length': None, 'validation_method': None, 'module_name': 'core', 'class_name': 'Menu'},
 
     'user_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
+    "username_id": {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     "employee_name": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "employee_code": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "contact_no": {'type': 'TEXT', 'length': 12, 'validation_method': None, 'is_optional': True},
+    "mobile_no": {'type': 'TEXT', 'length': 12, 'validation_method': None, 'is_optional': False},
     "designation": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "domain_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "user_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserGroup"},
@@ -218,6 +220,8 @@ api_params = {
     "form_category_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "fc_id" : {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_category": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "user_category_id" : {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
+    "user_category_name" : {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': False},
 
     "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
@@ -268,6 +272,8 @@ api_params['country_name'] = api_params.get('c_name')
 api_params['level_id'] = api_params.get('l_id')
 api_params['level_position'] = api_params.get('l_position')
 api_params['level_name'] = api_params.get('l_name')
+api_params['active'] = api_params.get('is_active')
+api_params['is_disable'] = api_params.get('is_active')
 api_params['is_remove'] = api_params.get('is_active')
 api_params['is_exists'] = api_params.get('is_active')
 api_params['is_admin'] = api_params.get('is_active')
@@ -292,3 +298,4 @@ api_params['s_name'] = api_params.get('statutory_name')
 api_params['s_id'] = api_params.get('statutory_id')
 api_params['s_ids'] = api_params.get('statutory_ids')
 api_params['mappings'] = api_params.get('mapping')
+api_params['u_cat_id'] = api_params.get('user_category_id')

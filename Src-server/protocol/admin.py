@@ -103,20 +103,23 @@ class UpdateUserGroup(Request):
 
 
 class ChangeUserGroupStatus(Request):
-    def __init__(self, user_group_id, is_active):
+    def __init__(self, user_group_id, user_group_name, is_active):
         self.user_group_id = user_group_id
+        self.user_group_name = user_group_name
         self.is_active = is_active
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ug_id", "active"])
+        data = parse_dictionary(data, ["ug_id", "ug_name", "active"])
         user_group_id = data.get("ug_id")
+        user_group_name = data.get("ug_name")
         is_active = data.get("active")
-        return ChangeUserGroupStatus(user_group_id, is_active)
+        return ChangeUserGroupStatus(user_group_id, user_group_name, is_active)
 
     def to_inner_structure(self):
         return {
             "ug_id": self.user_group_id,
+            "ug_name": self.user_group_name,
             "active": self.is_active
         }
 
@@ -137,15 +140,18 @@ class GetUsers(Request):
 
 class SaveUser(Request):
     def __init__(
-        self, email_id, user_group_id, employee_name,
-        employee_code, contact_no, address, designation,
+        self, user_category_id, employee_name,
+        employee_code, email_id, contact_no, mobile_no,
+        user_group_id, address, designation,
         country_ids, domain_ids
     ):
-        self.email_id = email_id
-        self.user_group_id = user_group_id
+        self.user_category_id = user_category_id
         self.employee_name = employee_name
         self.employee_code = employee_code
+        self.email_id = email_id
         self.contact_no = contact_no
+        self.mobile_no = mobile_no
+        self.user_group_id = user_group_id
         self.address = address
         self.designation = designation
         self.country_ids = country_ids
@@ -154,30 +160,36 @@ class SaveUser(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "email_id", "ug_id", "employee_name", "employee_code",
-            "contact_no", "address", "designation", "country_ids",
+            "u_cat_id",  "employee_name", "employee_code",
+            "email_id", "contact_no", "mobile_no",
+            "ug_id", "address", "designation", "country_ids",
             "domain_ids"])
-        email_id = data.get("email_id")
-        user_group_id = data.get("ug_id")
+        user_category_id = data.get("u_cat_id")
         employee_name = data.get("employee_name")
         employee_code = data.get("employee_code")
+        email_id = data.get("email_id")
         contact_no = data.get("contact_no")
+        mobile_no = data.get("mobile_no")
+        user_group_id = data.get("ug_id")
         address = data.get("address")
         designation = data.get("designation")
         country_ids = data.get("country_ids")
         domain_ids = data.get("domain_ids")
         return SaveUser(
-            email_id, user_group_id, employee_name, employee_code, contact_no,
-            address, designation, country_ids, domain_ids
+            user_category_id, employee_name, employee_code, email_id,
+            contact_no, mobile_no, user_group_id, address,
+            designation, country_ids, domain_ids
         )
 
     def to_inner_structure(self):
         return {
-            "email_id": self.email_id,
-            "ug_id": self.user_group_id,
+            "u_cat_id": self.user_category_id,
             "employee_name": self.employee_name,
             "employee_code": self.employee_code,
+            "email_id": self.email_id,
             "contact_no": self.contact_no,
+            "mobile_no": self.mobile_no,
+            "ug_id": self.user_group_id,
             "address": self.address,
             "designation": self.designation,
             "country_ids": self.country_ids,
@@ -366,12 +378,12 @@ class Response(object):
 
 class UserGroup(object):
     def __init__(
-        self, user_group_id, user_group_name, form_category_id,
+        self, user_group_id, user_group_name, user_category_id,
         form_ids, is_active, no_of_users
     ):
         self.user_group_id = user_group_id
         self.user_group_name = user_group_name
-        self.form_category_id = form_category_id
+        self.user_category_id = user_category_id
         self.form_ids = form_ids
         self.is_active = is_active
         self.no_of_users = no_of_users
@@ -381,23 +393,23 @@ class UserGroup(object):
         data = parse_dictionary(
             data, [
                 "user_group_id", "user_group_name",
-                "form_category_id", "form_ids", "is_active", "no_of_users"
+                "user_category_id", "form_ids", "is_active", "no_of_users"
             ])
         user_group_id = data.get("user_group_id")
         user_group_name = data.get("user_group_name")
-        form_category_id = data.get("form_category_id")
+        user_category_id = data.get("user_category_id")
         form_ids = data.get("form_ids")
         is_active = data.get("is_active")
         no_of_users = data.get("no_of_users")
         return UserGroup(
-            user_group_id, user_group_name, form_category_id,
+            user_group_id, user_group_name, user_category_id,
             form_ids, is_active, no_of_users)
 
     def to_structure(self):
         return {
             "user_group_id": self.user_group_id,
             "user_group_name": self.user_group_name,
-            "form_category_id": self.form_category_id,
+            "user_category_id": self.user_category_id,
             "form_ids": self.form_ids,
             "is_active": self.is_active,
             "no_of_users": self.no_of_users
@@ -498,27 +510,30 @@ class ChangeUserGroupStatusSuccess(Response):
 
 
 class GetUsersSuccess(Response):
-    def __init__(self, user_groups, domains, countries, users):
+    def __init__(self, user_groups, domains, countries, user_categories, users):
         self.user_groups = user_groups
         self.domains = domains
         self.countries = countries
+        self.user_categories = user_categories
         self.users = users
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["user_groups", "domains", "countries", "user_details"])
+            data, ["user_groups", "domains", "countries", "user-categories", "user_details"])
         user_groups = data.get("user_groups")
         domains = data.get("domains")
         countries = data.get("countries")
+        user_categories = data.get("user_categories")
         users = data.get("user_details")
-        return GetUsersSuccess(user_groups, domains, countries, users)
+        return GetUsersSuccess(user_groups, domains, countries, user_categories, users)
 
     def to_inner_structure(self):
         return {
             "user_groups": self.user_groups,
             "domains": self.domains,
             "countries": self.countries,
+            "user_categories": self.user_categories,
             "user_details": self.users
         }
 
