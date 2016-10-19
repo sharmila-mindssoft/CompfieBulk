@@ -2361,7 +2361,11 @@ BEGIN
 	) as geography_name
 	FROM tbl_units tu 
 	INNER JOIN tbl_unit_industries tui on tui.unit_id=tu.unit_id 
-	WHERE client_id=clientid and tui.domain_id=domainid
+	WHERE client_id=clientid and tui.domain_id=domainid and 
+	tu.unit_id not in (
+		SELECT unit_id FROM tbl_user_units 
+		WHERE client_id=clientid 
+	)
 	order by unit_name ASC;
 	SELECT tui.unit_id, (
 		SELECT domain_name FROM tbl_domains td
