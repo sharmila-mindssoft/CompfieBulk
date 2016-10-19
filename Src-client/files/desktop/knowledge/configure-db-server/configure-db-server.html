@@ -1,0 +1,110 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<div class="content-container width70" id="view">
+    <div class="content-area">
+        <h1>Configure Database Server</h1>
+        <div class="filters-and-search">
+            <div class="btn-add btn-db-server-add">Add</div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="grid-table" >
+            <table id="config-db-server-list">
+                <thead>
+                    <tr align="left">
+                        <th align="center" width="10%">#</th>
+                        <th>Database Server</th>
+                        <th>IP</th>
+                        <th>Port</th>
+                        <th>Username</th>
+                        <th>No. of Clients</th>
+                        <th align="center" width="10%">Edit</th>
+                    </tr>
+                    <tr>
+                        <td width="10%">&nbsp;</td>
+                        <td><input type="text" class="filter-text-box" id="search-db-server"></td>
+                        <td><input type="text" class="filter-text-box" id="search-ip"></td>
+                        <td><input type="numeric" class="filter-text-box" id="search-port" maxlength="4" ></td>
+                        <td><input type="text" class="filter-text-box" id="search-username" ></td>
+                        <td><input type="text" class="filter-text-box" id="search-no-clients" ></td>
+                        <td width="10%">&nbsp;</td>
+                    </tr>
+                </thead>
+                <tbody class="tbody-db-server-list">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="templates">
+    <table>
+        <tr class="table-row">
+            <td class="sno" align="center"></td>
+            <td class="db-server"></td>
+            <td class="ip"></td>
+            <td class="port"></td>
+            <td class="username"></td>
+            <td class="no-of-clients"></td>
+            <td align="center">
+                <span class="edit-icon" style="width: 16px; height: 16px; display:block">
+                </span> 
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="single-column-form-outer width50 default-display-none" id="add">
+    <div class="content-area">
+        <div class="single-column-form-inner">
+            <div class="single-column-header">
+                Configure Database Server<span class="error-message"></span>
+            </div>
+            <div class="single-column-input-row">
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Database Server:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <input type="text" class="input-box" name="db-server-name" autofocus="autofocus" tabindex="1" id="db-server-name" maxlength="50">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        IP:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <input type="text" class="input-box" name="ip" tabindex="1" id="ip">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Port:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <input type="number" class="input-box" name="port"  tabindex="1" id="port" maxlength="4" minlength="4">
+                    </div> 
+                </div>
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Username:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <input type="text" class="input-box" name="username" tabindex="1" id="username" maxlength="50">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="single-column-field-label">
+                        Password:<span class="mandatory">*</span>
+                    </div>
+                    <div class="single-column-field-input">
+                        <input type="password" class="input-box" name="pwd" tabindex="1" id="pwd" maxlength="50">
+                    </div>
+                </div>
+                <div class="submit-button-container">
+                    <input type="reset" name="cancel" value="Cancel" class="btn-cancel">&nbsp;&nbsp;
+                    <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/script/configure-db-server/configure-db-server.js"></script>
+{% endblock %}

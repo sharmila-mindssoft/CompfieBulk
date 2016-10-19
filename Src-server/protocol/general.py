@@ -1,6 +1,5 @@
 from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list, to_structure_dictionary_values,
-    to_dictionary_values
+    parse_dictionary, parse_static_list, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
     parse_structure_CustomTextType_250,
@@ -33,6 +32,7 @@ from protocol.to_structure import (
 #
 # Request
 #
+
 
 class Request(object):
     def to_structure(self):
@@ -105,10 +105,9 @@ class SaveDomain(Request):
         return SaveDomain(domain_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "d_name": self.domain_name,
         }
-        return to_dictionary_values(data)
 
 
 class UpdateDomain(Request):
@@ -124,11 +123,10 @@ class UpdateDomain(Request):
         return UpdateDomain(domain_id, domain_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "d_id": self.domain_id,
             "d_name": self.domain_name,
         }
-        return to_dictionary_values(data)
 
 
 class ChangeDomainStatus(Request):
@@ -144,11 +142,10 @@ class ChangeDomainStatus(Request):
         return ChangeDomainStatus(domain_id, is_active)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "d_id": self.domain_id,
             "is_active": self.is_active,
         }
-        return to_dictionary_values(data)
 
 
 class GetCountriesForUser(Request):
@@ -190,10 +187,9 @@ class SaveCountry(Request):
         return SaveCountry(country_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "c_name": self.country_name,
         }
-        return to_dictionary_values(data)
 
 
 class UpdateCountry(Request):
@@ -209,11 +205,10 @@ class UpdateCountry(Request):
         return UpdateCountry(country_id, country_name)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "c_id": self.country_id,
             "c_name": self.country_name,
         }
-        return to_dictionary_values(data)
 
 
 class ChangeCountryStatus(Request):
@@ -229,11 +224,10 @@ class ChangeCountryStatus(Request):
         return ChangeCountryStatus(country_id, is_active)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "c_id": self.country_id,
             "is_active": self.is_active,
         }
-        return to_dictionary_values(data)
 
 
 class GetNotifications(Request):
@@ -334,10 +328,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        print "inner: %s" % inner
         if type(inner) is dict:
-            to_structure_dictionary_values(inner)
-        print "inner: %s" % inner
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -406,7 +398,7 @@ class GetDomainsSuccess(Response):
         data = {
             "domains": self.domains
         }
-        return to_dictionary_values(data)
+        return data
 
 
 class SaveDomainSuccess(Response):
@@ -482,16 +474,17 @@ class GetCountriesSuccess(Response):
         self.countries = countries
 
     @staticmethod
-    def parse_structure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["countries"])
         countries = data.get("countries")
         return GetCountriesSuccess(countries)
 
-    def to_structure(self):
+    def to_inner_structure(self):
+
         data = {
             "countries": self.countries
         }
-        return to_dictionary_values(data, "GetCountriesSuccess")
+        return data
 
 
 class SaveCountrySuccess(Response):
@@ -575,10 +568,9 @@ class GetNotificationsSuccess(Response):
         return GetNotificationsSuccess(notifications)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "notifications": self.notifications
         }
-        return to_dictionary_values(data)
 
 
 class UpdateNotificationStatusSuccess(Response):

@@ -15,8 +15,7 @@ __all__ = [
     "parse_enum",
     "parse_date",
     "parse_VariantType",
-    "to_VariantType",
-    "to_dictionary_values"
+    "to_VariantType"
 ]
 
 
@@ -152,14 +151,9 @@ def parse_bytes(x):
 
 
 def parse_list(x, length=0):
-    print "x"
-    print x
-    print type(x)
-    #print len(x)
     if x is None:
         raise empty_error()
     if type(x) is not list:
-        print "yes list"
         raise expectation_error("a list", x)
     if len(x) <= length or length == 0:
         return x
@@ -184,7 +178,6 @@ def parse_dictionary(x, field_names=[]):
     if x is None:
         raise empty_error()
     if (type(x) is not dict) and (type(x) is not OrderedDict):
-        print "parse bg"
         raise expectation_error("a dict", x)
     for field_name in field_names:
         if field_name not in x.keys():
@@ -217,7 +210,6 @@ def parse_date(x):
     try:
         return datetime.strptime(x, "%d/%m/%Y")
     except Exception, e:
-        print e
         return None
 
 
@@ -259,156 +251,208 @@ def parse_optional_int_list(x, length=0, int_length=0):
     return parse_int_list(x, length, int_length)
 
 
+def parse_values(field_name, param, val):
+    _type = param.get('type')
+    _length = param.get('length')
+    _is_optional = param.get('is_optional')
+    _validation_method = param.get('validation_method')
+    # if param is None:
+    #     val = parse_vector_type_record_type(val)
+    #     continue
+    if _type == 'STRING':
+        assert _length is not None
+        assert _validation_method is not None
+        if _is_optional is False:
+            val = parse_custom_string(val, _length)
+        else:
+            val = parse_optional_custom_string(val, _length)
+
+    elif _type == 'TEXT':
+        if _is_optional is False:
+            val = parse_string(val)
+        else:
+            val = parse_optional_string(val)
+
+    elif _type == 'INT':
+        assert _length is not None
+        if _is_optional is False:
+            val = parse_number(val, 0, _length)
+        else:
+            val = parse_optional_number(val, 0, _length)
+
+    elif _type == 'BOOL':
+        assert _length is None
+        assert _validation_method is None
+        if _is_optional is False:
+            val = parse_bool(val)
+        else:
+            val = parse_optional_bool(val)
+
+    elif _type == 'VECTOR_TYPE_STRING':
+        # list_of_string by default support optional
+        assert _validation_method is None
+        if _is_optional is False:
+            val = parse_string_list(val, string_length=_length)
+        else:
+            val = parse_optional_string_list(
+                val, string_length=_length)
+
+    elif _type == 'VECTOR_TYPE_INT':
+        # list_of_int by default support optional
+        assert _validation_method is None
+        if _is_optional is False:
+            val = parse_int_list(val, int_length=_length)
+        else:
+            val = parse_optional_int_list(
+                val, int_length=param.get('length'))
+
+    return val
+
+
 def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print "field_name: %s" % field_name
-        print "param: %s" % param
         if param is None:
-            val = parse_vector_type_record_type(val)
-            continue
-        if param.get('type') == 'string':
-            assert param.get('length') is not None
-            assert param.get('validation_method') is not None
-            if param.get('is_optional') is False:
-                val = parse_custom_string(val, param.get('length'))
-            else:
-                val = parse_optional_custom_string(val, param.get('length'))
-
-        if param.get('type') == 'text':
-            if param.get('is_optional') is False:
-                val = parse_string(val)
-            else:
-                val = parse_optional_string(val)
-
-        elif param.get('type') == 'int':
-            assert param.get('length') is not None
-            if param.get('is_optional') is False:
-                val = parse_number(val, 0, param.get('length'))
-            else:
-                val = parse_optional_number(val, 0, param.get('length'))
-
-        elif param.get('type') == 'bool':
-            assert param.get('length') is None
-            assert param.get('validation_method') is None
-            if param.get('is_optional') is False:
-                val = parse_bool(val)
-            else:
-                val = parse_optional_bool(val)
-
-        elif param.get('type') == 'vector_type_string':
-            # list_of_string by default support optional
-            print "inside vector type string"
-            assert param.get('validation_method') is not None
-            if param.get('is_optional') is False:
-                val = parse_string_list(val, string_length=param.get('length'))
-                print "inside vector type string is optional"
-                print val
-            else:
-                val = parse_optional_string_list(
-                    val, string_length=param.get('length'))
-
-        elif param.get('type') == 'vector_type_int':
-            # list_of_int by default support optional
-            assert param.get('validation_method') is None
-            if param.get('is_optional') is False:
-                val = parse_int_list(val, int_length=param.get('length'))
-            else:
-                val = parse_optional_int_list(
-                    val, int_length=param.get('length'))
-
-        elif param.get('type') == 'vector_type':
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
+            raise ValueError('%s is not configured in settings' % (field_name))
+        print "field_name: %s, val: %s" % (field_name, val)
+        _type = param.get('type')
+        _module_name = param.get('module_name')
+        _class_name = param.get('class_name')
+        _validation_method = param.get('validation_method')
+        if _type == 'VECTOR_TYPE':
+            print "inside vector type=========>"
+            assert _module_name is not None
+            assert _class_name is not None
             val = parse_VectorType(
-                param.get('module_name'), param.get('class_name'), val
+                _module_name, _class_name, val
             )
             if is_validation_and_parse is True:
                 x[field_name] = val
-        elif param.get('type') == 'map_type':
+        elif _type == 'MAP_TYPE':
+            assert _module_name is not None
+            assert _class_name is not None
+            assert _validation_method is not None
+            val = parse_MapType(
+                _module_name, _class_name,
+                _validation_method, val
+            )
+            if is_validation_and_parse is True:
+                x[field_name] = val
+
+        elif _type == 'MAP_TYPE_VECTOR_TYPE':
+            map = {}
+            for key, value in val.items():
+                key = _validation_method(key)
+                vals = parse_VectorType(
+                    _module_name, _class_name, val
+                )
+                map[key] = vals
+                val = map
+
+        elif param.get('type') == 'RECORD_TYPE':
             assert param.get('module_name') is not None
             assert param.get('class_name') is not None
-            assert param.get('validation_method') is not None
-            val = parse_MapType(
-                param.get('module_name'), param.get('class_name'),
-                param.get('validation_method'), val
-            )
+            if param.get('is_optional') is True and val is None:
+                val = None
+            else:
+                val = parse_RecordType(
+                    param.get('module_name'), param.get('class_name'), val
+                )
             if is_validation_and_parse is True:
                 x[field_name] = val
+
+        elif _type == 'ENUM_TYPE':
+            assert _module_name is not None
+            assert _class_name is not None
+            val = parse_EnumType(_module_name, _class_name, val)
+
+        else:
+            val = parse_values(field_name, param, val)
         if(
             val is not None and
-            param.get('validation_method') is not None and
-            param.get("type") != "map_type"
+            _validation_method is not None and
+            _type != "MAP_TYPE"
         ):
-            val = param.get('validation_method')(val)
+            val = _validation_method(val)
     return x
 
 
-def to_dictionary_values(data, response=None):
-    final_result = None
-    result = {}
-    for key in data:
-        value = data[key]
-        param = api_params.get(key)
-        print "a"
-        print key
-        print value
-        print param
-        if param is None:
-            continue
-        if param.get('type') == 'vector_type':
-            print "vector"
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
-            value = to_VectorType(
-                param.get('module_name'), param.get('class_name'), value
-            )
-            result[key] = value
-        if param.get('type') == 'map_type':
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
-            assert param.get('validation_method') is not None
-            value = to_MapType(
-                param.get('module_name'), param.get('class_name'),
-                param.get("validation_method"), value
-            )
-            result[key] = value
-        else:
-            x = {key: value}
-            parse_dictionary_values(
-                x, field_names=[key], is_validation_and_parse=False)
-            result[key] = value
-    if response is not None:
-        final_result = [
-            response,
-            result
-        ]
-    else:
-        final_result = result
-    return final_result
-
-
-def parse_vector_type_record_type(value):
+def to_vector_type_record_type(value):
+    final_list = []
     if type(value) is list:
-        if len(value) == 0:
-            return value
-
-        if type(value[0]) is dict:
-            for v in value:
-                keys = v.keys()
-                v = parse_dictionary_values(v, keys, True)
-
-        return value
-    else:
-        return
+        for v in value:
+            v = to_structure_dictionary_values(v)
+            final_list.append(v)
+    return final_list
 
 
 def to_structure_dictionary_values(x):
     keys = x.keys()
     if len(keys) == 0:
         return {}
-    return parse_dictionary_values(x, keys, False)
+    for field_name in keys:
+        val = x.get(field_name)
+        param = api_params.get(field_name)
+        if param is None:
+            raise ValueError('%s is not configured in settings' % (field_name))
+        print "field_name: %s, val: %s" % (field_name, val)
+        _type = param.get('type')
+        _module_name = param.get('module_name')
+        _class_name = param.get('class_name')
+        _validation_method = param.get('validation_method')
+        if param is None:
+            raise ValueError('%s is not configured in settings' % (field_name))
+
+        if _type == 'VECTOR_TYPE':
+            assert _module_name is not None
+            assert _class_name is not None
+            val = to_VectorType(
+                _module_name, _class_name, val
+            )
+
+        elif _type == 'MAP_TYPE':
+            assert _module_name is not None
+            assert _class_name is not None
+            assert _validation_method is not None
+            val = to_MapType(
+                _module_name, _class_name,
+                _validation_method, val
+            )
+        elif _type == 'MAP_TYPE_VECTOR_TYPE':
+            map = {}
+            for key, value in val.items():
+                key = _validation_method(key)
+                if type(value) is list:
+                    vals = to_VectorType(_module_name, _class_name, value)
+                    map[key] = vals
+                else:
+                    map[key] = value
+                val = map
+        elif param.get('type') == 'RECORD_TYPE':
+            assert param.get('module_name') is not None
+            assert param.get('class_name') is not None
+            if param.get('is_optional') is True and val is None:
+                val = None
+            else:
+                val = to_RecordType(
+                    param.get('module_name'), param.get('class_name'), val
+                )
+
+        elif _type == 'ENUM_TYPE':
+            assert _module_name is not None
+            assert _class_name is not None
+            val = to_EnumType(_module_name, _class_name, val)
+        else:
+            val = parse_values(field_name, param, val)
+        if(
+            val is not None and _validation_method is not None and
+            _type != 'MAP_TYPE' and _type != 'MAP_TYPE_VECTOR_TYPE'
+        ):
+            val = _validation_method(val)
+
+        x[field_name] = val
+    return x
 
 
 def return_import(module, class_name):
@@ -428,24 +472,30 @@ def to_VariantType(data, module_name, class_name):
 
 
 def parse_RecordType(module_name, class_name, data):
+    print "inside parse_ Record type===>"
+    print "modeule: %s, class: %s" % (module_name, class_name)
+    print "data:%s" % data
     klass = return_import(module_name, class_name)
     return klass.parse_structure(data)
 
 
 def to_RecordType(module_name, class_name, data):
     klass = return_import(module_name, class_name)
-    return klass.to_structure(data)
+    data = klass.to_structure(data)
+    return to_structure_dictionary_values(data)
 
 
 def parse_VectorType(module_name, class_name, data):
+    print "inside parse vector type: ===>"
+    print "modeule: %s, class: %s" % (module_name, class_name)
     data = parse_list(data, 0)
     lst = []
-    print "inside item"
     for item in data:
-        print item
+        print "inside for : %s " % item
         lst.append(
             parse_RecordType(module_name, class_name, item)
         )
+    print lst
     return lst
 
 
@@ -463,8 +513,14 @@ def parse_MapType(module_name, class_name, validation_method, data):
     map = {}
     for key, value in data.items():
         key = validation_method(key)
-        parsed_value = parse_RecordType(module_name, class_name, value)
-        map[key] = parsed_value
+        if type(value) == list:
+            val_list = [
+               parse_RecordType(module_name, class_name, val) for val in value
+            ]
+            map[key] = val_list
+        else:
+            parsed_value = parse_RecordType(module_name, class_name, value)
+            map[key] = parsed_value
     return map
 
 
@@ -472,6 +528,18 @@ def to_MapType(module_name, class_name, validation_method, data):
     map = {}
     for key, value in data.items():
         key = validation_method(key)
-        dict_value = to_RecordType(module_name, class_name, value)
-        map[key] = dict_value
+        if type(value) == list:
+            val_list = [
+               to_RecordType(module_name, class_name, val) for val in value
+            ]
+            map[key] = val_list
+        else:
+            dict_value = to_RecordType(module_name, class_name, value)
+            map[key] = dict_value
     return map
+
+def parse_EnumType(module_name, class_name, data):
+    return parse_RecordType(module_name, class_name, data)
+
+def to_EnumType(module_name, class_name, data):
+    return to_RecordType(module_name, class_name, data)

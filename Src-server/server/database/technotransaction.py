@@ -306,7 +306,6 @@ def get_unassigned_compliances(
         tuple(parent_ids),
         domain_id, unit_id
     ])
-    print rows
     columns = [
         "compliance_id", "compliance_task",
         "document_name", "statutory_provision",
@@ -659,7 +658,6 @@ def get_assign_statutory_wizard_two(
         str("%" + str(geography_id) + ",%"),
         tuple(parent_ids)
     ])
-    print rows
     columns = [
         "statutory_mapping_id", "statutory_nature_id",
         "statutory_nature_name", "statutory_id"
@@ -703,11 +701,8 @@ def return_unassign_statutory_wizard_two(
         db, country_id, domain_id, industry_id,
         geography_id, unit_id
     )
-    print new_compliance
     assigned_statutory_list = []
-    print STATUTORY_PARENTS
     for key, value in new_compliance.items():
-        print key
         name = STATUTORY_PARENTS.get(int(key))[0]
         compliances = value
         applicable_status = bool(1)

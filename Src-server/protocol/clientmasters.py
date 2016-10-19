@@ -524,12 +524,13 @@ class CloseUnit(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self, from_date, to_date, user_id, form_id, record_count):
+    def __init__(self, from_date, to_date, user_id, form_id, record_count, page_count):
         self.from_date = from_date
         self.to_date = to_date
         self.user_id = user_id
         self.form_id = form_id
         self.record_count = record_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
@@ -544,10 +545,12 @@ class GetAuditTrails(Request):
         form_id = parse_structure_OptionalType_UnsignedIntegerType_32(form_id)
         record_count = data.get("record_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        page_count = data.get("page_count")
+        page_count = parse_structure_UnsignedIntegerType_32(page_count)
         return GetAuditTrails(
             from_date, to_date,
             user_id, form_id,
-            record_count
+            record_count, page_count
         )
 
     def to_inner_structure(self):
@@ -556,7 +559,8 @@ class GetAuditTrails(Request):
             "to_date": to_structure_CustomTextType_20(self.to_date),
             "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id),
             "form_id": to_structure_OptionalType_UnsignedIntegerType_32(self.form_id),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count),
+            "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
         }
 
 

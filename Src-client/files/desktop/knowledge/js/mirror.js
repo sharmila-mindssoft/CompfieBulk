@@ -927,10 +927,10 @@ function initMirror() {
   // Client Group Master
   function getDateConfigurations(cId, dId, pFrom, pTo) {
       return {
-        'c_id': cId,
-        'd_id': dId,
-        'p_from': pFrom,
-        'p_to': pTo
+        'country_id': cId,
+        'domain_id': dId,
+        'period_from': pFrom,
+        'period_to': pTo
       };
   }
 
@@ -939,72 +939,75 @@ function initMirror() {
   ){
       return {
         "d_id": d_id,
+        "activation_date": null,
         "org": org
       }
   }
 
   function getLegalEntityRow(
     c_id, b_g_id, b_g_name, l_e_name,
-    inc_p, logo, n_o_l, f_s, sms, c_f, c_t, d
+    logo, n_o_l, f_s, c_f, c_t, d
   ) {
     return {
-        "c_id": c_id,
-        "b_g": getBusinessGroupDict(b_g_id, b_g_name),
-        "l_e_name": l_e_name,
-        "inc_p": inc_p,
+        "country_id": c_id,
+        "business_group": getBusinessGroupDict(b_g_id, b_g_name),
+        "legal_entity_name": l_e_name,
         "logo": logo,
-        "n_o_l": n_o_l,
-        "f_s": f_s,
-        "sms": sms,
-        "c_f": c_f,
-        "c_t": c_t,
-        "d": d
+        "no_of_licence": n_o_l,
+        "file_space": f_s,
+        "contract_from": c_f,
+        "contract_to": c_t,
+        "domain_details": d
     };
   }
   function getLegalEntityUpdateRow(
     c_id, b_g_id, b_g_name, l_e_id, l_e_name,
-    inc_p, logo, new_logo, n_o_l, f_s, sms, c_f, c_t, d
+    logo, new_logo, n_o_l, f_s, c_f, c_t, d
   ) {
+    console.log("inside getLegalEntityUpdateRow:" + b_g_id)
     return {
-        "c_id": c_id,
-        "b_g": getBusinessGroupDict(b_g_id, b_g_name),
-        "l_e_id": l_e_id,
-        "l_e_name": l_e_name,
-        "inc_p": inc_p,
-        "logo": logo,
+        "country_id": c_id,
+        "business_group": getBusinessGroupDict(b_g_id, b_g_name),
+        "legal_entity_id": l_e_id,
+        "legal_entity_name": l_e_name,
+        "old_logo": logo,
         "new_logo": new_logo,
-        "n_o_l": n_o_l,
-        "f_s": f_s,
-        "sms": sms,
-        "c_f": c_f,
-        "c_t": c_t,
-        "d": d
+        "no_of_licence": n_o_l,
+        "file_space": f_s,
+        "contract_from": c_f,
+        "contract_to": c_t,
+        "domain_details": d
     };
   }
-  function saveClientGroup(g_name, u_name, les, d_cs, callback) {
+  function saveClientGroup(g_name, u_name, short_name, no_of_view_licence, les, d_cs, callback) {
     callerName = 'techno';
     var request = [
       'SaveClientGroup',
       {
-        "g_name": g_name,
-        "u_name": u_name,
-        "les": les,
-        "d_cs": d_cs
+        "group_name": g_name,
+        "email_id": u_name,
+        "short_name": short_name,
+        "no_of_view_licence": no_of_view_licence,
+        "legal_entity_details": les,
+        "date_configurations": d_cs
       }
     ];
     apiRequest(callerName, request, callback);
   }
 
-  function updateClientGroup(g_id, g_name, u_name, les, d_cs, callback) {
+  function updateClientGroup(g_id, g_name, u_name, short_name, no_of_view_licence,
+    les, d_cs, callback) {
     callerName = 'techno';
     var request = [
       'UpdateClientGroup',
       {
-        "g_id": g_id,
-        "g_name": g_name,
-        "u_name": u_name,
-        "les": les,
-        "d_cs": d_cs
+        "client_id": g_id,
+        "group_name": g_name,
+        "email_id": u_name,
+        "short_name": short_name,
+        "no_of_view_licence": no_of_view_licence,
+        "legal_entities": les,
+        "date_configurations": d_cs
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1044,6 +1047,16 @@ function initMirror() {
       {
         'group_id': client_id
       }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  // Assign Legal Entity
+  function getAssignLegalEntityList(callback) {
+    callerName = 'techno';
+    var request = [
+      'GetAssignLegalEntityList',
+      {}
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1114,13 +1127,14 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
   function getBusinessGroupDict(bgId, bgName) {
-    if (bgName == null || bgName == '') {
+    console.log("bgName:"+bgName);
+    if ((bgName == null || bgName == '') && (bgId == null || bgId == '')) {
       return null;
     } else {
-      return [{
-        'bg_id': bgId,
-        'bg_name': bgName
-      }];
+      return {
+        'business_group_id': bgId,
+        'business_group_name': bgName
+      };
     }
   }
   function getLegalEntityDict(leId, leName) {
@@ -1559,7 +1573,188 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-
+  function getDbServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetDbServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveDBServer(
+    db_server_name, ip, port, username, password, callback
+  ){
+    callerName = "console_admin"
+    var request = [
+      "SaveDBServer",
+      {
+        "db_server_name": db_server_name,
+        "ip": ip,
+        "port": port,
+        "username": username,
+        "password": password
+      }
+    ];
+    apiRequest(callerName, request, callback)
+  }
+  function getClientServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetClientServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveClientServer(
+    client_server_id, client_server_name, ip, port, callback
+  ){
+    callerName = "console_admin";
+    var request = [
+      "SaveClientServer",
+      {
+        "client_server_id": client_server_id,
+        "client_server_name": client_server_name,
+        "ip": ip,
+        "port": port
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAllocatedDBEnv(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetAllocatedDBEnv",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveDBEnv(client_id, le_id, db_server_ip, machine_id, callback){
+      callerName = "console_admin";
+      var request = [
+          "SaveAllocatedDBEnv",
+          {
+            "client_id": client_id, 
+            "legal_entity_id": le_id,
+            "database_server_ip": db_server_ip,
+            "machine_id": machine_id
+          }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function getFileStorage(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetFileStorage",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveFileStorage(client_id, le_id, machine_id, callback){
+      callerName = "console_admin";
+      var request = [
+          "SaveFileStorage",
+          {
+            "client_id": client_id, 
+            "legal_entity_id": le_id,
+            "machine_id": machine_id
+          }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function getAutoDeletionList(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetAutoDeletionList",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveAutoDeletion(auto_deletion_details, callback){
+      callerName = "console_admin";
+      var request = [
+        "SaveAutoDeletion",
+        {
+          "auto_deletion_details": auto_deletion_details
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function getUserMappings(callback){
+    callerName = "admin";
+      var request = [
+        "GetUserMappings",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveUserMappings(country_id, domain_id, parent_user_id, child_users, callback){
+    callerName = "admin";
+    var request = [
+      "SaveUserMappings",
+      {
+        "country_id": country_id,
+        "domain_id": domain_id,
+        "parent_user_id": parent_user_id,
+        "child_users": child_users
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getUnassignedUnitsList(callback){
+    callerName = "techno";
+    var request = [
+      "GetUnassignedUnits",
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedUnitsList(domain_id, client_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignedUnits",
+      {
+        "domain_id": domain_id,
+        "client_id": client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedUnitDetails(legal_entity_id, domain_manager_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignedUnitDetails",
+      {
+        "legal_entity_id": legal_entity_id,
+        "user_id": domain_manager_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignUnitFormData(domain_id, client_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignUnitFormData",
+      {
+        "domain_id": domain_id,
+        "client_id": client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveAssignedUnits(client_id, user_id, active_units, callback){
+      callerName = "techno";
+      var request = [
+        "SaveAsssignedUnits",
+        {
+          "user_id": user_id,
+          "active_units": active_units,
+          "client_id": client_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1651,6 +1846,7 @@ function initMirror() {
     updateClientGroup: updateClientGroup,
     getClientGroups: getClientGroups,
     changeClientGroupStatus: changeClientGroupStatus,
+    getAssignLegalEntityList: getAssignLegalEntityList,
     changePassword: changePassword,
     forgotPassword: forgotPassword,
     validateResetToken: validateResetToken,
@@ -1700,7 +1896,24 @@ function initMirror() {
     getEntityApprovalList: getEntityApprovalList,
     approveUnit: approveUnit,
     getClientGroupApprovalList: getClientGroupApprovalList,
-    approveClientGroup: approveClientGroup
+    approveClientGroup: approveClientGroup,
+    getDbServerList: getDbServerList,
+    saveDBServer: saveDBServer,
+    getClientServerList: getClientServerList,
+    saveClientServer: saveClientServer,
+    getAllocatedDBEnv: getAllocatedDBEnv,
+    saveDBEnv: saveDBEnv,
+    getFileStorage: getFileStorage,
+    saveFileStorage: saveFileStorage,
+    getAutoDeletionList: getAutoDeletionList,
+    saveAutoDeletion: saveAutoDeletion,
+    getUserMappings: getUserMappings,
+    saveUserMappings: saveUserMappings,
+    getUnassignedUnitsList: getUnassignedUnitsList,
+    getAssignedUnitsList: getAssignedUnitsList,
+    getAssignedUnitDetails: getAssignedUnitDetails,
+    getAssignUnitFormData: getAssignUnitFormData,
+    saveAssignedUnits: saveAssignedUnits
   };
 }
 var mirror = initMirror();

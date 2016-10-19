@@ -3359,6 +3359,12 @@ div.scrollable {
 	left:-12px;
 }
 
+.icon-style {
+	width: 16px;
+	height: 16px;
+	display:block
+}
+
 .edit-icon {
 	background:  url(../images/icon-edit.png) no-repeat center;
 	border: none;
@@ -3459,4 +3465,25 @@ div.scrollable {
 
 .mtable {
 	width: 100%;
+}
+
+.btn-back {
+	float: left;
+	background: #662D91 url(../images/icon-back-active.png) no-repeat 0.5em center;
+	cursor: pointer;
+	color: #fff;
+	font-size: 13px;
+	text-align: center;
+	border: none;
+	outline: none;
+	font-weight: normal;
+	padding: 0.4em 1em 0.4em 2.2em;
+
+	-webkit-border-radius: 0.5em;
+	-moz-border-radius: 0.5em;
+	border-radius: 0.5em;
+}
+.btn-back:hover {
+	background: #ccc url(../images/icon-back.png) no-repeat 0.5em center;
+	color: #000;
 }

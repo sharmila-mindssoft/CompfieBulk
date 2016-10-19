@@ -13,7 +13,6 @@ from server.database.login import verify_password
 from server.database.knowledgemaster import (
     get_geograhpy_levels_for_user,
     get_geographies_for_user_with_mapping,
-    get_industries
 )
 
 from server.database.technomaster import *
@@ -31,7 +30,11 @@ __all__ = [
     "change_client_status",
     "reactivate_unit",
     "get_client_profile",
-    "create_new_admin"
+    "create_new_admin",
+    "get_assign_legal_entity_list",
+    "get_unassigned_units",
+    "get_assigned_units",
+    "process_save_assigned_units_request"
 ]
 
 #
@@ -54,12 +57,11 @@ def get_client_groups(db, request, session_user):
 ########################################################
 def get_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
-    users = get_techno_users(db)
     domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     return technomasters.GetClientGroupFormDataSuccess(
-        countries=countries, users=users, domains=domains,
-        industries=industries
+        countries=countries, domains=domains,
+        industry_name_id=industries
     )
 
 
@@ -72,24 +74,21 @@ def process_save_client_group(db, request, session_user):
         return technomasters.GroupNameAlreadyExists()
     else:
         group_id = save_client_group(
-            db, request.group_name, request.user_name
+            db, request.group_name, request.email_id,
+            request.short_name, request.no_of_view_licence, session_user
         )
         legal_entity_names = save_legal_entities(
             db, request, group_id, session_user)
-        country_ids = save_date_configurations(
+        save_date_configurations(
             db, group_id, request.date_configurations, session_user
         )
         legal_entity_id_name_map = get_legal_entity_ids_by_name(
             db, legal_entity_names
         )
-        save_client_user(db, group_id, request.user_name)
-        save_client_countries(db, group_id, country_ids)
-        save_client_domains(db, group_id, request, legal_entity_id_name_map)
-        save_incharge_persons(db, group_id, request, legal_entity_id_name_map)
+        save_client_user(db, group_id, request.email_id)
         save_organization(
             db, group_id, request, legal_entity_id_name_map, session_user
         )
-        print "going to return SaveClientGroupSuccess"
         return technomasters.SaveClientGroupSuccess()
 
 
@@ -99,18 +98,20 @@ def process_save_client_group(db, request, session_user):
 def get_edit_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
     business_groups = get_client_business_groups(db, request.group_id)
-    users = get_techno_users(db)
     domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     group_id = request.group_id
     (
-        group_name, user_name, legal_entities, date_configuration_list
+        group_name, user_name, short_name, total_view_licence,
+        legal_entities, date_configuration_list
     ) = get_client_details(db, group_id)
     return technomasters.GetEditClientGroupFormDataSuccess(
-        countries=countries, users=users, domains=domains,
+        countries=countries, domains=domains,
         business_groups=business_groups,
-        industries=industries, group_name=group_name,
-        user_name=user_name, legal_entities=legal_entities,
+        industry_name_id=industries, group_name=group_name,
+        email_id=user_name, short_name=short_name,
+        no_of_licence=total_view_licence,
+        legal_entities=legal_entities,
         date_configurations=date_configuration_list
     )
 
@@ -120,36 +121,26 @@ def get_edit_client_group_form_data(db, request, session_user):
 ########################################################
 def process_update_client_group(db, request, session_user):
     session_user = int(session_user)
-    if is_invalid_group_id(db, request.group_id):
+    if is_invalid_group_id(db, request.client_id):
         return technomasters.InvalidClientId()
-    elif is_duplicate_group_name(db, request.group_name, request.group_id):
+    elif is_duplicate_group_name(db, request.group_name, request.client_id):
         return technomasters.GroupNameAlreadyExists()
-    country_ids = save_date_configurations(
-        db, request.group_id, request.date_configurations, session_user
+    save_date_configurations(
+        db, request.client_id, request.date_configurations, session_user
     )
-    if is_deactivated_existing_country(
-        db, request.group_id, country_ids
-    ):
-        return technomasters.CannotDeactivateCountry()
-    else:
-        update_client_group(
-            db, request.group_name, request.group_id
-        )
-        legal_entity_names = update_legal_entities(
-            db, request, request.group_id, session_user)
-        legal_entity_id_name_map = get_legal_entity_ids_by_name(
-            db, legal_entity_names
-        )
-        save_client_countries(db, request.group_id, country_ids)
-        save_client_domains(
-            db, request.group_id, request, legal_entity_id_name_map)
-        save_incharge_persons(
-            db, request.group_id, request, legal_entity_id_name_map)
-        save_organization(
-            db, request.group_id, request,
-            legal_entity_id_name_map, session_user
-        )
-        return technomasters.UpdateClientGroupSuccess()
+    update_client_group(
+        db, request.group_name, request.client_id
+    )
+    legal_entity_names = update_legal_entities(
+        db, request, request.client_id, session_user)
+    legal_entity_id_name_map = get_legal_entity_ids_by_name(
+        db, legal_entity_names
+    )
+    save_organization(
+        db, request.client_id, request,
+        legal_entity_id_name_map, session_user
+    )
+    return technomasters.UpdateClientGroupSuccess()
 
 
 ########################################################
@@ -276,14 +267,10 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
 
 
 def save_client(db, request, session_user):
-    print "inside save client==================>"
     client_id = request.client_id
+
     business_group_id = request.business_group_id
-    print
-    print business_group_id
     legal_entity_id = request.legal_entity_id
-    print
-    print legal_entity_id
     country_id = request.country_id
     print
     print country_id
@@ -474,7 +461,6 @@ def reactivate_unit(db, request, session_user):
 # To Get the Profile of all clients
 ########################################################
 def get_client_profile(db, request, session_user):
-    print "inside get client profile"
     client_ids = get_user_clients(db, session_user)
     if client_ids is None:
         return technomasters.UserIsNotResponsibleForAnyClient()
@@ -510,3 +496,70 @@ def get_next_unit_code(db, request, session_user):
     client_id = request.client_id
     next_unit_code = get_next_auto_gen_number(db, client_id=client_id)
     return technomasters.GetNextUnitCodeSuccess(next_unit_code)
+
+#
+# Assign Legal Entity
+#
+
+
+########################################################
+# To Get list of all legal entity
+########################################################
+def get_assign_legal_entity_list(db, request, session_user):
+    legal_entities = get_assign_legalentities(db)
+    return technomasters.GetAssignLegalEntityListSuccess(
+        legal_entities=legal_entities
+    )
+
+
+############################################################
+# To Get Unassigned units list
+############################################################
+def get_unassigned_units(db):
+    units_list = get_unassigned_units_list(db)
+    return technomasters.GetUnassignedUnitsSuccess(
+        unassigned_units_list=units_list
+    )
+
+
+############################################################
+# To Get assigned units list
+############################################################
+def get_assigned_units(db, request):
+    units_list = get_assigned_units_list(db, request)
+    return technomasters.GetAssignedUnitsSuccess(
+        assigned_units_list=units_list
+    )
+
+
+############################################################
+# To Get assigned unit details list
+############################################################
+def get_assigned_unit_details(db, request):
+    units_list = get_assigned_unit_details_list(db, request)
+    return technomasters.GetAssignedUnitDetailsSuccess(
+        assigned_unit_details_list=units_list
+    )
+
+
+############################################################
+# To Get assign unit form data
+############################################################
+def get_assign_unit_form_data(db, request, session_user):
+    (
+        business_groups, legal_entities, units, domain_managers
+    ) = get_data_for_assign_unit(db, request, session_user)
+    return technomasters.GetAssignUnitFormDataSuccess(
+        business_groups=business_groups,
+        unit_legal_entity=legal_entities,
+        assigned_unit_details_list=units,
+        domain_manager_users=domain_managers
+    )
+
+
+############################################################
+# To save assigned units
+############################################################
+def process_save_assigned_units_request(db, request, session_user):
+    save_assigned_units(db, request, session_user)
+    return technomasters.SaveAsssignedUnitsSuccess()

@@ -196,7 +196,7 @@ def return_client_groups_approval_list(groups):
     result = [
         fn(
             client_id=group["client_id"], group_name=group["group_name"],
-            username=group["group_admin"], le_count=group["count"],
+            username=group["email_id"], le_count=group["count"],
             is_active=True if(group["count"] > 0) else False,
             country_ids=[
                 int(x) for x in group["client_countries"].split(",")
@@ -209,9 +209,10 @@ def return_client_groups_approval_list(groups):
 def approve_client_group(db, request, session_user):
     client_group_approval_details = request.client_group_approval_details
     current_time_stamp = get_date_time()
-    columns = ["approve_status", "remarks", "updated_by", "updated_on"]
+    columns = ["is_approved", "remarks", "approved_by", "approved_on"]
     values = []
     conditions = []
+    approval_status = False
     for detail in client_group_approval_details:
         client_id = detail.client_id
         approval_status = detail.approval_status

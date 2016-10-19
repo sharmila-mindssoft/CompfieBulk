@@ -324,13 +324,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getadminforms;
 
 DELIMITER //
-CREATE procedure `sp_tbl_forms_getadminforms`()
+CREATE procedure `sp_tbl_forms_getadminforms`(
+	IN fc_id INT(11)
+)
 BEGIN
 	SELECT T01.form_id, T01.form_name, T01.form_url, T01.form_order, T01.parent_menu,
 	T02.form_category, T03.form_type FROM tbl_forms T01
 	INNER JOIN tbl_form_category T02 ON T02.form_category_id = T01.form_category_id
 	INNER JOIN tbl_form_type T03 ON T03.form_type_id = T01.form_type_id
-	WHERE T01.form_category_id = 1 ORDER BY T01.form_order;
+	WHERE T01.form_category_id = fc_id ORDER BY T01.form_order;
 END //
 DELIMITER ;
 
@@ -374,11 +376,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getuserformids;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
-	IN _user_id INT
+	IN _user_id INT, admin_user_type INT
 )
 BEGIN
 	if _user_id = 0 then
-		SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+		if admin_user_type == 0 then
+			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
+		else
+			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 2;
+		end if;
 	else
 		SELECT t1.form_ids as form_id from tbl_user_groups t1
 		INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id
@@ -441,7 +447,7 @@ BEGIN
     (
         select sum(is_active) from tbl_legal_entities tle
         WHERE tle.client_id=tcg.client_id
-    ) as is_active
+    ) as is_active, is_approved
     FROM tbl_client_groups tcg;
 END //
 DELIMITER ;
@@ -557,8 +563,11 @@ CREATE PROCEDURE `sp_client_group_save`(
     IN groupname VARCHAR(50), email_id VARCHAR(100)
 )
 BEGIN
-    INSERT INTO tbl_client_groups (group_name, group_admin)
-    VALUES (groupname, email_id);
+    INSERT INTO tbl_client_groups (
+	group_name, short_name, email_id, total_view_licence, 
+	is_active, status_changed_on, is_approved, created_by, 
+	created_on) VALUES (groupname, shortname, emailid, 
+	no_of_view_licence, 1, now(), 0, session_user, now());
 END //
 DELIMITER ;
 
@@ -633,8 +642,11 @@ CREATE PROCEDURE `sp_le_domain_industry_delete`(
     IN clientid INT(11)
 )
 BEGIN
-    DELETE FROM tbl_legal_entity_domain_industry
-    WHERE client_id=clientid;
+    DELETE FROM tbl_legal_entity_domains
+    WHERE legal_entity_id in (
+    	select legal_entity_id from tbl_legal_entities
+    	where client_id = clientid
+    );
 END //
 DELIMITER ;
 
@@ -651,6 +663,22 @@ BEGIN
     SELECT legal_entity_id, legal_entity_name
     FROM tbl_legal_entities
     WHERE find_in_set(legal_entity_name, legal_entity_names);
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get ids of legal entities which were inserted
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_name_by_id`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_legal_entity_name_by_id`(
+    IN entity_id INT(11)
+)
+BEGIN
+    SELECT legal_entity_name
+    FROM tbl_legal_entities
+    WHERE legal_entity_id=entity_id;
 END //
 DELIMITER ;
 
@@ -678,10 +706,10 @@ CREATE PROCEDURE `sp_client_user_save_admin`(
 )
 BEGIN
     INSERT INTO tbl_client_users (
-        client_id, legal_entity_id, user_id,  email_id, employee_name, created_on,
+        client_id, user_id,  email_id, employee_name, created_on,
         is_primary_admin, is_active
     ) VALUES (
-        clientid, 0, 0, username, "Admin", current_time_stamp, 1, 1
+        clientid, 0, username, "Admin", current_time_stamp, 1, 1
     );
 END //
 DELIMITER ;
@@ -757,8 +785,8 @@ CREATE PROCEDURE `sp_client_groups_details_by_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT group_name, group_admin FROM tbl_client_groups
-    WHERE client_id=clientid;
+    SELECT group_name, short_name, email_id, total_view_licence
+    FROM tbl_client_groups WHERE client_id=clientid;
 END //
 DELIMITER ;
 
@@ -777,7 +805,7 @@ BEGIN
         WHERE tbg.business_group_id=tle.business_group_id
     ) as business_group_name,
     legal_entity_name, contract_from, contract_to, logo,
-    file_space_limit, total_licence, sms_subscription
+    file_space_limit, total_licence
     FROM tbl_legal_entities tle WHERE client_id=clientid;
 END //
 DELIMITER ;
@@ -796,19 +824,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- --------------------------------------------------------------------------------
--- To get incharge persons by group id
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_user_clients_by_group_id`;
-DELIMITER //
-CREATE PROCEDURE `sp_user_clients_by_group_id`(
-    IN clientid INT(11)
-)
-BEGIN
-    SELECT client_id, legal_entity_id, user_id
-    FROM tbl_user_clients WHERE client_id = clientid;
-END //
-DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- to get configurations of Client by group id
@@ -833,8 +848,12 @@ CREATE PROCEDURE `sp_le_d_industry_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, domain_id, industry_id, no_of_units
-    FROM tbl_legal_entity_domain_industry WHERE client_id = clientid;
+    SELECT legal_entity_id, domain_id, organization_id, count,
+    activation_date
+    FROM tbl_legal_entity_domains WHERE legal_entity_id in (
+    	select legal_entity_id from tbl_legal_entities 
+    	where client_id = clientid
+    );
 END //
 DELIMITER ;
 
@@ -951,7 +970,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getuserclients`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
 	select client_id, group_name from tbl_client_groups
     where client_id in
@@ -967,7 +986,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcount`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitcount`(in clientId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getunitcount`(in clientId INT(11))
 BEGIN
 	select count(*) as units from tbl_units
     where client_id = clientId;
@@ -979,7 +998,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcode`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitcode`(in unit_code_start_letter varchar(50),
+CREATE PROCEDURE `sp_tbl_unit_getunitcode`(in unit_code_start_letter varchar(50),
 			clientId INT(11))
 BEGIN
 	SELECT TRIM(LEADING unit_code_start_letter FROM unit_code) as code
@@ -993,7 +1012,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientbusinessgroup`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
 BEGIN
 	select business_group_id, business_group_name, client_id from tbl_business_groups
     where client_id in
@@ -1009,7 +1028,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientlegalentity`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
 	select legal_entity_id, legal_entity_name, business_group_id, client_id from tbl_legal_entities
     where client_id in
@@ -1024,7 +1043,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdivision`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientdivision`(in userId INT(11))
+CREATE PROCEDURE `sp_tbl_unit_getclientdivision`(in userId INT(11))
 BEGIN
 	select division_id, division_name, legal_entity_id, business_group_id, client_id from tbl_divisions
     where client_id in
@@ -1113,7 +1132,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdomains`;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getclientdomains`(in userId INT(11),
+CREATE PROCEDURE `sp_tbl_unit_getclientdomains`(in userId INT(11),
 	user_res int(11))
 BEGIN
 	if(user_res > 0)then
@@ -1239,9 +1258,9 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
 	IN session_user INT(11)
 )
 BEGIN
-	SELECT client_id, group_name, group_admin, count, client_countries
+	SELECT client_id, group_name, email_id, count, client_countries
 	FROM (
-		SELECT client_id, group_name, group_admin,
+		SELECT client_id, group_name, email_id,
 		(
 			SELECT count(legal_entity_id) FROM tbl_legal_entities tle
 			WHERE tle.client_id = tcg.client_id and is_active=1
@@ -1254,7 +1273,7 @@ BEGIN
 			)
 		) as client_countries
 		FROM tbl_client_groups tcg
-		WHERE approve_status != 1
+		WHERE is_approved != 1
 	) a WHERE count > 0;
 END //
 DELIMITER ;
@@ -1455,7 +1474,7 @@ BEGIN
 	tf.form_order, tf.parent_menu FROM tbl_forms tf LEFT JOIN
 	tbl_form_category tfc ON (tf.form_category_id = tfc.form_category_id)
 	LEFT JOIN tbl_form_type tft ON (tf.form_type_id = tft.form_type_id)
-	WHERE tf.form_category_id in (3,4,7,8) order by tf.form_order;
+	WHERE tf.form_category_id in (3,4,5,6,7,8) order by tf.form_order;
 END //
 DELIMITER ;
 
@@ -1468,7 +1487,7 @@ CREATE PROCEDURE `sp_formcategory_list` ()
 BEGIN
 	SELECT form_category_id, form_category
 	FROM tbl_form_category
-	WHERE form_category_id in (3,4,7,8);
+	WHERE form_category_id in (3,4,5,6,7,8);
 END //
 DELIMITER ;
 
@@ -1731,7 +1750,7 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- To Get the name of employee by id
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_users_change_status`;
+DROP PROCEDURE IF EXISTS `sp_empname_by_id`;
 DELIMITER //
 CREATE PROCEDURE `sp_empname_by_id`(
 	IN userid INT(11)
@@ -1770,6 +1789,330 @@ END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
+-- To get the form category of the admin user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_admin_getformcategory`;
+DELIMITER //
+CREATE PROCEDURE `sp_admin_getformcategory`(
+	IN uname VARCHAR(100)
+)
+BEGIN
+	DECLARE fc_id INT(11);
+	DECLARE utype INT(11);
+	SELECT user_type into utype FROM tbl_admin WHERE username = uname;
+	IF utype = 0 THEN
+		SET fc_id = 1;
+	ELSE
+		SET fc_id = 2;
+	END IF;
+	SELECT fc_id;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get all database server details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_databaseserver_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_databaseserver_list`()
+BEGIN
+	SELECT db_server_name, ip, port, server_username, server_password, length
+	FROM tbl_database_server;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Check whether the db server name already exists or not
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_databaseserver_is_duplicate`;
+DELIMITER //
+CREATE PROCEDURE `sp_databaseserver_is_duplicate`(
+	IN dbservername VARCHAR(50), ip_addr TEXT
+)
+BEGIN
+	SELECT count(ip) as count FROM tbl_database_server
+	WHERE db_server_name = dbservername and ip != ip_addr;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To save or update Database server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_databaseserver_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_databaseserver_save`(
+	IN dbservername VARCHAR(50), ipaddr VARCHAR(50),
+	port_no INT(11), username VARCHAR(50), pwd VARCHAR(50)
+)
+BEGIN
+	INSERT INTO tbl_database_server (
+		db_server_name, ip, port, server_username, server_password
+	) VALUES (dbservername, ipaddr, port_no, username, pwd) 
+	ON DUPLICATE KEY UPDATE db_server_name = dbservername,
+	server_username = username, server_password= pwd, port = port_no;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get all Machine  details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_machines_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_machines_list`()
+BEGIN
+	SELECT machine_id, machine_name, ip, port, client_ids
+	FROM tbl_machines;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Check whether the machine name already exists or not
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_machines_is_duplicate`;
+DELIMITER //
+CREATE PROCEDURE `sp_machines_is_duplicate`(
+	IN machinename VARCHAR(50), machineid INT(11)
+)
+BEGIN
+	IF machineid IS NULL THEN
+		SELECT count(machine_id) as count FROM tbl_machines
+		WHERE machine_name = machinename;
+	ELSE
+		SELECT count(machine_id) as count FROM tbl_machines
+		WHERE machine_name = machinename and machine_id != machineid;
+	END IF;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To save or update Machine
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_machines_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_machines_save`(
+	IN machineid INT(11), machinename VARCHAR(50), ipaddr VARCHAR(50),
+	port_no INT(11)
+)
+BEGIN
+	IF machineid IS NULL THEN
+		INSERT INTO tbl_machines (
+			machine_name, ip, port
+		) VALUES (machinename, ipaddr, port_no) ;
+
+	ELSE
+		UPDATE tbl_machines SET machine_name = machinename, 
+		ip=ipaddr, port = port_no WHERE machine_id = machineid;
+	END IF;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Allocate database environment
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientdatabase_list`()
+BEGIN
+	SELECT client_id, legal_entity_id, machine_id, database_ip
+	FROM tbl_client_database;
+
+	SELECT client_id, group_name FROM tbl_client_groups;
+
+	SELECT legal_entity_id, legal_entity_name, client_id 
+	FROM tbl_legal_entities;
+
+	SELECT machine_id, machine_name FROM tbl_machines;
+
+	SELECT db_server_name, ip  FROM tbl_database_server;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Save or Update Client database details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientdatabase_save`(
+	IN clientid INT(11), le_id INT(11),
+	db_server_ip VARCHAR(20), machineid INT(11)
+)
+BEGIN
+	DECLARE port_no INT(11);
+	DECLARE username VARCHAR(50);
+	DECLARE pwd VARCHAR(50);
+	DECLARE dbservername VARCHAR(50);
+	DECLARE machine_ip VARCHAR(50);
+	DECLARE machine_port INT(4);
+	DECLARE shortname VARCHAR(20);
+	SELECT port INTO port_no FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT server_username INTO username FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT server_password INTO pwd FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT db_server_name INTO dbservername FROM tbl_database_server WHERE ip = db_server_ip;
+	SELECT ip INTO machine_ip FROM tbl_machines WHERE machine_id = machineid;
+	SELECT port INTO machine_port FROM tbl_machines WHERE machine_id = machineid;
+	SELECT short_name INTO shortname FROM tbl_client_groups WHERE client_id=clientid;
+	INSERT INTO tbl_client_database (
+		client_id, legal_entity_id, machine_id, database_ip, 
+		database_port, database_username, database_password,
+		database_name, server_ip, server_port, client_short_name
+	) VALUES (
+		clientid, le_id, machineid, db_server_ip, port_no, username,
+		pwd, dbservername, machine_ip, machine_port, shortname
+	) ON DUPLICATE KEY UPDATE machine_id=machineid,
+	database_ip = db_server_ip, database_port=port_no,
+	database_username=username, database_password=pwd,
+	database_name=dbservername, server_ip=machine_ip,
+	server_port=machine_port;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Configuring File Storage
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientfilestorage_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientfilestorage_list`()
+BEGIN
+	SELECT client_id, legal_entity_id, machine_id
+	FROM tbl_client_filestorage;
+
+	SELECT client_id, group_name FROM tbl_client_groups;
+
+	SELECT legal_entity_id, legal_entity_name, client_id 
+	FROM tbl_legal_entities;
+
+	SELECT machine_id, machine_name FROM tbl_machines;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Update File storage server id for a legal entity
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientfilestorage_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientfilestorage_save`(
+	IN clientid INT(11), le_id INT(11), machineid INT(11)
+)
+BEGIN
+	INSERT INTO tbl_client_filestorage
+	(client_id, legal_entity_id, machine_id) VALUES
+	(clientid, le_id, machineid) ON DUPLICATE KEY UPDATE
+	machine_id=machineid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Auto deletion form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_unit_autodeletion_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_unit_autodeletion_list`()
+BEGIN
+	SELECT client_id, group_name FROM tbl_client_groups;
+	
+	SELECT legal_entity_id, legal_entity_name, client_id,
+	(
+		SELECT count(unit_id) FROM tbl_units tu
+		WHERE tu.legal_entity_id=tl.legal_entity_id
+	) as unit_count,
+	(
+		SELECT max(deletion_year) FROM tbl_unit_autodeletion tua 
+		WHERE tua.client_id=tl.client_id
+		and tua.legal_entity_id = tl.legal_entity_id
+	) as deletion_period, is_active
+	FROM tbl_legal_entities tl;
+
+	SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
+	(
+		SELECT deletion_year FROM tbl_unit_autodeletion tua 
+		WHERE tua.client_id=tu.client_id
+		and tua.legal_entity_id = tu.legal_entity_id
+	) as deletion_year, address FROM tbl_units tu;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To delete Auto deletion details of all units under a legal entity
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_unitautodeletion_delete`;
+DELIMITER //
+CREATE PROCEDURE `sp_unitautodeletion_delete`(
+	IN le_id INT(11)
+)
+BEGIN
+	DELETE FROM tbl_unit_autodeletion
+	WHERE legal_entity_id=le_id;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get the users under following type CC Managers, CC Users, Techno managers
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_type_wise`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_type_wise`()
+BEGIN 
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=4;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=3;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=5;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=6;
+	SELECT user_id, is_active,
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=7;
+	SELECT user_id, is_active, 
+	concat(employee_code," - ", employee_name) as employee_name
+	FROM tbl_users WHERE user_category_id=8;
+	SELECT user_id, country_id FROM tbl_user_countries;
+	SELECT user_id, domain_id FROM tbl_user_domains;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get User mappings
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermappings_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_usermappings_list`()
+BEGIN
+	select user_mapping_id, user_category_id, country_id, domain_id,
+	parent_user_id, child_user_id from tbl_user_mapping;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get user category by user id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_category_by_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_category_by_id`(
+	IN userid INT(11)
+)
+BEGIN
+	SELECT user_category_id FROM tbl_users WHERE user_id=userid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Delete Mappings under a parent user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_delete`;
+DELIMITER //
+CREATE PROCEDURE `sp_usermapping_delete`(
+	IN parent_userid INT(11)
+)
+BEGIN
+	DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
+END //
+DELIMITER;
+
 -- To get list of countries under client master group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_unit`;
@@ -1895,6 +2238,195 @@ BEGIN
 	select max(unit_id) as max_id from
 	tbl_units;
 END
+
+-- --------------------------------------------------------------------------------
+-- To get Unassigned units list
+-- -- -----------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_userunits_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_userunits_list`()
+BEGIN
+	select count(tu.unit_id) as total_units, tu.client_id, 
+	tu.legal_entity_id, domain_id, (
+		SELECT domain_name from tbl_domains td
+		WHERE td.domain_id=tud.domain_id
+	) as domain_name,(
+		SELECT group_name FROM tbl_client_groups tcg
+		WHERE tcg.client_id=tu.client_id
+	) as client_name,(
+		SELECT count(unit_id) FROM tbl_user_units tuu
+		WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
+	) as assigned_units
+	from tbl_units tu inner join tbl_unit_industries tud 
+	ON tu.unit_id = tud.unit_id group by client_id, domain_id;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get assigned units list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_userunits_assigned_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_userunits_assigned_list`(
+	IN clientid INT(11), domainid INT(11)
+)
+BEGIN
+	SELECT tuu.user_id, 
+	concat(employee_code,"-", employee_name) as employee_name,
+	tuu.legal_entity_id, legal_entity_name, 
+	count(unit_id) as no_of_units,
+	(
+		SELECT business_group_name FROM tbl_business_groups tbg
+		WHERE tbg.business_group_id=tle.business_group_id
+	) as business_group_name
+	FROM tbl_user_units tuu 
+	INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
+	INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
+	WHERE tuu.client_id=clientid and domain_id=domainid
+	group by user_id;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get assigned unit details list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_userunits_assigned_details_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_userunits_assigned_details_list`(
+	IN u_id INT(11), le_id INT(11)
+)
+BEGIN
+	select unit_id, (
+		SELECT legal_entity_name FROM tbl_legal_entities tle
+		WHERE tle.legal_entity_id=tu.legal_entity_id
+	) as legal_entity_name,(
+		SELECT division_name FROM tbl_divisions td
+		WHERE td.division_id=tu.division_id
+	) as division_name,(
+		SELECT category_name FROM tbl_category_master tcm
+		WHERE tcm.category_id=tu.category_id
+	) as category_name, unit_code, unit_name, address, (
+		SELECT geography_name FROM tbl_geographies tgm
+		WHERE tgm.geography_id = tu.geography_id
+	) as geography_name FROM tbl_units tu
+	WHERE legal_entity_id = le_id and unit_id in (
+		SELECT unit_id FROM tbl_user_units 
+		WHERE user_id=u_id and legal_entity_id= le_id
+	);
+	SELECT unit_id, (
+		SELECT domain_name FROM tbl_domains td
+		WHERE td.domain_id = tui.domain_id
+	) as domain_name, (
+		SELECT industry_name FROM tbl_industries ti
+		WHERE ti.industry_id = tui.industry_id
+	) as industry_name FROM tbl_unit_industries tui 
+	WHERE tui.unit_id in (
+		SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
+	);
+END // 
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get domain managers
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_domain_managers`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_domain_managers`(
+	IN session_user INT(11)
+)
+BEGIN
+	SELECT user_id,
+	concat(employee_code, "-", employee_name) as employee_name,
+	is_active FROM tbl_users WHERE user_category_id=7 and
+	user_id in (SELECT child_user_id FROM tbl_user_mapping
+	WHERE parent_user_id=session_user);
+END // 
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get list of units under a client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_units_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_units_list`(
+	IN clientid INT(11)
+)
+BEGIN
+	SELECT tu.unit_id, unit_code, unit_name,
+	address, (
+		SELECT division_name FROM tbl_divisions td 
+		WHERE td.division_id=tu.division_id
+	) as division_name, (
+		SELECT category_name FROM tbl_category_master tcm
+		WHERE tcm.category_id=tu.category_id
+	) as category_name,legal_entity_id,(
+		SELECT legal_entity_name FROM tbl_legal_entities tle
+		WHERE tle.legal_entity_id=tu.legal_entity_id
+	) as legal_entity_name,
+	business_group_id, is_active, (
+		SELECT geography_name FROM tbl_geographies tg
+		WHERE tg.geography_id = tu.geography_id
+	) as geography_name
+	FROM tbl_units tu 
+	INNER JOIN tbl_unit_industries tui on tui.unit_id=tu.unit_id 
+	WHERE client_id=clientid and tui.domain_id=domainid and 
+	tu.unit_id not in (
+		SELECT unit_id FROM tbl_user_units 
+		WHERE client_id=clientid 
+	)
+	order by unit_name ASC;
+	SELECT tui.unit_id, (
+		SELECT domain_name FROM tbl_domains td
+		WHERE td.domain_id = tui.domain_id
+	) as domain_name, (
+		SELECT industry_name FROM tbl_industries ti
+		WHERE ti.industry_id = tui.industry_id
+	) as industry_name FROM tbl_unit_industries tui 
+	WHERE tui.unit_id in (
+		SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
+	) and tui.domain_id=domainid;
+END // 
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get list of business groups under a client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_business_groups_by_client`;
+DELIMITER //
+CREATE PROCEDURE `sp_business_groups_by_client`(
+	IN clientid INT(11)
+)
+BEGIN
+	SELECT business_group_id, business_group_name, client_id
+	FROM tbl_business_groups WHERE client_id=clientid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get legal entities under a client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entities_by_client`;
+DELIMITER //
+CREATE PROCEDURE `sp_legal_entities_by_client`(
+	IN clientid INT(11)
+)
+BEGIN
+	SELECT legal_entity_id, legal_entity_name, business_group_id,
+	client_id FROM tbl_legal_entities WHERE client_id=clientid;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To delete user units
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_userunits_delete`;
+DELIMITER //
+CREATE PROCEDURE `sp_userunits_delete`(
+	IN userid INT(11)
+)
+BEGIN
+	DELETE FROM tbl_user_units WHERE user_id=userid;
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------

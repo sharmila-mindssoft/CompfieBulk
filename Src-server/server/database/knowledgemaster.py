@@ -59,7 +59,7 @@ def get_industry_by_id(db, industry_id):
 
     return ", ".join(industry_names)
 
-## stored procedure not created
+# stored procedure not created
 def get_active_industries(db):
     columns = ["country_id", "country_name", "domain_id", "domain_name", "industry_id", "industry_name", "is_active"]
     tables = [
@@ -71,8 +71,6 @@ def get_active_industries(db):
     result = db.get_data_from_multiple_tables(
         columns, tables, aliases, condition, condition_val=[1], order=order
     )
-    print "result"
-    print result
     return return_industry(result)
 
 
@@ -114,7 +112,6 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     # columns = ["country_id", "domain_id", "industry_name", "created_by", "created_on"]
     values = [country_ids, domain_ids, industry_name, str(user_id), str(created_on)]
     new_id = db.call_insert_proc("sp_industry_master_saveindustry", values)
-    print new_id
     if new_id is False:
         raise process_error("E001")
     else:
@@ -126,14 +123,11 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
 def update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id):
     new_id = False
     oldData = get_industry_by_id(db, industry_id)
-    print oldData
     if oldData is None:
         return False
     columns = ["industry_id", "industry_name", "country_id", "domain_id", "created_by"]
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
-    print new_id
-    print "new_id"
     if new_id is True:
         action = "Industry type %s updated" % (industry_name)
         db.save_activity(user_id, 7, action)
@@ -148,7 +142,6 @@ def update_industry_status(db, industry_id, is_active, user_id):
         return False
     values = [industry_id, is_active, user_id]
     new_id = db.call_update_proc("sp_industry_master_updatestatus", values)
-    print new_id
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
@@ -181,7 +174,7 @@ def get_statutory_nature(db):
         "is_active"
     ]
 
-    result = db.call_proc("sp_statutory_nature_getstatutorynatures",(), columns)
+    result = db.call_proc("sp_statutory_nature_getstatutorynatures", (), columns)
     return return_statutory_nature(result)
 
 
@@ -215,7 +208,7 @@ def check_duplicate_statutory_nature(db, nature_name, nature_id):
 
 def save_statutory_nature(db, nature_name, country_id, user_id):
     created_on = get_date_time()
-    columns = ["statutory_nature_name", "country_id", "created_by", "created_on"]
+    # columns = ["statutory_nature_name", "country_id", "created_by", "created_on"]
     values = [nature_name, country_id, user_id, str(created_on)]
     new_id = db.call_insert_proc("sp_statutorynature_savestatutorynature", values)
     if new_id is False:

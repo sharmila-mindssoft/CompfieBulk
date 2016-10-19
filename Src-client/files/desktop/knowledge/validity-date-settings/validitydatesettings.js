@@ -11,7 +11,7 @@ function initialize(){
   function onSuccess(data) {
     COUNTRIES = data["countries"];
     DOMAINS = data["domains"];
-    VALIDITY_DATES = data["validity_dates"];
+    VALIDITY_DATES = data["validity_date_settings"];
     COUNTRY_DOMAIN_MAPPINGS = data["country_domain_mappings"]
     initialize_maps();
     loadValidityDatesList();

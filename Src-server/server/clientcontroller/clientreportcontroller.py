@@ -325,13 +325,13 @@ def get_assigneewise_compliance(db, request, session_user):
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
-    from_count = request.record_count
-    to_count = RECORD_DISPLAY_COUNT
+    from_count = request.from_count
+    page_count = request.page_count
 
     data, total_count = report_assigneewise_compliance(
         db, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,
-        from_count, to_count
+        from_count, page_count
     )
     assignee_wise_compliances_list = return_assignee_report_data(data)
     return clientreport.GetAssigneewisecomplianceReportSuccess(
@@ -371,13 +371,13 @@ def get_serviceproviderwise_compliance(db, request, session_user):
         statutory_id = request.statutory_id
         unit_id = request.unit_id
         service_provider_id = request.service_provider_id
-        from_count = request.record_count
-        to_count = RECORD_DISPLAY_COUNT
+        from_count = request.from_count
+        page_count = request.page_count
 
         data, total_count = report_serviceproviderwise_compliance(
             db, country_id, domain_id, statutory_id,
             unit_id, service_provider_id, session_user,
-            from_count, to_count
+            from_count, page_count
         )
         sp_wise_compliances_list = return_serviceprovider_report_data(data)
         return clientreport.GetServiceProviderWiseComplianceSuccess(
@@ -466,14 +466,14 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         from_date = request.from_date
         to_date = request.to_date
         compliance_status = request.compliance_status
-        from_count = request.record_count
-        to_count = RECORD_DISPLAY_COUNT
+        from_count = request.from_count
+        page_count = request.page_count
 
         compliance_details_list, total = report_compliance_details(
             db, client_id,
             country_id, domain_id, statutory_id, unit_id, compliance_id,
             assignee_id, from_date, to_date, compliance_status, session_user,
-            from_count, to_count
+            from_count, page_count
         )
         return clientreport.GetComplianceDetailsReportSuccess(
             compliance_details_list, total
@@ -562,34 +562,34 @@ def get_risk_report(db, request, session_user, client_id):
     unit_id = request.unit_id
     level_1_statutory_name = request.level_1_statutory_name
     statutory_status = request.statutory_status
-    from_count = request.record_count
-    to_count = RECORD_DISPLAY_COUNT
+    from_count = request.from_count
+    page_count = request.page_count
     compliance_list = []
     if request.csv is False:
         if statutory_status == 1:  # Delayed compliance
             total, compliance_list = get_delayed_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         if statutory_status == 2:  # Not complied
             total, compliance_list = get_not_complied_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         if statutory_status == 3:  # Not opted
             total, compliance_list = get_not_opted_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         if statutory_status == 4:  # Unassigned
             total, compliance_list = get_unassigned_compliances_with_count(
                 db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id,
                 level_1_statutory_name,
-                session_user, from_count, to_count
+                session_user, from_count, page_count
             )
         return clientreport.GetRiskReportSuccess(
             total, compliance_list
@@ -732,7 +732,6 @@ def get_client_details_report_filters(db, request, session_user, client_id):
 
 
 def get_client_details_report_data(db, request, session_user, client_id):
-    to_count = RECORD_DISPLAY_COUNT
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "ClientDetails"
@@ -744,7 +743,7 @@ def get_client_details_report_data(db, request, session_user, client_id):
         units = get_client_details_report(
             db, request.country_id, request.business_group_id,
             request.legal_entity_id, request.division_id, request.unit_id,
-            request.domain_ids, session_user, request.start_count, to_count
+            request.domain_ids, session_user, request.from_count, request.page_count
         )
         total_count = get_client_details_count(
             db, request.country_id, request.business_group_id,

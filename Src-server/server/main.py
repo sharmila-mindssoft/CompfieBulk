@@ -11,7 +11,7 @@ from lxml import etree
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
-    admin, clientadminsettings,
+    admin, consoleadmin, clientadminsettings,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
     clientcoordinationmaster
@@ -108,7 +108,9 @@ class API(object):
         self, response_data, response
     ):
         assert response is not None
+        print "response: %s" % response
         data = response_data.to_structure()
+        print "data: %s" % data
         s = json.dumps(data, indent=2)
         response.send(s)
 
@@ -256,6 +258,10 @@ class API(object):
     @api_request(admin.RequestFormat)
     def handle_admin(self, request, db):
         return controller.process_admin_request(request, db)
+
+    @api_request(consoleadmin.RequestFormat)
+    def handle_console_admin(self, request, db):
+        return controller.process_console_admin_request(request, db)
 
     @api_request(technomasters.RequestFormat)
     def handle_techno(self, request, db):
@@ -436,6 +442,10 @@ def run_server(port):
             ("/knowledge/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
+            (
+                "/knowledge/api/console_admin",
+                api.handle_console_admin
+            ),
             ("/knowledge/api/techno", api.handle_techno),
             (
                 "/knowledge/api/handle_client_admin_settings",

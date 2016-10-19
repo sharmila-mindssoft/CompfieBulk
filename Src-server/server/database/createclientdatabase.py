@@ -44,16 +44,12 @@ class ClientDBCreate(object):
         # raise ValueError(message)
 
     def prepare_db_constrains(self):
-        print "inside prepare db constraints"
         result = self.get_server_machine_details()
-        print "result: {}".format(result)
         if result is False:
             raise self.process_error("Prepare db_constrsains failed")
         elif result is True:
             res = self.process_db_creation()
-            r = self.update_client_db_details()
-            print r
-            print res
+            self.update_client_db_details()
             return res
 
     def db_name(self):
@@ -68,7 +64,6 @@ class ClientDBCreate(object):
         return generate_random()
 
     def get_server_machine_details(self):
-        print "inside get server machiner details"
         logger.logGroup("get_server_machine_details", "begin")
         data = get_server_details(self._db)
         if len(data) <= 0:
@@ -102,11 +97,9 @@ class ClientDBCreate(object):
         result = result_q.get()
         logger.logGroup("process_db_creation", "==================--------------")
         logger.logGroup("", "\n")
-        print result
         return result
 
     def _mysql_server_connect(self, host, username, password, port):
-        print host, username, password, port
         return mysql.connect(
             host=host, user=username, passwd=password, port=port
         )

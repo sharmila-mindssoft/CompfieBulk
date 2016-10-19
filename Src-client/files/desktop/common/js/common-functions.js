@@ -1,7 +1,9 @@
+var visiblePageCount = 10;
+
 //Load count values in pagination selectbox
-var pageList = [2,10,25,50,100,500];
+var pageList = [2, 50, 100, 250, 500];
 function loadItemsPerPage() {
-  for(var i=0; i<pageList.length; i++) {
+  for(var i = 0; i < pageList.length; i++) {
     var Id = pageList[i];
     $('#items_per_page').append($('<option value="' + Id + '">' + Id + '</option>'));
   };
@@ -10,6 +12,22 @@ function loadItemsPerPage() {
 function validateEmail($email) {
   var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
   return emailReg.test($email);
+}
+
+function ValidateIPaddress(ipaddress) 
+{
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)){
+        return true;
+    }
+    return false;
+}
+
+function validateLength(value, len){
+    if(value.length > len){
+        return false
+    }else{
+        return true
+    }
 }
 
 function clearMessage() {
@@ -162,8 +180,9 @@ function checkStrength(password) {
   }
 }
 function onArrowKey(e, ac_item, callback, type) {
+
   var selector = "#"
-  if(type="class"){
+  if(type=="class"){
     selector = "."
   }
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
@@ -849,3 +868,18 @@ function activate_text_arrow(ac_id, ac_name, callback) {
   ];
   callback(ac_result);
 }
+
+var month_id_name_map = {} 
+month_id_name_map[1] = "January"
+month_id_name_map[2] = "February"
+month_id_name_map[3] = "March"
+month_id_name_map[4] = "April"
+month_id_name_map[5] = "May"
+month_id_name_map[6] = "June"
+month_id_name_map[7] = "July"
+month_id_name_map[8] = "August"
+month_id_name_map[9] = "September"
+month_id_name_map[10] = "October"
+month_id_name_map[11] = "Novemeber"
+month_id_name_map[12] = "December"
+

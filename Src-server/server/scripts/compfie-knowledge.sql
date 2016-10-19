@@ -56,7 +56,6 @@ CREATE TABLE `tbl_user_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_admin`;
-
 CREATE TABLE `tbl_admin` (
   `email_id` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -302,7 +301,7 @@ CREATE TABLE `tbl_compliances` (
   `duration` int(11) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp DEFAULT '0000-00-00 00:00:00',
+  `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `fk_compliances_statutory_mappings` (`statutory_mapping_id`),
@@ -430,6 +429,8 @@ CREATE TABLE `tbl_legal_entities` (
 ) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
 
 
+
+
 DROP TABLE IF EXISTS `tbl_legal_entity_domain_industry`;
 CREATE TABLE `tbl_legal_entity_domain_industry` (
   `client_id` int(11) NOT NULL,
@@ -515,9 +516,9 @@ CREATE TABLE `tbl_units` (
   KEY `fk_units_geographies` (`geography_id`),
   KEY `fk_tbl_units_1` (`client_id`),
   KEY `fk_units_countries_idx` (`category_id`),
-  CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_category_master` (`category_id`),
   CONSTRAINT `fk_legal_entities_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_units_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_category_master` (`category_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
@@ -650,9 +651,9 @@ CREATE TABLE `tbl_client_compliances` (
   `compliance_applicable` tinyint(4) DEFAULT NULL,
   `compliance_opted` tinyint(4) DEFAULT NULL,
   `compliance_remarks` varchar(500) DEFAULT NULL,
-  `submitted_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `submitted_on` timestamp NULL DEFAULT NULL,
   `created_by` int(11) NOT NULL,
-  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`client_statutory_id`, `compliance_id`),
@@ -678,18 +679,20 @@ CREATE TABLE `tbl_mobile_registration` (
 
 DROP TABLE IF EXISTS `tbl_machines`;
 CREATE TABLE `tbl_machines` (
-  `machine_id` int(11) NOT NULL,
+  `machine_id` int(11) NOT NULL AUTO_INCREMENT,
   `machine_name` varchar(50) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
-  `client_ids` varchar(100) NULL DEFAULT NULL,
+  `client_ids` varchar(100) DEFAULT NULL,
   `server_full` tinyint(1) NOT NULL,
   PRIMARY KEY (`machine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
 DROP TABLE IF EXISTS `tbl_client_database`;
 CREATE TABLE `tbl_client_database` (
   `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
   `machine_id` int(11) NOT NULL,
   `database_ip` varchar(20) NOT NULL,
   `database_port` int(11) NOT NULL,
@@ -699,7 +702,10 @@ CREATE TABLE `tbl_client_database` (
   `database_name` varchar(50) NOT NULL,
   `server_ip` varchar(20) NOT NULL,
   `server_port` int(11) NOT NULL,
-  PRIMARY KEY (`client_id`),
+  PRIMARY KEY (`client_id`,`legal_entity_id`),
+  KEY `fk_tbl_machines_id` (`machine_id`),
+  KEY `fk_tbl_le_id` (`legal_entity_id`),
+  CONSTRAINT `fk_tbl_client_database_1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_client_group_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_machines_id` FOREIGN KEY (`machine_id`) REFERENCES `tbl_machines` (`machine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -789,3 +795,51 @@ CREATE TABLE `tbl_user_clients` (
   CONSTRAINT `fk_tbl_client_groups_user_clients_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_users_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_client_filestorage`;
+CREATE TABLE `tbl_client_filestorage` (
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `machine_id` int(11) NOT NULL,
+  PRIMARY KEY (`client_id`,`legal_entity_id`),
+  KEY `index2` (`machine_id`),
+  KEY `fk_tbl_client_filestorage_2_idx` (`legal_entity_id`),
+  CONSTRAINT `fk_tbl_client_filestorage_3` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_client_filestorage_1` FOREIGN KEY (`machine_id`) REFERENCES `tbl_machines` (`machine_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_client_filestorage_2` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_unit_autodeletion`;
+CREATE TABLE `tbl_unit_autodeletion` (
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `deletion_year` int(11) DEFAULT NULL,
+  PRIMARY KEY (`client_id`,`legal_entity_id`,`unit_id`),
+  KEY `fk_tbl_unit_autodeletion_2_idx` (`legal_entity_id`),
+  KEY `fk_tbl_unit_autodeletion_3_idx` (`unit_id`),
+  CONSTRAINT `fk_tbl_unit_autodeletion_3` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_unit_autodeletion_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_unit_autodeletion_2` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_user_mapping`;
+CREATE TABLE `tbl_user_mapping` (
+  `user_mapping_id` int(11) NOT NULL AUTO_INCREMENT,
+  `cc_manager_id` int(11) DEFAULT '0',
+  `is_active` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`user_mapping_id`),
+  KEY `index2` (`cc_manager_id`),
+  CONSTRAINT `fk_tbl_user_mapping_1` FOREIGN KEY (`user_mapping_id`) REFERENCES `tbl_users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_user_mapping_users`;
+CREATE TABLE `tbl_user_mapping_users` (
+  `user_mapping_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `form_category_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`user_mapping_id`),
+  CONSTRAINT `fk_tbl_user_mapping_users_1` FOREIGN KEY (`user_mapping_id`) REFERENCES `tbl_user_mapping` (`user_mapping_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+

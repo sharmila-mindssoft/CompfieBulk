@@ -71,7 +71,14 @@ messages = {
     "E070": "Invalid File space",
     "E071": "Save Organization failed",
     "E072": "Unit Approval failed",
-    "E073": "Client Group Approval failed"
+    "E073": "Client Group Approval failed",
+    "E074": "Configuring Database server failed",
+    "E075": "Configuring Client server failed",
+    "E076": "Allocating Database environment failed",
+    "E077": "Configuring File Storage failed",
+    "E078": "Configuring auto deletion failed",
+    "E079": "Save User Mapping Failed",
+    "E080": "Assign Units Failed"
 }
 
 client_message = {

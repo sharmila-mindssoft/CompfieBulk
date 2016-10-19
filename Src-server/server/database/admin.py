@@ -1,6 +1,7 @@
 import threading
-from protocol import core
+from protocol import core, admin
 from server.database.tables import *
+from server.database.forms import *
 from server.common import (
     get_date_time,
     generate_and_return_password
@@ -28,7 +29,8 @@ __all__ = [
     "update_user_status", "get_user_group_detailed_list",
     "get_user_countries", "get_user_domains", "get_mapped_countries",
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
-    "save_validity_date_settings"
+    "save_validity_date_settings", "get_user_mapping_form_data",
+    "save_user_mappings"
 ]
 
 
@@ -52,11 +54,13 @@ def get_domains_for_user(db, user_id):
 # Return Type : List of Object of Domain
 ###############################################################################
 def return_domains(data):
+    print "domais: %s" % data
     results = []
     for d in data:
         results.append(core.Domain(
             d["domain_id"], d["domain_name"], bool(d["is_active"])
         ))
+    print "results: %s" % results
     return results
 
 
@@ -786,3 +790,126 @@ def save_validity_date_settings(db, data, session_user):
                 current_time_stamp
             )
         )
+
+
+def get_user_mappings(db):
+    data = db.call_proc("sp_usermappings_list", None)
+    return return_user_mapping_users(data)
+
+
+def return_user_mapping_users(data):
+    result = []
+    for datum in data:
+        fn = admin.UserMapping
+        result = [
+            fn(
+                user_mapping_id=datum["user_mapping_id"],
+                parent_user_id=datum["parent_user_id"],
+                child_user_id=datum["child_user_id"]
+            )
+        ]
+    return result
+
+
+def return_users(data, country_map, domain_map):
+    fn = admin.User
+    result = []
+    for datum in data:
+        user_id = int(datum["user_id"])
+        user = fn(
+            user_id=user_id, employee_name=datum["employee_name"],
+            is_active=bool(datum["is_active"]),
+            country_ids=country_map[user_id],
+            domain_ids=domain_map[user_id]
+        )
+        result.append(user)
+    return result
+
+
+def generate_country_map(countries):
+    country_map = {}
+    for country in countries:
+        user_id = country["user_id"]
+        if user_id not in country_map:
+            country_map[user_id] = []
+        country_map[user_id].append(
+            int(country["country_id"])
+        )
+    return country_map
+
+
+def generate_domain_map(domains):
+    domain_map = {}
+    for domain in domains:
+        user_id = domain["user_id"]
+        if user_id not in domain_map:
+            domain_map[user_id] = []
+        domain_map[user_id].append(
+            int(domain["domain_id"])
+        )
+    return domain_map
+
+
+def get_user_mapping_form_data(db, session_user):
+    countries = get_countries_for_user(db, session_user)
+    domains = get_domains_for_user(db, session_user)
+    result = db.call_proc_with_multiresult_set("sp_users_type_wise", None, 8)
+    user_countries = result[6]
+    user_domains = result[7]
+    user_countries_map = generate_country_map(user_countries)
+    user_domains_map = generate_domain_map(user_domains)
+
+    knowledge_managers_result = result[0]
+    knowledge_users_result = result[1]
+    techno_managers_result = result[2]
+    techno_users_result = result[3]
+    domain_managers_result = result[4]
+    domain_users_result = result[5]
+    knowledge_managers = return_users(
+        knowledge_managers_result, user_countries_map, user_domains_map)
+    knowledge_users = return_users(
+        knowledge_users_result, user_countries_map, user_domains_map)
+    techno_managers = return_users(
+        techno_managers_result, user_countries_map, user_domains_map)
+    techno_users = return_users(
+        techno_users_result, user_countries_map, user_domains_map)
+    domain_managers = return_users(
+        domain_managers_result, user_countries_map, user_domains_map)
+    domain_users = return_users(
+        domain_users_result, user_countries_map, user_domains_map)
+    user_mappings = get_user_mappings(db)
+    return (
+        countries, domains, knowledge_managers, knowledge_users,
+        techno_managers, techno_users, domain_managers, domain_users,
+        user_mappings
+    )
+
+
+def save_user_mappings(db, request, session_user):
+    current_time_stamp = get_date_time()
+    country_id = request.country_id
+    domain_id = request.domain_id
+    parent_user_id = request.parent_user_id
+    child_users = request.child_users
+    insert_columns = [
+        "user_category_id", "country_id", "domain_id", "parent_user_id",
+        "child_user_id", "created_by", "created_on"
+    ]
+    cat_rows = db.call_proc("sp_users_category_by_id", (parent_user_id,))
+    user_category_id = cat_rows[0]["user_category_id"]
+    insert_values = [
+        (
+            user_category_id, country_id, domain_id, parent_user_id,
+            child_user_id, session_user, current_time_stamp
+        ) for child_user_id in child_users
+    ]
+    db.call_update_proc("sp_usermapping_delete", (parent_user_id,))
+    result = db.bulk_insert(
+        tblUserMapping, insert_columns, insert_values
+    )
+    if result:
+        name_rows = db.call_proc("sp_empname_by_id", (parent_user_id,))
+        action = "Users mapped for - \"%s\"" % name_rows[0]["empname"]
+        db.save_activity(session_user, frmUserMapping, action)
+    else:
+        raise process_error("E079")

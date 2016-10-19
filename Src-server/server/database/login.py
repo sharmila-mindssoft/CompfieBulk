@@ -46,7 +46,8 @@ def verify_login(db, username, password):
         if data_list is None:
             return False
         else:
-            return convert_to_dict(data_list, data_columns)
+            result = convert_to_dict(data_list, data_columns)
+            return result
     else:
         return True
 
@@ -112,27 +113,33 @@ def verify_username(db, username, is_mobile=False):
     if user_rows:
         result = convert_to_dict(user_rows, user_columns)
         if is_mobile is True :
-                forms = get_user_form_ids(db, int(result[0]["user_id"]))
+                forms = get_user_form_ids(db, int(result[0]["user_id"]), None)
                 form_ids = [int(x) for x in forms.split(",")]
                 if 11 in form_ids :
                     return (
                         result[0]["user_id"],
-                        result[0]["employee_name"]
+                        result[0]["employee_name"],
+                        None
                     )
                 else :
                     return None
         else :
             return (
                 result[0]["user_id"],
-                result[0]["employee_name"]
+                result[0]["employee_name"],
+                None
             )
     else:  # checking in tbl_admin
-        admin_query = " SELECT count(username) as count FROM tbl_admin " + \
+        admin_query = " SELECT count(username) as count, user_type FROM tbl_admin " + \
             " WHERE username = %s"
         admin_rows = db.select_all(admin_query, param)
         count = admin_rows[0][0]
+        user_type = admin_rows[0][1]
         if count > 0:
-            return (0, "Administrator")
+            if user_type == 0 :
+                return (0, "Administrator", user_type)
+            else :
+                return (1, "ConsoleAdmin", user_type)
         else:
             return (None, None)
 

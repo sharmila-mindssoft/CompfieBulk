@@ -347,7 +347,6 @@ def get_client_details_report(
         " tu.unit_id ASC LIMIT %s, %s"
     params.extend([int(start_count), int(to_count)])
     rows = db.select_all(query, params)
-    print rows
     columns_list = columns.replace(" ", "").split(",")
     unit_rows = convert_to_dict(rows, columns_list)
     grouped_units = {}
@@ -533,7 +532,6 @@ def get_compliance_list_report_techno(
         "frequency_id", "statutory_dates", "repeats_every",
         "repeats_type_id", "duration", "duration_type_id"
     ]
-    print rows
     report_data = []
     if rows:
         report_data = convert_to_dict(rows, columns)
@@ -551,9 +549,6 @@ def return_knowledge_report(
 
     report_list = []
     for r in report_data:
-        print
-        print r
-        print
         mapping = r["statutory_mapping"].split(">>")
         act_name = mapping[0].strip()
         statutory_provision = " >>".join(mapping[1:])

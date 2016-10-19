@@ -129,7 +129,6 @@ def get_country_domain_timelines(
 
 def calculate_ageing_in_hours(ageing):
         day = ageing.days
-        print day
         hour = 0
         # if day > 0:
         #     hour += day * 24
@@ -137,7 +136,7 @@ def calculate_ageing_in_hours(ageing):
         minutes = (ageing.seconds / 60 % 60)
         if day == 0:
             summary = "%s:%s Hour(s)" % (hour, minutes)
-        else :
+        else:
             summary = "%s Day(s) %s:%s Hour(s)" % (day, hour, minutes)
         return summary
 

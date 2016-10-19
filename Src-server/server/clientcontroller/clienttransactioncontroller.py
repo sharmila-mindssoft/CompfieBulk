@@ -206,7 +206,6 @@ def process_get_assign_compliance_form_data(db, session_user):
     countries = get_countries_for_user(db, session_user)
     domains = get_domains_for_user(db, session_user)
     row = get_user_company_details(db, session_user)
-    print "row : {}".format(row)
     business_group_ids = row[3]
     business_groups = get_business_groups_for_user(
         db, business_group_ids

@@ -1,211 +1,294 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
+<style>
+.width100px{
+    width: 100px;
+}
+.width10Percent {
+  width:10%
+}
+.width20Percent {
+  width:20%
+}
+.width8Percent{
+  width:8%;
+}
+.width15px{
+    width:15px;
+}
+.dialog-heading-bg {
+    background:#ccc;
+    padding:5px 10px;
+    border-radius:3px;
+    font-size: 0.9em;
+    color:black
+}
+.dialog-sub-heading-bg{
+    padding-top: 15px;
+    font-weight: bold;
+}
+.padding-left-10px{
+    padding-left: 10px;
+}
+.edit-right-icon {
+    cursor: pointer;
+    float: right;
+}
+
+</style>
 <div class="content-container width80" id="clientgroup-view">
     <div class="content-area">
-      <h1>Clients</h1>
-      <div class="filters-and-search">
-        <div class="btn-add btn-clientgroup-add" formtarget="_self">Add</div>
-      </div>
-      <div class="clearfix"></div>
-      <div class="grid-table">
-        <table class="js-filtertable">
-          <thead>
-          <tr align="left">
-            <th align="center" style="width: 8%">#</th>
-            <th>Country</th>
-            <th>Group</th>
-            <th>No.of Legal Entity</th>
-            <th align="center" style="width:10" >Edit</th>
-            <th align="center" style="width:10%">Status</th>
-          </tr>
-          <tr>
-            <td align="center"></td>
-            <td><input type="text" class="filter-text-box js-filter" id="search-country-name"></td>
-            <td><input type="text" class="filter-text-box js-filter" id="search-clientgroup-name"></td>
-            <td><input type="text" class="filter-text-box js-filter" id="no-of-le"></td>
-            <td align="center"></td>
-            <td align="center"></td>
-          </tr>
-          </thead>
-          <tbody class="tbody-clientgroup-list">
-          </tbody>
-        </table>
-      </div>
+        <h1>Clients</h1>
+        <div class="filters-and-search">
+            <div class="btn-add btn-clientgroup-add" formtarget="_self">
+                Add
+            </div>
+        </div>
+        <div class="clearfix">
+            
+        </div>
+        <div class="grid-table">
+            <table class="js-filtertable">
+                <thead>
+                    <tr align="left">
+                        <th align="center" class="width8Percent">#</th>
+                        <th>Country</th>
+                        <th>Group</th>
+                        <th>No.of Legal Entity</th>
+                        <th align="center" class="width10Percent" >Edit</th>
+                        <th align="center" class="width10Percent" >Status</th>
+                        <th align="center" class="width20Percent">Approval Status</th>
+                    </tr>
+                    <tr>
+                        <td align="center"></td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="search-country-name">
+                        </td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="search-clientgroup-name">
+                        </td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="no-of-le">
+                        </td>
+                        <td align="center"></td>
+                        <td align="center">
+                            <select class="filter-text-box" id="search-status" >
+                                <option value='0'>All</option>
+                                <option value='1'>Active</option>
+                                <option value='2'>Inactive</option>
+                            </select>
+                        </td>
+                        <td align="center">
+                            <select class="filter-text-box" id="search-status" >
+                                <option value='0'>All</option>
+                                <option value='1'>Pending</option>
+                                <option value='2'>Approved</option>
+                                <option value='3'>Rejected</option>
+                            </select>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody class="tbody-clientgroup-list">
+                </tbody>
+            </table>
+        </div>
     </div>
     <div id="templates">
-      <table class="table-clientgroup-list">
-        <tr class="table-row">
-          <td align="center" class="sno">1</td>
-          <td class="country_names"></td>
-          <td class="group_name"></td>
-          <td class="no_of_entities"></td>
-          <td align="center">
-            <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
-          </td>
-          <td align="center">
-            <span class="status" style="width: 16px; height: 16px; display:block"> </span>
-          </td>
-        </tr>
-      </table>
+        <table class="table-clientgroup-list">
+            <tr class="table-row">
+                <td align="center" class="sno">1</td>
+                <td class="country_names"></td>
+                <td class="group_name"></td>
+                <td class="no_of_entities"></td>
+                <td align="center">
+                    <span class="edit-icon icon-style"> </span>
+                </td>
+                <td align="center">
+                    <span class="status icon-style" > </span>
+                </td>
+                <td class="approval-status"></td>
+            </tr>
+        </table>
     </div>
 </div>
 <div class="content-container default-display-none" id="clientgroup-add" >
-  <div class="content-area">
-    <div class="add-container">
-      <div class="add-container-heading">Add Client<span class="error-message"></span></div>
-      <div class="input-row">
-        <div class="input-row-left">
-          <div class="input-row">
-            <div class="single-column-field-label">Group:
-                <span class="mandatory">*</span>
+    <div class="content-area">
+        <div class="add-container">
+            <div class="add-container-heading">
+                Add Client<span class="error-message"></span>
             </div>
-            <div class="field-input">
-              <input id="group-text" type="text" class="input-box" placeholder="Group Name">
-            </div>
-          </div>
-          </div>
-          <div class="input-row-right">
             <div class="input-row">
-                <div class="single-column-field-label">Username:
-                    <span class="mandatory">*</span>
+                <div class="input-row-left">
+                    <div class="input-row">
+                        <div class="single-column-field-label">
+                            Group:<span class="mandatory">*</span>
+                        </div>
+                        <div class="field-input">
+                            <input id="group-text" type="text" class="input-box" placeholder="Group Name">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="single-column-field-label">
+                            View Only Licence(s):<span class="mandatory">*</span>
+                        </div>
+                        <div class="field-input">
+                            <input id="view-licence-text" type="text" class="input-box numeric" placeholder="View Licence">
+                        </div>
+                    </div>
+                    <div class="input-row action-div">
+                        <div class="single-column-field-label">
+                            Action:<span class="mandatory">*</span>
+                        </div>
+                        <div class="field-input actions">
+                            <select  class="input-box">
+                                <option value="1">Edit</option>
+                                <option value="2">Renewal</option>
+                                <option value="3">Amendment</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="field-input">
-                    <input type="text" id="username" class="input-box" placeholder="user@domain.com">
-                    <br><br>
-                    <span class="input-notes">
-                        [&#9658;This will be used as the username for group admin.<br>&#9658;
-                        Password will be auto-generated]
+                <div class="input-row-right">
+                    <div class="input-row">
+                        <div class="single-column-field-label">
+                            Short Name:<span class="mandatory">*</span>
+                        </div>
+                        <div class="field-input">
+                            <input type="text" id="shortname" class="input-box" placeholder="Short Name">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="single-column-field-label">
+                            Username:<span class="mandatory">*</span>
+                        </div>
+                        <div class="field-input">
+                            <input type="text" id="username" class="input-box" placeholder="user@domain.com">
+                            <br><br>
+                            <span class="input-notes">
+                                [&#9658;We will use this email ID to contact you about your account]
+                                <br>
+                                <a href="#">Resend Registration Email</a>
+                            </span>
+                            <img class="edit-right-icon edit-username-viewlicence" src="/images/icon-edit.png">
+                        </div>
+                    </div>
+                    <div class="input-row remarks-div">
+                        <div class="single-column-field-label">
+                            Remarks:<span class="mandatory">*</span>
+                        </div>
+                        <div class="field-input">
+                            <input id="remarks-text" type="text" class="input-box" placeholder="Remarks text">
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="add-container">
+                    <div class="form-sub-title">
+                        Legal Entity Configuration
+                    </div>
+                    <span>
+                        <a>
+                            <img src="/images/icon-plus.png" formtarget="_self" title="Click to add Legal Entity" class="add-le img-link float-right"/>
+                        </a>
                     </span>
-              </div>
+                    <div class="le-body">
+                    </div>
+                    <div class="grid-table">
+                        <div class="form-sub-title">
+                            Date Configuration
+                            <img class="edit-right-icon edit-date-config" src="/images/icon-edit.png">
+                        </div>
+                        <table class="letable">
+                            <thead>
+                                <tr align="left">
+                                    <th width="25%" class="form-sub-table-th">Domain</th>
+                                    <th colspan="2" width="75%" align="center" class="form-sub-table-th">Timeline</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-dateconfiguration-list">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="submit-button-container">
+                    <input type="reset" name="cancel" value="Cancel" class="btn-cancel cancel">
+                    &nbsp;&nbsp;
+                    <input type="submit" name="submit" value="Submit" class="btn-submit save" >
+                </div>
             </div>
-          </div>
-         <div class="clearfix"></div>
-          <div class="add-container">
-          <div class="form-sub-title">Legal Entity Configuration</div>
-          <span><a ><img src="/images/icon-plus.png" formtarget="_self" title="Click to add Legal Entity" class="add-le img-link float-right"/></a> </span>
-          <div class="le-body">
-          </div>
-          <div class="grid-table">
-          <div class="form-sub-title">Date Configuration</div>
-            <table class="letable">
-                <thead>
-                  <tr align="left">
-                    <th width="25%" class="form-sub-table-th">Domain</th>
-                    <th colspan="2" width="75%" align="center" class="form-sub-table-th">Timeline</th>
-                  </tr>
-                </thead>
-                <tbody class="tbody-dateconfiguration-list">
-                </tbody>
-            </table>
-          </div>
         </div>
-         
-         <div class="clearfix"></div>
-          <div class="submit-button-container">
-            <input type="reset" name="cancel" value="Cancel" class="btn-cancel cancel">
-            &nbsp;&nbsp;
-            <input type="submit" name="submit" value="Submit" class="btn-submit save" >
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 <!--Templates-->
 <div class="legal-entity-config-template default-display-none">
     <div class="grid-table">
         <input type="hidden" class="le-no">
+        <input type="hidden" class="le-id">
         <table class="btable letable">
-          <tr class="form-sub-table-tr">
-            <td colspan="9" align="left">
-              <table border="1" class="form-sub-table">
-                <tr class="form-sub-table-tr">
-                    <td width="10%" vertical-align="middle" class="text-right">Country:&nbsp;</td>
-                    <td width="15%">
-                        <select style="background-color: #ffffff;" placeholder="Select Country" class="testSelAll2 input-box country">
-                        </select>
-                    </td>
-                    <td width="10%" class="text-right">Business Group:</td>
-                    <td width="20%">
-                        <div class="select_business_group">
-                            <select style="background-color:#fff;" placeholder="Select Business Group"  class="testSelAll2 input-box business-group">
-                            </select>
-                            <a class="cursor-poter add-business-group" onclick="addOrSelectBusinessGroup('add')">
-                                <img src="/images/add.png" />
-                            </a>
-                        </div>
-                        <div class="input_business_group default-display-none">
-                          <input type="text" class="input-box white-bg business-group-text" placeholder="Enter Business Group">
-                          <a class="cursor-poter cancel-add-business-group" onclick="addOrSelectBusinessGroup('cancel')">&nbsp;
-                            <img src="/images/delete.png" />
-                        </a>
-                        </div>
-                    </td>
-                    <td width="10%" class="text-right">Legal Entity:</td>
-                    <td width="20%">
-                        <input type="text"  id="legal_entity_text" class="input-box white-bg legal-entity-text" placeholder="Enter Legal Entity">
-                    </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr class="form-sub-table-tr">
-            <td colspan="9" align="left">
-              <table border="1">
-                <tr class="form-sub-table-tr">
-                  <td width="10%" class="text-right">Incharge Person:&nbsp;</td>
-                  <td width="15%">
-                    <input type="hidden" id="users">
-                    <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly">
-                    <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
-                      <ul id="ulist-user">
-                          
-                      </ul>
-                    </div>
-                  </td>
-                  <td width="10%" class="text-right">Upload Logo:</td>
-                  <td width="20%">
-                    <input type="file" id="upload-logo" class="input-box white-bg">
-                    <span ><img  id="upload-logo-img"  width="25" height="30"></span>
-                  </td>
-                  <td width="10%" class="text-right">File Space:</td>
-                  <td width="20%">
-                    <input type="text" id="file-space" class="input-box white-bg" placeholder="Enter File Space"> GB
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr class="form-sub-table-tr">
-            <td colspan="9" align="left">
-              <table border="1">
-                <tr class="form-sub-table-tr">
-                  <td width="10%" class="text-right">Contract From:&nbsp;</td>
-                  <td width="15%"><input type="text" readonly="readonly" class="input-box white-bg contract-from" placeholder="Select Contract From"></td>
-                  <td width="10%" class="text-right">Contract To:</td>
-                  <td width="20%"><input type="text" readonly="readonly" class="input-box white-bg contract-to" placeholder="Select Contract To"></td>
-                  <td width="10%" class="text-right">Total Licence(s):</td>
-                  <td width="20%"><input type="text" id="no-of-user-licence" class="input-box white-bg" placeholder="Enter No. of Licence"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr class="form-sub-table-tr">
-            <td colspan="9" align="left">
-              <table>
-                <tr class="form-sub-table-tr">
-                  <td width="100%" style="padding-right: 32px;" class="text-right">
-                    <input type="checkbox" id="subscribe-sms"> &nbsp;Subscribe for SMS Notification
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+            <tr class="form-sub-table-tr">
+                <td colspan="9" align="left">
+                    <img class="edit-right-icon" src="/images/icon-edit.png">
+                    <table border="1" class="form-sub-table">
+                        <tr class="form-sub-table-tr">
+                            <td width="10%" vertical-align="middle">Country:&nbsp;</td>
+                            <td width="15%">
+                                <select placeholder="Select Country" class="testSelAll2 input-box country white-bg">
+                                </select>
+                            </td>
+                            <td width="10%">Business Group:</td>
+                            <td width="20%">
+                                <div class="select_business_group">
+                                    <select  placeholder="Select Business Group"  class="testSelAll2 input-box business-group white-bg">
+                                    </select>
+                                    <a class="cursor-poter add-business-group" onclick="addOrSelectBusinessGroup('add')">
+                                        <img src="/images/add.png" class="width15px addbg"/>
+                                    </a>
+                                </div>
+                                <div class="input_business_group default-display-none">
+                                    <input type="text" class="input-box white-bg business-group-text" placeholder="Enter Business Group">
+                                    <a class="cursor-poter cancel-add-business-group" onclick="addOrSelectBusinessGroup('cancel')">&nbsp;
+                                        <img src="/images/delete.png" class="width15px"/>
+                                    </a>
+                                </div>
+                            </td>
+                            <td width="10%">Legal Entity:</td>
+                            <td width="20%">
+                                <input type="text"  id="legal_entity_text" class="input-box white-bg    legal-entity-text" placeholder="Enter Legal Entity">
+                            </td>
+                        </tr>
+                        <tr class="form-sub-table-tr">
+                            <td width="10%">Contract From:&nbsp;</td>
+                            <td width="15%"><input type="text" readonly="readonly" class="input-box white-bg contract-from" placeholder="Select Contract From"></td>
+                            <td width="10%">Contract To:</td>
+                            <td width="20%"><input type="text" readonly="readonly" class="input-box white-bg contract-to" placeholder="Select Contract To"></td>
+                            <td width="10%">Total Licence(s):</td>
+                            <td width="20%"><input type="text" id="no-of-user-licence" class="input-box white-bg" placeholder="Enter No. of Licence"></td>
+                        </tr>
+                        <tr class="form-sub-table-tr">
+                            <td width="10%">Upload Logo:</td>
+                            <td width="20%">
+                                <input type="file" id="upload-logo" class="input-box white-bg">
+                                <span>
+                                    <img  id="upload-logo-img"  width="25" height="30">
+                                </span>
+                            </td>
+                            <td width="10%">File Space:</td>
+                            <td width="20%">
+                                <input type="text" id="file-space" class="input-box white-bg" placeholder="Enter File Space"> GB
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
           <tr align="left">
-            <th width="45%">Domain<span class="mandatory">*</span></th>
-            <th width="45%">Organization<span class="mandatory">*</span></th>
-            <th width="10%">Remove <input type="hidden" class="domain-count" value='0'/></th>
+            <th width="45%" class="domain-header">Domain<span class="mandatory">*</span></th>
+            <th width="45%" class="org-header">Organization<span class="mandatory">*</span></th>
+            <th width="10%" class="remove-header">Remove</th>
           </tr>
+          <input type="hidden" class="domain-count" value='0'/>
           <tbody class="domain-list">
           </tbody>
         </table>
@@ -236,11 +319,11 @@
       </td>
     </tr>
     <tr class="table-dconfig-domain-row" >
-      <td style="padding-left:10px;" width="30%"><span class="dconfig-domain-name" ></span>
+      <td width="30%" class="padding-left-10px"><span class="dconfig-domain-name" ></span>
         <input type="hidden" class="inputDomain" value="">
       </td>
       <td align="center" width="35%">
-        <select class="input-box tl-from" style="width:100px">
+        <select class="input-box tl-from width100px" >
         <!-- <option value="">Select</option> -->
         <option value="1">January</option>
         <option value="2">February</option>
@@ -257,7 +340,7 @@
         </select>
       </td>
       <td align="center" width="35%">
-        <select class="input-box tl-to" style="width:100px">
+        <select class="input-box tl-to width100px">
         <!-- <option value="">Select</option> -->
         <option value="1">January</option>
         <option value="2">February</option>
@@ -283,8 +366,8 @@
         <input type="hidden" id="d-cnt"/>
         <input type="hidden" id="o-cnt"/>
         <div>
-            <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; font-size: 0.9em;color:black">Add Organization</h1>
-            <div style="padding-top: 15px; font-weight: bold;">
+            <h1 class="dialog-heading-bg">Add Organization</h1>
+            <div class="dialog-sub-heading-bg">
                 Domain: Labour Law
                 <span class="error-message"></span>
             </div>
@@ -324,8 +407,24 @@
         </tr>
     </table>
 </div>
-<div class="user-list-drop-down">
+<div class="user-list-drop-down default-display-none">
   <li></li>
+</div>
+<div class="text default-display-none">
+    <span></span>
+</div>
+<div class="logo-img default-display-none">
+    <span>
+        <img  id="upload-logo-img"  width="25" height="30">
+    </span>
+</div>
+<div class="text-with-tooltip default-display-none">
+    <abbr title=""></abbr>
+</div>
+<div class="select-option default-display-none">
+    <select>
+        <option></option>
+    </select>
 </div>
 <script type="text/javascript" src="/script/client-master/clientmaster-new.js"></script>
 {% endblock %}

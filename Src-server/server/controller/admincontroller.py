@@ -14,7 +14,7 @@ __all__ = [
     "process_admin_request", "get_user_groups"
 ]
 
-forms = [3, 4]
+forms = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
 ########################################################
@@ -25,7 +25,10 @@ def process_admin_request(request, db):
     request_frame = request.request
     session_user = validate_user_session(db, session_token)
     if session_user is not None:
-        is_valid = validate_user_forms(db, session_user, forms, request_frame)
+        admin_user_type = 0
+        is_valid = validate_user_forms(
+            db, session_user, forms, request_frame, admin_user_type
+        )
         if is_valid is not True:
             return login.InvalidSessionToken()
 
@@ -36,52 +39,62 @@ def process_admin_request(request, db):
         result = get_user_groups(db, request_frame, session_user)
         logger.logKnowledgeApi("GetUserGroups", "process end")
 
-    if type(request_frame) is admin.SaveUserGroup:
+    elif type(request_frame) is admin.SaveUserGroup:
         logger.logKnowledgeApi("SaveUserGroup", "process begin")
         result = save_user_group_record(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveUserGroup", "process end")
 
-    if type(request_frame) is admin.UpdateUserGroup:
+    elif type(request_frame) is admin.UpdateUserGroup:
         logger.logKnowledgeApi("UpdateUserGroup", "process begin")
         result = update_user_groups(db, request_frame, session_user)
         logger.logKnowledgeApi("UpdateUserGroup", "process end")
 
-    if type(request_frame) is admin.ChangeUserGroupStatus:
+    elif type(request_frame) is admin.ChangeUserGroupStatus:
         logger.logKnowledgeApi("ChangeUserGroupStatus", "process begin")
         result = change_user_group_status(db, request_frame, session_user)
         logger.logKnowledgeApi("ChangeUserGroupStatus", "process end")
 
-    if type(request_frame) is admin.GetUsers:
+    elif type(request_frame) is admin.GetUsers:
         logger.logKnowledgeApi("GetUsers", "process begin")
         result = get_users(db, request_frame, session_user)
         logger.logKnowledgeApi("ChangeUserGroupStatus", "process end")
 
-    if type(request_frame) is admin.SaveUser:
+    elif type(request_frame) is admin.SaveUser:
         logger.logKnowledgeApi("SaveUser", "process begin")
         result = save_user_record(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveUser", "process end")
 
-    if type(request_frame) is admin.UpdateUser:
+    elif type(request_frame) is admin.UpdateUser:
         logger.logKnowledgeApi("UpdateUser", "process begin")
         result = update_user_record(db, request_frame, session_user)
         logger.logKnowledgeApi("UpdateUser", "process end")
 
-    if type(request_frame) is admin.ChangeUserStatus:
+    elif type(request_frame) is admin.ChangeUserStatus:
         logger.logKnowledgeApi("ChangeUserStatus", "process begin")
         result = change_user_status(db, request_frame, session_user)
         logger.logKnowledgeApi("ChangeUserStatus", "process end")
 
-    if type(request_frame) is admin.GetValidityDateList:
+    elif type(request_frame) is admin.GetValidityDateList:
         logger.logKnowledgeApi("GetValidityDateList", "process begin")
         result = process_getvaliditydate_request(
             db, request_frame, session_user)
         logger.logKnowledgeApi("GetValidityDateList", "process end")
 
-    if type(request_frame) is admin.SaveValidityDateSettings:
+    elif type(request_frame) is admin.SaveValidityDateSettings:
         logger.logKnowledgeApi("SaveValidityDateSettings", "process begin")
         result = process_save_validity_date_settings(
             db, request_frame, session_user)
         logger.logKnowledgeApi("SaveValidityDateSettings", "process end")
+
+    elif type(request_frame) is admin.GetUserMappings:
+        logger.logKnowledgeApi("GetUserMappings", "process begin")
+        result = process_get_user_mappings(db, session_user)
+        logger.logKnowledgeApi("GetUserMappings", "process end")
+
+    elif type(request_frame) is admin.SaveUserMappings:
+        logger.logKnowledgeApi("SaveUserMappings", "process begin")
+        result = process_save_user_mappings(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveUserMappings", "process end")
     return result
 
 
@@ -92,6 +105,8 @@ def get_forms_list(db):
     result_rows = get_forms(db)
     knowledge_user_forms = []
     knowledge_manager_forms = []
+    cc_user_forms = []
+    cc_manager_forms = []
     techno_user_forms = []
     techno_manager_forms = []
     for row in result_rows:
@@ -108,6 +123,10 @@ def get_forms_list(db):
             knowledge_user_forms.append(form)
         elif int(row["form_category_id"]) == 4:
             knowledge_manager_forms.append(form)
+        elif int(row["form_category_id"]) == 5:
+            cc_manager_forms.append(form)
+        elif int(row["form_category_id"]) == 6:
+            cc_user_forms.append(form)
         elif int(row["form_category_id"]) == 7:
             techno_user_forms.append(form)
         elif int(row["form_category_id"]) == 8:
@@ -115,6 +134,8 @@ def get_forms_list(db):
     result = {}
     result[3] = process_user_menus(knowledge_user_forms)
     result[4] = process_user_menus(knowledge_manager_forms)
+    result[5] = process_user_menus(cc_manager_forms)
+    result[6] = process_user_menus(cc_user_forms)
     result[7] = process_user_menus(techno_user_forms)
     result[8] = process_user_menus(techno_manager_forms)
     return result
@@ -359,3 +380,23 @@ def process_save_validity_date_settings(db, request, session_user):
     save_validity_date_settings(
         db, request.validity_date_settings, session_user)
     return admin.SaveValidityDateSettingsSuccess()
+
+
+def process_get_user_mappings(db, session_user):
+    (
+        countries, domains, knowledge_managers, knowledge_users,
+        techno_managers, techno_users, domain_managers, domain_users,
+        user_mappings
+    ) = get_user_mapping_form_data(db, session_user)
+    return admin.GetUserMappingsSuccess(
+        countries=countries, domains=domains,
+        knowledge_managers=knowledge_managers, knowledge_users=knowledge_users,
+        techno_managers=techno_managers, techno_users=techno_users,
+        domain_managers=domain_managers, domain_users=domain_users,
+        user_mappings=user_mappings
+    )
+
+
+def process_save_user_mappings(db, request, session_user):
+    save_user_mappings(db, request, session_user)
+    return admin.SaveUserMappingsSuccess()
