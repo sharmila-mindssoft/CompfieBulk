@@ -1084,6 +1084,14 @@ body .markdown-body
 <li><a href="#approve-unit">Approve Unit</a></li>
 </ul>
 </li>
+<li><a href="#assign-client-unit">Assign Client Unit</a><ul>
+<li><a href="#unassigned-units-list">Unassigned Units List</a></li>
+<li><a href="#assigned-units-list">Assigned Units List</a></li>
+<li><a href="#assigned-unit-details-list">Assigned Unit details List</a></li>
+<li><a href="#assign-unit-form-data">Assign Unit form data</a></li>
+<li><a href="#save-assigned-unit">Save Assigned Unit</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1716,6 +1724,116 @@ Success Response
 
 [
     "ApproveUnitSuccess", 
+    {}
+]
+</code></pre>
+<h2 id="assign-client-unit"><a name="user-content-assign-client-unit" href="#assign-client-unit" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Assign Client Unit</h2>
+<h3 id="unassigned-units-list"><a name="user-content-unassigned-units-list" href="#unassigned-units-list" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Unassigned Units List</h3>
+<pre><code>[ "GetUnassignedUnits", {} ]
+
+Success Response
+
+[
+    "GetUnassignedUnitsSuccess", 
+    {
+        "unassigned_units_list": [
+            {
+                "unassigned_units": STRING, 
+                "group_name": STRING, 
+                "domain_name": STRING, 
+                "client_id": INT, 
+                "domain_id": INT
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="assigned-units-list"><a name="user-content-assigned-units-list" href="#assigned-units-list" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Assigned Units List</h3>
+<pre><code>[ 
+    "GetAssignedUnits", 
+    { 
+        "domain_id": INT, 
+        "client_id": INT
+    } 
+]
+
+Success Response
+
+[
+    "GetAssignedUnitsSuccess", 
+    {
+        "assigned_units_list": [
+            {
+                "user_id": INT, 
+                "legal_entity_id": INT, 
+                "legal_entity_name": STRING, 
+                "business_group_name": STRING, 
+                "employee_name": STRING, 
+                "unit_count": INT
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="assigned-unit-details-list"><a name="user-content-assigned-unit-details-list" href="#assigned-unit-details-list" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Assigned Unit details List</h3>
+<pre><code>[ 
+    "GetAssignedUnitDetails", 
+    { 
+        "legal_entity_id": INT, 
+        "user_id": INT
+    } 
+]
+
+Success Response
+
+[
+    "GetAssignedUnitDetailsSuccess", 
+    {
+        "assigned_unit_details_list": [UNIT_DETAILS,]
+    }
+]
+</code></pre>
+<h3 id="assign-unit-form-data"><a name="user-content-assign-unit-form-data" href="#assign-unit-form-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Assign Unit form data</h3>
+<pre><code>[
+    "GetAssignUnitFormData", 
+    {
+        "domain_id": INT,
+        "client_id": INT 
+    }
+]
+
+Success Response
+
+[
+    "GetAssignUnitFormDataSuccess", 
+    {
+        "business_groups": [BUSINESS_GROUP,], 
+        "domain_manager_users": [USER,], 
+        "unit_legal_entity": [LEGAL_ENTITY,],
+        "assigned_unit_details_list": [UNIT_DETAILS,], 
+    }
+]
+</code></pre>
+<h3 id="save-assigned-unit"><a name="user-content-save-assigned-unit" href="#save-assigned-unit" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Assigned Unit</h3>
+<pre><code> [ 
+    "SaveAsssignedUnits", 
+    { 
+        "user_id": INT, 
+        "active_units": [ 
+            { 
+                "unit_id": INT, 
+                "domain_name": STRING,
+                "legal_entity_id": INT
+            },
+        ], 
+        "client_id": INT
+    } 
+]
+
+Success Response
+
+[
+    "SaveAsssignedUnitsSuccess", 
     {}
 ]
 </code></pre></article></body></html>

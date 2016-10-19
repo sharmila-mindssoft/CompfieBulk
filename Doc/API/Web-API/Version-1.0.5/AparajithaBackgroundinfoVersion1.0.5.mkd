@@ -54,6 +54,7 @@
 	{
         "legal_entity_id": INT, 
         "legal_entity_name": STRING, 
+        "business_group_id": INT,
         "client_id": INT
     }
 
@@ -90,4 +91,29 @@
         "is_active": BOOL, 
         "country_ids": [INT,], 
         "domain_ids": [INT,],     
+    }
+
+## USER
+
+	{
+        "is_active": BOOL, 
+        "user_id": INT, 
+        "employee_name": STRING
+    }
+
+## UNIT_DETAILS
+
+	{
+        "division_name": STRING, 
+        "unit_name": STRING, 
+        "legal_entity_name": STRING, 
+        "domain_names": [STRING,], 
+        "unit_code": STRING, 
+        "geography_name": STRING, 
+        "address": STRING, 
+        "org_names_list": [
+            [STRING,],
+        ], 
+        "unit_id": INT, 
+        "category_name": STRING
     }
