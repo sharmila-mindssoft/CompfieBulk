@@ -1061,10 +1061,12 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser`(in userId INT(11))
 BEGIN
 	select t1.unit_id, t1.client_id, t1.business_group_id,
-    t1.legal_entity_id, t1.division_id, t1.country_id,
-	t1.geography_id, t1.industry_id, t1.unit_code,
+    t1.legal_entity_id, t1.division_id,
+	t1.geography_id, t1.unit_code,t1.country_id,
 	t1.unit_name, t1.address, t1.postal_code,
-	t1.domain_ids, t1.is_active,
+	t1.approve_status, t1.is_active,
+	t4.category_name,
+	t6.domain_id as domain_ids, t6.industry_id as i_ids,
 	(select business_group_name from tbl_business_groups where
     business_group_id = t1.business_group_id) as b_group,
     (select legal_entity_name from tbl_legal_entities where
@@ -1074,12 +1076,19 @@ BEGIN
     (select group_name from tbl_client_groups where
     client_id = t1.client_id) as group_name
     from
-    tbl_units as t1, tbl_user_clients as t2, tbl_user_countries as t3
+    tbl_units as t1, tbl_user_clients as t2, tbl_user_countries as t3,
+	tbl_category_master as t4,
+	tbl_user_domains as t5, tbl_unit_industries as t6
     where
-    t1.client_id = t2.client_id and
+	t6.domain_id = t5.domain_id and
+	t5.user_id = t2.user_id and
+	t4.category_id = t1.category_id and
+	t4.client_id = t1.client_id and
 	t1.country_id = t3.country_id and
     t3.user_id = t2.user_id and
+	t1.client_id = t2.client_id and
     t2.user_id = userId
+	group by t1.unit_id
     order by group_name, b_group, l_entity, division;
 END //
 DELIMITER ;
@@ -2106,8 +2115,8 @@ DELIMITER;
 
 -- To get list of countries under client master group
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_for_unit`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_countries_for_unit`(IN session_user INT(11))
 BEGIN
 	IF session_user > 0 THEN
@@ -2128,8 +2137,8 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- To get list of industries for client id for client unit
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_getindustries_for_legalentity`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_getindustries_for_legalentity`(IN session_user INT(11))
 BEGIN
 	IF session_user > 0 THEN
@@ -2157,8 +2166,8 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- To check dupliaction of unit code and unit name
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_checkduplication`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_checkduplication`(in unitId int(11), unitCode varchar(50),
 		unitName varchar(50), clientId int(11))
 BEGIN
@@ -2182,8 +2191,8 @@ DELIMITER;
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitId`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_check_unitId`(in unitId int(11))
 BEGIN
 	select count(*) as unit_id_cnt from
@@ -2195,8 +2204,8 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- check dupliaction of id for save units
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitgroupid`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_check_unitgroupid`(
 in tableName varchar(50), param int(11))
 BEGIN
@@ -2222,14 +2231,13 @@ DELIMITER;
 -- --------------------------------------------------------------------------------
 -- Get unit max id
 -- -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_max_unitid`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_tbl_units_max_unitid`()
 BEGIN
 	select max(unit_id) as max_id from
 	tbl_units;
 END
-
 
 -- --------------------------------------------------------------------------------
 -- To get Unassigned units list
@@ -2419,4 +2427,63 @@ CREATE PROCEDURE `sp_userunits_delete`(
 BEGIN
 	DELETE FROM tbl_user_units WHERE user_id=userid;
 END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- find dupliacte catofory name / division name for unit master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitgroupname`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_units_check_unitgroupname`(
+in tableName varchar(50), param varchar(50))
+BEGIN
+	if tableName = 'catg_name' then
+		select count(0) as catg_cnt from
+		tbl_category_master where category_name = param;
+	end if;
+	if tableName = 'div_name' then
+		select count(0) as div_name_cnt from
+		tbl_divisions where division_name = param;
+	end if;
+END
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- save new division from unit master form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_save_division`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_save_division`(
+	in clientId int(11), bg_id int(11), le_id int(11),
+	divisionName varchar(50), createdBy int(11),
+	createdOn timestamp
+	)
+BEGIN
+	insert into tbl_divisions
+	(client_id, business_group_id, legal_entity_id, division_name,
+	created_by, created_on)
+	values
+	(clientId, bg_id, le_id, divisionName, createdBy, createdOn);
+END
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- save new category added from unit master form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_save_category`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_save_category`(
+	in clientId int(11), bg_id int(11), le_id int(11),
+	div_id varchar(50), categoryName varchar(50), createdBy int(11),
+	createdOn timestamp
+	)
+BEGIN
+	insert into tbl_category_master
+	(client_id, business_group_id, legal_entity_id, division_id,
+	category_name, created_by, created_on)
+	values
+	(clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
+END
 DELIMITER;

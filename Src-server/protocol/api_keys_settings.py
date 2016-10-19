@@ -299,6 +299,12 @@ api_params = {
     "assigned_unit_details_list": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"AssignedUnitDetails"},
     "domain_manager_users": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"User"},
     "active_units": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"ActiveUnit"},
+    'division_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'dv_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'div_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'unit_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "division_units": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"UnitDivision"},
+    "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
