@@ -1667,6 +1667,10 @@ def get_user_client_countries(db, session_user):
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
 def get_assign_legalentities(db):
+    #
+    # To get list of legal entities with no of unassigned units
+    #  Parameters - None
+    #
     legalentities = db.call_proc(
         "sp_assign_legal_entities_list", None
     )
@@ -1689,13 +1693,27 @@ def return_assign_legalentities(assign_legalentities_list):
     return assign_legalentities_list
 
 
+##########################################################################
+#  To get Unassigned units list
+#  Parameters : Object of database
+#  Return Type : Returns List of object of UnassignedUnit
+##########################################################################
 def get_unassigned_units_list(db):
+    #
+    # To get list of unassigned units
+    #  Parameters - None
+    #
     units = db.call_proc(
         "sp_userunits_list", None
     )
     return return_unassigned_units(units)
 
 
+###############################################################################
+#  To convert data fetched from database into List of object of UnassignedUnit
+#  Parameters : Object fetched from database
+#  Return Type : Returns List of object of UnassignedUnit
+###############################################################################
 def return_unassigned_units(data):
     fn = technomasters.UnassignedUnit
     result = [
@@ -1713,15 +1731,29 @@ def return_unassigned_units(data):
     return result
 
 
+###############################################################################
+#  To get list of assigned units
+#  Parameters : Object of database, Received request
+#  Return Type : Returns List of object of AssignedUnit
+###############################################################################
 def get_assigned_units_list(db, request):
     domain_id = request.domain_id
     client_id = request.client_id
+    #
+    # To get list of assigned units under a client and domain
+    #  Parameters - client id, domain_id
+    #
     units = db.call_proc(
         "sp_userunits_assigned_list", (client_id, domain_id)
     )
     return return_assigned_units(units)
 
 
+###############################################################################
+#  To convert data fetched from database into list of object of Assigned unit
+#  Parameters : Data fetched from database (Tuple of tuples)
+#  Return Type : Returns List of object of AssignedUnit
+###############################################################################
 def return_assigned_units(data):
     fn = technomasters.AssignedUnit
     result = [
@@ -1736,9 +1768,18 @@ def return_assigned_units(data):
     return result
 
 
+###############################################################################
+#  To get details of assigned units
+#  Parameters : Object of database, Received request
+#  Return Type : Returns List of object of AssignedUnitDetails
+###############################################################################
 def get_assigned_unit_details_list(db, request):
     legal_entity_id = request.legal_entity_id
     user_id = request.user_id
+    #
+    # To get details of assigned units under a domain manager and legal entity
+    #  Parameters - Domain manager id, legal entity id
+    #
     units, industry_details = db.call_proc_with_multiresult_set(
         "sp_userunits_assigned_details_list", (user_id, legal_entity_id), 2
     )
@@ -1747,6 +1788,12 @@ def get_assigned_unit_details_list(db, request):
     return return_assigned_unit_details(units, unit_industry_name_map)
 
 
+###############################################################################
+#  To convert data fetched from database into list of object of
+#  AssignedUnitDetails
+#  Parameters : Unit data, Unit - industry name map (Dict)
+#  Return Type : Returns List of object of AssignedUnitDetails
+###############################################################################
 def return_assigned_unit_details(units, unit_industry_name_map):
     fn = technomasters.AssignedUnitDetails
     result = [
@@ -1765,6 +1812,12 @@ def return_assigned_unit_details(units, unit_industry_name_map):
     return result
 
 
+###############################################################################
+#  To convert data fetched from database into list of object of
+#  AssignedUnitDetails
+#  Parameters : Unit data, Unit - industry name map (Dict)
+#  Return Type : Returns List of object of AssignedUnitDetails
+###############################################################################
 def get_data_for_assign_unit(db, request, session_user):
     business_groups = get_business_groups_for_client(db, request.client_id)
     legal_entities = get_legal_entities_for_client(db, request.client_id)
@@ -1773,21 +1826,48 @@ def get_data_for_assign_unit(db, request, session_user):
     return business_groups, legal_entities, units, domain_managers
 
 
+###############################################################################
+#  To get business groups under a client
+#  Parameters : Object of database, client id
+#  Return Type : Returns List of object of BusinessGroup
+###############################################################################
 def get_business_groups_for_client(db, client_id):
+    #
+    # To get list of business groups under a client
+    # Parameters - client id
+    #
     data = db.call_proc(
         "sp_business_groups_by_client", (client_id,)
     )
     return return_business_groups(data)
 
 
+###############################################################################
+#  To get Legal entities under a client
+#  Parameters : Object of database, client id
+#  Return Type : Returns List of object of Legal Entity
+###############################################################################
 def get_legal_entities_for_client(db, client_id):
+    #
+    # To get list of legal entities under a client
+    # Parameters - client id
+    #
     data = db.call_proc(
         "sp_legal_entities_by_client", (client_id,)
     )
     return return_legal_entities_for_unit(data)
 
 
+###############################################################################
+#  To get Legal entities under a client
+#  Parameters : Object of database, client id
+#  Return Type : Returns List of object of Legal Entity
+###############################################################################
 def get_domain_managers_for_user(db, session_user):
+    #
+    # To get list of domain managers assigned under a session user
+    # Parameters - session user
+    #
     users = db.call_proc(
         "sp_users_domain_managers", (session_user,)
     )
@@ -1806,6 +1886,10 @@ def return_domain_managers(data):
 
 
 def get_units_of_client(db, client_id, domain_id):
+    #
+    # To get list of units under a client and domain
+    # Parameters - client id, domain id
+    #
     result = db.call_proc_with_multiresult_set(
         "sp_units_list", (client_id, domain_id), 2)
     units = result[0]
@@ -1849,6 +1933,10 @@ def save_assigned_units(db, request, session_user):
             session_user, current_time_stamp
         )
         values_list.append(value_tuple)
+    #
+    # To delete all the settings under the given domain manager
+    # Parameters - domain manager id
+    #
     db.call_update_proc(
         "sp_userunits_delete", (domain_manager_id, )
     )

@@ -545,6 +545,9 @@ def get_assign_unit_form_data(db, request, session_user):
     )
 
 
+############################################################
+# To save assigned units
+############################################################
 def process_save_assigned_units_request(db, request, session_user):
     save_assigned_units(db, request, session_user)
     return technomasters.SaveAsssignedUnitsSuccess()
