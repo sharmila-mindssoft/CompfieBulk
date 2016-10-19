@@ -2206,3 +2206,85 @@ BEGIN
 	select max(unit_id) as max_id from
 	tbl_units;
 END
+
+-- -------------------------------------------------------------------------------------------
+-- To get the list of groups with countries and number of legal entities assigned / unassigned
+-- -------------------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_assign_legal_entities_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_assign_legal_entities_list`()
+BEGIN
+    select client_id, group_name,
+    (
+        select group_concat(country_name) from tbl_countries
+        where country_id in (
+            select country_id from tbl_client_countries
+            where client_id=client_id
+        )
+    ) as country_names,
+    (
+        select count(legal_entity_id) from tbl_legal_entities tle
+        WHERE tle.client_id=tcg.client_id
+    ) as no_of_legal_entities,
+    (
+        select count(legal_entity_id) from tbl_user_legalentity tule
+        WHERE tule.client_id=tcg.client_id group by tule.client_id
+    ) as no_of_assigned_legal_entities
+    
+    FROM tbl_client_groups tcg;
+END ;;
+DELIMITER ;
+
+
+-- ----------------------------------------------------
+-- To get the unassigned legal entity details by client
+-- ----------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_unassigned_legal_entity_details_by_group_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_unassigned_legal_entity_details_by_group_id`(
+    IN clientid INT(11)
+)
+BEGIN
+	SELECT t1.legal_entity_id, t1.legal_entity_name,t2.business_group_name, t3.country_name, t3.country_id
+	FROM tbl_legal_entities t1
+	LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
+	INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
+	LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
+	WHERE t1.client_id=clientid and t4.legal_entity_id is null;
+END ;;
+DELIMITER ;
+
+-- ------------------------
+-- To get techno users list
+-- ------------------------
+DROP PROCEDURE IF EXISTS `sp_users_technouser_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
+BEGIN
+	SELECT t1.child_user_id as user_id, t2.is_active, 
+    concat(t2.employee_code," - ", t2.employee_name) as employee_name  
+    from tbl_user_mapping t1 
+    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id
+    WHERE t1.user_category_id=8 and t1.parent_user_id = session_user;
+	SELECT user_id, country_id FROM tbl_user_countries;
+	SELECT user_id, domain_id FROM tbl_user_domains;
+END ;;
+DELIMITER ;
+
+-- --------------------------------------------------
+-- To get the assigned legal entity details by client
+-- --------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_assigned_legal_entity_details_by_group_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_assigned_legal_entity_details_by_group_id`(
+    IN clientid INT(11)
+)
+BEGIN
+	SELECT t1.legal_entity_id, t1.legal_entity_name,t2.business_group_name, t3.country_name, t3.country_id
+	FROM tbl_legal_entities t1
+	LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
+	INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
+	LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
+	WHERE t1.client_id=clientid and t4.legal_entity_id is not null;
+END ;;
+DELIMITER ;
