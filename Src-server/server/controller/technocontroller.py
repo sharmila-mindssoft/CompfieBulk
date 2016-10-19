@@ -15,7 +15,10 @@ from technomastercontroller import (
     get_next_unit_code,
     get_client_group_form_data,
     get_edit_client_group_form_data,
-    get_assign_legal_entity_list
+    get_assign_legal_entity_list,
+    get_edit_assign_legal_entity,
+    process_save_assign_legal_entity,
+    view_assign_legal_entity
 )
 from server import logger
 
@@ -138,6 +141,33 @@ def process_techno_request(request, db):
         logger.logKnowledgeApi("------", str(time.time()))
         result =  get_assign_legal_entity_list(db, request_frame, session_user)
         logger.logKnowledgeApi("GetAssignLegalEntityList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    if type(request_frame) is technomasters.GetEditAssignLegalEntity:
+        logger.logKnowledgeApi("GetEditAssignLegalEntity", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = get_edit_assign_legal_entity(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("GetEditAssignLegalEntity", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    if type(request_frame) is technomasters.SaveAssignLegalEntity:
+        logger.logKnowledgeApi("SaveAssignLegalEntity", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_save_assign_legal_entity(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("SaveAssignLegalEntity", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    if type(request_frame) is technomasters.ViewAssignLegalEntity:
+        logger.logKnowledgeApi("ViewAssignLegalEntity", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = view_assign_legal_entity(
+            db, request_frame, session_user
+        )
+        logger.logKnowledgeApi("ViewAssignLegalEntity", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     return result

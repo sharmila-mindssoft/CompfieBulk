@@ -1,5 +1,5 @@
 from protocol import (
-    core, technomasters
+    core, technomasters, admin
 )
 from server.exceptionmessage import process_error
 from server.constants import (CLIENT_LOGO_PATH)
@@ -1798,8 +1798,158 @@ def return_assign_legalentities(assign_legalentities_list):
     assign_legalentities_list = [
         fn(
             legalentity["client_id"], legalentity["group_name"],
-            legalentity["country_names"], legalentity["no_of_legal_entities"]
+            legalentity["country_names"], legalentity["no_of_legal_entities"],
+            legalentity["no_of_assigned_legal_entities"]
             
         ) for legalentity in assign_legalentities_list
     ]
     return assign_legalentities_list
+
+
+def return_users(data, country_map, domain_map):
+    fn = admin.User
+    result = []
+    for datum in data:
+        user_id = int(datum["user_id"])
+        user = fn(
+            user_id=user_id, employee_name=datum["employee_name"],
+            is_active=bool(datum["is_active"]),
+            country_ids=country_map[user_id],
+            domain_ids=domain_map[user_id]
+        )
+        result.append(user)
+    return result
+
+
+def generate_country_map(countries):
+    country_map = {}
+    for country in countries:
+        user_id = country["user_id"]
+        if user_id not in country_map:
+            country_map[user_id] = []
+        country_map[user_id].append(
+            int(country["country_id"])
+        )
+    return country_map
+
+
+def generate_domain_map(domains):
+    domain_map = {}
+    for domain in domains:
+        user_id = domain["user_id"]
+        if user_id not in domain_map:
+            domain_map[user_id] = []
+        domain_map[user_id].append(
+            int(domain["domain_id"])
+        )
+    return domain_map
+
+#
+#   Getting data for Editing Assign Legal Entity
+#
+##########################################################################
+#  To get details of a client by id
+#  Parameters : Object of database, client id
+#  Return Type : Tuple with group name, username, legal entities and
+#  date configurations
+##########################################################################
+def get_unassigned_legal_entity(db, client_id):
+    
+    legal_entities = db.call_proc(
+        "sp_unassigned_legal_entity_details_by_group_id", (client_id,)
+    )
+    
+    legal_entities = return_unassigned_legal_entities(
+        legal_entities
+    )
+
+
+    return (
+        legal_entities
+    )
+
+
+def get_techno_users_list(db, session_user):
+    result = db.call_proc_with_multiresult_set("sp_users_technouser_list", (session_user,), 3)
+
+    user_countries = result[1]
+    user_domains = result[2]
+    techno_users_result = result[0]
+
+    user_countries_map = generate_country_map(user_countries)
+    user_domains_map = generate_domain_map(user_domains)
+    techno_users = return_users(
+        techno_users_result, user_countries_map, user_domains_map)
+
+    return (
+        techno_users
+    )
+##########################################################################
+#  To convert the data fetched from database into Legal entity object
+#  Parameters : Legal entity tuple, incharge person tuple, domain tuple
+#  Return Type : List of object of Legal entities
+##########################################################################
+def return_unassigned_legal_entities(legal_entities):
+    results = []
+    
+    for legal_entity in legal_entities:
+        results.append(
+            core.UnAssignLegalEntity(
+                legal_entity_id=legal_entity["legal_entity_id"],
+                legal_entity_name=legal_entity["legal_entity_name"],
+                business_group_name=legal_entity["business_group_name"],
+                c_name=legal_entity["country_name"],
+                c_id=legal_entity["country_id"]
+            )
+        )
+    return results
+
+##########################################################################
+#  To Save Assign Legal Entity
+##########################################################################
+def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_user):
+    # db.call_proc(
+    #     "sp_user_legalentities_delete", (user_ids, )
+    # )
+    values_list = []
+    current_time_stamp = get_date_time()
+    columns = ["user_id", "client_id", "legal_entity_id", "assigned_by", "assigned_on"]
+
+    for user_id in user_ids:
+        for legal_entity_id in legal_entity_ids:
+            values_tuple = (user_id, client_id, legal_entity_id, session_user, current_time_stamp)
+            values_list.append(values_tuple)
+    res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
+    if res is False:
+        raise process_error("E041")
+    return res
+
+def get_assigned_legal_entity(db, client_id):
+    
+    legal_entities = db.call_proc(
+        "sp_assigned_legal_entity_details_by_group_id", (client_id,)
+    )
+    
+    legal_entities = return_assigned_legal_entities(
+        legal_entities
+    )
+
+
+    return (
+        legal_entities
+    )
+
+def return_assigned_legal_entities(legal_entities):
+    results = []
+    
+    for legal_entity in legal_entities:
+        results.append(
+            core.UnAssignLegalEntity(
+                legal_entity_id=legal_entity["legal_entity_id"],
+                legal_entity_name=legal_entity["legal_entity_name"],
+                business_group_name=legal_entity["business_group_name"],
+                c_name=legal_entity["country_name"],
+                c_id=legal_entity["country_id"]
+            )
+        )
+    return results

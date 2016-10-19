@@ -1060,6 +1060,42 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+
+  function getEditAssignLegalEntity(client_id, callback){
+    callerName = 'techno';
+    var request = [
+      'GetEditAssignLegalEntity',
+      {
+        'group_id': client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function saveAssignLegalEntity(client_id, legal_entity_ids, user_ids, callback){
+    callerName = 'techno';
+    var request = [
+      'SaveAssignLegalEntity',
+      {
+        'client_id': client_id,
+        'legal_entity_ids': legal_entity_ids,
+        'user_ids': user_ids
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function viewAssignLegalEntity(client_id, callback){
+    callerName = 'techno';
+    var request = [
+      'ViewAssignLegalEntity',
+      {
+        'client_id': client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   // Change Password APIs
   function changePassword(currentPassword, newPassword, callback) {
     callerName = 'login';
@@ -1795,6 +1831,9 @@ function initMirror() {
     getClientGroups: getClientGroups,
     changeClientGroupStatus: changeClientGroupStatus,
     getAssignLegalEntityList: getAssignLegalEntityList,
+    getEditAssignLegalEntity: getEditAssignLegalEntity,
+    saveAssignLegalEntity: saveAssignLegalEntity,
+    viewAssignLegalEntity: viewAssignLegalEntity,
     changePassword: changePassword,
     forgotPassword: forgotPassword,
     validateResetToken: validateResetToken,

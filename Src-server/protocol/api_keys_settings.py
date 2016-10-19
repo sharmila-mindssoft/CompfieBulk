@@ -143,6 +143,9 @@ api_params = {
     "new_logo": {'type': 'RECORD_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "FileList"},
     'old_logo': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'no_of_legal_entities': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'no_of_assigned_legal_entities': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'user_ids': {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    'legal_entity_ids': {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
 
     'email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'business_group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -196,6 +199,8 @@ api_params = {
     "divisions" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "Division"},
 
     "assign_le_list" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AssignLegalEntity"},
+    "unassign_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnAssignLegalEntity"},
+    "assigned_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnAssignLegalEntity"},
 
     'le_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "country_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
