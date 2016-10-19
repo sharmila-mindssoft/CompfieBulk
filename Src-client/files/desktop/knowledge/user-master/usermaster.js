@@ -28,7 +28,7 @@ var Designation = $("designation");
 var User_category = $('#usercatval');
 // auto complete
 var User_group_val = $('#usergroup');
-var User_group_ac = $("usergroupval");
+var User_group_ac = $("#usergroupval");
 // multi select textbox
 var Country = $("#countryselected");
 var Domains == $('#domainselected');
@@ -625,7 +625,7 @@ function pageControls() {
 // page load
 function initialize() {
   $(document).ready(function () {
-    getUsers();
+    renderUserList(null);
     pageControls();
     Emp_name.focus();
 
