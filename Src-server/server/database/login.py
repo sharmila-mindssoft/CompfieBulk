@@ -24,7 +24,7 @@ __all__ = [
 def verify_login(db, username, password):
 
     args = [username, password]
-    expected_result = 3
+    expected_result = 4
     result = db.call_proc_with_multiresult_set(
        "sp_verify_login", args, expected_result
     )

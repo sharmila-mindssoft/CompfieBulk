@@ -96,7 +96,7 @@ def process_login(db, request, session_user_ip):
             if user_category_id <= 2 :
                 return admin_login_response(db, session_user_ip, verified_login, forms)
             else :
-                return user_login_response(db, verified_login, user_info, forms)
+                return user_login_response(db, session_user_ip, user_info, forms)
         else :
             pass
 
@@ -160,7 +160,8 @@ def mobile_user_login_respone(db, data, request, ip):
     )
 
 
-def user_login_response(db, data, ip):
+def user_login_response(db, ip, data, forms):
+    data = data[0]
     user_id = data["user_id"]
     email_id = data["email_id"]
     session_type = 1  # web
@@ -172,8 +173,9 @@ def user_login_response(db, data, ip):
     address = None if data["address"] == "" else data["address"]
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
-    form_ids = data["form_ids"]
-    menu = process_user_forms(db, form_ids)
+    # form_ids = data["form_ids"]
+    # menu = process_user_forms(db, form_ids)
+    menu = process_admin_forms(forms)
     # db.save_user_login_history(user_id)
     return login.UserLoginSuccess(
         int(user_id), session_token, email_id, user_group_name,

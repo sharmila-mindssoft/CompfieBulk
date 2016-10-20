@@ -237,7 +237,7 @@ class UserLoginSuccess(Response):
         data = parse_dictionary(data, [
             "user_id", "session_token", "email_id",
             "user_group_name", "menu", "employee_name", "employee_code",
-            "contact_no", "address", "designation", "client_id", "is_admin"])
+            "contact_no", "address", "designation", "user_client_id", "is_admin"])
         user_id = data.get("user_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
@@ -248,7 +248,7 @@ class UserLoginSuccess(Response):
         contact_no = data.get("contact_no")
         address = data.get("address")
         designation = data.get("designation")
-        client_id = data.get("client_id")
+        client_id = data.get("user_client_id")
         is_admin = data.get("is_admin")
         return UserLoginSuccess(
             user_id, session_token, email_id, user_group_name, menu, employee_name,
@@ -267,7 +267,7 @@ class UserLoginSuccess(Response):
             "contact_no": self.contact_no,
             "address": self.address,
             "designation": self.designation,
-            "client_id": self.client_id,
+            "user_client_id": self.client_id,
             "is_admin": self.is_admin
         }
 
