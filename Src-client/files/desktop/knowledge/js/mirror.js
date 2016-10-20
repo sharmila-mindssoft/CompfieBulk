@@ -1635,7 +1635,7 @@ function initMirror() {
       var request = [
           "SaveAllocatedDBEnv",
           {
-            "client_id": client_id, 
+            "client_id": client_id,
             "legal_entity_id": le_id,
             "database_server_ip": db_server_ip,
             "machine_id": machine_id
@@ -1656,7 +1656,7 @@ function initMirror() {
       var request = [
           "SaveFileStorage",
           {
-            "client_id": client_id, 
+            "client_id": client_id,
             "legal_entity_id": le_id,
             "machine_id": machine_id
           }
@@ -1755,6 +1755,17 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+
+  //user mapping report
+  function getUserMappingReportFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetUserMappingReportFilters',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -1913,7 +1924,8 @@ function initMirror() {
     getAssignedUnitsList: getAssignedUnitsList,
     getAssignedUnitDetails: getAssignedUnitDetails,
     getAssignUnitFormData: getAssignUnitFormData,
-    saveAssignedUnits: saveAssignedUnits
+    saveAssignedUnits: saveAssignedUnits,
+    getUserMappingReportFilters: getUserMappingReportFilters
   };
 }
 var mirror = initMirror();
