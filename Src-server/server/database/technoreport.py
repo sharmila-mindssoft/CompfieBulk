@@ -623,3 +623,57 @@ def return_knowledge_report(
         )
         report_list.append(info)
     return report_list, total_count
+
+
+def get_user_category_details(db, session_user):
+    result = db.call_proc("sp_get_user_category_details",(int(session_user), ))
+    return result
+
+
+def get_countries_for_usermapping_report_filter(db, user_id, user_category_id):
+    result = db.call_proc("sp_countries_for_usermapping_report", (user_category_id, user_id))
+    results = []
+    for d in result:
+        results.append(core.Country(
+            d["country_id"], d["country_name"], bool(d["is_active"])
+        ))
+    return results
+
+
+def get_group_details_for_usermapping_report_filter(db, user_id, user_category_id):
+    result = db.call_proc("sp_usermapping_report_group_details", (user_category_id, user_id))
+    results = []
+    for d in result:
+        results.append(core.UserMappingGroupDetails(
+            d["client_id"], d["client_name"], d["legal_entity_id"], d["country_id"], d["business_group_id"]
+        ))
+    return results
+
+def get_business_groups_for_usermapping_report(db):
+    result = db.call_proc("sp_usermapping_report_business_groups", ())
+    results = []
+    for d in result:
+        results.append(core.ClientBusinessGroup(
+            d["business_group_id"], d["business_group_name"]
+        ))
+    return results
+
+def get_legal_entities_for_usermapping_report(db):
+    result = db.call_proc("sp_usermapping_report_legal_entity", ())
+    results = []
+    for d in result:
+        results.append(core.ClientLegalEntity(
+            d["legal_entity_id"], d["legal_entity_name"], d["business_group_id"]
+        ))
+    return results
+
+def get_unit_details_for_usermapping_report(db, user_id, user_category_id):
+    result = db.call_proc("sp_usermapping_report_unit_details", (user_category_id, user_id))
+    results = []
+    for d in result:
+        results.append(core.UserMappingUnitDetails(
+            d["unit_id"], d["unit_name"], d["client_id"], d["business_group_id"],
+            d["legal_entity_id"], d["country_id"], d["division_id"], d["division_name"],
+            d["category_id"], d["category_name"]
+        ))
+    return results
