@@ -23,14 +23,16 @@ BEGIN
 		WHERE T2.category_id_2 = 1 ;
 
     elseif @_user_category_id > 2 then
-		SELECT user_id, user_category_id, employee_code, employee_name, email_id, contact_no, mobile_no,
-		address, designation, @_user_group_id := user_group_id as user_group_id
-		FROM tbl_users WHERE user_id = @_user_id;
+		SELECT T1.user_id, T1.user_category_id, T1.employee_code, T1.employee_name,
+        T1.email_id, T1.contact_no, T1.mobile_no,
+		T1.address, T1.designation, @_user_group_id := T1.user_group_id as user_group_id,
+        (select tg.user_group_name from tbl_user_groups tg where tg.user_group_id = T1.user_group_id) as user_group_name
+		FROM tbl_users as T1 WHERE T1.user_id = @_user_id;
 
         SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
         T1.form_name, T1.form_url, T1.form_order, T1.parent_menu
 		FROM tbl_forms as T1 INNER JOIN tbl_user_group_forms as T2
-		ON T2.user_group_id = @_usser_group_id;
+		ON T2.user_group_id = @_user_group_id;
     end if;
 END //
 
