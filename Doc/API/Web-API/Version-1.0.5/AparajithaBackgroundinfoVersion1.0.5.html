@@ -1029,6 +1029,8 @@ body .markdown-body
 <li><a href="#date_config">DATE_CONFIG</a></li>
 <li><a href="#industry">INDUSTRY</a></li>
 <li><a href="#user_config">USER_CONFIG</a></li>
+<li><a href="#user">USER</a></li>
+<li><a href="#unit_details">UNIT_DETAILS</a></li>
 </ul>
 </li>
 </ul>
@@ -1080,6 +1082,7 @@ body .markdown-body
 <pre><code>{
     "legal_entity_id": INT, 
     "legal_entity_name": STRING, 
+    "business_group_id": INT,
     "client_id": INT
 }
 </code></pre>
@@ -1112,5 +1115,28 @@ body .markdown-body
     "is_active": BOOL, 
     "country_ids": [INT,], 
     "domain_ids": [INT,],     
+}
+</code></pre>
+<h2 id="user"><a name="user-content-user" href="#user" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>USER</h2>
+<pre><code>{
+    "is_active": BOOL, 
+    "user_id": INT, 
+    "employee_name": STRING
+}
+</code></pre>
+<h2 id="unit_details"><a name="user-content-unit_details" href="#unit_details" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UNIT_DETAILS</h2>
+<pre><code>{
+    "division_name": STRING, 
+    "unit_name": STRING, 
+    "legal_entity_name": STRING, 
+    "domain_names": [STRING,], 
+    "unit_code": STRING, 
+    "geography_name": STRING, 
+    "address": STRING, 
+    "org_names_list": [
+        [STRING,],
+    ], 
+    "unit_id": INT, 
+    "category_name": STRING
 }
 </code></pre></article></body></html>

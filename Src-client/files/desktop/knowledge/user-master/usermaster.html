@@ -11,12 +11,15 @@
 
           <table>
             <tr>
-              <th align="center">#</th>
-              <th align="left">Employee</th>
-              <th align="left">User Group</th>
-              <th align="left">Designation</th>
-              <th align="center" width="9%">Edit</th>
-              <th align="center" width="9%">Status</th>
+              <th width="3%">#</th>
+              <th align="left" width="15%">Employee</th>
+              <th align="left" width="15%">User ID</th>
+              <th align="left" width="15%">Email ID</th>
+              <th align="left" width="15%">Category Name</th>
+              <th align="center" width="6%">Registration Email</th>
+              <th align="center" width="5%">Edit</th>
+              <th align="center" width="8%">Status</th>
+              <th align="center" width="6%">Disable</th>
             </tr>
             <tr>
               <td>&nbsp;</td>
@@ -24,12 +27,23 @@
                 <input type="text"  id="search-employee-name" class="filter-text-box">
               </td>
               <td>
-                <input type="text"  id="search-usergroup" class="filter-text-box">
+                <input type="text"  id="search-user-id" class="filter-text-box">
               </td>
               <td>
-                <input type="text"  id="search-designation" class="filter-text-box">
+                <input type="text"  id="search-email-id" class="filter-text-box">
+              </td>
+              <td>
+                <input type="text"  id="search-category-name" class="filter-text-box">
               </td>
               <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>
+                <select class="msdropdown" style="width:85px;">
+                  <option value="All">All</option>
+                  <option value="Active" data-image="/knowledge/images/icon-active.png">Active</option>
+                  <option value="Deactive" data-image="/knowledge/images/icon-inactive.png" name="cd">Inactive</option>
+                </select>
+              </td>
               <td>&nbsp;</td>
             </tr>
             <tbody class="tbody-user-list">
@@ -43,13 +57,18 @@
   <tr class="table-row">
     <td class="sno" align="center"></td>
     <td class="employee-name"></td>
-    <td class="user-group"></td>
-    <td class="designation"></td>
+    <td class="username"></td>
+    <td class="email-id"></td>
+    <td class="cat-name"></td>
+    <td class="registration-email"></td>
     <td align="center">
-      <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+      <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
     </td>
     <td align="center">
       <span class="status" style="width: 16px; height: 16px; display:block"> </span>
+    </td>
+    <td align="center">
+      <span class="disable" style="width: 16px; height: 16px; display:block"> </span>
     </td>
   </tr>
 </table>
@@ -59,7 +78,15 @@
         <div class="add-container">
           <div class="add-container-heading">Users<span class="error-message"></span></div>
           <div class="input-row-left">
-
+            <div class="input-row">
+              <div class="field-label">Category Name:<span class="mandatory">*</span></div>
+              <div class="field-input">
+              <select class="input-box" id="usercatval">
+                <option>Select</option>
+              </select>
+                <input type="hidden" id="cateid" value="">
+              </div>
+            </div>
             <div class="input-row">
               <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
               <div class="field-input">
@@ -89,12 +116,16 @@
           <div class="input-row" style="padding-bottom:0px;">
             <div class="field-label">&nbsp;</div>
             <div class="field-input">
-              <span style="font-size:10px;">[This will be used as the username for user acc.]</span>
+              <span style="font-size:10px;">[&#9658;We will use this email ID to contact you about your account.]</span>
             </div>
           </div>
           <div class="input-row" style="padding-bottom:0px;">
             <div class="field-label">Contact No.:</div>
-            <div class="field-input"><input type="text" maxlength="3" id="countrycode" class="input-box countrycode fieldvalue" value="+91" tabindex="5"> <input type="text" maxlength="5" id="areacode" class="input-box areacode fieldvalue" tabindex="6" > <input type="text" maxlength="10" id="contactno" class="input-box mobile fieldvalue" tabindex="7"></div>
+            <div class="field-input">
+            <input id="countrycode" type="text" maxlength="3"  class="input-box countrycode fieldvalue" value="+91" tabindex="5" >
+            <input id="areacode" type="text" maxlength="5"  class="input-box areacode fieldvalue" tabindex="6" >
+            <input id="contactno" type="text" maxlength="10"  class="input-box mobile fieldvalue" tabindex="7">
+            </div>
           </div>
 
           <div class="input-row" style="padding-bottom:0px;">
@@ -104,10 +135,18 @@
             </div>
           </div>
           <div class="input-row">
+            <div class="field-label">Mobile No.:<span class="mandatory">*</span></div>
+            <div class="field-input">
+            <input id="mcountrycode" type="text" class="input-box countrycode fieldvalue" value="+91" >
+            <input id="mobileno" type="text" class="input-box mobile fieldvalue" value="9876543210"
+            maxlength="10"
+            style="width: 63% !important"></div>
+          </div>
+          <div class="input-row">
             <div class="field-label">User Group:<span class="mandatory">*</span></div>
             <div class="field-input">
               <input type="text" class="input-box icon-autocomplete fieldvalue" id="usergroupval" tabindex="8">
-              <input type="hidden" id="usergroup">
+              <input id="usergroup" type="hidden" >
               <div id="ac-usergroup" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
             </div>

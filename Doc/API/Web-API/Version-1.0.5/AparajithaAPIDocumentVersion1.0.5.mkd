@@ -675,3 +675,119 @@
         {}
     ]
 
+## Assign Client Unit
+
+### Unassigned Units List
+
+    [ "GetUnassignedUnits", {} ]
+
+    Success Response
+
+    [
+        "GetUnassignedUnitsSuccess", 
+        {
+            "unassigned_units_list": [
+                {
+                    "unassigned_units": STRING, 
+                    "group_name": STRING, 
+                    "domain_name": STRING, 
+                    "client_id": INT, 
+                    "domain_id": INT
+                },
+            ]
+        }
+    ]
+
+### Assigned Units List
+
+    [ 
+        "GetAssignedUnits", 
+        { 
+            "domain_id": INT, 
+            "client_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "GetAssignedUnitsSuccess", 
+        {
+            "assigned_units_list": [
+                {
+                    "user_id": INT, 
+                    "legal_entity_id": INT, 
+                    "legal_entity_name": STRING, 
+                    "business_group_name": STRING, 
+                    "employee_name": STRING, 
+                    "unit_count": INT
+                },
+            ]
+        }
+    ]
+
+### Assigned Unit details List
+
+    [ 
+        "GetAssignedUnitDetails", 
+        { 
+            "legal_entity_id": INT, 
+            "user_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "GetAssignedUnitDetailsSuccess", 
+        {
+            "assigned_unit_details_list": [UNIT_DETAILS,]
+        }
+    ]
+
+### Assign Unit form data
+
+    [
+        "GetAssignUnitFormData", 
+        {
+            "domain_id": INT,
+            "client_id": INT 
+        }
+    ]
+
+    Success Response
+
+    [
+        "GetAssignUnitFormDataSuccess", 
+        {
+            "business_groups": [BUSINESS_GROUP,], 
+            "domain_manager_users": [USER,], 
+            "unit_legal_entity": [LEGAL_ENTITY,],
+            "assigned_unit_details_list": [UNIT_DETAILS,], 
+        }
+    ]
+
+### Save Assigned Unit
+
+     [ 
+        "SaveAsssignedUnits", 
+        { 
+            "user_id": INT, 
+            "active_units": [ 
+                { 
+                    "unit_id": INT, 
+                    "domain_name": STRING,
+                    "legal_entity_id": INT
+                },
+            ], 
+            "client_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveAsssignedUnitsSuccess", 
+        {}
+    ]
+
