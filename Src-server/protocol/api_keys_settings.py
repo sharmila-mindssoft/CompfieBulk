@@ -305,6 +305,11 @@ api_params = {
     'unit_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "division_units": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"UnitDivision"},
     "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "category_id": {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    "usermapping_group_details": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserMappingGroupDetails"},
+    "usermapping_unit": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserMappingUnitDetails"},
+    "usermapping_legal_entities": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"ClientLegalEntity"},
+    "usermapping_business_groups": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"ClientBusinessGroup"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
