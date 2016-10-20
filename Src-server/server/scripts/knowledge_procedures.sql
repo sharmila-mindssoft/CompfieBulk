@@ -75,8 +75,8 @@ DROP PROCEDURE IF EXISTS `sp_validitydays_settings_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_validitydays_settings_list`()
 BEGIN
-	SELECT validity_days_id, country_id, domain_id, days
-	FROM tbl_validity_days_settings;
+	SELECT validity_date_id, country_id, domain_id, days
+	FROM tbl_validity_date_settings;
 END //
 DELIMITER ;
 
@@ -106,14 +106,14 @@ CREATE PROCEDURE `sp_validitydays_settings_save`(
 )
 BEGIN
 	IF validitydaysid is null then
-		INSERT INTO tbl_validity_days_settings
+		INSERT INTO tbl_validity_date_settings
 		(country_id, domain_id, days, created_by, created_on, updated_by, updated_on)
 		VALUES
 		(countryid, domainid, validitydays, createdby, createdon, updatedby, updatedon);
 	ELSE
-		Update tbl_validity_days_settings set days=validitydays,
+		Update tbl_validity_date_settings set days=validitydays,
 		updated_on = updatedon, updated_by = updatedby
-		WHERE validity_days_id = validitydaysid;
+		WHERE validity_date_id = validitydaysid;
 	END IF;
 END //
 DELIMITER ;
@@ -418,7 +418,7 @@ CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
 )
 BEGIN
 	if _user_id = 0 then
-		if admin_user_type == 0 then
+		if admin_user_type = 0 then
 			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 1;
 		else
 			SELECT form_id as form_id FROM tbl_forms WHERE form_category_id = 2;
@@ -1554,7 +1554,7 @@ DROP PROCEDURE IF EXISTS `sp_usercategory_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_usercategory_list` ()
 BEGIN
-	SELECT user_category_id, user_category
+	SELECT user_category_id, user_category_name
 	FROM tbl_user_category where user_category_id > 2;
 END //
 DELIMITER ;
@@ -1745,7 +1745,7 @@ BEGIN
     END IF;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check whether the employee code already exists or not
@@ -1765,7 +1765,7 @@ BEGIN
         WHERE employee_code=empcode and user_id != userid;
     END IF;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save / update user
@@ -1803,7 +1803,7 @@ BEGIN
 
 	END IF;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Check the status of user group of the user
@@ -1818,7 +1818,7 @@ BEGIN
 	inner join tbl_users u on  ug.user_group_id = u.user_group_id
 	where u.user_id = userid and ug.is_active = 1;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To update the status of user
@@ -1834,7 +1834,7 @@ BEGIN
 	updated_by =  session_user and updated_on = updated_time
 	WHERE user_id = userid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get the name of employee by id
@@ -1849,7 +1849,7 @@ BEGIN
 	FROM tbl_users
 	WHERE user_id = userid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Delete user countries
@@ -1862,7 +1862,7 @@ CREATE PROCEDURE `sp_usercountries_delete`(
 BEGIN
 	DELETE FROM tbl_user_countries WHERE user_id=userid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Delete user domains
@@ -1875,7 +1875,7 @@ CREATE PROCEDURE `sp_userdomains_delete`(
 BEGIN
 	DELETE FROM tbl_user_domains WHERE user_id=userid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get the form category of the admin user
@@ -1896,7 +1896,7 @@ BEGIN
 	END IF;
 	SELECT fc_id;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get all database server details
@@ -1908,7 +1908,7 @@ BEGIN
 	SELECT db_server_name, ip, port, server_username, server_password, length
 	FROM tbl_database_server;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Check whether the db server name already exists or not
@@ -1922,7 +1922,7 @@ BEGIN
 	SELECT count(ip) as count FROM tbl_database_server
 	WHERE db_server_name = dbservername and ip != ip_addr;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save or update Database server
@@ -1940,7 +1940,7 @@ BEGIN
 	ON DUPLICATE KEY UPDATE db_server_name = dbservername,
 	server_username = username, server_password= pwd, port = port_no;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get all Machine  details
@@ -1952,7 +1952,7 @@ BEGIN
 	SELECT machine_id, machine_name, ip, port, client_ids
 	FROM tbl_machines;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Check whether the machine name already exists or not
@@ -1971,7 +1971,7 @@ BEGIN
 		WHERE machine_name = machinename and machine_id != machineid;
 	END IF;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save or update Machine
@@ -1993,7 +1993,7 @@ BEGIN
 		ip=ipaddr, port = port_no WHERE machine_id = machineid;
 	END IF;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Allocate database environment
@@ -2014,7 +2014,7 @@ BEGIN
 
 	SELECT db_server_name, ip  FROM tbl_database_server;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save or Update Client database details
@@ -2053,7 +2053,7 @@ BEGIN
 	database_name=dbservername, server_ip=machine_ip,
 	server_port=machine_port;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Configuring File Storage
@@ -2072,7 +2072,7 @@ BEGIN
 
 	SELECT machine_id, machine_name FROM tbl_machines;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Update File storage server id for a legal entity
@@ -2088,7 +2088,7 @@ BEGIN
 	(clientid, le_id, machineid) ON DUPLICATE KEY UPDATE
 	machine_id=machineid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Auto deletion form
@@ -2118,7 +2118,7 @@ BEGIN
 		and tua.legal_entity_id = tu.legal_entity_id
 	) as deletion_year, address FROM tbl_units tu;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To delete Auto deletion details of all units under a legal entity
@@ -2132,7 +2132,7 @@ BEGIN
 	DELETE FROM tbl_unit_autodeletion
 	WHERE legal_entity_id=le_id;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get the users under following type CC Managers, CC Users, Techno managers
@@ -2162,7 +2162,7 @@ BEGIN
 	SELECT user_id, country_id FROM tbl_user_countries;
 	SELECT user_id, domain_id FROM tbl_user_domains;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get User mappings
@@ -2174,7 +2174,7 @@ BEGIN
 	select user_mapping_id, user_category_id, country_id, domain_id,
 	parent_user_id, child_user_id from tbl_user_mapping;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get user category by user id
@@ -2187,7 +2187,7 @@ CREATE PROCEDURE `sp_users_category_by_id`(
 BEGIN
 	SELECT user_category_id FROM tbl_users WHERE user_id=userid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Delete Mappings under a parent user
@@ -2200,7 +2200,7 @@ CREATE PROCEDURE `sp_usermapping_delete`(
 BEGIN
 	DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- To get list of countries under client master group
 -- --------------------------------------------------------------------------------
@@ -2221,7 +2221,7 @@ BEGIN
 		FROM tbl_countries ORDER BY country_name;
     END IF;
 END//
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of industries for client id for client unit
@@ -2250,7 +2250,7 @@ BEGIN
 				t2.client_id in (select client_id from tbl_client_users)
 			order by industry_name;
    END IF;
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check dupliaction of unit code and unit name
@@ -2274,7 +2274,7 @@ BEGIN
 		unit_id != unitId;
 	end if;
 END
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
@@ -2288,7 +2288,7 @@ BEGIN
 	tbl_units where
 	unit_id = unitId;
 END
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- check dupliaction of id for save units
@@ -2315,7 +2315,7 @@ BEGIN
 		tbl_divisions where division_id = param;
 	end if;
 END
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get unit max id
@@ -2326,7 +2326,8 @@ CREATE PROCEDURE `sp_tbl_units_max_unitid`()
 BEGIN
 	select max(unit_id) as max_id from
 	tbl_units;
-END
+END //
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get Unassigned units list
@@ -2349,7 +2350,7 @@ BEGIN
 	from tbl_units tu inner join tbl_unit_industries tud 
 	ON tu.unit_id = tud.unit_id group by client_id, domain_id;
 END//
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get assigned units list
@@ -2374,7 +2375,7 @@ BEGIN
 	WHERE tuu.client_id=clientid and domain_id=domainid
 	group by user_id;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get assigned unit details list
@@ -2413,7 +2414,7 @@ BEGIN
 		SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
 	);
 END // 
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domain managers
@@ -2430,7 +2431,7 @@ BEGIN
 	user_id in (SELECT child_user_id FROM tbl_user_mapping
 	WHERE parent_user_id=session_user);
 END // 
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of units under a client
@@ -2475,7 +2476,7 @@ BEGIN
 		SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
 	) and tui.domain_id=domainid;
 END // 
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of business groups under a client
@@ -2489,7 +2490,7 @@ BEGIN
 	SELECT business_group_id, business_group_name, client_id
 	FROM tbl_business_groups WHERE client_id=clientid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get legal entities under a client
@@ -2503,7 +2504,7 @@ BEGIN
 	SELECT legal_entity_id, legal_entity_name, business_group_id,
 	client_id FROM tbl_legal_entities WHERE client_id=clientid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To delete user units
@@ -2516,7 +2517,7 @@ CREATE PROCEDURE `sp_userunits_delete`(
 BEGIN
 	DELETE FROM tbl_user_units WHERE user_id=userid;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- find dupliacte catofory name / division name for unit master
@@ -2534,8 +2535,8 @@ BEGIN
 		select count(0) as div_name_cnt from
 		tbl_divisions where division_name = param;
 	end if;
-END
-DELIMITER;
+END //
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- save new division from unit master form
@@ -2554,8 +2555,8 @@ BEGIN
 	created_by, created_on)
 	values
 	(clientId, bg_id, le_id, divisionName, createdBy, createdOn);
-END
-DELIMITER;
+END // 
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- save new category added from unit master form
@@ -2574,5 +2575,5 @@ BEGIN
 	category_name, created_by, created_on)
 	values
 	(clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
-END
-DELIMITER;
+END // 
+DELIMITER ;

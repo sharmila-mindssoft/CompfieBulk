@@ -42,7 +42,9 @@ function initialize_maps(){
 }
 
 function loadValidityDatesList(){
+  var count = 0;
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
+    ++ count;
     if(domain_list.length > 0){
       var tableRow = $('#templates .table-dconfig-list .table-dconfig-countries-row');
       var clone = tableRow.clone();
@@ -70,6 +72,12 @@ function loadValidityDatesList(){
       }
     }
   });
+  if(count <= 0){
+    $(".btn-submit").hide();
+    var clone = $(".no-records tr").clone();
+    $('.tbody-validity-config-list').append(clone);
+
+  }
 }
 
 $(".btn-submit").click(function(){

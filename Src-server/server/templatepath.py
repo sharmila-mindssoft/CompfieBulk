@@ -424,5 +424,10 @@ TEMPLATE_PATHS = [
         "/knowledge/assign-client-unit",
         "files/desktop/knowledge/assign-client-unit/assign-client-unit.html",
         None, {}
+    ),
+    (
+        "/knowledge/reassign-user-account",
+        "files/desktop/knowledge/reassign-user-account/reassign-user-account.html",
+        None, {}
     )
 ]

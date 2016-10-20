@@ -11,7 +11,6 @@ from server.common import (
 )
 from server.database.tables import *
 from server.database.login import *
-from server.database.general import get_admin_forms
 
 __all__ = [
     "process_login_request",
@@ -74,10 +73,11 @@ def process_login(db, request, session_user_ip):
 
     user_category_id = verified_login.get('user_category_id')
 
-    if verified_username.get('username') is None :
+    if verified_username.get('username') is None:
         print 'username'
+        print "returning first invalid username=======>"
         return login.InvalidUserName()
-    elif user_id is None :
+    elif user_id is None:
         print 'user_id'
         save_login_failure(db, user_id, session_user_ip)
         rows = get_login_attempt_and_time(db, user_id)
@@ -90,14 +90,16 @@ def process_login(db, request, session_user_ip):
             captcha_text = None
         return login.InvalidCredentials(captcha_text)
 
-    else :
+    else:
         if login_type.lower() == "web":
             delete_login_failure_history(db, user_id)
-            if user_category_id <= 2 :
-                return admin_login_response(db, session_user_ip, verified_login, forms)
-            else :
-                return user_login_response(db, verified_login, user_info, forms)
-        else :
+            if user_category_id <= 2:
+                return admin_login_response(
+                    db, session_user_ip, verified_login, forms)
+            else:
+                return user_login_response(
+                    db, verified_login, user_info, forms)
+        else:
             pass
 
     # user_id, employee_name, user_type = verify_username(db, username)
@@ -105,12 +107,14 @@ def process_login(db, request, session_user_ip):
     # if user_id is None:
     #     return login.InvalidUserName()
     # else:
-    #     response, user_info, forms = verify_login(db, username, encrypt_password)
+    #     response, user_info, forms = verify_login(
+    # db, username, encrypt_password)
     #     if response is True:
     #         delete_login_failure_history(db, user_id)
-    #         if user_info is None :
-    #             return admin_login_response(db, session_user_ip, response, forms)
-    #         else :
+    #         if user_info is None:
+    #             return admin_login_response(
+    # db, session_user_ip, response, forms)
+    #         else:
     #             return user_login_response(db, response, user_info, forms)
     #     else:
     #         if bool(response):
@@ -188,9 +192,9 @@ def admin_login_response(db, ip, result, forms):
     print user_id
     user_category_id = result.get('user_category_id')
     print user_category_id
-    if user_category_id == 1 :
+    if user_category_id == 1:
         name = "Compfie Admin"
-    else :
+    else:
         name = "Console Admin"
     email_id = None
     session_type = 1  # web
@@ -216,6 +220,7 @@ def process_forgot_password(db, request):
         send_reset_link(db, user_id, email_id, employee_name)
         return login.ForgotPasswordSuccess()
     else:
+        print "returning second invalid username=======>"
         return login.InvalidUserName()
 
 

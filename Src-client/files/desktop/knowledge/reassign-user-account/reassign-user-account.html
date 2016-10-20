@@ -1,0 +1,272 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<div class="content-container">
+    <div class="content-area">
+        <div class="add-container">
+            <div class="add-container-heading">
+                Reassign User's Account<span class="error-message"></span>
+            </div>
+            <div class="input-row-left">
+                <div class="input-row">
+                    <div class="field-label">
+                        User Type:<span class="mandatory">*</span>
+                    </div>
+                    <div class="field-input">
+                        <select class="input-box" id="usertype">
+                            <option value="1" selected="selected">Techno Manager</option>
+                            <option value="2">Techno Executive</option>
+                            <option value="3">Domain Manager</option>
+                            <option value="4">Domain Executive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row filter-group-div" style="display: none;">
+                    <div class="field-label">Group:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="group_name" value="" placeholder="Enter Group">
+                        <input type="hidden" id="group_id">
+                        <div id="ac-group" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row filter-legal-div" style="display: none;">
+                    <div class="field-label">
+                        Legal Entity:<span class="mandatory">*</span>
+                    </div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="legal_entity_name" value="" placeholder="Enter Legal Entity">
+                        <input type="hidden" id="legal_entity_id">
+                        <div id="ac-entity" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-row-right">
+                <div class="input-row techno-mgr-div">
+                    <div class="field-label">Techno Manager:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="techno_manager_name" value="" placeholder="Enter Techno Manager">
+                        <input type="hidden" id="techno_manager_id">
+                        <div id="ac-techno-manager" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row techno-user-div" style="display: none;">
+                    <div class="field-label">Techno Executive:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="techno_user_name" value="" placeholder="Enter Techno User">
+                        <input type="hidden" id="techno_user_id">
+                        <div id="ac-techno-user" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row domain-mgr-div" style="display: none;">
+                    <div class="field-label">Domain Manager:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="domain_manager_name" value="" placeholder="Enter Domain Manager">
+                        <input type="hidden" id="domain_manager_id">
+                        <div id="ac-domain-manager" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row domain-user-div" style="display: none;">
+                    <div class="field-label">Domain Executive:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="domain_executive_name" value="" placeholder="Enter Domain Executive">
+                        <input type="hidden" id="domain_executive_id">
+                        <div id="ac-domain-executive" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row filter-business-div" style="display: none;">
+                    <div class="field-label">Business Group:</div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="business_group_name" value="" placeholder="Enter Business Group">
+                        <input type="hidden" id="business_group_id">
+                        <div id="ac-business-group" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row filter-domain-div" style="display: none;">
+                    <div class="field-label">Domain:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="domain_name" value="" placeholder="Enter Business Group">
+                        <input type="hidden" id="domain_id">
+                        <div id="ac-domain" class="ac-textbox default-display-none">
+                          <ul style="width:85%;"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="submit-button-container">
+                <input type="submit" name="cancel" value="Show" class="btn-submit btn-show" >
+            </div>
+            <div class="clearfix"></div>
+            <div class="grid-table group-view default-display-none">
+                <table>
+                    <tr align="left">
+                        <th align="center" width="2%"><input type="checkbox"  /></th>
+                        <th width="15%">Country</th>
+                        <th width="20%">Group</th>
+                        <th width="15%">No.of Legal Entity</th>
+                    </tr>
+                    <tr>
+                        <td align="center"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                    </tr>
+                    <tbody class="tbody-reassign-list-group-view">
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid-table legalentity-view default-display-none">
+                <table>
+                    <tr align="left">
+                        <th align="center" width="2%"><input type="checkbox"  /></th>
+                        <th width="15%">Group</th>
+                        <th width="15%">Business Group</th>
+                        <th width="15%">Country</th>
+                        <th width="15%">Legal Entity</th>
+                    </tr>
+                    <tr>
+                        <td align="center"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                    </tr>
+                    <tbody class="tbody-reassign-list-legalentity-view">
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid-table unit-view default-display-none">
+                <table>
+                    <tr align="left">
+                        <th width="2%" align="center"><input type="checkbox" class="form_checkbox"></th>
+                        <th width="15%">Unit Code</th>
+                        <th width="15%">Unit Name</th>
+                        <th width="12%">Unit Location</th>
+                    </tr>
+                    <tr>
+                        <td align="center"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                        <td><input type="text" class="filter-text-box"></td>
+                    </tr>
+                    <tbody class="tbody-reassign-list-unit-view">
+                    </tbody>
+                </table>
+            </div>
+            <div class="clear"></div>
+            <div class="view-note default-display-none"  style="border-top: 1px dashed #ccc;">
+                <div>
+                    <div class="input-row-left">
+                        <div class="input-row reassign-tm">
+                            <div class="field-label" style="width: 42%">
+                                Reassign To Techno Manager:
+                                <span class="mandatory">*</span>
+                            </div>
+                            <div class="field-input">
+                                <input type="text" class="input-box icon-autocomplete" value="EMP0002 - Hariharan" style="width: 90%" />
+                            </div>
+                        </div> 
+                        <div class="input-row reassign-tu" style="display: none;">
+                            <div class="field-label" style="width: 42%">
+                                Reassign To Techno Executive:
+                                <span class="mandatory">*</span>
+                            </div>
+                            <div class="field-input">
+                                <input type="text" class="input-box icon-autocomplete" value="EMP0002 - Hariharan" />
+                            </div>
+                        </div>
+                        <div class="input-row reassign-dm" style="display: none;">
+                            <div class="field-label" style="width: 42%">
+                                Reassign To Domain Manager:
+                                <span class="mandatory">*</span>
+                            </div>
+                            <div class="field-input">
+                                <input type="text" class="input-box icon-autocomplete" value="EMP0002 - Hariharan" />
+                            </div>
+                        </div>
+                        <div class="input-row reassign-du" style="display: none;">
+                            <div class="field-label" style="width: 42%">
+                                Reassign To Domain Executive:
+                                <span class="mandatory">*</span>
+                            </div>
+                            <div class="field-input">
+                                <input type="text" class="input-box icon-autocomplete" value="EMP0002 - Hariharan" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-row-right">
+                        <div class="input-row">
+                            <div class="field-label">
+                                Remarks:<span class="mandatory">*</span>
+                            </div>
+                            <div class="field-input">
+                                <textarea placeholder="Enter remarks here" class="input-box"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="submit-button-container">
+                    <input type="submit" name="Submit" value="Submit" class="btn-submit" >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="templates">
+    <div class="group-view-row">
+        <table>
+            <tr>
+                <td align="center">
+                    <input type="checkbox" checked="checked" class="select-check" />
+                </td>
+                <td class="countries"></td>
+                <td class="group-name"></td>
+                <td class="le-count"></td>
+            </tr>
+        </table>     
+    </div>
+    <div class="legalentity-view-row">
+        <table>
+            <tr>
+                <td align="center">
+                    <input type="checkbox" checked="checked" class="select-check" />
+                </td>
+                <td class="group-name"></td>
+                <td class="bg-name"></td>
+                <td class="country"></td>
+                <td class="entity"></td>
+            </tr>
+        </table>     
+    </div>
+    <div class="unit-view-row">
+        <table>
+            <tr>
+                <td align="center">
+                    <input type="checkbox" class="form_checkbox" class="select-check">
+                </td>
+                <td class="unit-code"></td>
+                <td class="unit-name">
+                    <abbr class="page-load tipso_style" title="15/9, New Delhi, 110001">
+                        <img src="/images/icon-info.png" style="padding-right: 3px;" />
+                        <span></span>
+                    </abbr>
+                </td>
+                <td class="location"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script type="text/javascript" src="/script/reassign-user-account/reassign-user-account.js"></script>
+{% endblock %}

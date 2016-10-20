@@ -289,7 +289,10 @@ var message = {
   "unit_updated": "Units(s) Updated Successfully",
   "domain_manager_required": "Domain Manager required",
   "atleast_one_unit_required": "Select atleast one unit to assign",
-  "assign_success": "Assigned successfully"
+  "assign_success": "Assigned successfully",
+  "techno_executive_required": "Techno executive required",
+  "domain_executive_required": "Domain executive required",
+  
 };
 
 function clearMessage() {

@@ -1,11 +1,10 @@
 from server.database.tables import *
 from server.common import (
-    convert_to_dict, get_date_time, new_uuid, encrypt,
+    get_date_time, new_uuid, encrypt,
     get_date_time_in_date
 )
 from server.constants import SESSION_CUTOFF
 from dateutil import relativedelta
-from server.database.general import get_user_form_ids
 
 __all__ = [
     "verify_login",
@@ -35,22 +34,22 @@ def verify_login(db, username, password):
     uname = res = user_info = forms = response = {}
 
     # print uname
-    if (len(result[1]) == 0) :
+    if (len(result[1]) == 0):
         return (uname, response, user_info, forms)
 
-    if (len(result[0]) == 0) :
+    if (len(result[0]) == 0):
         return (uname, response, user_info, forms)
 
     res = result[1]
     response = res[0]
     uname = result[0][0]
-    if res[0]['user_id'] is None :
+    if res[0]['user_id'] is None:
         user_info = None
         forms = None
-    elif res[0]['user_category_id'] <= 2 :
+    elif res[0]['user_category_id'] <= 2:
         user_info = None
         forms = result[2]
-    elif res[0]['user_category_id'] > 2 :
+    elif res[0]['user_category_id'] > 2:
         user_info = result[2]
         forms = result[3]
 
@@ -145,18 +144,18 @@ def verify_username(db, username, is_mobile=False):
 #     user_rows = db.select_all(user_query, param)
 #     if user_rows:
 #         result = convert_to_dict(user_rows, user_columns)
-#         if is_mobile is True :
+#         if is_mobile is True:
 #                 forms = get_user_form_ids(db, int(result[0]["user_id"]), None)
 #                 form_ids = [int(x) for x in forms.split(",")]
-#                 if 11 in form_ids :
+#                 if 11 in form_ids:
 #                     return (
 #                         result[0]["user_id"],
 #                         result[0]["employee_name"],
 #                         None
 #                     )
-#                 else :
+#                 else:
 #                     return None
-#         else :
+#         else:
 #             return (
 #                 result[0]["user_id"],
 #                 result[0]["employee_name"],
@@ -169,9 +168,9 @@ def verify_username(db, username, is_mobile=False):
 #         count = admin_rows[0][0]
 #         user_type = admin_rows[0][1]
 #         if count > 0:
-#             if user_type == 0 :
+#             if user_type == 0:
 #                 return (0, "Administrator", user_type)
-#             else :
+#             else:
 #                 return (1, "ConsoleAdmin", user_type)
 #         else:
 #             return (None, None)
