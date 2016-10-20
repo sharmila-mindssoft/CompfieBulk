@@ -30,7 +30,7 @@ BEGIN
         SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
         T1.form_name, T1.form_url, T1.form_order, T1.parent_menu
 		FROM tbl_forms as T1 INNER JOIN tbl_user_group_forms as T2
-		ON T2.user_group_id = @_usser_group_id;
+		ON T2.form_id = T1.form_id and T2.user_group_id = @_user_group_id;
     end if;
 END //
 
@@ -127,10 +127,10 @@ CREATE PROCEDURE `sp_industry_master_checkduplicateindustry`(
 in industryid int(11), in industryname varchar(50))
 BEGIN
 	if industryid = 0 then
-		SELECT count(1) FROM tbl_industries WHERE industry_name = industryname;
+		SELECT count(1) FROM tbl_organisation WHERE organisation_name = industryname;
 	else
-        SELECT count(1) FROM tbl_industries WHERE industry_name = industryname
-        and industry_id != industryid;
+        SELECT count(1) FROM tbl_organisation WHERE organisation_name = industryname
+        and organisation_id != industryid;
 	end if;
 END //
 DELIMITER ;
@@ -143,8 +143,8 @@ DROP PROCEDURE IF EXISTS `sp_industry_master_getindusdtrybyid`;
 DELIMITER //
 CREATE PROCEDURE `sp_industry_master_getindusdtrybyid`(industryid int(11))
 BEGIN
-	SELECT industry_name FROM tbl_industries WHERE
-    industry_id = industryid;
+	SELECT organisation_name FROM tbl_organisation WHERE
+    organisation_id = industryid;
 END //
 DELIMITER ;
 
@@ -157,7 +157,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_industry_master_getindustries`()
 BEGIN
 	SELECT t1.country_id, t2.country_name, t1.domain_id, t3.domain_name,
-		t1.industry_id, t1.industry_name, t1.is_active FROM tbl_industries t1
+		t1.organisation_id as industry_id, t1.organisation_name as industry_name, t1.is_active FROM tbl_organisation t1
         INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id INNER JOIN
         tbl_domains t3 on t1.domain_id = t3.domain_id;
 END //
@@ -188,8 +188,8 @@ CREATE PROCEDURE `sp_industry_master_saveindustry`(
 in countryid int(11), in domainid int(11), in industryname varchar(50),
 in createdby int(11), in createdon timestamp)
 BEGIN
-	INSERT INTO tbl_industries
-    (industry_name, country_id, domain_id, created_by, created_on)
+	INSERT INTO tbl_organisation
+    (organisation_name, country_id, domain_id, created_by, created_on)
     VALUES
 	(industryname, countryid, domainid, createdby, createdon);
 END //
@@ -207,12 +207,12 @@ CREATE PROCEDURE `sp_industry_master_updateindustry`(
 BEGIN
 	UPDATE tbl_industries
     SET
-    industry_name = industryName,
+    organisation_name = industryName,
     country_id = countryId,
     domain_id = domainId,
     updated_by = updatedBy
     WHERE
-    industry_id = industryId;
+    organisation_id = industryId;
 END //
 DELIMITER ;
 
@@ -224,12 +224,12 @@ DELIMITER //
 CREATE PROCEDURE `sp_industry_master_updatestatus`(
 	in industryId int(11), in isActive tinyint(4), in updatedBy int(11))
 BEGIN
-	UPDATE tbl_industries
+	UPDATE tbl_organisation
     SET
     is_active = isActive,
     updated_by = updatedBy
     WHERE
-    industry_id = industryId;
+    organisation_id = industryId;
 END //
 DELIMITER ;
 
@@ -537,8 +537,8 @@ DROP PROCEDURE IF EXISTS `sp_industries_active_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_industries_active_list`()
 BEGIN
-    SELECT industry_id, industry_name, is_active
-    FROM tbl_industries
+    SELECT organisation_id, organisation_name, is_active
+    FROM tbl_organisation
     WHERE is_active=1;
 END //
 DELIMITER ;
@@ -2534,7 +2534,7 @@ BEGIN
 		select count(0) as div_name_cnt from
 		tbl_divisions where division_name = param;
 	end if;
-END
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
@@ -2554,7 +2554,7 @@ BEGIN
 	created_by, created_on)
 	values
 	(clientId, bg_id, le_id, divisionName, createdBy, createdOn);
-END
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
@@ -2574,7 +2574,7 @@ BEGIN
 	category_name, created_by, created_on)
 	values
 	(clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
-END
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
@@ -2590,7 +2590,7 @@ BEGIN
 	where
 	tuc.user_category_id = tu.user_category_id and
 	tu.user_id = userId;
-END
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
@@ -2613,13 +2613,13 @@ BEGIN
 		(select country_id from tbl_user_countries
 			where user_id = userId) and is_active = 1;
 	end if;
-END
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
 -- Get group details for user mapping report
 -- --------------------------------------------------------------------------------
-DELIMITER $$
+DELIMITER //
 
 CREATE PROCEDURE `sp_usermapping_report_group_details`(
 in userCatgId int(11), userId int(11))
@@ -2661,7 +2661,7 @@ BEGIN
 		tle.client_id in (select distinct(client_id) from tbl_user_units
 		where user_id = userId);
 	end if;
-END
+END //
 DELIMITER;
 -- --------------------------------------------------------------------------------
 -- Get business group details for user mapping report
@@ -2672,7 +2672,7 @@ CREATE PROCEDURE `sp_usermapping_report_business_groups`()
 BEGIN
 	select business_group_id, business_group_name
 	from tbl_business_groups;
-END
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
@@ -2684,13 +2684,13 @@ CREATE PROCEDURE `sp_usermapping_report_legal_entity`()
 BEGIN
 	select legal_entity_id, legal_entity_name, business_group_id
 	from tbl_legal_entities;
-END
+END //
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
 -- Get unit's details, divison, category - user mapping report
 -- --------------------------------------------------------------------------------
-DELIMITER $$
+DELIMITER //
 
 CREATE PROCEDURE `sp_usermapping_report_unit_details`(
 in userCatgId int(11), userId int(11))
@@ -2724,6 +2724,6 @@ BEGIN
 		tu.unit_id in (select distinct(unit_id) from tbl_user_units
 		where user_id = userId and user_category_id = userCatgId);
 	end if;
-END
+END //
 DELIMITER;
 
