@@ -3247,7 +3247,7 @@ class AssignLegalEntity(object):
         country_name = data.get("country_name")
         group_name = data.get("group_name")
         no_of_legal_entities = data.get("no_of_legal_entities")
-        
+
         return AssignLegalEntity(
             client_id, group_id, country_name, group_name, no_of_legal_entities
         )
@@ -3259,4 +3259,97 @@ class AssignLegalEntity(object):
             "country_name": self.country_name,
             "group_name": self.group_name,
             "no_of_legal_entities": self.no_of_legal_entities
+        }
+
+class UserMappingGroupDetails(object):
+    def __init__(
+        self, client_id, client_name, legal_entity_id, country_id, business_group_id
+    ):
+        self.client_id = client_id
+        self.client_name  = client_name
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.business_group_id = business_group_id
+
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "client_name", "legal_entity_id", "country_id"
+                "business_group_id"
+            ]
+        )
+        client_id = data.get("client_id")
+        client_name = data.get("client_name")
+        legal_entity_id = data.get("legal_entity_id")
+        country_id = data.get("country_id")
+        business_group_id = data.get("business_group_id")
+
+        return UserMappingGroupDetails(
+            client_id, client_name, legal_entity_id, country_id, business_group_id
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "client_name": self.client_name,
+            "legal_entity_id": self.legal_entity_id,
+            "country_id": self.country_id,
+            "business_group_id": self.business_group_id
+        }
+
+class UserMappingUnitDetails(object):
+    def __init__(
+        self, unit_id, unit_name, client_id, business_group_id, legal_entity_id, country_id,
+        division_id, division_name, category_id, category_name
+    ):
+        self.unit_id = unit_id
+        self.unit_name  = unit_name
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.division_id = division_id
+        self.division_name = division_name
+        self.category_id = category_id
+        self.category_name = category_name
+
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "unit_id", "unit_name", "client_id", "business_group_id", "legal_entity_id", "country_id",
+                "division_id", "division_name", "category_id", "category_name"
+            ]
+        )
+        unit_id = data.get("unit_id")
+        unit_name  = data.get("unit_name")
+        client_id = data.get("client_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        country_id = data.get("country_id")
+        division_id = data.get("division_id")
+        division_name = data.get("division_name")
+        category_id = data.get("category_id")
+        category_name = data.get("category_name")
+
+        return UserMappingUnitDetails(
+                unit_id, unit_name, client_id, business_group_id, legal_entity_id, country_id,
+                division_id, division_name, category_id, category_name
+        )
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit_name": self.unit_name,
+            "client_id": self.clent_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "country_id": self.country_id,
+            "division_id": self.division_id,
+            "division_name": self.division_name,
+            "category_id": self.category_id,
+            "category_name": self.category_name
         }
