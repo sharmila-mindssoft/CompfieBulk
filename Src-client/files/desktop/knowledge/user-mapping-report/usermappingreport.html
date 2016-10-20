@@ -1,0 +1,77 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+  <div class='loading-indicator-spin'>
+    <span><img src='/images/loading-img.gif' alt="">   </span>
+  </div>
+  <div class="content-container">
+    <div class="content-area">
+      <div class="add-container">
+    	<div class="add-container-heading">User Mapping Report<span class="error-message"></span></div>
+			<div class="input-row-left">
+				<div class="input-row">
+					<div class="field-label">Country :<span class="mandatory"> *</span></div>
+      				<div class="field-input">
+        				<select class="input-box" id="countries"  tabindex="1" autofocus="autofocus">
+            				<option value="">Select</option>
+        				</select>
+      				</div>
+				</div>
+        <div class="input-row">
+          <div class="field-label">Group Name :<span class="mandatory"> *</span></div>
+          <div class="field-input">
+            <select class="input-box" id="clientids"  tabindex="2" autofocus="autofocus">
+                <option value="">Select</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Business Group :</div>
+          <div class="field-input">
+            <select class="input-box" id="businessgroup"  tabindex="3" autofocus="autofocus">
+                <option value="">Select</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Legal Entity :<span class="mandatory"> *</span></div>
+          <div class="field-input">
+            <select class="input-box" id="legalentity"  tabindex="4" autofocus="autofocus">
+                <option value="">Select</option>
+            </select>
+          </div>
+        </div>
+			</div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Division :</div>
+          <div class="field-input">
+            <select class="input-box" id="division"  tabindex="5" autofocus="autofocus">
+                <option value="">Select</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Category :</div>
+          <div class="field-input">
+            <select class="input-box" id="category"  tabindex="6" autofocus="autofocus">
+                <option value="">Select</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Unit :</div>
+          <div class="field-input">
+            <select class="input-box" id="units"  tabindex="7" autofocus="autofocus">
+                <option value="">Select</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      </div>
+  	</div>
+  </div>
+{% endblock %}
