@@ -129,6 +129,12 @@ def process_techno_report_request(request, db):
         result = process_get_compliance_task_report(db, request_frame, user_id)
         logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+    elif type(request_frame) is technoreports.GetUserMappingReportFilters:
+        logger.logKnowledgeApi("GetUserMappingReportFilters", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_user_mapping_reports_filter(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetUserMappingReportFilters", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 
@@ -242,3 +248,17 @@ def process_get_compliance_task_report(db, request_frame, user_id):
     return knowledgereport.GetStatutoryMappingReportDataSuccess(
         country_id, domain_id, report_data, total_count
     )
+
+def process_get_user_mapping_reports_filter(db, request_frame, session_user):
+    user_category_details = get_user_category_details(db, session_user)
+
+    for row in user_category_details:
+        countries = get_countries_for_usermapping_report_filter(db, (int(row["user_category_id"]), int(session_user)))
+        usermapping_group_details = get_group_details_for_usermapping_report_filter(db, (int(row["user_category_id"]), int(session_user)))
+        usermapping_business_groups = get_business_groups_for_usermapping_report(db)
+        usermapping_legal_entities = get_legal_entities_for_usermapping_report(db)
+        usermapping_unit = get_unit_details_for_usermapping_report(db, (int(row["user_category_id"]), int(session_user)))
+        return GetUserMappingReportFiltersSuccess(
+            countries = countries, usermapping_group_details = usermapping_group_details, usermapping_business_groups = usermapping_business_groups,
+            usermapping_legal_entities = usermapping_legal_entities, usermapping_unit = usermapping_unit
+        )
