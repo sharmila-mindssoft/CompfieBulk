@@ -39,7 +39,7 @@ INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge
 INSERT INTO tbl_forms VALUES(15, 2, 'Statutory Mapping', '/knowledge/statutory-mapping', 15, null);
 INSERT INTO tbl_forms VALUES(16, 2, 'Approve Statutory Mapping', '/knowledge/approve-statutory-mapping', 16, null);
 INSERT INTO tbl_forms VALUES(17, 2, 'Client Group', '/knowledge/client-master', 17, null);
-INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '', 18, null);
+INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '/knowledge/assign-legal-entity', 18, null);
 INSERT INTO tbl_forms VALUES(19, 2, 'Assign Client Unit', '', 19, null);
 INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit', 20, null);
 INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '', 21, null);
