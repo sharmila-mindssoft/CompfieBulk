@@ -47,6 +47,7 @@ def process_admin_forms(data):
 
 def process_user_menus(form_list):
     menus = {}
+    print form_list
     for form in form_list:
         form_type = form.form_type
         _forms = menus.get(form_type)
@@ -68,4 +69,6 @@ def reorder_menu(menus):
         new_menu["Transaction"] = menus["Transaction"]
     if "Report" in menus:
         new_menu["Report"] = menus["Report"]
+    if "My Accounts" in menus:
+        new_menu["My Accounts"] = menus["My Accounts"]
     return new_menu

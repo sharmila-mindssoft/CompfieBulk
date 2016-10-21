@@ -124,3 +124,223 @@ UnboundLocalError: local variable 'legalentities_list' referenced before assignm
 UnboundLocalError: local variable 'legalentities_list' referenced before assignment
  
 
+2016-10-21 12:30:53,994 - knowledge_logger - main.py-handle-api- : execute() first 
+
+2016-10-21 12:30:53,994 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
+    "sp_verify_login", args, expected_result
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
+    r = convert_to_dict(cursor.fetchall(), cols)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
+    self._check_executed()
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
+    self.errorhandler(self, ProgrammingError, "execute() first")
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
+    raise errorclass(errorvalue)
+ProgrammingError: execute() first
+ 
+
+2016-10-21 12:35:45,198 - knowledge_logger - main.py-handle-api- : execute() first 
+
+2016-10-21 12:35:45,199 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
+    "sp_verify_login", args, expected_result
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
+    r = convert_to_dict(cursor.fetchall(), cols)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
+    self._check_executed()
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
+    self.errorhandler(self, ProgrammingError, "execute() first")
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
+    raise errorclass(errorvalue)
+ProgrammingError: execute() first
+ 
+
+2016-10-21 12:37:04,398 - knowledge_logger - main.py-handle-api- : execute() first 
+
+2016-10-21 12:37:04,398 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
+    "sp_verify_login", args, expected_result
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
+    r = convert_to_dict(cursor.fetchall(), cols)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
+    self._check_executed()
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
+    self.errorhandler(self, ProgrammingError, "execute() first")
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
+    raise errorclass(errorvalue)
+ProgrammingError: execute() first
+ 
+
+2016-10-21 12:37:14,454 - knowledge_logger - main.py-handle-api- : execute() first 
+
+2016-10-21 12:37:14,454 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
+    "sp_verify_login", args, expected_result
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
+    r = convert_to_dict(cursor.fetchall(), cols)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
+    self._check_executed()
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
+    self.errorhandler(self, ProgrammingError, "execute() first")
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
+    raise errorclass(errorvalue)
+ProgrammingError: execute() first
+ 
+
+2016-10-21 12:38:35,147 - knowledge_logger - main.py-handle-api- : execute() first 
+
+2016-10-21 12:38:35,148 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
+    "sp_verify_login", args, expected_result
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
+    r = convert_to_dict(cursor.fetchall(), cols)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
+    self._check_executed()
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
+    self.errorhandler(self, ProgrammingError, "execute() first")
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
+    raise errorclass(errorvalue)
+ProgrammingError: execute() first
+ 
+
+2016-10-21 12:48:42,665 - knowledge_logger - main.py-handle-api- : execute() first 
+
+2016-10-21 12:48:42,666 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
+    "sp_verify_login", args, expected_result
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
+    r = convert_to_dict(cursor.fetchall(), cols)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
+    self._check_executed()
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
+    self.errorhandler(self, ProgrammingError, "execute() first")
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
+    raise errorclass(errorvalue)
+ProgrammingError: execute() first
+ 
+
+2016-10-21 13:27:59,633 - knowledge_logger - main.py-handle-api- : sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'") 
+
+2016-10-21 13:27:59,634 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 39, in process_admin_request
+    result = get_user_groups(db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 216, in get_user_groups
+    form_categories = get_user_cetegories_db(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 203, in get_user_cetegories_db
+    rows = get_form_categories(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/admin.py", line 360, in get_form_categories
+    return db.call_proc("sp_usercategory_list", None)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'")
+ 
+
+2016-10-21 13:28:52,956 - knowledge_logger - main.py-handle-api- : sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist") 
+
+2016-10-21 13:28:52,957 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 278, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 82, in process_knowledge_master_request
+    result = process_get_industry(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 176, in process_get_industry
+    results = get_industries(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 46, in get_industries
+    result = db.call_proc("sp_industry_master_getindustries", (), columns)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist")
+ 
+
+2016-10-21 13:29:11,240 - knowledge_logger - main.py-handle-api- : sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'") 
+
+2016-10-21 13:29:11,240 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 39, in process_admin_request
+    result = get_user_groups(db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 216, in get_user_groups
+    form_categories = get_user_cetegories_db(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 203, in get_user_cetegories_db
+    rows = get_form_categories(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/admin.py", line 360, in get_form_categories
+    return db.call_proc("sp_usercategory_list", None)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'")
+ 
+
+2016-10-21 13:31:13,499 - knowledge_logger - main.py-handle-api- : sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist") 
+
+2016-10-21 13:31:13,499 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 278, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 82, in process_knowledge_master_request
+    result = process_get_industry(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 176, in process_get_industry
+    results = get_industries(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 46, in get_industries
+    result = db.call_proc("sp_industry_master_getindustries", (), columns)
+  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist")
+ 
+

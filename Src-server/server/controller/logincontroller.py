@@ -62,38 +62,77 @@ def process_login(db, request, session_user_ip):
     username = request.username
     password = request.password
     encrypt_password = encrypt(password)
-    user_id, employee_name, user_type = verify_username(
-        db, username
-    )
-    print user_id, employee_name, password
-    if user_id is None:
+    response = verify_login(db, username, encrypt_password)
+    print response
+    verified_username = response[0]
+    verified_login = response[1]
+    print verified_login
+    print verified_username.get('username')
+    user_info = response[2]
+    forms = response[3]
+    user_id = verified_username.get('user_id')
+
+    user_category_id = verified_login.get('user_category_id')
+
+    if verified_username.get('username') is None :
+        print 'username'
         return login.InvalidUserName()
-    else:
-        response = verify_login(db, username, encrypt_password)
-        if response is True:
-            delete_login_failure_history(db, user_id)
-            return admin_login_response(db, session_user_ip, username)
+    elif user_id is None :
+        print 'user_id'
+        save_login_failure(db, user_id, session_user_ip)
+        rows = get_login_attempt_and_time(db, user_id)
+        no_of_attempts = 0
+        if rows:
+            no_of_attempts = rows[0]["login_attempt"]
+        if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
+            captcha_text = generate_random(CAPTCHA_LENGTH)
         else:
-            if bool(response):
-                if login_type.lower() == "web":
-                    delete_login_failure_history(db, user_id)
-                    return user_login_response(db, response, session_user_ip)
-                else:
-                    delete_login_failure_history(db, user_id)
-                    return mobile_user_login_respone(
-                        db, response, request, session_user_ip
-                    )
-            else:
-                save_login_failure(db, user_id, session_user_ip)
-                rows = get_login_attempt_and_time(db, user_id)
-                no_of_attempts = 0
-                if rows:
-                    no_of_attempts = rows[0]["login_attempt"]
-                if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
-                    captcha_text = generate_random(CAPTCHA_LENGTH)
-                else:
-                    captcha_text = None
-                return login.InvalidCredentials(captcha_text)
+            captcha_text = None
+        return login.InvalidCredentials(captcha_text)
+
+    else :
+        if login_type.lower() == "web":
+            delete_login_failure_history(db, user_id)
+            if user_category_id <= 2 :
+                return admin_login_response(db, session_user_ip, verified_login, forms)
+            else :
+                return user_login_response(db, session_user_ip, user_info, forms)
+        else :
+            pass
+
+    # user_id, employee_name, user_type = verify_username(db, username)
+    # print user_id, employee_name, password
+    # if user_id is None:
+    #     return login.InvalidUserName()
+    # else:
+    #     response, user_info, forms = verify_login(db, username, encrypt_password)
+    #     if response is True:
+    #         delete_login_failure_history(db, user_id)
+    #         if user_info is None :
+    #             return admin_login_response(db, session_user_ip, response, forms)
+    #         else :
+    #             return user_login_response(db, response, user_info, forms)
+    #     else:
+    #         if bool(response):
+    #             if login_type.lower() == "web":
+    #                 # delete_login_failure_history(db, user_id)
+    #                 pass
+    #             else:
+    #                 delete_login_failure_history(db, user_id)
+    #                 return mobile_user_login_respone(
+    #                     db, response, request, session_user_ip
+    #                 )
+    #         else:
+    #             save_login_failure(db, user_id, session_user_ip)
+    #             rows = get_login_attempt_and_time(db, user_id)
+    #             no_of_attempts = 0
+    #             if rows:
+    #                 no_of_attempts = rows[0]["login_attempt"]
+    #             if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
+    #                 captcha_text = generate_random(CAPTCHA_LENGTH)
+    #             else:
+    #                 captcha_text = None
+    #             return login.InvalidCredentials(captcha_text)
 
 
 def mobile_user_login_respone(db, data, request, ip):
@@ -121,7 +160,8 @@ def mobile_user_login_respone(db, data, request, ip):
     )
 
 
-def user_login_response(db, data, ip):
+def user_login_response(db, ip, data, forms):
+    data = data[0]
     user_id = data["user_id"]
     email_id = data["email_id"]
     session_type = 1  # web
@@ -133,9 +173,9 @@ def user_login_response(db, data, ip):
     address = None if data["address"] == "" else data["address"]
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
-    form_ids = data["form_ids"]
-    menu = process_user_forms(db, form_ids)
-    print "menu before user login success: %s" % menu
+    # form_ids = data["form_ids"]
+    # menu = process_user_forms(db, form_ids)
+    menu = process_admin_forms(forms)
     # db.save_user_login_history(user_id)
     return login.UserLoginSuccess(
         int(user_id), session_token, email_id, user_group_name,
@@ -144,13 +184,21 @@ def user_login_response(db, data, ip):
     )
 
 
-def admin_login_response(db, ip, username):
-    user_id = 0
+def admin_login_response(db, ip, result, forms):
+    user_id = result.get('user_id')
+    print user_id
+    user_category_id = result.get('user_category_id')
+    print user_category_id
+    if user_category_id == 1 :
+        name = "Compfie Admin"
+    else :
+        name = "Console Admin"
     email_id = None
     session_type = 1  # web
-    session_token = add_session(db, user_id, session_type, ip, "Administrator")
-    admin_forms = get_admin_forms(db, username)
-    menu = process_admin_forms(admin_forms)
+    session_token = add_session(db, user_id, session_type, ip, name)
+    print forms
+    menu = process_admin_forms(forms)
+    print menu
     print 'menus return'
     employee_name = "Administrator"
     return login.AdminLoginSuccess(

@@ -226,7 +226,7 @@ def return_knowledge_report(db, report_data, total_count=None):
             industry_names = get_industry_by_id(db, industry_ids)
 
         geography_ids = [
-            int(x) for x in r["geography_ids"][:-1].split(',')
+            int(x) for x in r["geography_ids"].split(',') if x != ''
         ]
         geography_mapping_list = []
         for g_id in geography_ids:
