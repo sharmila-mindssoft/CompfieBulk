@@ -1760,6 +1760,14 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function getReassignUserAccountFormdata(callback){
+    callerName = "admin";
+    var request = [
+        "GetReassignUserAccountFormdata",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1918,7 +1926,8 @@ function initMirror() {
     getAssignedUnitsList: getAssignedUnitsList,
     getAssignedUnitDetails: getAssignedUnitDetails,
     getAssignUnitFormData: getAssignUnitFormData,
-    saveAssignedUnits: saveAssignedUnits
+    saveAssignedUnits: saveAssignedUnits,
+    getReassignUserAccountFormdata: getReassignUserAccountFormdata
   };
 }
 var mirror = initMirror();

@@ -340,12 +340,25 @@ class SaveUserMappings(Request):
         }
 
 
+class GetReassignUserAccountFormdata(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetReassignUserAccountFormdata()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Request_class_map():
     classes = [
         GetUserGroups, SaveUserGroup, UpdateUserGroup,
         ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser,
         ChangeUserStatus, GetValidityDateList, SaveValidityDateSettings,
-        GetUserMappings, SaveUserMappings
+        GetUserMappings, SaveUserMappings, GetReassignUserAccountFormdata
     ]
     class_map = {}
     for c in classes:
@@ -834,6 +847,61 @@ class SaveUserMappingsSuccess(Response):
 
     def to_inner_structure(self):
         return {
+        }
+
+
+class GetReassignUserAccountFormdataSuccess(Request):
+    def __init__(
+        self, techno_managers, techno_users, domain_managers,
+        domain_users, groups, business_groups, legal_entities,
+        domains, countries, units
+    ):
+        self.techno_managers = techno_managers
+        self.techno_users = techno_users
+        self.domain_managers = domain_managers
+        self.domain_users = domain_users
+        self.groups = groups
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.domains = domains
+        self.countries = countries
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "techno_managers", "techno_users", "domain_managers",
+            "domain_users", "groups", "business_groups", "legal_entities",
+            "domains", "countries", "units"
+        ])
+        techno_managers = data.get("techno_managers")
+        techno_users = data.get("techno_users")
+        domain_managers = data.get("domain_managers")
+        domain_users = data.get("domain_users")
+        groups = data.get("groups")
+        business_groups = data.get("business_groups")
+        legal_entities = data.get("legal_entities")
+        domains = data.get("domains")
+        countries = data.get("countries")
+        units = data.get("units")
+        return GetReassignUserAccountFormdataSuccess(
+            techno_managers, techno_users, domain_managers,
+            domain_users, groups, business_groups, legal_entities,
+            domains, countries, units
+        )
+
+    def to_inner_structure(self):
+        return {
+            "techno_managers": self.techno_managers,
+            "techno_users": self.techno_users,
+            "domain_managers": self.domain_managers,
+            "domain_users": self.domain_users,
+            "groups": self.groups,
+            "business_groups": self.business_groups,
+            "legal_entities": self.legal_entities,
+            "domains": self.domains,
+            "countries": self.countries,
+            "units": self.units
         }
 
 

@@ -233,27 +233,29 @@ function validateAndShowList(){
     }else{
         if(val_user_type == 3){
             if(val_domain_manager_id.trim().length == 0){
-                displayMessage(message.domain_amnager_required);
+                displayMessage(message.domain_manager_required);
                 validation_result = false;
             }
         }else if(val_user_type == 4){
             if(val_domain_executive_id.trim().length == 0){
-                displayMessage(message.domain_amnager_required);
+                displayMessage(message.domain_manager_required);
                 validation_result = false;
             }
         }
-        if(val_group_id.trim().length == 0){
-            displayMessage(message.group_required);
-            validation_result = false;
-        }else if(val_business_group_id.trim().length == 0){
-            displayMessage(message.businessgroup_required);
-            validation_result = false;
-        }else if(val_legal_entity_id.trim().length == 0){
-            displayMessage(message.legalentity_required);
-            validation_result = false;
-        }else if(val_domain_id.trim().length == 0){
-            displayMessage(message.domain_required);
-            validation_result = false;
+        if(validation_result == true){
+            if(val_group_id.trim().length == 0){
+                displayMessage(message.group_required);
+                validation_result = false;
+            }else if(val_business_group_id.trim().length == 0){
+                displayMessage(message.businessgroup_required);
+                validation_result = false;
+            }else if(val_legal_entity_id.trim().length == 0){
+                displayMessage(message.legalentity_required);
+                validation_result = false;
+            }else if(val_domain_id.trim().length == 0){
+                displayMessage(message.domain_required);
+                validation_result = false;
+            }    
         }
     }
     if(validation_result == true){
@@ -310,14 +312,30 @@ function loadUnits(){
 
 }
 
+function getFormData(){
+    function onSuccess(data) {
+        
+    }
+    function onFailure(error) {
+        custom_alert(error);
+    }
+    mirror.getReassignUserAccountFormdata(function (error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    });
+}
+
 $(function(){
     initialize();
 });
 
 function initialize(){
-    console.log("inside initialize")
     $(document).ready(function () {
         pageControls();
+        getFormData();
     });
 }
 
