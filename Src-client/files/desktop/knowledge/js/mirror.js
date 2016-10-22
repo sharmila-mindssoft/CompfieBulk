@@ -1770,6 +1770,18 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetUserMappingDetailsReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'legal_entity_id': legalEntityId,
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
 
   return {
     log: log,
@@ -1930,7 +1942,8 @@ function initMirror() {
     getAssignedUnitDetails: getAssignedUnitDetails,
     getAssignUnitFormData: getAssignUnitFormData,
     saveAssignedUnits: saveAssignedUnits,
-    getUserMappingReportFilters: getUserMappingReportFilters
+    getUserMappingReportFilters: getUserMappingReportFilters,
+    getUsermappingDetailsReport: getUsermappingDetailsReport
   };
 }
 var mirror = initMirror();
