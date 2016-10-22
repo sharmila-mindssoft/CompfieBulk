@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
@@ -82,6 +82,8 @@ class Request(object):
 
     @staticmethod
     def parse_structure(data):
+        print "techno reports"
+        print data
         data = parse_static_list(data, 2)
         name, data = data
         if _Request_class_map.get(name) is None:
@@ -343,6 +345,47 @@ class GetComplianceTaskReport(Request):
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
+class GetUserMappingReportFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetUserMappingReportFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetUserMappingDetailsReportData(Request):
+    def __init__(
+        self, country_id, client_id, legal_entity_id
+    ):
+        self.country_id = country_id
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "client_id", "legal_entity_id"
+        ])
+        country_id = data.get("country_id")
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+
+        return GetUserMappingDetailsReportData(
+            country_id, client_id, legal_entity_id
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id
+        }
+
 def _init_Request_class_map():
     classes = [
         GetClientDetailsReportFilters,
@@ -352,7 +395,9 @@ def _init_Request_class_map():
         GetAssignedStatutoryReportFilters,
         GetAssignedStatutoryReport,
         GetComplianceTaskFilter,
-        GetComplianceTaskReport
+        GetComplianceTaskReport,
+        GetUserMappingReportFilters,
+        GetUserMappingDetailsReportData
     ]
     class_map = {}
     for c in classes:
@@ -629,9 +674,64 @@ class GetAssignedStatutoryReportSuccess(Response):
             "unit_wise_assigned_statutories": to_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(self.unit_wise_assigned_statutories),
         }
 
+# user mapping report - filter success
+
+class GetUserMappingReportFiltersSuccess(Response):
+    def __init__(self, countries, usermapping_groupdetails, usermapping_business_groups, usermapping_legal_entities, usermapping_unit):
+        self.countries = countries
+        self.usermapping_groupdetails = usermapping_groupdetails
+        self.usermapping_business_groups = usermapping_business_groups
+        self.usermapping_legal_entities = usermapping_legal_entities
+        self.usermapping_unit = usermapping_unit
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries", "usermapping_groupdetails", "usermapping_business_groups", "usermapping_legal_entities", "usermapping_unit"])
+        countries = data.get("countries")
+        usermapping_groupdetails = data.get("usermapping_group_details")
+        usermapping_business_groups = data.get("usermapping_business_groups")
+        usermapping_legal_entities = data.get("usermapping_legal_entities")
+        usermapping_unit = data.get("usermapping_unit")
+        return GetUserMappingReportFiltersSuccess(countries, usermapping_groupdetails, usermapping_business_groups, usermapping_legal_entities, usermapping_unit)
+
+    def to_inner_structure(self):
+        data = {
+            "countries": self.countries,
+            "usermapping_groupdetails": self.usermapping_groupdetails,
+            "usermapping_business_groups": self.usermapping_business_groups,
+            "usermapping_legal_entities": self.usermapping_legal_entities,
+            "usermapping_unit": self.usermapping_unit,
+        }
+        return to_structure_dictionary_values(data)
+
+# user mapping report - filter success
+
+class GetUserMappingReportDataSuccess(Response):
+    def __init__(self, techno_details, unit_domains, domains):
+        self.techno_details = techno_details
+        self.unit_domains = unit_domains
+        self.domains = domains
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["techno_details", "unit_domains", "domains"])
+        techno_details = data.get("techno_details")
+        unit_domains = data.get("unit_domains")
+        domains = data.get("domains")
+        return GetUserMappingReportDataSuccess(techno_details, unit_domains, domains)
+
+    def to_inner_structure(self):
+        data = {
+            "techno_details": self.techno_details,
+            "unit_domains": self.unit_domains,
+            "domains": self.domains,
+        }
+        return to_structure_dictionary_values(data)
 
 def _init_Response_class_map():
-    classes = [GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess, GetStatutoryNotificationsReportDataSuccess, GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess]
+    classes = [GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess,
+                GetStatutoryNotificationsReportDataSuccess, GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess,
+                GetUserMappingReportFiltersSuccess, GetUserMappingReportDataSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -765,33 +865,4 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
             "division_name": to_structure_OptionalType_CustomTextType_50(self.division_name),
             "address": to_structure_CustomTextType_250(self.address),
             "assigned_statutories": to_structure_VectorType_RecordType_core_AssignedStatutory(self.assigned_statutories),
-        }
-
-# user mapping report - filter success
-
-class GetUserMappingReportFiltersSuccess(Response):
-    def __init__(self, countries, usermapping_groupdetails, usermapping_business_groups, usermapping_legal_entities, usermapping_unit):
-        self.countries = countries
-        self.usermapping_groupdetails = usermapping_groupdetails
-        self.usermapping_business_groups = usermapping_business_groups
-        self.usermapping_legal_entities = usermapping_legal_entities
-        self.usermapping_unit = usermapping_unit
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "usermapping_groupdetails", "usermapping_business_groups", "usermapping_legal_entities", "usermapping_unit"])
-        countries = data.get("countries")
-        usermapping_groupdetails = data.get("usermapping_groupdetails")
-        usermapping_business_groups = data.get("usermapping_business_groups")
-        usermapping_legal_entities = data.get("usermapping_legal_entities")
-        usermapping_unit = data.get("usermapping_unit")
-        return GetUserMappingReportFiltersSuccess(countries, usermapping_groupdetails, usermapping_business_groups, usermapping_legal_entities, usermapping_unit)
-
-    def to_inner_structure(self):
-        return {
-            "countries": self.countries,
-            "usermapping_groupdetails": self.usermapping_groupdetails,
-            "usermapping_business_groups": self.usermapping_business_groups,
-            "usermapping_legal_entities": self.usermapping_legal_entities,
-            "usermapping_unit": self.usermapping_unit,
         }
