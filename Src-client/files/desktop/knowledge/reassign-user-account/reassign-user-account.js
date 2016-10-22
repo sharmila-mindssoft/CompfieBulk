@@ -96,6 +96,7 @@ var ReassignToTechnoUser = $(".reassign-tu");
 var ReassignToDomainManager = $(".reassign-dm");
 var ReassignToDomainUser = $(".reassign-du");
 var RemarksDiv = $(".remarks-div");
+var Remarks = $(".remarks");
 var ViewNote = $(".view-note");
 
 var UnitHeaderCheckBox = $(".unit-header-checkbox");
@@ -123,9 +124,13 @@ var LEGAL_ENTITIES = '';
 var UNITS = '';
 var COUNTRIES = '';
 var DOMAINS = '';
+var ASSIGNED_ENTITIES = '';
+var ASSIGNED_UNITS = '';
 var client_id_name_map = {};
 var country_id_name_map = {};
 var business_group_id_name_map = {};
+var user_wise_entities = {};
+var user_wise_units = {};
 
 var GroupCheckBoxes = {};
 var EntityCheckBoxes = {};
@@ -356,11 +361,13 @@ function clearGrids(){
     ReassignToDomainManager.hide();
     ReassignToDomainUser.hide();
     RemarksDiv.hide();
+    Submit.hide();
 }
 
 function loadAssignList(){
     ViewNote.show();
     RemarksDiv.show();
+    Submit.show();
     if(val_user_type == 1){
         GroupView.show();
         LegalEntityView.hide();
@@ -421,18 +428,21 @@ function activateOrDeactivateGroup(group_id){
 function loadLegalEntity(){
     EntityCheckBoxes = {};
     TBodyReassignListLegalEntityView.empty();
+    var entities_assigned_to_selected_user = user_wise_entities[val_techno_executive_id];
     $.each(LEGAL_ENTITIES, function(key, value){
-        var clone = LegalEntityViewRow.clone();
-        $(Group_Name, clone).text(client_id_name_map[value.group_id]);
-        $(BG_Name, clone).text(business_group_id_name_map[value.business_group_id]);
-        $(Country, clone).text(country_id_name_map[value.country_id]);
-        $(Entity, clone).text(value.legal_entity_name);
-        $(EntityCheckBox, clone).addClass("entity-"+value.legal_entity_id);
-        EntityCheckBoxes[value.legal_entity_id] = false;
-        TBodyReassignListLegalEntityView.append(clone);
-        $(EntityCheckBox, clone).change(function(){
-            activateOrDeactivateEntity(value.legal_entity_id);
-        });
+        if(entities_assigned_to_selected_user.indexOf(value.legal_entity_id) > -1){
+            var clone = LegalEntityViewRow.clone();
+            $(Group_Name, clone).text(client_id_name_map[value.group_id]);
+            $(BG_Name, clone).text(business_group_id_name_map[value.business_group_id]);
+            $(Country, clone).text(country_id_name_map[value.country_id]);
+            $(Entity, clone).text(value.legal_entity_name);
+            $(EntityCheckBox, clone).addClass("entity-"+value.legal_entity_id);
+            EntityCheckBoxes[value.legal_entity_id] = false;
+            TBodyReassignListLegalEntityView.append(clone);
+            $(EntityCheckBox, clone).change(function(){
+                activateOrDeactivateEntity(value.legal_entity_id);
+            });
+        }
     });
 }
 
@@ -444,17 +454,29 @@ function activateOrDeactivateEntity(legal_entity_id){
 function loadUnits(){
     UnitCheckBoxes = {};
     TBodyReassignListUnitView.empty();
+    var assigned_units_of_selected_user = [];
+    if(val_domain_executive_id in user_wise_units){
+        assigned_units_of_selected_user = user_wise_units[val_domain_executive_id][val_domain_id]
+        if(val_user_type == 3)
+            assigned_units_of_selected_user = user_wise_units[val_domain_manager_id][val_domain_id]
+    }
     $.each(UNITS, function(key, value){
-        var clone = UnitViewRow.clone();
-        $(UnitCode, clone).text(value.unit_code);
-        $(UnitName, clone).text(value.unit_name);
-        $(UnitLocation, clone).text(value.address);
-        UnitCheckBoxes[value.unit_id] = false;
-        $(UnitCheckBox, clone).addClass("unit-"+value.unit_id);
-        TBodyReassignListUnitView.append(clone);
-        $(UnitCheckBox, clone).change(function(){
-            activateOrDeactivateUnit(value.unit_id);
-        });
+        if(
+            assigned_units_of_selected_user.indexOf(value.unit_id) > -1 &&
+            value.legal_entity_id == val_legal_entity_id && 
+            value.client_id == val_group_id
+        ){
+            var clone = UnitViewRow.clone();
+            $(UnitCode, clone).text(value.unit_code);
+            $(UnitName, clone).text(value.unit_name);
+            $(UnitLocation, clone).text(value.address);
+            UnitCheckBoxes[value.unit_id] = false;
+            $(UnitCheckBox, clone).addClass("unit-"+value.unit_id);
+            TBodyReassignListUnitView.append(clone);
+            $(UnitCheckBox, clone).change(function(){
+                activateOrDeactivateUnit(value.unit_id);
+            }); 
+        }
     });
 }
 
@@ -495,6 +517,7 @@ function validateAndSave(){
     var reassign_to_user = '';
     var old_user = '';
     var user_validation_msg = '';
+    var val_remarks = Remarks.val();
     if(val_user_type == 1){
         check_box_list = GroupCheckBoxes;
         display_text = "Group";
@@ -531,6 +554,8 @@ function validateAndSave(){
         displayMessage("Select atleast one "+display_text);
     }else if(!reassign_to_user){
         displayMessage(user_validation_msg);
+    }else if(val_remarks.trim() == 0){
+        displayMessage(message.remarks_required);
     }else{
         function onSuccess(data) {
             displayMessage(message.reassign_users_account_success);
@@ -540,7 +565,7 @@ function validateAndSave(){
         }
         mirror.saveReassignUserAccount(
             parseInt(val_user_type), parseInt(old_user), parseInt(reassign_to_user), ids,
-            function (error, response) {
+            val_remarks, function (error, response) {
             if (error == null) {
                 onSuccess(response);
             } else {
@@ -561,6 +586,18 @@ function generateIdNameMaps(){
     $.each(BUSINESS_GROUPS, function(key, value){
         business_group_id_name_map[value.business_group_id] = value.business_group_name;
     });
+    $.each(ASSIGNED_ENTITIES, function(key, value){
+        if(!(value.user_id in user_wise_entities))
+            user_wise_entities[value.user_id] = [];
+        user_wise_entities[value.user_id].push(value.legal_entity_id);
+    });
+    $.each(ASSIGNED_UNITS, function(key, value){
+        if(!(value.user_id in user_wise_units))
+            user_wise_units[value.user_id] = {};
+        if(!(value.domain_id in user_wise_units[value.user_id]))
+            user_wise_units[value.user_id][domain_id] = [];
+        user_wise_units[value.user_id][domain_id].push(value.unit_id);
+    });
 }
 
 function getFormData(){
@@ -575,6 +612,8 @@ function getFormData(){
         UNITS = data.unit_id_name;
         COUNTRIES = data.countries;
         DOMAINS = data.domains;
+        ASSIGNED_ENTITIES = data.assigned_legal_entities;
+        ASSIGNED_UNITS = data.assigned_units;
         generateIdNameMaps();
     }
     function onFailure(error) {

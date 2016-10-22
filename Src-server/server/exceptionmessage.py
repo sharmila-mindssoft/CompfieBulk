@@ -78,7 +78,9 @@ messages = {
     "E077": "Configuring File Storage failed",
     "E078": "Configuring auto deletion failed",
     "E079": "Save User Mapping Failed",
-    "E080": "Assign Units Failed"
+    "E080": "Assign Units Failed",
+    "E081": "Save Reassign user account history failed",
+    "E082": "Save Reassign user account failed",
 }
 
 client_message = {

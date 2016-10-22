@@ -355,30 +355,36 @@ class GetReassignUserAccountFormdata(Request):
 
 
 class SaveReassignUserAccount(Request):
-    def __init__(self, user_type, old_user_id, new_user_id, assigned_ids):
+    def __init__(
+        self, user_type, old_user_id, new_user_id, assigned_ids, remarks
+    ):
         self.user_type = user_type
         self.old_user_id = old_user_id
         self.new_user_id = new_user_id
         self.assigned_ids = assigned_ids
+        self.remarks = remarks
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "user_type", "old_user_id", "new_user_id", "assigned_ids"
+            "user_type", "old_user_id", "new_user_id", "assigned_ids",
+            "remarks"
         ])
         user_type = data.get("user_type")
         old_user_id = data.get("old_user_id")
         new_user_id = data.get("new_user_id")
         assigned_ids = data.get("assigned_ids")
+        remarks = data.get("remarks")
         return SaveReassignUserAccount(
-            user_type, old_user_id, new_user_id, assigned_ids)
+            user_type, old_user_id, new_user_id, assigned_ids, remarks)
 
     def to_inner_structure(self):
         return {
             "user_type": self.user_type,
             "old_user_id": self.old_user_id,
             "new_user_id": self.new_user_id,
-            "assigned_ids": self.assigned_ids
+            "assigned_ids": self.assigned_ids,
+            "remarks": self.remarks
         }
 
 
@@ -405,6 +411,7 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        print "inner : %s" % inner
         if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
@@ -919,11 +926,61 @@ class LegalEntity(object):
         }
 
 
+class AssignedLegalEntities(object):
+    def __init__(
+        self, user_id, legal_entity_id
+    ):
+        self.user_id = user_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "legal_entity_id"
+        ])
+        user_id = data.get("user_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return AssignedLegalEntities(user_id, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "legal_entity_id": self.legal_entity_id
+        }
+
+
+class AssignedUnits(object):
+    def __init__(
+        self, user_id, unit_id, domain_id
+    ):
+        self.user_id = user_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "unit_id", "domain_id"
+        ])
+        user_id = data.get("user_id")
+        unit_id = data.get("unit_id")
+        domain_id = data.get("domain_id")
+        return AssignedUnits(user_id, unit_id, domain_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "unit_id": self.unit_id,
+            "domain_id": self.domain_id
+        }
+
+
 class GetReassignUserAccountFormdataSuccess(Request):
     def __init__(
         self, techno_managers, techno_users, domain_managers,
         domain_users, groups, business_groups, admin_legal_entity,
-        domains, countries, unit_id_name
+        domains, countries, unit_id_name, assigned_legal_entities,
+        assigned_units
     ):
         self.techno_managers = techno_managers
         self.techno_users = techno_users
@@ -935,13 +992,16 @@ class GetReassignUserAccountFormdataSuccess(Request):
         self.domains = domains
         self.countries = countries
         self.unit_id_name = unit_id_name
+        self.assigned_legal_entities = assigned_legal_entities
+        self.assigned_units = assigned_units
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "techno_managers", "techno_users", "domain_managers",
             "domain_users", "groups", "business_groups", "admin_legal_entity",
-            "domains", "countries", "unit_id_name"
+            "domains", "countries", "unit_id_name", "assigned_legal_entities",
+            "assigned_units"
         ])
         techno_managers = data.get("techno_managers")
         techno_users = data.get("techno_users")
@@ -953,10 +1013,13 @@ class GetReassignUserAccountFormdataSuccess(Request):
         domains = data.get("domains")
         countries = data.get("countries")
         unit_id_name = data.get("unit_id_name")
+        assigned_legal_entities = data.get("assigned_legal_entities")
+        assigned_units = data.get("assigned_units")
         return GetReassignUserAccountFormdataSuccess(
             techno_managers, techno_users, domain_managers,
             domain_users, groups, business_groups, admin_legal_entity,
-            domains, countries, unit_id_name
+            domains, countries, unit_id_name, assigned_legal_entities,
+            assigned_units
         )
 
     def to_inner_structure(self):
@@ -970,7 +1033,9 @@ class GetReassignUserAccountFormdataSuccess(Request):
             "admin_legal_entity": self.admin_legal_entity,
             "domains": self.domains,
             "countries": self.countries,
-            "unit_id_name": self.unit_id_name
+            "unit_id_name": self.unit_id_name,
+            "assigned_legal_entities": self.assigned_legal_entities,
+            "assigned_units": self.assigned_units
         }
 
 

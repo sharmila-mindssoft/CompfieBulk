@@ -31,7 +31,8 @@ __all__ = [
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
     "save_validity_date_settings", "get_user_mapping_form_data",
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
-    "save_reassigned_user_account"
+    "save_reassigned_user_account", "get_assigned_legal_entities",
+    "get_assigned_units"
 ]
 
 
@@ -956,27 +957,99 @@ def return_legal_entities_for_unit(legal_entities):
     return results
 
 
-def save_reassigned_user_account(db, request, session_user):
-    user_type = request.user_type
-    current_time_stamp = get_date_time()
-    columns = ["user_id", "assigned_by", "assigned_on"]
-    value_list = []
-    conditions = []
-    table = None
-    for assigned_id in request.assigned_ids:
-        value_list.append(
-            (request.new_user_id, session_user, current_time_stamp)
+def save_reassigned_user_account_history(db, request, session_user):
+    try:
+        old_user_id = request.old_user_id
+        new_user_id = request.new_user_id
+        assigned_ids = request.assigned_ids
+        remarks = request.remarks
+        user_type = request.user_type
+        current_time_stamp = get_date_time()
+        data = db.call_proc(
+            "sp_names_by_id",
+            (",".join(str(x) for x in assigned_ids), user_type),
         )
+        names = ''
+        for datum in data:
+            names += datum["name"]
+
         if user_type == 1:
-            condition = "client_id=%s" % (assigned_id)
-            table = tblUserLegalEntity
+            reassigned_data = "Following groups were reassigned :- %s " % (names)
         elif user_type == 2:
-            condition = "legal_entity_id=%s" % (assigned_id)
-            table = tblUserLegalEntity
+            reassigned_data = "Following legal entities were reassigned :- %s" % (
+                names)
         else:
-            condition = "unit_id = %s" % (assigned_id)
-            table = tblUserUnits
-        conditions.append(condition)
-    db.bulk_update(
-        table, columns, value_list, conditions
-    )
+            reassigned_data = "Following units were reassigned :- %s" % (names)
+        db.call_insert_proc(
+            "sp_reassignaccounthistory_save", (
+                old_user_id, new_user_id,  reassigned_data, remarks,
+                session_user, current_time_stamp
+            )
+        )
+    except Exception, e:
+        print e
+        raise process_error("E081")
+
+
+def save_reassigned_user_account(db, request, session_user):
+    save_reassigned_user_account_history(db, request, session_user)
+    try:
+        user_type = request.user_type
+        current_time_stamp = get_date_time()
+        columns = ["user_id", "assigned_by", "assigned_on"]
+        value_list = []
+        conditions = []
+        table = None
+        for assigned_id in request.assigned_ids:
+            value_list.append(
+                (request.new_user_id, session_user, current_time_stamp)
+            )
+            if user_type == 1:
+                condition = "client_id=%s" % (assigned_id)
+                table = tblUserLegalEntity
+            elif user_type == 2:
+                condition = "legal_entity_id=%s" % (assigned_id)
+                table = tblUserLegalEntity
+            else:
+                condition = "unit_id = %s" % (assigned_id)
+                table = tblUserUnits
+            conditions.append(condition)
+        db.bulk_update(
+            table, columns, value_list, conditions
+        )
+    except Exception, e:
+        print e
+        raise process_error("E082")
+
+
+def get_assigned_legal_entities(db):
+    result = db.call_proc("sp_userlegalentities_assigned_list", None)
+    return return_assigned_legal_entities(result)
+
+
+def return_assigned_legal_entities(data):
+    fn = admin.AssignedLegalEntities
+    result = [
+        fn(
+            user_id=datum["user_id"],
+            legal_entity_id=datum["legal_entity_id"]
+        ) for datum in data
+    ]
+    return result
+
+
+def get_assigned_units(db):
+    result = db.call_proc("sp_userunits_reassign_list", None)
+    return return_assigned_units(result)
+
+
+def return_assigned_units(data):
+    fn = admin.AssignedUnits
+    result = [
+        fn(
+            user_id=datum["user_id"],
+            unit_id=datum["unit_id"],
+            domain_id=datum["domain_id"]
+        )for datum in data
+    ]
+    return result

@@ -1769,7 +1769,7 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
   function saveReassignUserAccount(
-    user_type, old_user_id, new_user_id, assigned_ids, callback
+    user_type, old_user_id, new_user_id, assigned_ids, remarks, callback
   ){
       callerName = "admin";
       var request = [
@@ -1778,7 +1778,8 @@ function initMirror() {
           "user_type": user_type,
           "old_user_id": old_user_id,
           "new_user_id": new_user_id,
-          "assigned_ids": assigned_ids
+          "assigned_ids": assigned_ids,
+          "remarks": remarks
         }
       ];
       apiRequest(callerName, request, callback); 

@@ -2609,3 +2609,69 @@ BEGIN
 	FROM tbl_units;
 END //
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of assigned legal entities
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_userlegalentities_assigned_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_userlegalentities_assigned_list`()
+BEGIN
+	SELECT user_id, legal_entity_id FROM tbl_user_legalentity;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of assigned units
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_userunits_reassign_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_userunits_reassign_list`()
+BEGIN
+	SELECT user_id, unit_id, domain_id FROM tbl_user_units;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get name of group/ legal entity/ Unit by ids
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_names_by_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_names_by_id`(
+	IN assigned_ids TEXT, user_type INT(11)
+)
+BEGIN
+	IF user_type = 1 then
+		SELECT group_name as name FROM tbl_client_groups 
+		WHERE find_in_set(assigned_ids, client_id);
+	ELSEIF user_type = 2 then
+		SELECT legal_entity_name as name FROM tbl_legal_entities
+		WHERE find_in_set(assinged_ids, legal_entity_id);
+	ELSE 
+		SELECT concat(unit_code, "-", unit_name) as name
+		FROM tbl_units WHERE find_in_set(assigned_ids, unit_id);
+	END IF;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To save reassign user account history
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_reassignaccounthistory_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_reassignaccounthistory_save`(
+	IN old_user_id INT(11), new_user_id INT(11), 
+	reassigned_data_text TEXT, remark_text TEXT, session_user INT(11),
+	current_time_stamp DATETIME
+)
+BEGIN
+	INSERT INTO tbl_user_account_reassign_history
+	(user_category_id, reassigned_from, reassigned_to, reassigned_data, 
+	remarks, assigned_by, assigned_on) values (
+		(SELECT user_category_id 
+		FROM tbl_users WHERE user_id = old_user_id),
+		old_user_id, new_user_id, reassigned_data_text, remark_text,
+		session_user, current_time_stamp
+	);
+END //
+DELIMITER ;
