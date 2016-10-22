@@ -279,7 +279,8 @@ function resetValues(){
 	$('.filter-text-box').val('');
 	$('.group-label').text('');
 	$('.country-label').text('');
-	$('#usersSelected').val('');
+	$('#userval').val('');
+  $('#userid').val('');
 }
 function initialize(){
 		resetValues();

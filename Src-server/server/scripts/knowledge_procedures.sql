@@ -2313,7 +2313,7 @@ BEGIN
     (
         select group_concat(country_name) from tbl_countries
         where country_id in (
-            select country_id from tbl_client_countries
+            select country_id from tbl_legal_entities
             where client_id=client_id
         )
     ) as country_names,
@@ -2327,7 +2327,7 @@ BEGIN
     ) as no_of_assigned_legal_entities
     
     FROM tbl_client_groups tcg;
-END ;;
+END ;
 DELIMITER ;
 
 
@@ -2346,7 +2346,7 @@ BEGIN
 	INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
 	LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
 	WHERE t1.client_id=clientid and t4.legal_entity_id is null;
-END ;;
+END ;
 DELIMITER ;
 
 -- ------------------------
@@ -2363,7 +2363,7 @@ BEGIN
     WHERE t1.user_category_id=8 and t1.parent_user_id = session_user;
 	SELECT user_id, country_id FROM tbl_user_countries;
 	SELECT user_id, domain_id FROM tbl_user_domains;
-END ;;
+END ;
 DELIMITER ;
 
 -- --------------------------------------------------
@@ -2381,5 +2381,5 @@ BEGIN
 	INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
 	LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
 	WHERE t1.client_id=clientid and t4.legal_entity_id is not null;
-END ;;
+END ;
 DELIMITER ;
