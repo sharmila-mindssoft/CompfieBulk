@@ -323,6 +323,7 @@ api_params = {
     "assigned_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "assigned_legal_entities": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"AssignedLegalEntities"},
     "assigned_units": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"AssignedUnits"},
+    "assigned_clients": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'admin', "class_name":"AssignedClient"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -500,11 +500,12 @@ def get_reassign_user_account_form_data(db, request, session_user):
     units = get_units(db)
     assigned_legal_entities = get_assigned_legal_entities(db)
     assigned_units = get_assigned_units(db)
+    assigned_clients = get_assigned_clients(db)
     return admin.GetReassignUserAccountFormdataSuccess(
         techno_managers, techno_users, domain_managers,
         domain_users, groups, business_groups, legal_entities,
         domains, countries, units, assigned_legal_entities,
-        assigned_units
+        assigned_units, assigned_clients
     )
 
 

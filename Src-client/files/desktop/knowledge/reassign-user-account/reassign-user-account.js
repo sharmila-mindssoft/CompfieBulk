@@ -126,11 +126,13 @@ var COUNTRIES = '';
 var DOMAINS = '';
 var ASSIGNED_ENTITIES = '';
 var ASSIGNED_UNITS = '';
+var ASSIGNED_CLIENTS = '';
 var client_id_name_map = {};
 var country_id_name_map = {};
 var business_group_id_name_map = {};
 var user_wise_entities = {};
 var user_wise_units = {};
+var user_wise_clients = {};
 
 var GroupCheckBoxes = {};
 var EntityCheckBoxes = {};
@@ -406,17 +408,20 @@ function loadAssignList(){
 function loadGroupList(){
     GroupCheckBoxes = {};
     TBodyReassignListGroupView.empty();
+    var assigned_clients = user_wise_clients[val_techno_manager_id];
     $.each(GROUPS, function(key, value){
-        var clone = GroupViewRow.clone();
-        $(CountryNames, clone).text(value.country_names);
-        $(Group_Name, clone).text(value.group_name);
-        $(LECount, clone).text(value.no_of_legal_entities);
-        GroupCheckBoxes[value.group_id] = false;
-        $(GroupCheckBox, clone).addClass("group-"+value.group_id);
-        TBodyReassignListGroupView.append(clone);
-        $(GroupCheckBox, clone).change(function(){
-            activateOrDeactivateGroup(value.group_id);
-        });
+        if(assigned_clients.indexOf(value.group_id) > -1){
+            var clone = GroupViewRow.clone();
+            $(CountryNames, clone).text(value.country_names);
+            $(Group_Name, clone).text(value.group_name);
+            $(LECount, clone).text(value.no_of_legal_entities);
+            GroupCheckBoxes[value.group_id] = false;
+            $(GroupCheckBox, clone).addClass("group-"+value.group_id);
+            TBodyReassignListGroupView.append(clone);
+            $(GroupCheckBox, clone).change(function(){
+                activateOrDeactivateGroup(value.group_id);
+            }); 
+        }
     });
 }
 
@@ -598,6 +603,11 @@ function generateIdNameMaps(){
             user_wise_units[value.user_id][domain_id] = [];
         user_wise_units[value.user_id][domain_id].push(value.unit_id);
     });
+    $.each(ASSIGNED_CLIENTS, function(key, value){
+        if(!(value.user_id in user_wise_clients))
+            user_wise_clients[value.user_id] = [];
+        user_wise_clients[value.user_id].push(value.client_id);
+    });
 }
 
 function getFormData(){
@@ -614,6 +624,7 @@ function getFormData(){
         DOMAINS = data.domains;
         ASSIGNED_ENTITIES = data.assigned_legal_entities;
         ASSIGNED_UNITS = data.assigned_units;
+        ASSIGNED_CLIENTS = data.assigned_clients;
         generateIdNameMaps();
     }
     function onFailure(error) {

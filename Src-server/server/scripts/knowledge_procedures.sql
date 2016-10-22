@@ -2736,7 +2736,7 @@ BEGIN
     WHERE t1.user_category_id=8 and t1.parent_user_id = session_user;
 	SELECT user_id, country_id FROM tbl_user_countries;
 	SELECT user_id, domain_id FROM tbl_user_domains;
-END ;
+END //
 DELIMITER ;
 
 -- --------------------------------------------------
@@ -2754,5 +2754,16 @@ BEGIN
 	INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
 	LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
 	WHERE t1.client_id=clientid and t4.legal_entity_id is not null;
-END ;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of assigned units for reassigning
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_userclients_reassign_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_userclients_reassign_list`()
+BEGIN
+	SELECT user_id, client_id FROM tbl_user_clients;
+END //
 DELIMITER ;

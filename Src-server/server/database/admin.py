@@ -32,7 +32,7 @@ __all__ = [
     "save_validity_date_settings", "get_user_mapping_form_data",
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
     "save_reassigned_user_account", "get_assigned_legal_entities",
-    "get_assigned_units"
+    "get_assigned_units", "get_assigned_clients"
 ]
 
 
@@ -977,8 +977,9 @@ def save_reassigned_user_account_history(db, request, session_user):
             reassigned_data = "Following groups were reassigned :- %s " % (
                 names)
         elif user_type == 2:
-            reassigned_data = "Following legal entities were reassigned :- %s" % (
-                names)
+            reassigned_data = "Following legal entities were " + \
+                " reassigned :- %s" % (
+                    names)
         else:
             reassigned_data = "Following units were reassigned :- %s" % (names)
         db.call_insert_proc(
@@ -1007,7 +1008,7 @@ def save_reassigned_user_account(db, request, session_user):
             )
             if user_type == 1:
                 condition = "client_id=%s" % (assigned_id)
-                table = tblUserLegalEntity
+                table = tblUserClients
             elif user_type == 2:
                 condition = "legal_entity_id=%s" % (assigned_id)
                 table = tblUserLegalEntity
@@ -1051,6 +1052,22 @@ def return_assigned_units(data):
             user_id=datum["user_id"],
             unit_id=datum["unit_id"],
             domain_id=datum["domain_id"]
+        )for datum in data
+    ]
+    return result
+
+
+def get_assigned_clients(db):
+    result = db.call_proc("sp_userclients_reassign_list", None)
+    return return_assigned_clients(result)
+
+
+def return_assigned_clients(data):
+    fn = admin.AssignedClient
+    result = [
+        fn(
+            user_id=datum["user_id"],
+            client_id=datum["client_id"]
         )for datum in data
     ]
     return result
