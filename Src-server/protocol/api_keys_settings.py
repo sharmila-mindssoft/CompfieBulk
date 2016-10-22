@@ -310,10 +310,16 @@ api_params = {
     "division_units": {'type':'vector_type', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'technomasters', "class_name":"UnitDivision"},
     "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "category_id": {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
-    "usermapping_group_details": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserMappingGroupDetails"},
+    "usermapping_groupdetails": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserMappingGroupDetails"},
     "usermapping_unit": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserMappingUnitDetails"},
     "usermapping_legal_entities": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"ClientLegalEntity"},
     "usermapping_business_groups": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"ClientBusinessGroup"},
+    'client_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'unit_code_name': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'techno_manager': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'techno_user': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "techno_details": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserMappingReportTechno"},
+    "unit_domains": {'type':'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name':'core', "class_name":"UserMappingReportDomain"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
