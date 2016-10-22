@@ -974,7 +974,8 @@ def save_reassigned_user_account_history(db, request, session_user):
             names += datum["name"]
 
         if user_type == 1:
-            reassigned_data = "Following groups were reassigned :- %s " % (names)
+            reassigned_data = "Following groups were reassigned :- %s " % (
+                names)
         elif user_type == 2:
             reassigned_data = "Following legal entities were reassigned :- %s" % (
                 names)

@@ -3252,39 +3252,86 @@ class EntityDomainDetails(object):
 
 class AssignLegalEntity(object):
     def __init__(
-        self, client_id, group_id, country_name,
-        group_name,no_of_legal_entities
+        self, client_id, country_name,
+        group_name,no_of_legal_entities, no_of_assigned_legal_entities
     ):
         self.client_id = client_id
-        self.group_id = group_id
         self.country_name = country_name
         self.group_name = group_name
         self.no_of_legal_entities = no_of_legal_entities
+        self.no_of_assigned_legal_entities = no_of_assigned_legal_entities
 
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "client_id", "group_id", "country_name", "group_name"
-                "no_of_legal_entities"
+                "client_id", "country_name", "group_name"
+                "no_of_legal_entities", "no_of_assigned_legal_entities"
             ]
         )
         client_id = data.get("client_id")
-        group_id = data.get("group_id")
         country_name = data.get("country_name")
         group_name = data.get("group_name")
         no_of_legal_entities = data.get("no_of_legal_entities")
+        no_of_assigned_legal_entities = data.get("no_of_assigned_legal_entities")
         
         return AssignLegalEntity(
-            client_id, group_id, country_name, group_name, no_of_legal_entities
+            client_id, country_name, group_name, no_of_legal_entities, no_of_assigned_legal_entities
         )
 
     def to_structure(self):
         return {
             "client_id": self.client_id,
-            "group_id": self.group_id,
             "country_name": self.country_name,
             "group_name": self.group_name,
-            "no_of_legal_entities": self.no_of_legal_entities
+            "no_of_legal_entities": self.no_of_legal_entities,
+            "no_of_assigned_legal_entities": self.no_of_assigned_legal_entities
+        }
+
+class UnAssignLegalEntity(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, business_group_name, c_name, c_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
+        self.c_name = c_name
+        self.c_id = c_id
+       
+    @staticmethod
+    def parse_structure(data):
+        print
+        print
+        print "inside unassign legal entity parse structure:"
+        print
+        print
+        data = parse_dictionary(
+            data, [
+                "legal_entity_id",
+                "legal_entity_name",
+                "business_group_name",
+                "c_name",
+                "c_id"
+            ]
+        )
+        
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_name = data.get("business_group_name")
+        c_name = data.get("c_name")
+        c_id = data.get("c_id")
+
+        return UnAssignLegalEntity(
+            legal_entity_id, legal_entity_name,
+            business_group_name, c_name, c_id
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_name": self.business_group_name,
+            "c_name": self.c_name,
+            "c_id": self.c_id
         }

@@ -491,11 +491,13 @@ CREATE TABLE `tbl_compliance_update_history` (
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
   `client_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
   `group_admin_username` varchar(20) NOT NULL,
   `total_view_licence` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
+  `remarks` varchar(500) DEFAULT NULL,
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_approved` tinyint(4) DEFAULT '0',
   `approved_by` int(11) DEFAULT NULL,
@@ -948,6 +950,14 @@ CREATE TABLE `tbl_user_legalentity` (
   `assigned_on` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_user_clients`;
+CREATE TABLE `tbl_user_clients` (
+  `user_id` int(11) NOT NULL,
+  `user_category_id` int(11) NOT NULL,
+  `client_id` int(11) DEFAULT NULL,
+  `assigned_by` int(11) DEFAULT NULL,
+  `assigned_on` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_user_units`;
 CREATE TABLE `tbl_user_units` (

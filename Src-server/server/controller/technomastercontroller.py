@@ -34,7 +34,10 @@ __all__ = [
     "get_assign_legal_entity_list",
     "get_unassigned_units",
     "get_assigned_units",
-    "process_save_assigned_units_request"
+    "process_save_assigned_units_request",
+    "get_edit_assign_legal_entity",
+    "process_save_assign_legal_entity",
+    "view_assign_legal_entity"
 ]
 
 #
@@ -506,9 +509,9 @@ def get_next_unit_code(db, request, session_user):
 # To Get list of all legal entity
 ########################################################
 def get_assign_legal_entity_list(db, request, session_user):
-    legal_entities = get_assign_legalentities(db)
+    assign_le_list = get_assign_legalentities(db)
     return technomasters.GetAssignLegalEntityListSuccess(
-        legal_entities=legal_entities
+        assign_le_list=assign_le_list
     )
 
 
@@ -563,3 +566,43 @@ def get_assign_unit_form_data(db, request, session_user):
 def process_save_assigned_units_request(db, request, session_user):
     save_assigned_units(db, request, session_user)
     return technomasters.SaveAsssignedUnitsSuccess()
+
+
+########################################################
+# To Get data of particular client
+########################################################
+def get_edit_assign_legal_entity(db, request, session_user):
+    #countries = get_user_countries(db, session_user)
+    techno_users = get_techno_users_list(db, session_user)
+    group_id = request.group_id
+    unassign_legal_entities= get_unassigned_legal_entity(db, group_id)
+
+    return technomasters.GetEditAssignLegalEntitySuccess(
+        unassign_legal_entities=unassign_legal_entities,
+        techno_users=techno_users
+    )
+
+########################################################
+# To save assign legal entity
+########################################################
+def process_save_assign_legal_entity(db, request, session_user):
+    #countries = get_user_countries(db, session_user)
+    #techno_users = get_techno_users_list(db)
+    # group_id = request.group_id
+    # unassign_legal_entities= get_unassigned_legal_entity(db, group_id)
+    client_id = request.client_id
+    user_ids = request.user_ids
+    legal_entity_ids = request.legal_entity_ids
+    save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_user)
+    return technomasters.SaveAssignLegalEntitySuccess()
+
+
+def view_assign_legal_entity(db, request, session_user):
+    #countries = get_user_countries(db, session_user)
+    #techno_users = get_techno_users_list(db, session_user)
+    client_id = request.client_id
+    assigned_legal_entities= get_assigned_legal_entity(db, client_id)
+   
+    return technomasters.ViewAssignLegalEntitySuccess(
+        assigned_legal_entities=assigned_legal_entities,
+    )

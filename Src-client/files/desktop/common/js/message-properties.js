@@ -292,8 +292,12 @@ var message = {
   "assign_success": "Assigned successfully",
   "techno_executive_required": "Techno executive required",
   "domain_executive_required": "Domain executive required",
-  "reassign_users_account_success": "User's account reassigned successfully"
-  
+  "reassign_users_account_success": "User's account reassigned successfully",
+  "mapping_save_success": "User mapping saved successfully",
+  "unit_saved": "Unit(s) Saved successfully",
+  "unit_updated": "Units(s) Updated Successfully",
+  "no_legal_entity_selected" : "Atleast one legalentity should select",
+  "no_user_selected" : "No user selected for assign"
 };
 
 function clearMessage() {

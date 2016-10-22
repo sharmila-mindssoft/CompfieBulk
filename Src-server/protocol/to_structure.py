@@ -2398,3 +2398,14 @@ def to_structure_VectorType_RecordType_core_AssignLegalEntity(data):
 
 def to_structure_RecordType_core_AssignLegalEntity(data):
     return to_structure_RecordType("core", "AssignLegalEntity", data)
+
+def to_structure_VectorType_RecordType_core_UnAssignLegalEntity(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_UnAssignLegalEntity(item))
+    return lst
+
+def to_structure_RecordType_core_UnAssignLegalEntity(data):
+    from protocol import core
+    return core.UnAssignLegalEntity.to_structure(data)
