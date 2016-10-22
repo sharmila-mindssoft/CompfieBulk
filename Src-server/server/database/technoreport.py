@@ -630,8 +630,11 @@ def get_user_category_details(db, session_user):
     return result
 
 
-def get_countries_for_usermapping_report_filter(db, user_id, user_category_id):
+def get_countries_for_usermapping_report_filter(db, user_category_id, user_id):
+    print user_id
     result = db.call_proc("sp_countries_for_usermapping_report", (user_category_id, user_id))
+    print "countries"
+    print result
     results = []
     for d in result:
         results.append(core.Country(
@@ -640,7 +643,7 @@ def get_countries_for_usermapping_report_filter(db, user_id, user_category_id):
     return results
 
 
-def get_group_details_for_usermapping_report_filter(db, user_id, user_category_id):
+def get_group_details_for_usermapping_report_filter(db, user_category_id, user_id):
     result = db.call_proc("sp_usermapping_report_group_details", (user_category_id, user_id))
     results = []
     for d in result:
@@ -667,7 +670,7 @@ def get_legal_entities_for_usermapping_report(db):
         ))
     return results
 
-def get_unit_details_for_usermapping_report(db, user_id, user_category_id):
+def get_unit_details_for_usermapping_report(db, user_category_id, user_id):
     result = db.call_proc("sp_usermapping_report_unit_details", (user_category_id, user_id))
     results = []
     for d in result:
@@ -677,3 +680,37 @@ def get_unit_details_for_usermapping_report(db, user_id, user_category_id):
             d["category_id"], d["category_name"]
         ))
     return results
+
+def get_usermapping_report_dataset(db, user_id, client_id, legal_entity_id, country_id):
+    args = [user_id, client_id, legal_entity_id, country_id]
+    expected_result = 4
+    result = db.call_proc_with_multiresult_set(
+       "sp_usermapping_report_details", args, expected_result
+    )
+    print "result"
+    print result
+    techno_details = unit_domains = domains = {}
+
+    if(len(result) > 0):
+        if(len(result[1]) > 0):
+            print "result 1"
+            print result[1]
+            techno_details = result[1]
+            '''for techno in result[1]:
+                techno_details.append(core.UserMappingReportTechno(
+                    techno["unit_id"], techno["techno_manager"], techno["techno_user"]
+                ))'''
+        if(len(result[2]) > 0):
+            unit_domains = result[2]
+            '''for assign_domain in result[2]:
+                unit_domains.append(core.UserMappingReportDomain(
+                    assign_domain["unit_id"], assign_domain["employee_name"], assign_domain["user_category_name"], assign_domain["domain_id"]
+                ))'''
+
+        if(len(result[3]) > 0):
+            domains = result[3]
+            '''for domain in result[3]:
+                domains.append(core.Domain(
+                    domain["domain_id"], domain["domain_name"], domain["is_active"]
+                ))'''
+    return (techno_details, unit_domains, domains)
