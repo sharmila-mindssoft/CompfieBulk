@@ -903,7 +903,7 @@ function commonAutoComplete(
     for (var i in suggestions) {
       str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
     }
-    ac_div.find('ul').append(str);  
+    ac_div.find('ul').append(str);
   } else {
     $('.ac-textbox').hide();
   }

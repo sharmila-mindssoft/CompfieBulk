@@ -252,7 +252,6 @@ def parse_optional_int_list(x, length=0, int_length=0):
 
 
 def parse_values(field_name, param, val):
-    print field_name, param, val
     _type = param.get('type')
     _length = param.get('length')
     _is_optional = param.get('is_optional')
@@ -316,13 +315,11 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
-        print "field_name: %s, val: %s" % (field_name, val)
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
         _validation_method = param.get('validation_method')
         if _type == 'VECTOR_TYPE':
-            print "inside vector type=========>"
             assert _module_name is not None
             assert _class_name is not None
             val = parse_VectorType(
@@ -397,7 +394,6 @@ def to_structure_dictionary_values(x):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
-        print "field_name: %s, val: %s" % (field_name, val)
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
@@ -473,9 +469,6 @@ def to_VariantType(data, module_name, class_name):
 
 
 def parse_RecordType(module_name, class_name, data):
-    print "inside parse_ Record type===>"
-    print "modeule: %s, class: %s" % (module_name, class_name)
-    print "data:%s" % data
     klass = return_import(module_name, class_name)
     return klass.parse_structure(data)
 
@@ -487,16 +480,12 @@ def to_RecordType(module_name, class_name, data):
 
 
 def parse_VectorType(module_name, class_name, data):
-    print "inside parse vector type: ===>"
-    print "modeule: %s, class: %s" % (module_name, class_name)
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        print "inside for : %s " % item
         lst.append(
             parse_RecordType(module_name, class_name, item)
         )
-    print lst
     return lst
 
 

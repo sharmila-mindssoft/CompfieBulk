@@ -353,12 +353,42 @@ class GetReassignUserAccountFormdata(Request):
         return {
         }
 
+
+class SaveReassignUserAccount(Request):
+    def __init__(self, user_type, old_user_id, new_user_id, assigned_ids):
+        self.user_type = user_type
+        self.old_user_id = old_user_id
+        self.new_user_id = new_user_id
+        self.assigned_ids = assigned_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "user_type", "old_user_id", "new_user_id", "assigned_ids"
+        ])
+        user_type = data.get("user_type")
+        old_user_id = data.get("old_user_id")
+        new_user_id = data.get("new_user_id")
+        assigned_ids = data.get("assigned_ids")
+        return SaveReassignUserAccount(
+            user_type, old_user_id, new_user_id, assigned_ids)
+
+    def to_inner_structure(self):
+        return {
+            "user_type": self.user_type,
+            "old_user_id": self.old_user_id,
+            "new_user_id": self.new_user_id,
+            "assigned_ids": self.assigned_ids
+        }
+
+
 def _init_Request_class_map():
     classes = [
         GetUserGroups, SaveUserGroup, UpdateUserGroup,
         ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser,
         ChangeUserStatus, GetValidityDateList, SaveValidityDateSettings,
-        GetUserMappings, SaveUserMappings, GetReassignUserAccountFormdata
+        GetUserMappings, SaveUserMappings, GetReassignUserAccountFormdata,
+        SaveReassignUserAccount
     ]
     class_map = {}
     for c in classes:
@@ -850,11 +880,50 @@ class SaveUserMappingsSuccess(Response):
         }
 
 
+class LegalEntity(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, business_group_id,
+        client_id, country_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.client_id = client_id
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "legal_entity_id", "legal_entity_name", "business_group_id",
+                "client_id", "country_id"
+            ]
+        )
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_id = data.get("business_group_id")
+        client_id = data.get("client_id")
+        country_id = data.get("country_id")
+        return LegalEntity(
+            legal_entity_id, legal_entity_name, business_group_id, client_id,
+            country_id
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id,
+            "client_id": self.client_id,
+            "country_id": self.country_id
+        }
+
+
 class GetReassignUserAccountFormdataSuccess(Request):
     def __init__(
         self, techno_managers, techno_users, domain_managers,
-        domain_users, groups, business_groups, legal_entities,
-        domains, countries, units
+        domain_users, groups, business_groups, admin_legal_entity,
+        domains, countries, unit_id_name
     ):
         self.techno_managers = techno_managers
         self.techno_users = techno_users
@@ -862,17 +931,17 @@ class GetReassignUserAccountFormdataSuccess(Request):
         self.domain_users = domain_users
         self.groups = groups
         self.business_groups = business_groups
-        self.legal_entities = legal_entities
+        self.admin_legal_entity = admin_legal_entity
         self.domains = domains
         self.countries = countries
-        self.units = units
+        self.unit_id_name = unit_id_name
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "techno_managers", "techno_users", "domain_managers",
-            "domain_users", "groups", "business_groups", "legal_entities",
-            "domains", "countries", "units"
+            "domain_users", "groups", "business_groups", "admin_legal_entity",
+            "domains", "countries", "unit_id_name"
         ])
         techno_managers = data.get("techno_managers")
         techno_users = data.get("techno_users")
@@ -880,14 +949,14 @@ class GetReassignUserAccountFormdataSuccess(Request):
         domain_users = data.get("domain_users")
         groups = data.get("groups")
         business_groups = data.get("business_groups")
-        legal_entities = data.get("legal_entities")
+        admin_legal_entity = data.get("admin_legal_entity")
         domains = data.get("domains")
         countries = data.get("countries")
-        units = data.get("units")
+        unit_id_name = data.get("unit_id_name")
         return GetReassignUserAccountFormdataSuccess(
             techno_managers, techno_users, domain_managers,
-            domain_users, groups, business_groups, legal_entities,
-            domains, countries, units
+            domain_users, groups, business_groups, admin_legal_entity,
+            domains, countries, unit_id_name
         )
 
     def to_inner_structure(self):
@@ -898,10 +967,24 @@ class GetReassignUserAccountFormdataSuccess(Request):
             "domain_users": self.domain_users,
             "groups": self.groups,
             "business_groups": self.business_groups,
-            "legal_entities": self.legal_entities,
+            "admin_legal_entity": self.admin_legal_entity,
             "domains": self.domains,
             "countries": self.countries,
-            "units": self.units
+            "unit_id_name": self.unit_id_name
+        }
+
+
+class SaveReassignUserAccountSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveReassignUserAccountSuccess()
+
+    def to_inner_structure(self):
+        return {
         }
 
 
@@ -915,7 +998,7 @@ def _init_Response_class_map():
         ChangeUserStatusSuccess, CannotDeactivateUserExists,
         GetValidityDateListSuccess, SaveValidityDateSettingsSuccess,
         GetUserMappingsSuccess, GetUserMappingsSuccess,
-        SaveUserMappingsSuccess
+        SaveUserMappingsSuccess, SaveReassignUserAccountSuccess
     ]
     class_map = {}
     for c in classes:

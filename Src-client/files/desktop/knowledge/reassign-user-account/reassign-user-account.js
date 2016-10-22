@@ -1,6 +1,7 @@
 /* Elements */
 var UserType = $("#usertype");
 var Show = $(".btn-show");
+var Submit = $(".save");
 
 // Group auto complete
 var GroupDiv = $(".filter-group-div");
@@ -19,24 +20,36 @@ var TechnoManagerDiv = $(".techno-mgr-div");
 var TechnoManagerName = $("#techno_manager_name");
 var TechnoManagerId = $("#techno_manager_id");
 var ACTechnoManager = $("#ac-techno-manager");
+var RTTechnoManagerName = $("#rt_techno_manager_name");
+var RTTechnoManagerId = $("#rt_techno_manager_id");
+var ACRTTechnoManager = $("#ac-rt-techno-manager");
 
 // Techno User autocomplete
 var TechnoUserDiv = $(".techno-user-div");
 var TechnoUserName = $("#techno_user_name");
 var TechnoUserId = $("#techno_user_id");
 var ACTechnoUser = $("#ac-techno-user");
+var RTTechnoUserName = $("#rt_techno_user_name");
+var RTTechnoUserId = $("#rt_techno_user_id");
+var ACRTTechnoUser = $("#ac-rt-techno-user");
 
 // Domain manager autocomplete
 var DomainManagerDiv = $(".domain-mgr-div");
 var DomainManagerName = $("#domain_manager_name");
 var DomainManagerId = $("#domain_manager_id");
 var ACDomainManager = $("#ac-domain-manager");
+var RTDomainManagerName = $("#rt_domain_manager_name");
+var RTDomainManagerId = $("#rt_domain_manager_id");
+var ACRTDomainManager = $("#ac-rt-domain-manager");
 
 // Domain Executive autocomplete
 var DomainUserDiv = $(".domain-user-div"); 
 var DomainExecutiveName = $("#domain_executive_name");
 var DomainExecutiveId = $("#domain_executive_id");
 var ACDomainExecutive = $("#ac-domain-executive");
+var RTDomainExecutiveName = $("#rt_domain_user_name");
+var RTDomainExecutiveId = $("#rt_domain_user_id");
+var ACRTDomainExecutive = $("#ac-rt-domain-user");
 
 // Business Group auto complete
 var BusinessGroupDiv = $(".filter-business-div");
@@ -53,19 +66,41 @@ var ACDomain = $("#ac-domain");
 // Group View List
 var GroupView = $(".group-view");
 var TBodyReassignListGroupView = $(".tbody-reassign-list-group-view");
+var GroupViewRow = $(".group-view-row tr");
+var CountryNames = ".countries";
+var Group_Name = ".group-name";
+var LECount = ".le-count";
+var GroupCheckBox = ".group-checkbox";
 
 // Legal Entity View List
 var LegalEntityView = $(".legalentity-view");
 var TBodyReassignListLegalEntityView = $(".tbody-reassign-list-legalentity-view");
+var LegalEntityViewRow = $(".legalentity-view-row tr")
+var BG_Name = ".bg-name";
+var Country = ".country";
+var Entity = ".entity";
+var EntityCheckBox = ".entity-checkbox";
 
 // Unit view List
 var UnitView = $(".unit-view");
 var TBodyReassignListUnitView = $(".tbody-reassign-list-unit-view");
+var UnitViewRow = $(".unit-view-row tr");
+var UnitCode = ".unit-code";
+var UnitName = ".unit-name";
+var UnitLocation = ".location";
+var UnitCheckBox  = ".unit-checkbox";
+
 
 var ReassignToTechnoManager = $(".reassign-tm");
 var ReassignToTechnoUser = $(".reassign-tu");
 var ReassignToDomainManager = $(".reassign-dm");
 var ReassignToDomainUser = $(".reassign-du");
+var RemarksDiv = $(".remarks-div");
+var ViewNote = $(".view-note");
+
+var UnitHeaderCheckBox = $(".unit-header-checkbox");
+var EntityHeaderCheckBox = $(".entity-header-checkbox");
+var GroupHeaderCheckBox = $(".group-header-checkbox");
 
 /* Variables */
 var val_user_type = '';
@@ -78,17 +113,23 @@ var val_business_group_id = '';
 var val_legal_entity_id = '';
 var val_domain_id = '';
 
+var TECHNO_MANAGERS = '';
+var TECHNO_USERS = '';
+var DOMAIN_MANAGERS = '';
+var DOMAIN_USERS = '';
+var GROUPS = '';
+var BUSINESS_GROUPS = '';
+var LEGAL_ENTITIES = '';
+var UNITS = '';
+var COUNTRIES = '';
+var DOMAINS = '';
+var client_id_name_map = {};
+var country_id_name_map = {};
+var business_group_id_name_map = {};
 
-var TECHNO_MANAGERS = [
-    {
-        "user_id": 1,
-        "employee_name": "Test 1"
-    },
-    {
-        "user_id": 2,
-        "employee_name": "Test 2"
-    }
-]
+var GroupCheckBoxes = {};
+var EntityCheckBoxes = {};
+var UnitCheckBoxes = {};
 
 //retrive businessgroup form autocomplete value
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -99,6 +140,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function pageControls(){
     UserType.change(function(){
         user_type = UserType.val();
+        clearGrids();
         if(user_type == 1){ // Techno Manager
             TechnoManagerDiv.show();
             TechnoUserDiv.hide();
@@ -146,35 +188,67 @@ function pageControls(){
             onAutoCompleteSuccess(TechnoManagerName, TechnoManagerId, val);
         });
     });
+    RTTechnoManagerName.keyup(function(e){
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, ACRTTechnoManager, RTTechnoManagerId, text_val, 
+            TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
+            onAutoCompleteSuccess(RTTechnoManagerName, RTTechnoManagerId, val);
+        });
+    });
     TechnoUserName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACTechnoUser, TechnoUserId, text_val, 
-            TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
+            TECHNO_USERS, "employee_name", "user_id", function (val) {
             onAutoCompleteSuccess(TechnoUserName, TechnoUserId, val);
+        });
+    }); 
+    RTTechnoUserName.keyup(function(e){
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, ACRTTechnoUser, RTTechnoUserId, text_val, 
+            TECHNO_USERS, "employee_name", "user_id", function (val) {
+            onAutoCompleteSuccess(RTTechnoUserName, RTTechnoUserId, val);
         });
     }); 
     DomainManagerName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACDomainManager, DomainManagerId, text_val, 
-            TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
+            DOMAIN_MANAGERS, "employee_name", "user_id", function (val) {
             onAutoCompleteSuccess(DomainManagerName, DomainManagerId, val);
+        });
+    });
+    RTDomainManagerName.keyup(function(e){
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, ACRTDomainManager, RTDomainManagerId, text_val, 
+            DOMAIN_MANAGERS, "employee_name", "user_id", function (val) {
+            onAutoCompleteSuccess(RTDomainManagerName, RTDomainManagerId, val);
         });
     });
     DomainExecutiveName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACDomainExecutive, DomainExecutiveId, text_val, 
-            TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
+            DOMAIN_USERS, "employee_name", "user_id", function (val) {
             onAutoCompleteSuccess(DomainExecutiveName, DomainExecutiveId, val);
+        });
+    });
+    RTDomainExecutiveName.keyup(function(e){
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, ACRTDomainExecutive, RTDomainExecutiveId, text_val, 
+            DOMAIN_USERS, "employee_name", "user_id", function (val) {
+            onAutoCompleteSuccess(RTDomainExecutiveName, RTDomainExecutiveId, val);
         });
     });
     GroupName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACGroup, GroupId, text_val, 
-            TECHNO_MANAGERS, "group_name", "client_id", function (val) {
+            GROUPS, "group_name", "client_id", function (val) {
             onAutoCompleteSuccess(GroupName, GroupId, val);
         });
     });
@@ -182,7 +256,7 @@ function pageControls(){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACBusinessGroup, BusinessGroupId, text_val, 
-            TECHNO_MANAGERS, "business_group_name", "business_group_id", 
+            BUSINESS_GROUPS, "business_group_name", "business_group_id", 
             function (val) {
                 onAutoCompleteSuccess(BusinessGroupName, BusinessGroupId, val);
         });
@@ -191,7 +265,7 @@ function pageControls(){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACEntity, EntityId, text_val, 
-            TECHNO_MANAGERS, "legal_entity_name", "legal_entity_id", 
+            LEGAL_ENTITIES, "legal_entity_name", "legal_entity_id", 
             function (val) {
                 onAutoCompleteSuccess(EntityName, EntityId, val);
         });
@@ -200,13 +274,25 @@ function pageControls(){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACDomain, DomainId, text_val, 
-            TECHNO_MANAGERS, "domain_name", "domain_id", 
+            DOMAINS, "domain_name", "domain_id", 
             function (val) {
                 onAutoCompleteSuccess(DomainName, DomainId, val);
         });
     });
     Show.click(function(){
         validateAndShowList();
+    });
+    Submit.click(function(){
+        validateAndSave();
+    });
+    UnitHeaderCheckBox.change(function(){
+        activateOrDeactivateAllUnit();
+    });
+    EntityHeaderCheckBox.change(function(){
+        activateOrDeactivateAllEntity();
+    });
+    GroupHeaderCheckBox.change(function(){
+        activateOrDeactivateAllGroup();
     });
 }
 
@@ -215,6 +301,7 @@ function validateAndShowList(){
     val_techno_manager_id = TechnoManagerId.val();
     val_techno_executive_id = TechnoUserId.val();
     val_domain_manager_id = DomainManagerId.val();
+    val_domain_executive_id = DomainExecutiveId.val();
     val_group_id = GroupId.val();
     val_business_group_id = BusinessGroupId.val();
     val_legal_entity_id = EntityId.val();
@@ -238,16 +325,13 @@ function validateAndShowList(){
             }
         }else if(val_user_type == 4){
             if(val_domain_executive_id.trim().length == 0){
-                displayMessage(message.domain_manager_required);
+                displayMessage(message.domain_executive_required);
                 validation_result = false;
             }
         }
         if(validation_result == true){
             if(val_group_id.trim().length == 0){
                 displayMessage(message.group_required);
-                validation_result = false;
-            }else if(val_business_group_id.trim().length == 0){
-                displayMessage(message.businessgroup_required);
                 validation_result = false;
             }else if(val_legal_entity_id.trim().length == 0){
                 displayMessage(message.legalentity_required);
@@ -263,8 +347,20 @@ function validateAndShowList(){
     }
 }
 
+function clearGrids(){
+    GroupView.hide();
+    LegalEntityView.hide();
+    UnitView.hide();
+    ReassignToTechnoManager.hide();
+    ReassignToTechnoUser.hide();
+    ReassignToDomainManager.hide();
+    ReassignToDomainUser.hide();
+    RemarksDiv.hide();
+}
+
 function loadAssignList(){
-    $(".view-note").show();
+    ViewNote.show();
+    RemarksDiv.show();
     if(val_user_type == 1){
         GroupView.show();
         LegalEntityView.hide();
@@ -301,20 +397,185 @@ function loadAssignList(){
 }
 
 function loadGroupList(){
+    GroupCheckBoxes = {};
+    TBodyReassignListGroupView.empty();
+    $.each(GROUPS, function(key, value){
+        var clone = GroupViewRow.clone();
+        $(CountryNames, clone).text(value.country_names);
+        $(Group_Name, clone).text(value.group_name);
+        $(LECount, clone).text(value.no_of_legal_entities);
+        GroupCheckBoxes[value.group_id] = false;
+        $(GroupCheckBox, clone).addClass("group-"+value.group_id);
+        TBodyReassignListGroupView.append(clone);
+        $(GroupCheckBox, clone).change(function(){
+            activateOrDeactivateGroup(value.group_id);
+        });
+    });
+}
 
+function activateOrDeactivateGroup(group_id){
+    group_status = $(".group-"+group_id).prop("checked");
+    GroupCheckBoxes[group_id] = group_status;
 }
 
 function loadLegalEntity(){
+    EntityCheckBoxes = {};
+    TBodyReassignListLegalEntityView.empty();
+    $.each(LEGAL_ENTITIES, function(key, value){
+        var clone = LegalEntityViewRow.clone();
+        $(Group_Name, clone).text(client_id_name_map[value.group_id]);
+        $(BG_Name, clone).text(business_group_id_name_map[value.business_group_id]);
+        $(Country, clone).text(country_id_name_map[value.country_id]);
+        $(Entity, clone).text(value.legal_entity_name);
+        $(EntityCheckBox, clone).addClass("entity-"+value.legal_entity_id);
+        EntityCheckBoxes[value.legal_entity_id] = false;
+        TBodyReassignListLegalEntityView.append(clone);
+        $(EntityCheckBox, clone).change(function(){
+            activateOrDeactivateEntity(value.legal_entity_id);
+        });
+    });
+}
 
+function activateOrDeactivateEntity(legal_entity_id){
+    entity_status = $(".entity-"+legal_entity_id).prop("checked");
+    EntityCheckBoxes[legal_entity_id] = entity_status;
 }
 
 function loadUnits(){
+    UnitCheckBoxes = {};
+    TBodyReassignListUnitView.empty();
+    $.each(UNITS, function(key, value){
+        var clone = UnitViewRow.clone();
+        $(UnitCode, clone).text(value.unit_code);
+        $(UnitName, clone).text(value.unit_name);
+        $(UnitLocation, clone).text(value.address);
+        UnitCheckBoxes[value.unit_id] = false;
+        $(UnitCheckBox, clone).addClass("unit-"+value.unit_id);
+        TBodyReassignListUnitView.append(clone);
+        $(UnitCheckBox, clone).change(function(){
+            activateOrDeactivateUnit(value.unit_id);
+        });
+    });
+}
 
+function activateOrDeactivateUnit(unit_id){
+    unit_status = $(".unit-"+unit_id).prop("checked");
+    UnitCheckBoxes[unit_id] = unit_status;
+}
+
+function activateOrDeactivateAllUnit(){
+    unit_header_checkbox_stauts = UnitHeaderCheckBox.prop("checked");
+    $.each(UnitCheckBoxes, function(key, value){
+        $(".unit-"+key).prop("checked", unit_header_checkbox_stauts);
+        UnitCheckBoxes[key] = unit_header_checkbox_stauts;
+    });
+}
+
+function activateOrDeactivateAllEntity(){
+    entity_header_checkbox_stauts = EntityHeaderCheckBox.prop("checked");
+    $.each(EntityCheckBoxes, function(key, value){
+        $(".entity-"+key).prop("checked", entity_header_checkbox_stauts);
+        EntityCheckBoxes[key] = entity_header_checkbox_stauts;
+    });
+}
+
+function activateOrDeactivateAllGroup(){
+    group_header_checkbox_status = GroupHeaderCheckBox.prop("checked");
+    $.each(GroupCheckBoxes, function(key, value){
+        $(".group-"+key).prop("checked", group_header_checkbox_status);
+        GroupCheckBoxes[key] = group_header_checkbox_status;
+    });
+}
+
+function validateAndSave(){
+    var check_box_list = [];
+    var true_count = 0;
+    var display_text = "";
+    var ids = [];
+    var reassign_to_user = '';
+    var old_user = '';
+    var user_validation_msg = '';
+    if(val_user_type == 1){
+        check_box_list = GroupCheckBoxes;
+        display_text = "Group";
+        reassign_to_user = RTTechnoManagerId.val();
+        user_validation_msg = message.techno_manager_required;
+        old_user = TechnoManagerId.val();
+    }else if (val_user_type == 2){
+        check_box_list = EntityCheckBoxes;
+        display_text = "Legal Entity";
+        reassign_to_user = RTTechnoUserId.val();
+        user_validation_msg = message.techno_executive_required;
+        old_user = TechnoUserId.val();
+    }else if (val_user_type == 3 || val_user_type == 4){
+        check_box_list = UnitCheckBoxes;
+        display_text = "Unit";
+        if(val_user_type == 3){
+            reassign_to_user = RTDomainManagerId.val();
+            user_validation_msg = message.domain_manager_required;
+            old_user = DomainManagerId.val();
+        }else{
+            reassign_to_user = RTDomainExecutiveId.val();
+            user_validation_msg = message.domain_executive_required;
+            old_user = DomainExecutiveId.val();
+        }
+    }
+    $.each(check_box_list, function(key, value){
+        if(value == true){
+            ++true_count;
+        }
+        ids.push(parseInt(key));
+    });
+
+    if(true_count <= 0){
+        displayMessage("Select atleast one "+display_text);
+    }else if(!reassign_to_user){
+        displayMessage(user_validation_msg);
+    }else{
+        function onSuccess(data) {
+            displayMessage(message.reassign_users_account_success);
+        }
+        function onFailure(error) {
+            custom_alert(error);
+        }
+        mirror.saveReassignUserAccount(
+            parseInt(val_user_type), parseInt(old_user), parseInt(reassign_to_user), ids,
+            function (error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        });
+    }
+
+}
+
+function generateIdNameMaps(){
+    $.each(GROUPS, function(key, value){
+        client_id_name_map[value.client_id] = value.group_name;
+    });
+    $.each(COUNTRIES, function(key, value){
+        country_id_name_map[value.country_id] = value.country_name;
+    });
+    $.each(BUSINESS_GROUPS, function(key, value){
+        business_group_id_name_map[value.business_group_id] = value.business_group_name;
+    });
 }
 
 function getFormData(){
     function onSuccess(data) {
-        
+        TECHNO_MANAGERS = data.techno_managers;
+        TECHNO_USERS = data.techno_users;
+        DOMAIN_MANAGERS = data.domain_managers;
+        DOMAIN_USERS = data.domain_users;
+        GROUPS = data.groups;
+        BUSINESS_GROUPS = data.business_groups;
+        LEGAL_ENTITIES = data.admin_legal_entity;
+        UNITS = data.unit_id_name;
+        COUNTRIES = data.countries;
+        DOMAINS = data.domains;
+        generateIdNameMaps();
     }
     function onFailure(error) {
         custom_alert(error);

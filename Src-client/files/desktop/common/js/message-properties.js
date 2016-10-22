@@ -292,6 +292,7 @@ var message = {
   "assign_success": "Assigned successfully",
   "techno_executive_required": "Techno executive required",
   "domain_executive_required": "Domain executive required",
+  "reassign_users_account_success": "User's account reassigned successfully"
   
 };
 

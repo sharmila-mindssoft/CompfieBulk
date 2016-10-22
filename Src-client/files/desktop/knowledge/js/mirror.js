@@ -1768,6 +1768,21 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function saveReassignUserAccount(
+    user_type, old_user_id, new_user_id, assigned_ids, callback
+  ){
+      callerName = "admin";
+      var request = [
+        "SaveReassignUserAccount",
+        {
+          "user_type": user_type,
+          "old_user_id": old_user_id,
+          "new_user_id": new_user_id,
+          "assigned_ids": assigned_ids
+        }
+      ];
+      apiRequest(callerName, request, callback); 
+  }
   return {
     log: log,
     toJSON: toJSON,
@@ -1927,7 +1942,8 @@ function initMirror() {
     getAssignedUnitDetails: getAssignedUnitDetails,
     getAssignUnitFormData: getAssignUnitFormData,
     saveAssignedUnits: saveAssignedUnits,
-    getReassignUserAccountFormdata: getReassignUserAccountFormdata
+    getReassignUserAccountFormdata: getReassignUserAccountFormdata,
+    saveReassignUserAccount: saveReassignUserAccount
   };
 }
 var mirror = initMirror();

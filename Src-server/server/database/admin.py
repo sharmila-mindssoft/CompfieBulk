@@ -30,7 +30,8 @@ __all__ = [
     "get_user_countries", "get_user_domains", "get_mapped_countries",
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
     "save_validity_date_settings", "get_user_mapping_form_data",
-    "save_user_mappings"
+    "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
+    "save_reassigned_user_account"
 ]
 
 
@@ -54,13 +55,11 @@ def get_domains_for_user(db, user_id):
 # Return Type : List of Object of Domain
 ###############################################################################
 def return_domains(data):
-    print "domais: %s" % data
     results = []
     for d in data:
         results.append(core.Domain(
             d["domain_id"], d["domain_name"], bool(d["is_active"])
         ))
-    print "results: %s" % results
     return results
 
 
@@ -861,9 +860,7 @@ def generate_domain_map(domains):
     return domain_map
 
 
-def get_user_mapping_form_data(db, session_user):
-    countries = get_countries_for_user(db, session_user)
-    domains = get_domains_for_user(db, session_user)
+def get_all_user_types(db):
     result = db.call_proc_with_multiresult_set("sp_users_type_wise", None, 8)
     user_countries = result[6]
     user_domains = result[7]
@@ -888,6 +885,18 @@ def get_user_mapping_form_data(db, session_user):
         domain_managers_result, user_countries_map, user_domains_map)
     domain_users = return_users(
         domain_users_result, user_countries_map, user_domains_map)
+    return (
+        knowledge_managers, knowledge_users, techno_managers, techno_users,
+        domain_managers, domain_users)
+
+
+def get_user_mapping_form_data(db, session_user):
+    countries = get_countries_for_user(db, session_user)
+    domains = get_domains_for_user(db, session_user)
+    (
+        knowledge_managers, knowledge_users, techno_managers, techno_users,
+        domain_managers, domain_users
+    ) = get_all_user_types(db)
     user_mappings = get_user_mappings(db)
     return (
         countries, domains, knowledge_managers, knowledge_users,
@@ -924,3 +933,50 @@ def save_user_mappings(db, request, session_user):
         db.save_activity(session_user, frmUserMapping, action)
     else:
         raise process_error("E079")
+
+
+def get_legal_entities_for_user(db, user_id):
+    result = db.call_proc(
+        "sp_tbl_unit_getclientlegalentity", (user_id,))
+    return return_legal_entities_for_unit(result)
+
+
+def return_legal_entities_for_unit(legal_entities):
+    results = []
+
+    for legal_entity in legal_entities:
+        legal_entity_obj = admin.LegalEntity(
+            legal_entity_id=legal_entity["legal_entity_id"],
+            legal_entity_name=legal_entity["legal_entity_name"],
+            business_group_id=legal_entity["business_group_id"],
+            client_id=legal_entity["client_id"],
+            country_id=legal_entity["country_id"]
+        )
+        results.append(legal_entity_obj)
+    return results
+
+
+def save_reassigned_user_account(db, request, session_user):
+    user_type = request.user_type
+    current_time_stamp = get_date_time()
+    columns = ["user_id", "assigned_by", "assigned_on"]
+    value_list = []
+    conditions = []
+    table = None
+    for assigned_id in request.assigned_ids:
+        value_list.append(
+            (request.new_user_id, session_user, current_time_stamp)
+        )
+        if user_type == 1:
+            condition = "client_id=%s" % (assigned_id)
+            table = tblUserLegalEntity
+        elif user_type == 2:
+            condition = "legal_entity_id=%s" % (assigned_id)
+            table = tblUserLegalEntity
+        else:
+            condition = "unit_id = %s" % (assigned_id)
+            table = tblUserUnits
+        conditions.append(condition)
+    db.bulk_update(
+        table, columns, value_list, conditions
+    )

@@ -343,7 +343,7 @@ DROP PROCEDURE IF EXISTS sp_tbl_domains_for_user;
 DELIMITER //
 CREATE procedure `sp_tbl_domains_for_user`(IN _user_id VARCHAR(11))
 BEGIN
-	IF _user_id > 0 THEN
+	IF _user_id > 2 THEN
 		SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active
 		FROM tbl_domains t1
 		INNER JOIN tbl_user_domains t2 on t1.domain_id = t2.domain_id
@@ -474,7 +474,7 @@ BEGIN
     (
         select group_concat(country_name) from tbl_countries
         where country_id in (
-            select country_id from tbl_client_countries
+            select country_id from tbl_legal_entities
             where client_id=client_id
         )
     ) as country_names,
@@ -485,7 +485,7 @@ BEGIN
     (
         select sum(is_active) from tbl_legal_entities tle
         WHERE tle.client_id=tcg.client_id
-    ) as is_active, is_approved
+    ) as is_active, is_approved, remarks
     FROM tbl_client_groups tcg;
 END //
 DELIMITER ;
@@ -499,7 +499,7 @@ CREATE PROCEDURE `sp_countries_for_user`(
     IN session_user INT(11)
 )
 BEGIN
-    IF session_user > 0 THEN
+    IF session_user > 2 THEN
 		SELECT country_id, country_name, is_active
 		FROM tbl_countries
 		WHERE country_id in (
@@ -521,12 +521,17 @@ CREATE PROCEDURE `sp_domains_for_user`(
     IN session_user INT(11)
 )
 BEGIN
-    SELECT domain_id, domain_name, is_active
-    FROM tbl_domains WHERE is_active=1
-    and domain_id in (
-        SELECT domain_id FROM tbl_user_domains
-        WHERE user_id=session_user
-    );
+    IF session_user > 2 THEN
+		SELECT domain_id, domain_name, is_active
+		FROM tbl_domains WHERE is_active=1
+		and domain_id in (
+			SELECT domain_id FROM tbl_user_domains
+			WHERE user_id=session_user
+		);
+	ELSE
+		SELECT domain_id, domain_name, is_active
+		FROM tbl_domains WHERE is_active=1;
+	END IF;
 END //
 DELIMITER ;
 
@@ -1052,11 +1057,15 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientbusinessgroup`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
 BEGIN
-	select business_group_id, business_group_name, client_id from tbl_business_groups
-    where client_id in
-	(select t1.client_id from tbl_client_groups t1
-    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
-	and t2.user_id = userId) order by business_group_name ASC;
+	IF userId > 2 THEN
+		select business_group_id, business_group_name, client_id from tbl_business_groups
+	    where client_id in
+		(select t1.client_id from tbl_user_legalentity t1
+	    where t1.user_id = userId) order by business_group_name ASC;
+	ELSE
+		select business_group_id, business_group_name, client_id 
+		from tbl_business_groups order by business_group_name ASC;
+	END IF;
 END //
 DELIMITER ;
 
@@ -1068,11 +1077,18 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientlegalentity`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
-	select legal_entity_id, legal_entity_name, business_group_id, client_id from tbl_legal_entities
-    where client_id in
-	(select t1.client_id from tbl_client_groups t1
-    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
-	and t2.user_id = userId) order by legal_entity_name ASC;
+	IF userId > 2 THEN
+		select legal_entity_id, legal_entity_name, business_group_id, client_id ,
+		country_id
+		from tbl_legal_entities
+	    where legal_entity_id in
+		(select t1.legal_entity_id from tbl_user_legalentity t1
+	    where t1.user_id = userId) order by legal_entity_name ASC;
+	ELSE
+		select legal_entity_id, legal_entity_name, business_group_id, client_id,
+		country_id
+		from tbl_legal_entities order by legal_entity_name ASC;
+	END IF;
 END //
 DELIMITER ;
 
@@ -2576,4 +2592,18 @@ BEGIN
 	values
 	(clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
 END // 
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of units
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_units_name_and_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_units_name_and_id`(
+)
+BEGIN
+	SELECT unit_id, unit_code, unit_name, address, division_id,
+	legal_entity_id, business_group_id, client_id, is_closed as is_active
+	FROM tbl_units;
+END //
 DELIMITER ;

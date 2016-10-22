@@ -812,14 +812,17 @@ def get_groups(db):
 ##########################################################################
 def return_group(groups):
     fn = core.ClientGroup
-    client_list = [
-        fn(
-            group["client_id"], group["group_name"],
-            group["country_names"], group["no_of_legal_entities"],
-            True if group["is_active"] > 0 else False,
-            int(group["is_approved"]), group["remarks"]
-        ) for group in groups
-    ]
+    client_list = []
+    for group in groups:
+        if group["client_id"] is not None:
+            client_list.append(
+                fn(
+                    group["client_id"], group["group_name"],
+                    group["country_names"], group["no_of_legal_entities"],
+                    True if group["is_active"] > 0 else False,
+                    int(group["is_approved"]), group["remarks"]
+                )
+            )
     return client_list
 
 
@@ -1370,6 +1373,12 @@ def return_unit_industry(data):
             client_id, unit_count, legal_entity_id, is_active
         ))
     return results
+
+
+def get_units(db):
+    result = db.call_proc(
+        "sp_units_name_and_id", None)
+    return return_units(result)
 
 
 def return_units(units):
