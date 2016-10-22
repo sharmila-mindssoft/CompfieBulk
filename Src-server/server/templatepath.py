@@ -383,6 +383,11 @@ TEMPLATE_PATHS = [
         "files/desktop/knowledge/compliance-task-list/compliancetasklist.html",
         None, {}
     ),
+    (
+        "/knowledge/user-mapping-report",
+        "files/desktop/knowledge/user-mapping-report/usermappingreport.html",
+        None, {}
+    ),
     # audit trial
     (
         "/knowledge/audit-trail",
