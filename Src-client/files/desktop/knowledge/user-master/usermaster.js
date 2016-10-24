@@ -31,7 +31,7 @@ var User_group_val = $('#usergroup');
 var User_group_ac = $("#usergroupval");
 // multi select textbox
 var Country = $("#countryselected");
-var Domains == $('#domainselected');
+var Domains = $('#domainselected');
 var Select_Box = $('#selectboxview');
 var Select_Box_Country = $('#selectboxview-country');
 var Domain_li_list = $('#ulist');
@@ -80,30 +80,40 @@ function renderUserList(response) {
         var tableRow = $('#templates .table-user-master .table-row');
         var rowClone = tableRow.clone();
 
-        $('.sno', clone).text(j);
-        $('.employee-name', clone).html(v.employee_code + ' - ' + v.employee_name);
-        $('.username',clone).html(username);
-        $('.email-id', clone).html(v.email_id);
-        $('.cat-name', clone).html(v.u_cat_id);
-        $('.registration-email', clone).html("");
-        // $('.user-group', clone).text(usergroup);
-        // $('.designation', clone).text(designation);
+        $('.sno', rowClone).text(j);
+        $('.employee-name', rowClone).html(v.employee_code + ' - ' + v.employee_name);
+        $('.username',rowClone).html(v.username);
+        $('.email-id', rowClone).html(v.email_id);
+        $('.cat-name', rowClone).html(v.u_cat_id);
+        $('.registration-email', rowClone).html("");
+        // $('.user-group', rowClone).text(usergroup);
+        // $('.designation', rowClone).text(designation);
         $('.edit-icon').attr('title', 'Edit');
-        $('.edit-icon', clone).on('click', function () {
-          displayEdit(userId);
+        $('.edit-icon', rowClone).on('click', function () {
+          displayEdit(v.user_id);
         });
-        $('.status', clone).addClass(classValue);
+        classValue = "active-icon"
+        $('.status', rowClone).addClass(classValue);
         $('.active-icon').attr('title', 'Deactivate');
         $('.inactive-icon').attr('title', 'Activate');
-        $('.status', clone).on('click', function () {
-          changeStatus(userId, passStatus);
+        if (v.is_active == true)
+          passStatus = false;
+        else
+          passStatus = true;
+        $('.status', rowClone).on('click', function () {
+          changeStatus(v.user_id, passStatus);
         });
-        $('.disable', clone).addClass(classValue);
+        $('.disable', rowClone).addClass(classValue);
         $('.enable-icon').attr('title', 'Click here to disable');
         $('.disable-icon').attr('title', 'Client here to enable');
-        $('.disable', clone).on('click', function () {
-          changeDisable(userId, passDstatus);
+        if (v.is_disable == true)
+          passDstatus = false;
+        else
+          passDstatus = true;
+        $('.disable', rowClone).on('click', function () {
+          changeDisable(v.user_id, passDstatus);
         });
+        $('.table-user-master').append(rowClone);
         j = j + 1;
       });
     }
@@ -147,8 +157,8 @@ function showAddScreen() {
 
 function loadUserCategories() {
   var User_category = $('#usercatval');
-  $.each(userCategoryList, function (key, value) {
-    User_category.append($('<option></option>').val(userCategoryList[key].user_category_id).html(userCategoryList[key].user_category_name));
+  $.each(CategoryList, function (key, value) {
+    User_category.append($('<option></option>').val(CategoryList[key].user_category_id).html(CategoryList[key].user_category_name));
   });
 }
 
@@ -438,7 +448,7 @@ function pageControls() {
       $('#' + item + ' li:eq('+ n_item + ')').attr('class');
     }
 
-    if(e.keyCode != 40 && e.keyCode != 38 && e,keyCode != 32) {
+    if(e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
       item_selected = '';
     }
     if (e.keyCode == 13) {
@@ -468,7 +478,7 @@ function pageControls() {
       return false;
     }
 
-    if (e.keyC ode == 32) {
+    if (e.keyCode == 32) {
       remove_select(item_selected, 'auto-selected');
       var multi_select_id = parseInt(get_id(item_selected));
       var item_class = get_class(item_selected);
@@ -555,7 +565,7 @@ function pageControls() {
     Country_li_list.empty();
     var str = '';
     for (var i in CountryList) {
-      d = DomainsList[i];
+      d = CountryList[i];
       if (d.is_active == true) {
         active = false;
         if ($.inArray(d.country_id, Country_ids) >= 0) {
@@ -572,36 +582,6 @@ function pageControls() {
   Country.keyup(function(e) {
     onKeyUpDownSelect(e, 'ulist-country');
   });
-
-  function active_click(element) {
-    domains_class = 'active_selectbox';
-    country_class = 'active_selectbox_country';
-
-    e_type = ''
-    klass = $(element).attr('class');
-    if (e_type) {
-      if (klass == domains_class) {
-        $(element).removeClass(domains_class);
-        Domain_ids.splice(Domain_ids.indexOf(parseInt(element.id)));
-      }
-      else {
-        $(element).addClass(domains_class);
-        Domain_ids.push(parseInt(element.id));
-      }
-      Domains.val(Domain_ids.length + ' Selected');
-    }
-    else {
-      if (klass == country_class) {
-        $(element).removeClass(country_class);
-        Country_ids.splice(Country_ids.indexOf(parseInt(element.id)));
-      }
-      else {
-        $(element).addClass(country_class);
-        Country_ids.push(parseInt(element.id));
-      }
-      Country.val(Country_ids.length + ' Selected');
-    }
-  }
 
   User_group_ac.keyup(function(e) {
     var textVal = $(this).val();
@@ -624,11 +604,14 @@ function pageControls() {
 }
 // page load
 function initialize() {
-  $(document).ready(function () {
-    renderUserList(null);
-    pageControls();
-    Emp_name.focus();
-
-  });
+  renderUserList(null);
+  pageControls();
+  console.log(AddButton);
+  Emp_name.focus();
   fieldOrder();
 }
+
+$(document).ready(function () {
+  initialize();
+});
+

@@ -318,7 +318,7 @@ def get_users(db, request_frame, session_user):
     user_rows = rows[0]
     for user_row in user_rows:
         user_id = user_row["user_id"]
-        user_cat_id = user_row["user_categroy_id"]
+        user_cat_id = user_row["user_category_id"]
         employee_name = user_row["employee_name"]
         employee_code = user_row["employee_code"]
         email_id = user_row["email_id"]
@@ -328,8 +328,8 @@ def get_users(db, request_frame, session_user):
         address = None if user_row["address"] == "" else user_row["address"]
         designation = None if (
             user_row["designation"] == "") else user_row["designation"]
-        country_ids = get_user_country(user_id)
-        domain_ids = get_user_domain(user_id)
+        country_ids = get_user_country(user_id, rows[2])
+        domain_ids = get_user_domain(user_id, rows[1])
         is_active = True if user_row["is_active"] == 1 else False
         is_disable = True if user_row["is_disable"] == 1 else False
         username = user_row["username"]
