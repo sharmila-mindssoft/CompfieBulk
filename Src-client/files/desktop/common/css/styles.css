@@ -933,6 +933,10 @@ textarea.input-box{
 	background: #dadada url(../images/auto-complete-arrow.png) no-repeat 95% center;
 	padding-right: 1.5em;
 }
+.icon-dropdown {
+	background: #dadada url(../images/dropdown-arrow.png) no-repeat 95% center;
+	padding-right: 1.5em;
+}
 .filter-text-box {
 	width: 95%;
 	height: 25px;
@@ -3478,4 +3482,25 @@ div.scrollable {
 
 .mtable {
 	width: 100%;
+}
+
+.btn-back {
+	float: left;
+	background: #662D91 url(../images/icon-back-active.png) no-repeat 0.5em center;
+	cursor: pointer;
+	color: #fff;
+	font-size: 13px;
+	text-align: center;
+	border: none;
+	outline: none;
+	font-weight: normal;
+	padding: 0.4em 1em 0.4em 2.2em;
+
+	-webkit-border-radius: 0.5em;
+	-moz-border-radius: 0.5em;
+	border-radius: 0.5em;
+}
+.btn-back:hover {
+	background: #ccc url(../images/icon-back.png) no-repeat 0.5em center;
+	color: #000;
 }

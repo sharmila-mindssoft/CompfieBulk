@@ -10,6 +10,10 @@ from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
 from server.database.tables import *
 from server.database.admin import *
+from server.database.technomaster import (
+    get_groups, get_business_groups_for_user, get_units
+)
+
 __all__ = [
     "process_admin_request", "get_user_groups"
 ]
@@ -95,6 +99,21 @@ def process_admin_request(request, db):
         logger.logKnowledgeApi("SaveUserMappings", "process begin")
         result = process_save_user_mappings(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveUserMappings", "process end")
+    elif type(request_frame) is admin.GetReassignUserAccountFormdata:
+        logger.logKnowledgeApi(
+            "GetReassignUserAccountFormdata", "process begin")
+        result = get_reassign_user_account_form_data(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi(
+            "GetReassignUserAccountFormdata", "process end")
+    elif type(request_frame) is admin.SaveReassignUserAccount:
+        logger.logKnowledgeApi(
+            "SaveReassignUserAccount", "process begin")
+        result = process_save_reassign_user_account_request(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi(
+            "SaveReassignUserAccount", "process end")
+
     return result
 
 
@@ -450,16 +469,46 @@ def process_save_validity_date_settings(db, request, session_user):
 
 def process_get_user_mappings(db, session_user):
     (
-        countries, domains, cc_managers, cc_users,
-        technomanagers, user_mappings, user_mapping_users
+        countries, domains, knowledge_managers, knowledge_users,
+        techno_managers, techno_users, domain_managers, domain_users,
+        user_mappings
     ) = get_user_mapping_form_data(db, session_user)
     return admin.GetUserMappingsSuccess(
-        countries=countries, domains=domains, cc_managers=cc_managers,
-        cc_users=cc_users, techno_managers=technomanagers,
-        user_mappings=user_mappings, user_mapping_users=user_mapping_users
+        countries=countries, domains=domains,
+        knowledge_managers=knowledge_managers, knowledge_users=knowledge_users,
+        techno_managers=techno_managers, techno_users=techno_users,
+        domain_managers=domain_managers, domain_users=domain_users,
+        user_mappings=user_mappings
     )
 
 
 def process_save_user_mappings(db, request, session_user):
     save_user_mappings(db, request, session_user)
     return admin.SaveUserMappingsSuccess()
+
+
+def get_reassign_user_account_form_data(db, request, session_user):
+    countries = get_countries_for_user(db, session_user)
+    domains = get_domains_for_user(db, session_user)
+    (
+        knowledge_managers, knowledge_users, techno_managers, techno_users,
+        domain_managers, domain_users
+    ) = get_all_user_types(db)
+    groups = get_groups(db)
+    business_groups = get_business_groups_for_user(db, session_user)
+    legal_entities = get_legal_entities_for_user(db, session_user)
+    units = get_units(db)
+    assigned_legal_entities = get_assigned_legal_entities(db)
+    assigned_units = get_assigned_units(db)
+    assigned_clients = get_assigned_clients(db)
+    return admin.GetReassignUserAccountFormdataSuccess(
+        techno_managers, techno_users, domain_managers,
+        domain_users, groups, business_groups, legal_entities,
+        domains, countries, units, assigned_legal_entities,
+        assigned_units, assigned_clients
+    )
+
+
+def process_save_reassign_user_account_request(db, request, session_user):
+    save_reassigned_user_account(db, request, session_user)
+    return admin.SaveReassignUserAccountSuccess()

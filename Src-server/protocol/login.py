@@ -1,10 +1,10 @@
 from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values)
 
+
 #
 # Request
 #
-
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
@@ -29,6 +29,7 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+
 class Login(Request):
     def __init__(self, login_type, username, password, short_name, ip):
         self.login_type = login_type
@@ -39,7 +40,8 @@ class Login(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["login_type", "username", "password", "ip"])
+        data = parse_dictionary(
+            data, ["login_type", "username", "password", "ip"])
         login_type = data.get("login_type")
         username = data.get("username")
         password = data.get("password")
@@ -55,6 +57,7 @@ class Login(Request):
             "short_name": self.short_name,
             "ip": self.ip
         }
+
 
 class ForgotPassword(Request):
     def __init__(self, username, short_name, login_type):
@@ -173,6 +176,7 @@ class Logout(Request):
             "session_token": self.session_token,
         }
 
+
 def _init_Request_class_map():
     classes = [
         Login, ForgotPassword, ResetTokenValidation, ResetPassword,
@@ -185,14 +189,15 @@ def _init_Request_class_map():
 
 _Request_class_map = _init_Request_class_map()
 
+
 #
 # Response
 #
-
 class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        print "inner before: %s " % inner
         if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
@@ -251,8 +256,9 @@ class UserLoginSuccess(Response):
         client_id = data.get("user_client_id")
         is_admin = data.get("is_admin")
         return UserLoginSuccess(
-            user_id, session_token, email_id, user_group_name, menu, employee_name,
-            employee_code, contact_no, address, designation, client_id, is_admin)
+            user_id, session_token, email_id, user_group_name, menu,
+            employee_name, employee_code, contact_no, address,
+            designation, client_id, is_admin)
 
     def to_inner_structure(self):
         return {
@@ -260,7 +266,6 @@ class UserLoginSuccess(Response):
             "session_token": self.session_token,
             "email_id": self.email_id,
             "user_group_name": self.user_group_name,
-            # "menu": to_structure_RecordType_core_Menu(self.menu),
             "menu": self.menu,
             "employee_name": self.employee_name,
             "employee_code": self.employee_code,
@@ -271,8 +276,12 @@ class UserLoginSuccess(Response):
             "is_admin": self.is_admin
         }
 
+
 class AdminLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, menu, employee_name, client_id):
+    def __init__(
+        self, user_id, session_token, email_id,
+        menu, employee_name, client_id
+    ):
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
@@ -282,22 +291,33 @@ class AdminLoginSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id", "menu", "employee_name", "user_client_id"])
+        data = parse_dictionary(
+            data, [
+                "user_id", "session_token", "email_id", "menu",
+                "employee_name", "user_client_id"
+            ])
         user_id = data.get("user_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
         menu = data.get("menu")
-        # menu = parse_structure_RecordType_core_Menu(menu)
         employee_name = data.get("employee_name")
         client_id = data.get("user_client_id")
-        return AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, client_id)
+        return AdminLoginSuccess(
+            user_id, session_token, email_id, menu, employee_name, client_id)
 
     def to_inner_structure(self):
+        print {
+            "user_id": self.user_id,
+            "session_token": self.session_token,
+            "email_id": self.email_id,
+            "menu": self.menu,
+            "employee_name": self.employee_name,
+            "user_client_id": self.client_id
+        }
         return {
             "user_id": self.user_id,
             "session_token": self.session_token,
             "email_id": self.email_id,
-            # "menu": to_structure_RecordType_core_Menu(self.menu),
             "menu": self.menu,
             "employee_name": self.employee_name,
             "user_client_id": self.client_id

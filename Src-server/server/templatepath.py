@@ -330,6 +330,11 @@ TEMPLATE_PATHS = [
         "files/desktop/knowledge/client-master-approval/clientmasterapproval.html",
         None, {}
     ),
+    (
+        "/knowledge/assign-legal-entity",
+        "files/desktop/knowledge/assign-legal-entity/assignlegalentity.html",
+        None, {}
+    ),
     # Techno user master
     (
         "/knowledge/client-unit",
@@ -413,6 +418,16 @@ TEMPLATE_PATHS = [
     (
         "/knowledge/user-mapping",
         "files/desktop/knowledge/user-mapping/usermapping.html",
+        None, {}
+    ),
+    (
+        "/knowledge/assign-client-unit",
+        "files/desktop/knowledge/assign-client-unit/assign-client-unit.html",
+        None, {}
+    ),
+    (
+        "/knowledge/reassign-user-account",
+        "files/desktop/knowledge/reassign-user-account/reassign-user-account.html",
         None, {}
     )
 ]

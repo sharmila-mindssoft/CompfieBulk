@@ -1,4 +1,4 @@
-USE `compfie_knowledge`;
+USE `compfie_knowledge_new`;
 
 -- DELETE FROM tbl_form_category;
 INSERT INTO tbl_user_category VALUES(1, "Compfie Admin");
@@ -33,17 +33,21 @@ INSERT INTO tbl_forms VALUES(9, 1, 'Validity Date Settings', '/knowledge/validit
 -- Transaction
 INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-master', 10, null);
 INSERT INTO tbl_forms VALUES(11, 2, 'User Mapping', '/knowledge/user-mapping', 11, null);
-INSERT INTO tbl_forms VALUES(12, 2, 'Reassign User Account ', '/knowledge/user-mapping-techno', 12, null);
+INSERT INTO tbl_forms VALUES(12, 2, 'Reassign User Account ', '/knowledge/reassign-user-account', 12, null);
 INSERT INTO tbl_forms VALUES(13, 2, 'Approve Client Group', '/knowledge/client-master-approval', 13, null);
 INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/client-master-approval', 14, null);
 INSERT INTO tbl_forms VALUES(15, 2, 'Statutory Mapping', '/knowledge/statutory-mapping', 15, null);
 INSERT INTO tbl_forms VALUES(16, 2, 'Approve Statutory Mapping', '/knowledge/approve-statutory-mapping', 16, null);
+
 INSERT INTO tbl_forms VALUES(17, 2, 'Client Group', '/knowledge/client-master', 17, null);
-INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '', 18, null);
-INSERT INTO tbl_forms VALUES(19, 2, 'Assign Client Unit', '', 19, null);
+
+INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '/knowledge/assign-legal-entity', 18, null);
+INSERT INTO tbl_forms VALUES(19, 2, 'Assign Client Unit', '/knowledge/assign-client-unit', 19, null);
+
 INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit', 20, null);
 INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '', 21, null);
 INSERT INTO tbl_forms VALUES(22, 2, 'Client Unit', '/knowledge/client-unit', 22, null);
+
 INSERT INTO tbl_forms VALUES(23, 2, 'Assign Statutory', '/knowledge/assign-statutory', 23, null);
 INSERT INTO tbl_forms VALUES(24, 2, 'Approve Assigned Statutory', '/knowledge/assign-statutory', 24, null);
 INSERT INTO tbl_forms VALUES(25, 2, 'Configure Database Server', '/knowledge/configure-db-server', 25, null);

@@ -932,10 +932,10 @@ function initMirror() {
   // Client Group Master
   function getDateConfigurations(cId, dId, pFrom, pTo) {
       return {
-        'c_id': cId,
-        'd_id': dId,
-        'p_from': pFrom,
-        'p_to': pTo
+        'country_id': cId,
+        'domain_id': dId,
+        'period_from': pFrom,
+        'period_to': pTo
       };
   }
 
@@ -944,72 +944,75 @@ function initMirror() {
   ){
       return {
         "d_id": d_id,
+        "activation_date": null,
         "org": org
       }
   }
 
   function getLegalEntityRow(
     c_id, b_g_id, b_g_name, l_e_name,
-    inc_p, logo, n_o_l, f_s, sms, c_f, c_t, d
+    logo, n_o_l, f_s, c_f, c_t, d
   ) {
     return {
-        "c_id": c_id,
-        "b_g": getBusinessGroupDict(b_g_id, b_g_name),
-        "l_e_name": l_e_name,
-        "inc_p": inc_p,
+        "country_id": c_id,
+        "business_group": getBusinessGroupDict(b_g_id, b_g_name),
+        "legal_entity_name": l_e_name,
         "logo": logo,
-        "n_o_l": n_o_l,
-        "f_s": f_s,
-        "sms": sms,
-        "c_f": c_f,
-        "c_t": c_t,
-        "d": d
+        "no_of_licence": n_o_l,
+        "file_space": f_s,
+        "contract_from": c_f,
+        "contract_to": c_t,
+        "domain_details": d
     };
   }
   function getLegalEntityUpdateRow(
     c_id, b_g_id, b_g_name, l_e_id, l_e_name,
-    inc_p, logo, new_logo, n_o_l, f_s, sms, c_f, c_t, d
+    logo, new_logo, n_o_l, f_s, c_f, c_t, d
   ) {
+    console.log("inside getLegalEntityUpdateRow:" + b_g_id)
     return {
-        "c_id": c_id,
-        "b_g": getBusinessGroupDict(b_g_id, b_g_name),
-        "l_e_id": l_e_id,
-        "l_e_name": l_e_name,
-        "inc_p": inc_p,
-        "logo": logo,
+        "country_id": c_id,
+        "business_group": getBusinessGroupDict(b_g_id, b_g_name),
+        "legal_entity_id": l_e_id,
+        "legal_entity_name": l_e_name,
+        "old_logo": logo,
         "new_logo": new_logo,
-        "n_o_l": n_o_l,
-        "f_s": f_s,
-        "sms": sms,
-        "c_f": c_f,
-        "c_t": c_t,
-        "d": d
+        "no_of_licence": n_o_l,
+        "file_space": f_s,
+        "contract_from": c_f,
+        "contract_to": c_t,
+        "domain_details": d
     };
   }
-  function saveClientGroup(g_name, u_name, les, d_cs, callback) {
+  function saveClientGroup(g_name, u_name, short_name, no_of_view_licence, les, d_cs, callback) {
     callerName = 'techno';
     var request = [
       'SaveClientGroup',
       {
-        "g_name": g_name,
-        "u_name": u_name,
-        "les": les,
-        "d_cs": d_cs
+        "group_name": g_name,
+        "email_id": u_name,
+        "short_name": short_name,
+        "no_of_view_licence": no_of_view_licence,
+        "legal_entity_details": les,
+        "date_configurations": d_cs
       }
     ];
     apiRequest(callerName, request, callback);
   }
 
-  function updateClientGroup(g_id, g_name, u_name, les, d_cs, callback) {
+  function updateClientGroup(g_id, g_name, u_name, short_name, no_of_view_licence,
+    les, d_cs, callback) {
     callerName = 'techno';
     var request = [
       'UpdateClientGroup',
       {
-        "g_id": g_id,
-        "g_name": g_name,
-        "u_name": u_name,
-        "les": les,
-        "d_cs": d_cs
+        "client_id": g_id,
+        "group_name": g_name,
+        "email_id": u_name,
+        "short_name": short_name,
+        "no_of_view_licence": no_of_view_licence,
+        "legal_entities": les,
+        "date_configurations": d_cs
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1048,6 +1051,52 @@ function initMirror() {
       'GetEditClientGroupFormData',
       {
         'group_id': client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  // Assign Legal Entity
+  function getAssignLegalEntityList(callback) {
+    callerName = 'techno';
+    var request = [
+      'GetAssignLegalEntityList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+
+  function getEditAssignLegalEntity(client_id, callback){
+    callerName = 'techno';
+    var request = [
+      'GetEditAssignLegalEntity',
+      {
+        'group_id': client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function saveAssignLegalEntity(client_id, legal_entity_ids, user_ids, callback){
+    callerName = 'techno';
+    var request = [
+      'SaveAssignLegalEntity',
+      {
+        'client_id': client_id,
+        'legal_entity_ids': legal_entity_ids,
+        'user_ids': user_ids
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function viewAssignLegalEntity(client_id, callback){
+    callerName = 'techno';
+    var request = [
+      'ViewAssignLegalEntity',
+      {
+        'client_id': client_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1119,13 +1168,14 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
   function getBusinessGroupDict(bgId, bgName) {
-    if (bgName == null || bgName == '') {
+    console.log("bgName:"+bgName);
+    if ((bgName == null || bgName == '') && (bgId == null || bgId == '')) {
       return null;
     } else {
-      return [{
-        'bg_id': bgId,
-        'bg_name': bgName
-      }];
+      return {
+        'business_group_id': bgId,
+        'business_group_name': bgName
+      };
     }
   }
   function getLegalEntityDict(leId, leName) {
@@ -1134,15 +1184,14 @@ function initMirror() {
       'le_name': leName
     };
   }
-  function getDivisionDict(dId, dName) {
-    if (dName == null || dName == '') {
-      return null;
-    } else {
-      return {
-        'd_id': dId,
-        'd_name': dName
-      };
-    }
+  function getDivisionDict(dv_id, dv_name, cg, div_cnt, unit_cnt) {
+    return {
+      'dv_id': dv_id,
+      'dv_name': dv_name,
+      'cg': cg,
+      'div_cnt': div_cnt,
+      'unit_cnt': unit_cnt
+    };
   }
   /*function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, uLoc, iId, iName, dIds) {
     return {
@@ -1176,7 +1225,7 @@ function initMirror() {
       'units': units
     };
   }
-  function saveClient(cId, bg_id, le_id, c_id, dv_id, cg, cw_units, callback) {
+  function saveClient(cId, bg_id, le_id, c_id, div_dict, cw_units, callback) {
     callerName = 'techno';
     var request = [
       'SaveClient',
@@ -1185,8 +1234,7 @@ function initMirror() {
         'bg_id': bg_id,
         'le_id': le_id,
         'c_id': c_id,
-        'dv_id': dv_id,
-        'cg': cg,
+        'div_dict': div_dict,
         'units': cw_units
       }
     ];
@@ -1682,17 +1730,95 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function saveUserMappings(cc_manager_id, cc_users, techno_managers, callback){
+  function saveUserMappings(country_id, domain_id, parent_user_id, child_users, callback){
     callerName = "admin";
     var request = [
       "SaveUserMappings",
       {
-        "user_id": cc_manager_id,
-        "cc_user_ids": cc_users,
-        "techno_manager_ids": techno_managers
+        "country_id": country_id,
+        "domain_id": domain_id,
+        "parent_user_id": parent_user_id,
+        "child_users": child_users
       }
     ];
     apiRequest(callerName, request, callback);
+  }
+  function getUnassignedUnitsList(callback){
+    callerName = "techno";
+    var request = [
+      "GetUnassignedUnits",
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedUnitsList(domain_id, client_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignedUnits",
+      {
+        "domain_id": domain_id,
+        "client_id": client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedUnitDetails(legal_entity_id, domain_manager_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignedUnitDetails",
+      {
+        "legal_entity_id": legal_entity_id,
+        "user_id": domain_manager_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignUnitFormData(domain_id, client_id, callback){
+    callerName = "techno";
+    var request = [
+      "GetAssignUnitFormData",
+      {
+        "domain_id": domain_id,
+        "client_id": client_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function saveAssignedUnits(client_id, user_id, active_units, callback){
+      callerName = "techno";
+      var request = [
+        "SaveAsssignedUnits",
+        {
+          "user_id": user_id,
+          "active_units": active_units,
+          "client_id": client_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function getReassignUserAccountFormdata(callback){
+    callerName = "admin";
+    var request = [
+        "GetReassignUserAccountFormdata",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function saveReassignUserAccount(
+    user_type, old_user_id, new_user_id, assigned_ids, remarks, callback
+  ){
+      callerName = "admin";
+      var request = [
+        "SaveReassignUserAccount",
+        {
+          "user_type": user_type,
+          "old_user_id": old_user_id,
+          "new_user_id": new_user_id,
+          "assigned_ids": assigned_ids,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback); 
   }
   return {
     log: log,
@@ -1785,6 +1911,10 @@ function initMirror() {
     updateClientGroup: updateClientGroup,
     getClientGroups: getClientGroups,
     changeClientGroupStatus: changeClientGroupStatus,
+    getAssignLegalEntityList: getAssignLegalEntityList,
+    getEditAssignLegalEntity: getEditAssignLegalEntity,
+    saveAssignLegalEntity: saveAssignLegalEntity,
+    viewAssignLegalEntity: viewAssignLegalEntity,
     changePassword: changePassword,
     forgotPassword: forgotPassword,
     validateResetToken: validateResetToken,
@@ -1846,7 +1976,14 @@ function initMirror() {
     getAutoDeletionList: getAutoDeletionList,
     saveAutoDeletion: saveAutoDeletion,
     getUserMappings: getUserMappings,
-    saveUserMappings: saveUserMappings
+    saveUserMappings: saveUserMappings,
+    getUnassignedUnitsList: getUnassignedUnitsList,
+    getAssignedUnitsList: getAssignedUnitsList,
+    getAssignedUnitDetails: getAssignedUnitDetails,
+    getAssignUnitFormData: getAssignUnitFormData,
+    saveAssignedUnits: saveAssignedUnits,
+    getReassignUserAccountFormdata: getReassignUserAccountFormdata,
+    saveReassignUserAccount: saveReassignUserAccount
   };
 }
 var mirror = initMirror();

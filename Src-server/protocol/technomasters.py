@@ -1,4 +1,7 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list, parse_VariantType, to_VariantType, to_structure_dictionary_values)
+from protocol.jsonvalidators import (
+    parse_dictionary, parse_static_list,
+    to_structure_dictionary_values, parse_VariantType, to_VariantType
+)
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_GroupCompany,
     parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
@@ -39,7 +42,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_VectorType_RecordType_core_ClientGroup,
     parse_structure_VectorType_RecordType_core_LegalEntityDetails,
-    parse_structure_VectorType_RecordType_core_Industries
+    parse_structure_VectorType_RecordType_core_Industries,
+    parse_structure_VectorType_RecordType_core_AssignLegalEntity
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -85,7 +89,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation,
     to_structure_VectorType_RecordType_core_ClientGroup,
     to_structure_VectorType_RecordType_core_LegalEntityDetails,
-    to_structure_VectorType_RecordType_core_Industries
+    to_structure_VectorType_RecordType_core_Industries,
+    to_structure_VectorType_RecordType_core_AssignLegalEntity
 )
 
 
@@ -163,36 +168,41 @@ class GetEditClientGroupFormData(Request):
 
 class SaveClientGroup(Request):
     def __init__(
-        self, group_name, user_name, legal_entities, date_configurations
+        self, group_name, email_id, short_name, no_of_view_licence,
+        legal_entity_details, date_configurations
     ):
         self.group_name = group_name
-        self.user_name = user_name
-        self.legal_entities = legal_entities
+        self.email_id = email_id
+        self.short_name = short_name
+        self.no_of_view_licence = no_of_view_licence
+        self.legal_entity_details = legal_entity_details
         self.date_configurations = date_configurations
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "g_name", "u_name", "les", "d_cs"
+            "group_name", "email_id", "short_name", "no_of_view_licence",
+            "legal_entity_details", "date_configurations"
         ])
-        group_name = data.get("g_name")
-        group_name = parse_structure_CustomTextType_50(group_name)
-        user_name = data.get("u_name")
-        user_name = parse_structure_CustomTextType_100(user_name)
-        legal_entities = data.get("les")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntityDetails(legal_entities)
-        date_configurations = data.get("d_cs")
-        date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+        group_name = data.get("group_name")
+        email_id = data.get("email_id")
+        short_name = data.get("short_name")
+        no_of_view_licence = data.get("no_of_view_licence")
+        legal_entity_details = data.get("legal_entity_details")
+        date_configurations = data.get("date_configurations")
         return SaveClientGroup(
-            group_name, user_name, legal_entities, date_configurations
+            group_name, email_id, short_name, no_of_view_licence,
+            legal_entity_details, date_configurations
         )
 
     def to_inner_structure(self):
         return {
-            "g_name": to_structure_CustomTextType_50(self.group_name),
-            "u_name": to_structure_CustomTextType_100(self.user_name),
-            "les": to_structure_VectorType_RecordType_core_LegalEntityDetails(self.legal_entities),
-            "d_cs": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
+            "group_name": self.group_name,
+            "email_id": self.email_id,
+            "short_name": self.short_name,
+            "no_of_view_licence": self.no_of_view_licence,
+            "legal_entity_details": self.legal_entities,
+            "date_configurations": self.date_configurations
         }
 
 
@@ -229,41 +239,49 @@ class CreateNewAdmin(Request):
             "username": to_structure_CustomTextType_100(self.username)
         }
 
+
 class UpdateClientGroup(Request):
     def __init__(
-        self, group_id, group_name, user_name,
+        self, client_id, group_name, email_id, short_name, no_of_view_licence,
         legal_entities, date_configurations
     ):
-        self.group_id = group_id
+        self.client_id = client_id
         self.group_name = group_name
-        self.user_name = user_name
+        self.email_id = email_id
+        self.short_name = short_name
+        self.no_of_view_licence = no_of_view_licence
         self.legal_entities = legal_entities
         self.date_configurations = date_configurations
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-               "g_id", "g_name", "u_name", "les", "d_cs"
+               "client_id", "group_name", "email_id", "short_name",
+               "no_of_view_licence", "legal_entities",
+               "date_configurations"
             ]
         )
-        group_id = data.get("g_id")
-        group_name = data.get("g_name")
-        user_name = data.get("u_name")
-        legal_entities = data.get("les")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
-        date_configurations = data.get("d_cs")
-        date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+        client_id = data.get("client_id")
+        group_name = data.get("group_name")
+        email_id = data.get("email_id")
+        short_name = data.get("short_name")
+        no_of_view_licence = data.get("no_of_view_licence")
+        legal_entities = data.get("legal_entities")
+        date_configurations = data.get("date_configurations")
         return UpdateClientGroup(
-            group_id, group_name, user_name, legal_entities, date_configurations
+            client_id, group_name, email_id, short_name, no_of_view_licence,
+            legal_entities, date_configurations
         )
 
     def to_inner_structure(self):
         return {
-            "g_id": self.group_id,
-            "g_name": self.group_name,
-            "u_name": self.user_name,
-            "les": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "d_cs": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "email_id": self.email_id,
+            "short_name": self.short_name,
+            "no_of_view_licence": self.no_of_view_licence,
+            "legal_entities": self.legal_entities,
+            "date_configurations": self.date_configurations
         }
 
 
@@ -363,6 +381,35 @@ class DIVISION(Request):
         }
 
 
+class UnitDivision(Request):
+    def __init__(self, division_id, division_name, category_name, division_cnt, unit_cnt):
+        self.division_id = division_id
+        self.division_name = division_name
+        self.category_name = category_name
+        self.division_cnt = division_cnt
+        self.unit_cnt = unit_cnt
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["dv_id", "dv_name", "cg", "div_cnt", "unit_cnt"])
+        division_id = data.get("dv_id")
+        division_name = data.get("dv_name")
+        category_name = data.get("cg")
+        division_cnt = data.get("div_cnt")
+        unit_cnt = data.get("unit_cnt")
+
+        return UnitDivision(division_id, division_name, category_name, division_cnt, unit_cnt)
+
+    def to_inner_structure(self):
+        data =  {
+            "division_id": self.division_id,
+            "division_name": self.division_name,
+            "category_name": self.category_name,
+            "division_cnt": self.division_cnt,
+            "unit_cnt": self.unit_cnt,
+        }
+        return data
+
 class UNIT(object):
     def __init__(
         self, unit_id, geography_id, unit_code, unit_name,unit_address,
@@ -385,6 +432,7 @@ class UNIT(object):
                 "i_ids"
             ]
         )
+        print "inside class uint after append"
         unit_id = data.get("u_id")
         geography_id = data.get("geo_id")
         unit_code = data.get("u_code")
@@ -431,30 +479,28 @@ class COUNTRYWISEUNITS(object):
         }
 
 class SaveClient(Request):
-    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name, units):
+    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, division_units, units):
         self.client_id = client_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
-        self.division_id = division_id
-        self.category_name = category_name
+        self.division_units = division_units
         self.units = units
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "cl_id", "bg_id", "le_id", "c_id", "dv_id", "cg", "units"
+                "cl_id", "bg_id", "le_id", "c_id", "div_dict", "units"
             ]
         )
         client_id = data.get("cl_id")
         business_group_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         country_id = data.get("c_id")
-        division_id = data.get("dv_id")
-        category_name = data.get("cg")
+        division_units = data.get("div_dict")
         units = data.get("units")
         return SaveClient(
-            client_id, business_group_id, legal_entity_id, country_id, division_id, category_name, units
+            client_id, business_group_id, legal_entity_id, country_id, division_units, units
         )
 
     def to_inner_structure(self):
@@ -463,8 +509,7 @@ class SaveClient(Request):
             "business_group_id": self.business_group_id,
             "legal_entity_id": self.legal_entity_id,
             "country_id": self.country_id,
-            "division_id": self.division_id,
-            "category_name": self.category_name,
+            "division_units": self.division_units,
             "units": self.units,
         }
         return data
@@ -585,12 +630,204 @@ class GetNextUnitCode(Request):
             "client_id" : to_structure_UnsignedIntegerType_32(self.client_id)
         }
 
+
+class GetAssignLegalEntityList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAssignLegalEntityList()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class GetUnassignedUnits(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetUnassignedUnits()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class GetAssignedUnits(Request):
+    def __init__(self, client_id, domain_id):
+        self.client_id = client_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "domain_id"])
+        client_id = data.get("client_id")
+        domain_id = data.get("domain_id")
+        return GetAssignedUnits(client_id, domain_id)
+
+    def to_inner_structure(self):
+        return {
+            "client_id": self.client_id,
+            "domain_id": self.domain_id
+        }
+
+
+class GetAssignedUnitDetails(Request):
+    def __init__(self, legal_entity_id, user_id):
+        self.legal_entity_id = legal_entity_id
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id", "user_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        user_id = data.get("user_id")
+        return GetAssignedUnitDetails(legal_entity_id, user_id)
+
+    def to_inner_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "user_id": self.user_id
+        }
+
+
+class GetAssignUnitFormData(Request):
+    def __init__(self, client_id, domain_id):
+        self.client_id = client_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "domain_id"])
+        client_id = data.get("client_id")
+        domain_id = data.get("domain_id")
+        return GetAssignUnitFormData(client_id, domain_id)
+
+    def to_inner_structure(self):
+        return {
+            "client_id": self.client_id,
+            "domain_id": self.domain_id
+        }
+
+
+class GetEditAssignLegalEntity(Request):
+    def __init__(self, group_id):
+        self.group_id = group_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["group_id"])
+        group_id = data.get("group_id")
+        return GetEditAssignLegalEntity(group_id)
+
+    def to_inner_structure(self):
+        return {
+            "group_id": self.group_id
+        }
+
+class SaveAssignLegalEntity(Request):
+    def __init__(
+        self, client_id, legal_entity_ids, user_ids
+    ):
+        self.client_id = client_id
+        self.legal_entity_ids = legal_entity_ids
+        self.user_ids = user_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "client_id", "legal_entity_ids", "user_ids"
+        ])
+        client_id = data.get("client_id")
+        legal_entity_ids = data.get("legal_entity_ids")
+        user_ids = data.get("user_ids")
+        return SaveAssignLegalEntity(
+            client_id, legal_entity_ids, user_ids
+        )
+
+    def to_inner_structure(self):
+        return {
+            "client_id": self.client_id,
+            "legal_entity_ids": self.legal_entity_ids,
+            "user_ids": self.user_ids
+        }
+
+
+class ActiveUnit(object):
+    def __init__(self, unit_id, domain_name, legal_entity_id):
+        self.unit_id = unit_id
+        self.domain_name = domain_name
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["unit_id", "domain_name", "legal_entity_id"])
+        unit_id = data.get("unit_id")
+        domain_name = data.get("domain_name")
+        legal_entity_id = data.get("legal_entity_id")
+        return ActiveUnit(unit_id, domain_name, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "domain_name": self.domain_name,
+            "legal_entity_id": self.legal_entity_id
+        }
+
+
+class SaveAsssignedUnits(Request):
+    def __init__(self, client_id, user_id, active_units):
+        self.client_id = client_id
+        self.user_id = user_id
+        self.active_units = active_units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "user_id", "active_units"])
+        client_id = data.get("client_id")
+        user_id = data.get("user_id")
+        active_units = data.get("active_units")
+        return SaveAsssignedUnits(client_id, user_id, active_units)
+
+    def to_inner_structure(self):
+        return {
+            "client_id": self.client_id,
+            "user_id": self.user_id,
+            "active_units": self.active_units
+        }
+
+class ViewAssignLegalEntity(Request):
+    def __init__(self, client_id):
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id"])
+        client_id = data.get("client_id")
+        return ViewAssignLegalEntity(client_id)
+
+    def to_inner_structure(self):
+        return {
+            "client_id": self.client_id
+        }
+
+
 def _init_Request_class_map():
     classes = [
         GetClientGroups, SaveClientGroup, UpdateClientGroup,
         ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient,
         ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
-        GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData
+        GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData,
+        GetAssignLegalEntityList, GetUnassignedUnits, GetAssignedUnits,
+        GetAssignedUnitDetails, GetAssignUnitFormData, SaveAsssignedUnits,
+        GetEditAssignLegalEntity, SaveAssignLegalEntity, ViewAssignLegalEntity
     ]
     class_map = {}
     for c in classes:
@@ -599,10 +836,10 @@ def _init_Request_class_map():
 
 _Request_class_map = _init_Request_class_map()
 
+
 #
 # Response
 #
-
 class Response(object):
     def to_structure(self):
         name = type(self).__name__
@@ -636,14 +873,11 @@ class GetClientGroupsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["groups"])
         groups = data.get("groups")
-        groups = parse_structure_VectorType_RecordType_core_ClientGroup(
-            groups)
         return GetClientGroupsSuccess(groups)
 
     def to_inner_structure(self):
         return {
-            "groups": to_structure_VectorType_RecordType_core_ClientGroup(
-                self.groups)
+            "groups": self.groups
         }
 
 
@@ -772,6 +1006,31 @@ class InvalidDivisionId(Response):
         return {
         }
 
+class InvalidDivisionName(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidDivisionName()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class InvalidCategoryName(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCategoryName()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class InvalidUnitId(Response):
     def __init__(self):
@@ -786,6 +1045,89 @@ class InvalidUnitId(Response):
         return {
         }
 
+class GetAssignLegalEntityListSuccess(Response):
+    def __init__(self, assign_le_list):
+        self.assign_le_list = assign_le_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["assign_le_list"])
+        assign_le_list = data.get("assign_le_list")
+        return GetAssignLegalEntityListSuccess(assign_le_list)
+
+    def to_inner_structure(self):
+        return {
+            "assign_le_list": self.assign_le_list
+        }
+
+class GetEditAssignLegalEntitySuccess(Response):
+    def __init__(
+        self, 
+        unassign_legal_entities,
+        techno_users
+    ):
+        
+        self.unassign_legal_entities = unassign_legal_entities
+        self.techno_users = techno_users
+        
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "unassign_legal_entities", "techno_users"
+        ])
+       
+        unassign_legal_entities = data.get("unnssign_legal_entities")
+        techno_users = data.get("techno_users")
+        
+        return GetEditAssignLegalEntitySuccess(
+            unassign_legal_entities, techno_users
+        )
+
+    def to_inner_structure(self):
+        
+        return {
+            "unassign_legal_entities": self.unassign_legal_entities,
+            "techno_users": self.techno_users
+        }
+
+class SaveAssignLegalEntitySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveAssignLegalEntitySuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class ViewAssignLegalEntitySuccess(Response):
+    def __init__(
+        self, 
+        assigned_legal_entities
+    ):
+        
+        self.assigned_legal_entities = assigned_legal_entities
+        
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "assigned_legal_entities"
+        ])
+       
+        assigned_legal_entities = data.get("assigned_legal_entities")
+        
+        return ViewAssignLegalEntitySuccess(
+            assigned_legal_entities
+        )
+
+    def to_inner_structure(self):
+        
+        return {
+            "assigned_legal_entities": self.assigned_legal_entities
+        }
 
 class Unit(object):
     def __init__(
@@ -849,10 +1191,14 @@ class CountryWiseUnits(object):
             to_structure_SignedIntegerType_8(self.country_id) : to_structure_VectorType_RecordType_technomasters_UnitDetails(self.units),
         }
 
+
 class UnitDetails(object):
-    def __init__(self, unit_id, client_id, business_group_id, legal_entity_id, country_id,
-                    division_id, category_name, geography_id, unit_code, unit_name, unit_address,
-                    postal_code, domain_ids, i_ids, is_active, approve_status):
+    def __init__(
+        self, unit_id, client_id, business_group_id,
+        legal_entity_id, country_id, division_id, category_name,
+        geography_id, unit_code, unit_name, unit_address,
+        postal_code, domain_ids, i_ids, is_active, approve_status
+    ):
         self.unit_id = unit_id
         self.client_id = client_id
         self.business_group_id = business_group_id
@@ -919,96 +1265,87 @@ class UnitDetails(object):
 
 class GetClientGroupFormDataSuccess(Response):
     def __init__(
-        self, countries, users, domains, industries
+        self, countries, domains, industry_name_id
     ):
         self.countries = countries
-        self.users = users
         self.domains = domains
-        self.industries = industries
+        self.industry_name_id = industry_name_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "users", "domains", "industries"
+            "countries", "domains", "industry_name_id"
         ])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_core_ClientInchargePersons(users)
         domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        industries = data.get("industries")
-        industries = parse_structure_VectorType_RecordType_core_Industries(industries)
+        industry_name_id = data.get("industry_name_id")
         return GetClientGroupFormDataSuccess(
-            countries, users, domains, industries
+            countries, domains, industry_name_id
         )
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "industries": to_structure_VectorType_RecordType_core_Industries(self.industries)
+            "countries": self.countries,
+            "domains": self.domains,
+            "industry_name_id": self.industry_name_id
         }
 
 
 class GetEditClientGroupFormDataSuccess(Response):
     def __init__(
-        self, countries,  business_groups, users, domains, industries,
-        group_name, user_name, legal_entities, date_configurations
+        self, countries,  business_groups, domains, industry_name_id,
+        group_name, email_id, short_name, no_of_licence,
+        legal_entities, date_configurations
     ):
         self.countries = countries
         self.business_groups = business_groups
-        self.users = users
         self.domains = domains
-        self.industries = industries
+        self.industry_name_id = industry_name_id
         self.group_name = group_name
-        self.user_name = user_name
+        self.email_id = email_id
+        self.short_name = short_name
+        self.no_of_licence = no_of_licence
         self.legal_entities = legal_entities
         self.date_configurations = date_configurations
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "business_groups", "users", "domains", "industries",
-            "client_details", "group_name", "user_name", "legal_entities",
-            "date_configurations"
+            "countries", "business_groups", "domains", "industry_name_id",
+            "client_details", "group_name", "email_id", "legal_entities",
+            "date_configurations", "short_name", "no_of_licence"
         ])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(business_groups)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_core_ClientInchargePersons(users)
         domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        industries = data.get("industries")
-        industries = parse_structure_VectorType_RecordType_core_Industries(industries)
-        group_name = data.get("g_name")
-        group_name = parse_structure_CustomTextType_50(group_name)
-        user_name = data.get("u_name")
-        user_name = parse_structure_CustomTextType_100(user_name)
-        legal_entities = data.get("les")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
-        date_configurations = data.get("d_cs")
-        date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+        industry_name_id = data.get("industry_name_id")
+        group_name = data.get("group_name")
+        short_name = data.get("short_name")
+        email_id = data.get("email_id")
+        legal_entities = data.get("legal_entity_details")
+        date_configurations = data.get("date_configurations")
+        no_of_licence = data.get("no_of_licence")
         return GetEditClientGroupFormDataSuccess(
-            countries, business_groups,  users, domains, industries,
-            group_name, user_name, legal_entities, date_configurations
+            countries,  business_groups, domains, industry_name_id,
+            group_name, email_id, short_name, no_of_licence,
+            legal_entities, date_configurations
         )
 
     def to_inner_structure(self):
+        print "self.business_groups: %s" % self.business_groups
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "industries": to_structure_VectorType_RecordType_core_Industries(self.industries),
-            "group_name": to_structure_CustomTextType_50(self.group_name),
-            "user_name": to_structure_CustomTextType_100(self.user_name),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations)
+            "countries": self.countries,
+            "business_groups": self.business_groups,
+            "domains": self.domains,
+            "industry_name_id": self.industry_name_id,
+            "group_name": self.group_name,
+            "short_name": self.short_name,
+            "email_id": self.email_id,
+            "no_of_licence": self.no_of_licence,
+            "legal_entities": self.legal_entities,
+            "date_configurations": self.date_configurations
         }
+
 
 class GetClientsSuccess(Response):
     def __init__(
@@ -1160,6 +1497,7 @@ class ServerIsFull(Response):
         return {
         }
 
+
 class BusinessGroupNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -1172,6 +1510,7 @@ class BusinessGroupNameAlreadyExists(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class LegalEntityNameAlreadyExists(Response):
     def __init__(self):
@@ -1418,6 +1757,7 @@ class InvalidNoOfLicence(Response):
         return {
         }
 
+
 class InvalidFileSpace(Response):
     def __init__(self):
         pass
@@ -1431,20 +1771,265 @@ class InvalidFileSpace(Response):
         return {
         }
 
+
+class UnassignedUnit(object):
+    def __init__(
+        self, domain_name, domain_id, group_name, client_id,
+        unassigned_units
+    ):
+        self.domain_name = domain_name
+        self.domain_id = domain_id
+        self.group_name = group_name
+        self.client_id = client_id
+        self.unassigned_units = unassigned_units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "domain_name", "domain_id", "group_name",
+                "client_id", "unassigned_units"
+            ]
+        )
+        domain_name = data.get("domain_name")
+        domain_id = data.get("domain_id")
+        group_name = data.get("group_name")
+        client_id = data.get("client_id")
+        unassigned_units = data.get("unassigned_units")
+        return UnassignedUnit(
+            domain_name, domain_id, group_name,
+            client_id, unassigned_units
+        )
+
+    def to_structure(self):
+        return {
+            "domain_name": self.domain_name,
+            "domain_id": self.domain_id,
+            "group_name": self.group_name,
+            "client_id": self.client_id,
+            "unassigned_units": self.unassigned_units
+        }
+
+
+class AssignedUnit(object):
+    def __init__(
+        self, user_id, employee_name, business_group_name,
+        legal_entity_id, legal_entity_name, unit_count
+    ):
+        self.user_id = user_id
+        self.employee_name = employee_name
+        self.business_group_name = business_group_name
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.unit_count = unit_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "user_id", "employee_name", "business_group_name",
+                "legal_entity_id", "legal_entity_name", "unit_count"
+            ]
+        )
+        user_id = data.get("user_id")
+        employee_name = data.get("employee_name")
+        business_group_name = data.get("business_group_name")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        unit_count = data.get("unit_count")
+        return AssignedUnit(
+            user_id, employee_name, business_group_name,
+            legal_entity_id, legal_entity_name, unit_count
+        )
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "employee_name": self.employee_name,
+            "business_group_name": self.business_group_name,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "unit_count": self.unit_count
+        }
+
+
+class AssignedUnitDetails(object):
+    def __init__(
+        self, unit_id, legal_entity_name, division_name, category_name,
+        unit_code, unit_name, address, domain_names, org_names_list,
+        geography_name
+    ):
+        self.unit_id = unit_id
+        self.legal_entity_name = legal_entity_name
+        self.division_name = division_name
+        self.category_name = category_name
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+        self.domain_names = domain_names
+        self.org_names_list = org_names_list
+        self.geography_name = geography_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "unit_id", "legal_entity_name", "division_name",
+                "category_name", "unit_code", "unit_name",
+                "address", "domain_names",
+                "org_names_list", "geography_name"
+            ]
+        )
+        unit_id = data.get("unit_id")
+        legal_entity_name = data.get("legal_entity_name")
+        division_name = data.get("division_name")
+        category_name = data.get("category_name")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        address = data.get("address")
+        domain_names = data.get("domain_names")
+        org_names_list = data.get("org_names_list")
+        geography_name = data.get("geography_name")
+        return AssignedUnitDetails(
+            unit_id, legal_entity_name, division_name, category_name,
+            unit_code, unit_name, address, domain_names,
+            org_names_list, geography_name
+        )
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "legal_entity_name": self.legal_entity_name,
+            "division_name": self.division_name,
+            "category_name": self.category_name,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "address": self.address,
+            "domain_names": self.domain_names,
+            "org_names_list": self.org_names_list,
+            "geography_name": self.geography_name
+        }
+
+
+class GetUnassignedUnitsSuccess(Response):
+    def __init__(self, unassigned_units_list):
+        self.unassigned_units_list = unassigned_units_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unassigned_units_list"])
+        unassigned_units_list = data.get("unassigned_units_list")
+        return GetUnassignedUnitsSuccess(unassigned_units_list)
+
+    def to_inner_structure(self):
+        return {
+            "unassigned_units_list": self.unassigned_units_list
+        }
+
+
+class GetAssignedUnitsSuccess(Response):
+    def __init__(self, assigned_units_list):
+        self.assigned_units_list = assigned_units_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["assigned_units_list"])
+        assigned_units_list = data.get("assigned_units_list")
+        return GetAssignedUnitsSuccess(assigned_units_list)
+
+    def to_inner_structure(self):
+        return {
+            "assigned_units_list": self.assigned_units_list
+        }
+
+
+class GetAssignedUnitDetailsSuccess(Response):
+    def __init__(self, assigned_unit_details_list):
+        self.assigned_unit_details_list = assigned_unit_details_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["assigned_unit_details_list"])
+        assigned_unit_details_list = data.get("assigned_unit_details_list")
+        return GetAssignedUnitDetailsSuccess(assigned_unit_details_list)
+
+    def to_inner_structure(self):
+        return {
+            "assigned_unit_details_list": self.assigned_unit_details_list
+        }
+
+
+class GetAssignUnitFormDataSuccess(Response):
+    def __init__(
+        self, business_groups, unit_legal_entity, assigned_unit_details_list,
+        domain_manager_users
+    ):
+        self.business_groups = business_groups
+        self.unit_legal_entity = unit_legal_entity
+        self.assigned_unit_details_list = assigned_unit_details_list
+        self.domain_manager_users = domain_manager_users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "business_groups", "unit_legal_entity",
+                "assigned_unit_details_list",
+                "domain_manager_users"
+            ])
+        business_groups = data.get("business_groups")
+        unit_legal_entity = data.get("unit_legal_entity")
+        assigned_unit_details_list = data.get("assigned_unit_details_list")
+        domain_manager_users = data.get("domain_manager_users")
+        return GetAssignUnitFormDataSuccess(
+            business_groups, unit_legal_entity, assigned_unit_details_list,
+            domain_manager_users
+        )
+
+    def to_inner_structure(self):
+        return {
+            "business_groups": self.business_groups,
+            "unit_legal_entity": self.unit_legal_entity,
+            "assigned_unit_details_list": self.assigned_unit_details_list,
+            "domain_manager_users": self.domain_manager_users
+        }
+
+
+class SaveAsssignedUnitsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveAsssignedUnitsSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists,
-        UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess, InvalidClientId,
-        GetClientsSuccess, SaveClientSuccess, BusinessGroupNameAlreadyExists,
-        LegalEntityNameAlreadyExists, DivisionNameAlreadyExists, UnitNameAlreadyExists,
+        UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess,
+        InvalidClientId, GetClientsSuccess, SaveClientSuccess,
+        BusinessGroupNameAlreadyExists, LegalEntityNameAlreadyExists,
+        DivisionNameAlreadyExists, UnitNameAlreadyExists,
         UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
-        ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
-        InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId,
+        ChangeClientStatusSuccess, ReactivateUnitSuccess,
+        GetClientProfileSuccess, InvalidBusinessGroupId,
+        InvalidLegalEntityId, InvalidDivisionId,
+        InvalidDivisionName, InvalidCategoryName,
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
         InvalidNoOfLicence, InvalidFileSpace, ServerIsFull, NotAnImageFile,
-        GetNextUnitCodeSuccess, GetClientGroupFormDataSuccess
+        GetNextUnitCodeSuccess, GetClientGroupFormDataSuccess,
+        GetAssignLegalEntityListSuccess, GetUnassignedUnitsSuccess,
+        GetAssignUnitFormDataSuccess, SaveAsssignedUnitsSuccess,
+        GetEditAssignLegalEntitySuccess, SaveAssignLegalEntitySuccess,
+        ViewAssignLegalEntitySuccess
     ]
     class_map = {}
     for c in classes:
@@ -1474,7 +2059,8 @@ class RequestFormat(object):
 
     def to_structure(self):
         return {
-            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "session_token": to_structure_CustomTextType_50(
+                self.session_token),
             "request": to_VariantType(
                 self.request, "technomasters", "Response"
             )

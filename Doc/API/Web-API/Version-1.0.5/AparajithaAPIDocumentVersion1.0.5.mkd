@@ -1,0 +1,793 @@
+<h1> COMPFIE - API Document </h1>
+
+[TOC]
+
+# Request Format
+
+    {
+        "session_token": SESSION_TOKEN,
+        "request": will be any of the following requests
+    }
+
+    Possible Errors
+
+    [
+        "InvalidSessionToken",
+        {}  
+    ]
+
+    Note : All the following Requests will be in the above format
+
+## User Mapping
+
+### List
+
+   [ "GetUserMappings", {} ]
+
+   Success Response
+
+    [
+        "GetUserMappingsSuccess", 
+        {
+            "countries": [COUNTRY,], 
+            "domains": [DOMAIN], 
+            "knowledge_managers": [USER_CONFIG,], 
+            "knowledge_users": [USER_CONFIG,], 
+            "techno_managers": [USER_CONFIG,], 
+            "techno_users": [USER_CONFIG,],
+            "domain_managers": [USER_CONFIG,], 
+            "domain_users": [USER_CONFIG,], 
+            "user_mappings": [
+                {
+                    "parent_user_id": INT, 
+                    "user_mapping_id": INT, 
+                    "child_user_id": INT
+                }
+            ]
+        }
+    ]
+
+### Save
+    
+    [
+        "SaveUserMappings", 
+        {
+            "country_id": INT,
+            "domain_id": INT,
+            "parent_user_id": INT,
+            "child_users": [INT,] 
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveUserMappingsSuccess", 
+        {}
+    ]
+
+# Compfie Admin
+
+## Validity Date Settings
+
+### List
+
+    [ 
+        "GetValidityDateList", 
+        {} 
+    ]
+
+    Success Response
+
+    [
+        "GetValidityDateListSuccess", 
+        {
+            "domains": [DOMAIN,], 
+            "validity_date_settings": [VALIDITY_DATE_SETTINGS,], 
+            "country_domain_mappings": {
+                COUNTRY_ID : [DOMAIN_ID,],
+            }, 
+            "countries": [COUNTRY,]
+        }
+    ]
+
+### Save / Update
+
+    [
+        "SaveValidityDateSettings", 
+        { 
+            "validity_date_settings": [VALIDITY_DATE_SETTINGS,]
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveValidityDateSettingsSuccess", 
+        {}
+    ]
+
+# Console Admin
+
+## Configure Database Server
+
+### List
+
+    [ "GetDbServerList", {} ]
+
+    Success Response
+
+    [
+        "GetDbServerListSuccess", 
+        {
+            "db_servers": [
+                {
+                    "db_server_name": STRING, 
+                    "username": STRING, 
+                    "no_of_clients": INT, 
+                    "ip": STRING, 
+                    "password": STRING, 
+                    "port": STRING
+                }
+            ]
+        }
+    ]
+
+### Save
+
+    [ 
+        "SaveDBServer", 
+        {
+            "db_server_name": STRING,
+            "ip": STRING,
+            "port": STRING,
+            "username": STRING,
+            "password": STRING
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveDBServerSuccess", 
+        {}
+    ]
+
+## Configure Client Server
+
+### List
+
+    [ "GetClientServerList", {} ]
+
+    Success Response
+
+    [
+        "GetClientServerListSuccess", 
+        {
+            "client_servers": [
+                {
+                    "no_of_clients": INT, 
+                    "ip": STRING, 
+                    "client_server_id": INT, 
+                    "port": INT, 
+                    "client_server_name": STRING
+                }
+            ]
+        }
+    ]
+
+### Save
+
+    [ 
+        "SaveClientServer", 
+        {
+            "client_server_id": INT,
+            "client_server_name": STRING,
+            "ip": STRING,
+            "port": INT 
+        }
+    ]
+
+    Success Response
+
+    [
+        "SaveClientServerSuccess", 
+        {}
+    ]  
+
+## Allocate DB Environment
+
+### List
+
+    [ "GetAllocatedDBEnv", {} ]
+
+    Success Response
+
+    [
+        "GetAllocatedDBEnvSuccess", 
+        {
+            "client_groups": [CLIENT_GROUP,], 
+            "client_legal_entities": [LEGAL_ENTITY,], 
+            "client_dbs": [
+                {
+                    "legal_entity_id": INT, 
+                    "machine_id": INT, 
+                    "database_server_ip": STRING, 
+                    "client_id": INT
+                },
+            ], 
+            "client_server_name_and_id": [
+                {
+                    "machine_id": INT, 
+                    "machine_name": STRING
+                },
+            ], 
+            "db_server_name_and_id": [
+                {
+                    "db_server_name": STRING, 
+                    "ip": STRING
+                }, 
+      
+            ]
+        }
+    ]
+
+### Save
+    [ 
+        "SaveAllocatedDBEnv", 
+        {
+            "client_id": INT,
+            "legal_entity_id": INT,
+            "database_server_ip": STRING,
+            "machine_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveAllocatedDBEnvSuccess", 
+        {}
+    ]
+
+## Auto Deletion
+
+### List
+
+    [ "GetAutoDeletionList", {} ]
+
+    Success Response
+
+    [
+        "GetAutoDeletionListSuccess", 
+        {
+            "client_groups": [CLIENT_GROUP,], 
+            "auto_deletion_entities": [
+                {
+                    "deletion_period": INT, 
+                    "legal_entity_id": INT, 
+                    "is_active": BOOL, 
+                    "legal_entity_name": STRING, 
+                    "client_id": INT, 
+                    "unit_count": INT
+                }, 
+      
+            ], 
+            "auto_deletion_units": [
+                {
+                    "unit_id": INT,
+                    "unit_code": STRING, 
+                    "unit_name": STRING,
+                    "address": STRING 
+                    "legal_entity_id": INT,
+                    "client_id": INT,
+                    "deletion_year": INT, 
+                },
+            ]
+        }
+    ]
+
+### Save
+
+    [
+        "SaveAutoDeletion", 
+        {
+            "auto_deletion_details": [ 
+                { 
+                    "client_id": INT,
+                    "legal_entity_id": INTT,
+                    "unit_id": INT,
+                    "deletion_year": INT
+                } 
+            ] 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveAutoDeletionSuccess", 
+        {}
+    ]
+
+## Configure File Storage
+
+### List
+
+    [ "GetFileStorage", {} ]
+
+    Success Response
+
+    [
+        "GetFileStorageSuccess", 
+        {
+            "client_groups": [CLIENT_GROUP,], 
+            "client_legal_entities": [ LEGAL_ENTITY,], 
+            "client_server_name_and_id": [
+                {
+                    "machine_id": INT, 
+                    "machine_name": STRING
+                }
+            ], 
+            "file_storages": [
+                {
+                    "legal_entity_id": INT, 
+                    "machine_id": INT, 
+                    "client_id": INT
+                }
+            ]
+        }
+    ]
+
+### Save
+
+    [
+        "SaveFileStorage", 
+        { 
+            "client_id": INT, 
+            "legal_entity_id": INT, 
+            "machine_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveFileStorageSuccess", 
+        {}
+    ]
+
+# Techno Functional - Manager
+
+## Client Group Creation
+
+### List
+    
+    [ "GetClientGroups", {} ]
+    
+    Success Response
+
+    [
+        "GetClientGroupsSuccess", 
+        {
+            "groups": [
+                {
+                    "country_names": STRING, 
+                    "is_approved": INT, 
+                    "is_active": BOOL, 
+                    "group_name": STRING, 
+                    "no_of_legal_entities": INT, 
+                    "remarks": STRING, 
+                    "group_id": INT
+                },
+            ]
+        }
+    ]
+
+### Form Data
+
+    [ "GetClientGroupFormData", {} ]
+
+    Success Response
+
+    [
+        "GetClientGroupFormDataSuccess", 
+        {
+            "domains": [DOMAIN,], 
+            "industry_name_id": [INDUSTRY,], 
+            "countries": [COUNTRY,]
+        }
+    ]
+
+### Save
+
+    [ 
+        "SaveClientGroup", 
+        { 
+            "group_name": STRING,
+            "email_id": STRING,
+            "short_name": STRING,
+            "no_of_view_licence": INT,
+            "legal_entity_details": [ 
+                { 
+                    "country_id": INT, 
+                    "business_group": BUSINESS_GROUP, 
+                    "legal_entity_name": "Samsung LE 1", 
+                    "logo": FILE, 
+                    "no_of_licence": 10, 
+                    "file_space": 8,
+                    "contract_from": "01-Oct-2016",
+                    "contract_to": "31-Oct-2016",
+                    "domain_details": [ 
+                        { 
+                            "d_id": INT,
+                            "activation_date": DATE,
+                            "org": {
+                                ORGANIZATION_ID: INT 
+                            } 
+                        },
+                    ] 
+                },
+            ], 
+            "date_configurations": [DATE_CONFIG,] 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveClientGroupSuccess", 
+        {}
+    ]
+
+### Edit Form Data
+
+    [ 
+        "GetEditClientGroupFormData", 
+        { 
+            "group_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "GetEditClientGroupFormDataSuccess", 
+        {
+            "industry_name_id": [INDUSTRY], 
+            "date_configurations": [DATE_CONFIG,], 
+            "business_groups": [CLIENT_BUSINESS_GROUP,], 
+            "countries": [COUNTRY,], 
+            "domains": [DOMAIN,], 
+            "legal_entities": [
+                {
+                    "old_logo": STRING
+                    "legal_entity_id": INT, 
+                    "legal_entity_name": STRING, 
+                    "new_logo": NONE, 
+                    "file_space": INT, 
+                    "no_of_licence": INT, 
+                    "country_id": INT, 
+                    "contract_from": STRING,
+                    "domain_details": [
+                        {
+                            "d_id": INT, 
+                            "org": {
+                                ORGANIZATION_ID: INT,
+                            }, 
+                            "activation_date": STRING
+                        },
+                    ],
+                    "business_group": BUSINESS_GROUP, 
+                    "contract_to": STRING
+                },
+            ], 
+            "email_id": STRING, 
+            "no_of_licence": INT, 
+            "group_name": STRING,
+            "short_name": STRING, 
+        } 
+    ]
+
+### Update
+
+    [ 
+        "UpdateClientGroup", 
+        { 
+            "client_id": INT,
+            "group_name": STRING,
+            "email_id": STRING,
+            "short_name": STRING,
+            "no_of_view_licence": INT,
+            "legal_entities": [ 
+                { 
+                    "country_id": 1, 
+                    "business_group": BUSINESS_GROUP, 
+                    "legal_entity_id": INT,
+                    "legal_entity_name": STRING,
+                    "old_logo": STRING,
+                    "new_logo": FILE, 
+                    "no_of_licence": INT,
+                    "file_space": INT, 
+                    "contract_from": STRING,
+                    "contract_to": STRING, 
+                    "domain_details": [ 
+                        { 
+                            "d_id": INT, 
+                            "activation_date": STRING, 
+                            "org": { 
+                                ORGANIZATION_ID: INT 
+                            } 
+                        } 
+                    ] 
+                },
+            ], 
+            "date_configurations": [DATE_CONFIG,] 
+        }
+    ]
+
+    Success Response
+
+    [
+        "UpdateClientGroupSuccess", 
+        {}
+    ]
+
+### Status Change
+
+    [ 
+        "ChangeClientGroupStatus", 
+        { 
+            "client_id": INT, 
+            "is_active": BOOL 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "ChangeClientStatusSuccess", 
+        {}
+    ]
+
+## Approve Client Group
+
+### List
+
+    [ "GetClientGroupApprovalList", {} ]
+
+    Success Response
+
+    [
+        "GetClientGroupApprovalListSuccess", 
+        {
+            "group_approval_list": [
+                {
+                    "username": STRING
+                    "country_ids": [INT,], 
+                    "is_active": BOOL, 
+                    "group_name": STRING, 
+                    "le_count": INT, 
+                    "client_id": INT
+                },
+            ], 
+            "countries": [COUNTRY,]
+        }
+    ]
+
+### Popup
+
+    - Same as Client Group --> Edit Form data
+
+### Approve / Reject
+
+    [
+        "ApproveClientGroup",
+        {
+            "client_group_approval_details": [
+                {
+                    "client_id": INT,
+                    "approval_status": BOOL,
+                    "reason": STRING
+                } 
+            ] 
+        } 
+    ]
+
+    Success Response
+
+    [
+        "ApproveClientGroupSuccess", 
+        {}
+    ]
+
+## Client Unit Approval
+
+### List
+
+    [ "GetClientUnitApprovalList", {} ]
+
+    Success Response
+
+    [
+        "GetClientUnitApprovalListSuccess", 
+        {
+            "unit_approval_list": [
+                {
+                    "legal_entity_id": INT, 
+                    "group_name": STRING, 
+                    "legal_entity_name": STRING, 
+                    "business_group_name": STRING, 
+                    "country_name": STRING, 
+                    "unit_count": INT
+                }, 
+            ]
+        }
+    ]
+
+
+### Units List
+
+    [ "GetEntityApprovalList", { "legal_entity_id": 6 } ]
+
+    Success Response
+
+    [
+        "GetEntityApprovalListSuccess", 
+        {
+            "entity_unit_approval_list": [
+                {
+                    "unit_id": INT, 
+                    "unit_code": STRING,
+                    "unit_name": STRING, 
+                    "category_name": STRING,
+                    "division_name": STRING, 
+                    "geography_name": STRING, 
+                    "org_names": [STRING,], 
+                    "domain_names": [STRING,], 
+                    "address": STRING, 
+                    "postal_code": STRING, 
+                    
+                }
+            ]
+        }
+    ]
+
+### Approve Unit
+
+    [ 
+        "ApproveUnit", 
+        { 
+            "unit_approval_details": [ 
+                {
+                    "unit_id": INT,
+                    "approval_status": BOOL,
+                    "reason": STRING
+                },
+            ] 
+        }
+    ]
+
+    Success Response
+
+    [
+        "ApproveUnitSuccess", 
+        {}
+    ]
+
+## Assign Client Unit
+
+### Unassigned Units List
+
+    [ "GetUnassignedUnits", {} ]
+
+    Success Response
+
+    [
+        "GetUnassignedUnitsSuccess", 
+        {
+            "unassigned_units_list": [
+                {
+                    "unassigned_units": STRING, 
+                    "group_name": STRING, 
+                    "domain_name": STRING, 
+                    "client_id": INT, 
+                    "domain_id": INT
+                },
+            ]
+        }
+    ]
+
+### Assigned Units List
+
+    [ 
+        "GetAssignedUnits", 
+        { 
+            "domain_id": INT, 
+            "client_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "GetAssignedUnitsSuccess", 
+        {
+            "assigned_units_list": [
+                {
+                    "user_id": INT, 
+                    "legal_entity_id": INT, 
+                    "legal_entity_name": STRING, 
+                    "business_group_name": STRING, 
+                    "employee_name": STRING, 
+                    "unit_count": INT
+                },
+            ]
+        }
+    ]
+
+### Assigned Unit details List
+
+    [ 
+        "GetAssignedUnitDetails", 
+        { 
+            "legal_entity_id": INT, 
+            "user_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "GetAssignedUnitDetailsSuccess", 
+        {
+            "assigned_unit_details_list": [UNIT_DETAILS,]
+        }
+    ]
+
+### Assign Unit form data
+
+    [
+        "GetAssignUnitFormData", 
+        {
+            "domain_id": INT,
+            "client_id": INT 
+        }
+    ]
+
+    Success Response
+
+    [
+        "GetAssignUnitFormDataSuccess", 
+        {
+            "business_groups": [BUSINESS_GROUP,], 
+            "domain_manager_users": [USER,], 
+            "unit_legal_entity": [LEGAL_ENTITY,],
+            "assigned_unit_details_list": [UNIT_DETAILS,], 
+        }
+    ]
+
+### Save Assigned Unit
+
+     [ 
+        "SaveAsssignedUnits", 
+        { 
+            "user_id": INT, 
+            "active_units": [ 
+                { 
+                    "unit_id": INT, 
+                    "domain_name": STRING,
+                    "legal_entity_id": INT
+                },
+            ], 
+            "client_id": INT
+        } 
+    ]
+
+    Success Response
+
+    [
+        "SaveAsssignedUnitsSuccess", 
+        {}
+    ]
+

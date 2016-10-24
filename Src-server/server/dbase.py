@@ -479,10 +479,12 @@ class Database(object):
                             query += column+" = '%s', " % (
                                 values[outer_index][index])
                         else:
-                            query += column+" = '%s' " % values[outer_index][index]
+                            query += column+" = '%s' " % (
+                                values[outer_index][index])
                 query += " WHERE " + cond + "; "
                 cursor = self.cursor()
                 assert cursor is not None
+                print query
                 cursor.execute(query)
             return True
         except mysql.Error, e:

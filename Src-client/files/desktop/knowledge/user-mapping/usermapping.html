@@ -1,145 +1,107 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-<div class="content-container width70" id="view">
+<style>
+    .width655em {
+        width: 65.5em;
+    }
+    .width100Percent {
+        width: 100%;
+    }
+    .width50Percent {
+        width: 50%;
+    }
+    .width85Percent {
+        width: 85%;
+    }
+    .tab-border{
+        border:1px solid white;
+    }
+</style>
+<div class="content-container width655em">
     <div class="content-area">
         <h1>User Mapping</h1>
-        <div class="filters-and-search">
-            <div class="btn-add btn-user-mapping-add">Add</div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="grid-table" >
-            <table id="user-mapping-list">
-                <thead>
-                    <tr align="left">
-                        <th align="center" width="10%">#</th>
-                        <th>Country</th>
-                        <th>Domain</th>
-                        <th>CC Manager</th>
-                        <th align="center" width="10%">Edit</th>
-                        <th align="center" width="10%">Status</th>
-                    </tr>
-                    <tr>
-                        <td width="10%">&nbsp;</td>
-                        <td>
-                            <input type="text" class="filter-text-box" id="search-country">
-                        </td>
-                        <td>
-                            <input type="text" class="filter-text-box" id="search-domain">
-                        </td>
-                        <td>
-                            <input type="text" class="filter-text-box" id="search-cc-manager" >
-                        </td>
-                        <td width="10%">&nbsp;</td>
-                        <td width="15%">
-                            <select class="filter-text-box" id="search-status" >
-                                <option value='0'>All</option>
-                                <option value='1'>
-                                    Active
-                                </option>
-                                <option value='2'>
-                                    Inactive
-                                </option>
-                            </select>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody class="tbody-user-mapping">
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<div class="content-container default-display-none width70" id="add" >
-    <div class="content-area">
         <div class="add-container">
-            <div class="add-container-heading">
-                User Mapping<span class="error-message"></span>
-            </div>
-            <div class="input-row">
-                <div class="input-row-left">
-                    <div class="input-row">
-                        <div class="single-column-field-label">
-                            Country:<span class="mandatory">*</span>
-                        </div>
-                        <div class="single-column-field-input">
-                            <input type="hidden" id="country" value="">
-                            <input type="text" class="input-box icon-autocomplete" id="countryval" value="" placeholder="Enter Country">
-                            <div id="ac-country" class="ac-textbox default-display-none">
-                              <ul style="width:85%;"></ul>
+            <div class="archive-container">
+                <div class="archive-header">
+                    <span class="know-mgr-exec-tab active">
+                        Knowledge Manager - Knowledge Executive
+                    </span>
+                    <span class="tech-mgr-exec-tab">
+                        Techno Manager - Techno Executive
+                    </span>
+                    <span class="tech-mgr-mgr-tab">
+                        Techno Manager - Domain Manager
+                    </span>
+                    <span class="domain-mgr-exec-tab">
+                        Domain Manager - Domain Executive
+                    </span>
+                </div>
+                <div>
+                    <span class="error-message"></span>
+                </div>
+                <div class="know-mgr-exec-tab-content" class="tab-border">
+                    <div class="input-row-left">
+                        <div class="input-row">
+                            <div class="single-column-field-label">
+                                Country:<span class="mandatory">*</span>
+                            </div>
+                            <div class="single-column-field-input">
+                                <input type="hidden" id="country" value="">
+                                <input type="text" class="input-box icon-autocomplete" id="countryval" value="" placeholder="Enter Country">
+                                <div id="ac-country" class="ac-textbox default-display-none">
+                                  <ul class="width85Percent"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="input-row">
-                        <div class="single-column-field-label">
-                            CC Manager:<span class="mandatory">*</span>
+                    <div class="input-row-right">
+                        <div class="input-row">
+                            <div class="single-column-field-label">
+                                Domain:<span class="mandatory">*</span>
+                            </div>
+                            <div class="single-column-field-input">
+                                <input type="hidden" id="domain" value="">
+                                <input type="text" class="input-box icon-autocomplete" id="domainval" value="" placeholder="Enter Domain">
+                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                  <ul class="width85Percent"></ul>
+                                </div>
+                            </div>
                         </div>
-                        <div class="single-column-field-input">
-                            <input type="hidden" id="user" value="">
-                            <input type="text" class="input-box icon-autocomplete" id="userval" value="" placeholder="Enter CC Manager">
-                            <div id="ac-user" class="ac-textbox default-display-none">
-                              <ul style="width:85%;"></ul>
+                    </div>
+                    <br>
+                    <div class="submit-button-container">
+                        <input type="submit" name="submit" value="Show" id="show" class="btn-submit">
+                    </div>
+                    <div class="form-container-outer">
+                        <div id="grid-panchayat" class="form-container-grid-table" >
+                            <table class="width100Percent">
+                                <tr align="left">
+                                    <th class="width50Percent parent-user">Knowledge Manager</th>
+                                    <th class="width50Percent child-user">Knowledge Executive</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <ul class="parent-user-list">
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="child-user-list">
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br>  
+                            <div class="submit-button-container">
+                                <input type="submit" name="submit" value="Submit" class="btn-submit" id="save">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="input-row-right">
-                    <div class="input-row">
-                        <div class="single-column-field-label">
-                            Domain:<span class="mandatory">*</span>
-                        </div>
-                        <div class="single-column-field-input">
-                            <input type="hidden" id="domain" value="">
-                            <input type="text" class="input-box icon-autocomplete" id="domainval" value="" placeholder="Enter Domain">
-                            <div id="ac-domain" class="ac-textbox default-display-none">
-                              <ul style="width:85%;"></ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="submit-button-container">
-                <input type="submit" name="Show" value="Show" class="btn-submit" id="show" tabindex="2">
-            </div>
-            <div class="form-container-grid-table default-display-none user-grid">
-                <table>
-                    <tr>
-                        <th width="50%">CC User</th>
-                        <th width="50%">Techno Manager</th>
-                    </tr>
-                    <tr>
-                        <td class="cc-user-list">
-                            <ul></ul>
-                        </td>
-                        <td class="techno-manager-list">
-                            <ul></ul>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="submit-button-container default-display-none">
-                <input type="reset" name="cancel" value="Cancel" class="btn-cancel">&nbsp;&nbsp;
-                <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
             </div>
         </div>
     </div>
 </div>
 <div id="templates">
-    <table>
-        <tr class="table-row">
-            <td class="sno" align="center"></td>
-            <td class="country"></td>
-            <td class="domain"></td>
-            <td class="cc-manager"></td>
-            <td align="center">
-                <span class="edit-icon icon-style">
-                </span> 
-            </td>
-            <td align="center">
-                <span class="status icon-style">
-                </span> 
-            </td>
-        </tr>
-    </table>
     <div class="drop-down-option">
         <ul>
             <li></li>

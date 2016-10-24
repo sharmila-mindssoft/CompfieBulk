@@ -868,3 +868,76 @@ function activate_text_arrow(ac_id, ac_name, callback) {
   ];
   callback(ac_result);
 }
+
+var month_id_name_map = {} 
+month_id_name_map[1] = "January"
+month_id_name_map[2] = "February"
+month_id_name_map[3] = "March"
+month_id_name_map[4] = "April"
+month_id_name_map[5] = "May"
+month_id_name_map[6] = "June"
+month_id_name_map[7] = "July"
+month_id_name_map[8] = "August"
+month_id_name_map[9] = "September"
+month_id_name_map[10] = "October"
+month_id_name_map[11] = "Novemeber"
+month_id_name_map[12] = "December"
+
+
+function commonAutoComplete(
+    e, ac_div, id_element, text_val, list_val, field_name, id_name, callback
+) {
+  ac_div.show();
+  id_element.val('');
+  var suggestions = [];
+  ac_div.find('ul').empty();
+  if (text_val.length > 0) {
+    for (var i in list_val) {
+      if (~list_val[i][field_name].toLowerCase().indexOf(text_val.toLowerCase()))
+        suggestions.push([
+          list_val[i][id_name],
+          list_val[i][field_name]
+        ]);
+    }
+    var str = '';
+    for (var i in suggestions) {
+      str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
+    }
+    ac_div.find('ul').append(str);
+  } else {
+    $('.ac-textbox').hide();
+  }
+  onCommonArrowKey(e, ac_div, callback);
+}
+
+function onCommonArrowKey(e, ac_item, callback) {
+  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
+    chosen = '';
+  }
+  if (e.keyCode == 40) {
+    if (chosen === '') {
+      chosen = 0;
+    } else if (chosen + 1 < ac_item.find('li').length) {
+      chosen++;
+    }
+    ac_item.find(' li').removeClass('auto-selected');
+    ac_item.find(' li:eq(' + chosen + ')').addClass('auto-selected');
+    return false;
+  }
+  if (e.keyCode == 38) {
+    if (chosen === '') {
+      chosen = 0;
+    } else if (chosen > 0) {
+      chosen--;
+    }
+    ac_item.find(' li').removeClass('auto-selected');
+    ac_item.find(' li:eq(' + chosen + ')').addClass('auto-selected');
+    return false;
+  }
+  if (e.keyCode == 13) {
+    var ac_id = ac_item.find(' li:eq(' + chosen + ')').attr('id');
+    var ac_name = ac_item.find(' li:eq(' + chosen + ')').text();
+    activate_text_arrow(ac_id, ac_name, callback);
+    return false;
+  }
+}

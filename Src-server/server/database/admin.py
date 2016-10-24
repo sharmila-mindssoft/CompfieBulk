@@ -30,7 +30,9 @@ __all__ = [
     "get_user_countries", "get_user_domains", "get_mapped_countries",
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
     "save_validity_date_settings", "get_user_mapping_form_data",
-    "save_user_mappings"
+    "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
+    "save_reassigned_user_account", "get_assigned_legal_entities",
+    "get_assigned_units", "get_assigned_clients"
 ]
 
 
@@ -802,52 +804,19 @@ def save_validity_date_settings(db, data, session_user):
 
 
 def get_user_mappings(db):
-    data = db.call_proc_with_multiresult_set(
-        "sp_usermappings_list", None, 2)
-    user_mappings = data[0]
-    user_mapping_users = data[1]
-    return (
-        return_user_mappings(user_mappings),
-        return_user_mapping_users(user_mapping_users)
-    )
-
-
-def return_user_mappings(data):
-    fn = admin.UserMapping
-    result = [
-        fn(
-            user_mapping_id=datum["user_mapping_id"],
-            cc_manager_id=datum["cc_manager_id"],
-            is_active=datum["is_active"]
-        ) for datum in data
-    ]
-    return result
+    data = db.call_proc("sp_usermappings_list", None)
+    return return_user_mapping_users(data)
 
 
 def return_user_mapping_users(data):
-    mapping_users = {}
-    for datum in data:
-        user_mapping_id = int(datum["user_mapping_id"])
-        if user_mapping_id not in mapping_users:
-            mapping_users[user_mapping_id] = {}
-            mapping_users[user_mapping_id]["cc_user_ids"] = []
-            mapping_users[user_mapping_id]["techno_manager_ids"] = []
-        if int(datum["form_category_id"]) == 6:
-            mapping_users[user_mapping_id]["cc_user_ids"].append(
-                int(datum["user_id"])
-            )
-        else:
-            mapping_users[user_mapping_id]["techno_manager_ids"].append(
-                int(datum["user_id"])
-            )
     result = []
-    for key, value in mapping_users:
-        fn = admin.UserMappingUsers
+    for datum in data:
+        fn = admin.UserMapping
         result = [
             fn(
-                user_mapping_id=key,
-                cc_user_id=value["cc_user_ids"],
-                techno_manager_ids=value["techno_manager_ids"]
+                user_mapping_id=datum["user_mapping_id"],
+                parent_user_id=datum["parent_user_id"],
+                child_user_id=datum["child_user_id"]
             )
         ]
     return result
@@ -892,50 +861,213 @@ def generate_domain_map(domains):
     return domain_map
 
 
+def get_all_user_types(db):
+    result = db.call_proc_with_multiresult_set("sp_users_type_wise", None, 8)
+    user_countries = result[6]
+    user_domains = result[7]
+    user_countries_map = generate_country_map(user_countries)
+    user_domains_map = generate_domain_map(user_domains)
+
+    knowledge_managers_result = result[0]
+    knowledge_users_result = result[1]
+    techno_managers_result = result[2]
+    techno_users_result = result[3]
+    domain_managers_result = result[4]
+    domain_users_result = result[5]
+    knowledge_managers = return_users(
+        knowledge_managers_result, user_countries_map, user_domains_map)
+    knowledge_users = return_users(
+        knowledge_users_result, user_countries_map, user_domains_map)
+    techno_managers = return_users(
+        techno_managers_result, user_countries_map, user_domains_map)
+    techno_users = return_users(
+        techno_users_result, user_countries_map, user_domains_map)
+    domain_managers = return_users(
+        domain_managers_result, user_countries_map, user_domains_map)
+    domain_users = return_users(
+        domain_users_result, user_countries_map, user_domains_map)
+    return (
+        knowledge_managers, knowledge_users, techno_managers, techno_users,
+        domain_managers, domain_users)
+
+
 def get_user_mapping_form_data(db, session_user):
     countries = get_countries_for_user(db, session_user)
     domains = get_domains_for_user(db, session_user)
-    result = db.call_proc_with_multiresult_set("sp_users_type_wise", None, 5)
-    user_countries = result[3]
-    user_domains = result[4]
-    user_countries_map = generate_country_map(user_countries)
-    user_domains_map = generate_domain_map(user_domains)
-    cc_managers_result = result[0]
-    cc_users_result = result[1]
-    techno_managers_result = result[2]
-    cc_managers = return_users(
-        cc_managers_result, user_countries_map, user_domains_map)
-    cc_users = return_users(
-        cc_users_result, user_countries_map, user_domains_map)
-    techno_managers = return_users(
-        techno_managers_result, user_countries_map, user_domains_map)
-    user_mappings, user_mapping_users = get_user_mappings(db)
+    (
+        knowledge_managers, knowledge_users, techno_managers, techno_users,
+        domain_managers, domain_users
+    ) = get_all_user_types(db)
+    user_mappings = get_user_mappings(db)
     return (
-        countries, domains, cc_managers, cc_users, techno_managers,
-        user_mappings, user_mapping_users
+        countries, domains, knowledge_managers, knowledge_users,
+        techno_managers, techno_users, domain_managers, domain_users,
+        user_mappings
     )
 
 
 def save_user_mappings(db, request, session_user):
-    cc_manager_id = request.user_id
-    cc_users_list = request.cc_user_ids
-    techno_managers = request.techno_manager_ids
+    current_time_stamp = get_date_time()
+    country_id = request.country_id
+    domain_id = request.domain_id
+    parent_user_id = request.parent_user_id
+    child_users = request.child_users
     insert_columns = [
-        "cc_manager_id", "user_id", "form_category_id", "is_active"
+        "user_category_id", "country_id", "domain_id", "parent_user_id",
+        "child_user_id", "created_by", "created_on"
     ]
-    cc_user_list = [
-        (cc_manager_id, user, 6, 1) for user in cc_users_list
+    cat_rows = db.call_proc("sp_users_category_by_id", (parent_user_id,))
+    user_category_id = cat_rows[0]["user_category_id"]
+    insert_values = [
+        (
+            user_category_id, country_id, domain_id, parent_user_id,
+            child_user_id, session_user, current_time_stamp
+        ) for child_user_id in child_users
     ]
-    techno_managers_list = [
-        (cc_manager_id, user, 7, 1) for user in techno_managers
-    ]
-    insert_values = cc_user_list + techno_managers_list
+    db.call_update_proc("sp_usermapping_delete", (parent_user_id,))
     result = db.bulk_insert(
         tblUserMapping, insert_columns, insert_values
     )
     if result:
-        name_rows = db.call_proc("sp_empname_by_id", (cc_manager_id,))
+        name_rows = db.call_proc("sp_empname_by_id", (parent_user_id,))
         action = "Users mapped for - \"%s\"" % name_rows[0]["empname"]
         db.save_activity(session_user, frmUserMapping, action)
     else:
         raise process_error("E079")
+
+
+def get_legal_entities_for_user(db, user_id):
+    result = db.call_proc(
+        "sp_tbl_unit_getclientlegalentity", (user_id,))
+    return return_legal_entities_for_unit(result)
+
+
+def return_legal_entities_for_unit(legal_entities):
+    results = []
+
+    for legal_entity in legal_entities:
+        legal_entity_obj = admin.LegalEntity(
+            legal_entity_id=legal_entity["legal_entity_id"],
+            legal_entity_name=legal_entity["legal_entity_name"],
+            business_group_id=legal_entity["business_group_id"],
+            client_id=legal_entity["client_id"],
+            country_id=legal_entity["country_id"]
+        )
+        results.append(legal_entity_obj)
+    return results
+
+
+def save_reassigned_user_account_history(db, request, session_user):
+    try:
+        old_user_id = request.old_user_id
+        new_user_id = request.new_user_id
+        assigned_ids = request.assigned_ids
+        remarks = request.remarks
+        user_type = request.user_type
+        current_time_stamp = get_date_time()
+        data = db.call_proc(
+            "sp_names_by_id",
+            (",".join(str(x) for x in assigned_ids), user_type),
+        )
+        names = ''
+        for datum in data:
+            names += datum["name"]
+
+        if user_type == 1:
+            reassigned_data = "Following groups were reassigned :- %s " % (
+                names)
+        elif user_type == 2:
+            reassigned_data = "Following legal entities were " + \
+                " reassigned :- %s" % (
+                    names)
+        else:
+            reassigned_data = "Following units were reassigned :- %s" % (names)
+        db.call_insert_proc(
+            "sp_reassignaccounthistory_save", (
+                old_user_id, new_user_id,  reassigned_data, remarks,
+                session_user, current_time_stamp
+            )
+        )
+    except Exception, e:
+        print e
+        raise process_error("E081")
+
+
+def save_reassigned_user_account(db, request, session_user):
+    save_reassigned_user_account_history(db, request, session_user)
+    try:
+        user_type = request.user_type
+        current_time_stamp = get_date_time()
+        columns = ["user_id", "assigned_by", "assigned_on"]
+        value_list = []
+        conditions = []
+        table = None
+        for assigned_id in request.assigned_ids:
+            value_list.append(
+                (request.new_user_id, session_user, current_time_stamp)
+            )
+            if user_type == 1:
+                condition = "client_id=%s" % (assigned_id)
+                table = tblUserClients
+            elif user_type == 2:
+                condition = "legal_entity_id=%s" % (assigned_id)
+                table = tblUserLegalEntity
+            else:
+                condition = "unit_id = %s" % (assigned_id)
+                table = tblUserUnits
+            conditions.append(condition)
+        db.bulk_update(
+            table, columns, value_list, conditions
+        )
+    except Exception, e:
+        print e
+        raise process_error("E082")
+
+
+def get_assigned_legal_entities(db):
+    result = db.call_proc("sp_userlegalentities_assigned_list", None)
+    return return_assigned_legal_entities(result)
+
+
+def return_assigned_legal_entities(data):
+    fn = admin.AssignedLegalEntities
+    result = [
+        fn(
+            user_id=datum["user_id"],
+            legal_entity_id=datum["legal_entity_id"]
+        ) for datum in data
+    ]
+    return result
+
+
+def get_assigned_units(db):
+    result = db.call_proc("sp_userunits_reassign_list", None)
+    return return_assigned_units(result)
+
+
+def return_assigned_units(data):
+    fn = admin.AssignedUnits
+    result = [
+        fn(
+            user_id=datum["user_id"],
+            unit_id=datum["unit_id"],
+            domain_id=datum["domain_id"]
+        )for datum in data
+    ]
+    return result
+
+
+def get_assigned_clients(db):
+    result = db.call_proc("sp_userclients_reassign_list", None)
+    return return_assigned_clients(result)
+
+
+def return_assigned_clients(data):
+    fn = admin.AssignedClient
+    result = [
+        fn(
+            user_id=datum["user_id"],
+            client_id=datum["client_id"]
+        )for datum in data
+    ]
+    return result

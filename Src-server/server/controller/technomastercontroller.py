@@ -30,7 +30,14 @@ __all__ = [
     "change_client_status",
     "reactivate_unit",
     "get_client_profile",
-    "create_new_admin"
+    "create_new_admin",
+    "get_assign_legal_entity_list",
+    "get_unassigned_units",
+    "get_assigned_units",
+    "process_save_assigned_units_request",
+    "get_edit_assign_legal_entity",
+    "process_save_assign_legal_entity",
+    "view_assign_legal_entity"
 ]
 
 #
@@ -53,12 +60,11 @@ def get_client_groups(db, request, session_user):
 ########################################################
 def get_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
-    users = get_techno_users(db)
     domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     return technomasters.GetClientGroupFormDataSuccess(
-        countries=countries, users=users, domains=domains,
-        industries=industries
+        countries=countries, domains=domains,
+        industry_name_id=industries
     )
 
 
@@ -71,20 +77,18 @@ def process_save_client_group(db, request, session_user):
         return technomasters.GroupNameAlreadyExists()
     else:
         group_id = save_client_group(
-            db, request.group_name, request.user_name
+            db, request.group_name, request.email_id,
+            request.short_name, request.no_of_view_licence, session_user
         )
         legal_entity_names = save_legal_entities(
             db, request, group_id, session_user)
-        country_ids = save_date_configurations(
+        save_date_configurations(
             db, group_id, request.date_configurations, session_user
         )
         legal_entity_id_name_map = get_legal_entity_ids_by_name(
             db, legal_entity_names
         )
-        save_client_user(db, group_id, request.user_name)
-        save_client_countries(db, group_id, country_ids)
-        save_client_domains(db, group_id, request, legal_entity_id_name_map)
-        save_incharge_persons(db, group_id, request, legal_entity_id_name_map)
+        save_client_user(db, group_id, request.email_id)
         save_organization(
             db, group_id, request, legal_entity_id_name_map, session_user
         )
@@ -97,18 +101,20 @@ def process_save_client_group(db, request, session_user):
 def get_edit_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
     business_groups = get_client_business_groups(db, request.group_id)
-    users = get_techno_users(db)
     domains = get_user_domains(db, session_user)
     industries = get_active_industries(db)
     group_id = request.group_id
     (
-        group_name, user_name, legal_entities, date_configuration_list
+        group_name, user_name, short_name, total_view_licence,
+        legal_entities, date_configuration_list
     ) = get_client_details(db, group_id)
     return technomasters.GetEditClientGroupFormDataSuccess(
-        countries=countries, users=users, domains=domains,
+        countries=countries, domains=domains,
         business_groups=business_groups,
-        industries=industries, group_name=group_name,
-        user_name=user_name, legal_entities=legal_entities,
+        industry_name_id=industries, group_name=group_name,
+        email_id=user_name, short_name=short_name,
+        no_of_licence=total_view_licence,
+        legal_entities=legal_entities,
         date_configurations=date_configuration_list
     )
 
@@ -118,36 +124,26 @@ def get_edit_client_group_form_data(db, request, session_user):
 ########################################################
 def process_update_client_group(db, request, session_user):
     session_user = int(session_user)
-    if is_invalid_group_id(db, request.group_id):
+    if is_invalid_group_id(db, request.client_id):
         return technomasters.InvalidClientId()
-    elif is_duplicate_group_name(db, request.group_name, request.group_id):
+    elif is_duplicate_group_name(db, request.group_name, request.client_id):
         return technomasters.GroupNameAlreadyExists()
-    country_ids = save_date_configurations(
-        db, request.group_id, request.date_configurations, session_user
+    save_date_configurations(
+        db, request.client_id, request.date_configurations, session_user
     )
-    if is_deactivated_existing_country(
-        db, request.group_id, country_ids
-    ):
-        return technomasters.CannotDeactivateCountry()
-    else:
-        update_client_group(
-            db, request.group_name, request.group_id
-        )
-        legal_entity_names = update_legal_entities(
-            db, request, request.group_id, session_user)
-        legal_entity_id_name_map = get_legal_entity_ids_by_name(
-            db, legal_entity_names
-        )
-        save_client_countries(db, request.group_id, country_ids)
-        save_client_domains(
-            db, request.group_id, request, legal_entity_id_name_map)
-        save_incharge_persons(
-            db, request.group_id, request, legal_entity_id_name_map)
-        save_organization(
-            db, request.group_id, request,
-            legal_entity_id_name_map, session_user
-        )
-        return technomasters.UpdateClientGroupSuccess()
+    update_client_group(
+        db, request.group_name, request.client_id
+    )
+    legal_entity_names = update_legal_entities(
+        db, request, request.client_id, session_user)
+    legal_entity_id_name_map = get_legal_entity_ids_by_name(
+        db, legal_entity_names
+    )
+    save_organization(
+        db, request.client_id, request,
+        legal_entity_id_name_map, session_user
+    )
+    return technomasters.UpdateClientGroupSuccess()
 
 
 ########################################################
@@ -177,66 +173,100 @@ def validate_duplicate_data(db, request, session_user):
     client_id = request.client_id
     business_group_id = request.business_group_id
     legal_entity_id = request.legal_entity_id
-    division_id = request.division_id
+    divisions_list = request.division_units
 
-    #country_wise_units = request.country_wise_units
 
     if not is_invalid_id(db, "client_id", client_id):
         return technomasters.InvalidClientId()
 
     if business_group_id is not None:
-        #b_group_id = business_group.business_group_id
-        #b_group_name = business_group.business_group_name
-        #if is_duplicate_business_group(
-         #   db, b_group_id, b_group_name, client_id
-        #):
-         #   return technomasters.BusinessGroupNameAlreadyExists()
-        #if b_group_id is not None:
         if not is_invalid_id(db, "bg_id", business_group_id):
             return technomasters.InvalidBusinessGroupId()
 
-    if division_id is not None:
-        #div_id = division.division_id
-        #div_name = division.division_name
-        #if is_duplicate_division(db, div_id, div_name, client_id):
-         #   return technomasters.DivisionNameAlreadyExists()
-        #if div_id is not None:
-        if not is_invalid_id(db, "division_id", division_id):
-            return technomasters.InvalidDivisionId()
+    if divisions_list is not None:
+        print "inside divisions valid checking"
+        print divisions_list
+        for row_division in divisions_list:
+            division_id = row_division.get("dv_id")
+            division_name = row_division.get("dv_name")
+            category_name = row_division.get("cg")
+            if division_id is not None:
+                if not is_invalid_id(db, "division_id", division_id):
+                    return technomasters.InvalidDivisionId()
+            else:
+                if division_name is not None and division_id is None:
+                    if is_invalid_name(db, "div_name", division_name):
+                        return technomasters.InvalidDivisionName()
 
-    #leg_id = legal_entity.legal_entity_id
-    #leg_name = legal_entity.legal_entity_name
-    #if is_duplicate_legal_entity(db, leg_id, leg_name, client_id):
-    #    return technomasters.LegalEntityNameAlreadyExists()
+            if category_name is not None:
+                if is_invalid_name(db, "catg_name", category_name):
+                        return technomasters.InvalidCategoryName()
+
+
+
     if legal_entity_id is not None:
         if not is_invalid_id(db, "legal_entity_id", legal_entity_id):
             return technomasters.InvalidLegalEntityId()
+    return True
 
+
+def validate_unit_data(db, request, div_ids, category_ids, client_id, session_user):
     units = request.units
+    divisions = request.division_units
     new_unit_list = []
     old_unit_list = []
+    dict_unit_list = []
+    int_div_cnt = 1
+    int_unit_cnt = 1
+    i = 0
+    #var unit
+    print "inside valid unit data"
+    print div_ids
+    print category_ids
+    print "Map:"
+    for counts, div, catg in map(None, divisions ,div_ids, category_ids):
+        div_cnt = counts.get("div_cnt")
+        unit_cnt = counts.get("unit_cnt")
+        print "inside merge loop"
+        print unit_cnt
+        while i < len(units):
+            print "inside units"
+            print "unit dict"
+            unit = units[i]
+            print type(unit)
+            print int_unit_cnt
+            unit_id = unit.unit_id
+            unit_name = unit.unit_name
+            print unit_name
+            if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
+                return technomasters.UnitCodeAlreadyExists(
+                    get_next_auto_gen_number(db, client_id)
+                )
 
-    for unit in units:
-        unit_id = unit.unit_id
-        unit_name = unit.unit_name
-        if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
-            return technomasters.UnitCodeAlreadyExists(
-                get_next_auto_gen_number(db, client_id)
-            )
+            elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
+                return technomasters.UnitNameAlreadyExists()
+            else:
+                pass
 
-        elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
-            return technomasters.UnitNameAlreadyExists()
-        else:
-            pass
-
-        if unit_id is not None:
-            if not is_invalid_id(db, "unit_id", unit_id):
-                return technomasters.InvalidUnitId()
-            old_unit_list.append(unit)
-        else:
-            new_unit_list.append(unit)
+            if unit_id is not None:
+                if not is_invalid_id(db, "unit_id", unit_id):
+                    return technomasters.InvalidUnitId()
+                old_unit_list.append(unit)
+                return [True, new_unit_list, old_unit_list]
+            else:
+                new_unit_list.append(unit)
+                new_unit_list.append({"div_id": div.get("div_id")})
+                new_unit_list.append({"catg_id": catg.get("catg_id")})
+                print "new unit list"
+                print new_unit_list
+            if i == (unit_cnt - 1):
+                i = i + 1
+                break
+            else:
+                i = i + 1
 
     return [True, new_unit_list, old_unit_list]
+
 
 
 def save_client(db, request, session_user):
@@ -245,94 +275,72 @@ def save_client(db, request, session_user):
     business_group_id = request.business_group_id
     legal_entity_id = request.legal_entity_id
     country_id = request.country_id
-    division_id = request.division_id
-    category_name = request.category_name
+    print
+    print country_id
+    divisions = request.division_units
+    div_ids = []
+    category_ids = []
+
     is_valid = validate_duplicate_data(db, request, session_user)
-    if type(is_valid) is not list:
-        return is_valid
+    print "is_valid"
+    print is_valid
+    if is_valid ==  True:
+        if divisions is not None:
+           print "inside division is not None"
+           for division in divisions:
+                division_id = division.get("dv_id")
+                division_name = division.get("dv_name")
+                category_name = division.get("cg")
+
+                if division_id is None:
+                    print "inside div id is None"
+                    if division_name is not None:
+                        div_id = save_division(
+                            db, client_id, div_name, business_group_id, legal_entity_id, session_user
+                            )
+                        if div_id == 0 or div_id < 0:
+                            return False
+                        else:
+                            div_ids.append({"div_id":div_id})
+                    else:
+                        div_ids.append({"div_id":0})
+                else:
+                    div_id = division_id
+                    div_ids.append({"div_id":div_id})
+
+                if category_name is not None:
+                    category_id = save_category(
+                        db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user
+                        )
+                    print "saved category_id"
+                    print category_id
+                    if category_id == 0 or category_id < 0:
+                        return False
+                    else:
+                        category_ids.append({"catg_id":category_id})
+                else:
+                    category_ids.append({"catg_id":0})
+
+
+    is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
+    print "is_valid_unit : %s" % is_valid
+    if type(is_valid_unit) is not list:
+        return is_valid_unit
     else:
-        if is_valid[0] is True:
-            units = is_valid[1]
+        if is_valid_unit[0] is True:
+            units = is_valid_unit[1]
+            print "after append"
+            print units
 
-        b_group_id = None
-        leg_id = None
-        div_id = None
-        if business_group is not None:
-            b_group_name = business_group.business_group_name
-            b_group_id = business_group.business_group_id
-            if b_group_id is None:
-                b_group_id = save_business_group(
-                    db, client_id, b_group_name, session_user
-                )
-            if b_group_id is False:
-                return False
-
-        if legal_entity is not None:
-            leg_name = legal_entity.legal_entity_name
-            leg_id = legal_entity.legal_entity_id
-            if leg_id is None:
-                leg_id = save_legal_entity(
-                    db, client_id, leg_name, b_group_id, session_user
-                )
-            if leg_id is False:
-                return False
-
-        if division is not None:
-            div_name = division.division_name
-            div_id = division.division_id
-            if div_id is None:
-                div_id = save_division(
-                    db, client_id, div_name, b_group_id, leg_id, session_user
-                )
-            if div_id is False:
-                return False
-        #b_group_id = None
-        #leg_id = None
-        #div_id = None
-        #if business_group is not None:
-         #   print "inside business group is not None"
-          #  b_group_name = business_group.business_group_name
-           # b_group_id = business_group.business_group_id
-            #if b_group_id is None:
-             #   print "inside business group id is None"
-              #  b_group_id = save_business_group(
-               #     db, client_id, b_group_name, session_user
-                #)
-                #print "b_group_id : %s" % b_group_id
-            #if b_group_id is False:
-             #   return False
-
-        #if legal_entity is not None:
-         #   print "inside legal entity is not None"
-          #  leg_name = legal_entity.legal_entity_name
-           # leg_id = legal_entity.legal_entity_id
-            #print "leg_id : %s " % leg_id
-           # if leg_id is None:
-            #    print "inside legal entity id is none"
-             #   leg_id = save_legal_entity(
-              #      db, client_id, leg_name, b_group_id, session_user
-               # )
-            #if leg_id is False:
-             #   return False
-
-        #if division is not None:
-           # print "inside division is not None"
-            #div_name = division.division_name
-            #div_id = division.division_id
-            #print "div_id : %s " % div_id
-            #if div_id is None:
-             #   print "inside div id is None"
-              #  div_id = save_division(
-               #     db, client_id, div_name, b_group_id, leg_id, session_user
-                #)
-            #if div_id is False:
-             #   return False
-
-        res = save_unit(
-            db, client_id, units, business_group_id, legal_entity_id, country_id, division_id, category_name, session_user
-        )
-        if res:
-            return technomasters.SaveClientSuccess()
+    res = save_unit(
+        db, client_id, units, business_group_id, legal_entity_id, country_id, session_user
+    )
+    print "save result"
+    print res
+    if res:
+        return technomasters.SaveClientSuccess()
+    else:
+        return False
 
 
 ########################################################
@@ -491,3 +499,110 @@ def get_next_unit_code(db, request, session_user):
     client_id = request.client_id
     next_unit_code = get_next_auto_gen_number(db, client_id=client_id)
     return technomasters.GetNextUnitCodeSuccess(next_unit_code)
+
+#
+# Assign Legal Entity
+#
+
+
+########################################################
+# To Get list of all legal entity
+########################################################
+def get_assign_legal_entity_list(db, request, session_user):
+    assign_le_list = get_assign_legalentities(db)
+    return technomasters.GetAssignLegalEntityListSuccess(
+        assign_le_list=assign_le_list
+    )
+
+
+############################################################
+# To Get Unassigned units list
+############################################################
+def get_unassigned_units(db):
+    units_list = get_unassigned_units_list(db)
+    return technomasters.GetUnassignedUnitsSuccess(
+        unassigned_units_list=units_list
+    )
+
+
+############################################################
+# To Get assigned units list
+############################################################
+def get_assigned_units(db, request):
+    units_list = get_assigned_units_list(db, request)
+    return technomasters.GetAssignedUnitsSuccess(
+        assigned_units_list=units_list
+    )
+
+
+############################################################
+# To Get assigned unit details list
+############################################################
+def get_assigned_unit_details(db, request):
+    units_list = get_assigned_unit_details_list(db, request)
+    return technomasters.GetAssignedUnitDetailsSuccess(
+        assigned_unit_details_list=units_list
+    )
+
+
+############################################################
+# To Get assign unit form data
+############################################################
+def get_assign_unit_form_data(db, request, session_user):
+    (
+        business_groups, legal_entities, units, domain_managers
+    ) = get_data_for_assign_unit(db, request, session_user)
+    return technomasters.GetAssignUnitFormDataSuccess(
+        business_groups=business_groups,
+        unit_legal_entity=legal_entities,
+        assigned_unit_details_list=units,
+        domain_manager_users=domain_managers
+    )
+
+
+############################################################
+# To save assigned units
+############################################################
+def process_save_assigned_units_request(db, request, session_user):
+    save_assigned_units(db, request, session_user)
+    return technomasters.SaveAsssignedUnitsSuccess()
+
+
+########################################################
+# To Get data of particular client
+########################################################
+def get_edit_assign_legal_entity(db, request, session_user):
+    #countries = get_user_countries(db, session_user)
+    techno_users = get_techno_users_list(db, session_user)
+    group_id = request.group_id
+    unassign_legal_entities= get_unassigned_legal_entity(db, group_id)
+
+    return technomasters.GetEditAssignLegalEntitySuccess(
+        unassign_legal_entities=unassign_legal_entities,
+        techno_users=techno_users
+    )
+
+########################################################
+# To save assign legal entity
+########################################################
+def process_save_assign_legal_entity(db, request, session_user):
+    #countries = get_user_countries(db, session_user)
+    #techno_users = get_techno_users_list(db)
+    # group_id = request.group_id
+    # unassign_legal_entities= get_unassigned_legal_entity(db, group_id)
+    client_id = request.client_id
+    user_ids = request.user_ids
+    legal_entity_ids = request.legal_entity_ids
+    save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_user)
+    return technomasters.SaveAssignLegalEntitySuccess()
+
+
+def view_assign_legal_entity(db, request, session_user):
+    #countries = get_user_countries(db, session_user)
+    #techno_users = get_techno_users_list(db, session_user)
+    client_id = request.client_id
+    assigned_legal_entities= get_assigned_legal_entity(db, client_id)
+   
+    return technomasters.ViewAssignLegalEntitySuccess(
+        assigned_legal_entities=assigned_legal_entities,
+    )
