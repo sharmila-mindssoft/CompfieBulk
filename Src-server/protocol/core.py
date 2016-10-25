@@ -665,21 +665,24 @@ class Country(object):
 #
 
 class Domain(object):
-    def __init__(self, domain_id, domain_name, is_active):
+    def __init__(self, country_ids, domain_id, domain_name, is_active):
+        self.country_ids = country_ids
         self.domain_id = domain_id
         self.domain_name = domain_name
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["domain_id", "domain_name", "is_active"])
+        data = parse_dictionary(data, ["country_ids", "domain_id", "domain_name", "is_active"])
+        country_ids = data.get("country_ids")
         domain_id = data.get("domain_id")
         domain_name = data.get("domain_name")
         is_active = data.get("is_active")
-        return Domain(domain_id, domain_name, is_active)
+        return Domain(country_ids, domain_id, domain_name, is_active)
 
     def to_structure(self):
         data = {
+            "country_ids": self.country_ids,
             "domain_id": self.domain_id,
             "domain_name": self.domain_name,
             "is_active": self.is_active,
@@ -2559,13 +2562,14 @@ class ClientInchargePersons(object):
 
 class UserDetails(object):
     def __init__(
-        self, user_id, user_category_id, employee_name,
+        self, user_id, user_category_id, user_category_name, employee_name,
         employee_code,  email_id, user_group_id,
         contact_no, mobile_no, address, designation, country_ids,
         domain_ids, is_active, is_disable, username
     ):
         self.user_id = user_id
         self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
         self.employee_name = employee_name
         self.employee_code = employee_code
         self.email_id = email_id
@@ -2584,6 +2588,7 @@ class UserDetails(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "user_id", "user_category_id",
+            "user_category_name",
             "employee_name", "employee_code",
             "email_id", "user_group_id",
             "contact_no", "mobile_no",
@@ -2593,6 +2598,7 @@ class UserDetails(object):
         ])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category-id")
+        user_category_name = data.get("user_category_name")
         employee_name = data.get("employee_name")
         employee_code = data.get("employee_code")
         email_id = data.get("email_id")
@@ -2608,6 +2614,7 @@ class UserDetails(object):
         username = data.get("username_id")
         return UserDetails(
             user_id, user_category_id,
+            user_category_name,
             employee_name, employee_code,
             email_id, user_group_id,
             contact_no, mobile_no, address, designation,
@@ -2619,6 +2626,7 @@ class UserDetails(object):
         return {
             "user_id" : self.user_id,
             "user_category_id": self.user_category_id,
+            "user_category_name": self.user_category_name,
             "employee_name": self.employee_name,
             "employee_code": self.employee_code,
             "email_id": self.email_id,
@@ -2631,7 +2639,7 @@ class UserDetails(object):
             "domain_ids": self.domain_ids,
             "is_active": self.is_active,
             "is_disable": self.is_disable,
-            "username_id": self.username
+            "username_id": self.username,
         }
 
 #
@@ -3275,7 +3283,7 @@ class AssignLegalEntity(object):
         group_name = data.get("group_name")
         no_of_legal_entities = data.get("no_of_legal_entities")
         no_of_assigned_legal_entities = data.get("no_of_assigned_legal_entities")
-        
+
         return AssignLegalEntity(
             client_id, country_name, group_name, no_of_legal_entities, no_of_assigned_legal_entities
         )
@@ -3298,7 +3306,7 @@ class UnAssignLegalEntity(object):
         self.business_group_name = business_group_name
         self.c_name = c_name
         self.c_id = c_id
-       
+
     @staticmethod
     def parse_structure(data):
         print
@@ -3315,7 +3323,7 @@ class UnAssignLegalEntity(object):
                 "c_id"
             ]
         )
-        
+
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_name = data.get("legal_entity_name")
         business_group_name = data.get("business_group_name")

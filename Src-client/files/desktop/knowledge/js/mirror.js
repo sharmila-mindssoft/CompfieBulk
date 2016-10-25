@@ -235,19 +235,23 @@ function initMirror() {
     });
   }
   //Domain Master
-  function saveDomain(dName, callback) {
+  function saveDomain(dName, cIds, callback) {
     var request = [
       'SaveDomain',
-      { 'd_name': dName }
+      {
+        'd_name': dName,
+        'c_ids': cIds
+      }
     ];
     apiRequest('general', request, callback);
   }
-  function updateDomain(dId, dName, callback) {
+  function updateDomain(dId, dName, cIds, callback) {
     var request = [
       'UpdateDomain',
       {
         'd_id': dId,
-        'd_name': dName
+        'd_name': dName,
+        'c_ids': cIds
       }
     ];
     apiRequest('general', request, callback);
@@ -874,6 +878,12 @@ function initMirror() {
       'domain_ids': dIds
     };
   }
+
+  function sendRegistration(userInfo, callback) {
+    var request = ['SendRegistraion', userInfo];
+    apiRequest("admin", request, callback);
+  }
+
   function saveAdminUser(userDetail, callback) {
     callerName = 'admin';
     var request = [
@@ -925,6 +935,17 @@ function initMirror() {
       {
         'user_id': uId,
         'is_active': active
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function changeAdminDisaleStatus(uId, active, callback) {
+    callerName = 'admin';
+    var request = [
+      'ChangeDisableStatus',
+      {
+        'user_id': uId,
+        'is_disable': active
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1818,7 +1839,7 @@ function initMirror() {
           "remarks": remarks
         }
       ];
-      apiRequest(callerName, request, callback); 
+      apiRequest(callerName, request, callback);
   }
   return {
     log: log,
@@ -1902,6 +1923,7 @@ function initMirror() {
     getAdminUserGroupList: getAdminUserGroupList,
     getSaveAdminUserDict: getSaveAdminUserDict,
     saveAdminUser: saveAdminUser,
+    sendRegistration: sendRegistration,
     getUpdateAdminUserDict: getUpdateAdminUserDict,
     updateAdminUser: updateAdminUser,
     changeAdminUserStatus: changeAdminUserStatus,
@@ -1983,7 +2005,8 @@ function initMirror() {
     getAssignUnitFormData: getAssignUnitFormData,
     saveAssignedUnits: saveAssignedUnits,
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
-    saveReassignUserAccount: saveReassignUserAccount
+    saveReassignUserAccount: saveReassignUserAccount,
+    changeAdminDisaleStatus: changeAdminDisaleStatus
   };
 }
 var mirror = initMirror();

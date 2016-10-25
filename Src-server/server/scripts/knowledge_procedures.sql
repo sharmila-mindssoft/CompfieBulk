@@ -1,3 +1,18 @@
+-- IST time function
+DROP FUNCTION IF EXISTS `current_ist_datetime`;
+DELIMITER //
+CREATE FUNCTION `current_ist_datetime`() RETURNS datetime
+BEGIN
+	DECLARE current_ist_date datetime;
+    SET current_ist_date = convert_tz(utc_timestamp(),'+00:00','+05:30') ;
+
+RETURN current_ist_date;
+END //
+
+DELIMITER ;
+
+-- verify login
+
 DROP PROCEDURE IF EXISTS `sp_verify_login`;
 DELIMITER //
 CREATE PROCEDURE `sp_verify_login`(
@@ -343,18 +358,22 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_tbl_domains_for_user;
 DELIMITER //
-CREATE procedure `sp_tbl_domains_for_user`(IN _user_id VARCHAR(11))
+CREATE procedure `sp_tbl_domains_for_user`(
+	IN u_id INT(11)
+)
 BEGIN
-	IF _user_id > 2 THEN
+	SELECT @u_cat_id := user_category_id from tbl_users where user_id = u_id;
+	IF @u_cat_id > 2 THEN
 		SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active
 		FROM tbl_domains t1
 		INNER JOIN tbl_user_domains t2 on t1.domain_id = t2.domain_id
-		WHERE t2.user_id LIKE _user_id
+		WHERE t2.user_id = u_id
 		ORDER BY t1.domain_name;
 	ELSE
 		SELECT domain_id, domain_name, is_active FROM tbl_domains
 		ORDER BY domain_name;
 	END IF;
+	SELECT country_id, domain_id from tbl_domain_countries;
 END //
 DELIMITER ;
 
@@ -609,10 +628,10 @@ CREATE PROCEDURE `sp_client_group_save`(
 )
 BEGIN
     INSERT INTO tbl_client_groups (
-	group_name, short_name, email_id, total_view_licence, 
-	is_active, status_changed_on, is_approved, created_by, 
-	created_on) VALUES (groupname, shortname, emailid, 
-	no_of_view_licence, 1, now(), 0, session_user, now());
+	group_name, short_name, email_id, total_view_licence,
+	is_active, status_changed_on, is_approved, created_by,
+	created_on) VALUES (groupname, shortname, emailid,
+	no_of_view_licence, 1, current_ist_datetime(), 0, session_user, current_ist_datetime());
 END //
 DELIMITER ;
 
@@ -896,7 +915,7 @@ BEGIN
     SELECT legal_entity_id, domain_id, organization_id, count,
     activation_date
     FROM tbl_legal_entity_domains WHERE legal_entity_id in (
-    	select legal_entity_id from tbl_legal_entities 
+    	select legal_entity_id from tbl_legal_entities
     	where client_id = clientid
     );
 END //
@@ -1006,7 +1025,7 @@ CREATE PROCEDURE `sp_notifications_notify_incharge`(
 BEGIN
     INSERT INTO tbl_notifications
     (notification_text, link, created_on) VALUES
-    (notification, url, now());
+    (notification, url, current_ist_datetime());
 END //
 DELIMITER ;
 
@@ -1065,7 +1084,7 @@ BEGIN
 		(select t1.client_id from tbl_user_legalentity t1
 	    where t1.user_id = userId) order by business_group_name ASC;
 	ELSE
-		select business_group_id, business_group_name, client_id 
+		select business_group_id, business_group_name, client_id
 		from tbl_business_groups order by business_group_name ASC;
 	END IF;
 END //
@@ -1432,21 +1451,31 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_domains_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_domains_save`(
-	IN domainid INT(11), countryid INT(11), domainname  VARCHAR(50),
+	IN domainid INT(11), domainname  VARCHAR(50),
 	session_user INT(11)
 )
 BEGIN
 	IF domainid IS NULL THEN
 		INSERT INTO tbl_domains (
-		country_id, domain_name, is_active,
+		domain_name, is_active,
 		created_by, created_on) VALUES (
-		countryid, domainname, 1, session_user, now());
+		domainname, 1, session_user, current_ist_datetime());
 	ELSE
-		UPDATE tbl_domains SET  country_id = countryid,
+		UPDATE tbl_domains SET
 		domain_name = domainname,
-		updated_on = now(), updated_by = session_user
+		updated_on = current_ist_datetime(), updated_by = session_user
 		WHERE domain_id = domainid;
 	END IF;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp-domaincountries_delete`;
+DELIMITER //
+CREATE PROCEDURE `domaincountries_delete`(
+	IN d_id INT(11)
+)
+BEGIN
+	DELETE FROM tbl_domain_countries where domain_id = d_id;
 END //
 DELIMITER ;
 
@@ -1640,11 +1669,11 @@ BEGIN
 	IF ug_id IS NULL THEN
 		INSERT INTO tbl_user_groups
 		(user_category_id, user_group_name, is_active, created_by, created_on)
-		VALUES (u_cat_id, ug_name, 1, session_user, now());
+		VALUES (u_cat_id, ug_name, 1, session_user, current_ist_datetime());
 	ELSE
 		UPDATE tbl_user_groups SET user_category_id = u_cat_id,
 		user_group_name = ug_name,
-		updated_by = session_user, updated_on = now()
+		updated_by = session_user, updated_on = current_ist_datetime()
 		WHERE user_group_id=ug_id;
 	END IF;
 END //
@@ -1661,7 +1690,7 @@ CREATE PROCEDURE `sp_usergroup_change_status`(
 )
 BEGIN
 	UPDATE tbl_user_groups set is_active = isactive,
-	updated_by = session_user, updated_on = now()
+	updated_by = session_user, updated_on = current_ist_datetime()
 	WHERE user_group_id=ug_id;
 END //
 DELIMITER ;
@@ -1731,12 +1760,14 @@ DELIMITER //
 CREATE PROCEDURE `sp_user_detailed_list`()
 BEGIN
 	SELECT T1.user_id, T1.user_category_id,
+	(select user_category_name from tbl_user_category where user_category_id = T1.user_category_id) as user_category_name,
 	T1.employee_name, T1.employee_code, T1.email_id,
     T1.user_group_id,
 	T1.contact_no, T1.mobile_no, T1.address, T1.designation, T1.is_active, T1.is_disable,
     T2.username
 	FROM tbl_users T1
     LEFT JOIN tbl_user_login_details T2 ON T1.user_id = T2.user_id
+    WHERE T1.user_category_id > 2
 	ORDER BY T1.employee_name;
 
     SELECT user_id, domain_id from tbl_user_domains;
@@ -1794,7 +1825,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_save`(
 	IN u_cat_id INT(11), userid INT(11), emailid VARCHAR(100), ug_id INT(11),
-	pwd VARCHAR(50), emp_name VARCHAR(50), emp_code VARCHAR(20),
+	emp_name VARCHAR(50), emp_code VARCHAR(20),
 	contactno VARCHAR(12), mobileno VARCHAR(15), addr TEXT, desig VARCHAR(50),
 	session_user INT(11)
 )
@@ -1806,7 +1837,7 @@ BEGIN
 			is_active, created_by, created_on
 		)	VALUES (
 			u_cat_id, emp_name, emp_code, emailid,
-			contactno, mobileno, ug_id, addr, desig, 1, session_user, now()
+			contactno, mobileno, ug_id, addr, desig, 1, session_user, current_ist_datetime()
 		);
 	ELSE
 		UPDATE tbl_users SET user_category_id=u_cat_id, email_id=emailid,
@@ -1814,7 +1845,7 @@ BEGIN
 		employee_code=emp_code, contact_no=contactno,
 		mobile_no=mobileno, address=addr,
 		designation = desig, updated_by=session_user,
-		updated_on = now() WHERE user_id=userid;
+		updated_on = current_ist_datetime() WHERE user_id=userid;
 
 		UPDATE tbl_user_login_details set email_id = emailid,
 		user_category_id=u_cat_id where user_id = userid;
@@ -1822,6 +1853,24 @@ BEGIN
 	END IF;
 END //
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Save verification token
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_tbl_email_verification_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_email_verification_save`(
+	IN u_id INT(11), r_token TEXT, t_type INT(11), e_date datetime
+)
+BEGIN
+	INSERT INTO tbl_email_verification(user_id, verification_code, verification_type_id, expiry_date)
+	VALUES (u_id, r_token, t_type, e_date);
+END //
+DELIMITER ;
+
 
 -- --------------------------------------------------------------------------------
 -- To Check the status of user group of the user
@@ -1832,7 +1881,7 @@ CREATE PROCEDURE `sp_user_usergroup_status`(
 	IN userid INT(11)
 )
 BEGIN
-	select count(ug.user_group_id) from tbl_user_groups ug
+	select count(ug.user_group_id) as group_count from tbl_user_groups ug
 	inner join tbl_users u on  ug.user_group_id = u.user_group_id
 	where u.user_id = userid and ug.is_active = 1;
 END //
@@ -1849,7 +1898,24 @@ CREATE PROCEDURE `sp_users_change_status`(
 )
 BEGIN
 	UPDATE tbl_users set is_active = isactive,
-	updated_by =  session_user and updated_on = updated_time
+	updated_by =  session_user and status_changed_on = updated_time
+	WHERE user_id = userid;
+END //
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To update the status of user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_disable_status`;
+DELIMITER //
+CREATE PROCEDURE `sp_users_disable_status`(
+	IN userid INT(11), isdisable TINYINT(4), session_user INT(11),
+	updated_time TIMESTAMP
+)
+BEGIN
+	UPDATE tbl_users set is_disable = isdisable,
+	updated_by =  session_user and disabled_on = updated_time
 	WHERE user_id = userid;
 END //
 DELIMITER ;
@@ -2158,7 +2224,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_users_type_wise`;
 DELIMITER //
 CREATE PROCEDURE `sp_users_type_wise`()
-BEGIN 
+BEGIN
 	SELECT user_id, is_active,
 	concat(employee_code," - ", employee_name) as employee_name
 	FROM tbl_users WHERE user_category_id=4;
@@ -2174,7 +2240,7 @@ BEGIN
 	SELECT user_id, is_active,
 	concat(employee_code," - ", employee_name) as employee_name
 	FROM tbl_users WHERE user_category_id=7;
-	SELECT user_id, is_active, 
+	SELECT user_id, is_active,
 	concat(employee_code," - ", employee_name) as employee_name
 	FROM tbl_users WHERE user_category_id=8;
 	SELECT user_id, country_id FROM tbl_user_countries;
@@ -2354,7 +2420,7 @@ DROP PROCEDURE IF EXISTS `sp_userunits_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_userunits_list`()
 BEGIN
-	select count(tu.unit_id) as total_units, tu.client_id, 
+	select count(tu.unit_id) as total_units, tu.client_id,
 	tu.legal_entity_id, domain_id, (
 		SELECT domain_name from tbl_domains td
 		WHERE td.domain_id=tud.domain_id
@@ -2365,7 +2431,7 @@ BEGIN
 		SELECT count(unit_id) FROM tbl_user_units tuu
 		WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
 	) as assigned_units
-	from tbl_units tu inner join tbl_unit_industries tud 
+	from tbl_units tu inner join tbl_unit_industries tud
 	ON tu.unit_id = tud.unit_id group by client_id, domain_id;
 END//
 DELIMITER ;
@@ -2379,15 +2445,15 @@ CREATE PROCEDURE `sp_userunits_assigned_list`(
 	IN clientid INT(11), domainid INT(11)
 )
 BEGIN
-	SELECT tuu.user_id, 
+	SELECT tuu.user_id,
 	concat(employee_code,"-", employee_name) as employee_name,
-	tuu.legal_entity_id, legal_entity_name, 
+	tuu.legal_entity_id, legal_entity_name,
 	count(unit_id) as no_of_units,
 	(
 		SELECT business_group_name FROM tbl_business_groups tbg
 		WHERE tbg.business_group_id=tle.business_group_id
 	) as business_group_name
-	FROM tbl_user_units tuu 
+	FROM tbl_user_units tuu
 	INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
 	INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
 	WHERE tuu.client_id=clientid and domain_id=domainid
@@ -2418,7 +2484,7 @@ BEGIN
 		WHERE tgm.geography_id = tu.geography_id
 	) as geography_name FROM tbl_units tu
 	WHERE legal_entity_id = le_id and unit_id in (
-		SELECT unit_id FROM tbl_user_units 
+		SELECT unit_id FROM tbl_user_units
 		WHERE user_id=u_id and legal_entity_id= le_id
 	);
 	SELECT unit_id, (
@@ -2427,11 +2493,11 @@ BEGIN
 	) as domain_name, (
 		SELECT industry_name FROM tbl_industries ti
 		WHERE ti.industry_id = tui.industry_id
-	) as industry_name FROM tbl_unit_industries tui 
+	) as industry_name FROM tbl_unit_industries tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
 	);
-END // 
+END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2448,7 +2514,7 @@ BEGIN
 	is_active FROM tbl_users WHERE user_category_id=7 and
 	user_id in (SELECT child_user_id FROM tbl_user_mapping
 	WHERE parent_user_id=session_user);
-END // 
+END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2462,7 +2528,7 @@ CREATE PROCEDURE `sp_units_list`(
 BEGIN
 	SELECT tu.unit_id, unit_code, unit_name,
 	address, (
-		SELECT division_name FROM tbl_divisions td 
+		SELECT division_name FROM tbl_divisions td
 		WHERE td.division_id=tu.division_id
 	) as division_name, (
 		SELECT category_name FROM tbl_category_master tcm
@@ -2475,12 +2541,12 @@ BEGIN
 		SELECT geography_name FROM tbl_geographies tg
 		WHERE tg.geography_id = tu.geography_id
 	) as geography_name
-	FROM tbl_units tu 
-	INNER JOIN tbl_unit_industries tui on tui.unit_id=tu.unit_id 
-	WHERE client_id=clientid and tui.domain_id=domainid and 
+	FROM tbl_units tu
+	INNER JOIN tbl_unit_industries tui on tui.unit_id=tu.unit_id
+	WHERE client_id=clientid and tui.domain_id=domainid and
 	tu.unit_id not in (
-		SELECT unit_id FROM tbl_user_units 
-		WHERE client_id=clientid 
+		SELECT unit_id FROM tbl_user_units
+		WHERE client_id=clientid
 	)
 	order by unit_name ASC;
 	SELECT tui.unit_id, (
@@ -2489,11 +2555,11 @@ BEGIN
 	) as domain_name, (
 		SELECT industry_name FROM tbl_industries ti
 		WHERE ti.industry_id = tui.industry_id
-	) as industry_name FROM tbl_unit_industries tui 
+	) as industry_name FROM tbl_unit_industries tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
 	) and tui.domain_id=domainid;
-END // 
+END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2573,7 +2639,7 @@ BEGIN
 	created_by, created_on)
 	values
 	(clientId, bg_id, le_id, divisionName, createdBy, createdOn);
-END // 
+END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2593,7 +2659,7 @@ BEGIN
 	category_name, created_by, created_on)
 	values
 	(clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
-END // 
+END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2642,12 +2708,12 @@ CREATE PROCEDURE `sp_names_by_id`(
 )
 BEGIN
 	IF user_type = 1 then
-		SELECT group_name as name FROM tbl_client_groups 
+		SELECT group_name as name FROM tbl_client_groups
 		WHERE find_in_set(assigned_ids, client_id);
 	ELSEIF user_type = 2 then
 		SELECT legal_entity_name as name FROM tbl_legal_entities
 		WHERE find_in_set(assinged_ids, legal_entity_id);
-	ELSE 
+	ELSE
 		SELECT concat(unit_code, "-", unit_name) as name
 		FROM tbl_units WHERE find_in_set(assigned_ids, unit_id);
 	END IF;
@@ -2660,15 +2726,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_reassignaccounthistory_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_reassignaccounthistory_save`(
-	IN old_user_id INT(11), new_user_id INT(11), 
+	IN old_user_id INT(11), new_user_id INT(11),
 	reassigned_data_text TEXT, remark_text TEXT, session_user INT(11),
 	current_time_stamp DATETIME
 )
 BEGIN
 	INSERT INTO tbl_user_account_reassign_history
-	(user_category_id, reassigned_from, reassigned_to, reassigned_data, 
+	(user_category_id, reassigned_from, reassigned_to, reassigned_data,
 	remarks, assigned_by, assigned_on) values (
-		(SELECT user_category_id 
+		(SELECT user_category_id
 		FROM tbl_users WHERE user_id = old_user_id),
 		old_user_id, new_user_id, reassigned_data_text, remark_text,
 		session_user, current_time_stamp
@@ -2698,7 +2764,7 @@ BEGIN
         select count(legal_entity_id) from tbl_user_legalentity tule
         WHERE tule.client_id=tcg.client_id group by tule.client_id
     ) as no_of_assigned_legal_entities
-    
+
     FROM tbl_client_groups tcg;
 END ;
 DELIMITER ;
@@ -2729,9 +2795,9 @@ DROP PROCEDURE IF EXISTS `sp_users_technouser_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
 BEGIN
-	SELECT t1.child_user_id as user_id, t2.is_active, 
-    concat(t2.employee_code," - ", t2.employee_name) as employee_name  
-    from tbl_user_mapping t1 
+	SELECT t1.child_user_id as user_id, t2.is_active,
+    concat(t2.employee_code," - ", t2.employee_name) as employee_name
+    from tbl_user_mapping t1
     INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id
     WHERE t1.user_category_id=8 and t1.parent_user_id = session_user;
 	SELECT user_id, country_id FROM tbl_user_countries;

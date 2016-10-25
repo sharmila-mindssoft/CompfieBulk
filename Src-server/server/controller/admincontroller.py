@@ -78,6 +78,16 @@ def process_admin_request(request, db):
         result = change_user_status(db, request_frame, session_user)
         logger.logKnowledgeApi("ChangeUserStatus", "process end")
 
+    elif type(request_frame) is admin.ChangeDisableStatus:
+        logger.logKnowledgeApi("ChangeDisableStatus", "process begin")
+        result = change_disable_status(db, request_frame, session_user)
+        logger.logKnowledgeApi("ChangeDisableStatus", "process end")
+
+    elif type(request_frame) is admin.SendRegistraion:
+        logger.logKnowledgeApi("SendRegistraion", "process begin")
+        result = send_user_registration_mail(db, request_frame, session_user)
+        logger.logKnowledgeApi("SendRegistraion", "process end")
+
     elif type(request_frame) is admin.GetValidityDateList:
         logger.logKnowledgeApi("GetValidityDateList", "process begin")
         result = process_getvaliditydate_request(
@@ -133,8 +143,6 @@ def return_forms(row):
 
 def get_forms_list(db):
     result_rows = get_forms(db)
-    print result_rows
-    print '\n\n'
     knowledge_manager_forms = return_forms(result_rows[0])
     knowledge_user_forms = return_forms(result_rows[1])
     techno_manager_forms = return_forms(result_rows[2])
@@ -142,28 +150,6 @@ def get_forms_list(db):
     domain_manager_forms = return_forms(result_rows[4])
     domain_user_forms = return_forms(result_rows[5])
 
-    # for row in result_rows:
-    #     parent_menu = None if (
-    #         row["parent_menu"] == None) else row["parent_menu"]
-    #     form = core.Form(
-    #         form_id=row["form_id"],
-    #         form_name=row["form_name"],
-    #         form_url=row["form_url"],
-    #         parent_menu=parent_menu,
-    #         form_type=row["form_type"]
-    #     )
-    #     if int(row["form_category_id"]) == 3:
-    #         knowledge_user_forms.append(form)
-    #     elif int(row["form_category_id"]) == 4:
-    #         knowledge_manager_forms.append(form)
-    #     elif int(row["form_category_id"]) == 5:
-    #         cc_manager_forms.append(form)
-    #     elif int(row["form_category_id"]) == 6:
-    #         cc_user_forms.append(form)
-    #     elif int(row["form_category_id"]) == 7:
-    #         techno_user_forms.append(form)
-    #     elif int(row["form_category_id"]) == 8:
-    #         techno_manager_forms.append(form)
     result = {}  # result key is user_category_id
     result[3] = process_user_menus(knowledge_manager_forms)
     result[4] = process_user_menus(knowledge_user_forms)
@@ -250,7 +236,6 @@ def save_user_group_record(db, request, session_user):
     form_category_id = request.form_category_id
     # form_ids = ",".join(str(x) for x in request.form_ids)
     form_ids = request.form_ids
-    print form_ids
     if is_duplicate_user_group_name(db, user_group_name):
         return admin.GroupNameAlreadyExists()
     elif save_user_group(
@@ -299,8 +284,9 @@ def change_user_group_status(db, request, session_user):
 # To get Users List with user details
 ########################################################
 def get_users(db, request_frame, session_user):
-    domain_list = get_domains_for_user(db, 0)
-    country_list = get_countries_for_user(db, 0)
+    domain_list = get_domains_for_user(db, session_user)
+    print domain_list
+    country_list = get_countries_for_user(db, session_user)
     user_group_list = []
     user_list = []
     user_cat_list = []
@@ -325,19 +311,22 @@ def get_users(db, request_frame, session_user):
     def get_user_domain(user_id, data):
         domain_ids = []
         for r in data:
-            domain_ids.append(int(r["domain_id"]))
+            if int(r["user_id"]) == user_id:
+                domain_ids.append(int(r["domain_id"]))
         return domain_ids
 
     def get_user_country(user_id, data):
         country_ids = []
         for r in data:
-            country_ids.append(int(r["country_id"]))
+            if int(r["user_id"]) == user_id:
+                country_ids.append(int(r["country_id"]))
         return country_ids
 
     user_rows = rows[0]
     for user_row in user_rows:
         user_id = user_row["user_id"]
         user_cat_id = user_row["user_category_id"]
+        user_cat_name = user_row["user_category_name"]
         employee_name = user_row["employee_name"]
         employee_code = user_row["employee_code"]
         email_id = user_row["email_id"]
@@ -355,6 +344,7 @@ def get_users(db, request_frame, session_user):
         user_list.append(
             core.UserDetails(
                 user_id, user_cat_id,
+                user_cat_name,
                 employee_name, employee_code,
                 email_id, user_group_id,
                 contact_no, mobile_no,
@@ -407,14 +397,18 @@ def save_user_record(db, request, session_user):
 #################################################################
 def update_user_record(db, request, session_user):
     user_id = request.user_id
+    user_category_id = request.user_category_id
+    email_id = request.email_id
     user_group_id = request.user_group_id
     employee_name = request.employee_name
     employee_code = request.employee_code
     contact_no = request.contact_no
-    address = request.address
-    designation = request.designation
+    mobile_no = request.mobile_no
+    address = None if request.address == "" else request.address
+    designation = None if request.designation == "" else request.designation
     country_ids = request.country_ids
     domain_ids = request.domain_ids
+
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
     elif is_duplicate_employee_code(
@@ -422,25 +416,43 @@ def update_user_record(db, request, session_user):
     ):
         return admin.EmployeeCodeAlreadyExists()
     elif update_user(
-        db, user_id, user_group_id, employee_name, employee_code,
-        contact_no, address, designation, country_ids, domain_ids,
-        session_user
+        db, user_id, user_category_id, email_id, user_group_id, employee_name,
+        employee_code, contact_no, mobile_no, address, designation,
+        country_ids, domain_ids, session_user
     ):
         return admin.UpdateUserSuccess()
 
+def send_user_registration_mail(db, request, session_user):
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+    if res :
+        return admin.SendRegistraionSuccess()
+    else :
+        print "send email failed"
 
 ###################################################################
 # To Change the status of user
 ###################################################################
 def change_user_status(db, request, session_user):
     user_id = request.user_id
-    is_active = 0 if request.is_active is False else 1
+    is_active = int(request.is_active)
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
 
-    elif update_user_status(db, user_id, is_active):
+    elif update_user_status(db, user_id, is_active, session_user):
         return admin.ChangeUserStatusSuccess()
 
+
+###################################################################
+# To disable user
+###################################################################
+def change_disable_status(db, request, session_user):
+    user_id = request.user_id
+    is_active = int(request.is_active)
+    if db.is_invalid_id(tblUsers, "user_id", user_id):
+        return admin.InvalidUserId()
+
+    elif update_disable_status(db, user_id, is_active, session_user):
+        return admin.ChangeUserStatusSuccess()
 
 ################################################################
 # To Get list of Countries, domains and Validity Dates

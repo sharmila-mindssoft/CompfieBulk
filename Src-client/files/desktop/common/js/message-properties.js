@@ -297,7 +297,15 @@ var message = {
   "unit_saved": "Unit(s) Saved successfully",
   "unit_updated": "Units(s) Updated Successfully",
   "no_legal_entity_selected" : "Atleast one legalentity should select",
-  "no_user_selected" : "No user selected for assign"
+  "no_user_selected" : "No user selected for assign",
+  "resend": "Email sent successfully",
+
+  // tooltips
+  "active_tooltip": "Click here to deactivate",
+  "deactive_tooltip": "Click here to activate",
+  "enable_tooltip": "Click here to disable",
+  "disable_tooltip": "Click here to enable",
+  "disabled_tooltip": "Can not enable",
 };
 
 function clearMessage() {

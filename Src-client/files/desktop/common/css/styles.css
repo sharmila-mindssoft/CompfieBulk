@@ -3395,13 +3395,13 @@ div.scrollable {
 }
 
 .enable-icon {
-	background:  url(../images/icon-enable.png) no-repeat center;
+	background:  url(../images/icon-disable.png) no-repeat center;
 	border: none;
 	outline: none;
 	cursor: pointer;
 }
 .disable-icon {
-	background:  url(../images/icon-disable.png) no-repeat center;
+	background:  url(../images/icon-enable.png) no-repeat center;
 	border: none;
 	outline: none;
 	cursor: pointer;

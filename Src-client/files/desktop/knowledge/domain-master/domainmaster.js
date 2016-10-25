@@ -77,6 +77,7 @@ function validate() {
 }
 //save or update domain master
 $('#submit').click(function () {
+  var countryIds = [1];
   var domainId = $('#domainid').val();
   var domainName = $('#domainname').val().trim();
   if (validate()) {
@@ -94,7 +95,7 @@ $('#submit').click(function () {
           displayMessage(error);
         }
       }
-      mirror.saveDomain(domainName, function (error, response) {
+      mirror.saveDomain(domainName, countryIds, function (error, response) {
         if (error == null) {
           onSuccess(response);
         } else {
@@ -117,7 +118,7 @@ $('#submit').click(function () {
           displayMessage(error);
         }
       }
-      mirror.updateDomain(parseInt(domainId), domainName, function (error, response) {
+      mirror.updateDomain(parseInt(domainId), domainName, countryIds, function (error, response) {
         if (error == null) {
           onSuccess(response);
         } else {

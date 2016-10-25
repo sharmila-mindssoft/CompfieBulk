@@ -290,7 +290,7 @@ def parse_values(field_name, param, val):
 
     elif _type == 'VECTOR_TYPE_STRING':
         # list_of_string by default support optional
-        assert _validation_method is None
+        assert _validation_method is not None
         if _is_optional is False:
             val = parse_string_list(val, string_length=_length)
         else:

@@ -95,35 +95,41 @@ class GetDomains(Request):
 
 
 class SaveDomain(Request):
-    def __init__(self, domain_name):
+    def __init__(self, country_ids, domain_name):
+        self.country_ids = country_ids
         self.domain_name = domain_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["d_name"])
-        domain_name = data.get('d_name')
-        return SaveDomain(domain_name)
+        data = parse_dictionary(data, ["c_ids", "d_name"])
+        domain_name = data.get("d_name")
+        country_ids = data.get("c_ids")
+        return SaveDomain(country_ids, domain_name)
 
     def to_inner_structure(self):
         return {
+            "c_ids": self.country_ids,
             "d_name": self.domain_name,
         }
 
 
 class UpdateDomain(Request):
-    def __init__(self, domain_id, domain_name):
+    def __init__(self, country_ids, domain_id, domain_name):
+        self.country_ids = country_ids
         self.domain_id = domain_id
         self.domain_name = domain_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["d_id", "d_name"])
+        data = parse_dictionary(data, ["c_ids", "d_id", "d_name"])
+        country_ids = data.get("c_ids")
         domain_id = data.get("d_id")
         domain_name = data.get("d_name")
-        return UpdateDomain(domain_id, domain_name)
+        return UpdateDomain(country_ids, domain_id, domain_name)
 
     def to_inner_structure(self):
         return {
+            "c_ids": self.country_ids,
             "d_id": self.domain_id,
             "d_name": self.domain_name,
         }

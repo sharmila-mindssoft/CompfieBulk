@@ -1,462 +1,740 @@
-2016-10-22 10:04:28,509 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-25 17:18:05,386 - knowledge_logger - main.py-parse-request : expected key "username" is missing in the dictionary, but received: {u'user_id': 6} 
 
-2016-10-22 10:04:28,535 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
+2016-10-25 17:18:05,388 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1922, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 372, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-10-22 10:05:46,703 - knowledge_logger - main.py-parse-request : user_type is not configured in settings 
-
-2016-10-22 10:05:46,703 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 1025, in parse_structure
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 1151, in parse_structure
     request, "admin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 467, in parse_VariantType
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in parse_VariantType
     return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 34, in parse_structure
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 34, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 367, in parse_inner_structure
-    "user_type", "old_user_id", "new_user_id", "assigned_ids"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 318, in parse_dictionary_values
-    raise ValueError('%s is not configured in settings' % (field_name))
-ValueError: user_type is not configured in settings
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 149, in parse_inner_structure
+    data = parse_dictionary(data, ["user_id", "username", "email_id"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "username" is missing in the dictionary, but received: {u'user_id': 6}
  
 
-2016-10-22 10:08:34,404 - knowledge_logger - main.py-parse-request : expected a list with integer values , but received: [u'1'] 
+2016-10-25 17:19:14,330 - knowledge_logger - main.py-parse-request : expected key "username" is missing in the dictionary, but received: {u'user_id': 6} 
 
-2016-10-22 10:08:34,404 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
+2016-10-25 17:19:14,330 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 1025, in parse_structure
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 1151, in parse_structure
     request, "admin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 467, in parse_VariantType
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in parse_VariantType
     return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 34, in parse_structure
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 34, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 367, in parse_inner_structure
-    "user_type", "old_user_id", "new_user_id", "assigned_ids"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 372, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 305, in parse_values
-    val = parse_int_list(val, int_length=_length)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 242, in parse_int_list
-    raise expectation_error("a list with integer values ", x)
-ValueError: expected a list with integer values , but received: [u'1']
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 149, in parse_inner_structure
+    data = parse_dictionary(data, ["user_id", "username", "email_id"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "username" is missing in the dictionary, but received: {u'user_id': 6}
  
 
-2016-10-22 10:09:10,577 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-25 17:20:21,108 - knowledge_logger - main.py-parse-request : expected key "username" is missing in the dictionary, but received: {u'user_id': 6} 
 
-2016-10-22 10:09:10,577 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
+2016-10-25 17:20:21,108 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1922, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 372, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-10-22 10:09:43,336 - knowledge_logger - main.py-parse-request : expected a list with integer values , but received: [u'1'] 
-
-2016-10-22 10:09:43,336 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 1025, in parse_structure
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 1151, in parse_structure
     request, "admin", "Request"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 467, in parse_VariantType
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in parse_VariantType
     return klass.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 34, in parse_structure
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 34, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/admin.py", line 367, in parse_inner_structure
-    "user_type", "old_user_id", "new_user_id", "assigned_ids"
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 372, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 305, in parse_values
-    val = parse_int_list(val, int_length=_length)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 242, in parse_int_list
-    raise expectation_error("a list with integer values ", x)
-ValueError: expected a list with integer values , but received: [u'1']
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 149, in parse_inner_structure
+    data = parse_dictionary(data, ["user_id", "username", "email_id"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "username" is missing in the dictionary, but received: {u'user_id': 6}
  
 
-2016-10-22 10:10:35,856 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-25 17:21:57,810 - knowledge_logger - main.py-handle-api- : global name 'save_registraion_token' is not defined 
 
-2016-10-22 10:10:35,856 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1922, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 372, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 273, in parse_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-10-22 10:11:04,971 - knowledge_logger - main.py-handle-api- : global name 'save_reassigned_user_account' is not defined 
-
-2016-10-22 10:11:04,971 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 164, in handle_api_request
+2016-10-25 17:21:57,810 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 260, in handle_admin
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
     return controller.process_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 113, in process_admin_request
-    db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 509, in process_save_reassign_user_account_request
-    save_reassigned_user_account(db, request, session_user)
-NameError: global name 'save_reassigned_user_account' is not defined
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+NameError: global name 'save_registraion_token' is not defined
  
 
-2016-10-22 10:11:35,952 - knowledge_logger - main.py-handle-api- : append() takes exactly one argument (3 given) 
+2016-10-25 17:22:45,100 - knowledge_logger - main.py-handle-api- : global name 'new_uuid' is not defined 
 
-2016-10-22 10:11:35,953 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 164, in handle_api_request
+2016-10-25 17:22:45,100 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 260, in handle_admin
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
     return controller.process_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 113, in process_admin_request
-    db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 509, in process_save_reassign_user_account_request
-    save_reassigned_user_account(db, request, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/admin.py", line 977, in save_reassigned_user_account
-    request.new_user_id, session_user, current_time_stamp
-TypeError: append() takes exactly one argument (3 given)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 555, in save_registraion_token
+    registration_token = new_uuid()
+NameError: global name 'new_uuid' is not defined
  
 
-2016-10-22 10:26:20,962 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-25 17:24:10,654 - knowledge_logger - main.py-handle-api- : unsupported type for timedelta hours component: str 
 
-2016-10-22 10:26:20,962 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1922, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 369, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-10-22 10:27:13,965 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-10-22 10:27:13,965 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1922, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 369, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-10-22 10:27:43,895 - knowledge_logger - main.py-handle-api- : tuple index out of range 
-
-2016-10-22 10:27:43,895 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 164, in handle_api_request
+2016-10-25 17:24:10,654 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 260, in handle_admin
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
     return controller.process_admin_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 113, in process_admin_request
-    db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 509, in process_save_reassign_user_account_request
-    save_reassigned_user_account(db, request, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/admin.py", line 994, in save_reassigned_user_account
-    table, columns, value_list, conditions
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 477, in bulk_update
-    if values[outer_index][index] is not None:
-IndexError: tuple index out of range
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 556, in save_registraion_token
+    expiry_date = addHours(current_time_stamp, REGISTRATION_EXPIRY)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/common.py", line 56, in addHours
+    new_date = (due_date + datetime.timedelta(hours=value))
+TypeError: unsupported type for timedelta hours component: str
  
 
-2016-10-22 10:37:15,602 - knowledge_logger - main.py-parse-request : null is not allowed 
+2016-10-25 17:27:05,950 - knowledge_logger - main.py-handle-api- : unsupported type for timedelta hours component: datetime.datetime 
 
-2016-10-22 10:37:15,603 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1922, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 369, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-10-22 10:45:26,245 - knowledge_logger - main.py-parse-request : null is not allowed 
-
-2016-10-22 10:45:26,245 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1922, in parse_structure
-    data = parse_dictionary(data, ["session_token", "request"])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 369, in parse_dictionary_values
-    val = parse_values(field_name, param, val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 272, in parse_values
-    val = parse_string(val)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
- 
-
-2016-10-21 12:30:53,994 - knowledge_logger - main.py-handle-api- : execute() first 
-
-2016-10-21 12:30:53,994 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+2016-10-25 17:27:05,950 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
-    result = process_login(db, request, session_user_ip)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
-    response = verify_login(db, username, encrypt_password)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
-    "sp_verify_login", args, expected_result
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
-    r = convert_to_dict(cursor.fetchall(), cols)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
-    self._check_executed()
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
-    self.errorhandler(self, ProgrammingError, "execute() first")
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
-    raise errorclass(errorvalue)
-ProgrammingError: execute() first
- 
-
-2016-10-21 12:35:45,198 - knowledge_logger - main.py-handle-api- : execute() first 
-
-2016-10-21 12:35:45,199 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
-    result = process_login(db, request, session_user_ip)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
-    response = verify_login(db, username, encrypt_password)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
-    "sp_verify_login", args, expected_result
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
-    r = convert_to_dict(cursor.fetchall(), cols)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
-    self._check_executed()
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
-    self.errorhandler(self, ProgrammingError, "execute() first")
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
-    raise errorclass(errorvalue)
-ProgrammingError: execute() first
- 
-
-2016-10-21 12:37:04,398 - knowledge_logger - main.py-handle-api- : execute() first 
-
-2016-10-21 12:37:04,398 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
-    result = process_login(db, request, session_user_ip)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
-    response = verify_login(db, username, encrypt_password)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
-    "sp_verify_login", args, expected_result
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
-    r = convert_to_dict(cursor.fetchall(), cols)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
-    self._check_executed()
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
-    self.errorhandler(self, ProgrammingError, "execute() first")
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
-    raise errorclass(errorvalue)
-ProgrammingError: execute() first
- 
-
-2016-10-21 12:37:14,454 - knowledge_logger - main.py-handle-api- : execute() first 
-
-2016-10-21 12:37:14,454 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
-    result = process_login(db, request, session_user_ip)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
-    response = verify_login(db, username, encrypt_password)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
-    "sp_verify_login", args, expected_result
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
-    r = convert_to_dict(cursor.fetchall(), cols)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
-    self._check_executed()
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
-    self.errorhandler(self, ProgrammingError, "execute() first")
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
-    raise errorclass(errorvalue)
-ProgrammingError: execute() first
- 
-
-2016-10-21 12:38:35,147 - knowledge_logger - main.py-handle-api- : execute() first 
-
-2016-10-21 12:38:35,148 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
-    result = process_login(db, request, session_user_ip)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
-    response = verify_login(db, username, encrypt_password)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
-    "sp_verify_login", args, expected_result
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
-    r = convert_to_dict(cursor.fetchall(), cols)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
-    self._check_executed()
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
-    self.errorhandler(self, ProgrammingError, "execute() first")
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
-    raise errorclass(errorvalue)
-ProgrammingError: execute() first
- 
-
-2016-10-21 12:48:42,665 - knowledge_logger - main.py-handle-api- : execute() first 
-
-2016-10-21 12:48:42,666 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 253, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
-    result = process_login(db, request, session_user_ip)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 65, in process_login
-    response = verify_login(db, username, encrypt_password)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 29, in verify_login
-    "sp_verify_login", args, expected_result
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 753, in call_proc_with_multiresult_set
-    r = convert_to_dict(cursor.fetchall(), cols)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 406, in fetchall
-    self._check_executed()
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 107, in _check_executed
-    self.errorhandler(self, ProgrammingError, "execute() first")
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 38, in defaulterrorhandler
-    raise errorclass(errorvalue)
-ProgrammingError: execute() first
- 
-
-2016-10-21 13:27:59,633 - knowledge_logger - main.py-handle-api- : sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'") 
-
-2016-10-21 13:27:59,634 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 258, in handle_admin
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
     return controller.process_admin_request(request, db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 39, in process_admin_request
-    result = get_user_groups(db, request_frame, session_user)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 216, in get_user_groups
-    form_categories = get_user_cetegories_db(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 203, in get_user_cetegories_db
-    rows = get_form_categories(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/admin.py", line 360, in get_form_categories
-    return db.call_proc("sp_usercategory_list", None)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 556, in save_registraion_token
+    expiry_date = addHours(current_time_stamp, REGISTRATION_EXPIRY)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/common.py", line 58, in addHours
+    new_date = (due_date + datetime.timedelta(hours=value))
+TypeError: unsupported type for timedelta hours component: datetime.datetime
+ 
+
+2016-10-25 17:29:52,949 - knowledge_logger - main.py-handle-api- : unsupported type for timedelta hours component: datetime.datetime 
+
+2016-10-25 17:29:52,949 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 556, in save_registraion_token
+    expiry_date = addHours(current_time_stamp, int(REGISTRATION_EXPIRY))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/common.py", line 58, in addHours
+    new_date = (due_date + datetime.timedelta(hours=value))
+TypeError: unsupported type for timedelta hours component: datetime.datetime
+ 
+
+2016-10-25 17:30:57,816 - knowledge_logger - main.py-handle-api- : send_reset_link() takes exactly 6 arguments (5 given) 
+
+2016-10-25 17:30:57,817 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 561, in save_registraion_token
+    email().send_reset_link(db, email_id, emp_name, link)
+TypeError: send_reset_link() takes exactly 6 arguments (5 given)
+ 
+
+2016-10-25 17:35:08,321 - knowledge_logger - main.py-handle-api- : (535, 'Incorrect authentication data') 
+
+2016-10-25 17:35:08,322 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 561, in save_registraion_token
+    email().send_registraion_link(db, email_id, emp_name, link)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/emailcontroller.py", line 129, in send_registraion_link
+    self.send_email(receiver, subject, message, is_credential=True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/emailcontroller.py", line 41, in send_email
+    server.login(self.sender, self.password)
+  File "/usr/lib/python2.7/smtplib.py", line 622, in login
+    raise SMTPAuthenticationError(code, resp)
+SMTPAuthenticationError: (535, 'Incorrect authentication data')
+ 
+
+2016-10-25 17:40:04,812 - knowledge_logger - main.py-handle-api- : call_insert_proc() takes exactly 3 arguments (6 given) 
+
+2016-10-25 17:40:04,813 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 566, in save_registraion_token
+    user_id, registration_token, 1, expiry_date
+TypeError: call_insert_proc() takes exactly 3 arguments (6 given)
+ 
+
+2016-10-25 17:41:05,793 - knowledge_logger - main.py-handle-api- : sp_tbl_email_verification_save- (6, 'ae49b566c7264942b945e1c6e7616efe', 1, datetime.datetime(2016, 10, 27, 12, 11, 1, 930328))- (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge_new`.`tbl_email_verification`, CONSTRAINT `fk_tbl_email_verification_verification_type_id` FOREIGN KEY (`verification_type_id`) REFERENCES `tbl_verification_type` (`verifica)') 
+
+2016-10-25 17:41:05,794 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 566, in save_registraion_token
+    (user_id, registration_token, 1, expiry_date)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 711, in call_insert_proc
     raise process_procedure_error(procedure_name, args, e)
-RuntimeError: sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'")
+RuntimeError: sp_tbl_email_verification_save- (6, 'ae49b566c7264942b945e1c6e7616efe', 1, datetime.datetime(2016, 10, 27, 12, 11, 1, 930328))- (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge_new`.`tbl_email_verification`, CONSTRAINT `fk_tbl_email_verification_verification_type_id` FOREIGN KEY (`verification_type_id`) REFERENCES `tbl_verification_type` (`verifica)')
  
 
-2016-10-21 13:28:52,956 - knowledge_logger - main.py-handle-api- : sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist") 
+2016-10-25 18:10:31,656 - knowledge_logger - main.py-handle-api- : sp_tbl_email_verification_save- (6, '44455a6555f44dfbb50958e70903f1b5', 1, datetime.datetime(2016, 10, 27, 12, 40, 26, 885680))- (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge_new`.`tbl_email_verification`, CONSTRAINT `fk_tbl_email_verification_verification_type_id` FOREIGN KEY (`verification_type_id`) REFERENCES `tbl_verification_type` (`verifica)') 
 
-2016-10-21 13:28:52,957 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+2016-10-25 18:10:31,657 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 278, in handle_knowledge_master
-    return controller.process_knowledge_master_request(request, db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 82, in process_knowledge_master_request
-    result = process_get_industry(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 176, in process_get_industry
-    results = get_industries(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 46, in get_industries
-    result = db.call_proc("sp_industry_master_getindustries", (), columns)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
-    raise process_procedure_error(procedure_name, args, e)
-RuntimeError: sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist")
- 
-
-2016-10-21 13:29:11,240 - knowledge_logger - main.py-handle-api- : sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'") 
-
-2016-10-21 13:29:11,240 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 258, in handle_admin
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
     return controller.process_admin_request(request, db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 39, in process_admin_request
-    result = get_user_groups(db, request_frame, session_user)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 216, in get_user_groups
-    form_categories = get_user_cetegories_db(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/admincontroller.py", line 203, in get_user_cetegories_db
-    rows = get_form_categories(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/admin.py", line 360, in get_form_categories
-    return db.call_proc("sp_usercategory_list", None)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = send_user_registration_mail(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 414, in send_user_registration_mail
+    res = save_registraion_token(db, request.user_id, request.username, request.email_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 566, in save_registraion_token
+    (user_id, registration_token, 1, expiry_date)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 711, in call_insert_proc
     raise process_procedure_error(procedure_name, args, e)
-RuntimeError: sp_usercategory_list- None- (1054, "Unknown column 'user_category' in 'field list'")
+RuntimeError: sp_tbl_email_verification_save- (6, '44455a6555f44dfbb50958e70903f1b5', 1, datetime.datetime(2016, 10, 27, 12, 40, 26, 885680))- (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge_new`.`tbl_email_verification`, CONSTRAINT `fk_tbl_email_verification_verification_type_id` FOREIGN KEY (`verification_type_id`) REFERENCES `tbl_verification_type` (`verifica)')
  
 
-2016-10-21 13:31:13,499 - knowledge_logger - main.py-handle-api- : sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist") 
+2016-10-25 18:24:27,596 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2016-10-21 13:31:13,499 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 162, in handle_api_request
+2016-10-25 18:24:27,596 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 1151, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 188, in parse_inner_structure
+    "domain_ids"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 369, in parse_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 279, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-10-25 18:41:06,007 - knowledge_logger - main.py-handle-api- : update_user() takes exactly 14 arguments (11 given) 
+
+2016-10-25 18:41:06,008 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/main.py", line 278, in handle_knowledge_master
-    return controller.process_knowledge_master_request(request, db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 82, in process_knowledge_master_request
-    result = process_get_industry(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgemastercontroller.py", line 176, in process_get_industry
-    results = get_industries(db)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 46, in get_industries
-    result = db.call_proc("sp_industry_master_getindustries", (), columns)
-  File "/home/minds/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 688, in call_proc
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 73, in process_admin_request
+    result = update_user_record(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 413, in update_user_record
+    session_user
+TypeError: update_user() takes exactly 14 arguments (11 given)
+ 
+
+2016-10-25 18:45:01,835 - knowledge_logger - main.py-handle-api- : int() argument must be a string or a number, not 'dict' 
+
+2016-10-25 18:45:01,836 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 78, in process_admin_request
+    result = change_user_status(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 433, in change_user_status
+    elif update_user_status(db, user_id, is_active):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 715, in update_user_status
+    check_user_group_active_status(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 704, in check_user_group_active_status
+    if int(row[0]) == 0:
+TypeError: int() argument must be a string or a number, not 'dict'
+ 
+
+2016-10-25 18:46:58,668 - knowledge_logger - main.py-handle-api- : global name 'session_user' is not defined 
+
+2016-10-25 18:46:58,669 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 78, in process_admin_request
+    result = change_user_status(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 433, in change_user_status
+    elif update_user_status(db, user_id, is_active):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 718, in update_user_status
+    (user_id, is_active, session_user, get_date_time())
+NameError: global name 'session_user' is not defined
+ 
+
+2016-10-25 18:49:51,543 - knowledge_logger - main.py-handle-api- : sp_users_change_status- (6,)- (1318, 'Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_users_change_status; expected 4, got 1') 
+
+2016-10-25 18:49:51,544 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 78, in process_admin_request
+    result = change_user_status(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 433, in change_user_status
+    elif update_user_status(db, user_id, is_active, session_user):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 722, in update_user_status
+    rows = db.call_proc("sp_users_change_status", (user_id, ))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 690, in call_proc
     raise process_procedure_error(procedure_name, args, e)
-RuntimeError: sp_industry_master_getindustries- ()- (1146, "Table 'compfie_knowledge_new.tbl_industries' doesn't exist")
+RuntimeError: sp_users_change_status- (6,)- (1318, 'Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_users_change_status; expected 4, got 1')
+ 
+
+2016-10-25 20:06:02,484 - knowledge_logger - main.py-parse-request : expected key "is_active" is missing in the dictionary, but received: {u'is_disable': True, u'user_id': 6} 
+
+2016-10-25 20:06:02,485 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 1179, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 290, in parse_inner_structure
+    data = parse_dictionary(data, ["user_id", "is_active"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "is_active" is missing in the dictionary, but received: {u'is_disable': True, u'user_id': 6}
+ 
+
+2016-10-25 20:06:34,781 - knowledge_logger - main.py-parse-request : expected key "is_active" is missing in the dictionary, but received: {u'is_disable': True, u'user_id': 6} 
+
+2016-10-25 20:06:34,781 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 1179, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 290, in parse_inner_structure
+    data = parse_dictionary(data, ["user_id", "is_active"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "is_active" is missing in the dictionary, but received: {u'is_disable': True, u'user_id': 6}
+ 
+
+2016-10-25 20:07:13,094 - knowledge_logger - main.py-parse-request : expected key "is_active" is missing in the dictionary, but received: {u'is_disable': True, u'user_id': 6} 
+
+2016-10-25 20:07:13,095 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 1179, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/admin.py", line 290, in parse_inner_structure
+    data = parse_dictionary(data, ["user_id", "is_active"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "is_active" is missing in the dictionary, but received: {u'is_disable': True, u'user_id': 6}
+ 
+
+2016-10-25 20:07:41,207 - knowledge_logger - main.py-handle-api- : global name 'change_disable_status' is not defined 
+
+2016-10-25 20:07:41,207 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 83, in process_admin_request
+    result = change_disable_status(db, request_frame, session_user)
+NameError: global name 'change_disable_status' is not defined
+ 
+
+2016-10-25 21:42:47,663 - knowledge_logger - main.py-handle-api- : sp_users_save- (4, None, u'usha@mindssoft.com', 4, u'Emp Exq', u'E343S', u'+91-545-65656', u'+91-223323', u'Addrss', u'Dess ig', 1L)- (1406, "Data too long for column 'contactno' at row 1") 
+
+2016-10-25 21:42:47,663 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 68, in process_admin_request
+    result = save_user_record(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 387, in save_user_record
+    country_ids, domain_ids, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 597, in save_user
+    address, designation, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 711, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_users_save- (4, None, u'usha@mindssoft.com', 4, u'Emp Exq', u'E343S', u'+91-545-65656', u'+91-223323', u'Addrss', u'Dess ig', 1L)- (1406, "Data too long for column 'contactno' at row 1")
+ 
+
+2016-10-25 21:44:59,970 - knowledge_logger - main.py-handle-api- : User country creation failed 
+
+2016-10-25 21:44:59,971 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 73, in process_admin_request
+    result = update_user_record(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 418, in update_user_record
+    country_ids, domain_ids, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 690, in update_user
+    save_user_countries(db, country_ids, user_id, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 643, in save_user_countries
+    raise process_error("E034")
+RuntimeError: User country creation failed
+ 
+
+2016-10-25 22:01:01,701 - knowledge_logger - main.py-handle-api- : sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now") 
+
+2016-10-25 22:01:01,701 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 214, in get_countries_for_user
+    result = db.call_proc("sp_countries_for_user", (user_id,))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 690, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now")
+ 
+
+2016-10-25 22:01:19,576 - knowledge_logger - main.py-handle-api- : sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now") 
+
+2016-10-25 22:01:19,577 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 214, in get_countries_for_user
+    result = db.call_proc("sp_countries_for_user", (user_id,))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 690, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now")
+ 
+
+2016-10-25 22:02:35,834 - knowledge_logger - main.py-handle-api- : sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now") 
+
+2016-10-25 22:02:35,835 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 214, in get_countries_for_user
+    result = db.call_proc("sp_countries_for_user", (user_id,))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 690, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now")
+ 
+
+2016-10-25 22:04:18,538 - knowledge_logger - main.py-handle-api- : sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now") 
+
+2016-10-25 22:04:18,539 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 289, in get_users
+    country_list = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 214, in get_countries_for_user
+    result = db.call_proc("sp_countries_for_user", (user_id,))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 690, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_countries_for_user- (0,)- (2014, "Commands out of sync; you can't run this command now")
+ 
+
+2016-10-25 22:11:33,865 - knowledge_logger - main.py-handle-api- : sp_countries_for_user- (1L,)- (2014, "Commands out of sync; you can't run this command now") 
+
+2016-10-25 22:11:33,865 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 289, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 214, in get_countries_for_user
+    result = db.call_proc("sp_countries_for_user", (user_id,))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 690, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_countries_for_user- (1L,)- (2014, "Commands out of sync; you can't run this command now")
+ 
+
+2016-10-25 22:12:58,819 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-10-25 22:12:58,819 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 287, in get_users
+    domain_list = get_domains_for_user(db, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 53, in get_domains_for_user
+    return return_domains(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 65, in return_domains
+    d["country_id"], d["domain_id"], d["domain_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-10-25 22:14:17,384 - knowledge_logger - main.py-handle-api- : User country creation failed 
+
+2016-10-25 22:14:17,384 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 73, in process_admin_request
+    result = update_user_record(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 421, in update_user_record
+    country_ids, domain_ids, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 691, in update_user
+    save_user_countries(db, country_ids, user_id, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 644, in save_user_countries
+    raise process_error("E034")
+RuntimeError: User country creation failed
+ 
+
+2016-10-25 22:37:33,813 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 'country_id' in 'field list'") 
+
+2016-10-25 22:37:33,814 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 287, in get_users
+    domain_list = get_domains_for_user(db, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 51, in get_domains_for_user
+    result = db.call_proc_with_multiresult_set(procedure, (user_id,), 3)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 757, in call_proc_with_multiresult_set
+    cursor.nextset()
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 142, in nextset
+    nr = db.next_result()
+OperationalError: (1054, "Unknown column 'country_id' in 'field list'")
+ 
+
+2016-10-25 22:38:14,195 - knowledge_logger - main.py-handle-api- : return_domains() takes exactly 1 argument (2 given) 
+
+2016-10-25 22:38:14,196 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 258, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/admincontroller.py", line 287, in get_users
+    domain_list = get_domains_for_user(db, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 53, in get_domains_for_user
+    return return_domains(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 72, in return_domains
+    c_ids = return_domains(d_id, data[2])
+TypeError: return_domains() takes exactly 1 argument (2 given)
+ 
+
+2016-10-25 22:39:54,238 - knowledge_logger - main.py-handle-api- : return_domains() takes exactly 1 argument (2 given) 
+
+2016-10-25 22:39:54,238 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 52, in process_general_request
+    result = process_get_domains(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 199, in process_get_domains
+    results = get_domains_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 53, in get_domains_for_user
+    return return_domains(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 72, in return_domains
+    c_ids = return_domains(d_id, data[2])
+TypeError: return_domains() takes exactly 1 argument (2 given)
+ 
+
+2016-10-25 22:40:38,319 - knowledge_logger - main.py-handle-api- : sp_domains_save- (2, u'Finance Law', 1L, '2016-10-25 22:40:38.318329')- (1366, "Incorrect integer value: 'Finance Law' for column 'countryid' at row 1") 
+
+2016-10-25 22:40:38,320 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 62, in process_general_request
+    result = process_update_domain(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 168, in process_update_domain
+    if (update_domain(db, domain_id, domain_name, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 149, in update_domain
+    "sp_domains_save", (domain_id, domain_name, updated_by, updated_on)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 729, in call_update_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_domains_save- (2, u'Finance Law', 1L, '2016-10-25 22:40:38.318329')- (1366, "Incorrect integer value: 'Finance Law' for column 'countryid' at row 1")
+ 
+
+2016-10-25 22:40:56,984 - knowledge_logger - main.py-parse-request : expected key "c_ids" is missing in the dictionary, but received: {u'd_name': u'Common Law', u'c_id': [1]} 
+
+2016-10-25 22:40:56,984 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 122, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 802, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 55, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 104, in parse_inner_structure
+    data = parse_dictionary(data, ["c_ids", "d_name"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "c_ids" is missing in the dictionary, but received: {u'd_name': u'Common Law', u'c_id': [1]}
+ 
+
+2016-10-25 22:41:22,932 - knowledge_logger - main.py-handle-api- : save_domain() takes exactly 4 arguments (3 given) 
+
+2016-10-25 22:41:22,932 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 57, in process_general_request
+    result = process_save_domain(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 154, in process_save_domain
+    if (save_domain(db, domain_name, user_id)):
+TypeError: save_domain() takes exactly 4 arguments (3 given)
+ 
+
+2016-10-25 22:43:11,233 - knowledge_logger - main.py-handle-api- : sp_domains_save- (None, 1, u'Common Law', 1L)- (1054, "Unknown column 'country_id' in 'field list'") 
+
+2016-10-25 22:43:11,233 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 57, in process_general_request
+    result = process_save_domain(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 155, in process_save_domain
+    if (save_domain(db, c_ids, domain_name, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 97, in save_domain
+    "sp_domains_save", (None, 1, domain_name, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 711, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_domains_save- (None, 1, u'Common Law', 1L)- (1054, "Unknown column 'country_id' in 'field list'")
+ 
+
+2016-10-25 22:48:19,198 - knowledge_logger - main.py-handle-api- : User country creation failed 
+
+2016-10-25 22:48:19,199 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 57, in process_general_request
+    result = process_save_domain(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 155, in process_save_domain
+    if (save_domain(db, c_ids, domain_name, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 102, in save_domain
+    save_domain_country(db, country_ids, domain_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 93, in save_domain_country
+    raise process_error("E034")
+RuntimeError: User country creation failed
+ 
+
+2016-10-25 22:50:36,703 - knowledge_logger - main.py-handle-api- : User country creation failed 
+
+2016-10-25 22:50:36,704 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 57, in process_general_request
+    result = process_save_domain(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 155, in process_save_domain
+    if (save_domain(db, c_ids, domain_name, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 102, in save_domain
+    save_domain_country(db, country_ids, domain_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 93, in save_domain_country
+    raise process_error("E034")
+RuntimeError: User country creation failed
+ 
+
+2016-10-25 22:51:34,886 - knowledge_logger - main.py-handle-api- : domaincountries_delete- (True,)- (1305, 'PROCEDURE compfie_knowledge_new.domaincountries_delete does not exist') 
+
+2016-10-25 22:51:34,886 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 62, in process_general_request
+    result = process_update_domain(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 169, in process_update_domain
+    if (update_domain(db, domain_id, domain_name, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 151, in update_domain
+    db.call_update_proc("domaincountries_delete", (domain_id,))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 729, in call_update_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: domaincountries_delete- (True,)- (1305, 'PROCEDURE compfie_knowledge_new.domaincountries_delete does not exist')
+ 
+
+2016-10-25 22:51:58,823 - knowledge_logger - main.py-handle-api- : global name 'country_ids' is not defined 
+
+2016-10-25 22:51:58,824 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 162, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 274, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 62, in process_general_request
+    result = process_update_domain(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 169, in process_update_domain
+    if (update_domain(db, domain_id, domain_name, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 152, in update_domain
+    save_domain_country(db, country_ids, domain_id)
+NameError: global name 'country_ids' is not defined
  
 

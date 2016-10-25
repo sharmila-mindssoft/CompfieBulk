@@ -42,6 +42,7 @@ api_params = {
 
     'c_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
 
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
@@ -329,6 +330,7 @@ api_params = {
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')
 api_params['country_id'] = api_params.get('c_id')
+api_params['country_ids'] = api_params.get('c_ids')
 api_params['country_name'] = api_params.get('c_name')
 api_params['level_id'] = api_params.get('l_id')
 api_params['level_position'] = api_params.get('l_position')

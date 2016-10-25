@@ -11,7 +11,7 @@ var ViewScreen = $('#user-view');
 var FilterBox = $('.filter-text-box');
 var AddButton = $('.btn-user-add');
 var CancelButton = $('.btn-user-cancel');
-
+var SubmitButton = $('.btn-submit');
 
 var User_id = $('#userid');
 var Emp_name = $('#employeename');
@@ -23,7 +23,7 @@ var Area_code = $('#areacode');
 var Contact_no = $('#contactno');
 var mCountry_code = $('#mcountrycode');
 var Mobile_no = $('#mobileno');
-var Designation = $("designation");
+var Designation = $("#designation");
 // select box
 var User_category = $('#usercatval');
 // auto complete
@@ -36,6 +36,7 @@ var Select_Box = $('#selectboxview');
 var Select_Box_Country = $('#selectboxview-country');
 var Domain_li_list = $('#ulist');
 var Country_li_list = $('#ulist-country');
+
 var Domain_li_active = "active_selectbox";
 var Country_li_active = "active_selectbox_country";
 
@@ -63,6 +64,24 @@ function popupWarning(message, callback) {
     }
   });
 }
+function sendCredentials(_u_id, _u_name, _e_id ) {
+  req_dict = {
+    'user_id': _u_id,
+    'username': _u_name,
+    'email_id': _e_id
+  };
+  custom_alert(req_dict);
+  mirror.sendRegistration(req_dict, function(error, response) {
+
+    if (error == null) {
+      custom_alert(msg.resend);
+    }
+    else {
+      custom_alert(error);
+    }
+
+  });
+}
 // User List render process
 function renderUserList(response) {
     FilterBox.val('');
@@ -81,39 +100,66 @@ function renderUserList(response) {
         var rowClone = tableRow.clone();
 
         $('.sno', rowClone).text(j);
-        $('.employee-name', rowClone).html(v.employee_code + ' - ' + v.employee_name);
-        $('.username',rowClone).html(v.username);
+        ename = v.employee_code + ' - ' + v.employee_name;
+        $('.employee-name', rowClone).html(ename);
+        $('.username',rowClone).html(v.username_id);
         $('.email-id', rowClone).html(v.email_id);
-        $('.cat-name', rowClone).html(v.u_cat_id);
-        $('.registration-email', rowClone).html("");
+        $('.cat-name', rowClone).html(v.user_category_name);
+        if (v.username_id == null){
+          $('.popup-link', rowClone).show();
+          $('.popup-link', rowClone).on('click', function() {
+            sendCredentials(v.user_id, ename, v.email_id);
+          });
+        }
+        else {
+          $('.popup-link', rowClone).hide();
+        }
         // $('.user-group', rowClone).text(usergroup);
         // $('.designation', rowClone).text(designation);
         $('.edit-icon').attr('title', 'Edit');
         $('.edit-icon', rowClone).on('click', function () {
           displayEdit(v.user_id);
         });
-        classValue = "active-icon"
-        $('.status', rowClone).addClass(classValue);
-        $('.active-icon').attr('title', 'Deactivate');
-        $('.inactive-icon').attr('title', 'Activate');
-        if (v.is_active == true)
-          passStatus = false;
-        else
-          passStatus = true;
+
+        if (v.is_active == true){
+          classValue = "active-icon";
+          $('.status', rowClone).addClass(classValue);
+          $('.active-icon', rowClone).attr('title', msg.active_tooltip);
+        }
+        else{
+          classValue = "inactive-icon";
+          $('.status', rowClone).addClass(classValue);
+          $('.inactive-icon', rowClone).attr('title', msg.deactive_tooltip);
+        }
+
         $('.status', rowClone).on('click', function () {
+          if (v.is_active == true) {
+            passStatus = false;
+          }
+          else {
+            passStatus = true;
+          }
           changeStatus(v.user_id, passStatus);
         });
-        $('.disable', rowClone).addClass(classValue);
-        $('.enable-icon').attr('title', 'Click here to disable');
-        $('.disable-icon').attr('title', 'Client here to enable');
-        if (v.is_disable == true)
-          passDstatus = false;
-        else
-          passDstatus = true;
+        if (v.is_disable == true) {
+          classDValue = "enable-icon";
+          $('.disable', rowClone).addClass(classDValue);
+          $('.enable-icon', rowClone).attr('title', msg.disable_tooltip);
+        }
+        else{
+          classDValue = "disable-icon";
+          $('.disable', rowClone).addClass(classDValue);
+          $('.disable-icon', rowClone).attr('title', msg.enable_tooltip);
+        }
+
         $('.disable', rowClone).on('click', function () {
+          if (v.is_disable == true)
+            passDstatus = false;
+          else
+            passDstatus = true;
           changeDisable(v.user_id, passDstatus);
         });
-        $('.table-user-master').append(rowClone);
+        $('.tbody-user-list').append(rowClone);
         j = j + 1;
       });
     }
@@ -140,6 +186,8 @@ function renderUserList(response) {
 
 function showList() {
   renderUserList(null);
+  Country_ids = [];
+  Domain_ids = [];
   AddScreen.hide();
   ViewScreen.show();
 }
@@ -152,7 +200,7 @@ function showAddScreen() {
   loadUserCategories();
   Country_ids = [];
   Domain_ids = [];
-  Emp_name.focus();
+  User_category.focus();
 }
 
 function loadUserCategories() {
@@ -185,27 +233,31 @@ function possibleFailures(error) {
 }
 // View field values in edit mode
 function displayEdit(userId) {
+  showAddScreen();
   displayMessage('');
-  User_id.val(userId);
+  User_id.val(parseInt(userId));
   for (var v in UsersList) {
     data = UsersList[v];
     if (data.user_id == userId) {
-      loadFormCategories();
-      $('#categoryName option[value = ' + userCatId + ']').attr('selected', 'selected');
+      userCatId = data.user_category_id;
+      // loadFormCategories();
+      $('#usercatval option[value = ' + userCatId + ']').attr('selected', 'selected');
       Emp_name.val(data.employee_name);
       Emp_code.val(data.employee_code);
       Address.val(data.address);
       Designation.val(data.designation);
-      var conatct = data.contact_no.split('-');
-      Country_code.val(contact[0]);
-      Area_code.val(contact[1]);
-      Contact_no.val(contact[2]);
+      if (data.contact_no != null) {
+        var contact = data.contact_no.split('-');
+        Country_code.val(contact[0]);
+        Area_code.val(contact[1]);
+        Contact_no.val(contact[2]);
+      }
       var mobile = data.mobile_no.split('-');
       mCountry_code.val(mobile[0]);
       Mobile_no.val(mobile[1]);
       User_group_val.val(data.user_group_id);
       for (var k in UserGroupList) {
-        if (userGroupsList[k].user_group_id == data.user_group_id) {
+        if (UserGroupList[k].user_group_id == data.user_group_id) {
           User_group_ac.val(UserGroupList[k].user_group_name);
           break;
         }
@@ -291,11 +343,11 @@ function submitUserData(){
     }
     else {
       userDetail = {
-        'u_cat_id': User_category,
-        'email_id': Email_id.val().trim(),
-        'ug_id': User_group_val.val().trim(),
+        'u_cat_id': parseInt(User_category.val()),
+        'ug_id': parseInt(User_group_val.val().trim()),
         'employee_name': Emp_name.val().trim(),
         'employee_code': Emp_code.val().trim(),
+        'email_id': Email_id.val().trim(),
         'contact_no': Country_code.val().trim() + '-' + Area_code.val().trim() + '-' + Contact_no.val().trim(),
         'mobile_no':  mCountry_code.val().trim() + '-' + Mobile_no.val().trim(),
         'address': Address.val().trim(),
@@ -303,6 +355,7 @@ function submitUserData(){
         'country_ids':  Country_ids,
         'domain_ids': Domain_ids,
       };
+      console.log(userDetail);
       if (User_id.val() == '') {
         mirror.saveAdminUser(userDetail, function(error, response) {
           if (error == null) {
@@ -314,8 +367,8 @@ function submitUserData(){
         });
       }
       else {
-        userDetail["user_id"] = User_id.val().trim();
-        mirror.saveAdminUser(userDetail, function(error, response) {
+        userDetail["user_id"] = parseInt(User_id.val());
+        mirror.updateAdminUser(userDetail, function(error, response) {
           if (error == null) {
             showList();
           }
@@ -326,6 +379,7 @@ function submitUserData(){
       }
     }
   }
+  process_submit();
 }
 // change status event action
 function changeStatus(userId, isActive) {
@@ -337,7 +391,7 @@ function changeStatus(userId, isActive) {
     if (isConfirm) {
       mirror.changeAdminUserStatus(userId, isActive, function(error, response) {
         if (error == null) {
-          renderUserList(null);
+          showList();
         }
         else {
           possibleFailures(error);
@@ -348,15 +402,15 @@ function changeStatus(userId, isActive) {
 }
 // disable action
 function changeDisable(userId, isDisable) {
-  var msgstatus = msg.disable_message;
+  var msgstatus = msg.enable_message;
   if (isDisable) {
-    msgstatus = msg.enable_message;
+    msgstatus = msg.disable_message;
   }
   popupWarning(msgstatus , function(isConfirm) {
     if (isConfirm) {
-      mirror.changeAdminUserStatus(userId, isDisable, function(error, response) {
+      mirror.changeAdminDisaleStatus(userId, isDisable, function(error, response) {
         if (error == null) {
-          renderUserList(null);
+          showList();
         }
         else {
           possibleFailures(error);
@@ -422,6 +476,54 @@ function processFilter() {
   renderUserList(filteredList);
 }
 
+function active_click(element) {
+  domains_class = 'active_selectbox';
+  country_class = 'active_selectbox_country';
+
+  e_type = ''
+  klass = $(element).attr('class');
+  if (e_type) {
+    if (klass == domains_class) {
+      $(element).removeClass(domains_class);
+      Domain_ids.splice(Domain_ids.indexOf(parseInt(element.id)));
+    }
+    else {
+      $(element).addClass(domains_class);
+      Domain_ids.push(parseInt(element.id));
+    }
+    Domains.val(Domain_ids.length + ' Selected');
+  }
+  else {
+    if (klass == country_class) {
+      $(element).removeClass(country_class);
+      Country_ids.splice(Country_ids.indexOf(parseInt(element.id)));
+    }
+    else {
+      $(element).addClass(country_class);
+      Country_ids.push(parseInt(element.id));
+    }
+    Country.val(Country_ids.length + ' Selected');
+  }
+}
+function chkbox_select(item, id, name, active) {
+  console.log(item);
+  if (item == 'ulist') {
+    a_klass = Domain_li_active;
+  }
+  else {
+    a_klass = Country_li_active;
+  }
+  eveClick = "";
+  li_string= ''
+  if (active == true) {
+    li_string  = '<li id="'+ id +'" class="'+ a_klass + '" onclick=active_click(this) >'+ name +'</li>';
+  }
+  else {
+   li_string  = '<li id="'+ id +'" onclick=active_click(this) >'+ name +'</li>';
+  }
+  return li_string;
+}
+
 function pageControls() {
   function onKeyUpDownSelect(e, item) {
     // Key code : 40- down arrow , 38- up arrow , 32- space , 13- enter key.
@@ -441,11 +543,13 @@ function pageControls() {
     }
 
     function get_id(n_item) {
-      $('#' + item + ' li:eq('+ n_item + ')').attr('id');
+      g_id = $('#' + item + ' li:eq('+ n_item + ')').attr('id');
+      return g_id;
     }
 
-    function get_class(item) {
-      $('#' + item + ' li:eq('+ n_item + ')').attr('class');
+    function get_class(n_item) {
+      g_c = $('#' + item + ' li:eq('+ n_item + ')').attr('class');
+      return g_c;
     }
 
     if(e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
@@ -485,26 +589,24 @@ function pageControls() {
 
       if (item == 'ulist') {
         // Domain select box
-        domain_klass = 'active_selectbox';
-        if (item_class == domain_klass) {
-          remove_select(item_selected, domain_klass);
+        if (item_class == Domain_li_active) {
+          remove_select(item_selected, Domain_li_active);
           Domain_ids.splice(Domain_ids.indexOf(multi_select_id));
         }
         else {
-          add_select(item_selected, domain_klass);
+          add_select(item_selected, Domain_li_active);
           Domain_ids.push(multi_select_id);
         }
         Domains.val(Domain_ids.length + ' Selected');
       }
       else {
         // country select box
-        country_klass = "active_selectbox_country"
-        if (item == country_klass) {
-          remove_select(item_selected, country_klass);
+        if (item == Country_li_active) {
+          remove_select(item_selected, Country_li_active);
           Country_ids.splice(Country_ids.indexOf(multi_select_id));
         }
         else {
-          add_select(item_selected, country_klass);
+          add_select(item_selected, Country_li_active);
           Country_ids.push(multi_select_id);
         }
         Country.val(Country_ids.length + ' Selected');
@@ -518,24 +620,6 @@ function pageControls() {
     Select_Box.hide();
     Select_Box_Country.hide();
   });
-
-  function chkbox_select( item, id, name, active) {
-    if (item = 'ulist') {
-      klass = Domain_li_active;
-    }
-    else {
-      klass = Country_li_active;
-    }
-    eveClick = "active_click(this)";
-    li_string= ''
-    if (active == true) {
-      li_string  = '<li id="'+ id +'" class="'+ klass + '" onclick="'+ eveClick + '" >'+ name +'</li>'
-    }
-    else {
-     li_string  = '<li id="'+ id +'" onclick="'+ eveClick + '" >'+ name +'</li>'
-    }
-    return li_string;
-  }
 
   Domains.focus(function() {
     Select_Box.show();
@@ -558,6 +642,7 @@ function pageControls() {
   });
   Domains.keyup(function(e) {
     onKeyUpDownSelect(e, 'ulist');
+    console.log(Domain_ids);
   });
 
   Country.focus(function() {
@@ -581,11 +666,13 @@ function pageControls() {
   });
   Country.keyup(function(e) {
     onKeyUpDownSelect(e, 'ulist-country');
+    console.log("countries");
+    console.log(Country_ids);
   });
 
   User_group_ac.keyup(function(e) {
     var textVal = $(this).val();
-    getUserGroupAutocomplete(e, textVal, UserGroupList, function(val) {
+    getUserGroupAutocomplete(e, User_category.val(), textVal, UserGroupList, function(val) {
       User_group_ac.val(val[1]);
       User_group_val.val(val[0]);
       User_group_ac.focus();
@@ -600,6 +687,9 @@ function pageControls() {
   });
   AddButton.click(function() {
     showAddScreen();
+  });
+  SubmitButton.click(function() {
+    submitUserData();
   });
 }
 // page load
