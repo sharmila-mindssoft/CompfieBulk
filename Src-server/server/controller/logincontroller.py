@@ -1,4 +1,4 @@
-from corecontroller import process_user_forms, process_admin_forms
+from corecontroller import process_admin_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
@@ -28,30 +28,42 @@ def process_login_request(request, db, session_user_ip):
         result = process_login(db, request, session_user_ip)
         logger.logKnowledgeApi("Login", "process end")
 
-    if type(request) is login.ForgotPassword:
+    elif type(request) is login.ForgotPassword:
         logger.logKnowledgeApi("ForgotPassword", "process begin")
         result = process_forgot_password(db, request)
         logger.logKnowledgeApi("ForgotPassword", "process end")
 
-    if type(request) is login.ResetTokenValidation:
+    elif type(request) is login.ResetTokenValidation:
         logger.logKnowledgeApi("ResetTokenValidation", "process begin")
         result = process_reset_token(db, request)
         logger.logKnowledgeApi("ResetTokenValidation", "process end")
 
-    if type(request) is login.ResetPassword:
+    elif type(request) is login.ResetPassword:
         logger.logKnowledgeApi("ResetPassword", "process begin")
         result = process_reset_password(db, request)
         logger.logKnowledgeApi("ResetPassword", "process end")
 
-    if type(request) is login.ChangePassword:
+    elif type(request) is login.ChangePassword:
         logger.logKnowledgeApi("ChangePassword", "process begin")
         result = process_change_password(db, request)
         logger.logKnowledgeApi("ChangePassword", "process end")
 
-    if type(request) is login.Logout:
+    elif type(request) is login.Logout:
         logger.logKnowledgeApi("Logout", "process begin")
         result = process_logout(db, request)
         logger.logKnowledgeApi("Logout", "process end")
+
+    elif type(request) is login.CheckRegistrationToken:
+        logger.logKnowledgeApi("CheckRegistrationToken", "process begin")
+        result = process_validate_rtoken(db, request)
+        logger.logKnowledgeApi("CheckRegistrationToken", "process end")
+
+    elif type(request) is login.SaveRegistraion:
+        logger.logKnowledgeApi("SaveRegistraion", "process begin")
+        result = process_save_logindetails(db, request)
+        logger.logKnowledgeApi("SaveRegistraion", "process end")
+
+    print result
 
     return result
 
@@ -121,7 +133,6 @@ def mobile_user_login_respone(db, data, request, ip):
         session_token
     )
 
-
 def user_login_response(db, ip, data, forms):
     data = data[0]
     user_id = data["user_id"]
@@ -145,7 +156,6 @@ def user_login_response(db, ip, data, forms):
         designation, None, bool(1)
     )
 
-
 def admin_login_response(db, ip, result, forms):
     user_id = result.get('user_id')
     user_category_id = result.get('user_category_id')
@@ -163,7 +173,6 @@ def admin_login_response(db, ip, result, forms):
         employee_name, None
     )
 
-
 def process_forgot_password(db, request):
     email_id = request.username
     user_type = request.login_type
@@ -175,7 +184,6 @@ def process_forgot_password(db, request):
         return login.ForgotPasswordSuccess()
     else:
         return login.InvalidUserName()
-
 
 def send_reset_link(db, user_id, email_id, employee_name):
     reset_token = new_uuid()
@@ -195,14 +203,12 @@ def send_reset_link(db, user_id, email_id, employee_name):
     else:
         print "Send email failed"
 
-
 def process_reset_token(db, request):
     user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
         return login.ResetSessionTokenValidationSuccess()
     else:
         return login.InvalidResetToken()
-
 
 def process_reset_password(db, request):
     user_id = validate_reset_token(db, request.reset_token)
@@ -217,7 +223,6 @@ def process_reset_password(db, request):
     else:
         return login.InvalidResetToken()
 
-
 def process_change_password(db, request):
     session_user = db.validate_session_token(request.session_token)
     if verify_password(db, request.current_password, session_user):
@@ -226,8 +231,27 @@ def process_change_password(db, request):
     else:
         return login.InvalidCurrentPassword()
 
-
 def process_logout(db, request):
     session = request.session_token
     remove_session(db, session)
     return login.LogoutSuccess()
+
+def process_validate_rtoken(db, request):
+    token = request.reset_token
+    if (validate_email_token(db, token)):
+        captcha_text = generate_random(CAPTCHA_LENGTH)
+        return login.CheckRegistrationTokenSuccess(captcha_text)
+    else :
+        return login.InvalidSessionToken()
+
+def process_save_logindetails(db, request):
+    username = request.username
+    password = request.password
+    # duplication username validation
+
+    encrypt_password = encrypt(password)
+    token = request.token
+    if save_login_details(db, token, username, encrypt_password):
+        return login.SaveRegistraionSuccess()
+    else :
+        return login.InvalidSessionToken()

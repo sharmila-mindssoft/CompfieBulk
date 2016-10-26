@@ -422,6 +422,9 @@ def update_user_record(db, request, session_user):
     ):
         return admin.UpdateUserSuccess()
 
+#
+#  User Registraion process
+#
 def send_user_registration_mail(db, request, session_user):
     res = save_registraion_token(db, request.user_id, request.username, request.email_id)
     if res :

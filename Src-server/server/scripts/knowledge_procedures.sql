@@ -46,8 +46,20 @@ BEGIN
 
         SELECT T1.form_id, (select form_type from tbl_form_type where form_type_id = T1.form_type_id) as form_type,
         T1.form_name, T1.form_url, T1.form_order, T1.parent_menu
-		FROM tbl_forms as T1 INNER JOIN tbl_user_group_forms as T2
-		ON T2.user_group_id = @_user_group_id;
+		FROM tbl_forms as T1
+		WHERE T1.form_id IN (select form_id from tbl_user_group_forms where user_group_id = @_user_group_id)
+        OR T1.form_id IN (45, 46)
+        OR T1.form_id IN (
+				select case
+				when @_user_category_id=3 and category_id_3 = 1 then 47
+				when @_user_category_id=4 and category_id_4 = 1 then 47
+				when @_user_category_id=5 and category_id_5 = 1 then 47
+				when @_user_category_id=6 and category_id_6 = 1 then 47
+				end as form_notify
+				from tbl_form_category
+				where form_id = 47
+        );
+
     end if;
 END //
 
@@ -1898,10 +1910,20 @@ CREATE PROCEDURE `sp_users_change_status`(
 )
 BEGIN
 	UPDATE tbl_users set is_active = isactive,
-	updated_by =  session_user and status_changed_on = updated_time
-	WHERE user_id = userid;
+		updated_by =  session_user and status_changed_on = updated_time
+		WHERE user_id = userid;
+
+	SELECT @_isdisable:= is_disable from tbl_users WHERE user_id = userid;
+	IF @_isdisable = 0 and isactive = 1 THEN
+		SET @_val = 1;
+	ELSE
+		SET @_val = 0;
+	END IF;
+	UPDATE tbl_user_login_details set is_active = @_val
+		where user_id = userid;
 END //
 DELIMITER ;
+
 
 
 -- --------------------------------------------------------------------------------
@@ -1915,8 +1937,16 @@ CREATE PROCEDURE `sp_users_disable_status`(
 )
 BEGIN
 	UPDATE tbl_users set is_disable = isdisable,
-	updated_by =  session_user and disabled_on = updated_time
-	WHERE user_id = userid;
+		updated_by =  session_user and disabled_on = updated_time
+		WHERE user_id = userid;
+	SELECT @_isactive:= is_active from tbl_users WHERE user_id = userid;
+	IF @_isactive = 1 and isdisable = 0 THEN
+		SET @_val = 1;
+	ELSE
+		SET @_val = 0;
+	END IF;
+	UPDATE tbl_user_login_details set is_active = @_val
+		where user_id = userid;
 END //
 DELIMITER ;
 
@@ -2831,5 +2861,54 @@ DELIMITER //
 CREATE PROCEDURE `sp_userclients_reassign_list`()
 BEGIN
 	SELECT user_id, client_id FROM tbl_user_clients;
+END //
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To verify token
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_validate_token`;
+DELIMITER //
+CREATE PROCEDURE `sp_validate_token`( IN token text)
+BEGIN
+	SELECT user_id, verification_code
+	FROM tbl_email_verification
+    WHERE expiry_date > current_ist_datetime() AND verification_code = token;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To crate user login details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_user_login_details_save`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_user_login_details_save`(
+	IN token text, uname varchar(50), pword text
+)
+BEGIN
+	SELECT @uid := user_id FROM tbl_email_verification WHERE verification_code = token;
+    SELECT @eid := email_id, @catid := user_category_id, @isactive := is_active
+	FROM tbl_users WHERE user_id = @uid;
+    INSERT INTO tbl_user_login_details(
+    user_id, user_category_id, email_id, username, password, is_active, created_on)
+		VALUES (@uid, @catid, @eid, uname, pword, @isactive, current_ist_datetime());
+
+	DELETE FROM tbl_email_verification where verification_code = token;
+END //
+DELIMITER ;
+
+--
+-- update password
+--
+
+DROP PROCEDURE IF EXISTS `sp_tbl_user_login_details_update`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_user_login_details_update`(
+	IN uid INT(11), pword TEXT
+)
+BEGIN
+	UPDATE tbl_user_login_details set password = pword WHERE user_id = uid;
+	SELECT username FROM tbl_user_login_details WHERE user_id = uid;
 END //
 DELIMITER ;

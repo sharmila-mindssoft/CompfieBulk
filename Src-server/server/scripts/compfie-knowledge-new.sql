@@ -627,10 +627,8 @@ CREATE TABLE `tbl_divisions` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`division_id`),
-  KEY `fk_divisions_business_groups` (`business_group_id`),
   KEY `fk_divisions_legal_entities` (`legal_entity_id`),
   KEY `fk_tbl_cg_div` (`client_id`),
-  CONSTRAINT `fk_divisions_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -712,12 +710,7 @@ CREATE TABLE `tbl_units_organizations` (
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_id` int(11) DEFAULT NULL,
-  KEY `fk_unit_id` (`unit_id`),
-  KEY `fk_domain_id` (`domain_id`),
-  KEY `fk_organisation_id` (`organisation_id`),
-  CONSTRAINT `fk_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_organisation_id` FOREIGN KEY (`organisation_id`) REFERENCES `tbl_organisation` (`organisation_id`)
+  UNIQUE KEY `fk_unit_id` (`unit_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_statutories`;
