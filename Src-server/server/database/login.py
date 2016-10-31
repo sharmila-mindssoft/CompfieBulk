@@ -52,7 +52,8 @@ def verify_login(db, username, password):
     elif res[0]['user_category_id'] > 2:
         user_info = result[2]
         forms = result[3]
-
+    print "user_category: %s" % res[0]["user_category_id"]
+    print "user_info: %s" % user_info
     return (uname, response, user_info, forms)
     # tblAdminCondition = "password=%s and username=%s"
     # admin_details = db.get_data(

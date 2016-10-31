@@ -1017,11 +1017,37 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getuserclients`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
-	select client_id, group_name from tbl_client_groups
-    where client_id in
-	(select t1.client_id from tbl_client_groups t1
-    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
-	and t2.user_id = userId);
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category 
+	FROM tbl_users WHERE user_id = userid;
+	IF user_category in (1,2) then
+		select client_id, group_name, is_active from tbl_client_groups
+		order by group_name ASC;
+	ELSEIF user_category = 5 then
+		select client_id, group_name, is_active from tbl_client_groups
+		where client_id in(
+			SELECT client_id FROM tbl_user_clients WHERE
+			user_id = userid 
+		) order by group_name ASC;
+	ELSEIF user_category = 6 then
+		select client_id, group_name, is_active from tbl_client_groups
+		where client_id in(
+			SELECT client_id FROM tbl_legal_entities 
+			WHERE legal_entity_id in (
+				SELECT legal_entity_id FROM tbl_user_legalentity WHERE
+				user_id = userid
+			)
+		) order by group_name ASC;
+	ELSE
+		select client_id, group_name, is_active from tbl_client_groups
+		where client_id in (
+			SELECT client_id FROM tbl_units 
+			WHERE unit_id in (
+				SELECT unit_id FROM tbl_user_units WHERE
+				user_id = userid
+			)
+		) order by group_name ASC;
+	END IF;
 END //
 DELIMITER ;
 
@@ -1059,14 +1085,34 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientbusinessgroup`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
 BEGIN
-	IF userId > 2 THEN
-		select business_group_id, business_group_name, client_id from tbl_business_groups
-	    where client_id in
-		(select t1.client_id from tbl_user_legalentity t1
-	    where t1.user_id = userId) order by business_group_name ASC;
-	ELSE
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category FROM tbl_users WHERE user_id = userid;
+	IF user_category in (1,2) then
 		select business_group_id, business_group_name, client_id 
 		from tbl_business_groups order by business_group_name ASC;
+	ELSEIF user_category = 5 then
+		select business_group_id, business_group_name, client_id 
+		from tbl_business_groups WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id=userid
+		) order by business_group_name ASC;
+	ELSEIF user_category = 6 then
+		select business_group_id, business_group_name, client_id 
+		from tbl_business_groups WHERE business_group_id in (
+			SELECT business_group_id FROM tbl_legal_entities
+			WHERE legal_entity_id in (
+				SELECT legal_entity_id from tbl_user_legalentity
+				WHERE user_id = userId
+			)
+		) order by business_group_name ASC;
+	ELSE
+		select business_group_id, business_group_name, client_id 
+		from tbl_business_groups WHERE business_group_id in (
+			SELECT business_group_id FROM tbl_units
+			WHERE unit_id in (
+				SELECT unit_id FROM tbl_user_units 
+				WHERE user_id = userid
+			)
+		) order by business_group_name ASC;
 	END IF;
 END //
 DELIMITER ;
@@ -1079,17 +1125,35 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientlegalentity`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
-	IF userId > 2 THEN
-		select legal_entity_id, legal_entity_name, business_group_id, client_id ,
-		country_id
-		from tbl_legal_entities
-	    where legal_entity_id in
-		(select t1.legal_entity_id from tbl_user_legalentity t1
-	    where t1.user_id = userId) order by legal_entity_name ASC;
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category 
+	FROM tbl_users WHERE user_id = userid;
+	IF user_category in (1,2) then
+		select legal_entity_id, legal_entity_name, business_group_id, 
+		client_id, country_id from tbl_legal_entities 
+		order by legal_entity_name ASC;
+	ELSEIF user_category = 5 THEN
+		select legal_entity_id, legal_entity_name, business_group_id, 
+		client_id, country_id from tbl_legal_entities 
+		WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id=userid
+		) order by legal_entity_name ASC;
+	ELSEIF user_category = 6 then
+		select legal_entity_id, legal_entity_name, business_group_id, 
+		client_id, country_id from tbl_legal_entities 
+		WHERE legal_entity_id in (
+			SELECT legal_entity_id FROM tbl_user_legalentity 
+			WHERE user_id=userid
+		) order by legal_entity_name ASC;
 	ELSE
-		select legal_entity_id, legal_entity_name, business_group_id, client_id,
-		country_id
-		from tbl_legal_entities order by legal_entity_name ASC;
+		select legal_entity_id, legal_entity_name, business_group_id, 
+		client_id, country_id from tbl_legal_entities 
+		WHERE legal_entity_id in (
+			SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+				SELECT unit_id FROM tbl_user_units 
+				WHERE user_id=userid
+			)
+		) order by legal_entity_name ASC;
 	END IF;
 END //
 DELIMITER ;
@@ -1101,11 +1165,38 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdivision`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientdivision`(in userId INT(11))
 BEGIN
-	select division_id, division_name, legal_entity_id, business_group_id, client_id from tbl_divisions
-    where client_id in
-	(select t1.client_id from tbl_client_groups t1
-    inner join tbl_user_clients t2 on t1.client_id = t2.client_id
-	and t2.user_id = userId) order by division_name ASC;
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category 
+	FROM tbl_users WHERE user_id = userid;
+	IF user_category in (1,2) then
+		select division_id, division_name, legal_entity_id, 
+		business_group_id, client_id from tbl_divisions
+		order by division_name ASC;
+	ELSEIF user_category = 5 then
+		select division_id, division_name, legal_entity_id, 
+		business_group_id, client_id from tbl_divisions
+		where client_id in(
+			SELECT client_id FROM tbl_user_clients WHERE
+			user_id = userid 
+		) order by division_name ASC;
+	ELSEIF user_category = 6 then
+		select division_id, division_name, legal_entity_id, 
+		business_group_id, client_id from tbl_divisions
+		where legal_entity_id in(
+			SELECT legal_entity_id FROM tbl_user_legalentity WHERE
+			user_id = userid 
+		) order by division_name ASC;
+	ELSE
+		select division_id, division_name, legal_entity_id, 
+		business_group_id, client_id from tbl_divisions
+		where legal_entity_id in(
+			SELECT division_id FROM tbl_units WHERE
+			unit_id in (
+				SELECT unit_id from tbl_user_units
+				WHERE user_id = userid
+			)
+		) order by division_name ASC;
+	END IF;
 END //
 DELIMITER ;
 
@@ -2765,5 +2856,241 @@ DELIMITER //
 CREATE PROCEDURE `sp_userclients_reassign_list`()
 BEGIN
 	SELECT user_id, client_id FROM tbl_user_clients;
+END //
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get categories assigned to an user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_categories_by_user`;
+DELIMITER //
+CREATE PROCEDURE `sp_categories_by_user`(
+	IN userid INT(11)
+)
+BEGIN
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category FROM tbl_users WHERE user_id = userid;
+	IF user_category in (1,2) then
+		SELECT category_id, category_name, division_id, legal_entity_id,
+		business_group_id, client_id FROM tbl_categories
+		Order by category_name ASC;
+	ELSEIF user_category = 5 then
+		SELECT category_id, category_name, division_id, legal_entity_id,
+		business_group_id, client_id FROM tbl_categories
+		WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id=userid
+		) Order by category_name ASC;
+	ELSEIF user_category = 6 then
+		SELECT category_id, category_name, division_id, legal_entity_id,
+		business_group_id, client_id FROM tbl_categories
+		WHERE legal_entity_id in (
+			SELECT legal_entity_id FROM tbl_user_legalentity 
+			WHERE user_id=userid
+		) Order by category_name ASC;
+	ELSE
+		SELECT category_id, category_name, division_id, legal_entity_id,
+		business_group_id, client_id FROM tbl_categories
+		WHERE category_id in (
+			SELECT category_id FROM tbl_units 
+			WHERE category_id is not null and unit_id in (
+				SELECT unit_id FROM tbl_user_units 
+				WHERE user_id = userid
+			)
+		) Order by category_name ASC;
+	END IF;
+END //
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get units assigned to a user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_units_by_user`;
+DELIMITER //
+CREATE PROCEDURE `sp_units_by_user`()
+BEGIN
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category 
+	FROM tbl_users WHERE user_id = userid;
+	IF user_category in (1,2) then
+		SELECT unit_id, category_id, division_id, legal_entity_id,
+		business_group_id, client_id, unit_code, unit_name,
+		address, is_closed as is_active FROM tbl_units
+		order by unit_name ASC;
+	ELSEIF user_category = 5 THEN
+		SELECT unit_id, category_id, division_id, legal_entity_id,
+		business_group_id, client_id, unit_code, unit_name,
+		address, is_closed as is_active FROM tbl_units
+		WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id=userid
+		) order by unit_name ASC; 
+	ELSEIF user_category = 6 then
+		SELECT unit_id, category_id, division_id, legal_entity_id,
+		business_group_id, client_id, unit_code, unit_name,
+		address, is_closed as is_active FROM tbl_units
+		WHERE legal_entity_id in (
+			SELECT legal_entity_id FROM tbl_user_legalentity 
+			WHERE user_id=userid
+		) order by unit_name ASC;
+	ELSE
+		SELECT unit_id, category_id, division_id, legal_entity_id,
+		business_group_id, client_id, unit_code, unit_name,
+		address, is_closed as is_active FROM tbl_units
+		WHERE unit_id in (
+			SELECT unit_id FROM tbl_user_units 
+			WHERE user_id = userid
+		) order by unit_name ASC;
+	END IF;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get details of units by unit ids to get common country, domain, organization,
+-- and geography
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_unit_unit_organiation_details`;
+DELIMITER //
+CREATE PROCEDURE `sp_unit_unit_organiation_details`(
+	IN unit_ids TEXT
+)
+BEGIN
+	select unit_id, country_id, geography_id FROM tbl_units
+	WHERE find_in_set(unit_id, unit_ids);
+	select unit_id, domain_id, organisation_id FROM tbl_units_organizations
+	WHERE find_in_set(unit_id, unit_ids);
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_compliances_by_unit_details`;
+DELIMITER //
+CREATE PROCEDURE `sp_compliances_by_unit_details`(
+	IN domain_ids TEXT, country_ids TEXT, geography_ids TEXT,
+	organization_ids TEXT
+)
+BEGIN
+	CREATE TEMPORARY TABLE statutory_mappings
+	SELECT tsm.statutory_mapping_id from tbl_statutory_mappings tsm
+	INNER JOIN tbl_mapped_industries tmi on (tsm.statutory_mapping_id=tmi.statutory_mapping_id)
+	INNER JOIN tbl_mapped_locations tml on (tml.statutory_mapping_id=tsm.statutory_mapping_id)
+	WHERE find_in_set(country_id, country_ids)
+	and find_in_set(domain_id, domain_ids)
+	and find_in_set(geography_id, geography_ids)
+	and find_in_set(organisation_id, organization_ids);
+
+	SELECT compliance_id, statutory_provision, document_name, compliance_task,
+	compliance_description, statutory_mapping_id 
+	FROM tbl_compliances WHERE  country_id in (1) 
+	and find_in_set(domain_id, domain_ids) and statutory_mapping_id in (
+		SELECT statutory_mapping_id from statutory_mappings
+	);
+	SELECT statutory_mapping_id, statutory_name
+	FROM tbl_mapped_statutories tms INNER JOIN tbl_statutories ts
+	ON (tms.statutory_id = ts.statutory_id) INNER JOIN tbl_statutory_levels tsl
+	ON (tsl.level_id = ts.level_id) WHERE level_position = 1 and 
+	statutory_mapping_id in (
+		SELECT statutory_mapping_id from statutory_mappings
+	);
+	SELECT statutory_mapping_id, (
+		select organisation_name FROM tbl_organisation torg
+		WHERE torg.organisation_id= tmi.organisation_id
+	) as org_name  FROM tbl_mapped_industries tmi WHERE statutory_mapping_id in (
+		SELECT statutory_mapping_id from statutory_mappings
+	);
+	SELECT statutory_mapping_id, (
+		SELECT geography_name from tbl_geographies tgeo
+		WHERE tgeo.geography_id = tml.geography_id
+	) as geography_name FROM tbl_mapped_locations tml
+	WHERE statutory_mapping_id in (
+		SELECT statutory_mapping_id from statutory_mappings
+	);
+	DROP TEMPORARY TABLE statutory_mappings;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get Client statutory ids by client id and unit id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_by_client_unit`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientstatutories_by_client_unit`(
+	IN clientid INT(11), unit_ids TEXT, compliance_ids TEXT
+)
+BEGIN
+	SELECT compliance_id, domain_id FROM tbl_compliances 
+	WHERE find_in_set(compliance_id, compliance_ids);
+	SELECT client_statutory_id, client_id, unit_id
+	FROM tbl_client_statutories WHERE client_id = clientid
+	AND find_in_set(unit_id, unit_ids) 
+	order by client_statutory_id DESC;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of client statutories
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientstatutories_list`()
+BEGIN
+	SELECT tcs.client_statutory_id, tcs.client_id, tcs.unit_id, tcs.status
+	FROM tbl_client_statutories tcs;
+
+	SELECT unit_id, tu.country_id, country_name, tu.client_id, group_name, 
+	tu.business_group_id, (SELECT business_group_name
+	FROM tbl_business_groups tbg WHERE tbg.business_group_id=tu.business_group_id
+	) as business_group_name, tu.legal_entity_id, legal_entity_name, 
+	tu.division_id, (SELECT division_name 
+	FROM tbl_divisions td WHERE td.division_id=tu.division_id) as division_name,
+	tu.category_id, (SELECT category_name FROM tbl_categories tc 
+	WHERE tc.category_id = tu.category_id) as category_name, 
+	tu.geography_id, geography_name,
+	concat(tu.unit_code, " - ", tu.unit_name) as unit_name,
+	(SELECT group_concat(domain_name) FROM tbl_domains td 
+	WHERE find_in_set(td.domain_id,tu.domain_ids)) as domain_name,
+	domain_ids
+	FROM tbl_units tu INNER JOIN tbl_countries tc
+	ON (tc.country_id = tu.country_id) INNER JOIN tbl_legal_entities tle
+	ON (tle.legal_entity_id = tu.legal_entity_id) INNER JOIN tbl_client_groups tcg
+	ON tcg.client_id = tu.client_id INNER JOIN tbl_geographies tg
+	ON tg.geography_id = tu.geography_id;
+END //
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get the assigned compliancees by client statutory id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_by_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_clientstatutories_by_id`(
+	IN cs_id INT(11)
+)
+BEGIN
+	SELECT DISTINCT client_compliance_id, client_statutory_id, tcc.statutory_id, 
+	statutory_applicable_status, tcc.remarks, tcc.compliance_id,
+	compliance_applicable_status, is_saved, is_submitted,
+	statutory_provision, document_name, compliance_task,
+	compliance_description, tc.statutory_mapping_id, statutory_name,
+	(
+		select group_concat(organisation_name) FROM tbl_organisation torg
+		WHERE torg.organisation_id in ( SELECT organisation_id from
+		tbl_mapped_industries tmi where tmi.statutory_mapping_id=tc.statutory_mapping_id)
+	) as organisation_name,
+	(
+		SELECT geography_name from tbl_geographies tgeo
+		WHERE tgeo.geography_id in (
+			SELECT geography_id FROM tbl_mapped_locations tml
+			WHERE tgeo.geography_id=tml.geography_id
+		)
+	) as geography_name
+	FROM tbl_client_compliances tcc INNER JOIN tbl_compliances tc
+	ON tc.compliance_id = tcc.compliance_id
+	INNER JOIN tbl_statutories ts ON ts.statutory_id = tcc.statutory_id
+	INNER JOIN tbl_mapped_locations tml ON tml.statutory_mapping_id = tc.statutory_mapping_id
+	WHERE client_statutory_id=cs_id;
 END //
 DELIMITER ;

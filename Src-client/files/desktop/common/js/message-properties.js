@@ -297,7 +297,7 @@ var message = {
   "unit_saved": "Unit(s) Saved successfully",
   "unit_updated": "Units(s) Updated Successfully",
   "no_legal_entity_selected" : "Atleast one legalentity should select",
-  "no_user_selected" : "No user selected for assign"
+  "no_user_selected" : "No user selected for assign",
 };
 
 function clearMessage() {

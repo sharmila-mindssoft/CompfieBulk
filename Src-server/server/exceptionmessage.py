@@ -81,6 +81,10 @@ messages = {
     "E080": "Assign Units Failed",
     "E081": "Save Reassign user account history failed",
     "E082": "Save Reassign user account failed",
+    "E083": "There are no common countries among the selected units",
+    "E084": "There are no common geographical location among the selected units",
+    "E085": "There are no common domains among the selected units",
+    "E086": "There are no common organisations among the selected units",
 }
 
 client_message = {
