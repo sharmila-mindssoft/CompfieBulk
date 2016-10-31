@@ -391,20 +391,22 @@ class ContactNumberAlreadyExists(Response):
 
 
 class GetDomainsSuccess(Response):
-    def __init__(self, domains):
+    def __init__(self, domains, countries):
         self.domains = domains
+        self.countries = countries
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains"])
+        data = parse_dictionary(data, ["domains", "countries"])
         domains = data.get("domains")
-        return GetDomainsSuccess(domains)
+        countries = data.get("countries")
+        return GetDomainsSuccess(domains, countries)
 
     def to_inner_structure(self):
-        data = {
-            "domains": self.domains
+        return {
+            "domains": self.domains,
+            "countries": self.countries
         }
-        return data
 
 
 class SaveDomainSuccess(Response):

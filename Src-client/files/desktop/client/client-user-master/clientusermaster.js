@@ -702,7 +702,7 @@ function onArrowKeyUser(e, ac_item) {
         activate_division();
       }
     }
-    
+
     return false;
   }
 }

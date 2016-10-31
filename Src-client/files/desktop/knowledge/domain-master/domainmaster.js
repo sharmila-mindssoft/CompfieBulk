@@ -1,204 +1,415 @@
-var domainsList;
-$('.btn-domain-add').click(function () {
-  $('#domain-view').hide();
-  $('#domain-add').show();
-  $('#domainname').val('');
-  $('#domainid').val('');
-  $('.error-message').html('');
-  $('#domainname').focus();
-});
-$('.btn-domain-cancel').click(function () {
-  $('#domain-add').hide();
-  $('#domain-view').show();
-});
-//get domains list from api
-function getDomains() {
-  function onSuccess(data) {
-    domainsList = data.domains;
-    loadDomainList(domainsList);
-  }
-  function onFailure(error) {
-    custom_alert(error);
-  }
-  mirror.getDomainList(function (error, response) {
-    if (error == null) {
-      onSuccess(response);
-    } else {
-      onFailure(error);
-    }
-  });
+
+var ListContainer = $('.tbody-domain-list1');
+var AddScreen = $("#domain-add");
+var ViewScreen = $("#domain-view");
+var AddButton = $(".btn-domain-add");
+var CancelButton = $(".btn-domain-cancel");
+var SubmitButton = $("#submit");
+
+var Country = $("#countryselected");
+var Select_Box_Country = $('#selectboxview-country');
+var Country_li_list = $('#ulist-country');
+var Country_li_active = "active_selectbox_country";
+
+var Domain_name = $("#domainname");
+var Domain_id = $("#domainid");
+var SearchDomain = $("#search-domain-name");
+
+var Country_name = $("#countryname");
+var SearchCountry = $("#search-country-name");
+
+var Msg_pan = $(".error-message");
+var msg = message;
+var d_page = null;
+var item_selected = ''
+
+function DomainPage() {
+    this._CountryList = [];
+    this._DomainList = [];
+    this._country_ids = [];
 }
-//display domains list in view page
-function loadDomainList(domainsList) {
-  var j = 1;
-  $('.tbody-domain-list1').find('tr').remove();
-  $.each(domainsList, function (key, value) {
-    var domainName = value.domain_name;
-    var domainId = value.domain_id;
-    var isActive = value.is_active;
-    var passStatus = null;
-    var classValue = null;
-    if (isActive == true) {
-      passStatus = false;
-      classValue = 'active-icon';
-    } else {
-      passStatus = true;
-      classValue = 'inactive-icon';
+
+DomainPage.prototype.displayMessage = function(message){
+    Msg_pan.text(message);
+    Msg_pan.show();
+};
+
+DomainPage.prototype.clearMessage = function(){
+    Msg_pan.text('');
+    Msg_pan.hide();
+};
+
+DomainPage.prototype.possibleFailures = function(error) {
+    if (error == 'DomainNameAlreadyExists') {
+        this.displayMessage(msg.domainname_exists);
     }
-    var tableRow = $('#templates .table-domain-master .table-row');
-    var clone = tableRow.clone();
-    $('.sno', clone).text(j);
-    $('.domain-name', clone).text(domainName);
-    $('.edit-icon').attr('title', 'Edit');
-    $('.edit-icon', clone).on('click', function () {
-      displayEdit(domainId, domainName);
+    else if (error == 'InvalidDomainId') {
+        this.displayMessage(msg.invalid_domainid);
+    }
+    else {
+        this.displayMessage(error);
+    }
+};
+
+DomainPage.prototype.popupWarning = function(message, callback) {
+    var Warning_popup = $('.warning-confirm');
+        Warning_popup.dialog({
+        title: msg.title_status_change,
+        buttons: {
+        Ok: function() {
+            $(this).dialog('close');
+            callback(true);
+        },
+        Cancel: function() {
+            $(this).dialog('close');
+            callback(false);
+        }
+        },
+        open: function() {
+        $('.warning-message').html(message);
+        }
     });
-    $('.status', clone).addClass(classValue);
-    $('.active-icon').attr('title', 'Deactivate');
-    $('.inactive-icon').attr('title', 'Activate');
-    $('.status', clone).on('click', function () {
-      changeStatus(domainId, passStatus);
-    });
-    $('.tbody-domain-list1').append(clone);
-    j = j + 1;
-  });
-}
-//validation
-function validate() {
-  var checkLength = domainValidate();
-  if (checkLength) {
-    if ($('#domainname').val().trim().length == 0) {
-      displayMessage(message.domainname_required);
-    } else {
-      displayMessage('');
-      return true;
-    }
-  }
-}
-//save or update domain master
-$('#submit').click(function () {
-  var countryIds = [1];
-  var domainId = $('#domainid').val();
-  var domainName = $('#domainname').val().trim();
-  if (validate()) {
-    if ($('#domainid').val() == '') {
-      function onSuccess(response) {
-        getDomains();
-        $('#domain-add').hide();
-        $('#domain-view').show();
-        $('#search-domain-name').val('');
-      }
-      function onFailure(error) {
-        if (error == 'DomainNameAlreadyExists') {
-          displayMessage(message.domainname_exists);
-        } else {
-          displayMessage(error);
+};
+
+DomainPage.prototype.showList = function() {
+    AddScreen.hide();
+    ViewScreen.show();
+    Domain_id.val('');
+    SearchDomain.val('');
+    SearchCountry.val('');
+    this.fetchDomain();
+};
+DomainPage.prototype.showAddScreen = function() {
+    ViewScreen.hide();
+    AddScreen.show();
+    Domain_id.val('');
+    Domain_name.val('');
+    this.displayMessage('');
+    this._country_ids = [];
+    Country.val("0 Selected");
+    Domain_name.focus();
+};
+DomainPage.prototype.renderList = function(d_data) {
+    t_this = this;
+    var j =1;
+    ListContainer.find('tr').remove();
+    $.each(d_data, function(k, v) {
+        var cloneRow = $('#templates .table-domain-master .table-row').clone();
+        $('.sno', cloneRow).text(j);
+
+        var c_n = v.c_names.join(', ');
+
+        $('.c_names', cloneRow).text(c_n);
+        $('.domain-name', cloneRow).text(v.domain_name);
+        $('.edit-icon').attr('title', 'Edit');
+        if (v.is_active == true){
+          $('.status', cloneRow).addClass("active-icon");
+          $('.status', cloneRow).attr('title', msg.active_tooltip);
         }
-      }
-      mirror.saveDomain(domainName, countryIds, function (error, response) {
-        if (error == null) {
-          onSuccess(response);
-        } else {
-          onFailure(error);
+        else{
+          $('.status', cloneRow).addClass("inactive-icon");
+          $('.status', cloneRow).attr('title', msg.deactive_tooltip);
         }
-      });
-    } else {
-      function onSuccess(response) {
-        getDomains();
-        $('#domain-add').hide();
-        $('#domain-view').show();
-        $('#search-domain-name').val('');
-      }
-      function onFailure(error) {
-        if (error == 'InvalidDomainId') {
-          displayMessage(message.invalid_domainid);
-        } else if (error == 'DomainNameAlreadyExists') {
-          displayMessage(message.domainname_exists);
-        } else {
-          displayMessage(error);
-        }
-      }
-      mirror.updateDomain(parseInt(domainId), domainName, countryIds, function (error, response) {
-        if (error == null) {
-          onSuccess(response);
-        } else {
-          onFailure(error);
-        }
-      });
-    }
-  }
-});
-//save or update domain master when press enter key
-$('#domainname').keypress(function (e) {
-  if (e.which == 13) {
-    if (validate()) {
-      jQuery('#submit').focus().click();
-    }
-  }
-});
-//edit domain master
-function displayEdit(domainId, domainName) {
-  $('.error-message').text('');
-  $('#domain-view').hide();
-  $('#domain-add').show();
-  $('#domainname').val(domainName.replace(/##/gi, '"'));
-  $('#domainid').val(domainId);
-}
-//activate/deactivate domain master
-function changeStatus(domainId, isActive) {
-  var msgstatus = message.deactive_message;
-  if (isActive) {
-    msgstatus = message.active_message;
-  }
-  $('.warning-confirm').dialog({
-    title: message.title_status_change,
-    buttons: {
-      Ok: function () {
-        $(this).dialog('close');
-        function onSuccess(response) {
-          getDomains();
-          $('#search-domain-name').val('');
-        }
-        function onFailure(error) {
-          if (error == 'TransactionExists') {
-            custom_alert(message.trasaction_exists);
-          } else {
-            custom_alert(error);
-          }
-        }
-        mirror.changeDomainStatus(domainId, isActive, function (error, response) {
-          if (error == null) {
-            onSuccess(response);
-          } else {
-            onFailure(error);
-          }
+
+        $('.edit-icon', cloneRow).on('click', function () {
+          t_this.showEdit(v.domain_id, v.domain_name, v.country_ids);
         });
-      },
-      Cancel: function () {
-        $(this).dialog('close');
-      }
-    },
-    open: function () {
-      $('.warning-message').html(msgstatus);
+
+        $('.status', cloneRow).on('click', function () {
+          if (v.is_active == true) {
+            passStatus = false;
+          }
+          else {
+            passStatus = true;
+          }
+          t_this.changeStatus(v.domain_id, passStatus);
+        });
+        ListContainer.append(cloneRow);
+        j = j + 1;
+
+    });
+};
+
+DomainPage.prototype.fetchDomain = function() {
+    t_this = this;
+    mirror.getDomainList(function (error, response) {
+        if (error == null) {
+            t_this._DomainList = response.domains;
+            t_this._CountryList = response.countries
+            t_this.renderList(t_this._DomainList);
+        }
+        else {
+            t_this.possibleFailures(error);
+        }
+    });
+};
+
+DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
+    this.showAddScreen();
+    Domain_name.val(d_name);
+    Domain_id.val(d_id);
+    this._country_ids = d_country;
+    Country.val(this._country_ids.length + " Selected");
+};
+
+DomainPage.prototype.changeStatus = function(d_id, status) {
+    var msgstatus = msg.deactive_message;
+    if (status) {
+        msgstatus = msg.active_message;
     }
-  });
+    t_this = this;
+    this.popupWarning(msgstatus , function(isConfirm) {
+        if (isConfirm) {
+            mirror.changeDomainStatus(d_id, status, function(error, response) {
+                if (error == null) {
+                    t_this.showList();
+                }
+                else {
+                    t_this.possibleFailures(error);
+                }
+            });
+        }
+    });
+};
+
+DomainPage.prototype.validate = function() {
+    var checkLength = domainValidate();
+    if (checkLength) {
+        if (Domain_name.val().trim().length ==0) {
+            this.displayMessage(msg.domainname_required);
+        }
+        else {
+            this.displayMessage('');
+            return true;
+        }
+    }
+};
+
+DomainPage.prototype.submitProcess = function() {
+    d_id = parseInt(Domain_id.val());
+    name = Domain_name.val().trim();
+    c_ids = this._country_ids;
+    t_this = this;
+    if (Domain_id.val() == '') {
+        mirror.saveDomain(name, c_ids, function(error, response) {
+            if (error == null)
+                t_this.showList();
+            else
+                t_this.displayMessage(error);
+        });
+    }
+    else {
+        mirror.updateDomain(d_id, name, c_ids, function(error, response) {
+            if (error == null)
+                t_this.showList();
+            else
+                t_this.displayMessage(error);
+        });
+    }
+};
+
+function chkbox_select(item, id, name, active) {
+    a_klass = Country_li_active;
+    eveClick = "";
+    li_string= ''
+    if (active == true) {
+        li_string  = '<li id="'+ id +'" class="'+ a_klass + '" onclick=list_click(this) >'+ name +'</li>';
+    }
+    else {
+    li_string  = '<li id="'+ id +'" onclick=list_click(this) >'+ name +'</li>';
+    }
+    return li_string;
 }
-//filter process
-$('#search-domain-name').keyup(function () {
-  var filterkey = this.value.toLowerCase();
-  var filteredList = [];
-  for (var entity in domainsList) {
-    domainName = domainsList[entity].domain_name;
-    if (~domainName.toLowerCase().indexOf(filterkey))
-      filteredList.push(domainsList[entity]);
-  }
-  loadDomainList(filteredList);
+
+function list_click(element) {
+    country_class = 'active_selectbox_country';
+
+    klass = $(element).attr('class');
+    if (klass == country_class) {
+        $(element).removeClass(country_class);
+        d_page._country_ids.splice(d_page._country_ids.indexOf(parseInt(element.id)));
+    }
+    else {
+        $(element).addClass(country_class);
+        d_page._country_ids.push(parseInt(element.id));
+    }
+    Country.val(d_page._country_ids.length + ' Selected');
+}
+
+function key_search(mainList) {
+    d_key = SearchDomain.val().toLowerCase();
+    c_key = SearchCountry.val().toLowerCase();
+    var fList = [];
+    for (var entity in mainList) {
+        dName = mainList[entity].domain_name;
+        cnames = mainList[entity].c_names;
+
+        var flg = false;
+
+        if (c_key.length == 0)  {
+            flg = true;
+        }
+        else {
+            for (var c in cnames) {
+                if (~cnames[c].toLowerCase().indexOf(c_key)){
+                    flg = true;
+                    continue;
+                }
+            }
+        }
+
+        if ((~dName.toLowerCase().indexOf(d_key)) && flg == true) {
+            fList.push(mainList[entity]);
+        }
+
+
+    }
+    return fList
+}
+
+function PageControls() {
+    function onKeyUpDownSelect(e, item) {
+        // Key code : 40- down arrow , 38- up arrow , 32- space , 13- enter key.
+        li_val = $('#' + item + ' li');
+        function highlight_row(n_item) {
+            li_val.removeClass('auto-selected');
+            $('#' + item + ' li:eq('+ n_item + ')').addClass('auto-selected');
+        }
+
+        function remove_select(n_item, rklass) {
+            $('#' + item + ' li:eq('+ n_item + ')').removeClass(rklass);
+        }
+
+        function add_select(n_item, aklass) {
+            $('#' + item + ' li:eq('+ n_item + ')').addClass(aklass);
+        }
+
+        function get_id(n_item) {
+            g_id = $('#' + item + ' li:eq('+ n_item + ')').attr('id');
+            return g_id;
+        }
+
+        function get_class(n_item) {
+            g_c = $('#' + item + ' li:eq('+ n_item + ')').attr('class');
+            return g_c;
+        }
+
+        if(e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
+            item_selected = '';
+        }
+        if (e.keyCode == 13) {
+            Select_Box_Country.hide()
+        }
+
+        if (e.keyCode == 40) {
+            if(item_selected == '') {
+                item_selected = 0;
+            }
+            else if (parseInt(item_selected) + 1 < li_val.length) {
+                item_selected++;
+            }
+            highlight_row(item_selected);
+            return false;
+        }
+
+        if (e.keyCode == 38) {
+            if(item_selected == '') {
+                item_selected = 0;
+            }
+            else if (item_selected > 0) {
+                item_selected--;
+            }
+            highlight_row(item_selected);
+            return false;
+        }
+
+        if (e.keyCode == 32) {
+            remove_select(item_selected, 'auto-selected');
+            var multi_select_id = parseInt(get_id(item_selected));
+            var item_class = get_class(item_selected);
+
+                // country select box
+            if (item_class == Country_li_active) {
+                remove_select(item_selected, Country_li_active);
+                d_page._country_ids.splice(d_page._country_ids.indexOf(multi_select_id));
+            }
+            else {
+                add_select(item_selected, Country_li_active);
+                d_page._country_ids.push(multi_select_id);
+            }
+            Country.val(d_page._country_ids.length + ' Selected');
+            return false;
+        }
+    }
+
+    Domain_name.keypress(function(e) {
+        if (e.which == 13) {
+            if (d_page.validate()) {
+                d_page.submitProcess();
+            }
+        }
+    });
+
+    Country.focus(function() {
+        Select_Box_Country.show();
+        Country_li_list.empty();
+        var str = '';
+        for (var i in d_page._CountryList) {
+            d = d_page._CountryList[i];
+            if (d.is_active == true) {
+                active = false;
+                if ($.inArray(d.country_id, d_page._country_ids) >= 0) {
+                    active = true;
+                }
+                else {
+                    active = false;
+                }
+                str += chkbox_select('ulist-country', d.country_id, d.country_name, active);
+            }
+        }
+        Country_li_list.append(str);
+    });
+
+    Country.keyup(function(e) {
+        onKeyUpDownSelect(e, 'ulist-country');
+    });
+
+    $('.hideselect').mouseleave(function() {
+        item_selected = '';
+        Select_Box_Country.hide();
+    });
+
+    Domain_name.on('input', function(e) {
+        this.value = isAlphabetic($(this));
+    });
+
+    SubmitButton.click(function() {
+        d_page.submitProcess();
+    });
+
+    AddButton.click(function() {
+        d_page.showAddScreen();
+    });
+
+    CancelButton.click(function() {
+        d_page.showList();
+    })
+
+    SearchDomain.keyup(function() {
+        fList = key_search(d_page._DomainList);
+        d_page.renderList(fList);
+    });
+
+    SearchCountry.keyup(function() {
+        fList = key_search(d_page._DomainList);
+        d_page.renderList(fList);
+    });
+}
+
+d_page = new DomainPage();
+
+$(document).ready(function() {
+    PageControls();
+    d_page.showList();
 });
-//initialization
-$(document).ready(function () {
-  getDomains();
-  $('#domainname').focus();
-});
-$('#domainname').on('input', function (e) {
-  this.value = isAlphabetic($(this));
-});
+

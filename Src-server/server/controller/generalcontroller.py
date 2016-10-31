@@ -198,8 +198,9 @@ def process_change_domain_status(db, request, user_id):
 # To get list of all domains
 ########################################################
 def process_get_domains(db, user_id):
-    results = get_domains_for_user(db, 0)
-    success = general.GetDomainsSuccess(domains=results)
+    domains = get_domains_for_user(db, 0)
+    countries = get_countries_for_user(db, user_id)
+    success = general.GetDomainsSuccess(domains, countries)
     return success
 
 

@@ -49,7 +49,6 @@ __all__ = [
 def get_domains_for_user(db, user_id):
     procedure = 'sp_tbl_domains_for_user'
     result = db.call_proc_with_multiresult_set(procedure, (user_id,), 3)
-    print result
     return return_domains(result)
 
 
@@ -59,19 +58,22 @@ def get_domains_for_user(db, user_id):
 # Return Type : List of Object of Domain
 ###############################################################################
 def return_country_list_of_domain(domain_id, countries):
-    c_list = []
+    c_ids = []
+    c_names = []
     for c in countries :
         if int(c["domain_id"]) == domain_id:
-            c_list.append(int(c["country_id"]))
-    return c_list
+            c_ids.append(int(c["country_id"]))
+            c_names.append(c["country_name"])
+
+    return c_ids, c_names
 
 def return_domains(data):
     results = []
     for d in data[1]:
         d_id = d["domain_id"]
-        c_ids = return_country_list_of_domain(d_id, data[2])
+        c_ids, c_names = return_country_list_of_domain(d_id, data[2])
         results.append(core.Domain(
-            c_ids, d_id, d["domain_name"], bool(d["is_active"])
+            c_ids, c_names, d_id, d["domain_name"], bool(d["is_active"])
         ))
     return results
 
@@ -144,10 +146,10 @@ def update_domain(db, c_ids, domain_id, domain_name, updated_by):
     if oldData is None:
         return False
     else:
-        domain_id = db.call_update_proc(
+        sdomain_id = db.call_update_proc(
             "sp_domains_save", (domain_id, domain_name, updated_by)
         )
-        if domain_id:
+        if sdomain_id:
             db.call_update_proc("domaincountries_delete", (domain_id,))
             save_domain_country(db, c_ids, domain_id)
             action = "Edit Domain - \"%s\"" % domain_name

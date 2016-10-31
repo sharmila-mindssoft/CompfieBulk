@@ -63,8 +63,6 @@ def process_login_request(request, db, session_user_ip):
         result = process_save_logindetails(db, request)
         logger.logKnowledgeApi("SaveRegistraion", "process end")
 
-    print result
-
     return result
 
 

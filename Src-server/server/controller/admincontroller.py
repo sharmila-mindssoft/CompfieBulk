@@ -285,7 +285,6 @@ def change_user_group_status(db, request, session_user):
 ########################################################
 def get_users(db, request_frame, session_user):
     domain_list = get_domains_for_user(db, session_user)
-    print domain_list
     country_list = get_countries_for_user(db, session_user)
     user_group_list = []
     user_list = []

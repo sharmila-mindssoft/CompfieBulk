@@ -665,24 +665,27 @@ class Country(object):
 #
 
 class Domain(object):
-    def __init__(self, country_ids, domain_id, domain_name, is_active):
+    def __init__(self, country_ids, country_names, domain_id, domain_name, is_active):
         self.country_ids = country_ids
+        self.country_names = country_names
         self.domain_id = domain_id
         self.domain_name = domain_name
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_ids", "domain_id", "domain_name", "is_active"])
+        data = parse_dictionary(data, ["country_ids", "c_names", "domain_id", "domain_name", "is_active"])
         country_ids = data.get("country_ids")
+        country_names = data.get("c_names")
         domain_id = data.get("domain_id")
         domain_name = data.get("domain_name")
         is_active = data.get("is_active")
-        return Domain(country_ids, domain_id, domain_name, is_active)
+        return Domain(country_ids, country_names, domain_id, domain_name, is_active)
 
     def to_structure(self):
         data = {
             "country_ids": self.country_ids,
+            "c_names": self.country_names,
             "domain_id": self.domain_id,
             "domain_name": self.domain_name,
             "is_active": self.is_active,
@@ -3183,11 +3186,6 @@ class LegalEntity(object):
 
     @staticmethod
     def parse_structure(data):
-        print
-        print
-        print "inside legal entity parse structure:  =======================>"
-        print
-        print
         data = parse_dictionary(
             data, [
                 "country_id", "business_group", "legal_entity_id",
@@ -3309,11 +3307,6 @@ class UnAssignLegalEntity(object):
 
     @staticmethod
     def parse_structure(data):
-        print
-        print
-        print "inside unassign legal entity parse structure:"
-        print
-        print
         data = parse_dictionary(
             data, [
                 "legal_entity_id",

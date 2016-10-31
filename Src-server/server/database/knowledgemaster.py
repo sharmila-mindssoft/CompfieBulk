@@ -164,7 +164,6 @@ def get_nature_by_id(db, nature_id):
     nature_name = None
     for r in row:
         nature_name = r["statutory_nature_name"]
-        print nature_name
     return nature_name
 
 

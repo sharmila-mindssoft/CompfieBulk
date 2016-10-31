@@ -385,10 +385,12 @@ BEGIN
 		SELECT domain_id, domain_name, is_active FROM tbl_domains
 		ORDER BY domain_name;
 	END IF;
-	SELECT country_id, domain_id from tbl_domain_countries;
+
+	select c.country_id, c.country_name, d.domain_id from tbl_countries c inner join
+		tbl_domain_countries d on c.country_id = d.country_id;
+
 END //
 DELIMITER ;
-
 -- --------------------------------------------------------------------------------
 -- To Get admin forms
 -- --------------------------------------------------------------------------------
@@ -1538,7 +1540,7 @@ BEGIN
 	WHERE domain_id = domainid;
 
 	SELECT count(*) AS count
-	FROM tbl_client_domains
+	FROM tbl_legal_entity_domains
 	WHERE domain_id = domainid;
 END //
 DELIMITER ;

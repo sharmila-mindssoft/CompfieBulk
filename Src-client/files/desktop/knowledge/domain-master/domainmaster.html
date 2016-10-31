@@ -11,12 +11,18 @@
           <tr align="left">
             <th align="center">#</th>
             <th>Domain Name</th>
+            <th>Country</th>
             <th align="center">Edit</th>
             <th align="center">Status</th>
           </tr>
           <tr>
             <td>&nbsp;</td>
-            <td><input type="text" class="filter-text-box" id="search-domain-name"></td>
+            <td>
+              <input type="text" class="filter-text-box" id="search-domain-name">
+            </td>
+            <td>
+              <input type="text" class="filter-text-box" id="search-country-name">
+            </td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
           </tr>
@@ -31,8 +37,9 @@
       <tr class="table-row">
         <td class="sno" align="center"></td>
         <td class="domain-name"></td>
+        <td class="c_names"></td>
         <td align="center">
-        	<span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span> 
+        	<span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
         </td>
         <td align="center">
         	<span class="status" style="width: 16px; height: 16px; display:block"> </span>
@@ -46,12 +53,27 @@
         <div class="single-column-header">Domain Master<span class="error-message"></div>
         <div class="single-column-input-row">
           <div class="input-row">
-            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
+            <div class="single-column-field-label">Country:
+              <span class="mandatory">*</span>
+            </div>
             <div class="single-column-field-input">
-              <input type="text" id="domainname" autofocus="autofocus" class="input-box" value="" maxlength="50" tabindex="1">
-              <input type="hidden" id="domainid" value="">
+              <input type="text" class="input-box icon-autocomplete fieldvalue" id="countryselected" readonly="readonly" tabindex="13">
+              <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
+              <ul id="ulist-country" class="hideselect" style="width:85%;"></ul>
+              </div>
             </div>
           </div>
+
+          <div class="input-row">
+            <div class="single-column-field-label">Domain:
+              <span class="mandatory">*</span>
+            </div>
+            <div class="single-column-field-input">
+                <input type="text" id="domainname" autofocus="autofocus" class="input-box" value="" maxlength="50" tabindex="1">
+                <input type="hidden" id="domainid" value="">
+            </div>
+          </div>
+
           <div class="submit-button-container">
             <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-domain-cancel">&nbsp;&nbsp;
             <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="2">
