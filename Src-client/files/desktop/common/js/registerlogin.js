@@ -1,5 +1,5 @@
 Spin_icon = $('.loading-indicator-spin');
-
+Msg_pan = $('.err-msg');
 Uname = $("#uname");
 Pword = $("#pword");
 CPword = $("#cpword");
@@ -8,10 +8,12 @@ Show_Captcha = $("#captchaCanvas");
 Submit_btn = $(".btn-submit");
 Pword_hint = $("#password-hint");
 passwordStrength = 'Weak';
-
+Status_check = $('#status-check');
+Status_msg = $('.status-msg');
 register_page = null;
 _rtoken = null;
 _captcha = null;
+IS_VALID = false;
 
 function call_api(request, callback) {
     console.log(JSON.stringify(request, null, ''));
@@ -21,7 +23,6 @@ function call_api(request, callback) {
         contentType: 'application/json',
         data: JSON.stringify(request, null, ''),
         success: function(data, textStatus, jqXHR) {
-            console.log(data);
             var data = JSON.parse(data);
 
             var status = data[0];
@@ -38,12 +39,13 @@ function call_api(request, callback) {
             console.log(jqXHR.responseText)
             console.log(errorThrown);
             console.log(textStatus);
-            callback(jqXHR.responseText, errorThrown);
+            callback(jqXHR.responseText, null);
         }
     });
 }
 
 function setCaptcha(val) {
+    Captcha.show();
     var myCanvas = document.getElementById('captchaCanvas');
     var myCanvasContext = myCanvas.getContext('2d');
     myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
@@ -53,7 +55,7 @@ function setCaptcha(val) {
 }
 
 displayMessage = function(message){
-    alert(message);
+    Msg_pan.text(message);
 };
 
 displayLoader = function(){
@@ -68,7 +70,11 @@ resetField = function() {
     Uname.val('');
     Pword.val('');
     CPword.val('');
-    Captcha.val('');
+    Captcha.hide();
+    Status_msg.text('');
+    setCaptcha('');
+    Status_check.removeClass()
+
 };
 
 validateToken = function() {
@@ -88,10 +94,12 @@ validateToken = function() {
                 _rtoken = reset_token;
                 _captcha = data.captcha;
                 setCaptcha(data.captcha);
+                IS_VALID = true;
             }
             else {
-                displayMessage(status);
+                displayMessage("Session expired");
                 Captcha.hide();
+                IS_VALID = false;
             }
         });
     }
@@ -121,6 +129,10 @@ saveData = function() {
 };
 
 validateMandatory = function() {
+    if (IS_VALID == false) {
+        displayMessage("Session expired");
+        return false
+    }
     if (Uname.val().trim().length == 0){
         displayMessage("Username required");
         return false;
@@ -158,6 +170,35 @@ validateMandatory = function() {
     return true;
 };
 
+checkAvailability = function() {
+    if (Uname.val().length == 0){
+        displayMessage("Username required");
+        return;
+    }
+    else if (IS_VALID == false) {
+        displayMessage("Session expired");
+        return;
+    }
+    request = [
+        "CheckUsername", {
+            'uname': Uname.val()
+        }
+    ];
+    // Status_check.show();
+    Status_check.addClass("load-icon");
+    call_api(request, function(status, data) {
+        Status_check.removeClass();
+        Status_msg.text('User name already exists');
+        if (status == null) {
+            Status_msg.text('')
+            Status_check.addClass("tick-icon");
+        }
+        else {
+            Status_msg.text('User name already exists');
+        }
+    });
+};
+
 $(function () {
     Pword_hint.css('display', 'none');
     hideLoader();
@@ -166,12 +207,8 @@ $(function () {
 
     Submit_btn.click(function() {
         is_valid = validateMandatory();
-        alert(is_valid);
         if (is_valid == true) {
             saveData();
-        }
-        else {
-            return;
         }
     });
 
@@ -191,9 +228,17 @@ $(function () {
     Pword.focusout(function() {
         Pword_hint.css('display', 'none');
     });
+    Uname.focusout(function() {
+        checkAvailability();
+    });
+    Uname.focus(function() {
+        Status_msg.text('');
+        Status_check.removeClass();
+    });
 
     CPword.keyup('input', function(e) {
         this.value = this.value.replace(/\s/g, '');
     });
+
 
 });

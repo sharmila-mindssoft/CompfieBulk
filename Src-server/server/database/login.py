@@ -14,7 +14,7 @@ __all__ = [
     "delete_used_token", "remove_session",
     "save_login_failure", "delete_login_failure_history",
     "get_login_attempt_and_time", "save_login_details",
-    "validate_email_token"
+    "validate_email_token", "check_username_duplicate"
 ]
 
 
@@ -300,4 +300,13 @@ def save_login_details(db, token, username, password):
         "sp_tbl_user_login_details_save",
         (token, username, password)
     )
+    return True
+
+def check_username_duplicate(db, uname):
+    print uname
+    res = db.call_proc("sp_tbl_user_login_checkusername", (uname, ))
+    count = res[0]['uname']
+    if count > 0 :
+        return False
+
     return True

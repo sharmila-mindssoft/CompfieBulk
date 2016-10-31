@@ -2914,3 +2914,16 @@ BEGIN
 	SELECT username FROM tbl_user_login_details WHERE user_id = uid;
 END //
 DELIMITER ;
+
+--
+-- Check username availability
+--
+DROP PROCEDURE IF EXISTS `sp_tbl_user_login_checkusername`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_user_login_checkusername`(
+	IN uname varchar(50)
+)
+BEGIN
+	SELECT count(0) as uname from tbl_user_login_details where username = uname;
+END //
+DELIMITER ;

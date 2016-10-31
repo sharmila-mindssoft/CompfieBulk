@@ -215,12 +215,26 @@ class SaveRegistraion(Request):
             "captcha": self.captcha
         }
 
+class CheckUsername(Request):
+    def __init__(self, username):
+        self.username = username
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["uname"])
+        username = data.get("uname")
+        return CheckUsername(username)
+
+    def to_inner_structure(self):
+        return {
+            "uname": self.username,
+        }
 
 def _init_Request_class_map():
     classes = [
         Login, ForgotPassword, ResetTokenValidation, ResetPassword,
         ChangePassword, Logout, UpdateUserProfile, CheckRegistrationToken,
-        SaveRegistraion
+        SaveRegistraion, CheckUsername
     ]
     class_map = {}
     for c in classes:
@@ -631,6 +645,33 @@ class InvalidCaptcha(Response):
         return {
         }
 
+class CheckUsernameSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CheckUsernameSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class UsernameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UsernameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UserLoginSuccess, AdminLoginSuccess, InvalidCredentials,
@@ -640,7 +681,7 @@ def _init_Response_class_map():
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
         NotConfigured, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
-        SaveRegistraionSuccess
+        SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists
     ]
     class_map = {}
     for c in classes:

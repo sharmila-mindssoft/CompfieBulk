@@ -63,6 +63,9 @@ def process_login_request(request, db, session_user_ip):
         result = process_save_logindetails(db, request)
         logger.logKnowledgeApi("SaveRegistraion", "process end")
 
+    elif type(request) is login.CheckUsername:
+        result = process_check_username(db, request)
+
     return result
 
 
@@ -253,3 +256,11 @@ def process_save_logindetails(db, request):
         return login.SaveRegistraionSuccess()
     else :
         return login.InvalidSessionToken()
+
+def process_check_username(db, request):
+    uname = request.username
+    print uname
+    if check_username_duplicate(db, uname):
+        return login.CheckUsernameSuccess()
+    else :
+        return login.UsernameAlreadyExists()

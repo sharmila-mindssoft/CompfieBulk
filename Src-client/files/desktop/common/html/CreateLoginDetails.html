@@ -21,14 +21,16 @@
       </div>
       <div style="clear:both;"></div>
       <div class='panel-body'>
-        <form class='form-horizontal' role='form'>
+        <div class='form-horizontal'>
           <div class="form-group">
             <label for="id_email" class="control-label col-md-3 col-md-offset-2">User ID</label>
             <div class="col-md-4">
               <div class="form-group">
                 <div class="col-md-10">
                   <input type="text" id="uname" placeholder="Enter User ID" class="form-control">
+                  <span class="status-msg"></span>
                 </div>
+                <span id="status-check" ></span>
               </div>
             </div>
           </div>
@@ -88,10 +90,11 @@
 
           <div class='form-group'>
             <div class='col-md-offset-5 col-md-3'>
+              <span class="err-msg"></span>
               <button class='btn-submit'>Register</button>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
 
@@ -117,6 +120,29 @@
     .btn-submit:hover {
       background: #999 none repeat scroll 0 0;
       color: #000;
+    }
+    .load-icon {
+      background:  url(../images/loading.gif) no-repeat center;
+      display:block;
+      border: none;
+      outline: none;
+      cursor: none;
+      width: 32px;
+      height: 32px;
+      margin-left: 80%;
+    }
+    .tick-icon {
+      background:  url(../images/tick_icon.gif) no-repeat center;
+      display:block;
+      border: none;
+      outline: none;
+      cursor: none;
+      width: 24px;
+      height: 24px;
+      margin-left: 80%;
+    }
+    .status-msg, .err-msg{
+      color: #ff0000;
     }
 
 

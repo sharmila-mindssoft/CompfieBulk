@@ -63,9 +63,9 @@ def process_login_request(
         logger.logClientApi("Logout", "end")
 
     elif type(request) is login.UpdateUserProfile:
-        logger.logClientApi("Logout", "begin")
+        logger.logClientApi("UpdateUserProfile", "begin")
         result = process_update_profile(db, request)
-        logger.logClientApi("Logout", "end")
+        logger.logClientApi("UpdateUserProfile", "end")
 
     return result
 
