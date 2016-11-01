@@ -45,9 +45,12 @@ def return_database_servers(data):
     fn = consoleadmin.DBServer
     result = [
         fn(
-            db_server_name=datum["db_server_name"], ip=datum["ip"],
-            port=datum["port"], username=datum["server_username"],
-            password=datum["server_password"], no_of_clients=datum["length"]
+            db_server_name=datum["database_server_name"], ip=datum["database_ip"],
+            port=datum["database_port"], username=datum["database_username"],
+            password=datum["database_password"],
+            no_of_clients=0 if(
+                datum["legal_entity_ids"] is None
+            ) else len(datum["legal_entity_ids"].split(","))
         ) for datum in data
     ]
     return result
@@ -125,8 +128,8 @@ def return_client_servers(data):
     result = []
     for datum in data:
         no_of_clients = []
-        if datum["client_ids"] is not None:
-            no_of_clients = datum["client_ids"].split(",")
+        if datum["legal_entity_ids"] is not None:
+            no_of_clients = datum["legal_entity_ids"].split(",")
         result.append(
             fn(
                 client_server_id=datum["machine_id"],

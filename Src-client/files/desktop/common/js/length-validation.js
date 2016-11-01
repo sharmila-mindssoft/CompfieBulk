@@ -361,7 +361,10 @@ var max_length = {
   'mcountrycode': 5,
   'mobileno': 10,
   'address': 250,
-  'designation': 50
+  'designation': 50,
+  'db_server_name': 50,
+  'username': 50,
+  'password': 50
 }
 
 function expectationError(expected, received){
@@ -370,8 +373,9 @@ function expectationError(expected, received){
 }
 
 function validateLength(key_name, value) {
-  v = max_length(key_name);
-  if (!length(value) <= v) {
+  v = max_length[key_name];
+  console.log(value);
+  if (!value.length <= v) {
     msg = "a " + key_name + " with max length " + v
     return expectationError(msg, value)
   }

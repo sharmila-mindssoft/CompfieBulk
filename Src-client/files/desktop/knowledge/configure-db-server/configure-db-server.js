@@ -102,7 +102,7 @@ function validateDBServer(){
     if(db_server_name == ''){
         displayMessage(message.db_server_name_required);
         result = false;
-    }else if(validateLength(db_server_name, 50) == false){
+    }else if(validateLength("db_server_name", db_server_name) == false){
         displayMessage(message.db_server_name_length_error);
         result = false;
     }else if(ip == ''){
@@ -120,13 +120,13 @@ function validateDBServer(){
     }else if(username == ''){
         displayMessage(message.username_required)
         result = false;
-    }else if(validateLength(username, 50) == false){
+    }else if(validateLength("username", username) == false){
         displayMessage(message.username_length_error);
         result = false;
     }else if(password == ''){
         displayMessage(message.password_required)
         result = false;
-    }else if(validateLength(password, 50) == false){
+    }else if(validateLength("password", password) == false){
         displayMessage(message.password_length_error);
         result = false;
     }else{
