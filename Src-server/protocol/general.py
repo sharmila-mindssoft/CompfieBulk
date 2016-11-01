@@ -2,31 +2,10 @@ from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
-    parse_structure_CustomTextType_250,
-    parse_structure_UnsignedIntegerType_32,
-    parse_structure_VariantType_general_Request, parse_structure_Bool,
-    parse_structure_CustomTextType_20, parse_structure_CustomTextType_500,
-    parse_structure_CustomTextType_50,
-    parse_structure_VectorType_RecordType_general_AuditTrail,
-    parse_structure_VectorType_RecordType_general_User,
-    parse_structure_VectorType_RecordType_general_AuditTrailForm,
-    parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_Text,
-    parse_structure_VectorType_RecordType_core_FileLst
+    parse_structure_VariantType_general_Request,
 )
 from protocol.to_structure import (
-    to_structure_CustomTextType_250,
-    to_structure_SignedIntegerType_8,
-    to_structure_VariantType_general_Request, to_structure_Bool,
-    to_structure_CustomTextType_20, to_structure_CustomTextType_500,
-    to_structure_CustomTextType_50,
-    to_structure_VectorType_RecordType_general_AuditTrail,
-    to_structure_UnsignedIntegerType_32,
-    to_structure_VectorType_RecordType_general_User,
-    to_structure_VectorType_RecordType_general_AuditTrailForm,
-    to_structure_OptionalType_UnsignedIntegerType_32,
-    to_structure_Text,
-    to_structure_VectorType_RecordType_core_FileLst
+    to_structure_VariantType_general_Request,
 )
 
 #
@@ -68,15 +47,13 @@ class UpdateUserProfile(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["contact_no", "address"])
         contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
         return UpdateUserProfile(contact_no, address)
 
     def to_inner_structure(self):
         return {
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_CustomTextType_250(self.address),
+            "contact_no": self.contact_no,
+            "address": self.address,
         }
 
 
@@ -244,12 +221,11 @@ class GetNotifications(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["notification_type"])
         notification_type = data.get("notification_type")
-        notification_type = parse_structure_CustomTextType_20(notification_type)
         return GetNotifications(notification_type)
 
     def to_inner_structure(self):
         return {
-            "notification_type": to_structure_CustomTextType_20(self.notification_type),
+            "notification_type": self.notification_type,
         }
 
 class UpdateNotificationStatus(Request):
@@ -261,15 +237,13 @@ class UpdateNotificationStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["notification_id", "has_read"])
         notification_id = data.get("notification_id")
-        notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         has_read = data.get("has_read")
-        has_read = parse_structure_Bool(has_read)
         return UpdateNotificationStatus(notification_id, has_read)
 
     def to_inner_structure(self):
         return {
-            "notification_id": to_structure_UnsignedIntegerType_32(self.notification_id),
-            "has_read": to_structure_Bool(self.has_read),
+            "notification_id": self.notification_id,
+            "has_read": self.has_read,
         }
 
 class GetAuditTrails(Request):
@@ -285,17 +259,11 @@ class GetAuditTrails(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id", "record_count", "page_count"])
         from_date = data.get("from_date")
-        from_date = parse_structure_CustomTextType_20(from_date)
         to_date = data.get("to_date")
-        to_date = parse_structure_CustomTextType_20(to_date)
-        user_id = data.get("user_id")
-        user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
-        form_id = data.get("form_id")
-        form_id = parse_structure_OptionalType_UnsignedIntegerType_32(form_id)
+        user_id = data.get("user_id_search")
+        form_id = data.get("form_id_search")
         record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         page_count = data.get("page_count")
-        page_count = parse_structure_UnsignedIntegerType_32(page_count)
         return GetAuditTrails(
             from_date, to_date,
             user_id, form_id,
@@ -304,12 +272,12 @@ class GetAuditTrails(Request):
 
     def to_inner_structure(self):
         return {
-            "from_date": to_structure_CustomTextType_20(self.from_date),
-            "to_date": to_structure_CustomTextType_20(self.to_date),
-            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id),
-            "form_id": to_structure_OptionalType_UnsignedIntegerType_32(self.form_id),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count),
-            "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "user_id_search": self.user_id,
+            "form_id_search": self.form_id,
+            "record_count": self.record_count,
+            "page_count": self.page_count
         }
 
 def _init_Request_class_map():
@@ -364,15 +332,13 @@ class UpdateUserProfileSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["contact_no", "address"])
         contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
         return UpdateUserProfile(contact_no, address)
 
     def to_inner_structure(self):
         return {
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_CustomTextType_250(self.address),
+            "contact_no": self.contact_no,
+            "address": self.address,
         }
 
 
@@ -604,23 +570,19 @@ class GetAuditTrailSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["audit_trails", "users", "forms", "total_records"])
+        data = parse_dictionary(data, ["audit_trails", "users", "forms_list", "total_records"])
         audit_trails = data.get("audit_trails")
-        audit_trails = parse_structure_VectorType_RecordType_general_AuditTrail(audit_trails)
         users = data.get("users")
-        users = parse_structure_VectorType_RecordType_general_User(users)
-        forms = data.get("forms")
-        forms = parse_structure_VectorType_RecordType_general_AuditTrailForm(forms)
+        forms = data.get("forms_list")
         total_records = data.get("total_records")
-        total_records = parse_structure_UnsignedIntegerType_32(total_records)
         return GetAuditTrailSuccess(audit_trails, users, forms, total_records)
 
     def to_inner_structure(self):
         return {
-            "audit_trail_details": to_structure_VectorType_RecordType_general_AuditTrail(self.audit_trails),
-            "users": to_structure_VectorType_RecordType_general_User(self.users),
-            "forms": to_structure_VectorType_RecordType_general_AuditTrailForm(self.forms),
-            "total_records": to_structure_UnsignedIntegerType_32(self.total_records)
+            "audit_trail_details": self.audit_trails,
+            "users": self.users,
+            "forms_list": self.forms,
+            "total_records": self.total_records
         }
 
 
@@ -658,12 +620,11 @@ class TransactionJobId(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["job_id"])
         job_id = data.get("job_id")
-        job_id = parse_structure_UnsignedIntegerType_32(job_id)
         return TransactionJobId(job_id)
 
     def to_inner_structure(self):
         return {
-            "job_id": to_structure_UnsignedIntegerType_32(self.job_id)
+            "job_id": self.job_id
         }
 
 class FileUploadSuccess(Response):
@@ -674,12 +635,11 @@ class FileUploadSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["file_list"])
         file_list = data.get("file_list")
-        file_list = parse_structure_VectorType_RecordType_core_FileLst(file_list)
         return FileUploadSuccess(file_list)
 
     def to_inner_structure(self):
         return {
-            "file_list": to_structure_VectorType_RecordType_core_FileLst(self.file_list)
+            "file_list": self.file_list
         }
 
 def _init_Response_class_map():
@@ -714,24 +674,19 @@ class Notification(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["notification_id", "notification_text", "link", "has_read", "date_and_time"])
         notification_id = data.get("notification_id")
-        notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         notification_text = data.get("notification_text")
-        notification_text = parse_structure_Text(notification_text)
         link = data.get("link")
-        link = parse_structure_CustomTextType_500(link)
         has_read = data.get("has_read")
-        has_read = parse_structure_Bool(has_read)
         date_and_time = data.get("date_and_time")
-        date_and_time = parse_structure_CustomTextType_20(date_and_time)
         return Notification(notification_id, notification_text, link, has_read, date_and_time)
 
     def to_structure(self):
         return {
-            "notification_id": to_structure_UnsignedIntegerType_32(self.notification_id),
-            "notification_text": to_structure_Text(self.notification_text),
-            "link": to_structure_CustomTextType_500(self.link),
-            "has_read": to_structure_Bool(self.has_read),
-            "date_and_time": to_structure_CustomTextType_20(self.date_and_time),
+            "notification_id": self.notification_id,
+            "notification_text": self.notification_text,
+            "link": self.link,
+            "has_read": self.has_read,
+            "date_and_time": self.date_and_time,
         }
 
 #
@@ -748,21 +703,17 @@ class AuditTrail(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "form_id", "action", "date"])
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         form_id = data.get("form_id")
-        form_id = parse_structure_UnsignedIntegerType_32(form_id)
         action = data.get("action")
-        action = parse_structure_CustomTextType_500(action)
         date = data.get("date")
-        date = parse_structure_CustomTextType_20(date)
         return AuditTrail(user_id, form_id, action, date)
 
     def to_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "form_id": to_structure_UnsignedIntegerType_32(self.form_id),
-            "action": to_structure_CustomTextType_500(self.action),
-            "date": to_structure_CustomTextType_20(self.date)
+            "user_id": self.user_id,
+            "form_id": self.form_id,
+            "action": self.action,
+            "date": self.date
         }
 
 class AuditTrailForm(object):
@@ -775,15 +726,13 @@ class AuditTrailForm(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["form_id", "form_name"])
         form_id = data.get("form_id")
-        form_id = parse_structure_UnsignedIntegerType_32(form_id)
         form_name = data.get("form_name")
-        form_name = parse_structure_CustomTextType_50(form_name)
         return AuditTrailForm(form_id, form_name)
 
     def to_structure(self):
         return {
-            "form_id": to_structure_SignedIntegerType_8(self.form_id),
-            "form_name": to_structure_CustomTextType_50(self.form_name)
+            "form_id": self.form_id,
+            "form_name": self.form_name
         }
 
 #
@@ -799,13 +748,12 @@ class RequestFormat(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
-        session_token = parse_structure_CustomTextType_50(session_token)
         request = data.get("request")
         request = parse_structure_VariantType_general_Request(request)
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
-            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "session_token": self.session_token,
             "request": to_structure_VariantType_general_Request(self.request),
         }

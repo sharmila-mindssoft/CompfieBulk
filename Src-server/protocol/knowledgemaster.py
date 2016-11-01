@@ -218,8 +218,6 @@ class SaveIndustry(Request):
         }
         return data
 
-
-
 class UpdateIndustry(Request):
     def __init__(self, country_id, domain_id, industry_id, industry_name):
         self.country_id = country_id
