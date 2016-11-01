@@ -1415,7 +1415,7 @@ BEGIN
 		(
 			select group_concat(country_id) from tbl_countries
 			where country_id in (
-				select country_id from tbl_client_countries
+				select country_id from tbl_legal_entities
 				where client_id=client_id
 			)
 		) as client_countries
