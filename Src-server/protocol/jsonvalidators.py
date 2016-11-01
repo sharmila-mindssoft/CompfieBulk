@@ -315,8 +315,6 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
-        print "field name: %s, val: %s, type: %s" % (
-            field_name, val, type(val))
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
@@ -398,7 +396,6 @@ def to_structure_dictionary_values(x):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
-        print "field_name: %s, val: %s" % (field_name, val)
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')

@@ -22,14 +22,6 @@ function ValidateIPaddress(ipaddress)
     return false;
 }
 
-function validateLength(value, len){
-    if(value.length > len){
-        return false
-    }else{
-        return true
-    }
-}
-
 function clearMessage() {
   $('.error-message').hide();
   $('.error-message').text('');

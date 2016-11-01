@@ -2112,7 +2112,8 @@ DROP PROCEDURE IF EXISTS `sp_databaseserver_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_databaseserver_list`()
 BEGIN
-	SELECT db_server_name, ip, port, server_username, server_password, length
+	SELECT database_server_name, database_ip, database_port, 
+	database_username, database_password, legal_entity_ids
 	FROM tbl_database_server;
 END //
 DELIMITER ;
@@ -2126,8 +2127,8 @@ CREATE PROCEDURE `sp_databaseserver_is_duplicate`(
 	IN dbservername VARCHAR(50), ip_addr TEXT
 )
 BEGIN
-	SELECT count(ip) as count FROM tbl_database_server
-	WHERE db_server_name = dbservername and ip != ip_addr;
+	SELECT count(database_ip) as count FROM tbl_database_server
+	WHERE database_server_name = dbservername and database_ip != ip_addr;
 END //
 DELIMITER ;
 
@@ -2142,10 +2143,10 @@ CREATE PROCEDURE `sp_databaseserver_save`(
 )
 BEGIN
 	INSERT INTO tbl_database_server (
-		db_server_name, ip, port, server_username, server_password
+		database_server_name, database_ip, database_port, database_username, database_password
 	) VALUES (dbservername, ipaddr, port_no, username, pwd)
-	ON DUPLICATE KEY UPDATE db_server_name = dbservername,
-	server_username = username, server_password= pwd, port = port_no;
+	ON DUPLICATE KEY UPDATE database_server_name = dbservername,
+	database_username = username, database_password=pwd, database_port = port_no;
 END //
 DELIMITER ;
 
@@ -2156,8 +2157,8 @@ DROP PROCEDURE IF EXISTS `sp_machines_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_machines_list`()
 BEGIN
-	SELECT machine_id, machine_name, ip, port, client_ids
-	FROM tbl_machines;
+	SELECT machine_id, machine_name, ip, port, legal_entity_ids
+	FROM tbl_application_server;
 END //
 DELIMITER ;
 
@@ -2171,10 +2172,10 @@ CREATE PROCEDURE `sp_machines_is_duplicate`(
 )
 BEGIN
 	IF machineid IS NULL THEN
-		SELECT count(machine_id) as count FROM tbl_machines
+		SELECT count(machine_id) as count FROM tbl_application_server
 		WHERE machine_name = machinename;
 	ELSE
-		SELECT count(machine_id) as count FROM tbl_machines
+		SELECT count(machine_id) as count FROM tbl_application_server
 		WHERE machine_name = machinename and machine_id != machineid;
 	END IF;
 END //
@@ -2191,12 +2192,12 @@ CREATE PROCEDURE `sp_machines_save`(
 )
 BEGIN
 	IF machineid IS NULL THEN
-		INSERT INTO tbl_machines (
+		INSERT INTO tbl_application_server (
 			machine_name, ip, port
 		) VALUES (machinename, ipaddr, port_no) ;
 
 	ELSE
-		UPDATE tbl_machines SET machine_name = machinename,
+		UPDATE tbl_application_server SET machine_name = machinename,
 		ip=ipaddr, port = port_no WHERE machine_id = machineid;
 	END IF;
 END //
