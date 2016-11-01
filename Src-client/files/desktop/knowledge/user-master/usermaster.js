@@ -108,7 +108,7 @@ function renderUserList(response) {
         if (v.username_id == null){
           $('.popup-link', rowClone).show();
           $('.popup-link', rowClone).on('click', function() {
-            sendCredentials(v.user_id, ename, v.email_id);
+            sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
           });
         }
         else {

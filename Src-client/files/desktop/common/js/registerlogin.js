@@ -70,7 +70,7 @@ resetField = function() {
     Uname.val('');
     Pword.val('');
     CPword.val('');
-    Captcha.hide();
+    Captcha.val('');
     Status_msg.text('');
     setCaptcha('');
     Status_check.removeClass()
