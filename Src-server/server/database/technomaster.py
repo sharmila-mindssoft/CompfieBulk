@@ -1293,6 +1293,19 @@ def get_user_clients(db, user_id):
     ]
     return client_ids
 
+
+def get_clients_by_user(db, user_id):
+    data = db.call_proc("sp_tbl_unit_getuserclients", [int(user_id)])
+    fn = core.Client
+    result = [
+        fn(
+            client_id=datum["client_id"], group_name=datum["group_name"],
+            is_active=bool(datum["is_active"])
+        ) for datum in data
+    ]
+    return result
+
+
 def get_countries_for_unit(db, user_id):
     rows = db.call_proc("sp_countries_for_unit", (user_id,))
 
@@ -1317,7 +1330,6 @@ def get_legal_entities_for_user(db, user_id):
 
 def return_legal_entities_for_unit(legal_entities):
     results = []
-
     for legal_entity in legal_entities:
         legal_entity_obj = core.UnitLegalEntity(
             legal_entity_id = legal_entity["legal_entity_id"],
@@ -1381,6 +1393,12 @@ def get_units(db):
     return return_units(result)
 
 
+def get_units_for_user(db, user_id):
+    result = db.call_proc(
+        "sp_units_by_user", (user_id,))
+    return return_units(result)
+
+
 def return_units(units):
     results = []
     for unit in units:
@@ -1418,8 +1436,6 @@ def return_unit_details(result):
     return unitdetails
 
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
-    print "inside max unit count"
-    print user_id
     result = db.call_proc("sp_tbl_unit_getuserclients", (user_id,))
     return return_group_companies_with_max_unit_count(db, result)
 

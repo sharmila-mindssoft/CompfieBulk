@@ -315,16 +315,20 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
+        print "field name: %s, val: %s, type: %s" % (
+            field_name, val, type(val))
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
         _validation_method = param.get('validation_method')
+        _is_optional = param.get("is_optional")
         if _type == 'VECTOR_TYPE':
             assert _module_name is not None
             assert _class_name is not None
-            val = parse_VectorType(
-                _module_name, _class_name, val
-            )
+            if _is_optional is False or val is not None:
+                val = parse_VectorType(
+                    _module_name, _class_name, val
+                )
             if is_validation_and_parse is True:
                 x[field_name] = val
         elif _type == 'MAP_TYPE':
@@ -394,6 +398,7 @@ def to_structure_dictionary_values(x):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
+        print "field_name: %s, val: %s" % (field_name, val)
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')

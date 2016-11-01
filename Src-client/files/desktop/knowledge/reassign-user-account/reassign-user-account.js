@@ -186,46 +186,47 @@ function pageControls(){
             DomainUserDiv.show();
         }
     });
-
+    condition_fields = ["is_active"];
+    condition_values = [true];
     TechnoManagerName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACTechnoManager, TechnoManagerId, text_val, 
             TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
-            onAutoCompleteSuccess(TechnoManagerName, TechnoManagerId, val);
-        });
+                onAutoCompleteSuccess(TechnoManagerName, TechnoManagerId, val);
+            }, condition_fields, condition_values);
     });
     RTTechnoManagerName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACRTTechnoManager, RTTechnoManagerId, text_val, 
             TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
-            onAutoCompleteSuccess(RTTechnoManagerName, RTTechnoManagerId, val);
-        });
+                onAutoCompleteSuccess(RTTechnoManagerName, RTTechnoManagerId, val);
+            }, condition_fields, condition_values);
     });
     TechnoUserName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACTechnoUser, TechnoUserId, text_val, 
             TECHNO_USERS, "employee_name", "user_id", function (val) {
-            onAutoCompleteSuccess(TechnoUserName, TechnoUserId, val);
-        });
+                onAutoCompleteSuccess(TechnoUserName, TechnoUserId, val);
+            }, condition_fields, condition_values);
     }); 
     RTTechnoUserName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACRTTechnoUser, RTTechnoUserId, text_val, 
             TECHNO_USERS, "employee_name", "user_id", function (val) {
-            onAutoCompleteSuccess(RTTechnoUserName, RTTechnoUserId, val);
-        });
+                onAutoCompleteSuccess(RTTechnoUserName, RTTechnoUserId, val);
+            }, condition_fields, condition_values);
     }); 
     DomainManagerName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACDomainManager, DomainManagerId, text_val, 
             DOMAIN_MANAGERS, "employee_name", "user_id", function (val) {
-            onAutoCompleteSuccess(DomainManagerName, DomainManagerId, val);
-        });
+                onAutoCompleteSuccess(DomainManagerName, DomainManagerId, val);
+            }, condition_fields, condition_values);
     });
     RTDomainManagerName.keyup(function(e){
         var text_val = $(this).val();
@@ -233,31 +234,31 @@ function pageControls(){
             e, ACRTDomainManager, RTDomainManagerId, text_val, 
             DOMAIN_MANAGERS, "employee_name", "user_id", function (val) {
             onAutoCompleteSuccess(RTDomainManagerName, RTDomainManagerId, val);
-        });
+        }, condition_fields, condition_values);
     });
     DomainExecutiveName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACDomainExecutive, DomainExecutiveId, text_val, 
             DOMAIN_USERS, "employee_name", "user_id", function (val) {
-            onAutoCompleteSuccess(DomainExecutiveName, DomainExecutiveId, val);
-        });
+                onAutoCompleteSuccess(DomainExecutiveName, DomainExecutiveId, val);
+            }, condition_fields, condition_values);
     });
     RTDomainExecutiveName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACRTDomainExecutive, RTDomainExecutiveId, text_val, 
             DOMAIN_USERS, "employee_name", "user_id", function (val) {
-            onAutoCompleteSuccess(RTDomainExecutiveName, RTDomainExecutiveId, val);
-        });
+                onAutoCompleteSuccess(RTDomainExecutiveName, RTDomainExecutiveId, val);
+            }, condition_fields, condition_values);
     });
     GroupName.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACGroup, GroupId, text_val, 
             GROUPS, "group_name", "client_id", function (val) {
-            onAutoCompleteSuccess(GroupName, GroupId, val);
-        });
+                onAutoCompleteSuccess(GroupName, GroupId, val);
+            }, condition_fields, condition_values);
     });
     BusinessGroupName.keyup(function(e){
         var text_val = $(this).val();
@@ -265,8 +266,8 @@ function pageControls(){
             e, ACBusinessGroup, BusinessGroupId, text_val, 
             BUSINESS_GROUPS, "business_group_name", "business_group_id", 
             function (val) {
-                onAutoCompleteSuccess(BusinessGroupName, BusinessGroupId, val);
-        });
+                onAutoCompleteSuccess(BusinessGroupName, BusinessGroupId, val);   
+            }, condition_fields, condition_values);
     });
     EntityName.keyup(function(e){
         var text_val = $(this).val();
@@ -274,8 +275,8 @@ function pageControls(){
             e, ACEntity, EntityId, text_val, 
             LEGAL_ENTITIES, "legal_entity_name", "legal_entity_id", 
             function (val) {
-                onAutoCompleteSuccess(EntityName, EntityId, val);
-        });
+                onAutoCompleteSuccess(EntityName, EntityId, val)
+            }, condition_fields, condition_values);
     })
     DomainName.keyup(function(e){
         var text_val = $(this).val();
@@ -283,8 +284,8 @@ function pageControls(){
             e, ACDomain, DomainId, text_val, 
             DOMAINS, "domain_name", "domain_id", 
             function (val) {
-                onAutoCompleteSuccess(DomainName, DomainId, val);
-        });
+                onAutoCompleteSuccess(DomainName, DomainId, val)
+            }, condition_fields, condition_values);
     });
     Show.click(function(){
         validateAndShowList();

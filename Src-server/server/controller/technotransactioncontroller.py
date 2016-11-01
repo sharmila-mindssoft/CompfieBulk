@@ -1,29 +1,19 @@
 import time
 from protocol import login, technotransactions
 from generalcontroller import (
-    validate_user_session, validate_user_forms, process_get_countries_for_user
+    validate_user_session, validate_user_forms
 )
 from server import logger
 from server.database.admin import (
     get_domains_for_user
 )
-from server.database.knowledgemaster import (
-    get_industries,
-    get_geographies,
-    get_geograhpy_levels_for_user
+from server.database.technomaster import (
+    get_clients_by_user, get_business_groups_for_user,
+    get_legal_entities_for_user, get_divisions_for_user,
+    get_units_for_user
+)
+from server.database.technotransaction import *
 
-)
-from server.database.technotransaction import (
-    get_groups_for_country,
-    get_business_groups_for_country,
-    get_legal_entity_for_country,
-    get_divisions_for_country,
-    get_units_for_country,
-    get_assign_statutory_wizard_two,
-    save_assigned_statutories,
-    get_assigned_statutories_list,
-    get_assigned_statutories_by_id
-)
 
 __all__ = [
     "process_techno_transaction_request"
@@ -44,17 +34,17 @@ def process_techno_transaction_request(request, db):
     if user_id is None:
         return login.InvalidSessionToken()
 
-    if type(request_frame) is technotransactions.GetAssignedStatutoriesList:
+    if type(request_frame) is technotransactions.GetAssignedStatutories:
         logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutories(db, user_id)
+        result = process_get_assigned_statutories(db)
         logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.GetAssignedStatutoriesById:
         logger.logKnowledgeApi("GetAssignedStatutoriesById", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutories_by_id(db, request_frame)
+        result = process_get_assigned_statutories_by_id(db, request_frame, user_id)
         logger.logKnowledgeApi("GetAssignedStatutoriesById", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
@@ -66,20 +56,26 @@ def process_techno_transaction_request(request, db):
         )
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_wizard_one(
-            db, request_frame, user_id
+            db, user_id
         )
         logger.logKnowledgeApi(
             "GetAssignedStatutoryWizardOneData", "process end"
         )
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technotransactions.GetStatutoryWizardTwoData:
-        logger.logKnowledgeApi("GetStatutoryWizardTwoData", "process begin")
+    elif(
+        type(
+            request_frame
+        ) is technotransactions.GetAssignedStatutoryWizardTwoData
+    ):
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryWizardTwoData", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_wizard_two(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetStatutoryWizardTwoData", "process end")
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryWizardTwoData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.SaveAssignedStatutory:
@@ -99,48 +95,63 @@ def process_techno_transaction_request(request, db):
     return result
 
 
-def process_get_assigned_statutories(db, user_id):
-    return get_assigned_statutories_list(db, user_id)
-
-
-def process_get_assigned_statutories_by_id(db, request_frame):
-    client_statutory_id = request_frame.client_statutory_id
-    return get_assigned_statutories_by_id(db, client_statutory_id)
-
-
-def process_get_assigned_statutory_wizard_one(db, request_frame, user_id):
-    country_id = request_frame.country_id
+def process_get_assigned_statutory_wizard_one(db, user_id):
+    group_companies = get_clients_by_user(db, user_id)
+    business_groups = get_business_groups_for_user(db, user_id)
+    legal_entities = get_legal_entities_for_user(db, user_id)
+    divisions = get_divisions_for_user(db, user_id)
+    categories = get_categories_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
-    industries = get_industries(db)
-    geography_levels = get_geograhpy_levels_for_user(db, user_id)
-    geographies = get_geographies(db, user_id, country_id)
-    group_companies = get_groups_for_country(db, country_id, user_id)
-    business_groups = get_business_groups_for_country(db, country_id, user_id)
-    legal_entities = get_legal_entity_for_country(db, country_id, user_id)
-    divisions = get_divisions_for_country(db, country_id, user_id)
-    units = get_units_for_country(db, country_id, user_id)
+    units = get_units_for_user(db, user_id)
     return technotransactions.GetAssignedStatutoryWizardOneDataSuccess(
-        domains, industries, geography_levels,
-        geographies, group_companies, business_groups,
-        legal_entities, divisions, units
+        group_companies, business_groups, legal_entities, divisions,
+        categories, domains, units
     )
 
 
-def process_get_assigned_statutory_wizard_two(db, request_frame, user_id):
-    geography_id = request_frame.geography_id
-    industry_id = request_frame.industry_id
-    domain_id = request_frame.domain_id
-    country_id = request_frame.country_id
-    unit_id = request_frame.unit_id
-    return get_assign_statutory_wizard_two(
-        db, country_id, geography_id, industry_id,
-        domain_id, unit_id, user_id
+def process_get_assigned_statutory_wizard_two(db, request, session_user):
+    level_1_statutories, statutories = get_assigned_statutory_wizard_two_data(
+        db, request.client_id, request.business_group_id,
+        request.legal_entity_id, request.division_id, request.category_id,
+        request.domain_id_optional, request.unit_ids
+    )
+    return technotransactions.GetAssignedStatutoryWizardTwoDataSuccess(
+        level_1_statutories_list=level_1_statutories,
+        statutories_for_assigning=statutories
     )
 
 
-def process_save_assigned_statutory(db, request_frame, user_id):
-    return save_assigned_statutories(db, request_frame, user_id)
+def process_save_assigned_statutory(db, request, session_user):
+    client_statutory_id = request.client_statutory_id
+    client_id = request.client_id
+    compliances_list = request.compliances_applicablity_status
+    unit_ids = request.unit_ids
+    units = request.unit_id_name
+    level_1_statutory_compliance = request.level_1_statutory_wise_compliances
+    submission_type = request.submission_type
+    if client_statutory_id is None:
+        save_assigned_statutory(
+            db, client_statutory_id, client_id, compliances_list, unit_ids, units,
+            level_1_statutory_compliance, submission_type, session_user
+        )
+    else:
+        update_assigned_statutory(
+            db, client_statutory_id, client_id, compliances_list, unit_ids, units,
+            level_1_statutory_compliance, submission_type, session_user
+        )
+    return technotransactions.SaveAssignedStatutorySuccess()
 
 
-def process_get_countries_for_groups(db, user_id):
-    return process_get_countries_for_user(db, user_id)
+def process_get_assigned_statutories(db):
+    assigned_statutories = get_assigned_statutories_list(db)
+    return technotransactions.GetAssignedStatutoriesSuccess(
+        assigned_statutories
+    )
+
+def process_get_assigned_statutories_by_id(db, request, session_user):
+    client_statutory_id = request.client_statutory_id
+    level_1_statutories, assigned_statutories = get_assigned_statutories_by_id(db, client_statutory_id)
+    return technotransactions.GetAssignedStatutoriesByIdSuccess(
+        level_1_statutories_list=level_1_statutories,
+        statutories_for_assigning=assigned_statutories 
+    )

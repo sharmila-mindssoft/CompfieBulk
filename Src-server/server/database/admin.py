@@ -826,7 +826,7 @@ def return_validity_days(data):
     fn = core.ValidityDates
     validity_date_list = [
         fn(
-            datum["validity_days_id"],
+            datum["validity_date_id"],
             datum["country_id"], datum["domain_id"],
             datum["days"]
         ) for datum in data

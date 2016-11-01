@@ -329,13 +329,6 @@ function initMirror() {
     ];
     apiRequest('knowledge_report', request, callback);
   }
-  function getCountriesForGroup(callback) {
-    var request = [
-      'GetCountriesForGroup',
-      {}
-    ];
-    apiRequest('techno_transaction', request, callback);
-  }
   //Industry Master
   function getSaveIndustryDict(industryDetail) {
     var cIds = industryDetail[0];
@@ -1359,71 +1352,6 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  // Assign statutories
-  function getAssignStatutoryWizardOne(countryId, callback) {
-    var request = [
-      'GetAssignedStatutoryWizardOneData',
-      { 'country_id': countryId }
-    ];
-    callerName = 'techno_transaction';
-    apiRequest(callerName, request, callback);
-  }
-  function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, unitId, callback) {
-    var request = [
-      'GetStatutoryWizardTwoData',
-      {
-        'country_id': countryId,
-        'domain_id': domainId,
-        'industry_id': industryId,
-        'geography_id': geographyId,
-        'unit_id': unitId
-      }
-    ];
-    callerName = 'techno_transaction';
-    apiRequest(callerName, request, callback);
-  }
-  function getAssignedStatutoriesList(callback) {
-    var request = [
-      'GetAssignedStatutoriesList',
-      {}
-    ];
-    callerName = 'techno_transaction';
-    apiRequest(callerName, request, callback);
-  }
-  function assignedStatutories(l1ID, compliances, aStatus, remarks) {
-    var statutories = {
-      'level_1_s_id': l1ID,
-      'compliances': compliances,
-      'a_status': aStatus,
-      'n_a_remarks': remarks
-    };
-    return statutories;
-  }
-  function saveOrSubmitAssignStatutory(cId, clientId, geoId, uIds, dId, subType, cSId, asStatutories, callback) {
-    var request = [
-      'SaveAssignedStatutory',
-      {
-        'c_id': cId,
-        'client_id': clientId,
-        'g_id': geoId,
-        'u_ids': uIds,
-        'd_id': dId,
-        'sub_type': subType,
-        'c_s_id': cSId,
-        'a_statutories': asStatutories
-      }
-    ];
-    callerName = 'techno_transaction';
-    apiRequest(callerName, request, callback);
-  }
-  function getAssignedStatutoryById(clientStatutoryId, callback) {
-    var request = [
-      'GetAssignedStatutoriesById',
-      { 'client_statutory_id': clientStatutoryId }
-    ];
-    callerName = 'techno_transaction';
-    apiRequest(callerName, request, callback);
-  }
   function getAssignedStatutoryReportFilters(callback) {
     var request = [
       'GetAssignedStatutoryReportFilters',
@@ -1841,16 +1769,102 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function getAssignStatutoryWizardOneData(callback){
+    callerName = 'techno_transaction';
+    var request = [
+      "GetAssignedStatutoryWizardOneData",
+      {}
+    ];
+    apiRequest(callerName, request, callback); 
+  }
+
+  function getAssignStatutoryWizardTwoData(
+    client_id, business_group_id, legal_entity_id, division_id, category_id,
+    domain_id, unit_ids, callback
+  ){
+      callerName = 'techno_transaction';
+      var request = [
+        "GetAssignedStatutoryWizardTwoData",
+        {
+          "client_id": client_id,
+          "business_group_id": business_group_id,
+          "legal_entity_id": legal_entity_id,
+          "division_id": division_id,
+          "category_id": category_id,
+          "domain_id_optional": domain_id,
+          "unit_ids": unit_ids
+        }
+      ];
+      apiRequest(callerName, request, callback); 
+  }
+
+  function saveAssignedStatutory(
+    client_statutory_id, units, client_id, unit_ids, compliances_list,
+    level_1_statutory_wise_compliances, callback
+  ){
+    callerName = 'techno_transaction';
+    var request = [
+        "SaveAssignedStatutory",
+        {
+          "client_statutory_id": client_statutory_id,
+          "unit_id_name": units,
+          "client_id": client_id,
+          "unit_ids": unit_ids,
+          "compliances_applicablity_status": compliances_list,
+          "level_1_statutory_wise_compliances": level_1_statutory_wise_compliances,
+          "submission_type": "save"
+        }
+      ];
+      apiRequest(callerName, request, callback); 
+  }
+
+  function submitAssignedStatutory(
+    client_statutory_id, units, client_id, unit_ids, compliances_list, level_1_statutory_wise_compliances, callback
+  ){
+    callerName = 'techno_transaction';
+    var request = [
+        "SaveAssignedStatutory",
+        {
+          "client_statutory_id": client_statutory_id,
+          "unit_id_name": units,
+          "client_id": client_id,
+          "unit_ids": unit_ids,
+          "compliances_applicablity_status": compliances_list,
+          "level_1_statutory_wise_compliances": level_1_statutory_wise_compliances,
+          "submission_type": "submit"
+        }
+      ];
+      apiRequest(callerName, request, callback); 
+  }
+
+  function getAssignedStatutories(callback){
+    callerName = 'techno_transaction';
+    var request = [
+        "GetAssignedStatutories",
+        {}
+      ];
+    apiRequest(callerName, request, callback); 
+  }
+
+  function getAssignedStatutoriesById(client_statutory_id, callback){
+    callerName = 'techno_transaction';
+    var request = [
+        "GetAssignedStatutoriesById",
+        {
+          "client_statutory_id": client_statutory_id
+        }
+      ];
+    apiRequest(callerName, request, callback); 
+  }
+
   return {
     log: log,
     toJSON: toJSON,
     parseJSON: parseJSON,
     getBaseUrl: getBaseUrl,
     initSession: initSession,
-    // updateUser_Session: updateUser_Session,
     clearSession: clearSession,
     verifyLoggedIn: verifyLoggedIn,
-    // login: login,
     logout: logout,
     getEmployeeName: getEmployeeName,
     getUserId: getUserId,
@@ -1873,7 +1887,6 @@ function initMirror() {
     getCountryList: getCountryList,
     getCountryListForUser: getCountryListForUser,
     getCountryReport: getCountryReport,
-    getCountriesForGroup: getCountriesForGroup,
     getSaveIndustryDict: getSaveIndustryDict,
     saveIndustry: saveIndustry,
     getUpdateIndustryDict:getUpdateIndustryDict,
@@ -1954,12 +1967,6 @@ function initMirror() {
     getClientProfile: getClientProfile,
     getClientDetailsReportFilters: getClientDetailsReportFilters,
     getClientDetailsReport: getClientDetailsReport,
-    getAssignStatutoryWizardOne: getAssignStatutoryWizardOne,
-    getAssignStatutoryWizardTwo: getAssignStatutoryWizardTwo,
-    getAssignedStatutoriesList: getAssignedStatutoriesList,
-    assignedStatutories: assignedStatutories,
-    saveOrSubmitAssignStatutory: saveOrSubmitAssignStatutory,
-    getAssignedStatutoryById: getAssignedStatutoryById,
     getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
     getAssignedStatutoryReport: getAssignedStatutoryReport,
     getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
@@ -2006,6 +2013,12 @@ function initMirror() {
     saveAssignedUnits: saveAssignedUnits,
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
     saveReassignUserAccount: saveReassignUserAccount,
+    getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
+    getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
+    saveAssignedStatutory: saveAssignedStatutory,
+    submitAssignedStatutory: submitAssignedStatutory,
+    getAssignedStatutories: getAssignedStatutories,
+    getAssignedStatutoriesById: getAssignedStatutoriesById,
     changeAdminDisaleStatus: changeAdminDisaleStatus
   };
 }

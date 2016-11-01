@@ -931,11 +931,6 @@ CREATE TABLE `tbl_user_mapping` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`user_mapping_id`),
-  UNIQUE KEY `user_category_id_UNIQUE` (`user_category_id`),
-  UNIQUE KEY `country_id_UNIQUE` (`country_id`),
-  UNIQUE KEY `domain_id_UNIQUE` (`domain_id`),
-  UNIQUE KEY `parent_user_id_UNIQUE` (`parent_user_id`),
-  UNIQUE KEY `child_user_id_UNIQUE` (`child_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

@@ -211,17 +211,13 @@ def process_save_industry(db, request_frame, user_id):
 def process_update_industry(db, request_frame, user_id):
     country_ids = request_frame.country_id
     domain_ids = request_frame.domain_id
-
     industry_name = request_frame.industry_name
     industry_id = request_frame.industry_id
     isDuplicate = check_duplicate_industry(db, industry_name, industry_id)
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
-    update_status = update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id)
-    print "update_status"
-    print update_status
-    if update_status is True:
+    if (update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id)):
         return knowledgemaster.UpdateIndustrySuccess()
     else:
         return knowledgemaster.InvalidIndustryId()

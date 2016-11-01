@@ -46,7 +46,6 @@ function loadIndustryList(industriesList) {
     var country_id = value.country_id;
     var country_name = value.country_name;
     var domain_id = value.domain_id;
-    // alert("domain:"+country_id);
     var domain_name = value.domain_name;
     var industryId = value.industry_id;
     var industryName = value.industry_name;
@@ -265,54 +264,6 @@ function changeStatus(industryId, isActive) {
   });
 }
 
-//filter industry name
-/*$('#search-industry-name').keyup(function () {
-  var count = 0;
-  var value = this.value.toLowerCase();
-  if(this.value.length >=3)
-  {
-    $('table').find('tr:not(:first):not(:last)').each(function (index) {
-    if (index === 0)
-      return;
-    var id = $(this).find('.industry-name').text().toLowerCase();
-    $(this).toggle(id.indexOf(value) !== -1);
-    });
-  }
-});
-
-//filter country name
-$('#search-country-name').keyup(function () {
-  var count = 0;
-  var value = this.value.toLowerCase();
-  if(this.value.length >=3)
-  {
-    alert(this.value);
-    $('table').find('tr:not(:first):not(:last)').each(function (index) {
-    if (index === 0)
-      return;
-    var id = $(this).find('.country-name').text().toLowerCase();
-    $(this).toggle(id.indexOf(value) !== -1);
-    });
-  }
-});
-
-//filter domain name
-$('#search-domain-name').keyup(function () {
-  var count = 0;
-  var value = this.value.toLowerCase();
-  if(this.value.length >=3)
-  {
-    alert(this.value);
-    $('table').find('tr:not(:first):not(:last)').each(function (index) {
-    if (index === 0)
-      return;
-    var id = $(this).find('.domain-name').text().toLowerCase();
-    $(this).toggle(id.indexOf(value) !== -1);
-    });
-  }
-});*/
-
-
 //filter process - industry name
 $('#search-industry-name').keyup(function () {
   if(this.value.length >= 3) {
@@ -492,6 +443,7 @@ $('#countryname').keyup(function (e) {
     onCountrynameSuccess(val);
   });
 });
+
 
 //store the selected country name and id
 function onCountrynameSuccess(val)
