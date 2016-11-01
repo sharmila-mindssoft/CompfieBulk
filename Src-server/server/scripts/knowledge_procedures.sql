@@ -156,10 +156,10 @@ CREATE PROCEDURE `sp_industry_master_checkduplicateindustry`(
 in industryid int(11), in industryname varchar(50))
 BEGIN
 	if industryid = 0 then
-		SELECT count(1) FROM tbl_industries WHERE industry_name = industryname;
+		SELECT count(1) FROM tbl_organisation WHERE organisation_name = industryname;
 	else
-        SELECT count(1) FROM tbl_industries WHERE industry_name = industryname
-        and industry_id != industryid;
+        SELECT count(1) FROM tbl_organisation WHERE organisation_name = industryname
+        and organisation_id != industryid;
 	end if;
 END //
 DELIMITER ;
@@ -172,8 +172,8 @@ DROP PROCEDURE IF EXISTS `sp_industry_master_getindusdtrybyid`;
 DELIMITER //
 CREATE PROCEDURE `sp_industry_master_getindusdtrybyid`(industryid int(11))
 BEGIN
-	SELECT industry_name FROM tbl_industries WHERE
-    industry_id = industryid;
+	SELECT organisation_name FROM tbl_organisation WHERE
+    organisation_id = industryid;
 END //
 DELIMITER ;
 
@@ -186,7 +186,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_industry_master_getindustries`()
 BEGIN
 	SELECT t1.country_id, t2.country_name, t1.domain_id, t3.domain_name,
-		t1.industry_id, t1.industry_name, t1.is_active FROM tbl_industries t1
+		t1.organisation_id, t1.organisation_name, t1.is_active FROM tbl_organisation t1
         INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id INNER JOIN
         tbl_domains t3 on t1.domain_id = t3.domain_id;
 END //
@@ -217,8 +217,8 @@ CREATE PROCEDURE `sp_industry_master_saveindustry`(
 in countryid int(11), in domainid int(11), in industryname varchar(50),
 in createdby int(11), in createdon timestamp)
 BEGIN
-	INSERT INTO tbl_industries
-    (industry_name, country_id, domain_id, created_by, created_on)
+	INSERT INTO tbl_organisation
+    (organisation_name, country_id, domain_id, created_by, created_on)
     VALUES
 	(industryname, countryid, domainid, createdby, createdon);
 END //
@@ -234,14 +234,14 @@ CREATE PROCEDURE `sp_industry_master_updateindustry`(
     in domainId int(11), in updatedBy int(11)
 )
 BEGIN
-	UPDATE tbl_industries
+	UPDATE tbl_organisation
     SET
-    industry_name = industryName,
+    organisation_name = industryName,
     country_id = countryId,
     domain_id = domainId,
     updated_by = updatedBy
     WHERE
-    industry_id = industryId;
+    organisation_id = industryId;
 END //
 DELIMITER ;
 
@@ -253,12 +253,12 @@ DELIMITER //
 CREATE PROCEDURE `sp_industry_master_updatestatus`(
 	in industryId int(11), in isActive tinyint(4), in updatedBy int(11))
 BEGIN
-	UPDATE tbl_industries
+	UPDATE tbl_organisation
     SET
     is_active = isActive,
     updated_by = updatedBy
     WHERE
-    industry_id = industryId;
+    organisation_id = industryId;
 END //
 DELIMITER ;
 
@@ -577,8 +577,8 @@ DROP PROCEDURE IF EXISTS `sp_industries_active_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_industries_active_list`()
 BEGIN
-    SELECT industry_id, industry_name, is_active
-    FROM tbl_industries
+    SELECT organisation_id, organisation_name, is_active
+    FROM tbl_organisation
     WHERE is_active=1;
 END //
 DELIMITER ;
@@ -1246,7 +1246,7 @@ BEGIN
 	t1.unit_name, t1.address, t1.postal_code,
 	t1.approve_status, t1.is_active,
 	t4.category_name,
-	t6.domain_id as domain_ids, t6.industry_id as i_ids,
+	t6.domain_id as domain_ids, t6.organisation_id as i_ids,
 	(select business_group_name from tbl_business_groups where
     business_group_id = t1.business_group_id) as b_group,
     (select legal_entity_name from tbl_legal_entities where
@@ -1403,9 +1403,9 @@ BEGIN
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id=tui.domain_id
 	) as domain_name, (
-		SELECT industry_name FROM tbl_industries ti
-		WHERE ti.industry_id=tui.industry_id
-	) as industry_name
+		SELECT organisation_name FROM tbl_organisation ti
+		WHERE ti.organisation_id=tui.organisation_id
+	) as organisation_name
 	FROM tbl_unit_industries tui WHERE unit_id in (
 		SELECT unit_id FROM tbl_units
 		WHERE legal_entity_id=le_id
@@ -2438,24 +2438,24 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_units_getindustries_for_legalentity`(IN session_user INT(11))
 BEGIN
 	IF session_user > 0 THEN
-		select t3.industry_id, t3.industry_name, t3.country_id, t3.domain_id,
+		select t3.organisation_id, t3.organisation_name, t3.country_id, t3.domain_id,
 				t3.is_active, t2.client_id, t2.no_of_units, t2.legal_entity_id
 			from tbl_client_users as t1, tbl_legal_entity_domain_industry as t2,
-					tbl_industries as t3
+					tbl_organisation as t3
 			where
-				t3.industry_id = t2.industry_id and
+				t3.organisation_id = t2.organisation_id and
 				t2.client_id = t1.client_id and
 				t1.user_id = session_user
-			order by industry_name;
+			order by organisation_name;
 	ELSE
-		select t3.industry_id, t3.industry_name, t3.country_id, t3.domain_id,
+		select t3.organisation_id, t3.organisation_name, t3.country_id, t3.domain_id,
 				t3.is_active, t2.client_id, t2.no_of_units, t2.legal_entity_id
 			from tbl_legal_entity_domain_industry as t2,
-					tbl_industries as t3
+					tbl_organisation as t3
 			where
-				t3.industry_id = t2.industry_id and
+				t3.organisation_id = t2.organisation_id and
 				t2.client_id in (select client_id from tbl_client_users)
-			order by industry_name;
+			order by organisation_name;
    END IF;
 DELIMITER ;
 
@@ -2614,9 +2614,9 @@ BEGIN
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id = tui.domain_id
 	) as domain_name, (
-		SELECT industry_name FROM tbl_industries ti
-		WHERE ti.industry_id = tui.industry_id
-	) as industry_name FROM tbl_unit_industries tui
+		SELECT organisation_name FROM tbl_organisation ti
+		WHERE ti.organisation_id = tui.organisation_id
+	) as organisation_name FROM tbl_unit_industries tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
 	);
@@ -2676,9 +2676,9 @@ BEGIN
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id = tui.domain_id
 	) as domain_name, (
-		SELECT industry_name FROM tbl_industries ti
-		WHERE ti.industry_id = tui.industry_id
-	) as industry_name FROM tbl_unit_industries tui
+		SELECT organisation_name FROM tbl_organisation ti
+		WHERE ti.organisation_id = tui.organisation_id
+	) as organisation_name FROM tbl_unit_industries tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
 	) and tui.domain_id=domainid;
@@ -3250,5 +3250,93 @@ CREATE PROCEDURE `sp_tbl_user_login_checkusername`(
 )
 BEGIN
 	SELECT count(0) as uname from tbl_user_login_details where username = uname;
+END //
+DELIMITER ;
+
+--
+-- Statutory maping list
+--
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_getlist`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_statutory_mapping_getlist`(
+    IN approve_sts TINYINT(5)
+)
+BEGIN
+
+    SELECT T1.statutory_mapping_id, T1.country_id,
+    (select country_name from tbl_countries
+        where country_id = T1.country_id) as country_name,
+    T1.domain_id,
+    (select domain_name from tbl_domains
+        where domain_id = T1.domain_id) as domain_name,
+    T1.statutory_nature_id,
+    (select statutory_nature_name from tbl_statutory_natures
+        where statutory_nature_id = T1.statutory_nature_id) as statutory_nature_name,
+    T1.is_active,
+    T1.is_approved, T1.remarks,
+    T2.compliance_id, T2.statutory_provision, T2.compliance_task, T2.document_name,
+    T2.is_active as comp_status, T2.is_approved as comp_approved,
+    T2.remarks as remarks
+    FROM tbl_statutory_mappings T1
+    INNER JOIN tbl_compliances T2
+    ON T1.statutory_mapping_id = T2.statutory_mapping_id
+    WHERE T1.is_approved = approve_sts or T2.is_approved = approve_sts;
+
+    SELECT T1.statutory_mapping_id, T1.organisation_id, T2.organisation_name
+    FROM tbl_mapped_industries T1
+    INNER JOIN tbl_organisation T2 ON T1.organisation_id = T2.organisation_id;
+
+    SELECT T1.statutory_mapping_id, T1.statutory_id, T2.statutory_name
+    FROM tbl_mapped_statutories as T1
+    INNER JOIN tbl_statutories as T2 ON T1.statutory_id = T2.statutory_id;
+
+END //
+DELIMITER ;
+
+--
+-- statutory mapping master data
+--
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_masterdata`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_statutory_mapping_masterdata`(
+    IN userid INT(11)
+)
+BEGIN
+    select t1.country_id, t1.country_name, t1.is_active from tbl_countries as t1
+    inner join tbl_user_countries as t2 on t1.country_id = t2.country_id
+    and t2.user_id = userid;
+
+    select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
+    tbl_domain_countries as t1
+    inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
+    and t2.user_id = userid
+    inner join tbl_domains as t3 on t3.domain_id = t1.domain_id;
+
+    select t1.organisation_id, t1.country_id, t1.domain_id, t1.organisation_name,
+    t1.is_active from tbl_organisation as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
+    where t2.user_id = 0 and t3.user_id = userid;
+
+    select t1.statutory_nature_id, t1.statutory_nature_name, t1.country_id,
+    t1.is_active from tbl_statutory_natures as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id and
+    t2.user_id = userid;
+
+    select t1.statutory_id, t1.level_id, t1.statutory_name,
+    t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id
+    from tbl_statutories as t1
+    inner join tbl_statutory_levels as t2 on t2.level_id = t1.level_id
+    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
+    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
+    where t3.user_id = 0 and t4.user_id = userid;
+
+    select t1.geography_id, t1.geography_name, t1.level_id,
+    t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id
+    from tbl_geographies as t1 inner join tbl_geography_levels as t2
+    on t2.level_id = t2.level_id inner join tbl_user_countries t3 on
+    t3.country_id = t2.country_id where t3.user_id = userid;
+
 END //
 DELIMITER ;
