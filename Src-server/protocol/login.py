@@ -176,11 +176,65 @@ class Logout(Request):
             "session_token": self.session_token,
         }
 
+class CheckRegistrationToken(Request):
+    def __init__(self, reset_token):
+        self.reset_token = reset_token
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["reset_token"])
+        reset_token = data.get("reset_token")
+        return CheckRegistrationToken(reset_token)
+
+    def to_inner_structure(self):
+        return {
+            "reset_token": self.reset_token,
+        }
+
+class SaveRegistraion(Request):
+    def __init__(self, token, username, password, captcha):
+        self.token = token
+        self.username = username
+        self.password = password
+        self.captcha = captcha
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["token", "uname", "pword", "captcha"])
+        token = data.get("token")
+        username = data.get("uname")
+        pword = data.get("pword")
+        captcha = data.get("captcha")
+        return SaveRegistraion(token, username, pword, captcha)
+
+    def to_inner_structure(self):
+        return {
+            "token": self.token,
+            "uname": self.username,
+            "pword": self.password,
+            "captcha": self.captcha
+        }
+
+class CheckUsername(Request):
+    def __init__(self, username):
+        self.username = username
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["uname"])
+        username = data.get("uname")
+        return CheckUsername(username)
+
+    def to_inner_structure(self):
+        return {
+            "uname": self.username,
+        }
 
 def _init_Request_class_map():
     classes = [
         Login, ForgotPassword, ResetTokenValidation, ResetPassword,
-        ChangePassword, Logout, UpdateUserProfile
+        ChangePassword, Logout, UpdateUserProfile, CheckRegistrationToken,
+        SaveRegistraion, CheckUsername
     ]
     class_map = {}
     for c in classes:
@@ -276,7 +330,6 @@ class UserLoginSuccess(Response):
             "is_admin": self.is_admin
         }
 
-
 class AdminLoginSuccess(Response):
     def __init__(
         self, user_id, session_token, email_id,
@@ -322,7 +375,6 @@ class AdminLoginSuccess(Response):
             "employee_name": self.employee_name,
             "user_client_id": self.client_id
         }
-
 
 class InvalidCredentials(Response):
     def __init__(self, captcha_text):
@@ -551,6 +603,75 @@ class UpdateUserProfileSuccess(Response):
             "address": self.address
         }
 
+class CheckRegistrationTokenSuccess(Response):
+    def __init__(self, captcha):
+        self.captcha = captcha
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["captcha"])
+        captcha = data.get("captcha")
+        return CheckRegistrationTokenSuccess(captcha)
+
+    def to_inner_structure(self):
+        return {
+            "captcha": self.captcha
+        }
+
+
+class SaveRegistraionSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveRegistraionSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class InvalidCaptcha(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCaptcha()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class CheckUsernameSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CheckUsernameSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class UsernameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UsernameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UserLoginSuccess, AdminLoginSuccess, InvalidCredentials,
@@ -558,7 +679,9 @@ def _init_Response_class_map():
         InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
         InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken,
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
-        NotConfigured, ContractNotYetStarted, UpdateUserProfileSuccess
+        NotConfigured, ContractNotYetStarted, UpdateUserProfileSuccess,
+        CheckRegistrationTokenSuccess, InvalidCaptcha,
+        SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists
     ]
     class_map = {}
     for c in classes:

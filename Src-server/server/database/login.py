@@ -13,7 +13,8 @@ __all__ = [
     "validate_reset_token", "update_password",
     "delete_used_token", "remove_session",
     "save_login_failure", "delete_login_failure_history",
-    "get_login_attempt_and_time"
+    "get_login_attempt_and_time", "save_login_details",
+    "validate_email_token", "check_username_duplicate"
 ]
 
 
@@ -55,34 +56,6 @@ def verify_login(db, username, password):
     print "user_category: %s" % res[0]["user_category_id"]
     print "user_info: %s" % user_info
     return (uname, response, user_info, forms)
-    # tblAdminCondition = "password=%s and username=%s"
-    # admin_details = db.get_data(
-    #     "tbl_admin", ["username", "password"],
-    #     tblAdminCondition,
-    #     (password, username)
-    # )
-    # if (len(admin_details) == 0):
-    #     data_columns = [
-    #         "user_id", "user_group_id", "email_id",
-    #         "employee_name", "employee_code",
-    #         "contact_no", "address",
-    #         "designation", "user_group_name", "form_ids"
-    #     ]
-    #     query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, " + \
-    #         " t1.employee_name, t1.employee_code, t1.contact_no, " + \
-    #         " t1.address, t1.designation, " + \
-    #         " t2.user_group_name, t2.form_ids " + \
-    #         " FROM tbl_users t1 INNER JOIN tbl_user_groups t2 " + \
-    #         " ON t1.user_group_id = t2.user_group_id " + \
-    #         " WHERE t1.password=%s and t1.email_id=%s and t1.is_active=1"
-    #     data_list = db.select_one(query, [password, username])
-    #     if data_list is None:
-    #         return False
-    #     else:
-    #         return convert_to_dict(data_list, data_columns)
-    # else:
-    #     return True
-
 
 ########################################################
 # To clear user session
@@ -181,15 +154,10 @@ def verify_password(db, password, user_id):
     columns = "count(1)"
     encrypted_password = encrypt(password)
     condition = "1"
-    rows = None
-    if user_id == 0:
-        condition = "password=%s"
-        condition_val = [encrypted_password]
-        rows = db.get_data(tblAdmin, columns, condition, condition_val)
-    else:
-        condition = "password=%s and user_id=%s"
-        condition_val = [encrypted_password, user_id]
-        rows = db.get_data(tblUsers, columns, condition, condition_val)
+
+    condition = "password=%s and user_id=%s"
+    condition_val = [encrypted_password, user_id]
+    rows = db.get_data("tbl_user_login_details", columns, condition, condition_val)
     if(int(rows[0]["count(1)"]) <= 0):
         return False
     else:
@@ -227,29 +195,24 @@ def validate_reset_token(db, reset_token):
 
 
 def update_password(db, password, user_id):
-    columns = ["password"]
-    values = [encrypt(password)]
-    condition = "1"
-    result = False
-    if user_id != 0:
-        condition = " user_id=%s"
-        values.append(user_id)
-        result = db.update(tblUsers, columns, values, condition)
-    else:
-        result = db.update(tblAdmin, columns, values, condition)
-
-    if user_id != 0:
-        columns = "employee_code, employee_name"
-        condition = "user_id =%s"
-        condition_val = [user_id]
-        rows = db.get_data(tblUsers, columns, condition, condition_val)
-        employee_name = rows[0]["employee_name"]
-        if rows[0]["employee_code"] is not None:
-            employee_name = "%s - %s" % (
-                rows[0]["employee_code"], rows[0]["employee_name"]
-            )
-    else:
-        employee_name = "Administrator"
+    result = db.call_proc_with_multiresult_set(
+        "sp_tbl_user_login_details_update",
+        (user_id, encrypt(password)), 1
+    )
+    print result
+    employee_name = result[0][0]["username"]
+    # if user_id != 0:
+    #     columns = "employee_code, employee_name"
+    #     condition = "user_id =%s"
+    #     condition_val = [user_id]
+    #     rows = db.get_data(tblUsers, columns, condition, condition_val)
+    #     employee_name = rows[0]["employee_name"]
+    #     if rows[0]["employee_code"] is not None:
+    #         employee_name = "%s - %s" % (
+    #             rows[0]["employee_code"], rows[0]["employee_name"]
+    #         )
+    # else:
+    #     employee_name = "Administrator"
 
     action = "\"%s\" has updated his/her password" % (employee_name)
     db.save_activity(user_id, 0, action)
@@ -320,3 +283,31 @@ def get_login_attempt_and_time(db, user_id):
         tblUserLoginHistory, columns, condition, condition_val
     )
     return rows
+
+def validate_email_token(db, token):
+    rows = db.call_proc(
+        "sp_validate_token", (token, ))
+    if rows :
+        user_id = rows[0].get("user_id")
+        if user_id is None :
+            return False
+        else:
+            return user_id
+    else :
+        return False
+
+def save_login_details(db, token, username, password):
+    db.call_insert_proc(
+        "sp_tbl_user_login_details_save",
+        (token, username, password)
+    )
+    return True
+
+def check_username_duplicate(db, uname):
+    print uname
+    res = db.call_proc("sp_tbl_user_login_checkusername", (uname, ))
+    count = res[0]['uname']
+    if count > 0 :
+        return False
+
+    return True

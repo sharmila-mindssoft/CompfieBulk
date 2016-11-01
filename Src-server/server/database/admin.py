@@ -3,11 +3,13 @@ from protocol import core, admin
 from server.database.tables import *
 from server.database.forms import *
 from server.common import (
-    get_date_time,
-    generate_and_return_password
+    get_date_time, get_current_date,
+    generate_and_return_password,
+    addHours, new_uuid
 )
 from server.emailcontroller import EmailHandler as email
 from server.exceptionmessage import process_error
+from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL
 
 __all__ = [
     "get_domains_for_user", "save_domain",
@@ -32,7 +34,7 @@ __all__ = [
     "save_validity_date_settings", "get_user_mapping_form_data",
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
     "save_reassigned_user_account", "get_assigned_legal_entities",
-    "get_assigned_units", "get_assigned_clients"
+    "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status"
 ]
 
 
@@ -46,7 +48,7 @@ __all__ = [
 #############################################################################
 def get_domains_for_user(db, user_id):
     procedure = 'sp_tbl_domains_for_user'
-    result = db.call_proc(procedure, (user_id,))
+    result = db.call_proc_with_multiresult_set(procedure, (user_id,), 3)
     return return_domains(result)
 
 
@@ -55,11 +57,23 @@ def get_domains_for_user(db, user_id):
 # Parameter(s) : Data fetched from database
 # Return Type : List of Object of Domain
 ###############################################################################
+def return_country_list_of_domain(domain_id, countries):
+    c_ids = []
+    c_names = []
+    for c in countries :
+        if int(c["domain_id"]) == domain_id:
+            c_ids.append(int(c["country_id"]))
+            c_names.append(c["country_name"])
+
+    return c_ids, c_names
+
 def return_domains(data):
     results = []
-    for d in data:
+    for d in data[1]:
+        d_id = d["domain_id"]
+        c_ids, c_names = return_country_list_of_domain(d_id, data[2])
         results.append(core.Domain(
-            d["domain_id"], d["domain_name"], bool(d["is_active"])
+            c_ids, c_names, d_id, d["domain_name"], bool(d["is_active"])
         ))
     return results
 
@@ -69,12 +83,25 @@ def return_domains(data):
 # Parameter(s) : Object of database, Domain name, session user
 # Return Type : Returns True on Successfull save otherwise raises process error
 ###############################################################################
-def save_domain(db, domain_name, user_id):
+def save_domain_country(db, c_ids, d_id):
+    country_columns = ["country_id", "domain_id"]
+    country_values_list = [
+       (c_id, d_id) for c_id in c_ids
+    ]
+    result = db.bulk_insert(
+        "tbl_domain_countries", country_columns, country_values_list
+    )
+    if result is False:
+        raise process_error("E034")
+
+def save_domain(db, country_ids, domain_name, user_id):
     domain_id = db.call_insert_proc(
-        "sp_domains_save", (None, 1, domain_name, user_id)
+        "sp_domains_save", (None, domain_name, user_id)
     )
     if domain_id is False:
         raise process_error("E024")
+    else :
+        save_domain_country(db, country_ids, domain_id)
     action = "Add Domain - \"%s\"" % domain_name
     db.save_activity(user_id, 2, action)
     return True
@@ -114,16 +141,17 @@ def get_domain_by_id(db, domain_id):
 # Return Type : Returns - True on Successfull update, Raises Process error
 #               When update fails
 ###############################################################################
-def update_domain(db, domain_id, domain_name, updated_by):
-    updated_on = get_date_time()
+def update_domain(db, c_ids, domain_id, domain_name, updated_by):
     oldData = get_domain_by_id(db, domain_id)
     if oldData is None:
         return False
     else:
-        domain_id = db.call_update_proc(
-            "sp_domains_save", (domain_id, domain_name, updated_by, updated_on)
+        sdomain_id = db.call_update_proc(
+            "sp_domains_save", (domain_id, domain_name, updated_by)
         )
-        if domain_id:
+        if sdomain_id:
+            db.call_update_proc("domaincountries_delete", (domain_id,))
+            save_domain_country(db, c_ids, domain_id)
             action = "Edit Domain - \"%s\"" % domain_name
             db.save_activity(updated_by, 2, action)
             return True
@@ -542,6 +570,36 @@ def is_duplicate_employee_code(db, employee_code, user_id=None):
     else:
         return False
 
+def save_registraion_token(db, user_id, emp_name, email_id):
+    def _del_olddata():
+        condition = "user_id = %s and verification_type_id = %s"
+        condition_val = [user_id, 1]
+        db.delete(tblEmailVerification, condition, condition_val)
+        return True
+
+    current_time_stamp = get_current_date()
+    registration_token = new_uuid()
+    expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
+
+    link = "%s/userregistration/%s" % (
+        KNOWLEDGE_URL, registration_token
+    )
+
+    notify_user_thread = threading.Thread(
+        target=notify_user, args=[
+            email_id, emp_name, link
+        ]
+    )
+    notify_user_thread.start()
+
+    if (_del_olddata()) :
+        db.call_insert_proc(
+            "sp_tbl_email_verification_save",
+            (user_id, registration_token, 1, expiry_date)
+        )
+        return True
+    else :
+        return False
 
 ###############################################################################
 # To save User
@@ -556,26 +614,23 @@ def save_user(
     address, designation, country_ids, domain_ids,
     session_user
 ):
-    current_time_stamp = get_date_time()
-    encrypted_password, password = generate_and_return_password()
+    # current_time_stamp = get_date_time()
+    # encrypted_password, password = generate_and_return_password()
     user_id = db.call_insert_proc(
         "sp_users_save", (
-            None, email_id, user_group_id, encrypted_password,
-            employee_name, employee_code, contact_no, address,
-            designation, session_user, current_time_stamp)
+            user_category_id, None, email_id, user_group_id,
+            employee_name, employee_code, contact_no, mobile_no,
+            address, designation, session_user)
     )
     if user_id is False:
         raise process_error("E033")
-    save_user_countries(db, country_ids, user_id)
-    save_user_domains(db, domain_ids, user_id)
+    save_user_countries(db, country_ids, user_id, session_user)
+    save_user_domains(db, domain_ids, user_id, session_user)
     action = "Created User \"%s - %s\"" % (employee_code, employee_name)
     db.save_activity(0, 4, action)
-    notify_user_thread = threading.Thread(
-        target=notify_user, args=[
-            email_id, password, employee_name, employee_code
-        ]
-    )
-    notify_user_thread.start()
+    name = "%s - %s" % (employee_code, employee_name)
+    save_registraion_token(db, user_id, name, email_id)
+
     return True
 
 
@@ -585,12 +640,10 @@ def save_user(
 # Return Type : if the email fails raises exception
 ###############################################################################
 def notify_user(
-    email_id, password, employee_name, employee_code
+    email_id, emp_name, link
 ):
     try:
-        email().send_knowledge_user_credentials(
-            email_id, password, employee_name, employee_code
-        )
+        email().send_registraion_link(email_id, emp_name, link)
     except Exception, e:
         print "Error while sending email"
         print e
@@ -602,11 +655,12 @@ def notify_user(
 # Return Type : Returns None on Successfull save otherwise raises process error
 ###############################################################################
 def save_user_countries(
-    db, country_ids, user_id
+    db, country_ids, user_id, session_user
 ):
-    country_columns = ["user_id", "country_id"]
+    current_time_stamp = get_date_time()
+    country_columns = ["user_id", "country_id", "assigned_by", "assigned_on"]
     country_values_list = [
-       (user_id, int(country_id)) for country_id in country_ids
+       (user_id, int(country_id), session_user, current_time_stamp) for country_id in country_ids
     ]
     result = db.bulk_insert(
         tblUserCountries, country_columns, country_values_list
@@ -621,11 +675,12 @@ def save_user_countries(
 # Return Type : Returns None on Successfull save otherwise raises process error
 ###############################################################################
 def save_user_domains(
-    db, domain_ids, user_id
+    db, domain_ids, user_id, session_user
 ):
-    domain_columns = ["user_id", "domain_id"]
+    current_time_stamp = get_date_time()
+    domain_columns = ["user_id", "domain_id", "assigned_by", "assigned_on"]
     domain_values_list = [
-        (user_id, int(domain_id)) for domain_id in domain_ids
+        (user_id, int(domain_id), session_user, current_time_stamp) for domain_id in domain_ids
     ]
     result = db.bulk_insert(
         tblUserDomains, domain_columns, domain_values_list
@@ -643,22 +698,23 @@ def save_user_domains(
 #   process error
 ###############################################################################
 def update_user(
-    db, user_id, user_group_id, employee_name, employee_code, contact_no,
-    address, designation, country_ids, domain_ids, session_user
+    db, user_id, user_category_id, email_id, user_group_id, employee_name,
+    employee_code, contact_no, mobile_no,
+    address, designation, country_ids, domain_ids,
+    session_user
 ):
-    current_time_stamp = get_date_time()
     result = db.call_update_proc(
         "sp_users_save", (
-            user_id, None, user_group_id, None,
-            employee_name, employee_code, contact_no, address,
-            designation, session_user, current_time_stamp)
+            user_category_id, user_id, email_id, user_group_id,
+            employee_name, employee_code, contact_no, mobile_no,
+            address, designation, session_user)
     )
     if result is False:
         raise process_error("E036")
     db.call_update_proc("sp_usercountries_delete", (user_id,))
     db.call_update_proc("sp_userdomains_delete", (user_id,))
-    save_user_countries(db, country_ids, user_id)
-    save_user_domains(db, domain_ids, user_id)
+    save_user_countries(db, country_ids, user_id, session_user)
+    save_user_domains(db, domain_ids, user_id, session_user)
     action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
     db.save_activity(0, 4, action)
     return True
@@ -671,7 +727,7 @@ def update_user(
 ###############################################################################
 def check_user_group_active_status(db, user_id):
     row = db.call_proc("sp_user_usergroup_status", (user_id,))
-    if int(row[0]) == 0:
+    if int(row[0]["group_count"]) == 0:
         raise process_error("E065")
 
 
@@ -681,7 +737,7 @@ def check_user_group_active_status(db, user_id):
 # Return Type : Returns True on Successfull update, Other wise raises process
 #               error
 ###############################################################################
-def update_user_status(db, user_id, is_active):
+def update_user_status(db, user_id, is_active, session_user):
     check_user_group_active_status(db, user_id)
     result = db.call_update_proc(
         "sp_users_change_status",
@@ -689,7 +745,8 @@ def update_user_status(db, user_id, is_active):
     )
     if result is False:
         raise process_error("E039")
-    rows = db.call_proc("sp_users_change_status", (user_id, ))
+
+    rows = db.call_proc("sp_empname_by_id", (user_id, ))
     employee_name = rows[0]["empname"]
     action = ""
     if is_active == 1:
@@ -699,6 +756,30 @@ def update_user_status(db, user_id, is_active):
     db.save_activity(0, 4, action)
     return result
 
+
+###############################################################################
+# To Update the status of user
+# Parameter(s) : Object of database, user id, active status
+# Return Type : Returns True on Successfull update, Other wise raises process
+#               error
+###############################################################################
+def update_disable_status(db, user_id, is_disable, session_user):
+    result = db.call_update_proc(
+        "sp_users_disable_status",
+        (user_id, is_disable, session_user, get_date_time())
+    )
+    if result is False:
+        raise process_error("E039")
+
+    rows = db.call_proc("sp_empname_by_id", (user_id, ))
+    employee_name = rows[0]["empname"]
+    action = ""
+    if is_disable == 1:
+        action = "Disabled User \"%s\"" % employee_name
+    else:
+        action = "Enabled User \"%s\"" % employee_name
+    db.save_activity(0, 4, action)
+    return result
 
 #####################################################################
 # To Fetch Countries which are mapped to Domains

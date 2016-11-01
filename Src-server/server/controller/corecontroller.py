@@ -40,7 +40,7 @@ def process_admin_forms(data):
         form_url = f["form_url"]
         form_type = f["form_type"]
         parent_menu = f["parent_menu"]
-        print "form_name: %s" % form_name
+        # print "form_name: %s" % form_name
         form = core.Form(form_id, form_name, form_url, parent_menu, form_type)
         form_list.append(form)
     return process_user_menus(form_list)
@@ -48,10 +48,9 @@ def process_admin_forms(data):
 
 def process_user_menus(form_list):
     menus = {}
-    print form_list
     for form in form_list:
         form_type = form.form_type
-        print "form_name: %s, form_type: %s" % (form.form_name, form.form_type)
+        # print "form_name: %s, form_type: %s" % (form.form_name, form.form_type)
         _forms = menus.get(form_type)
         if _forms is None:
             _forms = []

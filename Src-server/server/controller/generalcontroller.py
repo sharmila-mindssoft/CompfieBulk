@@ -148,10 +148,11 @@ def validate_user_forms(db, user_id, form_ids, requet, admin_user_type=None):
 ########################################################
 def process_save_domain(db, request, user_id):
     domain_name = request.domain_name
+    c_ids = request.country_ids
     isDuplicate = check_duplicate_domain(db, domain_name, domain_id=None)
     if isDuplicate:
         return general.DomainNameAlreadyExists()
-    if (save_domain(db, domain_name, user_id)):
+    if (save_domain(db, c_ids, domain_name, user_id)):
         return general.SaveDomainSuccess()
 
 
@@ -161,11 +162,12 @@ def process_save_domain(db, request, user_id):
 def process_update_domain(db, request, user_id):
     domain_name = request.domain_name
     domain_id = request.domain_id
+    c_ids = request.country_ids
     isDuplicate = check_duplicate_domain(db, domain_name, domain_id)
 
     if isDuplicate:
         return general.DomainNameAlreadyExists()
-    if (update_domain(db, domain_id, domain_name, user_id)):
+    if (update_domain(db, c_ids, domain_id, domain_name, user_id)):
         return general.UpdateDomainSuccess()
     else:
         return general.InvalidDomainId()
@@ -196,8 +198,9 @@ def process_change_domain_status(db, request, user_id):
 # To get list of all domains
 ########################################################
 def process_get_domains(db, user_id):
-    results = get_domains_for_user(db, 0)
-    success = general.GetDomainsSuccess(domains=results)
+    domains = get_domains_for_user(db, 0)
+    countries = get_countries_for_user(db, user_id)
+    success = general.GetDomainsSuccess(domains, countries)
     return success
 
 

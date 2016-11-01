@@ -1,7 +1,9 @@
+
 #!/usr/bin/python
 
 # import mandrill
-from smtplib import SMTP_SSL as SMTP
+# from smtplib import SMTP_SSL as SMTP
+from smtplib import SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
@@ -16,8 +18,10 @@ class Email(object):
     def __init__(self):
         # self.sender = "compfie.saas@gmail.com"
         # self.password = "compfie@123"
-        self.sender = "compfie.test@aparajitha.com"
-        self.password = "Ctt@123"
+        # self.sender = "compfie.test@aparajitha.com"
+        # self.password = "Ctt@123"
+        self.sender = "test@mindssoft.com"
+        self.password = "Test$#4u"
         # self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
         self.initializeTemplates()
 
@@ -35,7 +39,8 @@ class Email(object):
         if is_credential:
             _is_send = True
         if _is_send:
-            server = SMTP("mail.aparajitha.com", 465)
+            # server = SMTP("mail.aparajitha.com", 465)
+            server = SMTP("smtp.mindssoft.com", 25)
             print server
             server.set_debuglevel(False)
             server.login(self.sender, self.password)
@@ -114,6 +119,19 @@ class EmailHandler(Email):
         )
         # self.send_mail(template_name, email_to, context)
         return True
+
+    def send_registraion_link(
+        self, receiver, employee_name, reset_link
+    ):
+        subject = "Confirm Your Registration"
+        message = '''
+            Dear %s, <br> \
+            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>%s</p>  <br>\
+            <p> Thanks & Regards, </p>  <br>\
+            Compfie Support Team
+        ''' % (employee_name, reset_link)
+        self.send_email(receiver, subject, message, is_credential=True)
 
     def send_client_credentials(
         self, short_name, receiver, password

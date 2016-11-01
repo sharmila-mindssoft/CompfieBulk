@@ -24,6 +24,8 @@ def get_date_time_in_date():
     time_stamp = datetime.datetime.utcnow()
     return localize(time_stamp)
 
+def get_current_date():
+    return datetime.datetime.utcnow()
 
 def get_system_date():
     date = datetime.datetime.today()
@@ -52,6 +54,9 @@ def addDays(value, due_date):
     new_date = (due_date + datetime.timedelta(days=value))
     return new_date
 
+def addHours(value, due_date):
+    new_date = (due_date + datetime.timedelta(hours=value))
+    return new_date
 
 def addYear(value, due_date):
     try:
@@ -213,9 +218,9 @@ def encrypt(value):
     return m.hexdigest()
 
 
-def get_current_date():
-    date = datetime.datetime.today()
-    return date
+# def get_current_date():
+#     date = datetime.datetime.today()
+#     return date
 
 
 ########################################################

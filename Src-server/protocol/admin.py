@@ -138,6 +138,28 @@ class GetUsers(Request):
         }
 
 
+class SendRegistraion(Request):
+    def __init__(self, user_id, username, email_id):
+        self.user_id = user_id
+        self.email_id = email_id
+        self.username = username
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id", "username", "email_id"])
+        user_id = data.get("user_id")
+        username = data.get("username")
+        email_id = data.get("email_id")
+        return SendRegistraion(user_id, username, email_id)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+            "email_id": self.email_id
+        }
+
+
 class SaveUser(Request):
     def __init__(
         self, user_category_id, employee_name,
@@ -199,15 +221,19 @@ class SaveUser(Request):
 
 class UpdateUser(Request):
     def __init__(
-        self, user_id, user_group_id, employee_name,
-        employee_code, contact_no, address, designation,
+        self, user_id, user_category_id, employee_name,
+        employee_code, email_id, contact_no, mobile_no,
+        user_group_id, address, designation,
         country_ids, domain_ids
     ):
         self.user_id = user_id
-        self.user_group_id = user_group_id
+        self.user_category_id = user_category_id
         self.employee_name = employee_name
         self.employee_code = employee_code
+        self.email_id = email_id
         self.contact_no = contact_no
+        self.mobile_no = mobile_no
+        self.user_group_id = user_group_id
         self.address = address
         self.designation = designation
         self.country_ids = country_ids
@@ -216,36 +242,43 @@ class UpdateUser(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "user_id", "ug_id", "employee_name", "employee_code", "contact_no",
-            "address", "designation", "country_ids", "domain_ids"
-        ])
+            "user_id", "u_cat_id",  "employee_name", "employee_code",
+            "email_id", "contact_no", "mobile_no",
+            "ug_id", "address", "designation", "country_ids",
+            "domain_ids"])
         user_id = data.get("user_id")
-        user_group_id = data.get("ug_id")
+        user_category_id = data.get("u_cat_id")
         employee_name = data.get("employee_name")
         employee_code = data.get("employee_code")
+        email_id = data.get("email_id")
         contact_no = data.get("contact_no")
+        mobile_no = data.get("mobile_no")
+        user_group_id = data.get("ug_id")
         address = data.get("address")
         designation = data.get("designation")
         country_ids = data.get("country_ids")
         domain_ids = data.get("domain_ids")
         return UpdateUser(
-            user_id, user_group_id, employee_name, employee_code, contact_no,
-            address, designation, country_ids, domain_ids
+            user_id, user_category_id, employee_name, employee_code, email_id,
+            contact_no, mobile_no, user_group_id, address,
+            designation, country_ids, domain_ids
         )
 
     def to_inner_structure(self):
         return {
             "user_id": self.user_id,
-            "ug_id": self.user_group_id,
+            "u_cat_id": self.user_category_id,
             "employee_name": self.employee_name,
             "employee_code": self.employee_code,
+            "email_id": self.email_id,
             "contact_no": self.contact_no,
+            "mobile_no": self.mobile_no,
+            "ug_id": self.user_group_id,
             "address": self.address,
             "designation": self.designation,
             "country_ids": self.country_ids,
             "domain_ids": self.domain_ids
         }
-
 
 class ChangeUserStatus(Request):
     def __init__(self, user_id, is_active):
@@ -265,6 +298,23 @@ class ChangeUserStatus(Request):
             "is_active": self.is_active,
         }
 
+class ChangeDisableStatus(Request):
+    def __init__(self, user_id, is_active):
+        self.user_id = user_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id", "is_disable"])
+        user_id = data.get("user_id")
+        is_active = data.get("is_disable")
+        return ChangeDisableStatus(user_id, is_active)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
+            "is_disable": self.is_active,
+        }
 
 class GetValidityDateList(Request):
     def __init__(self):
@@ -394,7 +444,7 @@ def _init_Request_class_map():
         ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser,
         ChangeUserStatus, GetValidityDateList, SaveValidityDateSettings,
         GetUserMappings, SaveUserMappings, GetReassignUserAccountFormdata,
-        SaveReassignUserAccount
+        SaveReassignUserAccount, SendRegistraion, ChangeDisableStatus
     ]
     class_map = {}
     for c in classes:
@@ -591,6 +641,19 @@ class GetUsersSuccess(Response):
             "countries": self.countries,
             "user_categories": self.user_categories,
             "user_details": self.users
+        }
+
+class SendRegistraionSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SendRegistraionSuccess()
+
+    def to_inner_structure(self):
+        return {
         }
 
 
@@ -1088,7 +1151,8 @@ def _init_Response_class_map():
         ChangeUserStatusSuccess, CannotDeactivateUserExists,
         GetValidityDateListSuccess, SaveValidityDateSettingsSuccess,
         GetUserMappingsSuccess, GetUserMappingsSuccess,
-        SaveUserMappingsSuccess, SaveReassignUserAccountSuccess
+        SaveUserMappingsSuccess, SaveReassignUserAccountSuccess,
+        SendRegistraionSuccess
     ]
     class_map = {}
     for c in classes:

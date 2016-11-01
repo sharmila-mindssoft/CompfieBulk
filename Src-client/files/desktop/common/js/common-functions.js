@@ -14,7 +14,7 @@ function validateEmail($email) {
   return emailReg.test($email);
 }
 
-function ValidateIPaddress(ipaddress) 
+function ValidateIPaddress(ipaddress)
 {
     if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)){
         return true;
@@ -280,7 +280,7 @@ function getDomainAutocomplete(e, textval, listval, callback, flag) {
   onArrowKey(e, 'ac-domain', callback);
 }
 //usergroup autocomplete function
-function getUserGroupAutocomplete(e, textval, listval, callback) {
+function getUserGroupAutocomplete(e, cat_id, textval, listval, callback) {
   $('#ac-usergroup').show();
   $('#usergroup').val('');
   var usergroups = listval;
@@ -288,7 +288,11 @@ function getUserGroupAutocomplete(e, textval, listval, callback) {
   $('#ac-usergroup ul').empty();
   if (textval.length > 0) {
     for (var i in usergroups) {
-      if (~usergroups[i].user_group_name.toLowerCase().indexOf(textval.toLowerCase()) && usergroups[i].is_active == true)
+      if (
+          ~usergroups[i].user_group_name.toLowerCase().indexOf(textval.toLowerCase())
+          && usergroups[i].is_active == true
+          && usergroups[i].user_category_id == cat_id
+        )
         suggestions.push([
           usergroups[i].user_group_id,
           usergroups[i].user_group_name
@@ -869,7 +873,7 @@ function activate_text_arrow(ac_id, ac_name, callback) {
   callback(ac_result);
 }
 
-var month_id_name_map = {} 
+var month_id_name_map = {}
 month_id_name_map[1] = "January"
 month_id_name_map[2] = "February"
 month_id_name_map[3] = "March"

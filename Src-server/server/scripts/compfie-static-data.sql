@@ -161,6 +161,11 @@ INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
 INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
 
+--tbl_verification_type
+INSERT INTO tbl_verification_type VALUES(1, "Registraion");
+INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
+INSERT INTO tbl_verification_type VALUES(3, "Data Download");
+
 -- tbl_machines
 -- INSERT INTO `tbl_machines` (`machine_id`, `machine_name`, `ip`, `port`, `client_ids`, `server_full`) VALUES
 -- (1, 'client server one', '127.0.0.1', 8081, '1', 0);

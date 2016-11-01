@@ -97,7 +97,6 @@ CREATE TABLE `tbl_countries` (
 DROP TABLE IF EXISTS `tbl_domains`;
 CREATE TABLE `tbl_domains` (
   `domain_id` int(11) NOT NULL AUTO_INCREMENT,
-  `country_id` int(11) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
@@ -109,6 +108,13 @@ CREATE TABLE `tbl_domains` (
   CONSTRAINT `fk_domains_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_domain_countries`;
+CREATE TABLE `tbl_domain_countries` (
+  `country_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  UNIQUE KEY (`country_id`, `domain_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
@@ -117,8 +123,8 @@ CREATE TABLE `tbl_users` (
   `employee_name` varchar(50) NOT NULL,
   `employee_code` varchar(50) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `contact_no` varchar(20) DEFAULT NULL,
-  `mobile_no` varchar(20) DEFAULT NULL,
+  `contact_no` varchar(50) DEFAULT NULL,
+  `mobile_no` varchar(50) DEFAULT NULL,
   `user_group_id` int(11) NOT NULL,
   `address` varchar(250) DEFAULT NULL,
   `designation` varchar(50) DEFAULT NULL,
@@ -621,10 +627,8 @@ CREATE TABLE `tbl_divisions` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`division_id`),
-  KEY `fk_divisions_business_groups` (`business_group_id`),
   KEY `fk_divisions_legal_entities` (`legal_entity_id`),
   KEY `fk_tbl_cg_div` (`client_id`),
-  CONSTRAINT `fk_divisions_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -706,12 +710,7 @@ CREATE TABLE `tbl_units_organizations` (
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_id` int(11) DEFAULT NULL,
-  KEY `fk_unit_id` (`unit_id`),
-  KEY `fk_domain_id` (`domain_id`),
-  KEY `fk_organisation_id` (`organisation_id`),
-  CONSTRAINT `fk_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_organisation_id` FOREIGN KEY (`organisation_id`) REFERENCES `tbl_organisation` (`organisation_id`)
+  UNIQUE KEY `fk_unit_id` (`unit_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_statutories`;
@@ -846,7 +845,7 @@ CREATE TABLE `tbl_client_database` (
 
 DROP TABLE IF EXISTS `tbl_verification_type`;
 CREATE TABLE `tbl_verification_type` (
-  `verification_type_id` int(11) NOT NULL AUTO_INCREMENT,
+  `verification_type_id` int(11) NOT NULL,
   `verification_type` varchar(50) NOT NULL,
   PRIMARY KEY (`verification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -857,7 +856,7 @@ CREATE TABLE `tbl_email_verification` (
   `verification_code` varchar(50) NOT NULL,
   `verification_type_id` int(11) NOT NULL,
   `expiry_date` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`verification_code`),
+  UNIQUE KEY (`user_id`, `verification_code`, `verification_type_id`),
   KEY `fk_tbl_email_verification_verification_type_id` (`verification_type_id`),
   CONSTRAINT `fk_tbl_email_verification_verification_type_id` FOREIGN KEY (`verification_type_id`) REFERENCES `tbl_verification_type` (`verification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

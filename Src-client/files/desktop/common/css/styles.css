@@ -3778,17 +3778,17 @@ div.scrollable {
 }
 
 .enable-icon {
-    background: url(../images/icon-enable.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
+	background:  url(../images/icon-disable.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
 }
 
 .disable-icon {
-    background: url(../images/icon-disable.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
+	background:  url(../images/icon-enable.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
 }
 
 .back-to-top {
@@ -3888,6 +3888,6 @@ div.scrollable {
 }
 
 .btn-back:hover {
-    background: #ccc url(../images/icon-back.png) no-repeat 0.5em center;
-    color: #000;
+	background: #ccc url(../images/icon-back.png) no-repeat 0.5em center;
+	color: #000;
 }

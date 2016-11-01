@@ -60,7 +60,11 @@
     <td class="username"></td>
     <td class="email-id"></td>
     <td class="cat-name"></td>
-    <td class="registration-email"></td>
+    <td class="registration-email">
+      <a class='popup-link new-link' style="display:none">
+        Resend
+      </a>
+    </td>
     <td align="center">
       <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
     </td>
@@ -81,7 +85,7 @@
             <div class="input-row">
               <div class="field-label">Category Name:<span class="mandatory">*</span></div>
               <div class="field-input">
-              <select class="input-box" id="usercatval">
+              <select class="input-box" tabindex="1" id="usercatval">
                 <option>Select</option>
               </select>
                 <input type="hidden" id="cateid" value="">
@@ -90,7 +94,7 @@
             <div class="input-row">
               <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" maxlength="50" id="employeename" class="input-box fieldvalue" tabindex="1" autofocus="autofocus">
+                <input type="text" maxlength="50" id="employeename" class="input-box fieldvalue" tabindex="2" autofocus="autofocus">
                 <input type="hidden" id="userid" value="">
               </div>
             </div>
@@ -100,7 +104,7 @@
             </div>
             <div class="input-row">
               <div class="field-label">Address:</div>
-              <div class="field-input"><textarea class="input-box fieldvalue" id="address" style="height:70px;" tabindex="3" maxlength="250"></textarea></div>
+              <div class="field-input"><textarea class="input-box fieldvalue" id="address" style="height:70px;" tabindex="4" maxlength="250"></textarea></div>
             </div>
 
           </div>
@@ -108,7 +112,7 @@
 
             <div class="input-row" style="padding-bottom:0px;">
               <div class="field-label">Email ID:<span class="mandatory">*</span></div>
-              <div class="field-input"><input type="text" maxlength="100" id="emailid" class="input-box fieldvalue" placeholder="Email ID" tabindex="4">
+              <div class="field-input"><input type="text" maxlength="100" id="emailid" class="input-box fieldvalue" placeholder="Email ID" tabindex="5">
 
               <span id="view_emailid" style="default-display-none"> </span>
             </div>
@@ -122,9 +126,9 @@
           <div class="input-row" style="padding-bottom:0px;">
             <div class="field-label">Contact No.:</div>
             <div class="field-input">
-            <input id="countrycode" type="text" maxlength="3"  class="input-box countrycode fieldvalue" value="+91" tabindex="5" >
-            <input id="areacode" type="text" maxlength="5"  class="input-box areacode fieldvalue" tabindex="6" >
-            <input id="contactno" type="text" maxlength="10"  class="input-box mobile fieldvalue" tabindex="7">
+            <input id="countrycode" type="text" maxlength="3"  class="input-box countrycode fieldvalue" value="+91" tabindex="6" >
+            <input id="areacode" type="text" maxlength="5"  class="input-box areacode fieldvalue" tabindex="7" >
+            <input id="contactno" type="text" maxlength="10"  class="input-box mobile fieldvalue" tabindex="8">
             </div>
           </div>
 
@@ -137,15 +141,15 @@
           <div class="input-row">
             <div class="field-label">Mobile No.:<span class="mandatory">*</span></div>
             <div class="field-input">
-            <input id="mcountrycode" type="text" class="input-box countrycode fieldvalue" value="+91" >
-            <input id="mobileno" type="text" class="input-box mobile fieldvalue" value="9876543210"
+            <input id="mcountrycode" type="text" class="input-box countrycode fieldvalue" tabindex="9" value="+91" >
+            <input id="mobileno" type="text" tabindex="10" class="input-box mobile fieldvalue" value=""
             maxlength="10"
             style="width: 63% !important"></div>
           </div>
           <div class="input-row">
             <div class="field-label">User Group:<span class="mandatory">*</span></div>
             <div class="field-input">
-              <input type="text" class="input-box icon-autocomplete fieldvalue" id="usergroupval" tabindex="8">
+              <input type="text" class="input-box icon-autocomplete fieldvalue" id="usergroupval" tabindex="11">
               <input id="usergroup" type="hidden" >
               <div id="ac-usergroup" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -154,7 +158,7 @@
         </div>
         <div class="input-row">
           <div class="field-label">Designation:</div>
-          <div class="field-input"><input type="text" maxlength="50" id="designation" class="input-box fieldvalue" tabindex="9"></div>
+          <div class="field-input"><input type="text" maxlength="50" id="designation" class="input-box fieldvalue" tabindex="12"></div>
         </div>
 
       </div>
@@ -163,19 +167,19 @@
         <div class="input-row" >
           <div class="field-label">Countries:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete fieldvalue" id="countryselected" readonly="readonly" tabindex="10">
+            <input type="text" class="input-box icon-autocomplete fieldvalue" id="countryselected" readonly="readonly" tabindex="13">
             <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
             <ul id="ulist-country" class="hideselect" style="width:85%;"></ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     <div class="input-row-right">
 
       <div class="input-row" >
         <div class="field-label">Domain:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete fieldvalue" id="domainselected" readonly="readonly" tabindex="11">
+          <input type="text" class="input-box icon-autocomplete fieldvalue" id="domainselected" readonly="readonly" tabindex="14">
           <div id="selectboxview" class="ac-selectbox" style="display:none;">
           <ul id="ulist" class="hideselect" style="width:85%;"></ul>
         </div>
@@ -186,8 +190,8 @@
   <div class="submit-button-container" style="text-align:left;">
   </div>
   <div class="submit-button-container">
-    <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-user-cancel">&nbsp;&nbsp;
-    <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="12">
+    <input type="reset" name="cancel" tabindex="16" value="Cancel" class="btn-cancel btn-user-cancel">&nbsp;&nbsp;
+    <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="15">
   </div>
 </div>
 </div>

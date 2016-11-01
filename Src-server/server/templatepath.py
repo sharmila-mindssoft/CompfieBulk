@@ -429,5 +429,10 @@ TEMPLATE_PATHS = [
         "/knowledge/reassign-user-account",
         "files/desktop/knowledge/reassign-user-account/reassign-user-account.html",
         None, {}
+    ),
+    (
+        r"/knowledge/userregistration/([a-zA-Z-0-9]+)",
+        "files/desktop/common/html/CreateLoginDetails.html",
+        None, {}
     )
 ]
