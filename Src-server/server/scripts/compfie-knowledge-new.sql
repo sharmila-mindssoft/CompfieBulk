@@ -396,6 +396,7 @@ CREATE TABLE `tbl_compliances` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_updated` tinyint(1) DEFAULT '1'
   PRIMARY KEY (`compliance_id`),
   KEY `fk_compliances_statutory_mappings` (`statutory_mapping_id`),
   KEY `fk_compliance_frequency_id` (`frequency_id`),
@@ -540,7 +541,9 @@ CREATE TABLE `tbl_legal_entities` (
   `contract_to` date DEFAULT NULL,
   `logo` varchar(200) DEFAULT NULL,
   `file_space_limit` float DEFAULT '0',
+  `used_file_space` float DEFAULT '0',
   `total_licence` int(11) DEFAULT '0',
+  `used_licencce` int(11) DEFAULT '0'
   `is_closed` tinyint(4) DEFAULT '1',
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
@@ -814,14 +817,16 @@ CREATE TABLE `tbl_file_server` (
 DROP TABLE IF EXISTS `tbl_client_users`;
 CREATE TABLE `tbl_client_users` (
   `client_id` int(11) NOT NULL,
+  `legal_entity_ids` varchar(100) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `user_category_id` int(11) NOT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
   `employee_name` varchar(50) NOT NULL,
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
+  `mobile_no` varchar(20) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   `is_primary_admin` tinyint(1) NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL,
   KEY `fk_tbl_client_users_cg` (`client_id`),
@@ -937,7 +942,6 @@ CREATE TABLE `tbl_user_mapping` (
 DROP TABLE IF EXISTS `tbl_user_legalentity`;
 CREATE TABLE `tbl_user_legalentity` (
   `user_id` int(11) NOT NULL,
-  `user_category_id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
