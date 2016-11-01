@@ -186,7 +186,8 @@ DELIMITER //
 CREATE PROCEDURE `sp_industry_master_getindustries`()
 BEGIN
 	SELECT t1.country_id, t2.country_name, t1.domain_id, t3.domain_name,
-		t1.organisation_id, t1.organisation_name, t1.is_active FROM tbl_organisation t1
+		t1.organisation_id as industry_id, t1.organisation_name as industry_name,
+        t1.is_active FROM tbl_organisation t1
         INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id INNER JOIN
         tbl_domains t3 on t1.domain_id = t3.domain_id;
 END //
@@ -2614,9 +2615,9 @@ BEGIN
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id = tui.domain_id
 	) as domain_name, (
-		SELECT organisation_name FROM tbl_organisation ti
-		WHERE ti.organisation_id = tui.organisation_id
-	) as organisation_name FROM tbl_unit_industries tui
+		SELECT industry_name FROM tbl_industries ti
+		WHERE ti.industry_id = tui.industry_id
+	) as industry_name FROM tbl_unit_industries tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
 	);
@@ -2676,9 +2677,9 @@ BEGIN
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id = tui.domain_id
 	) as domain_name, (
-		SELECT organisation_name FROM tbl_organisation ti
-		WHERE ti.organisation_id = tui.organisation_id
-	) as organisation_name FROM tbl_unit_industries tui
+		SELECT industry_name FROM tbl_industries ti
+		WHERE ti.industry_id = tui.industry_id
+	) as industry_name FROM tbl_unit_industries tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
 	) and tui.domain_id=domainid;
@@ -3340,3 +3341,294 @@ BEGIN
 
 END //
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Get user category details for user mappping report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_user_category_details`;
+DELIMITER //
+
+CREATE  PROCEDURE `sp_get_user_category_details`(
+in userId int(11))
+BEGIN
+	select tuc.user_category_id, tuc.user_category_name
+	from tbl_user_login_details as tu, tbl_user_category as tuc
+	where
+	tuc.user_category_id = tu.user_category_id and
+	tu.user_id = userId;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get countries for user mapping report - for user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_for_usermapping_report`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_countries_for_usermapping_report`(
+in userCatgId int(11), userId int(11))
+BEGIN
+	if(userCatgId = 1)then
+		select country_id, country_name, is_active
+		from tbl_countries where
+		is_active = 1;
+	end if;
+	if(userCatgId = 5 or userCatgId = 6 or userCatgId = 7 or userCatgId = 8)then
+		select country_id, country_name, is_active
+		from tbl_countries
+		where country_id in
+		(select country_id from tbl_user_countries
+			where user_id = userId) and is_active = 1;
+	end if;
+END //
+DELIMITER;
+
+
+-- --------------------------------------------------------------------------------
+-- Get business group details for user mapping report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_report_business_groups`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_usermapping_report_business_groups`()
+BEGIN
+	select business_group_id, business_group_name
+	from tbl_business_groups;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get legal entity details - user mapping report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_report_legal_entity`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_usermapping_report_legal_entity`()
+BEGIN
+	select legal_entity_id, legal_entity_name, business_group_id
+	from tbl_legal_entities;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get unit's details, divison, category - user mapping report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_report_unit_details`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_usermapping_report_unit_details`(
+in userCatgId int(11), userId int(11))
+BEGIN
+	if(userCatgId = 1)then
+		select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name,tu.client_id,
+		tu.business_group_id, tu.legal_entity_id,
+		tu.country_id, td.division_id, td.division_name, tc.category_id,
+		tc.category_name
+		from
+		tbl_units as tu,
+		tbl_divisions as td,
+		tbl_categories as tc
+		where
+		tc.category_id = tu.category_id and
+		td.division_id = tu.division_id and
+		tu.unit_id in (select distinct(unit_id) from tbl_user_units);
+	end if;
+	if(userCatgId = 5 or userCatgId = 6 or userCatgId = 7 or userCatgId = 8)then
+		select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
+		tu.business_group_id, tu.legal_entity_id,
+		tu.country_id, td.division_id, td.division_name, tc.category_id,
+		tc.category_name
+		from
+		tbl_units as tu,
+		tbl_divisions as td,
+		tbl_categories as tc
+		where
+		tc.category_id = tu.category_id and
+		td.division_id = tu.division_id and
+		tu.unit_id in (select distinct(unit_id) from tbl_user_units
+		where user_id = userId and user_category_id = userCatgId);
+	end if;
+END //
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get group detais -division, category, unit for user mapping report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_report_group_details`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_usermapping_report_group_details`(
+in userCatgId int(11), userId int(11))
+BEGIN
+	if(userCatgId = 1)then
+		select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+		tle.business_group_id
+		from tbl_legal_entities as tle,
+		tbl_client_groups as tcg
+		where
+		tcg.client_id = tle.client_id and
+		tcg.is_approved = 1 and
+		tcg.is_active = 1 and
+		tle.is_closed != 1;
+	end if;
+	if(userCatgId = 5 or userCatgId = 6)then
+		select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+		tle.business_group_id
+		from tbl_legal_entities as tle,
+		tbl_client_groups as tcg
+		where
+		tcg.client_id = tle.client_id and
+		tcg.is_approved = 1 and
+		tcg.is_active = 1 and
+		tle.created_by = userId and
+		tle.is_closed != 1;
+	end if;
+	if(userCatgId = 7 or userCatgId = 8)then
+		select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+		tle.business_group_id
+		from
+		tbl_legal_entities as tle,
+		tbl_client_groups as tcg
+		where
+		tcg.client_id = tle.client_id and
+		tcg.is_approved = 1 and
+		tcg.is_active = 1 and
+		tle.is_closed != 1 and
+		tle.client_id in (select distinct(client_id) from tbl_user_units
+		where user_id = userId);
+	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- user mapping report - report details/data
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_report_details`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_usermapping_report_details`(
+	in userId int(11), clientId int(11), legalId int(11), counrtyId int(11))
+BEGIN
+	SELECT @_user_category_id := user_category_id as user_category_id
+    FROM tbl_users WHERE user_id = userId;
+
+	if(@_user_category_id = 1)then
+		select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user
+		from
+		tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
+		tbl_users as t_usr,tbl_user_units as t3
+		where
+		t3.client_id = t1.client_id and
+		t3.legal_entity_id = t1.legal_entity_id and
+		t_usr.user_id = t1.user_id and
+		t_mgr.user_id = t2.created_by and
+		t2.country_id = counrtyId and
+		t2.client_id = t1.client_id and
+		t2.legal_entity_id = t1.legal_entity_id and
+		t1.legal_entity_id = legalId and
+		t1.client_id = clientId
+		group by t1.user_id;
+
+		select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+		from
+		tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
+		tbl_user_category as t3
+		where
+		t3.user_category_id = t1.user_category_id and
+		t2.user_id = t1.user_id and
+		t4.unit_id = t1.unit_id and
+		t4.country_id = counrtyId and
+		t1.legal_entity_id =legalId and
+		t1.client_id = clientId;
+
+		select distinct(t3.domain_id),t3.domain_name,t3.is_active
+		from
+		tbl_user_units as t1,tbl_units_organizations as t2,tbl_domains as t3
+		where
+		t3.domain_id = t2.domain_id and
+		t2.unit_id = t1.unit_id and
+		t1.legal_entity_id =legalId and
+		t1.client_id = clientId
+		order by t3.domain_name;
+	elseif (@_user_category_id = 5)then
+		select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user
+		from
+		tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
+		tbl_users as t_usr,tbl_user_units as t3
+		where
+		t3.client_id = t1.client_id and
+		t3.legal_entity_id = t1.legal_entity_id and
+		t_usr.user_id = t1.user_id and
+		t_mgr.user_id = t2.created_by and
+		t2.created_by = userId and
+		t2.country_id = counrtyId and
+		t2.client_id = t1.client_id and
+		t2.legal_entity_id = t1.legal_entity_id and
+		t1.legal_entity_id = legalId and
+		t1.client_id = clientId
+		group by t1.user_id;
+
+		select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+		from
+		tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
+		tbl_user_category as t3
+		where
+		t3.user_category_id = t1.user_category_id and
+		t2.user_id = t1.user_id and
+		t4.unit_id = t1.unit_id and
+		t4.country_id = counrtyId and
+		t1.legal_entity_id =legalId and
+		t1.client_id = clientId;
+
+		select distinct(t3.domain_id),t3.domain_name,t3.is_active
+		from
+		tbl_user_units as t1,tbl_units_organizations as t2,tbl_domains as t3
+		where
+		t3.domain_id = t2.domain_id and
+		t2.unit_id = t1.unit_id and
+		t1.legal_entity_id =legalId and
+		t1.client_id = clientId
+		order by t3.domain_name;
+	elseif (@_user_category_id = 7)then
+		select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user
+		from
+		tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
+		tbl_users as t_usr,tbl_user_units as t3
+		where
+		t3.client_id = t1.client_id and
+		t3.legal_entity_id = t1.legal_entity_id and
+		t_usr.user_id = t1.user_id and
+		t_mgr.user_id = t2.created_by and
+		t2.country_id = counrtyId and
+		t2.client_id = t1.client_id and
+		t2.legal_entity_id = t1.legal_entity_id and
+		t1.legal_entity_id = legalId and
+		t1.client_id = clientId
+		group by t1.user_id;
+
+		select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+		from
+		tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
+		tbl_user_category as t3
+		where
+		t3.user_category_id = t1.user_category_id and
+		t2.user_id = t1.user_id and
+		t4.unit_id = t1.unit_id and
+		t4.country_id = counrtyId and
+		t1.user_id = userId and
+		t1.legal_entity_id =legalId and
+		t1.client_id = clientId;
+
+		select distinct(t3.domain_id),t3.domain_name,t3.is_active
+		from
+		tbl_user_units as t1,tbl_units_organizations as t2,tbl_domains as t3
+		where
+		t3.domain_id = t2.domain_id and
+		t2.unit_id = t1.unit_id and
+		t1.user_id = userId and
+		t1.legal_entity_id =legalId and
+		t1.client_id = clientId
+		order by t3.domain_name;
+	end if;
+END//
+DELIMITER;

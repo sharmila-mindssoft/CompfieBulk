@@ -1,0 +1,146 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+  <div class='loading-indicator-spin'>
+    <span><img src='/images/loading-img.gif' alt="">   </span>
+  </div>
+  <div class="content-container">
+    <div class="content-area">
+      <div class="add-container">
+    	<div class="add-container-heading">User Mapping Report<span class="error-message"></span></div>
+			<div class="input-row-left">
+				<div class="input-row">
+					<div class="field-label">Country :<span class="mandatory"> *</span></div>
+      				<div class="field-input">
+        				<select class="input-box" id="countries"  tabindex="1" autofocus="autofocus" onfocus="resetfilter('countries');">
+
+        				</select>
+      				</div>
+				</div>
+        <div class="input-row">
+          <div class="field-label">Group Name :<span class="mandatory"> *</span></div>
+          <div class="field-input">
+            <select class="input-box" id="clientids"  tabindex="2" autofocus="autofocus" onfocus="loadClientGroups();">
+
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Business Group :</div>
+          <div class="field-input">
+            <select class="input-box" id="businessgroup"  tabindex="3" autofocus="autofocus" onfocus="loadBusinessGroup();">
+
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Legal Entity :<span class="mandatory"> *</span></div>
+          <div class="field-input">
+            <select class="input-box" id="legalentity"  tabindex="4" autofocus="autofocus" onfocus="loadLegalEntity();">
+            </select>
+          </div>
+        </div>
+			</div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Division :</div>
+          <div class="field-input">
+            <select class="input-box" id="division"  tabindex="5" autofocus="autofocus" onfocus="loadDivision();">
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Category :</div>
+          <div class="field-input">
+            <select class="input-box" id="category"  tabindex="6" autofocus="autofocus" onfocus="loadCategory();">
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Unit :</div>
+          <div class="field-input">
+            <select class="input-box" id="units"  tabindex="7" autofocus="autofocus" onfocus="loadAssignedUnits();">
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>User Mapping Report</h1>
+          <table class="table-usermappingdeytails-list">
+            <tbody class="tbody-usermappingdetails-list">
+            </tbody>
+          </table>
+          <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="total_count"></p>
+      </div>
+      </div>
+  	</div>
+  </div>
+
+  <div id="templates">
+<table><tr class="tr-filter"><td colspan="10" style="border: 1px dotted #ccc;">
+<div style="margin-left:15%;" >
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+
+           <div style="margin-left:10px; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;" class="countryval"></span> </div>
+            <div style="margin-left:10px;  padding-bottom:1em;">Group  :<span style="margin-left:10px; font-weight:bold;" class="groupsval"> </span> </div>
+            <div style="margin-left:10px;  padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span> </div>
+          </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px;  padding-bottom:1em;">Legal Entity  :<span style="margin-left:10px; font-weight:bold;" class="lentityval"></span> </div>
+
+            <div style="margin-left:10px;  padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;" class="divisionval"></span> </div>
+
+            <div style="margin-left:10px;  padding-bottom:1em;">Category :<span style="margin-left:10px; font-weight:bold;" class="categoryval"></span> </div>
+          </div>
+        </div>
+        </td></tr>
+    <tr align="left" class="tr-heading">
+      <th width="3%" align="center" class="header-bg">#</th>
+      <th class="header-bg">Unit</th>
+      <th class="header-bg">Techno Manager</th>
+      <th class="header-bg">Techno User</th>
+    </tr>
+
+    <tr class="table-row" >
+      <td align="center" class="sno"></td>
+      <td class="unit-name"></td>
+      <td class="techno-manager"></td>
+      <td class="techno-user"></td>
+    </tr>
+  </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+    <tr align="left" class="table-row-no-content">
+      <td  align="left" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
+    </tr>
+  </table>
+</div>
+
+  <div class="country-drop-down">
+    <option value=""></option>
+  </div>
+  <div class="client-drop-down">
+    <option value=""></option>
+  </div>
+  <div class="bgrp-drop-down">
+    <option value=""></option>
+  </div>
+  <div class="le-drop-down">
+    <option value=""></option>
+  </div>
+  <div class="divi-drop-down">
+    <option value=""></option>
+  </div>
+  <div class="catg-drop-down">
+    <option value=""></option>
+  </div>
+  <div class="units-drop-down">
+    <option value=""></option>
+  </div>
+
+  <script type="text/javascript" src="/script/user-mapping-report/usermappingreport.js"></script>
+{% endblock %}

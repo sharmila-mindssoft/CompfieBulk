@@ -369,6 +369,17 @@ api_params = {
     'form_id_search': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "file_list" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "FileList"},
 
+    "category_id": {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    "usermapping_groupdetails": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingGroupDetails"},
+    "usermapping_unit": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingUnitDetails"},
+    "usermapping_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientLegalEntity"},
+    "usermapping_business_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientBusinessGroup"},
+    'client_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'unit_code_name': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'techno_manager': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'techno_user': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "techno_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportTechno"},
+    "unit_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportDomain"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

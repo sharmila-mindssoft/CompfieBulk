@@ -147,8 +147,6 @@ def user_login_response(db, ip, data, forms):
     address = None if data["address"] == "" else data["address"]
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
-    # form_ids = data["form_ids"]
-    # menu = process_user_forms(db, form_ids)
     menu = process_admin_forms(forms)
     # db.save_user_login_history(user_id)
     return login.UserLoginSuccess(

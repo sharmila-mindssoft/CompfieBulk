@@ -1775,7 +1775,7 @@ function initMirror() {
       "GetAssignedStatutoryWizardOneData",
       {}
     ];
-    apiRequest(callerName, request, callback); 
+    apiRequest(callerName, request, callback);
   }
 
   function getAssignStatutoryWizardTwoData(
@@ -1795,7 +1795,7 @@ function initMirror() {
           "unit_ids": unit_ids
         }
       ];
-      apiRequest(callerName, request, callback); 
+      apiRequest(callerName, request, callback);
   }
 
   function saveAssignedStatutory(
@@ -1815,7 +1815,7 @@ function initMirror() {
           "submission_type": "save"
         }
       ];
-      apiRequest(callerName, request, callback); 
+      apiRequest(callerName, request, callback);
   }
 
   function submitAssignedStatutory(
@@ -1834,7 +1834,7 @@ function initMirror() {
           "submission_type": "submit"
         }
       ];
-      apiRequest(callerName, request, callback); 
+      apiRequest(callerName, request, callback);
   }
 
   function getAssignedStatutories(callback){
@@ -1843,7 +1843,7 @@ function initMirror() {
         "GetAssignedStatutories",
         {}
       ];
-    apiRequest(callerName, request, callback); 
+    apiRequest(callerName, request, callback);
   }
 
   function getAssignedStatutoriesById(client_statutory_id, callback){
@@ -1854,7 +1854,28 @@ function initMirror() {
           "client_statutory_id": client_statutory_id
         }
       ];
-    apiRequest(callerName, request, callback); 
+    apiRequest(callerName, request, callback);
+
+  //user mapping report
+  function getUserMappingReportFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetUserMappingReportFilters',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetUserMappingDetailsReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'legal_entity_id': legalEntityId,
+      }
+    ];
+    apiRequest(callerName, request, callback);
   }
 
   return {
@@ -2020,6 +2041,10 @@ function initMirror() {
     getAssignedStatutories: getAssignedStatutories,
     getAssignedStatutoriesById: getAssignedStatutoriesById,
     changeAdminDisaleStatus: changeAdminDisaleStatus
+    getUserMappingReportFilters: getUserMappingReportFilters,
+    getUsermappingDetailsReport: getUsermappingDetailsReport
   };
+
+
 }
 var mirror = initMirror();
