@@ -1054,3 +1054,11 @@ def save_statutory_notification_units(
             n_id = db.insert(tblStatutoryNotificationsUnits, column, values)
             if n_id is False:
                 raise process_error("E023")
+
+# /////////////////////////////////
+#  Knowledge transaction:
+#    Statutory mapping
+#       Save mapping
+#       List mappings compliance wise
+#       update data complianceid wise or mapping wise
+#       Track and show which data updated in mapping while approve
