@@ -9,6 +9,7 @@ var UserGroupList;
 var AddScreen = $('#user-add');
 var ViewScreen = $('#user-view');
 var FilterBox = $('.filter-text-box');
+var UserStatus = $('.usr-status');
 var AddButton = $('.btn-user-add');
 var CancelButton = $('.btn-user-cancel');
 var SubmitButton = $('.btn-submit');
@@ -84,7 +85,6 @@ function sendCredentials(_u_id, _u_name, _e_id ) {
 }
 // User List render process
 function renderUserList(response) {
-    FilterBox.val('');
     renderUserData = function() {
       _userList = []
       if (response == null) {
@@ -181,6 +181,9 @@ function renderUserList(response) {
     }
     if (response == null) {
       fetchUserData();
+    }
+    else {
+      renderUserData();
     }
 }
 
@@ -452,10 +455,10 @@ function fieldOrder() {
 // List filter process
 function processFilter() {
   ename_search = $('#search-employee-name').val().toLowerCase();
-  uname_search = $('#search-username').val().toLowerCase();
-  email_search = $('#search-email').val().toLowerCase();
-  cat_search = $('#search-category').val().toLowerCase();
-  status_search = $('#search-status').val();
+  uname_search = $('#search-user-id').val().toLowerCase();
+  email_search = $('#search-email-id').val().toLowerCase();
+  cat_search = $('#search-category-name').val().toLowerCase();
+  usr_status = UserStatus.val();
 
   filteredList = []
   for(var v in UsersList) {
@@ -463,14 +466,23 @@ function processFilter() {
     en = data.employee_name.toLowerCase();
     ec = data.employee_code.toLowerCase();
     concat = ec + ' - ' + en;
-    uname = data.username.toLowerCase();
+    uname = data.username_id;
+    if (uname)
+      uname = uname.toLowerCase();
+    else
+      uname = '';
     email = data.email_id.toLowerCase();
-    cat = data.category_name.toLowerCase();
+    cat = data.user_category_name.toLowerCase();
     if (
       (~concat.indexOf(ename_search)) && (~uname.indexOf(uname_search)) &&
       (~email.indexOf(email_search)) && (~cat.indexOf(cat_search))
     ){
-      filteredList.push(data);
+      if (usr_status == 'All'){
+        filteredList.push(data);
+      }
+      else if (Boolean(parseInt(usr_status)) == data.is_active){
+        filteredList.push(data);
+      }
     }
   }
   renderUserList(filteredList);
@@ -690,6 +702,9 @@ function pageControls() {
   });
   SubmitButton.click(function() {
     submitUserData();
+  });
+  UserStatus.change(function() {
+    processFilter();
   });
 }
 // page load
