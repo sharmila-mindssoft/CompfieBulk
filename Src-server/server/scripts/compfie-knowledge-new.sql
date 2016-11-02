@@ -754,8 +754,8 @@ CREATE TABLE `tbl_client_compliances` (
   `submitted_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT NULL,
-  `client_updated_by` int(11) DEFAULT NULL,
-  `client_updated_on` timestamp NULL DEFAULT NULL,
+  `client_opted_by` int(11) DEFAULT NULL,
+  `client_opted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`,`compliance_id`),
   UNIQUE KEY `client_compliance_id_UNIQUE` (`client_compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
