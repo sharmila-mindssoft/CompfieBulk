@@ -103,9 +103,7 @@ CREATE TABLE `tbl_domains` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`domain_id`),
-  KEY `fk_domains_countries` (`country_id`),
-  CONSTRAINT `fk_domains_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
+  PRIMARY KEY (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_domain_countries`;
@@ -396,7 +394,7 @@ CREATE TABLE `tbl_compliances` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `is_updated` tinyint(1) DEFAULT '1'
+  `is_updated` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`compliance_id`),
   KEY `fk_compliances_statutory_mappings` (`statutory_mapping_id`),
   KEY `fk_compliance_frequency_id` (`frequency_id`),
@@ -543,7 +541,7 @@ CREATE TABLE `tbl_legal_entities` (
   `file_space_limit` float DEFAULT '0',
   `used_file_space` float DEFAULT '0',
   `total_licence` int(11) DEFAULT '0',
-  `used_licencce` int(11) DEFAULT '0'
+  `used_licencce` int(11) DEFAULT '0',
   `is_closed` tinyint(4) DEFAULT '1',
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
@@ -941,7 +939,7 @@ CREATE TABLE `tbl_user_mapping` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`user_mapping_id`),
+  PRIMARY KEY (`user_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
