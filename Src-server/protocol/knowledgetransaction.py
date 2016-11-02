@@ -1,4 +1,7 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (
+    parse_dictionary, parse_static_list,
+    to_structure_dictionary_values
+)
 from protocol.parse_structure import (
     parse_structure_VariantType_knowledgetransaction_Request,
 )
@@ -14,6 +17,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -282,6 +287,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -324,14 +331,14 @@ class GetStatutoryMappingsMasterSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "statutory_levels", "statutories", "geography_levels", "geographies", "compliance_frequency", "compliance_repeat_type", "compliance_approval_status", "compliance_duration_type"])
-        countries = data.get("countries")
-        domains = data.get("domains")
-        industries = data.get("industries")
-        statutory_natures = data.get("statutory_natures")
+        countries = data.get("country_info")
+        domains = data.get("domain_info")
+        industries = data.get("organisation_info")
+        statutory_natures = data.get("nature_info")
         statutory_levels = data.get("statutory_levels")
-        statutories = data.get("statutories")
-        geography_levels = data.get("geography_levels")
-        geographies = data.get("geographies")
+        statutories = data.get("statutory_info")
+        geography_levels = data.get("geography_level_info")
+        geographies = data.get("geography_info")
         compliance_frequency = data.get("compliance_frequency")
         compliance_repeat_type = data.get("compliance_repeat_type")
         compliance_approval_status = data.get("compliance_approval_status")
@@ -345,14 +352,14 @@ class GetStatutoryMappingsMasterSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "countries": self.countries,
-            "domains": self.domains,
-            "industries": self.industries,
-            "statutory_natures": self.statutory_natures,
+            "country_info": self.countries,
+            "domain_info": self.domains,
+            "organisation_info": self.industries,
+            "nature_info": self.statutory_natures,
             "statutory_levels": self.statutory_levels,
-            "statutories": self.statutories,
-            "geography_levels": self.geography_levels,
-            "geographies": self.geographies,
+            "statutory_info": self.statutories,
+            "geography_level_info": self.geography_levels,
+            "geography_info": self.geographies,
             "compliance_frequency": self.compliance_frequency,
             "compliance_repeat_type": self.compliance_repeat_type,
             "compliance_approval_status": self.compliance_approval_status,
@@ -548,3 +555,207 @@ class RequestFormat(object):
             "session_token": self.session_token,
             "request": to_structure_VariantType_knowledgetransaction_Request(self.request),
         }
+
+class DomainInfo(object):
+    def __init__(self, domain_id, country_id, domain_name, is_active):
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.country_id = country_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "d_id", "c_id", "d_name", "is_active"
+        ])
+        domain_id = data.get("d_id")
+        domain_name = data.get("d_name")
+        country_id = data.get("c_id")
+        is_active = data.get("is_active")
+        return DomainInfo(domain_id, country_id, domain_name, is_active)
+
+    def to_structure(self):
+        return {
+            "d_id": self.domain_id,
+            "c_id": self.country_id,
+            "d_name": self.domain_name,
+            "is_active": self.is_active
+        }
+
+class CountryInfo(object):
+    def __init__(self, country_id, country_name, is_active):
+        self.country_id = country_id
+        self.country_name = country_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "c_name", "is_active"
+        ])
+        country_id = data.get("c_id")
+        country_name = data.get("c_name")
+        is_active = data.get("is_active")
+        return CountryInfo(country_id, country_name, is_active)
+
+    def to_structure(self):
+        return {
+            "c_id": self.country_id,
+            "c_name": self.country_name,
+            "is_active": self.is_active
+        }
+
+class OrganisationInfo(object):
+    def __init__(
+        self, organisation_id, country_id, domain_id,
+        organisation_name, is_active
+    ):
+        self.organisation_id = organisation_id
+        self.organisation_name = organisation_name
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "org_id", "org_name", "c_id", "d_id", "is_active"
+        ])
+        organisation_id = data.get("org_id")
+        organisation_name = data.get("org_name")
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        is_active = data.get("is_active")
+        return OrganisationInfo(
+            organisation_id, country_id,
+            domain_id, organisation_name, is_active
+        )
+
+    def to_structure(self):
+        return {
+            "org_id": self.organisation_id,
+            "org_name": self.organisation_name,
+            "c_id": self.country_id,
+            "d_id": self.domain_id,
+            "is_active": self.is_active
+        }
+
+class StatutoryNatureInfo(object):
+    def __init__(self, nature_id, nature_name, country_id, is_active):
+        self.nature_id = nature_id
+        self.nature_name = nature_name
+        self.country_id = country_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data[
+            "s_n_id", "s_n_name", "c_id", "is_active"
+        ])
+        nature_id = data.get("s_n_id")
+        nature_name = data.get("s_n_name")
+        country_id = data.et("c_id")
+        is_active = data.get("is_active")
+        return StatutoryNatureInfo(
+            nature_id, nature_name, country_id, is_active
+        )
+
+    def to_structure(self):
+        return {
+            "s_n_id": self.nature_id,
+            "s_n_name": self.nature_name,
+            "c_id": self.country_id,
+            "is_active": self.is_active
+        }
+
+class StatutoryInfo(object):
+    def __init__(
+        self, statutory_id, statutory_name, level_id, parent_ids,
+        parent_id, parent_mappings, country_id, domain_id
+    ):
+        self.statutory_id = statutory_id
+        self.statutory_name = statutory_name
+        self.level_id = level_id
+        self.parent_ids = parent_ids
+        self.parent_id = parent_id
+        self.parent_mappings = parent_mappings
+        self.country_id = country_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "s_id", "s_name", "l_id", "p_ids",
+            "p_id", "p_maps", "c_id", "d_id"
+        ])
+        statutory_id = data.get("s_id")
+        statutory_name = data.get("s_name")
+        level_id = data.get("l_id")
+        parent_ids = data.get("p_ids")
+        parent_id = data.get("p_id")
+        parent_mappings = data.get("p_maps")
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        return StatutoryInfo(
+            statutory_id, statutory_name, level_id, parent_ids,
+            parent_id, parent_mappings,
+            country_id, domain_id
+        )
+
+    def to_structure(self):
+        return {
+            "s_id": self.statutory_id,
+            "s_name": self.statutory_name,
+            "l_id": self.level_id,
+            "p_ids": self.parent_ids,
+            "p_id": self.parent_id,
+            "p_maps": self.parent_mappings,
+            "c_id": self.country_id,
+            "d_id": self.domain_id
+        }
+
+class GeographyInfo(object):
+    def __init__(
+        self, geography_id, geography_name, level_id,
+        parent_ids, parent_id, parent_names, is_active, country_id
+    ):
+        self.geography_id = geography_id
+        self.geography_name = geography_name
+        self.level_id = level_id
+        self.parent_ids = parent_ids
+        self.parent_id = parent_id
+        self.parent_names = parent_names
+        self.is_active = is_active
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "g_id", "g_name", "l_id", "p_ids",
+            "p_id", "p_maps",  "is_active", "c_id"
+        ])
+        geography_id = data.get("g_id")
+        geography_name = data.get("g_name")
+        level_id = data.get("l_id")
+        parent_ids = data.get("p_ids")
+        parent_id = data.get("p_id")
+        parent_mappings = data.get("p_maps")
+        is_active = data.get("is_active")
+        country_id = data.get("c_id")
+        return GeographyInfo(
+            geography_id, geography_name, level_id, parent_ids, parent_id,
+            parent_mappings, is_active, country_id
+        )
+
+    def to_structure(self):
+        data = {
+            "g_id": self.geography_id,
+            "g_name": self.geography_name,
+            "l_id": self.level_id,
+            "p_ids": self.parent_ids,
+            "p_id": self.parent_id,
+            "p_maps": self.parent_names,
+            "is_active": self.is_active,
+            "c_id": self.country_id
+        }
+        return data

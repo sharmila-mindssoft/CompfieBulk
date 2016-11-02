@@ -138,7 +138,7 @@ class APPROVAL_STATUS(object):
 
     @staticmethod
     def values():
-        return ["Pending", "Approved", "Rejected", "Approved & Notified"]
+        return ["Yet to submit", "Pending", "Approved", "Rejected", "Approved & Notified"]
 
     def value(self):
         return self._value
@@ -300,7 +300,7 @@ class COMPLIANCE_FREQUENCY(object):
 
     @staticmethod
     def values():
-        return ["One Time", "Periodical", "Review", "On Occurrence"]
+        return ["One Time", "Periodical", "Review", "Flexi Review", "On Occurrence"]
 
     def value(self):
         return self._value
@@ -432,7 +432,7 @@ class DURATION_TYPE(object):
 
     @staticmethod
     def values():
-        return ["Day(s)", "Hour(s)"]
+        return ["Month(s)", "Day(s)", "Hour(s)"]
 
     def value(self):
         return self._value
@@ -2839,10 +2839,11 @@ class ComplianceFrequency(object):
         return ComplianceFrequency(frequency_id, frequency)
 
     def to_structure(self):
-        return {
+        data = {
             "frequency_id": self.frequency_id,
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
         }
+        return to_structure_dictionary_values(data)
 
 #
 # ComplianceRepeatType
@@ -2902,17 +2903,17 @@ class StatutoryApprovalStatus(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["approval_status_id", "approval_status"])
+        data = parse_dictionary(data, ["approval_status_id", "comp_approval_status"])
         approval_status_id = data.get("approval_status_id")
         approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
-        approval_status = data.get("approval_status")
+        approval_status = data.get("comp_approval_status")
         approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         return StatutoryApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
             "approval_status_id": self.approval_status_id,
-            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
+            "comp_approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
 

@@ -1,22 +1,27 @@
 import os
 import json
 from server.database.tables import *
-from protocol import (core)
+from protocol import (core, knowledgetransaction)
 from server.constants import (
     KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
 )
 from server.common import (
     convert_to_dict, get_date_time
 )
+from server.database.general import(
+    return_compliance_frequency, return_compliance_duration,
+    return_compliance_repeat, return_approval_status
+)
 from server.database.knowledgemaster import (
     STATUTORY_PARENTS, GEOGRAPHY_PARENTS,
     get_geographies, get_statutory_master,
     get_statutory_by_id, get_geography_by_id,
-    get_industry_by_id
+    get_industry_by_id, return_geography_levels,
+    return_statutory_levels
 )
 from server.exceptionmessage import process_error
 
-APPROVAL_STATUS = ["Pending", "Approved", "Rejected", "Approved & Notified"]
+APPROVAL_STATUS = ["Yet to submit", "Pending", "Approved", "Rejected", "Approved & Notified"]
 
 
 def get_compliance_by_id(db, compliance_id, is_active=None):
@@ -1062,3 +1067,112 @@ def save_statutory_notification_units(
 #       List mappings compliance wise
 #       update data complianceid wise or mapping wise
 #       Track and show which data updated in mapping while approve
+
+def return_domains(data):
+    result = []
+    for d in data :
+        result.append(
+            knowledgetransaction.DomainInfo(
+                d["domain_id"], d["country_id"],
+                d["domain_name"], bool(d["is_active"])
+            )
+        )
+    return result
+
+def return_country(data):
+    result = []
+    for d in data:
+        result.append(
+            knowledgetransaction.CountryInfo(
+                d["country_id"], d["country_name"], bool(d["is_active"])
+            )
+        )
+    return result
+
+def return_organisation(data):
+    result = []
+    for d in data :
+        result.append(
+            knowledgetransaction.OrganisationInfo(
+                d["organisation_id"],
+                d["country_id"], d["domain_id"],
+                d["organisation_name"],
+                bool(d["is_active"])
+            )
+        )
+    return result
+
+def return_statutory_nature(data):
+    results = []
+    for d in data:
+        nature_id = d["statutory_nature_id"]
+        nature_name = d["statutory_nature_name"]
+        country_id = d["country_id"]
+        is_active = bool(d["is_active"])
+        results.append(
+            knowledgetransaction.StatutoryNatureInfo(
+                nature_id, nature_name, country_id,
+                is_active
+            )
+        )
+    return results
+
+def return_stautory(data):
+    result = []
+    for d in data :
+        p_ids = [int(x) for x in d["parent_ids"].split(',') if x != '']
+        p_id = p_ids[-1:]
+        if len(p_id) > 0:
+            p_id = p_id[0]
+        p_names = [y for y in d["parent_names"].split('>>') if y != '']
+        result.append(
+            knowledgetransaction.StatutoryInfo(
+                d["statutory_id"], d["statutory_name"],
+                d["level_id"], p_ids, p_id, p_names,
+                d["country_id"], d["domain_id"]
+            )
+        )
+    return result
+
+def return_geography(data):
+    result = []
+    for d in data :
+        p_ids = [int(x) for x in d["parent_ids"].split(',') if x != '']
+        p_id = p_ids[-1:]
+        if len(p_id) > 0:
+            p_id = p_id[0]
+        p_names = [y for y in d["parent_names"].split('>>') if y != '']
+        result.append(
+            knowledgetransaction.GeographyInfo(
+                d["geography_id"], d["geography_name"],
+                d["level_id"], p_ids, p_id, p_names,
+                bool(d["is_active"]), d["country_id"],
+            )
+        )
+    return result
+
+def statutory_mapping_master(db, user_id):
+    result = db.call_proc_with_multiresult_set(
+        'sp_tbl_statutory_mapping_masterdata', [user_id], 11
+    )
+    countries = return_country(result[0])
+    domains = return_domains(result[1])
+    organisation = return_organisation(result[2])
+    statutory_nature = return_statutory_nature(result[3])
+    statutories = return_stautory(result[4])
+    geography = return_geography(result[5])
+    geography_level = return_geography_levels(result[6])
+    print result[7]
+    statutory_level = return_statutory_levels(result[7])
+    frequency = return_compliance_frequency(result[8])
+    repeats = return_compliance_repeat(result[9])
+    duration = return_compliance_duration(result[10])
+    approval_status = return_approval_status(APPROVAL_STATUS)
+
+    return knowledgetransaction.GetStatutoryMappingsMasterSuccess(
+        countries, domains, organisation, statutory_nature,
+        statutory_level, statutories, geography_level,
+        geography, frequency,
+        repeats,
+        approval_status, duration
+    )

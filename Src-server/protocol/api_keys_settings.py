@@ -84,13 +84,18 @@ api_params = {
     'doc_name': {'type': 'STRING', 'length': 50, 'validation_method': None, 'is_optional': True},
     'f_f_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', 'class_name': 'FileList'},
     'p_consequences': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': True},
-    'f_id': {'type': 'INT', 'length': '', 'validation_method': '', 'is_optional': True},
+    'f_id': {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': True},
+    'frequency_id': {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': True},
     'statu_dates': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', 'class_name': 'StatutoryDate'},
     'r_type_id': {'type': 'INT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'r_every': {'type': 'INT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'd_type_id': {'type': 'INT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'duration': {'type': 'INT', 'length': 50, 'validation_method': None, 'is_optional': True},
-    'frequency': {'type': 'STRING', 'length': 50, 'validation_method': None, 'is_optional': True},
+    'duration_type_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
+    'duration_type': {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
+    'repeat_type_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
+    'repeat_type': {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
+    'frequency': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'summary': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     's_m_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'a_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
@@ -102,7 +107,7 @@ api_params = {
     'compliance_frequency': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceFrequency'},
     'compliance_repeat_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceRepeatType'},
     'compliance_approval_status': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'StatutoryApprovalStatus'},
-    'compliance_duration_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'calss_name': 'ComplianceDurationType'},
+    'compliance_duration_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceDurationType'},
     'statu_mappings': {'type': 'MAP_TYPE', 'length': 100000, 'validation_method': is_numeric, 'module_name': 'core', 'class_name': 'StatutoryMapping'},
     'r_count': {'type': 'INT', 'length': 1000000, 'validation_method': None, 'is_optional': False},
     "industry_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
@@ -113,7 +118,8 @@ api_params = {
     "compliance_names": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', 'class_name': 'Compliance_Download'},
     "geography_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "geography_mappings": {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
-    'approval_status': {'type': 'INT', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'comp_approval_status': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'approval_status_id': {'type': 'INT', 'length': 50, 'validation_method': None, 'is_optional': False},
     'approval_status_text': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'levels': {'type': 'VECTOR_TYPE', 'module_name': 'knowledgemaster', 'class_name': 'Level'},
@@ -380,6 +386,15 @@ api_params = {
     'techno_user': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "techno_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportTechno"},
     "unit_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportDomain"},
+
+    "country_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "CountryInfo"},
+    "domain_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "DomainInfo"},
+    "organisation_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "OrganisationInfo"},
+    "nature_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "StatutoryNatureInfo"},
+    "statutory_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "StatutoryInfo"},
+    "geography_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "GeographyInfo"},
+    "geography_level_info" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitGeographyLevel"},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')
@@ -401,6 +416,7 @@ api_params['not_at_all_applicable'] = api_params.get('is_active')
 api_params['is_saved'] = api_params.get('is_active')
 api_params['parent_id'] = api_params.get('geography_id')
 api_params['parent_mappings'] = api_params.get('mapping')
+api_params['p_maps'] = api_params.get('mapping')
 api_params['level_1_statutory_id'] = api_params.get('statutory_id')
 api_params['level_1_s_id'] = api_params.get('statutory_id')
 api_params['level_1_statutory_name'] = api_params.get('statutory_name')
@@ -409,6 +425,7 @@ api_params['g_name'] = api_params.get('geography_name')
 api_params['p_ids'] = api_params.get('parent_ids')
 api_params['p_names'] = api_params.get('mapping')
 api_params['g_id'] = api_params.get('geography_id')
+api_params['p_id'] = api_params.get('geography_id')
 api_params['g_ids'] = api_params.get('geography_id')
 api_params['i_name'] = api_params.get('industry_name')
 api_params['i_id'] = api_params.get('industry_id')
@@ -426,3 +443,5 @@ api_params['token'] = api_params.get('reset_token')
 api_params['uname'] = api_params.get('username')
 api_params['pword'] = api_params.get('password')
 api_params['c_names'] = api_params.get('mapping')
+api_params["org_id"] = api_params.get("industry_id")
+api_params["org_name"] = api_params.get("industry_name")

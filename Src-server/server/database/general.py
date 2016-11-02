@@ -28,7 +28,9 @@ __all__ = [
     "get_compliance_duration", "get_compliance_repeat",
     "get_compliance_frequency", "get_approval_status",
     "get_audit_trails",
-    "update_profile"
+    "update_profile", "return_compliance_duration",
+    "return_compliance_repeat", "return_compliance_frequency",
+    "return_approval_status"
 ]
 
 
@@ -321,72 +323,71 @@ def get_notifications(
         ))
     return notifications
 
+def return_compliance_duration(data):
+    duration_list = []
+    for d in data:
+        duration = core.DURATION_TYPE(d["duration_type"])
+        duration_list.append(
+            core.ComplianceDurationType(
+                d["duration_type_id"], duration
+            )
+        )
+    return duration_list
 
 def get_compliance_duration(db):
-    def return_compliance_duration(data):
-        duration_list = []
-        for d in data:
-            duration = core.DURATION_TYPE(d["duration_type"])
-            duration_list.append(
-                core.ComplianceDurationType(
-                    d["duration_type_id"], duration
-                )
-            )
-        return duration_list
     result = db.get_data(
         "tbl_compliance_duration_type",
         ["duration_type_id", "duration_type"], None
     )
     return return_compliance_duration(result)
 
+def return_compliance_repeat(data):
+    repeat_list = []
+    for d in data:
+        repeat = core.REPEATS_TYPE(d["repeat_type"])
+        repeat_list.append(
+            core.ComplianceRepeatType(
+                d["repeat_type_id"], repeat
+            )
+        )
+    return repeat_list
 
 def get_compliance_repeat(db):
-    def return_compliance_repeat(data):
-        repeat_list = []
-        for d in data:
-            repeat = core.REPEATS_TYPE(d["repeat_type"])
-            repeat_list.append(
-                core.ComplianceRepeatType(
-                    d["repeat_type_id"], repeat
-                )
-            )
-        return repeat_list
     result = db.get_data(
         "tbl_compliance_repeat_type", ["repeat_type_id", "repeat_type"], None
     )
     return return_compliance_repeat(result)
 
 
+def return_compliance_frequency(data):
+    frequency_list = []
+    for d in data:
+        frequency = core.COMPLIANCE_FREQUENCY(
+            d["frequency"]
+        )
+        c_frequency = core.ComplianceFrequency(
+            d["frequency_id"], frequency
+        )
+        frequency_list.append(c_frequency)
+    return frequency_list
 def get_compliance_frequency(db):
-    def return_compliance_frequency(data):
-        frequency_list = []
-        for d in data:
-            frequency = core.COMPLIANCE_FREQUENCY(
-                d["frequency"]
-            )
-            c_frequency = core.ComplianceFrequency(
-                d["frequency_id"], frequency
-            )
-            frequency_list.append(c_frequency)
-        return frequency_list
     result = db.get_data(
         "tbl_compliance_frequency",
         ["frequency_id", "frequency"], None
     )
     return return_compliance_frequency(result)
 
+def return_approval_status(data):
+    approval_list = []
+    for sts in enumerate(data):
+        approve = core.APPROVAL_STATUS(sts[1])
+        c_approval = core.StatutoryApprovalStatus(
+            sts[0], approve
+        )
+        approval_list.append(c_approval)
+    return approval_list
 
 def get_approval_status(db, approval_id=None):
-    def return_approval_status(data):
-        approval_list = []
-        for sts in enumerate(data):
-            approve = core.APPROVAL_STATUS(sts[1])
-            c_approval = core.StatutoryApprovalStatus(
-                sts[0], approve
-            )
-            approval_list.append(c_approval)
-        return approval_list
-
     status = ("Pending", "Approved", "Rejected", "Approved & Notified")
 
     if approval_id is None:
