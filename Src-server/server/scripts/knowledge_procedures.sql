@@ -3305,40 +3305,66 @@ CREATE PROCEDURE `sp_tbl_statutory_mapping_masterdata`(
     IN userid INT(11)
 )
 BEGIN
+    -- 0
     select t1.country_id, t1.country_name, t1.is_active from tbl_countries as t1
     inner join tbl_user_countries as t2 on t1.country_id = t2.country_id
-    and t2.user_id = userid;
-
+    and t2.user_id = userid order by country_name;
+    -- 1
     select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
     tbl_domain_countries as t1
     inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
     and t2.user_id = userid
-    inner join tbl_domains as t3 on t3.domain_id = t1.domain_id;
-
+    inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
+    order by domain_name;
+    -- 2
     select t1.organisation_id, t1.country_id, t1.domain_id, t1.organisation_name,
     t1.is_active from tbl_organisation as t1
     inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = userid and t3.user_id = userid;
-
+    where t2.user_id = userid and t3.user_id = userid
+    order by organisation_name;
+    -- 3
     select t1.statutory_nature_id, t1.statutory_nature_name, t1.country_id,
     t1.is_active from tbl_statutory_natures as t1
     inner join tbl_user_countries as t2 on t2.country_id = t1.country_id and
-    t2.user_id = userid;
-
+    t2.user_id = userid
+    order by statutory_nature_name;
+    -- 4
     select t1.statutory_id, t1.level_id, t1.statutory_name,
     t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id
     from tbl_statutories as t1
     inner join tbl_statutory_levels as t2 on t2.level_id = t1.level_id
     inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
-    where t3.user_id = userid and t4.user_id = userid;
-
+    where t3.user_id = userid and t4.user_id = userid
+    order by statutory_name;
+    -- 5
     select t1.geography_id, t1.geography_name, t1.level_id,
     t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id
     from tbl_geographies as t1 inner join tbl_geography_levels as t2
     on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
-    t3.country_id = t2.country_id where t3.user_id = userid;
+    t3.country_id = t2.country_id where t3.user_id = userid
+    order by geography_name;
+    -- 6
+    select t1.level_id, t1.level_position, t1.level_name,
+    t1.country_id from tbl_geography_levels as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    where t2.user_id = userid
+    order by t1.level_position;
+    -- 7
+    select t1.level_id, t1.level_position, t1.level_name,
+    t1.country_id, t1.domain_id from tbl_statutory_levels as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
+    where t2.user_id = userid and t3.user_id = userid
+    order by t1.level_position;
+    -- 8
+    select frequency_id, frequency from tbl_compliance_frequency;
+    -- 9
+    select repeat_type_id, repeat_type from tbl_compliance_repeat_type;
+    -- 10
+    select duration_type_id, duration_type from tbl_compliance_duration_type;
+
 
 END //
 DELIMITER ;

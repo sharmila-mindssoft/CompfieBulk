@@ -31,10 +31,16 @@ CREATE TABLE `tbl_countries` (
 DROP TABLE IF EXISTS `tbl_domains`;
 CREATE TABLE `tbl_domains` (
   `domain_id` int(11) NOT NULL AUTO_INCREMENT,
-  `country_id` int(11) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`domain_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_domain_countries`;
+CREATE TABLE `tbl_domain_countries` (
+  `country_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  UNIQUE KEY (`country_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_organisation`;
@@ -159,6 +165,14 @@ CREATE TABLE `tbl_units` (
   PRIMARY KEY (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_units_organizations`;
+CREATE TABLE `tbl_units_organizations` (
+  `unit_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `organisation_id` int(11) DEFAULT NULL,
+  UNIQUE KEY `fk_unit_id` (`unit_id`, `domain_id`, `organisation_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -250,6 +264,36 @@ CREATE TABLE `tbl_user_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `tbl_form_category`;
+CREATE TABLE `tbl_form_category` (
+  `form_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `category_id_1` tinyint(2) DEFAULT 0,
+  `category_id_2` tinyint(2) DEFAULT 0,
+  `category_id_3` tinyint(2) DEFAULT 0,
+  `category_id_4` tinyint(2) DEFAULT 0,
+  `category_id_5` tinyint(2) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `tbl_form_type`;
+CREATE TABLE `tbl_form_type` (
+  `form_type_id` int(11) NOT NULL,
+  `form_type` varchar(20) NOT NULL,
+  PRIMARY KEY (`form_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_forms`;
+CREATE TABLE `tbl_forms` (
+  `form_id` int(11) NOT NULL,
+  `form_type_id` int(11) NOT NULL,
+  `form_name` varchar(50) NOT NULL,
+  `form_url` varchar(50) NOT NULL,
+  `form_order` int(11) NOT NULL,
+  `parent_menu` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`form_id`),
+  CONSTRAINT `tbl_forms_ibfk_1` FOREIGN KEY (`form_type_id`) REFERENCES `tbl_form_type` (`form_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_session_types`;
 CREATE TABLE `tbl_session_types` (
   `session_type_id` int(11) NOT NULL,
@@ -318,13 +362,24 @@ CREATE TABLE `tbl_users` (
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
+  `designation` varchar(50) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
+  `status_changed_on` timestamp NULL DEFAULT NULL,
+  `is_disable` tinyint(4) DEFAULT '0',
+  `disabled_on` timestamp NULL DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_user_login_details`;
 CREATE TABLE `tbl_user_login_details` (
   `user_id` int(11) NOT NULL,
+  `user_category_id` int(11) NOT NULL,
   `username` varchar(20) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   `password` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -392,10 +447,26 @@ CREATE TABLE `tbl_compliance_dates` (
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `old_statutory_date` longtext NOT NULL,
+  `old_repeats_type_id` int(11) DEFAULT NULL,
+  `old_repeats_every` int(11) DEFAULT NULL,
   `repeats_type_id` int(11) DEFAULT NULL,
   `repeats_every` int(11) DEFAULT NULL,
+  `statutory_date` longtext NOT NULL,
   `trigger_before_days` int(11) DEFAULT NULL,
   `due_date` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_compliance_dates`;
+CREATE TABLE `tbl_compliance_dates_history` (
+  `compliance_id` int(11) NOT NULL,
+  `frequency_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `statutory_date` longtext NOT NULL,
+  `repeats_type_id` int(11) DEFAULT NULL,
+  `repeats_every` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
