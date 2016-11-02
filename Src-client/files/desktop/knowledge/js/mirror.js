@@ -83,10 +83,7 @@ function initMirror() {
     if (info != null) {
       return info.menu.menus;
     } else {
-      frm = window.location.href;  // if (frm.indexOf("knowledge") > -1)
-                                   //     window.location.href = "/knowledge/login";
-                                   // else
-                                   //     window.location.href = "/login/" + window.localStorage["recent_short_name"];
+      frm = window.location.href;
     }
   }
   function getPageUrl() {
@@ -1855,6 +1852,7 @@ function initMirror() {
         }
       ];
     apiRequest(callerName, request, callback);
+  }
 
   //user mapping report
   function getUserMappingReportFilters(callback) {
@@ -1865,6 +1863,7 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+
   function getUsermappingDetailsReport(countryId, clientId, legalEntityId, callback) {
     callerName = 'techno_report';
     var request = [
@@ -2040,11 +2039,9 @@ function initMirror() {
     submitAssignedStatutory: submitAssignedStatutory,
     getAssignedStatutories: getAssignedStatutories,
     getAssignedStatutoriesById: getAssignedStatutoriesById,
-    changeAdminDisaleStatus: changeAdminDisaleStatus
+    changeAdminDisaleStatus: changeAdminDisaleStatus,
     getUserMappingReportFilters: getUserMappingReportFilters,
     getUsermappingDetailsReport: getUsermappingDetailsReport
   };
-
-
 }
 var mirror = initMirror();

@@ -23,6 +23,7 @@ function initializeNavBar() {
     $('.menu-item', itemObject).text(form_name);
     return itemObject;
   }
+
   var frm = window.location.href;
   var navBarItems = null;
   navBarItems = mirror.getUserMenu();

@@ -383,7 +383,7 @@ def process_save_geography_level(db, request_frame, user_id):
 # geography
 def process_get_geographies(db, user_id):
     countries = get_countries_for_user(db, user_id)
-    geography_levels = get_geograhpy_levels_for_user(db, user_id)
+    geography_levels = get_geography_levels(db)
     geographies = get_geographies(db, user_id)
     return knowledgemaster.GetGeographiesSuccess(
         countries,

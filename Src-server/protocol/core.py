@@ -692,18 +692,18 @@ class GeographyLevel(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "level_id", "level_position", "level_name"
+            "l_id", "l_position", "l_name"
         ])
-        level_id = data.get("level_id")
-        level_position = data.get("level_position")
-        level_name = data.get("level_name")
+        level_id = data.get("l_id")
+        level_position = data.get("l_position")
+        level_name = data.get("l_name")
         return GeographyLevel(level_id, level_position, level_name)
 
     def to_structure(self):
         data = {
-            "level_id": self.level_id,
-            "level_position": self.level_position,
-            "level_name": self.level_name,
+            "l_id": self.level_id,
+            "l_position": self.level_position,
+            "l_name": self.level_name,
         }
         return data
 

@@ -358,9 +358,18 @@ def get_geography_levels(db):
     ]
     condition = " 1 ORDER BY level_position"
     result = db.get_data("tbl_geography_levels", columns, condition)
-
-    return return_geography_levels(result)
-
+    geography_levels = {}
+    for d in result :
+        country_id = d["country_id"]
+        level = core.GeographyLevel(
+            d["level_id"], d["level_position"], d["level_name"]
+        )
+        _list = geography_levels.get(country_id)
+        if _list is None:
+            _list = []
+        _list.append(level)
+        geography_levels[country_id] = _list
+    return geography_levels
 
 def return_geography_levels(data):
     geography_levels = []
@@ -376,7 +385,6 @@ def return_geography_levels(data):
         #geography_levels[country_id] = _list
         geography_levels.append(level)
     return geography_levels
-
 
 def get_geograhpy_levels_for_user(db, user_id):
     assert user_id is not None
@@ -470,13 +478,10 @@ def get_geographies(db, user_id=None, country_id=None):
         " t2.level_position, t1.parent_names " + \
         " FROM tbl_geographies t1 " + \
         " INNER JOIN tbl_geography_levels t2 " + \
-        " on t1.level_id = t2.level_id " + \
-        " INNER JOIN tbl_user_countries t4 " + \
-        " ON t2.country_id = t4.country_id "
+        " on t1.level_id = t2.level_id "
+
     param = []
-    if user_id:
-        query = query + " AND t4.user_id=%s"
-        param.append(user_id)
+
     if country_id:
         query = query + " AND t2.country_id=%s"
         param.append(country_id)

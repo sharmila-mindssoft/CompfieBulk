@@ -117,10 +117,10 @@ api_params = {
     'approval_status_text': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'levels': {'type': 'VECTOR_TYPE', 'module_name': 'knowledgemaster', 'class_name': 'Level'},
-    "geography_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Level"},
-    "geographies": {'type': 'MAP_TYPE', 'validation_method': is_alphabet, 'module_name': 'core', "class_name": "Geography"},
+    "geography_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "GeographyLevel"},
+    "geographies": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Geography"},
     "geography_report": {'type': 'MAP_TYPE', 'validation_method': is_alphabet, 'module_name': 'knowledgereport', "class_name": "GeographyMapping"},
-    "statutory_natures": {'type': 'VECTOR_TYPE', 'validation_method': is_alphabet, 'module_name': 'core', "class_name": "StatutoryNature"},
+    "statutory_natures": {'type': 'VECTOR_TYPE', 'validation_method': None, 'module_name': 'core', "class_name": "StatutoryNature"},
     "statutory_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Level"},
     "statutories": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', 'class_name': 'Statutory'},
 

@@ -2113,7 +2113,7 @@ DROP PROCEDURE IF EXISTS `sp_databaseserver_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_databaseserver_list`()
 BEGIN
-	SELECT database_server_name, database_ip, database_port, 
+	SELECT database_server_name, database_ip, database_port,
 	database_username, database_password, legal_entity_ids
 	FROM tbl_database_server;
 END //
@@ -3319,7 +3319,7 @@ BEGIN
     t1.is_active from tbl_organisation as t1
     inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = 0 and t3.user_id = userid;
+    where t2.user_id = userid and t3.user_id = userid;
 
     select t1.statutory_nature_id, t1.statutory_nature_name, t1.country_id,
     t1.is_active from tbl_statutory_natures as t1
@@ -3332,16 +3332,17 @@ BEGIN
     inner join tbl_statutory_levels as t2 on t2.level_id = t1.level_id
     inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
-    where t3.user_id = 0 and t4.user_id = userid;
+    where t3.user_id = userid and t4.user_id = userid;
 
     select t1.geography_id, t1.geography_name, t1.level_id,
     t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id
     from tbl_geographies as t1 inner join tbl_geography_levels as t2
-    on t2.level_id = t2.level_id inner join tbl_user_countries t3 on
+    on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
     t3.country_id = t2.country_id where t3.user_id = userid;
 
 END //
 DELIMITER ;
+
 
 -- --------------------------------------------------------------------------------
 -- Get user category details for user mappping report
