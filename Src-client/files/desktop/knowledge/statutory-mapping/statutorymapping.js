@@ -1495,9 +1495,9 @@ function savestatutorymapping() {
     //console.log(key, value);
   }*/
   statutorymappingData = mirror.statutoryMapping(sm_countryid, sm_domainid, sm_industryids, sm_statutorynatureid, sm_statutoryids, compliances, sm_geographyids, disp_statutories, sm_id);
-  
+
   if (sm_id == null) {
-    
+
     mirror.saveStatutoryMapping(statutorymappingData, function (error, response) {
       if (error == null) {
         if(isUpload){
