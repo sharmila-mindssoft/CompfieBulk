@@ -47,19 +47,25 @@ class GetStatutoryMappingsMaster(Request):
         return GetStatutoryMappingsMaster()
 
     def to_inner_structure(self):
-        return{}
+        return {}
 
 class GetStatutoryMappings(Request):
-    def __init__(self):
-        pass
+    def __init__(self, approval_status_id, rcount):
+        self.approval_status_id = approval_status_id
+        self.rcount = rcount
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetStatutoryMappings()
+        data = parse_dictionary(data, ["approval_status_id", "rcount"])
+        approval_status = data.get("approval_status_id")
+        rcount = data.get("rcount")
+        return GetStatutoryMappings(approval_status, rcount)
 
     def to_inner_structure(self):
-        return {}
+        return {
+            "approval_status": self.approval_status,
+            "rcount": self.rcount
+        }
 
 class CheckDuplicateStatutoryMapping(Request):
     def __init__(
@@ -253,7 +259,6 @@ class ApproveMapping(object):
             "n_text": self.notification_text,
         }
 
-
 class ApproveStatutoryMapping(Request):
     def __init__(self, statutory_mappings):
         self.statutory_mappings = statutory_mappings
@@ -269,9 +274,27 @@ class ApproveStatutoryMapping(Request):
             "s_mappings": self.statutory_mappings,
         }
 
+class GetStatutoryMaster(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return GetStatutoryMaster()
+
+    def to_inner_structure(self):
+        return {}
+
 
 def _init_Request_class_map():
-    classes = [GetStatutoryMappingsMaster, GetStatutoryMappings, SaveStatutoryMapping, UpdateStatutoryMapping, ChangeStatutoryMappingStatus, GetApproveStatutoryMappings, ApproveStatutoryMapping, CheckDuplicateStatutoryMapping]
+    classes = [
+        GetStatutoryMappingsMaster, GetStatutoryMappings,
+        SaveStatutoryMapping, UpdateStatutoryMapping,
+        ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
+        ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
+        GetStatutoryMaster
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -307,10 +330,25 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+class GetStatutoryMasterSuccess(Response):
+    def __init__(self, statutories):
+        self.statutories = statutories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutories_info"])
+        statutories = data.get("statutory_info")
+        return GetStatutoryMasterSuccess(statutories)
+
+    def to_inner_structure(self):
+        return {
+            "statutory_info": self.statutories,
+        }
+
 class GetStatutoryMappingsMasterSuccess(Response):
     def __init__(
         self, countries, domains, industries,
-        statutory_natures, statutory_levels, statutories,
+        statutory_natures, statutory_levels,
         geography_levels, geographies,
         compliance_frequency, compliance_repeat_type,
         compliance_approval_status, compliance_duration_type
@@ -320,7 +358,6 @@ class GetStatutoryMappingsMasterSuccess(Response):
         self.industries = industries
         self.statutory_natures = statutory_natures
         self.statutory_levels = statutory_levels
-        self.statutories = statutories
         self.geography_levels = geography_levels
         self.geographies = geographies
         self.compliance_frequency = compliance_frequency
@@ -330,13 +367,17 @@ class GetStatutoryMappingsMasterSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "statutory_levels", "statutories", "geography_levels", "geographies", "compliance_frequency", "compliance_repeat_type", "compliance_approval_status", "compliance_duration_type"])
+        data = parse_dictionary(data, [
+            "countries", "domains", "industries", "statutory_natures",
+            "statutory_levels", "geography_levels", "geographies",
+            "compliance_frequency", "compliance_repeat_type",
+            "compliance_approval_status", "compliance_duration_type"
+        ])
         countries = data.get("country_info")
         domains = data.get("domain_info")
         industries = data.get("organisation_info")
         statutory_natures = data.get("nature_info")
         statutory_levels = data.get("statutory_levels")
-        statutories = data.get("statutory_info")
         geography_levels = data.get("geography_level_info")
         geographies = data.get("geography_info")
         compliance_frequency = data.get("compliance_frequency")
@@ -345,7 +386,7 @@ class GetStatutoryMappingsMasterSuccess(Response):
         compliance_duration_type = data.get("compliance_duration_type")
         return GetStatutoryMappingsMasterSuccess(
             countries, domains, industries, statutory_natures,
-            statutory_levels, statutories, geography_levels,
+            statutory_levels, geography_levels,
             geographies, compliance_frequency, compliance_repeat_type,
             compliance_approval_status, compliance_duration_type
         )
@@ -357,7 +398,6 @@ class GetStatutoryMappingsMasterSuccess(Response):
             "organisation_info": self.industries,
             "nature_info": self.statutory_natures,
             "statutory_levels": self.statutory_levels,
-            "statutory_info": self.statutories,
             "geography_level_info": self.geography_levels,
             "geography_info": self.geographies,
             "compliance_frequency": self.compliance_frequency,
@@ -367,18 +407,21 @@ class GetStatutoryMappingsMasterSuccess(Response):
         }
 
 class GetStatutoryMappingsSuccess(Response):
-    def __init__(self, statutory_mappings):
+    def __init__(self, statutory_mappings, total_records):
         self.statutory_mappings = statutory_mappings
+        self.total_records = total_records
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statu_mappings"])
         statutory_mappings = data.get("statu_mappings")
-        return GetStatutoryMappingsSuccess(statutory_mappings)
+        total_records = data.get("total_records")
+        return GetStatutoryMappingsSuccess(statutory_mappings, total_records)
 
     def to_inner_structure(self):
         return {
-            "statu_mappings": self.statutory_mappings
+            "statu_mappings": self.statutory_mappings,
+            "total_records": self.total_records
         }
 
 class SaveStatutoryMappingSuccess(Response):
@@ -525,7 +568,16 @@ class ApproveStatutoryMappingSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetStatutoryMappingsMasterSuccess, GetStatutoryMappingsSuccess, SaveStatutoryMappingSuccess, CheckDuplicateStatutoryMappingResponse, CheckDuplicateStatutoryMappingSuccess, UpdateStatutoryMappingSuccess, InvalidStatutoryMappingId, ChangeStatutoryMappingStatusSuccess, ApproveStatutoryMappingSuccess]
+    classes = [
+        GetStatutoryMappingsMasterSuccess,
+        GetStatutoryMappingsSuccess, SaveStatutoryMappingSuccess,
+        CheckDuplicateStatutoryMappingResponse,
+        CheckDuplicateStatutoryMappingSuccess,
+        UpdateStatutoryMappingSuccess, InvalidStatutoryMappingId,
+        ChangeStatutoryMappingStatusSuccess,
+        ApproveStatutoryMappingSuccess,
+        GetStatutoryMasterSuccess
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

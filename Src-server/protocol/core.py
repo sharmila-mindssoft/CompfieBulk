@@ -677,7 +677,7 @@ class Level(object):
             "l_position": self.level_position,
             "l_name": self.level_name,
         }
-        return data
+        return to_structure_dictionary_values(data)
 
 #
 # GeographyLevel
@@ -1272,90 +1272,123 @@ class Compliance(object):
 #
 # StatutoryMapping
 #
+def getMappingApprovalStatus(status_id):
+    dict = {
+        1: "Yet to submit",
+        2: "Pending",
+        3: "Approved",
+        4: "Approved & Notified",
+        5: "Rejected",
+    }
 
-class StatutoryMapping(object):
+    return dict.get(status_id)
+
+class MappedCompliance(object):
     def __init__(
-        self, country_id, country_name, domain_id,
-        domain_name, industry_ids, industry_names,
-        statutory_nature_id, statutory_nature_name,
-        statutory_ids, statutory_mappings, compliances,
-        compliance_names, geography_ids, geography_mappings,
-        approval_status, is_active, approval_status_text
+        self, compliance_id, compliance_name, is_active, is_approved,
+        approved_status, remarks
     ):
-        self.country_id = country_id
-        self.country_name = country_name
-        self.domain_id = domain_id
-        self.domain_name = domain_name
-        self.industry_ids = industry_ids
-        self.industry_names = industry_names
-        self.statutory_nature_id = statutory_nature_id
-        self.statutory_nature_name = statutory_nature_name
-        self.statutory_ids = statutory_ids
-        self.statutory_mappings = statutory_mappings
-        self.compliances = compliances
-        self.compliance_names = compliance_names
-        self.geography_ids = geography_ids
-        self.geography_mappings = geography_mappings
-        self.approval_status = approval_status
+        self.compliance_id = compliance_id
+        self.compliance_name = compliance_name
         self.is_active = is_active
-        self.approval_status_text = approval_status_text
+        self.is_approved = is_approved
+        self.approve_status = approved_status
+        self.remarks = remarks
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "country_name", "domain_id",
-            "domain_name", "industry_ids", "industry_names",
-            "statutory_nature_id", "statutory_nature_name",
-            "statutory_ids", "statutory_mappings",
-            "compliances", "compliance_names", "geography_ids",
-            "geography_mappings", "approval_status", "is_active",
-            "approval_status_text"
+            "comp_id," "comp_name", "is_active",
+            "is_approved", "approval_status_text",
+            "remarks"
         ])
-        country_id = data.get("country_id")
+        compliance_id = data.get("comp_id")
+        compliance_name = data.get("com_name")
+        is_active = data.get("is_active")
+        is_approved = data.get("is_approved")
+        approve_status = data.get("approval_status_text")
+        remarks = data.get("remarks")
+        return MappedCompliance(
+            compliance_id, compliance_name, is_active, is_approved,
+            approve_status, remarks
+        )
+
+    def to_structure(self):
+        return {
+            "comp_id": self.compliance_id,
+            "comp_name": self.compliance_name,
+            "is_active": self.is_active,
+            "is_approved": self.is_approved,
+            "approval_status_text": self.approve_status,
+            "remarks": self.remarks
+        }
+
+class StatutoryMapping(object):
+    def __init__(
+        self, country_name,
+        domain_name, industry_names,
+        statutory_nature_name,
+        statutory_mappings, mapped_compaliances,
+        geography_mappings,
+        approval_status, is_active, approval_status_text,
+        mapping_id
+    ):
+        self.country_name = country_name
+        self.domain_name = domain_name
+        self.industry_names = industry_names
+        self.statutory_nature_name = statutory_nature_name
+        self.statutory_mappings = statutory_mappings
+        self.mapped_compliances = mapped_compaliances
+        self.geography_mappings = geography_mappings
+        self.approval_status = approval_status
+        self.is_active = is_active
+        self.approval_status_text = approval_status_text
+        self.mapping_id = mapping_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "country_name",
+            "domain_name", "industry_names",
+            "statutory_nature_name",
+            "statutory_mappings",
+            "mapped_compliances",
+            "geography_mappings", "approval_status", "is_active",
+            "approval_status_text", "mapping_id"
+        ])
         country_name = data.get("country_name")
-        domain_id = data.get("domain_id")
         domain_name = data.get("domain_name")
-        industry_ids = data.get("industry_ids")
         industry_names = data.get("industry_names")
-        statutory_nature_id = data.get("statutory_nature_id")
         statutory_nature_name = data.get("statutory_nature_name")
-        statutory_ids = data.get("statutory_ids")
         statutory_mappings = data.get("statutory_mappings")
-        compliances = data.get("compliances")
-        compliance_names = data.get("compliance_names")
-        geography_ids = data.get("geography_ids")
+        mapped_compliances = data.get("mapped_compliances")
         geography_mappings = data.get("geography_mappings")
         approval_status = data.get("approval_status")
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         approval_status_text = data.get("approval_status_text")
+        mapping_id = data.get("mapping_id")
         return StatutoryMapping(
-            country_id, country_name, domain_id, domain_name,
-            industry_ids, industry_names, statutory_nature_id,
-            statutory_nature_name, statutory_ids, statutory_mappings,
-            compliances, compliance_names, geography_ids,
-            geography_mappings, approval_status, is_active, approval_status_text
+            country_name, domain_name,
+            industry_names, statutory_nature_name, statutory_mappings,
+            mapped_compliances,
+            geography_mappings, approval_status, is_active, approval_status_text,
+            mapping_id
         )
 
     def to_structure(self):
         return {
-            "country_id": self.country_id,
             "country_name": self.country_name,
-            "domain_id": self.domain_id,
             "domain_name": self.domain_name,
-            "industry_ids": self.industry_ids,
             "industry_names": self.industry_names,
-            "statutory_nature_id": self.statutory_nature_id,
             "statutory_nature_name": self.statutory_nature_name,
-            "statutory_ids": self.statutory_ids,
             "statutory_mappings": self.statutory_mappings,
-            "compliances": self.compliances,
-            "compliance_names": self.compliance_names,
-            "geography_ids": self.geography_ids,
+            "mapped_compliance": self.mapped_compliances,
             "geography_mappings": self.geography_mappings,
             "approval_status": self.approval_status,
             "is_active": self.is_active,
-            "approval_status_text": self.approval_status_text
+            "approval_status_text": self.approval_status_text,
+            "mapping_id": self.mapping_id
         }
 
 #

@@ -78,6 +78,7 @@ api_params = {
     'url': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
 
     'comp_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
     'c_task': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'description': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
@@ -108,7 +109,7 @@ api_params = {
     'compliance_repeat_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceRepeatType'},
     'compliance_approval_status': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'StatutoryApprovalStatus'},
     'compliance_duration_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceDurationType'},
-    'statu_mappings': {'type': 'MAP_TYPE', 'length': 100000, 'validation_method': is_numeric, 'module_name': 'core', 'class_name': 'StatutoryMapping'},
+    'statu_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'core', 'class_name': 'StatutoryMapping'},
     'r_count': {'type': 'INT', 'length': 1000000, 'validation_method': None, 'is_optional': False},
     "industry_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "industry_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': None, 'is_optional': False},
@@ -307,7 +308,7 @@ api_params = {
     "child_users": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "parent_user_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "child_user_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-    "remarks": {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    "remarks": {'type': 'TEXT', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
     'bg_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'bg_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -394,6 +395,7 @@ api_params = {
     "statutory_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "StatutoryInfo"},
     "geography_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "GeographyInfo"},
     "geography_level_info" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitGeographyLevel"},
+    "mapped_compliances": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'core', "class_name": "MappedCompliance"}
 
 }
 
@@ -445,3 +447,4 @@ api_params['pword'] = api_params.get('password')
 api_params['c_names'] = api_params.get('mapping')
 api_params["org_id"] = api_params.get("industry_id")
 api_params["org_name"] = api_params.get("industry_name")
+api_params["rcount"] = api_params.get("total_records")

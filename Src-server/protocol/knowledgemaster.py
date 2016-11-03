@@ -2,12 +2,10 @@ from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values,
 )
 from protocol.parse_structure import (
-    parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
-    parse_structure_VariantType_knowledgemaster_Request
+    parse_structure_VariantType_knowledgemaster_Request,
 )
 from protocol.to_structure import (
-    to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
-    to_structure_VariantType_knowledgemaster_Request
+    to_structure_VariantType_knowledgemaster_Request,
 )
 
 
@@ -890,7 +888,6 @@ class GetStatutoriesSuccess(Response):
         domains = data.get("domains")
         statutory_levels = data.get("statutory_levels")
         statutories = data.get("statutories")
-        statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(statutories)
         return GetStatutoriesSuccess(countries, domains, statutory_levels, statutories)
 
     def to_inner_structure(self):
@@ -898,7 +895,7 @@ class GetStatutoriesSuccess(Response):
             "countries": self.countries,
             "domains": self.domains,
             "statutory_levels": self.statutory_levels,
-            "statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.statutories),
+            "statutories": self.statutories,
         }
 
 class SaveStatutorySuccess(Response):

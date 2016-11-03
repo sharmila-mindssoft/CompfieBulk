@@ -21,6 +21,8 @@ from server.database.knowledgemaster import (
 )
 from server.exceptionmessage import process_error
 
+from server.constants import RECORD_DISPLAY_COUNT
+
 APPROVAL_STATUS = ["Yet to submit", "Pending", "Approved", "Rejected", "Approved & Notified"]
 
 
@@ -1151,28 +1153,107 @@ def return_geography(data):
         )
     return result
 
+def statutories_master(db, user_id):
+    result = db.call_proc(
+        'sp_tbl_statutory_masterdata', [user_id],
+    )
+    statutories = return_stautory(result)
+    return knowledgetransaction.GetStatutoryMasterSuccess(statutories)
+
 def statutory_mapping_master(db, user_id):
     result = db.call_proc_with_multiresult_set(
-        'sp_tbl_statutory_mapping_masterdata', [user_id], 11
+        'sp_tbl_statutory_mapping_masterdata', [user_id], 10
     )
     countries = return_country(result[0])
     domains = return_domains(result[1])
     organisation = return_organisation(result[2])
     statutory_nature = return_statutory_nature(result[3])
-    statutories = return_stautory(result[4])
-    geography = return_geography(result[5])
-    geography_level = return_geography_levels(result[6])
-    print result[7]
-    statutory_level = return_statutory_levels(result[7])
-    frequency = return_compliance_frequency(result[8])
-    repeats = return_compliance_repeat(result[9])
-    duration = return_compliance_duration(result[10])
+    geography = return_geography(result[4])
+    geography_level = return_geography_levels(result[5])
+    statutory_level = return_statutory_levels(result[6])
+    frequency = return_compliance_frequency(result[7])
+    repeats = return_compliance_repeat(result[8])
+    duration = return_compliance_duration(result[9])
     approval_status = return_approval_status(APPROVAL_STATUS)
 
     return knowledgetransaction.GetStatutoryMappingsMasterSuccess(
         countries, domains, organisation, statutory_nature,
-        statutory_level, statutories, geography_level,
+        statutory_level, geography_level,
         geography, frequency,
         repeats,
         approval_status, duration
     )
+
+def statutory_mapping_list(db, user_id, approve_status, rcount):
+
+    def return_compliance(mapping_id, com_info):
+        compliances = []
+        for c in comp_info:
+            if c["statutory_mapping_id"] != mapping_id :
+                continue
+
+            dname = d["document_name"]
+            cname = d["compliance_task"]
+            if dname :
+                cname = "%s - %s" % (dname, d["compliance_task"])
+
+            compliances.append(
+                core.MappedCompliance(
+                    c["compliance_id"], cname, bool(c["is_active"]),
+                    core.getMappingApprovalStatus(d["is_approved"]),
+                    c["remarks"]
+                )
+            )
+        return compliances
+
+    def return_organisation(mapping_id, org_info):
+        orgs = [
+            org["organisation_name"] for org in org_info
+            if org["statutory_mapping_id"] == mapping_id
+        ]
+        return orgs
+
+    def return_location(mapping_id, location_info):
+        locations = [
+            l["parent_names"] for l in location_info
+            if l["statutory_mapping_id"] == mapping_id
+        ]
+        return locations
+
+    def return_statutory(mapping_id, statutory_info):
+        statutory = [
+            s["parent_names"] for s in statutory_info
+            if l["statutory_mapping_id"] == mapping_id
+        ]
+        return statutory
+
+    fromcount = rcount
+    tocount = rcount + RECORD_DISPLAY_COUNT
+    result = db.call_proc_with_multiresult_set(
+        'sp_tbl_statutory_mapping_list',
+        [user_id, approve_status, fromcount, tocount], 6
+    )
+    mapping = result[0]
+    compliance = result[1]
+    organnisation = result[2]
+    statutory = result[3]
+    location = result[4]
+    total_record = result[5][0].get("total")
+
+    data = []
+    for m in mapping:
+        map_id = m["statutory_mapping_id"]
+        data.append(core.StatutoryMapping(
+            m["country_name"], m["domain_name"],
+            return_organisation(map_id, organnisation),
+            m["nature"],
+            return_statutry(map_id, statutory),
+            return_compliance(map_id, compliance),
+            return_location(map_id, location),
+            m["is_approved"],
+            bool(m["is_active"]),
+            core.getMappingApprovalStatus(m["is_approved"]),
+            map_id
+        ))
+
+    return data, total_record

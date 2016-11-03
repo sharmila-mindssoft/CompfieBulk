@@ -3330,6 +3330,43 @@ BEGIN
     t2.user_id = userid
     order by statutory_nature_name;
     -- 4
+
+    select t1.geography_id, t1.geography_name, t1.level_id,
+    t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id
+    from tbl_geographies as t1 inner join tbl_geography_levels as t2
+    on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
+    t3.country_id = t2.country_id where t3.user_id = userid
+    order by geography_name;
+    -- 5
+    select t1.level_id, t1.level_position, t1.level_name,
+    t1.country_id from tbl_geography_levels as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    where t2.user_id = userid
+    order by t1.level_position;
+    -- 6
+    select t1.level_id, t1.level_position, t1.level_name,
+    t1.country_id, t1.domain_id from tbl_statutory_levels as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
+    where t2.user_id = userid and t3.user_id = userid
+    order by t1.level_position;
+    -- 7
+    select frequency_id, frequency from tbl_compliance_frequency;
+    -- 8
+    select repeat_type_id, repeat_type from tbl_compliance_repeat_type;
+    -- 9
+    select duration_type_id, duration_type from tbl_compliance_duration_type;
+
+
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_masterdata`;
+DELIMITER //
+
+CREATE  PROCEDURE `sp_tbl_statutory_masterdata`(
+in userid int(11))
+BEGIN
     select t1.statutory_id, t1.level_id, t1.statutory_name,
     t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id
     from tbl_statutories as t1
@@ -3338,37 +3375,74 @@ BEGIN
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
     where t3.user_id = userid and t4.user_id = userid
     order by statutory_name;
-    -- 5
-    select t1.geography_id, t1.geography_name, t1.level_id,
-    t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id
-    from tbl_geographies as t1 inner join tbl_geography_levels as t2
-    on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
-    t3.country_id = t2.country_id where t3.user_id = userid
-    order by geography_name;
-    -- 6
-    select t1.level_id, t1.level_position, t1.level_name,
-    t1.country_id from tbl_geography_levels as t1
-    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
-    where t2.user_id = userid
-    order by t1.level_position;
-    -- 7
-    select t1.level_id, t1.level_position, t1.level_name,
-    t1.country_id, t1.domain_id from tbl_statutory_levels as t1
-    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
-    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = userid and t3.user_id = userid
-    order by t1.level_position;
-    -- 8
-    select frequency_id, frequency from tbl_compliance_frequency;
-    -- 9
-    select repeat_type_id, repeat_type from tbl_compliance_repeat_type;
-    -- 10
-    select duration_type_id, duration_type from tbl_compliance_duration_type;
-
 
 END //
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_list`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_statutory_mapping_list`(
+    IN userid INT(11), approvestatus varchar(1),
+    fromcount INT(11), tocount INT(11)
+)
+BEGIN
+    if approvestatus = 0 then
+        set approvestatus = '%';
+    end if;
+    select t1.statutory_mapping_id, t1.country_id, t1.domain_id, t1.statutory_nature_id,
+    t1.is_active, t1.is_approved, t1.remarks
+    (select country_name from tbl_countries where country_id = t1.country_id) as country_name,
+    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
+    (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id) as nature
+    from tbl_statutory_mappings as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
+    where t2.user_id = userid and t3.user_id = userid and t1.is_approved like approvestatus
+    order by country_name, domain_name
+    limit fromcount, tocount;
+
+    select t1.statutory_mapping_id, t1.compliance_id, t1.compliance_task, t1.document_name,
+    t1.is_active, t1.is_approved, t1.remarks
+    from tbl_compliances as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
+    where t2.user_id = userid and t3.user_id = userid
+    order by document_name, compliance_task and t1.is_approved like approvestatus;
+
+    select t1.statutory_mapping_id, t1.organisation_id,
+    (select organisation_name from tbl_organisation where organisation_id = t1.organisation_id) as organisation_name
+    from tbl_mapped_industries as t1
+    inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
+    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
+    where t3.user_id = userid and t4.user_id = userid and t2.is_approved = approvestatus;
+
+    select t1.statutory_mapping_id, t1.statutory_id,
+    (select parent_names from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
+    from tbl_mapped_statutories as t1
+    inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
+    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
+    where t3.user_id = userid and t4.user_id = userid and t2.is_approved = approvestatus;
+
+    select t1.statutory_mapping_id, t1.geography_id,
+    (select parent_names from tbl_geographies where geography_id = t1.geography_id) as geography_name
+    from tbl_mapped_locations as t1
+    inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
+    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
+    where t3.user_id = userid and t4.user_id = userid and t2.is_approved = approvestatus;
+
+    select count(t1.statutory_mapping_id) as total
+    from tbl_statutory_mappings as t1
+    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
+    where t2.user_id = userid and t3.user_id = userid and t1.is_approved like approvestatus
+    limit fromcount, tocount;
+
+END //
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get user category details for user mappping report
@@ -3385,7 +3459,7 @@ BEGIN
 	tuc.user_category_id = tu.user_category_id and
 	tu.user_id = userId;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get countries for user mapping report - for user
@@ -3409,7 +3483,7 @@ BEGIN
 			where user_id = userId) and is_active = 1;
 	end if;
 END //
-DELIMITER;
+DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
@@ -3423,7 +3497,7 @@ BEGIN
 	select business_group_id, business_group_name
 	from tbl_business_groups;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get legal entity details - user mapping report
@@ -3436,7 +3510,7 @@ BEGIN
 	select legal_entity_id, legal_entity_name, business_group_id
 	from tbl_legal_entities;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get unit's details, divison, category - user mapping report
@@ -3477,7 +3551,7 @@ BEGIN
 		where user_id = userId and user_category_id = userCatgId);
 	end if;
 END //
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get group detais -division, category, unit for user mapping report
@@ -3526,7 +3600,7 @@ BEGIN
 		where user_id = userId);
 	end if;
 END//
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- user mapping report - report details/data
@@ -3659,4 +3733,4 @@ BEGIN
 		order by t3.domain_name;
 	end if;
 END//
-DELIMITER;
+DELIMITER ;

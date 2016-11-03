@@ -313,8 +313,6 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print "parse"
-        print field_name, val, param
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
         _type = param.get('type')
@@ -396,7 +394,6 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print field_name, val, param
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
         _type = param.get('type')
@@ -407,8 +404,6 @@ def to_structure_dictionary_values(x):
             raise ValueError('%s is not configured in settings' % (field_name))
 
         if _type == 'VECTOR_TYPE':
-            print field_name, val, param
-            print _module_name, _class_name
             assert _module_name is not None
             assert _class_name is not None
             val = to_VectorType(
@@ -515,6 +510,8 @@ def parse_MapType(module_name, class_name, validation_method, data):
                parse_RecordType(module_name, class_name, val) for val in value
             ]
             map[key] = val_list
+        elif type(value) == dict:
+            map[key] = parse_MapType(module_name, class_name, validation_method, value)
         else:
             parsed_value = parse_RecordType(module_name, class_name, value)
             map[key] = parsed_value
@@ -530,6 +527,8 @@ def to_MapType(module_name, class_name, validation_method, data):
                to_RecordType(module_name, class_name, val) for val in value
             ]
             map[key] = val_list
+        elif type(value) == dict:
+            map[key] = to_MapType(module_name, class_name, validation_method, value)
         else:
             dict_value = to_RecordType(module_name, class_name, value)
             map[key] = dict_value

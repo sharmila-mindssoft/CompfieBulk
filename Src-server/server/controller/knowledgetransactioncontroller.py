@@ -10,7 +10,9 @@ from server.database.knowledgetransaction import (
     update_statutory_mapping,
     change_statutory_mapping_status,
     change_approval_status,
-    statutory_mapping_master
+    statutory_mapping_master,
+    statutories_master,
+    statutory_mapping_list
 )
 __all__ = [
     "process_knowledge_transaction_request"
@@ -36,9 +38,14 @@ def process_knowledge_transaction_request(request, db):
         result = process_get_statutory_mapping_master(db, user_id)
         logger.logKnowledgeApi("GetStatutoryMappingsMaster", "process end")
 
+    if type(request_frame) is knowledgetransaction.GetStatutoryMaster:
+        logger.logKnowledgeApi("GetStatutoryMaster", "process begin")
+        result = process_get_statutory_master(db, user_id)
+        logger.logKnowledgeApi("GetStatutoryMaster", "process end")
+
     elif type(request_frame) is knowledgetransaction.GetStatutoryMappings:
         logger.logKnowledgeApi("GetStatutoryMappings", "process begin")
-        result = process_get_statutory_mappings(db, user_id)
+        result = process_get_statutory_mappings(db, user_id, request_frame)
         logger.logKnowledgeApi("GetStatutoryMappings", "process end")
 
     elif type(
@@ -84,33 +91,19 @@ def process_knowledge_transaction_request(request, db):
     return result
 
 
+def process_get_statutory_master(db, user_id):
+    return statutories_master(db, user_id)
+
 def process_get_statutory_mapping_master(db, user_id):
     return statutory_mapping_master(db, user_id)
-    # countries = get_countries_for_user(db, user_id)
-    # domains = get_domains_for_user(db, user_id)
-    # industries = get_industries(db)
-    # statutory_natures = get_statutory_nature(db)
-    # statutory_levels = get_statutory_levels(db)
-    # statutories = get_statutory_master(db)
-    # geography_levels = get_geograhpy_levels_for_user(db, user_id)
-    # geographies = get_geographies(db, user_id)
-    # compliance_frequency = get_compliance_frequency(db)
-    # compliance_repeat_type = get_compliance_repeat(db)
-    # compliance_duration_type = get_compliance_duration(db)
-    # compliance_approval_status = get_approval_status(db)
-    # return knowledgetransaction.GetStatutoryMappingsMasterSuccess(
-    #     countries, domains, industries, statutory_natures,
-    #     statutory_levels, statutories, geography_levels,
-    #     geographies, compliance_frequency,
-    #     compliance_repeat_type,
-    #     compliance_approval_status, compliance_duration_type
-    # )
 
 
-def process_get_statutory_mappings(db, user_id):
-    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+def process_get_statutory_mappings(db, user_id, request):
+    a_status = request.approval_status_id
+    rcount = request.rcount
+    statutory_mappings, total = statutory_mapping_list(db, user_id, a_status, rcount)
     return knowledgetransaction.GetStatutoryMappingsSuccess(
-        statutory_mappings
+        statutory_mappings, total
     )
 
 
