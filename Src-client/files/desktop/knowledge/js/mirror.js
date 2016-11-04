@@ -681,6 +681,15 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
+
+  function getStatutoryMaster(callback) {
+    var request = [
+      'GetStatutoryMaster',
+      {}
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
+
   function getStatutoryMappingsMaster(callback) {
     var request = [
       'GetStatutoryMappingsMaster',
@@ -688,10 +697,13 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
-  function getStatutoryMappings(callback) {
+  function getStatutoryMappings(approval_status, rcount, callback) {
     var request = [
       'GetStatutoryMappings',
-      {}
+      {
+        "approval_status_id": parseInt(approval_status),
+        "rcount": parseInt(rcount)
+      }
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
@@ -1939,6 +1951,7 @@ function initMirror() {
     checkDuplicateStatutoryMapping: checkDuplicateStatutoryMapping,
     saveStatutoryMapping: saveStatutoryMapping,
     updateStatutoryMapping: updateStatutoryMapping,
+    getStatutoryMaster: getStatutoryMaster,
     getStatutoryMappingsMaster: getStatutoryMappingsMaster,
     getStatutoryMappings: getStatutoryMappings,
     changeStatutoryMappingStatus: changeStatutoryMappingStatus,
