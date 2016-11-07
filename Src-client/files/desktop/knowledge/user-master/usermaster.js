@@ -488,54 +488,6 @@ function processFilter() {
   renderUserList(filteredList);
 }
 
-function active_click(element) {
-  domains_class = 'active_selectbox';
-  country_class = 'active_selectbox_country';
-
-  e_type = ''
-  klass = $(element).attr('class');
-  if (e_type) {
-    if (klass == domains_class) {
-      $(element).removeClass(domains_class);
-      Domain_ids.splice(Domain_ids.indexOf(parseInt(element.id)));
-    }
-    else {
-      $(element).addClass(domains_class);
-      Domain_ids.push(parseInt(element.id));
-    }
-    Domains.val(Domain_ids.length + ' Selected');
-  }
-  else {
-    if (klass == country_class) {
-      $(element).removeClass(country_class);
-      Country_ids.splice(Country_ids.indexOf(parseInt(element.id)));
-    }
-    else {
-      $(element).addClass(country_class);
-      Country_ids.push(parseInt(element.id));
-    }
-    Country.val(Country_ids.length + ' Selected');
-  }
-}
-function chkbox_select(item, id, name, active) {
-  console.log(item);
-  if (item == 'ulist') {
-    a_klass = Domain_li_active;
-  }
-  else {
-    a_klass = Country_li_active;
-  }
-  eveClick = "";
-  li_string= ''
-  if (active == true) {
-    li_string  = '<li id="'+ id +'" class="'+ a_klass + '" onclick=active_click(this) >'+ name +'</li>';
-  }
-  else {
-   li_string  = '<li id="'+ id +'" onclick=active_click(this) >'+ name +'</li>';
-  }
-  return li_string;
-}
-
 function pageControls() {
   function onKeyUpDownSelect(e, item) {
     // Key code : 40- down arrow , 38- up arrow , 32- space , 13- enter key.
@@ -636,22 +588,30 @@ function pageControls() {
   Domains.focus(function() {
     Select_Box.show();
     Domain_li_list.empty();
-    var str = '';
-    for (var i in DomainsList) {
-      d = DomainsList[i];
-      if (d.is_active == true) {
-        active = false;
-        if ($.inArray(d.domain_id, Domain_ids) >= 0) {
-          active = true;
+    $.each(DomainsList, function(ke, val) {
+      if (val.is_active == false)
+        return
+      liObj = $('#templates .li-select').clone();
+      liObj.attr('id', 'd'+val.domain_id);
+      liObj.text(val.domain_name);
+      if ($.inArray(val.domain_id, Domain_ids) >= 0) {
+        liObj.addClass('active_selectbox');
+      }
+      liObj.on('click', function() {
+        if ($('#d'+val.domain_id).hasClass('active_selectbox')) {
+          $('#d'+val.domain_id).removeClass('active_selectbox');
+          Domain_ids.splice(Domain_ids.indexOf(val.domain_id), 1);
         }
         else {
-          active = false;
+          $('#d'+val.domain_id).addClass('active_selectbox');
+          Domain_ids.push(val.domain_id);
         }
-        str += chkbox_select('ulist', d.domain_id, d.domain_name, active);
-      }
-    }
-    Domain_li_list.append(str);
+        Domains.val(Domain_ids.length + ' Selected');
+      });
+      Domain_li_list.append(liObj);
+    });
   });
+
   Domains.keyup(function(e) {
     onKeyUpDownSelect(e, 'ulist');
     console.log(Domain_ids);
@@ -660,22 +620,31 @@ function pageControls() {
   Country.focus(function() {
     Select_Box_Country.show();
     Country_li_list.empty();
-    var str = '';
-    for (var i in CountryList) {
-      d = CountryList[i];
-      if (d.is_active == true) {
-        active = false;
-        if ($.inArray(d.country_id, Country_ids) >= 0) {
-          active = true;
+    $.each(CountryList, function(ke, val) {
+      if (val.is_active == false)
+        return
+      liObj = $('#templates .li-select').clone();
+      liObj.addClass('ctry');
+      liObj.attr('id','c'+val.country_id);
+      liObj.text(val.country_name);
+      if ($.inArray(val.country_id, Country_ids) >= 0) {
+        liObj.addClass(Country_li_active);
+      }
+      liObj.on('click', function() {
+        if ($('#c'+val.country_id).hasClass(Country_li_active)) {
+          $('#c'+val.country_id).removeClass(Country_li_active);
+          Country_ids.splice(Country_ids.indexOf(val.country_id), 1);
         }
         else {
-          active = false;
+          $('#c'+val.country_id).addClass(Country_li_active);
+          Country_ids.push(val.country_id);
         }
-        str += chkbox_select('ulist-country', d.country_id, d.country_name, active);
-      }
-    }
-    Country_li_list.append(str);
+        Country.val(Country_ids.length + ' Selected');
+      });
+      Country_li_list.append(liObj);
+    });
   });
+
   Country.keyup(function(e) {
     onKeyUpDownSelect(e, 'ulist-country');
     console.log("countries");
