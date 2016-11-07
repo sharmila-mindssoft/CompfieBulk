@@ -999,3 +999,18 @@ CREATE TABLE `tbl_validity_date_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`validity_date_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_group_admin_email_notification`;
+CREATE TABLE `tbl_group_admin_email_notification` (
+  `client_informed_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `group_admin_email_id` varchar(50) NOT NULL,
+  `unit_creation_informed` tinyint(1) DEFAULT 0,
+  `unit_sent_by` int(11) DEFAULT NULL,
+  `unit_sent_on` timestamp NULL DEFAULT NULL,
+  `assign_statutory_informed` tinyint(1) DEFAULT 0,
+  `statu_sent_by` int(11) DEFAULT NULL,
+  `statu_sent_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`client_informed_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
