@@ -210,7 +210,7 @@ def parse_date(x):
     try:
         return datetime.strptime(x, "%d/%m/%Y")
     except Exception, e:
-        return None
+        return e
 
 
 def parse_string_list(x, length=0, string_length=0):
@@ -372,7 +372,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         if(
             val is not None and
             _validation_method is not None and
-            _type != "MAP_TYPE"
+            _type != "MAP_TYPE" and type(val) != list
         ):
             val = _validation_method(val)
     return x
@@ -394,6 +394,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
+        print val, param, field_name
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
         _type = param.get('type')
@@ -446,7 +447,8 @@ def to_structure_dictionary_values(x):
             val = parse_values(field_name, param, val)
         if(
             val is not None and _validation_method is not None and
-            _type != 'MAP_TYPE' and _type != 'MAP_TYPE_VECTOR_TYPE'
+            _type != 'MAP_TYPE' and _type != 'MAP_TYPE_VECTOR_TYPE' and
+            type(val) != list
         ):
             val = _validation_method(val)
 
