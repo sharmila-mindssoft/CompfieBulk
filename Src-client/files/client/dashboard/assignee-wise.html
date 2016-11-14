@@ -1,0 +1,457 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
+<link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<link href="/files/client/common/css/custombox/custombox.min.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+  $(function(){
+    $(".left-menu-button").show();
+    $(".content-page").removeClass('m-l-0');
+  });
+</script>
+
+
+<div class="left side-menu">
+  <div class="sidebar-inner slimscrollleft">
+    <div id="sidebar-menu">
+      <ul>
+        <li class="text-muted menu-title">Chart List</li>
+        <li class="has_sub"> <a href="/dashboard" class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/escalation" class="waves-effect"><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/not-complied" class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
+        <li class="has_sub active"> <a href="/dashboard/assignee-wise" class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/trend-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/risk-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div>
+
+
+
+<div class="content-page">
+  <div class="content">
+    <div class="container">
+      <!-- Page-Title -->
+      <div class="row">
+        <div class="col-sm-12 h4-title">
+          <h4 class="page-title pull-left">Assignee Wise Compliance</h4>
+		
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card-box">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Seating Unit:</label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Seating Unit" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-4 control-label">Business Group:</label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter BusinessGroup" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-4 control-label">Division:</label>
+                           <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Division" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-4 control-label">User: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter User" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                  
+                  
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()" > Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                <script type="text/javascript">
+                    function show_div() {
+                        $('.details').show();
+                        $('#compliance_animation')
+                          .removeClass().addClass('bounceInLeft animated')
+                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                          $(this).removeClass();
+                        });
+                    }
+                </script>
+            </div>
+            <div id="compliance_animation">
+                <div class="table-responsive details" style="display: none;">
+                    <div class="card-box">
+                        <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="05%">#</th>
+                                    <th width="45%">Domain</th>
+                                    <th width="10%">Total</th>
+                                    <th width="10%">Complied</th>
+                                    <th width="10%">Delayed</th>
+                                    <th width="10%">In progress</th>
+                                    <th colspan="2">Not complied</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-lightdark">
+                                  <td colspan="100%">
+                                    <div class="col-sm-12"><span class="pull-left">KG1009 - Madurai unit</span></div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="100%" >
+                                        <div class="col-sm-2 no-padding">
+                                            <!--a class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-sm">EMP1028 -Sivaraman</a-->
+                                            <a class="c-pointer" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a">EMP1028 -Sivaraman</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Fiance Law</td>
+                                    <td>10</td>
+                                    <td>06</td>
+                                    <td>02</td>
+                                    <td>01</td>
+                                    <td>01</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer" onclick="parent.location='/dashboard/assignee-wise-task-details'"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Labour Law</td>
+                                    <td>11</td>
+                                    <td>04</td>
+                                    <td>03(+2)</td>
+                                    <td>01</td>
+                                    <td>01</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Industial Law</td>
+                                    <td>11</td>
+                                    <td>04</td>
+                                    <td>03</td>
+                                    <td>01</td>
+                                    <td>01</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-center">Total</td>
+                                    <td>32</td>
+                                    <td>14</td>
+                                    <td>10</td>
+                                    <td>03</td>
+                                    <td>03</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="100%" >
+                                        <div class="col-sm-2 no-padding">
+                                            <a class="c-pointer">EMP1027 - Vijayan</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Labour Law</td>
+                                    <td>08</td>
+                                    <td>04</td>
+                                    <td>01</td>
+                                    <td>02</td>
+                                    <td>01</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
+                                </tr>
+                                <tr class="bg-lightdark">
+                                  <td colspan="100%">
+                                    <div class="col-sm-6"><span class="pull-left">KG1180 - Namakkal unit</span></div>
+                                    <div class="col-sm-6">&nbsp;</div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="100%" >
+                                        <div class="col-sm-2 no-padding">
+                                            <a class="c-pointer">EMP1129 - Sivanathan</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Industrial Law</td>
+                                    <td>09</td>
+                                    <td>04</td>
+                                    <td>02</td>
+                                    <td>02</td>
+                                    <td>01</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="100%" >
+                                        <div class="col-sm-2 no-padding">
+                                            <a class="c-pointer">EMP1207 - Velmurugan</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Finance Law</td>
+                                    <td>10</td>
+                                    <td>04</td>
+                                    <td>03</td>
+                                    <td>02</td>
+                                    <td>01</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="100%" >
+                                        <div class="col-sm-2 no-padding">
+                                            <a class="c-pointer">EMP2018 - Vetriselvam</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Finance Law</td>
+                                    <td>08</td>
+                                    <td>02</td>
+                                    <td>04</td>
+                                    <td>01</td>
+                                    <td>01</td>
+                                    <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!-- content -->
+  </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title" id="mySmallModalLabel">EMP1028 - Sivaraman</h4>
+            </div>
+            <div class="modal-body">
+              <form role="form">
+                  <div class="form-group">
+                      <div class="table-responsive">
+                 
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="05%">#</th>
+                                <th width="15%">Year</th>
+                                <th width="10%">Total</th>
+                                <th width="10%">Complied</th>
+                                <th width="10%">Delayed</th>
+                                <th width="10%">In progress</th>
+                                <th width="10%">Not complied</th>
+                                <th width="1%">&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><a class="c-pointer" onclick="parent.location='/dashboard/assignee-wise-task-details'">2015</a></td>
+                                <td>10</td>
+                                <td>06</td>
+                                <td>02</td>
+                                <td>01</td>
+                                <td>01</td>
+                                <td><i class="fa fa-chevron-right pull-right"></i></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><a class="c-pointer">2014</a></td>
+                                <td>10</td>
+                                <td>08</td>
+                                <td>00</td>
+                                <td>01</td>
+                                <td>01</td>
+                                <td><i class="fa fa-chevron-right pull-right"></i></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><a class="c-pointer">2013</a></td>
+                                <td>10</td>
+                                <td>07</td>
+                                <td>02</td>
+                                <td>00</td>
+                                <td>01</td>
+                                <td><i class="fa fa-chevron-right pull-right"></i></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><a class="c-pointer">2012</a></td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>00</td>
+                                <td>00</td>
+                                <td>00</td>
+                                <td><i class="fa fa-chevron-right pull-right"></i></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><a class="c-pointer">2011</a></td>
+                                <td>10</td>
+                                <td>07</td>
+                                <td>02</td>
+                                <td>01</td>
+                                <td>00</td>
+                                <td><i class="fa fa-chevron-right pull-right"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                  </div>
+              </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="custom-modal" class="modal-demo">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">EMP1028 - Sivaraman</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+          <div class="form-group">
+              <div class="table-responsive">
+                <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%" style="width:600px;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="05%">#</th>
+                            <th class="text-center" width="8%">Year</th>
+                            <th class="text-center" width="10%">Total</th>
+                            <th class="text-center" width="10%">Complied</th>
+                            <th class="text-center" width="10%">Delayed</th>
+                            <th class="text-center" width="10%">In progress</th>
+                            <th class="text-center" width="10%">Not complied</th>
+                            <th class="text-center" width="1%">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><a class="c-pointer" onclick="parent.location='/dashboard/assignee-wise-task-details'">2015</a></td>
+                            <td>10</td>
+                            <td>06</td>
+                            <td>02</td>
+                            <td>01</td>
+                            <td>01</td>
+                            <td><i class="fa fa-chevron-right pull-right"></i></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><a class="c-pointer">2014</a></td>
+                            <td>10</td>
+                            <td>08</td>
+                            <td>00</td>
+                            <td>01</td>
+                            <td>01</td>
+                            <td><i class="fa fa-chevron-right pull-right"></i></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><a class="c-pointer">2013</a></td>
+                            <td>10</td>
+                            <td>07</td>
+                            <td>02</td>
+                            <td>00</td>
+                            <td>01</td>
+                            <td><i class="fa fa-chevron-right pull-right"></i></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><a class="c-pointer">2012</a></td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>00</td>
+                            <td>00</td>
+                            <td>00</td>
+                            <td><i class="fa fa-chevron-right pull-right"></i></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><a class="c-pointer">2011</a></td>
+                            <td>10</td>
+                            <td>07</td>
+                            <td>02</td>
+                            <td>01</td>
+                            <td>00</td>
+                            <td><i class="fa fa-chevron-right pull-right"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+          </div>
+      </form>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
+<script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $('#country').multiselect();
+    $('#domain').multiselect();	
+</script>
+
+<!-- Modal-Effect -->
+<script src="/files/client/common/js/custombox/custombox.min.js"></script>
+<script src="/files/client/common/js/custombox/legacy.min.js"></script>
+
+{% endblock %}

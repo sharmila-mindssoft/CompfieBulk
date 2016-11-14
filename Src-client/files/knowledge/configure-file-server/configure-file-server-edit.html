@@ -1,0 +1,42 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <div class="card-box">
+          <h4 class="page-title">Configure File Server</h4>
+          <hr class="no-top-margin">
+          <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">File Server</label>
+            <div class="col-sm-6">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter File Server" value="File Server One">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">IP</label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="000:000:0:0" value="192.168.1.1">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Port</label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0000" value="3306">
+            </div>
+          </div>
+      <div class="form-group">
+        <label class=" col-sm-offset-1 col-sm-3 control-label">&nbsp;</label>
+        <div class="col-sm-6">
+          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+          <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/configure-file-server/list'"> Cancel </button>
+        </div>
+      </div>
+      </form>
+        </div>
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+{% endblock %}

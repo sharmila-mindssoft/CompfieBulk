@@ -1,0 +1,621 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<link rel="stylesheet" href="/files/knowledge/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
+<script type="text/javascript" src="/files/knowledge/common/js/multiselect/bootstrap-multiselect.js"></script>
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <!-- <h4 class="page-title">Add Client Unit</h4>
+                <hr class="no-top-margin"> -->
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">
+                        Add Client Unit
+                    </h3>
+                    <div class="portlet-widgets">
+                        <a href="#" onclick="location.href='/client-unit/list'" >
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">Group <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <select id="group-select" class="form-control input-sm">
+                                    <option>RG Groups</option>
+                                    <option>SLK Groups</option>
+                                    <option>PGJ Groups</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-4 control-label">Country <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input class="form-control input-sm" value="India" type="text">
+                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">Business Group</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                    <option>RG Business Groups</option>
+                                    <option>SLK Business Groups</option>
+                                    <option>PGJ Business Groups</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                    <option>RG Entity</option>
+                                    <option>SLK Entity</option>
+                                    <option>PGJ Entity</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+
+                    <div class="clear"></div><br>
+
+                    <div class="card-box p-10">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-2 p-t-7">Division</label>
+                              <div class="select_business_group">
+                                <div class="col-sm-6 no-padding-right">
+                                    <select class="form-control input-sm">
+                                        <option>RG Entity</option>
+                                        <option>SLK Entity</option>
+                                        <option>PGJ Entity</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                  <button class="btn btn-success waves-effect waves-light btn-sm m-b-5" onclick="business_group_change('1')">
+                                    <i class="fa fa-plus"></i>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="input_business_group" style="display: none;">
+                                <div class="col-sm-6 no-padding-right">
+                                    <input class="form-control input-sm" placeholder="Enter Division" type="text">
+                                </div>
+                                <div class="col-sm-2">
+                                  <button class="btn btn-success waves-effect waves-light btn-sm m-b-5" onclick="business_group_change('2')">
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                                <label class="col-sm-2 p-t-7">Category</label>
+                                <div class="col-sm-6 no-padding-right">
+                                    <input class="form-control input-sm" placeholder="Enter Division" value="RG Category" type="text">
+                                </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4 p-t-7 pull-right">Active Units: 2</label>
+                          </div>
+                      </div>
+
+                      <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="2%">#</th>
+                                <th width="12%">Geography Level </th>
+                                <th width="15%">Unit Location </th>
+                                <th width="10%">
+                                    <div class="checkbox checkbox-primary checkbox-single">
+                                        <input id="singleCheckbox2" value="option2" type="checkbox">
+                                        <label for="singleCheckbox2"><strong>Unit Code</strong></label>
+                                    </div>
+                                </th>
+                                <th class="text-center" width="10%">Unit Name</th>
+                                <th class="text-center" width="10%">Unit Address</th>
+                                <th class="text-center" width="10%">Postal Code</th>
+                                <th class="text-center" width="8%">Domain</th>
+                                <th class="text-center" width="10%">Organization</th>
+                                <th class="text-center" width="5%">Status</th>
+                                <th class="text-center" width="8%">Approve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="State" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="New Delhi" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                   North Region, India
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm unit_code" value="RG10001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Corporate Office" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="15/9, New Delhi" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="110001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <select class="example-multiple" multiple="multiple">
+                                        <option value="Labour Law" selected="">Labour Law</option>
+                                        <option value="Finance Law" selected="">Finance Law </option>
+                                        <option value="Industrial Law">Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group  m-b-0 p-r-10">
+                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                        <optgroup label="Labour Law">
+                                            <option value="4" selected="">Contractor</option>
+                                            <option value="5" selected="">S &amp; E</option>
+                                            <option value="6">Mines</option>
+                                        </optgroup>
+                                        <optgroup label="Finance Law">
+                                            <option value="1">Factory</option>
+                                            <option value="2">Office</option>
+                                            <option value="3">Plantation</option>
+                                        </optgroup>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>Active</td>
+                                <td>Approved</td>
+                            </tr>
+                            <tr class="rejected_row">
+                                <td>2</td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Corporation" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="South Delhi Municipal Corporation" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                  South Delhi Municipal Corporation, Delhi 
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm unit_code" value="RG10002" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Regional Office - North" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="24-1/4, South Delhi" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="110001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <select class="example-multiple" multiple="multiple">
+                                        <option value="Labour Law" selected="">Labour Law</option>
+                                        <option value="Finance Law" selected="">Finance Law </option>
+                                        <option value="Industrial Law">Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group  m-b-0 p-r-10">
+                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                        <optgroup label="Labour Law">
+                                            <option value="4">Contractor</option>
+                                            <option value="5">S &amp; E</option>
+                                            <option value="6">Mines</option>
+                                        </optgroup>
+                                        <optgroup label="Finance Law">
+                                            <option value="1" selected="">Factory</option>
+                                            <option value="2" selected="">Office</option>
+                                            <option value="3">Plantation</option>
+                                        </optgroup>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>Active</td>
+                                <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Rejected reason goes here."></i> Rejected</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="City" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Chennai" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                  Chennai, Tamil Nadu, South Region 
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm unit_code" value="RG10003" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Regional Office - South" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="12, KK nagar, Chennai" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="600001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <select class="example-multiple" multiple="multiple">
+                                        <option value="Labour Law" selected="">Labour Law</option>
+                                        <option value="Finance Law" selected="">Finance Law </option>
+                                        <option value="Industrial Law">Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group  m-b-0 p-r-10">
+                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                        <optgroup label="Labour Law">
+                                            <option value="4">Contractor</option>
+                                            <option value="5">S &amp; E</option>
+                                            <option value="6">Mines</option>
+                                        </optgroup>
+                                        <optgroup label="Finance Law">
+                                            <option value="1" selected="">Factory</option>
+                                            <option value="2" selected="">Office</option>
+                                            <option value="3">Plantation</option>
+                                        </optgroup>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>Closed</td>
+                                <td>Approved</td>
+                            </tr>
+                        </tbody>
+                      </table>
+                      <div class="clear"></div>
+                    </div>
+
+
+                    <div class="card-box p-10">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-2 p-t-7">Division</label>
+                              <div class="input_business_group">
+                                <div class="col-sm-6 no-padding-right">
+                                    <input class="form-control input-sm" placeholder="Enter Division" type="text">
+                                </div>
+                                <div class="col-sm-2">
+                                  <button class="btn btn-success waves-effect waves-light btn-sm m-b-5">
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                                <label class="col-sm-2 p-t-7">Category</label>
+                                <div class="col-sm-6 no-padding-right">
+                                    <input class="form-control input-sm" placeholder="Enter Division" value="RG Category 01" type="text">
+                                </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4 p-t-7 pull-right">Active Units: 3</label>
+                          </div>
+                      </div>
+
+                      <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="2%">#</th>
+                                <th width="12%">Geography Level </th>
+                                <th width="15%">Unit Location </th>
+                                <th width="10%">
+                                    <div class="checkbox checkbox-primary checkbox-single">
+                                        <input id="singleCheckbox2" value="option2" type="checkbox">
+                                        <label for="singleCheckbox2"><strong>Unit Code</strong></label>
+                                    </div>
+                                </th>
+                                <th class="text-center" width="10%">Unit Name</th>
+                                <th class="text-center" width="10%">Unit Address</th>
+                                <th class="text-center" width="10%">Postal Code</th>
+                                <th class="text-center" width="8%">Domain</th>
+                                <th class="text-center" width="10%">Organization</th>
+                                <th class="text-center" width="5%">Status</th>
+                                <th class="text-center" width="8%">Approve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="State" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="New Delhi" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                   North Region, India
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm unit_code" value="RG10001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Corporate Office" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="15/9, New Delhi" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="110001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <select class="example-multiple" multiple="multiple">
+                                        <option value="Labour Law" selected="">Labour Law</option>
+                                        <option value="Finance Law" selected="">Finance Law </option>
+                                        <option value="Industrial Law">Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group  m-b-0 p-r-10">
+                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                        <optgroup label="Labour Law">
+                                            <option value="4" selected="">Contractor</option>
+                                            <option value="5" selected="">S &amp; E</option>
+                                            <option value="6">Mines</option>
+                                        </optgroup>
+                                        <optgroup label="Finance Law">
+                                            <option value="1">Factory</option>
+                                            <option value="2">Office</option>
+                                            <option value="3">Plantation</option>
+                                        </optgroup>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>Active</td>
+                                <td>Approved</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Corporation" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="South Delhi Municipal Corporation" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                  South Delhi Municipal Corporation, Delhi 
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm unit_code" value="RG10002" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Regional Office - North" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="24-1/4, South Delhi" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="110001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <select class="example-multiple" multiple="multiple">
+                                        <option value="Labour Law" selected="">Labour Law</option>
+                                        <option value="Finance Law" selected="">Finance Law </option>
+                                        <option value="Industrial Law">Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group  m-b-0 p-r-10">
+                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                        <optgroup label="Labour Law">
+                                            <option value="4">Contractor</option>
+                                            <option value="5">S &amp; E</option>
+                                            <option value="6">Mines</option>
+                                        </optgroup>
+                                        <optgroup label="Finance Law">
+                                            <option value="1" selected="">Factory</option>
+                                            <option value="2" selected="">Office</option>
+                                            <option value="3">Plantation</option>
+                                        </optgroup>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>Active</td>
+                                <td>Approved</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="City" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Chennai" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                  Chennai, Tamil Nadu, South Region 
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm unit_code" value="RG10003" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Regional Office - South" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="12, KK nagar, Chennai" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="600001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <select class="example-multiple" multiple="multiple">
+                                        <option value="Labour Law" selected="">Labour Law</option>
+                                        <option value="Finance Law" selected="">Finance Law </option>
+                                        <option value="Industrial Law">Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group  m-b-0 p-r-10">
+                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                        <optgroup label="Labour Law">
+                                            <option value="4">Contractor</option>
+                                            <option value="5">S &amp; E</option>
+                                            <option value="6">Mines</option>
+                                        </optgroup>
+                                        <optgroup label="Finance Law">
+                                            <option value="1" selected="">Factory</option>
+                                            <option value="2" selected="">Office</option>
+                                            <option value="3">Plantation</option>
+                                        </optgroup>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>Closed</td>
+                                <td>Approved</td>
+                            </tr>
+                        </tbody>
+                      </table>
+                      <div class="clear"></div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+                        <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/client-unit/list'"> Cancel </button> -->
+                    </div>
+
+
+
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+
+
+<script type="text/javascript">
+  function business_group_change(id) {
+    if(id == "2") {
+      $(".select_business_group").show();
+      $(".input_business_group").hide();
+    } else {
+      $(".select_business_group").hide();
+      $(".input_business_group").show();
+    }
+  }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.example-multiple-optgroups').multiselect({
+            buttonWidth: '120px',
+            enableClickableOptGroups: true /*,
+            enableCollapsibleOptGroups: true*/
+        });
+        $('.example-multiple').multiselect({
+            buttonWidth: '120px'
+        });
+    });
+</script>
+
+{% endblock %}
+

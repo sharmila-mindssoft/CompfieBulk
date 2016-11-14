@@ -1,0 +1,216 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <!-- <h4 class="page-title">Client Agreement Master Report</h4> -->        
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Client Agreement Master Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
+                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Group Name:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Group Name">
+                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group">
+                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity">
+                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Contract From:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="datepicker-autoclose">
+                                <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Contract To:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="datepicker-autoclose">
+                                <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                </div>
+                <div class="card-box">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4>Client Agreement Master Report</h4></div>
+                        <div class="col-sm-12 text-center"><h6>Country: India</h6></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="10%">Legal Entity</th>
+                                <th width="13%" class="text-center">User Licenses Used/Total</th>
+                                <th width="10%" class="text-center">File Space Used/Total</th>
+                                <th width="10%" class="text-center">LE/ Group Admin Details</th>
+                                <th width="10%" class="text-center">Contact Details</th>
+                                <th width="06%" class="text-center">Domain</th>
+                                <th width="12%" class="text-center">Units Per Domain Used/Total</th>
+                                <th width="12%" class="text-center">Date of Agreement Inception</th>
+                                <th width="08%" class="text-center">Contract From</th>
+                                <th width="08%" class="text-center">Contract To</th>
+                                <th width="05%" class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="col-sm-12 no-padding">
+                                        <input type="text" class="form-control input-sm" placeholder="RG Group" value="RG Group" readonly="true" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="col-sm-12 no-padding">
+                                        <input type="text" class="form-control input-sm" placeholder="RG - FACTORIES" value="RG - FACTORIES" readonly="true"  />
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>admin@abb.com</td>
+                                <td>+91-9876543210</td>
+                                <td colspan="100%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>RG Legal Entity</td>
+                                <td class="text-center">35/50</td>
+                                <td class="text-center">10/15 GB</td>
+                                <td>leadmin@abb.com</td>
+                                <td>+91-9876543211</td>
+                                <td>3</td>
+                                <td></td>
+                                <td class="text-center">01-Jan-2015</td>
+                                <td class="text-center">01-Jan-2016</td>
+                                <td class="text-center">31-Dec-2017</td>
+                                <td>Active</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">&nbsp;</td>
+                                <td colspan="100%">
+                                    <ul class="tree">
+                                        <li>
+                                            <table width="100%">
+                                                <tbody>
+                                                    <tr class="smallfont">
+                                                       <td width="20%">Labour Law</td>
+                                                       <td width="16%">
+                                                            <a class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg">45/50</a>
+                                                        </td>
+                                                       <td width="23%" class="text-center">01-Jan-2015</td>
+                                                       <td width="20%" class="text-center">01-Jan-2016</td>
+                                                       <td width="0%"></td>
+                                                       <td width="0%"></td>
+                                                    </tr>
+                                                    <tr class="smallfont">
+                                                       <td>Finance Law</td>
+                                                        <td><a href="#">22/30</a></td>
+                                                        <td class="text-center">01-Apr-2015</td>
+                                                        <td class="text-center">01-Jan-2016</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr class="smallfont">
+                                                       <td>Industrial Law</td>
+                                                        <td><a href="#">13/20</a></td>
+                                                        <td class="text-center">01-Jun-2015</td>
+                                                        <td class="text-center">01-Jan-2016</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="rpt-count">Total : 1 record(s)</p>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="page-title">Labour Law</h4>
+            <hr class="no-top-margin no-bottom-margin">
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                        <tbody>
+                          <tr class="table_bg_01">
+                            <td class="header-bg1" align="center">Organization Type 1</td>
+                            <td class="header-bg1" align="center">Organization Type 2</td>
+                            <td class="header-bg1" align="center">Organization Type 3</td>
+                            <td class="header-bg1" align="center">Organization Type 4</td>
+                          </tr>
+                          <tr>
+                            <td align="center">15/20</td>
+                            <td align="center">10/10</td>
+                            <td align="center">8/8</td>
+                            <td align="center">12/12</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script>
+    var resizefunc = [];
+</script>
+{% endblock %}

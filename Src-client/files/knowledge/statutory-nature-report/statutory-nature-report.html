@@ -1,0 +1,97 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+ <div class="row" id="animationSandbox">
+  <div class="col-sm-3"> </div>
+  <div class="col-sm-6">
+    <!-- <h4 class="page-title">Statutory Nature Master Report</h4> -->
+    <div class="portlet">
+        <div class="portlet-heading bg-info">
+        <h3 class="portlet-title">Statutory Nature Master Report</h3>
+        <div class="portlet-widgets">
+            <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+            </a> -->
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div id="bg-primary1" class="panel-collapse collapse in">
+        <div class="portlet-body">
+            <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="1%">#</th>
+                  <th width="20%">Country</th>
+                  <th width="20%">Statutory Nature</th>
+                  <th width="10%">Status</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
+                                All
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">All</a></li>
+                                <li><a href="#"> Active</a></li>
+                                <li><a href="#"> Inactive</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>India</td>
+                  <td>Central</td>
+                  <td>Active</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>India</td>
+                  <td>State</td>
+                  <td>Active</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Singapore</td>
+                  <td>Concurrent</td>
+                  <td>Inactive</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Srilanka</td>
+                  <td>Central</td>
+                  <td>Active</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>Srilanka</td>
+                  <td>State</td>
+                  <td>Active</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="rpt-count">Showing 5 records</p>
+          </div>
+        </div>
+     </div>
+  </div>
+  <!-- end col -->
+</div>
+{% endblock %}

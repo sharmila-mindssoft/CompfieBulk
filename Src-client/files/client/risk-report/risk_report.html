@@ -1,0 +1,219 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+             
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Risk Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Risk Report</h4> -->
+                <!-- <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Division: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Division" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6"> 
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Category: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Category" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Unit" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Task Status:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                  <option>All</option>
+                                  <option>Delayed Compliance</option>
+                                  <option>Not Complied</option>
+                                  <option>Not Opted</option>
+                                  <option>Unassigned Compliance</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                </div>
+                <div class="card-box">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><h4>Risk Report</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Domain : Labour Law</h6></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="15%">Compliance Task</th>
+                                <th width="10%">Frequency</th>
+                                <th width="10%">Admin Incharge</th>
+                                <th width="10%">Assignee</th>
+                                <th width="10%">Compliance Task Status</th>
+                                <th width="15%">Penal Consequences</th>
+                                <th width="10%">History</th>
+                                <th width="10%">Uploaded Documents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-lightdark">
+                              <td colspan="100%">
+                                <div class="col-sm-6"><span class="pull-left">Unit: RG0003 - RG Madurai Unit - No 14, 80 feet road, Anna nagar,Madurai</span></div>
+                                <div class="col-sm-6"></div>
+                              </td>
+                            </tr>
+                            <tr>
+                                <td colspan="100%" >
+                                    <div class="col-sm-2 no-padding">
+                                        <input type="text" class="form-control input-sm text-center" value="Test Act Central" readonly="true" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Form A - Registration</td>
+                                <td>Periodical</td>
+                                <td>Admin</td>
+                                <td>Mr. Rajkumar</td>
+                                <td>Delayed Compliance</td>
+                                <td>Fine Rs.10000 or Imprisonment upto 3 yrs</td>
+                                <td><a class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg">View</a></td>
+                                <td><a href="#">Form A</a></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Form B - Submission</td>
+                                <td>Review</td>
+                                <td>Admin</td>
+                                <td>Mr. Praveen</td>
+                                <td>Not Complied</td>
+                                <td>Fine Rs.10000 or Imprisonment upto 3 yrs</td>
+                                <td><a href="#">View</a></td>
+                                <td><a href="#">Form B</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="rpt-count">Total : 2 record(s)</p>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+</div>
+</div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="page-title">Task History</h4>
+            <hr class="no-top-margin no-bottom-margin">
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                        <tbody>
+                          <tr class="table_bg_01">
+                            <td class="header-bg1" align="center">Start Date</td>
+                            <td class="header-bg1" align="center">Due Date</td>
+                            <td class="header-bg1" align="center">Assignee</td>
+                            <td class="header-bg1" align="center">Concurr</td>
+                            <td class="header-bg1" align="center">Approver</td>
+                            <td class="header-bg1" align="center">Remarks</td>
+                          </tr>
+                          <tr>
+                            <td align="center">01-Aug-2016</td>
+                            <td align="center">07-Aug-2016</td>
+                            <td align="center">Rajkumar<br/>(08-Aug-2016)</td>
+                            <td align="center">Rajaram<br/>(08-Aug-2016)</td>
+                            <td align="center">Sivaraman<br/>(09-Aug-2016)</td>
+                            <td align="center">Delayed Submission due to payment portal error</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div>
+{% endblock %}

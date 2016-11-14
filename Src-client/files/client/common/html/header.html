@@ -1,0 +1,53 @@
+<div class="toplogobar">
+  <div class="toplogobar-logo"> <span><img src="/files/knowledge/common/images/logo.png" alt="compfie" height="36"></span> </div>
+  <!--div class="toplogobar-actions">
+    <div id="theme-setting"> <a href="#"><i class="fa fa-gears fa fa-2x"></i></a>
+      <ul>
+        <li><span>Skin</span>
+          <ul class="colors" data-target="body" data-prefix="skin-">
+            <li class="active"><a class="blue" href="#"></a></li>
+            <li><a class="red" href="#"></a></li>
+            <li><a class="green" href="#"></a></li>
+            <li><a class="orange" href="#"></a></li>
+            <li><a class="yellow" href="#"></a></li>
+          </ul>
+        </li>
+        <li> <span>Navbar</span>
+          <ul class="colors" data-target="#navbar" data-prefix="navbar-">
+            <li class="active"><a class="blue" href="#"></a></li>
+            <li><a class="red" href="#"></a></li>
+            <li><a class="green" href="#"></a></li>
+            <li><a class="orange" href="#"></a></li>
+            <li><a class="yellow" href="#"></a></li>
+          </ul>
+        </li>
+        <li> <span>Sidebar</span>
+          <ul class="colors" data-target="#main-container" data-prefix="sidebar-">
+            <li class="active"><a class="blue" href="#"></a></li>
+            <li><a class="red" href="#"></a></li>
+            <li><a class="green" href="#"></a></li>
+            <li><a class="orange" href="#"></a></li>
+            <li><a class="yellow" href="#"></a></li>
+          </ul>
+        </li>
+        
+      </ul>
+    </div>
+  </div-->
+</div>
+<div class="topbar">
+  <!-- LOGO -->
+  <div class="topbar-left">
+    <div class="text-center"> <a href="admin-dashboard.html" class="logo"> </a> </div>
+  </div>
+  {% if user == "clientgroupAdmin" %} 
+  {% include "/files/client/nav-bar/clientgroup-admin.html" %}
+  {% elif user == "legalentityAdmin" %}
+  {% include "/files/client/nav-bar/legalentity-admin.html" %}
+  {% elif user == "domainAdmin" %}
+  {% include "/files/client/nav-bar/domain-manager.html" %}
+  {% elif user == "clientExecutive" %}
+  {% include "/files/client/nav-bar/client-executive.html" %}
+  {% elif user == "serviceproviderUser" %}
+  {% include "/files/client/nav-bar/serviceprovider-user.html" %}
+  {% endif %} </div>

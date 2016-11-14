@@ -1,0 +1,131 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"> </div>
+        <div class="col-sm-8">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Allocate Database Environment Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Allocate Database Environment Report</h4>
+                <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback" >
+                          <label class="col-sm-4 control-label">Group:</label>
+                          <div class="col-md-6">
+                            <input type="text" class="form-control input-sm" placeholder="Enter Group Name">
+                            <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                          <label class="col-sm-4 control-label">Legal Entity:</label>
+                          <div class="col-md-6">
+                            <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity">
+                            <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                          </div>
+                        </div>
+                    </div>
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                </div>
+                <div class="card-box">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4>Allocate Database Environment Report</h4></div>
+                        <!-- <div class="col-sm-6 text-center"><h6>Group: -</h6></div>
+                        <div class="col-sm-6 text-center"><h6>Legal Entity: -</h6></div> -->
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="08%">Group</th>
+                                <th width="10%">Legal Entity</th>
+                                <th width="10%">Application Server</th>
+                                <th width="10%">Database Server</th>
+                                <th width="10%">File Server</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>RG Group</td>
+                                <td>RG Legal Entity 01</td>
+                                <td>Application Server 01</td>
+                                <td>Database Server 01</td>
+                                <td>File Server 01</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">&nbsp;</td>
+                                <td colspan="100%">
+                                    <ul class="tree">
+                                        <li>
+                                            <table width="100%">
+                                                <tbody>
+                                                    <tr class="smallfont">
+                                                       <td width="19%">&nbsp;</td>
+                                                       <td width="20%">Application Server 02</td>
+                                                       <td width="20%">Database Server 01</td>
+                                                       <td width="17%">File Server 01</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>RG Group</td>
+                                <td>RG Legal Entity 02</td>
+                                <td>Application Server 01</td>
+                                <td>Database Server 01</td>
+                                <td>File Server 01</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>RG Group</td>
+                                <td>RG Legal Entity 03</td>
+                                <td>Application Server 01</td>
+                                <td>Database Server 01</td>
+                                <td>File Server 01</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>RG Group</td>
+                                <td>RG Legal Entity 04</td>
+                                <td>Application Server 01</td>
+                                <td>Database Server 01</td>
+                                <td>File Server 01</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="rpt-count">Total : 4 record(s)</p>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+{% endblock %}

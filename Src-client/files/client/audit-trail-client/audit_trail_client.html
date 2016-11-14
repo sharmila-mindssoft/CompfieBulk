@@ -1,0 +1,148 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Audit Trail</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Audit Trail</h4> -->
+                <!-- <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity 01">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="10-Jul-2016">
+                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20-Jul-2016">
+                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter User">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Form: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Form">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                </div>
+                <div class="card-box">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><h4>Audit Trail</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity 01</h6></div>
+                        <div class="col-sm-4 text-center"><h6>From Date : 10-Jul-2016</h6></div>
+                        <div class="col-sm-4 text-center"><h6>To Date : 20-Jul-2016</h6></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="13%">User</th>
+                                <th width="10%">Date & Time</th>
+                                <th width="15%">Form Name</th>
+                                <th width="20%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>EMP1017 - Krishna Moorthy</td>
+                                <td>18-Jul-2016 12:15</td>
+                                <td>Compliance Task Details</td>
+                                <td>Upload Compliance - "Returns - Obtain attendance"</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>EMP1009 - Hariharan</td>
+                                <td>16-Jul-2016 15:25</td>
+                                <td>Assign Compliance</td>
+                                <td>Assign Compliance - "Returns - Krishna Moorthy"</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>EMP1017 - Krishna Moorthy</td>
+                                <td>15-Jul-2016 10:30</td>
+                                <td>Compliance Task Details</td>
+                                <td>Upload Compliance - "Registration - Prepare Form 3"</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>EMP1009 - Hariharan</td>
+                                <td>14-Jul-2016 12:15</td>
+                                <td>Assign Compliance</td>
+                                <td>Assign Compliance - "Registration - ART Solutions"</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>EMP1009 - Hariharan</td>
+                                <td>13-Jul-2016 15:25</td>
+                                <td>User Privileges</td>
+                                <td>Add User Privileges - "Asst. Manager"</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>EMP1009 - Hariharan</td>
+                                <td>11-Jul-2016 10:30</td>
+                                <td>Service Provider</td>
+                                <td>Add Service Provider - "ART Solutions"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="rpt-count">Total : 6 record(s)</p>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,306 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<link rel="stylesheet" href="/files/knowledge/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
+<script type="text/javascript" src="/files/knowledge/common/js/multiselect/bootstrap-multiselect.js"></script>
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="card-box">
+                <!--button type="button" class="btn btn-success btn-sm waves-effect waves-light pull-right m-t-5" onclick="parent.location='/client-group/list'"><span><i class="fa fa-mail-reply"></i></span> Back </button-->
+                <h4 class="page-title">Edit Client Unit</h4>
+                <hr class="no-top-margin">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="control-label">Group: RG Groups</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label">Business Group: RG Business Groups</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 no-padding-left">
+                        <div class="form-group">
+                            <label class="control-label">Country: India</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="control-label">Legal Entity: RG Entity</label>
+                        </div>
+                    </div>
+
+                    <div class="clear"></div><br>
+                    <div class="card-box p-10">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="p-t-7"> Division: RG Entity</label>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="p-t-7"> Category: RG Category</label>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4 p-t-7 pull-right">Active Units: 2</label>
+                          </div>
+                      </div>
+
+                      <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="2%">#</th>
+                                <th width="12%">Geography Level </th>
+                                <th width="15%">Unit Location </th>
+                                <th width="10%">Unit Code</th>
+                                <th class="text-center" width="10%">Unit Name</th>
+                                <th class="text-center" width="10%">Unit Address</th>
+                                <th class="text-center" width="8%">Postal Code</th>
+                                <th class="text-center" width="8%">Domain</th>
+                                <th class="text-center" width="10%">Organization</th>
+                                <th class="text-center" width="5%">Status</th>
+                                <th class="text-center" width="8%">Approve</th>
+                                <th class="text-center" width="4%">Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="row_view">
+                                <td>1</td>
+                                <td>State</td>
+                                <td>New Delhi</td>
+                                <td>RG10001</td>
+                                <td>Corporate Office</td>
+                                <td>15/9, New Delhi</td>
+                                <td>110001</td>
+                                <td>Labour Law <br> Finance Law </td>
+                                <td><strong>Labour Law </strong><br>Contractor <br> S & E</td>
+                                <td>Active</td>
+                                <td>Approved</td>
+                                <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer" onclick="chenge_row_edit(1);" ></i></td>
+                            </tr>
+                            <tr class="row_edit" style="display: none;">
+                                <td>1</td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="State" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group has-feedback m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="New Delhi" type="text">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                  </div>
+                                   North Region, India
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm unit_code" value="RG10001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="Corporate Office" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="15/9, New Delhi" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <input class="form-control input-sm" value="110001" type="text">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group m-b-0 p-r-10">
+                                    <select class="example-multiple" multiple="multiple">
+                                        <option value="Labour Law" selected="">Labour Law</option>
+                                        <option value="Finance Law" selected="">Finance Law </option>
+                                        <option value="Industrial Law">Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group  m-b-0 p-r-10">
+                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                        <optgroup label="Labour Law">
+                                            <option value="4" selected="">Contractor</option>
+                                            <option value="5" selected="">S &amp; E</option>
+                                            <option value="6">Mines</option>
+                                        </optgroup>
+                                        <optgroup label="Finance Law">
+                                            <option value="1">Factory</option>
+                                            <option value="2">Office</option>
+                                            <option value="3">Plantation</option>
+                                        </optgroup>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>Active</td>
+                                <td>Approved</td>
+                                <td class="icon-3x text-center">
+                                    <i class="fa fa-times text-danger c-pointer" onclick="chenge_row_edit(2);"></i>
+                                </td>
+                            </tr>
+
+                            <tr class="rejected_row">
+                                <td>2</td>
+                                <td>Corporation</td>
+                                <td>South Delhi Municipal Corporation</td>
+                                <td>RG10002</td>
+                                <td>Regional Office - North</td>
+                                <td>24-1/4, South Delhi</td>
+                                <td>110001</td>
+                                <td>Labour Law <br> Industrial Law</td>
+                                <td><strong>Finance Law</strong> Factory <br> Office</td>
+                                <td>Active</td>
+                                <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Rejected reason goes here."></i> Rejected</td>
+                                <td class="icon-3x text-center"> <i class="fa fa-pencil text-primary c-pointer"></i></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>City</td>
+                                <td>Chennai</td>
+                                <td>RG10003</td>
+                                <td>Regional Office - North</td>
+                                <td>Regional Office - South</td>
+                                <td>600001</td>
+                                <td>Labour Law <br> Industrial Law</td>
+                                <td><strong>Finance Law</strong> Factory <br> Office</td>
+                                <td>Inactive</td>
+                                <td>Approved</td>
+                                <td class="icon-3x text-center"> <i class="fa fa-pencil text-primary c-pointer"></i></td>
+                            </tr>
+                        </tbody>
+                      </table>
+                      <div class="clear"></div>
+                    </div>
+
+
+                    <div class="card-box p-10">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="p-t-7"> Division: -</label>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="p-t-7"> Category: JK Category</label>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4 p-t-7 pull-right">Active Units: 2</label>
+                          </div>
+                      </div>
+
+                      <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="2%">#</th>
+                                <th width="12%">Geography Level </th>
+                                <th width="15%">Unit Location </th>
+                                <th width="10%">Unit Code</th>
+                                <th class="text-center" width="10%">Unit Name</th>
+                                <th class="text-center" width="10%">Unit Address</th>
+                                <th class="text-center" width="10%">Postal Code</th>
+                                <th class="text-center" width="8%">Domain</th>
+                                <th class="text-center" width="10%">Organization</th>
+                                <th class="text-center" width="5%">Status</th>
+                                <th class="text-center" width="8%">Approve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="row_view">
+                                <td>1</td>
+                                <td>State</td>
+                                <td>New Delhi</td>
+                                <td>RG10001</td>
+                                <td>Corporate Office</td>
+                                <td>15/9, New Delhi</td>
+                                <td>110001</td>
+                                <td>Labour Law <br> Finance Law </td>
+                                <td><strong>Labour Law </strong><br>Contractor <br> S & E</td>
+                                <td>Active</td>
+                                <td>Approved</td>
+                                <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer" ></i></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>City</td>
+                                <td>Chennai</td>
+                                <td>RG10003</td>
+                                <td>Regional Office - North</td>
+                                <td>Regional Office - South</td>
+                                <td>600001</td>
+                                <td>Labour Law <br> Industrial Law</td>
+                                <td><strong>Finance Law</strong> Factory <br> Office</td>
+                                <td>Inactive</td>
+                                <td>Approved</td>
+                                <td class="icon-3x text-center"> <i class="fa fa-pencil text-primary c-pointer"></i></td>
+                            </tr>
+                        </tbody>
+                      </table>
+                      <div class="clear"></div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+                        <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/client-unit/list'"> Cancel </button>
+                    </div>
+
+
+
+                    <div class="clear"></div>
+                </form>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+
+
+<script type="text/javascript">
+  function business_group_change(id) {
+    if(id == "2") {
+      $(".select_business_group").show();
+      $(".input_business_group").hide();
+    } else {
+      $(".select_business_group").hide();
+      $(".input_business_group").show();
+    }
+  }
+</script>
+
+<script type="text/javascript">
+    function chenge_row_edit(id) {
+        if (id == "1") {
+            $('.row_edit').show();
+            $('.row_view').hide();
+        } else {
+            $('.row_edit').hide();
+            $('.row_view').show();
+        }
+        
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.example-multiple-optgroups').multiselect({
+            buttonWidth: '120px',
+            enableClickableOptGroups: true /*,
+            enableCollapsibleOptGroups: true*/
+        });
+        $('.example-multiple').multiselect({
+            buttonWidth: '120px'
+        });
+    });
+</script>
+
+{% endblock %}
+

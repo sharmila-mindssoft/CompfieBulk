@@ -1,0 +1,435 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-2"> </div>
+    <div class="col-sm-8">
+      <div class="portlet">
+          <!-- <h4 class="page-title">User Privileges Master</h4>
+          <hr class="no-top-margin"> -->
+          <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                User Privileges
+            </h3>
+            <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/user-privileges/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+              <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                <div class="col-lg-5">
+                <div class="form-group">
+                  <label class="col-sm-5 control-label" for="example-input-small">User Group Name:<span class="mandatory">*</span></label>
+                  <div class="col-sm-7">
+                    <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="User Group Name" value="User Group A">
+                  </div>
+                </div>
+                </div>
+                <div class="col-lg-5">
+              
+                <div class="form-group">
+                  <label class=" col-sm-5 control-label" for="example-input-small">Category Name:<span class="mandatory">*</span></label>
+                  <div class="col-sm-7 controls">
+                    <select class="form-control input-sm" data-placeholder="Choose a Category" tabindex="1" id="category">
+                      <option value="0"> Select</option>
+                      <option value="1" selected="selected">Knowledge Manager</option>
+                      <option value="2">Knowledge Executive</option>
+                      <option value="3">Techno Manager</option>
+                      <option value="4">Techno Executive</option>
+                      <option value="5">Domain Manager</option>
+                      <option value="6">Domain Executive</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-2">
+                <div class="form-group text-center">
+                      <button class="btn btn-primary waves-effect waves-light" type="submit" onclick="show_div()"> Show </button>
+                  </div>
+              </div>
+              </form>
+              <div class="clear"></div>
+              </div>
+      </div> 
+      <script type="text/javascript">
+          function show_div() {
+              $('.details').show();
+              $('#compliance_animation')
+                .removeClass().addClass('bounceInLeft animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass();
+              });
+          }
+      </script>
+      <div id="compliance_animation">
+      
+      <div class="details" style="display: none;">
+     <div class="table-responsive no-padding">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap km-view border-0 no-bgheader" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Form Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="2"><b>Transactions</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Approve Statutory Mapping</td>
+                  </tr>
+                  <tr><td colspan="2" ><b>Reports</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Domain Wise Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Unit Details</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Statutory Settings Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="form_checkbox"></td>
+                    <td>Statutory Mapping Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Statutory Notification List</td>
+                  </tr>
+                   <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>User Mapping Report</td>
+                  </tr>
+                </tbody>
+              </table>
+             
+              <!-- Knowledge Executive -->
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap ku-view" cellspacing="0" width="100%" style="display: none;">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Form Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="2"><b>Transactions</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Statutory Mapping</td>
+                  </tr>
+                  <tr><td colspan="2" ><b>Reports</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Domain Wise Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Unit Details</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Statutory Settings Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="form_checkbox"></td>
+                    <td>Statutory Mapping Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Statutory Notification List</td>
+                  </tr>
+                   <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>User Mapping Report</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Techno Manager -->
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap tm-view" cellspacing="0" width="100%" style="display: none;">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Form Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="2"><b>Transactions</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Client Group</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Assign Legal Entity</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Assign Client Unit</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Client Unit Approval</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Legal Entity Closure</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Reassign User's Account</td>
+                  </tr>
+                  <tr><td colspan="2" ><b>Reports</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Domain Wise Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Unit Details</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Statutory Settings Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="form_checkbox"></td>
+                    <td>Statutory Mapping Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Statutory Notification List</td>
+                  </tr>
+                   <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>User Mapping Report</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Techno Executive -->
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap tu-view" cellspacing="0" width="100%" style="display: none;">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Form Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="2"><b>Transactions</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Client Unit</td>
+                  </tr>
+                  <tr><td colspan="2" ><b>Reports</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Unit Details</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="form_checkbox"></td>
+                    <td>Statutory Mapping Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Statutory Notification List</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Domain Manager -->
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap dm-view" cellspacing="0" width="100%" style="display: none;">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Form Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="2"><b>Transactions</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Approve Assigned Statutory</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Assign Client Unit</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Reassign User's Account</td>
+                  </tr>
+                  <tr><td colspan="2" ><b>Reports</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Domain Wise Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Unit Details</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Statutory Settings Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="form_checkbox"></td>
+                    <td>Statutory Mapping Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Statutory Notification List</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Domain Executive -->
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap du-view" cellspacing="0" width="100%" style="display: none;">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Form Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="2"><b>Transactions</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked="checked"></td>
+                    <td>Assign Statutory</td>
+                  </tr>
+                  <tr><td colspan="2" ><b>Reports</b></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Domain Wise Agreement Master Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Client Unit Details</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Statutory Settings Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="form_checkbox"></td>
+                    <td>Statutory Mapping Report</td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" ></td>
+                    <td>Statutory Notification List</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              
+          </div>
+          
+          <center>
+            <div class="form-group p-t-7">
+                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+              <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/user-privileges/list'"> Cancel </button> -->
+            </div>
+          </center>
+          
+        </div>
+      
+      
+    
+    <!-- end col -->
+
+</div>
+</div>
+</div>
+</div>
+<script>
+$(function(){
+  $('#category').on('change', function (e) {
+    if($(this).val() == '1'){
+      $('.km-view').show();
+      $('.ku-view').hide();
+      $('.tm-view').hide();
+      $('.tu-view').hide();
+      $('.dm-view').hide();
+      $('.du-view').hide();
+    }else if($(this).val() == '2'){
+      $('.km-view').hide();
+      $('.ku-view').show();
+      $('.tm-view').hide();
+      $('.tu-view').hide();
+      $('.dm-view').hide();
+      $('.du-view').hide();
+    }else if($(this).val() == '3'){
+      $('.km-view').hide();
+      $('.ku-view').hide();
+      $('.tm-view').show();
+      $('.tu-view').hide();
+      $('.dm-view').hide();
+      $('.du-view').hide();
+    }else if($(this).val() == '4'){
+      $('.km-view').hide();
+      $('.ku-view').hide();
+      $('.tm-view').hide();
+      $('.tu-view').show();
+      $('.dm-view').hide();
+      $('.du-view').hide();
+    }else if($(this).val() == '5'){
+      $('.km-view').hide();
+      $('.ku-view').hide();
+      $('.tm-view').hide();
+      $('.tu-view').hide();
+      $('.dm-view').show();
+      $('.du-view').hide();
+    }else if($(this).val() == '6'){
+      $('.km-view').hide();
+      $('.ku-view').hide();
+      $('.tm-view').hide();
+      $('.tu-view').hide();
+      $('.dm-view').hide();
+      $('.du-view').show();
+    }
+  });
+});
+</script>
+
+{% endblock %} 

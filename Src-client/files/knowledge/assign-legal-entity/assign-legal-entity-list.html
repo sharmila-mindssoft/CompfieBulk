@@ -1,0 +1,93 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2"> </div>
+    <div class="col-sm-8">
+      <h4 class="page-title">Assign Legal Entity</h4>
+    </div>
+    <div class="col-sm-2"> </div>
+  </div>
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-2"> </div>
+    <div class="col-lg-8">
+      <div class="panel panel-default panel-info">
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+          <div class="dataTable_wrapper">
+            <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th align="center" width="2%">#</th>
+                  <th width="15%">Country</th>
+                  <th width="20%">Group</th>
+                  <th width="15%" class="text-center">Unassigned Legal Entity</th>
+                  <th width="10%" class="text-center">Assign</th>
+                  <th width="12%" class="text-center">Techno Executive</th>
+                </tr>
+                <tr class="odd gradeX">
+                  <td align="center"></td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding">
+                      <input type="text" class="form-control input-sm" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding">
+                      <input type="text" class="form-control input-sm" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td align="center">&nbsp;</td>
+                  <td align="center">&nbsp;</td>
+                  <td align="center">&nbsp;</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td align="center">1</td>
+                  <td>India, Singapore</td>
+                  <td>RG Group</td>
+                  <td class="text-center">4</td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" onclick="location.href='/assign-legal-entity/edit'"> Assign </button></td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" onclick="location.href='/unassign-legal-entity/edit'"> View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">2</td>
+                  <td>India</td>
+                  <td>PRG Group</td>
+                  <td class="text-center">2</td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" > Assign </button></td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" > View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">3</td>
+                  <td>India</td>
+                  <td>VRM Group</td>
+                  <td class="text-center">2</td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" > Assign </button></td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" > View</button></td>
+                </tr>
+                <tr>
+                  <td align="center">4</td>
+                  <td>India</td>
+                  <td>TKU Group</td>
+                  <td class="text-center">4</td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" > Assign </button></td>
+                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5" type="reset" > View</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

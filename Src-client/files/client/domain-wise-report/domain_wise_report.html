@@ -1,0 +1,310 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Domain Wise Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Domain Wise Report</h4> -->
+                <!-- <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Unit">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                  <option>All</option>
+                                  <option>Periodical</option>
+                                  <option>Review</option>
+                                  <option>Flexi Review</option>
+                                  <option>One Time</option>
+                                  <option>On Occurrence</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">User Type:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                  <option>All</option>
+                                  <option>Assignee</option>
+                                  <option>Concurrence</option>
+                                  <option>Approval</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter User">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MM-YYYY" value="01-Jan-2016">
+                                <i class="fa-1-3x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MM-YYYY" value="31-Dec-2016">
+                                <i class="fa-1-3x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Status:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                  <option>All</option>
+                                  <option>Complied</option>
+                                  <option>Delayed Compliances</option>
+                                  <option>Inprogress</option>
+                                  <option>Not Complied</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit" onclick="show_div()"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                <script type="text/javascript">
+                    function show_div() {
+                        $('.details').show();
+                        $('#compliance_animation')
+                          .removeClass().addClass('bounceInLeft animated')
+                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                          $(this).removeClass();
+                        });
+                    }
+                </script>
+                </div>
+                 <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><h4>Domain Wise Report</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Domain : Labour Law</h6></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="15%">Compliance Task</th>
+                                <th width="08%">Frequency</th>
+                                <th width="10%">Due Date</th>
+                                <th width="08%">Compliance Task Status</th>
+                                <th width="15%">User Name</th>
+                                <th width="10%">Activity Status</th>
+                                <th width="10%">Activity Date</th>
+                                <th width="10%">Uploaded Document</th>
+                                <th width="10%">Completion Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-lightdark">
+                              <td colspan="100%">Unit: AP0003 - Madurai - No.14, 80 feet road, Anna nagar, Madurai</td>
+                            </tr>
+                            <tr>
+                                <td colspan="100%" >
+                                    <div class="col-sm-2 no-padding">
+                                        <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>FORM I - Half yearly returns Submission</td>
+                                <td>One Time</td>
+                                <td>19-Aug-2016</td>
+                                <td>Inprogress</td>
+                                <td>EMP1004 - Suresh</td>
+                                <td>Pending</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">&nbsp;</td>
+                                <td colspan="100%">
+                                    <ul class="tree">
+                                        <li>
+                                            <table width="100%">
+                                                <tbody>
+                                                    <tr class="smallfont">
+                                                       <td width="27%">EMP1002 - Rajkumar</td>
+                                                       <td width="19%">
+                                                            Submitted
+                                                        </td>
+                                                       <td width="20%">18-Aug-2016</td>
+                                                       <td width="20%"><a href="#">Form A</a></td>
+                                                       <td width="0%">&nbsp;</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>FORM II - Submission</td>
+                                <td>Review</td>
+                                <td>20-Aug-2016</td>
+                                <td>Complied</td>
+                                <td>EMP1004 - Suresh</td>
+                                <td>Approved</td>
+                                <td>19-Aug-2016</td>
+                                <td>-</td>
+                                <td>18-Aug-2016</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">&nbsp;</td>
+                                <td colspan="100%">
+                                    <ul class="tree">
+                                        <li>
+                                            <table width="100%">
+                                                <tbody>
+                                                    <tr class="smallfont">
+                                                       <td width="27%">EMP1002 - Rajkumar</td>
+                                                       <td width="19%">
+                                                            Submitted
+                                                        </td>
+                                                       <td width="20%">18-Aug-2016</td>
+                                                       <td width="20%"><a href="#">Form B</a></td>
+                                                       <td width="0%">&nbsp;</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-lightdark">
+                              <td colspan="100%">Unit: AP0004 - Trichy - No.1, 80 feet road, K.K. nagar, Tirchy</td>
+                            </tr>
+                            <tr>
+                                <td colspan="100%" >
+                                    <div class="col-sm-2 no-padding">
+                                        <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>FORM II - Registration</td>
+                                <td>On Occurrence</td>
+                                <td>20-Aug-2016</td>
+                                <td>Not Complied</td>
+                                <td>EMP1004 - Suresh</td>
+                                <td>Rejected</td>
+                                <td>19-Aug-2016</td>
+                                <td>-</td>
+                                <td>--/--/----</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">&nbsp;</td>
+                                <td colspan="100%">
+                                    <ul class="tree">
+                                        <li>
+                                            <table width="100%">
+                                                <tbody>
+                                                    <tr class="smallfont">
+                                                       <td width="27%">EMP1002 - Rajkumar</td>
+                                                       <td width="19%">
+                                                            Submitted
+                                                        </td>
+                                                       <td width="20%">18-Aug-2016</td>
+                                                       <td width="20%"><a href="#">Form C</a></td>
+                                                       <td width="0%">&nbsp;</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="rpt-count">Total : 3 record(s)</p>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

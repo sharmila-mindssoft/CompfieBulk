@@ -1,0 +1,110 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-2"> </div>
+    <div class="col-sm-8">
+      <div class="portlet">
+          <!-- <h4 class="page-title">Statutory Level Master</h4>
+          <hr class="no-top-margin"> -->
+        <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Statutory Level Master
+            </h3>
+            <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/statutory-level-master/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+        <div class="col-lg-6">
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="India">
+                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+            </div>
+          </div>
+          </div>
+          <div class="col-lg-6">
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Domain Name <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="Labour Law">
+                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+            </div>
+          </div>
+        </div>
+        </form>
+        <div class="clear"></div>
+        </div>
+        </div>
+      <div class="table-responsive no-padding">
+      <div class="col-lg-12">
+       
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th class="col-sm-1">Level</th>
+                    <th class="col-sm-5">Title Name</th>
+                    <th class="col-sm-1">Level</th>
+                    <th class="col-sm-5">Title Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Primary Legislation"></td>
+                    <td>6</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Sub Rule"></td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Secondary Legislation"></td>
+                    <td>7</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Clause"></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Section"></td>
+                    <td>8</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Sub Clause"></td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Sub Section"></td>
+                    <td>9</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value=""></td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Rule"></td>
+                    <td>10</td>
+                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value=""></td>
+                  </tr>
+                </tbody>
+              </table>
+            
+      </div>
+      </div>
+      <center>
+        <div class="form-group">
+          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+        <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/statutory-level-master/list'"> Cancel </button>
+      </div>
+      </center>
+      </div>
+      
+    
+    <!-- end col -->
+  
+</div>
+</div>
+</div></div>
+{% endblock %}
+

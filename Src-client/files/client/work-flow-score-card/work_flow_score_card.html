@@ -1,0 +1,262 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+        
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Work Flow Score Card</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Work Flow Score Card</h4> -->
+                <!-- <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
+                            <div class="col-sm-7 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Country" value="India">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <div class="col-sm-7 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity 01">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                            <div class="col-sm-7 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                </div>
+                <div class="card-box">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><h4>Work Flow Score Card</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity 01</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Domain : Labour Law</h6></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" >
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="10%">Task Status</th>
+                                <th width="10%" class="text-center">Assignee</th>
+                                <th width="10%" class="text-center">Concur</th>
+                                <th width="10%" class="text-center">Approver</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><a class="completed c-pointer">Completed</a></td>
+                                <td class="text-center">2</td>
+                                <td class="text-center">3</td>
+                                <td class="text-center">5</td>
+                            </tr>
+                            <tr >
+                                <td>2</td>
+                                <td><a class="inprogress-with-due-date c-pointer">In progress within due date</a></td>
+                                <td class="text-center">5</td>
+                                <td class="text-center">10</td>
+                                <td class="text-center">10</td>
+                            </tr>
+                            <tr >
+                                <td>3</td>
+                                <td><a class="inprogress-over-due c-pointer">In progress over due</a></td>
+                                <td class="text-center">5</td>
+                                <td class="text-center">3</td>
+                                <td class="text-center">7</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td class="font-bold">Total</td>
+                                <td class="font-bold text-center">12</td>
+                                <td class="font-bold text-center">16</td>
+                                <td class="font-bold text-center">22</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="view-completed">
+                    <div class="col-sm-12"><h6>Unit Wise - Completed Task Count</h6></div>
+                    <table id="datatable-responsive" class="table table-list dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr class="bg-lightdark">
+                                <th width="15%">Unit</th>
+                                <th width="10%" class="text-center">You Submitted</th>
+                                <th width="10%" class="text-center">You Concurred</th>
+                                <th width="10%" class="text-center">You Approved</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RG1001 - Corporate Office</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">2</td>
+                                <td class="text-center">2</td>
+                            </tr>
+                            <tr>
+                                <td>RG1002 - Regional Office</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">2</td>
+                            </tr>
+                            <tr>
+                                <td>RG1004 - Branch Office</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center">1</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">Total</td>
+                                <td class="text-center font-bold">2</td>
+                                <td class="text-center font-bold">3</td>
+                                <td class="text-center font-bold">5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  </div>
+                  <div class="view-inprogress-with-due-date">
+                    <div class="col-sm-12"><h6>Unit Wise - In progress Within Due Date Task Count</h6></div>
+                    <table id="datatable-responsive" class="table table-list dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr class="bg-lightdark">
+                                <th width="15%">Unit</th>
+                                <th width="10%" class="text-center">Yet to Submit</th>
+                                <th width="10%" class="text-center">Yet to Concurr</th>
+                                <th width="10%" class="text-center">Yet to Approve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RG1001 - Corporate Office</td>
+                                <td class="text-center">2</td>
+                                <td class="text-center">3</td>
+                                <td class="text-center">3</td>
+                            </tr>
+                            <tr>
+                                <td>RG1002 - Regional Office</td>
+                                <td class="text-center">2</td>
+                                <td class="text-center">3</td>
+                                <td class="text-center">4</td>
+                            </tr>
+                            <tr>
+                                <td>RG1004 - Branch Office</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">4</td>
+                                <td class="text-center">3</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">Total</td>
+                                <td class="text-center font-bold">5</td>
+                                <td class="text-center font-bold">10</td>
+                                <td class="text-center font-bold">10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  </div>
+                  <div class="view-inprogress-over-due">
+                    <div class="col-sm-12"><h6>Unit Wise - In progress Over Due Task Count</h6></div>
+                    <table id="datatable-responsive" class="table table-list dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr class="bg-lightdark">
+                                <th width="15%">Unit</th>
+                                <th width="10%" class="text-center">Yet to Submit</th>
+                                <th width="10%" class="text-center">Yet to Concurr</th>
+                                <th width="10%" class="text-center">Yet to Approve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RG1001 - Corporate Office</td>
+                                <td class="text-center">2</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">1</td>
+                            </tr>
+                            <tr>
+                                <td>RG1002 - Regional Office</td>
+                                <td class="text-center">2</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">2</td>
+                            </tr>
+                            <tr>
+                                <td>RG1004 - Branch Office</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">4</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">Total</td>
+                                <td class="text-center font-bold">5</td>
+                                <td class="text-center font-bold">3</td>
+                                <td class="text-center font-bold">7</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+</div>
+</div>
+<script>
+$(function(){
+  $('.view-completed').hide();
+  $('.view-inprogress-with-due-date').hide();
+  $('.view-inprogress-over-due').hide();
+
+  $('.completed').on('click', function (e) {
+    $('.view-completed').show();
+    $('.view-inprogress-with-due-date').hide();
+    $('.view-inprogress-over-due').hide();
+  });
+  $('.inprogress-with-due-date').on('click', function (e) {
+    $('.view-completed').hide();
+    $('.view-inprogress-with-due-date').show();
+    $('.view-inprogress-over-due').hide();
+  });
+  $('.inprogress-over-due').on('click', function (e) {
+    $('.view-completed').hide();
+    $('.view-inprogress-with-due-date').hide();
+    $('.view-inprogress-over-due').show();
+  });
+ 
+});
+</script> 
+{% endblock %}

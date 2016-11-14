@@ -1,0 +1,252 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Statutory Settings - Unit Wise Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Statutory Settings - Unit Wise Report</h4> -->
+                <!-- <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group" value="RG Business Group">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Division: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Division" value="RG Division" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Category: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Category" value="RG Category" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit:</label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Unit" >
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                  <option>All</option>
+                                  <option>Periodical</option>
+                                  <option>Review</option>
+                                  <option>Flexi Review</option>
+                                  <option>One Time</option>
+                                  <option>On Occurrence</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Task Status:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                  <option>All</option>
+                                  <option>Assigned</option>
+                                  <option>Un-Assigned</option>
+                                  <option>Not Opted</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                </div>
+                <div class="card-box">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><h4>Statutory Settings - Unit Wise Report</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Domain : Labour Law</h6></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="15%">Compliance Task</th>
+                                <th width="08%">Compliance Frequency</th>
+                                <th width="10%">Due Date</th>
+                                <th width="08%">Task Status</th>
+                                <th width="15%">Format</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-lightdark">
+                              <td colspan="100%">
+                                <div class="col-sm-6"><span class="pull-left">Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001</span></div>
+                                <div class="col-sm-6"></div>
+                              </td>
+                            </tr>
+                            <tr>
+                                <td colspan="100%" >
+                                    <div class="col-sm-2 no-padding">
+                                        <input type="text" class="form-control input-sm text-center" value="Batteries Act" readonly="true" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Notifications</td>
+                                <td>On Occurrence</td>
+                                <td>-</td>
+                                <td>Not Opted</td>
+                                <td><a href="#">Document 1</a></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Annual Returns</td>
+                                <td>Periodical</td>
+                                <td>-</td>
+                                <td>Un-Assigned</td>
+                                <td><a href="#">Document 2</a></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">&nbsp;</td>
+                                <td colspan="100%">
+                                    <ul class="tree">
+                                        <li>
+                                            <table width="100%">
+                                                <tbody>
+                                                    <tr class="smallfont">
+                                                       <td width="19%">Mr. Praveen</td>
+                                                       <td width="19%">30-Apr-2016</td>
+                                                       <td width="20%">&nbsp;</td>
+                                                       <td width="0%">&nbsp;</td>
+                                                    </tr>
+                                                    <tr class="smallfont">
+                                                       <td>Mr. Praveen</td>
+                                                       <td>31-Jul-2016</td>
+                                                       <td>&nbsp;</td>
+                                                       <td>&nbsp;</td>
+                                                    </tr>
+                                                    <tr class="smallfont">
+                                                       <td>Mr. Praveen</td>
+                                                       <td>31-Oct-2016</td>
+                                                       <td>&nbsp;</td>
+                                                       <td>&nbsp;</td>
+                                                    </tr>
+                                                    <tr class="smallfont">
+                                                       <td>Mr. Ramkumar</td>
+                                                       <td>31-Jan-2017</td>
+                                                       <td>&nbsp;</td>
+                                                       <td>&nbsp;</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Quarterly Returns</td>
+                                <td>Periodical</td>
+                                <td>-</td>
+                                <td>Assigned</td>
+                                <td><a href="#">Document 3</a></td>
+                            </tr>
+                            <tr>
+                                <td colspan="100%" >
+                                    <div class="col-sm-2 no-padding">
+                                        <input type="text" class="form-control input-sm text-center" value="PF Act" readonly="true" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>FORM V - Submission</td>
+                                <td>Review</td>
+                                <td>-</td>
+                                <td>Assigned</td>
+                                <td><a href="#">Document 4</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="rpt-count">Total : 4 record(s)</p>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <div class="portlet">
+          <!-- <h4 class="page-title">Configure Database Server</h4>
+          <hr class="no-top-margin"> -->
+          <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Configure Database Server
+            </h3>
+            <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/configure-database-server/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Database Server <span class="mandatory">*</span></label>
+            <div class="col-sm-6">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Database Server" value="Database Server One">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">IP <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder data-mask="999.999.999.9999" value="192.168.1.1">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Port <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0000" value="3306">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Username <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Username" value="userone">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Password <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="password" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Password" value="123456789">
+            </div>
+          </div>
+      <div class="form-group">
+        <label class=" col-sm-offset-1 col-sm-3 control-label">&nbsp;</label>
+        <div class="col-sm-6">
+          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+          <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/configure-database-server/list'"> Cancel </button> -->
+        </div>
+      </div>
+      </form>
+      </div>
+      </div>
+        </div>
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+{% endblock %}

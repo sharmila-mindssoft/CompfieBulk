@@ -1,0 +1,113 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+      <h4 class="page-title">Allocate Database Environment</h4>
+    </div>
+    <div class="col-sm-1"></div>
+  </div>
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-1"> </div>
+    <div class="col-sm-10">
+      <div class="card-box table-responsive">
+            <div class="col-sm-12">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="1%">#</th>
+                    <th width="10%">Group</th>
+                    <th width="10%">Legal Entity</th>
+                    <th width="12%">Application Server</th>
+                    <th width="12%">Database Server</th>
+                    <th width="10%">File Server</th>
+                    <th width="06%" class="text-center">Action</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm" placeholder="Group" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm" placeholder="Legal Entity" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm" placeholder="Application Server" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm" placeholder="Database Server" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm" placeholder="File Server" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>RG Group</td>
+                    <td>RG Legal Entity 01</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="icon-3x text-center">
+                      <button class="btn btn-primary waves-effect m-l-5" type="submit" onclick="location.href='/allocate-database-environment/create'"> Create </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>JKL Group</td>
+                    <td>JKL Legal Entity 01</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="icon-3x text-center">
+                      <button class="btn btn-primary waves-effect m-l-5" type="submit"> Create </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>PRG Group</td>
+                    <td>PRG Legal Entity 01</td>
+                    <td>Application Server One</td>
+                    <td>Database Server One</td>
+                    <td>File Server One</td>
+                    <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top" onclick="parent.location='/allocate-database-environment/create'"></i></td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>TKU Group</td>
+                    <td>TKU Legal Entity 01</td>
+                    <td>Application Server Two</td>
+                    <td>Database Server One</td>
+                    <td>File Server One</td>
+                    <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top" ></i></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+       </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+{% endblock %}

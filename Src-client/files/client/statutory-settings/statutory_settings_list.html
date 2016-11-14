@@ -1,0 +1,360 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-12">
+            <button type="button" class="btn btn-success btn-sm waves-effect waves-light pull-right m-t-5" onclick="parent.location='/statutory-settings'"><span><i class="fa fa-mail-reply"></i></span> Back </button>
+                    <h4 class="page-title">Statutory Settings </h4>
+                <div class="card-box">
+                
+                    <!-- <hr class="no-top-margin"> -->
+
+                    <div class="col-sm-12">
+                        <div class="card-box table-responsive no-padding b-0">
+                        <!--  -->
+                            <div class="panel-group col-lg-12 no-padding singleunit" id="accordion" role="tablist" aria-multiselectable="true">
+                                <div class="panel panel-default bx-shadow-none">
+                                    <div class="panel-heading p-10" role="tab" id="headingOne">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse"
+                                                data-parent="#accordion" href="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                            <i class="fa fa-check text-info fa-1x"></i> The Batteries Act
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                        <div class="panel-body no-padding">
+                                            <div class="dataTable_wrapper">
+                                                <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="center" width="2%">#</th>
+                                                            <th width="14%">Statutory Provision</th>
+                                                            <th width="15%">Compliance Task</th>
+                                                            <th width="14%">Compliance Frequency</th>
+                                                            <th width="25%">Compliance Description</th>
+                                                            <th width="25%" class="text-center">Applicable Units</th>
+                                                            <th width="2%" class="text-center">Saved</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center">1</td>
+                                                            <td>Rule 4 (iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM I - Half yearly returns Submission"></i> FORM I - Half yearly returns Submission</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
+                                                            <td class="text-center"><a class="click-two-unit c-pointer">2 / 3</a></td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning c-pointer"></i></td>
+                                                        </tr>
+                                                        <tr class="view-two-unit">
+                                                          <td colspan="100%" class="no-padding">
+                                                            <table width="100%" class="table table-striped dt-responsive nowrap no-margin">
+                                                            <thead>
+                                                              <tr>
+                                                                <th width="15%">Location</th>
+                                                                <th width="25%">Unit Name</th>
+                                                                <th></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-edit fa-1-3x"></i></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-user-plus fa-1-3x"></i></th>
+                                                                <th width="20%">Remarks</th>
+                                                              </tr>
+                                                              </thead>
+                                                              <tbody>
+                                                              <tr>
+                                                                <td>South</td>
+                                                                <td>VRM1003 - Regional Office</td>
+                                                                <td></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                                <td></td>
+                                                              </tr>
+                                                              <tr>
+                                                                <td>Chennai</td>
+                                                                <td>VRM1005 - Branch Office</td>
+                                                                <td></td>
+                                                                <td class="text-center"><i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                                <td><i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here"></i> Remarks text g...</td>
+                                                              </tr>
+                                                              </tbody>
+                                                            </table>
+                                                          </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">2</td>
+                                                            <td>Rule 5 and Rule 6 (ii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM II - Registration"></i> FORM II - Registration</td>
+                                                            <td>One Time</td>
+                                                            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                                                            <td class="text-center"><a class="click-three-unit c-pointer">3 / 3</a></td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr class="view-three-unit" style="display:none;">
+                                                          <td colspan="100%" class="no-padding">
+                                                            <table width="100%" class="table table-striped dt-responsive nowrap no-margin">
+                                                            <thead>
+                                                              <tr>
+                                                                <th width="15%">Location</th>
+                                                                <th width="25%">Unit Name</th>
+                                                                <th></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-edit fa-1-3x"></i></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-user-plus fa-1-3x"></i></th>
+                                                                <th width="20%">Remarks</th>
+                                                              </tr>
+                                                              </thead>
+                                                              <tbody>
+                                                              <tr>
+                                                                <td>South</td>
+                                                                <td>VRM1003 - Regional Office</td>
+                                                                <td></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                                <td></td>
+                                                              </tr>
+                                                              <tr class="text-info">
+                                                                <td>North</td>
+                                                                <td>VRM1004 - Regional Office</td>
+                                                                <td></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x"></i></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                                <td></td>
+                                                              </tr>
+                                                              <tr>
+                                                                <td>Chennai</td>
+                                                                <td>VRM1005 - Branch Office</td>
+                                                                <td></td>
+                                                                <td class="text-center"><i class="fa fa-times fa-1-3x"></i></td>
+                                                                <td class="text-center"><i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                                <td><textarea class="form-control input-sm" rows="2" placeholder="Enter Remarks"></textarea><i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here"></i> Remarks text g...</td>
+                                                              </tr>
+                                                              </tbody>
+                                                            </table>
+                                                          </td>
+                                                        </tr>
+                                                        <tr >
+                                                            <td colspan="100%" class="bg-white" >
+                                                                <div class="col-sm-2 no-padding">
+                                                                    <input type="text" class="form-control input-sm text-center" value="Tamilnadu State Act" readonly="true" />
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">3</td>
+                                                            <td>Rule 6(iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td>Review</td>
+                                                            <td>Whether undertaking submitted by importer to authority.</td>
+                                                            <td class="text-center"><a>2 / 3</a></td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">4</td>
+                                                            <td>Rule 7(iv)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by dealer to manufacturer</td>
+                                                            <td class="text-center"><a>2 / 3</a></td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default bx-shadow-none">
+                                    <div class="panel-heading p-10" role="tab" id="headingTwo">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" role="button" data-toggle="collapse"
+                                                data-parent="#accordion" href="#collapseTwo"
+                                                aria-expanded="false" aria-controls="collapseTwo">
+                                                <i class="fa fa-times "></i> Indian Partnership Act, 1932
+                                                <div class="col-sm-3 pull-right m-t-m-5">
+                                                    <input type="text" class="form-control input-sm" id="elementRemarks" placeholder="Enter Remarks" />  
+                                                </div>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                        <div class="panel-body no-padding">
+                                            <div class="dataTable_wrapper">
+                                                <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="center" width="2%">#</th>
+                                                            <th width="14%">Statutory Provision</th>
+                                                            <th width="15%">Compliance Task</th>
+                                                            <th width="14%">Compliance Frequency</th>
+                                                            <th width="25%">Compliance Description</th>
+                                                            <th width="25%" class="text-center">Applicable Units</th>
+                                                            <th width="2%" class="text-center">Saved</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center">1</td>
+                                                            <td>Rule 4 (iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM I - Half yearly returns Submission"></i> FORM I - Half yearly returns Submission</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
+                                                            <td class="text-center"><a class="click-two-unit">2 / 3</a></td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">2</td>
+                                                            <td>Rule 5 and Rule 6 (ii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM II - Registration"></i> FORM II - Registration</td>
+                                                            <td>One Time</td>
+                                                            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                                                            <td class="text-center"><a class="click-three-unit">3 / 3</a></td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">3</td>
+                                                            <td>Rule 6(iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td>Review</td>
+                                                            <td>Whether undertaking submitted by importer to authority.</td>
+                                                            <td class="text-center"><a>2 / 3</a></td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">4</td>
+                                                            <td>Rule 7(iv)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by dealer to manufacturer</td>
+                                                           <td class="text-center"><a>2 / 3</a></td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default bx-shadow-none">
+                                    <div class="panel-heading p-10" role="tab" id="headingTwo">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" role="button" data-toggle="collapse"
+                                                data-parent="#accordion" href="#collapseThree"
+                                                aria-expanded="false" aria-controls="collapseThree">
+                                                <i class="fa fa-check text-info"></i> The Factories Act, 1948
+                                                <!-- <div class="col-sm-3 pull-right m-t-m-5">
+                                                    <input type="text" class="form-control input-sm" id="elementRemarks" placeholder="Enter Remarks" />  
+                                                </div> -->
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                                        <div class="panel-body no-padding">
+                                            <div class="dataTable_wrapper">
+                                                <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="center" width="2%">#</th>
+                                                            <th width="14%">Statutory Provision</th>
+                                                            <th width="15%">Compliance Task</th>
+                                                            <th width="14%">Compliance Frequency</th>
+                                                            <th width="25%">Compliance Description</th>
+                                                            <th width="25%" class="text-center">Applicable Units</th>
+                                                            <th width="2%" class="text-center">Saved</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center">1</td>
+                                                            <td>Rule 4 (iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM I - Half yearly returns Submission"></i> FORM I - Half yearly returns Submission</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
+                                                            <td class="text-center"><a class="click-two-unit">2 / 3</a></td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">2</td>
+                                                            <td>Rule 5 and Rule 6 (ii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM II - Registration"></i> FORM II - Registration</td>
+                                                            <td>One Time</td>
+                                                            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                                                            <td class="text-center"><a class="click-three-unit">3 / 3</a></td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">3</td>
+                                                            <td>Rule 6(iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td>Review</td>
+                                                            <td>Whether undertaking submitted by importer to authority.</td>
+                                                            <td class="text-center"><a>2 / 3</a></td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">4</td>
+                                                            <td>Rule 7(iv)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by dealer to manufacturer</td>
+                                                           <td class="text-center"><a>2 / 3</a></td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <!-- end single unit -->
+                             <div class="form-group text-center">
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Save </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times text-primary c-pointer"></i></button>
+                <h4 class="modal-title" id="mySmallModalLabel"> Enter Password</h4>
+            </div>
+            <div class="modal-body p-b-0">
+              <div class="form-group">
+                <input class="form-control input-sm" placeholder="Password" type="text">
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+              </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+var resizefunc = [];
+$(document).ready(function(){
+$(".click-two-unit").click(function() {
+      $(".view-two-unit").toggle();
+      
+    });
+$(".click-three-unit").click(function() {
+      $(".view-three-unit").toggle();
+      
+    });
+});
+</script>
+
+{% endblock %}

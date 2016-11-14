@@ -1,0 +1,122 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"> </div>
+        <div class="col-sm-8">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Login Trace</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Login Trace</h4> -->
+                <!-- <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MON-YYYY" value="10-Jul-2016">
+                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" value="20-Jul-2016">
+                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" placeholder="Enter User">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                </div>
+                <div class="card-box">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><h4>Login Trace</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity 01</h6></div>
+                        <div class="col-sm-4 text-center"><h6>From Date : 10-Jul-2016</h6></div>
+                        <div class="col-sm-4 text-center"><h6>To Date : 20-Jul-2016</h6></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="08%">Date & Time</th>
+                                <th width="05%">Action</th>
+                                <th width="20%">Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>18-Jul-2016 12:15</td>
+                                <td>Login</td>
+                                <td>Login Succeeded for User "Ragavan".[IP: 192.168.111.14]</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>16-Jul-2016 15:25</td>
+                                <td>Login</td>
+                                <td>Login Succeeded for User "Saravanan".[IP: 192.168.111.10]</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>15-Jul-2016 10:30</td>
+                                <td>Login</td>
+                                <td>Login failed. [IP: 192.168.111.55]</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>14-Jul-2016 12:15</td>
+                                <td>Logout</td>
+                                <td>Logout Succeeded for User "Vinoth".[IP: 192.168.111.88]</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>13-Jul-2016 15:25</td>
+                                <td>Login</td>
+                                <td>Login Succeeded for User "Vinoth".[IP: 192.168.111.88]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="rpt-count">Total : 5 record(s)</p>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

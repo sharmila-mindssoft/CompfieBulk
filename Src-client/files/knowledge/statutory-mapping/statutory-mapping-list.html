@@ -1,0 +1,249 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="btn-group pull-right m-t-5 m-b-20">
+                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" onclick="parent.location='/statutory-mapping/create'"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add </button>
+            </div>
+            <h4 class="page-title">Statutory Mapping List</h4>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-12">
+                <div class="card-box table-responsive">
+                    <div class="col-sm-12">
+                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="2%">#</th>
+                                    <th width="10%">Country</th>
+                                    <th width="10%">Domain</th>
+                                    <th width="10%">Organization</th>
+                                    <th width="10%">Statutory Nature</th>
+                                    <th width="26%">Statutory</th>
+                                    <th width="5%">Edit</th>
+                                    <th width="5%" class="text-center">Status</th>
+                                    <th width="10%" class="text-center">Approval Status</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding">
+                                          <input class="form-control input-sm" placeholder="Country" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding">
+                                          <input class="form-control input-sm" placeholder="Domain" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding">
+                                          <input class="form-control input-sm" placeholder="Organization" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding">
+                                          <input class="form-control input-sm" placeholder="Statutory Nature" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding">
+                                          <input class="form-control input-sm" placeholder="Statutory" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td align="center">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                                All
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">All</a></li>
+                                                <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <!--li><a href="#"><i class="fa fa-times text-danger"></i> Inactive</a></li-->
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="success">
+                                    <td align="center">1</td>
+                                    <td>India</td>
+                                    <td>Industrial Law</td>
+                                    <td>Factory</td>
+                                    <td>Central</td>
+                                    <td>
+                                    Batteries Act <i class="ti-angle-double-right "></i> Rule 4<br>
+                                    Batteries Act <i class="ti-angle-double-right "></i> Rule 7 <i class="ti-angle-double-right "></i>Section VII
+                                    </td>
+                                    <td align="center" class="icon-3x">
+                                    <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" onclick="location.href='/statutory-mapping/edit'"></i>
+                                    </td>
+                                    <td align="center" class="icon-3x">
+                                        <span data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i></span>
+                                    <td>Approved</td>
+                                </tr>
+                                <tr>
+                                    <td align="center">&nbsp;</td>
+                                    <td colspan="5">FORM IV - Dealer Registration </td>
+                                    <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                    <td align="center" class="icon-3x">&nbsp;</td>
+                                    <td style="padding-left: 10px;">Approved</td>
+                                </tr>
+                                <tr >
+                                  <td align="center">&nbsp;</td>
+                                  <td colspan="5">FORM V - Vendor Registration </td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                  <td align="center" class="icon-3x">&nbsp;</td>
+                                  <td style="padding-left: 10px;">Approved</td>
+                                </tr>
+                                <tr >
+                                  <td align="center">&nbsp;</td>
+                                  <td colspan="5">FORM II - Submission </td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                  <td align="center" class="icon-3x">&nbsp;</td>
+                                  <td style="padding-left: 10px;">Approved</td>
+                                </tr>
+
+                                <tr class="success">
+                                  <td align="center">2</td>
+                                  <td>India</td>
+                                  <td>Industrial Law</td>
+                                  <td>Factory</td>
+                                  <td>Central</td>
+                                  <td>Batteries Act <i class="ti-angle-double-right "></i> Rule XI<br>
+                                    </td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                  <td align="center" class="icon-3x"></td>
+                                  <td>Yet to Submit</td>
+                                </tr>
+                                <tr >
+                                    <td align="center">&nbsp;</td>
+                                    <td colspan="5">FORM VIII - Form Submission </td>
+                                    <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                    <td align="center" class="icon-3x">&nbsp;</td>
+                                    <td style="padding-left: 10px;">Yet to Submit</td>
+                                </tr>
+
+                                <tr >
+                                    <td align="center">&nbsp;</td>
+                                    <td colspan="5">FORM VI - Recycler Registration and Review </td>
+                                    <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                    <td align="center" class="icon-3x">&nbsp;</td>
+                                    <td style="padding-left: 10px;">Yet to Submit</td>
+                                </tr>
+                                
+
+                                <tr class="rejected_row success">
+                                  <td align="center">3</td>
+                                  <td>India</td>
+                                  <td>Industrial Law</td>
+                                  <td>Factory</td>
+                                  <td>Central</td>
+                                  <td>Batteries Act <i class="ti-angle-double-right "></i> Rule 8(I) <br>
+                                  Batteries Act <i class="ti-angle-double-right "></i> Rule 9(I) <br>
+                                  Batteries Act <i class="ti-angle-double-right "></i> Rule 9(V) <br></td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-check c-pointer text-success" data-toggle="tooltip" title="Click here to deactive" ></i></td>
+                                  <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Rejected reason goes here." ></i> Rejected</td>
+                                </tr>
+                                <tr class="rejected_row">
+                                  <td align="center">&nbsp;</td>
+                                  <td colspan="5">FORM VI - Recycler Registration and Review </td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                  <td align="center" class="icon-3x">&nbsp;</td>
+                                  <td style="padding-left: 10px;">Rejected</td>
+                                </tr>
+                                <tr class="rejected_row">
+                                  <td align="center">&nbsp;</td>
+                                  <td colspan="5">FORM V - Recycler Submission </td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                  <td align="center" class="icon-3x">&nbsp;</td>
+                                  <td style="padding-left: 10px;">Rejected</td>
+                                </tr>
+                                <tr class="rejected_row">
+                                  <td align="center">&nbsp;</td>
+                                  <td colspan="5">FORM V - Recycler Review </td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                  <td align="center" class="icon-3x">&nbsp;</td>
+                                  <td style="padding-left: 10px;">Rejected</td>
+                                </tr>
+                                <tr class="success">
+                                  <td align="center">4</td>
+                                  <td>India</td>
+                                  <td>Industrial Law</td>
+                                  <td>Factory</td>
+                                  <td>Central</td>
+                                  <td>Batteries Act <i class="ti-angle-double-right "></i> Rule 8(III) 
+                                  <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" onclick="location.href='/statutorymapping/edit'"></i></td>
+                                  <td align="center" class="icon-3x"><i class="fa fa-check c-pointer text-success" data-toggle="tooltip" title="Click here to deactive" ></i></td>
+                                  <td>Pending</td>
+                                </tr>
+                                <tr >
+                                    <td align="center">&nbsp;</td>
+                                    <td colspan="5">FORM VII - Half yearly returns by recyclers</td>
+                                    <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                    <td align="center" class="icon-3x">&nbsp;</td>
+                                    <td style="padding-left: 10px;">Approved</td>
+                                  </tr>
+                                  <tr class="rejected_row">
+                                    <td align="center">&nbsp;</td>
+                                    <td colspan="5">FORM VI - Quarterly returns by recyclers</td>
+                                    <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                    <td align="center" class="icon-3x">&nbsp;</td>
+                                    <td style="padding-left: 10px;"><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Rejected reason goes here." ></i> Rejected</td>
+                                  </tr>
+                                  <tr>
+                                    <td align="center">&nbsp;</td>
+                                    <td colspan="5">FORM III - Yearly returns by recyclers</td>
+                                    <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                    <td align="center" class="icon-3x">&nbsp;</td>
+                                    <td style="padding-left: 10px;">Pending</td>
+                                  </tr>
+                                  <tr>
+                                    <td align="center">&nbsp;</td>
+                                    <td colspan="5">FORM VIII - Form Submission</td>
+                                    <td align="center" class="icon-3x"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit" ></i></td>
+                                    <td align="center" class="icon-3x">&nbsp;</td>
+                                    <td style="padding-left: 10px;"><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Approved and notfied text goes here." ></i> Approved & Notified</td>
+                                  </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times text-primary c-pointer"></i></button>
+                <h4 class="modal-title" id="mySmallModalLabel"> Enter Password</h4>
+            </div>
+            <div class="modal-body p-b-0">
+              <div class="form-group">
+                <input class="form-control input-sm" placeholder="Password" type="text">
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+              </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %} 

@@ -1,0 +1,171 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+  <div  id="animationSandbox">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+      <div class="portlet">
+        <!-- <h4 class="header-title m-t-0 m-b-30">Assign Legal Entity</h4> -->
+        <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Assign Legal Entity
+            </h3>
+            <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/assign-legal-entity/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+             <div class="form-horizontal">
+            <div class="row">
+            <div class="col-lg-2"> </div>
+              <div class="col-lg-4">
+                <div class="form-group techno-user" >
+                  <label class="col-sm-4 control-label">Group:</label>
+                  <div class="col-md-6">
+                    <p class="form-control-static">RG Group</p>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-lg-4">
+                <div class="form-group filter-business">
+                  <label class="col-sm-4 control-label">Country:</label>
+                  <div class="col-md-6">
+                     <p class="form-control-static">India, Singapore</p>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-lg-2"> </div>
+            </div>
+            <div class="legalentity-view">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="2%" align="center">
+                      <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                          <input id="checkbox1" type="checkbox">
+                          <label for="checkbox1"></label>
+                      </div>
+                    </th>
+                    <th width="15%">Country</th>
+                    <th width="15%">Business Group</th>
+                    <th width="12%">Legal Entity</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                  <tr>
+                    <td>
+                      <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                          <input id="checkbox1" type="checkbox" checked="">
+                          <label for="checkbox1"></label>
+                      </div>
+                    </td>
+                    <td>India</td>
+                    <td>RG Business Group</td>
+                    <td>RG Legal Entity 01</td>
+                  </tr>
+                  <tr >
+                    <td>
+                      <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                          <input id="checkbox1" type="checkbox" checked="">
+                          <label for="checkbox1"></label>
+                      </div>
+                    </td>
+                    <td>Singapore</td>
+                    <td>RG Business Group 01</td>
+                    <td>RG Legal Entity 02</td>
+                  </tr>
+                  <tr >
+                    <td>
+                      <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                          <input id="checkbox1" type="checkbox" checked="">
+                          <label for="checkbox1"></label>
+                      </div>
+                    </td>
+                    <td>India</td>
+                    <td>RG Business Group</td>
+                    <td>RG Legal Entity 03</td>
+                  </tr>
+                  <tr >
+                    <td>
+                      <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                          <input id="checkbox1" type="checkbox">
+                          <label for="checkbox1"></label>
+                      </div>
+                    </td>
+                    <td>India</td>
+                    <td>RG Business Group</td>
+                    <td>RG Legal Entity 04</td>
+                  </tr>
+                  <tr >
+                    <td>
+                      <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                          <input id="checkbox1" type="checkbox">
+                          <label for="checkbox1"></label>
+                      </div>
+                    </td>
+                    <td>India</td>
+                    <td>RG Business Group</td>
+                    <td>RG Legal Entity 05</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="rpt-count">Selected Legal Entity : 3 record(s)</p>
+            </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <form class="form-horizontal" role="form">
+                  <div class="form-group has-feedback reassign-du" >
+                    <label class="col-md-5 control-label">Assign To Techno Executive:</label>
+                    <div class="col-md-3">
+                      <input  class="form-control input-sm" value="EMP0002 - Hariharan">
+                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <!-- end col -->
+            </div>
+             </div>
+            <div class="form-group text-center">
+              <button class="btn btn-primary text-center waves-effect waves-light" type="submit"> Submit </button>
+              <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/assign-legal-entity/list'"> Cancel </button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end col -->
+    </div>
+    <!-- end row -->
+  </div>
+</div>
+</div>
+{% endblock %}

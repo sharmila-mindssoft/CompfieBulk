@@ -1,0 +1,143 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<!-- Sweet Alert css -->
+<link href="/files/client/common/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+
+<div class="content-page">
+<div class="content">
+<div class="container">
+  <div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+      <div class="btn-group pull-right m-t-5 m-b-20">
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" onclick="parent.location='/service-provider/create'"> <span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add </button>
+      </div>
+      <h4 class="page-title">Service Providers</h4>
+    </div>
+    <div class="col-sm-1"></div>
+  </div>
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-1"> </div>
+    <div class="col-sm-10">
+      <div class="card-box table-responsive">
+            <div class="col-sm-12">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="1%">#</th>
+                    <th width="15%">Service Provider <span class="fa fa-sort pull-right sort active"></span></th>
+                    <th width="15%">Contact Person <span class="fa fa-sort pull-right sort"></span></th>
+                    <th width="10%">Contact No. <span class="fa fa fa-sort sort pull-right"></span></th>
+                    <th width="10%">Email ID <span class="fa fa fa-sort sort pull-right"></span></th>
+                    <th width="10%">Remarks <span class="fa fa fa-sort sort pull-right"></span></th>
+                    <th width="06%" class="text-center">Edit</th>
+                    <th width="06%" class="text-center">Status</th>
+                    <th width="06%" class="text-center">Block</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" placeholder="Service Provider" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" placeholder="Contact Person" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" placeholder="Contact No" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" placeholder="Email ID" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" placeholder="Remarks" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td></td>
+                    <td align="center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle waves-effect " data-toggle="dropdown" aria-expanded="true"> 
+                                All
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">All</a></li>
+                                <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
+                                <li><a href="#"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Service provider 1</td>
+                    <td>John</td>
+                    <td>+919876543210</td>
+                    <td>john@domain.com</td>
+                    <td>&nbsp;</td>
+                    <td class="icon-3x text-center">
+                      <i class="fa fa-pencil c-pointer text-primary" data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
+                    </td>
+                    <td class="icon-3x text-center">
+                      <i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="Click here to Deactivate" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center">
+                      <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Block" data-original-title="Tooltip on top"></i></td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Service provider 2</td>
+                    <td>Michel</td>
+                    <td>+91987654321</td>
+                    <td>michel@domain.com</td>
+                    <td>Test Remarks</td>
+                    <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center"><i class="fa fa-times text-danger c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Activate" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center"><i class="fa fa-ban text-danger c-pointer" data-toggle="tooltip" data-placement="top" title="Days left 30 day(s)." data-original-title="Tooltip on top"></i></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Service provider 3</td>
+                    <td>Ram Kumar</td>
+                    <td>+919876541234</td>
+                    <td>ram@domain.com</td>
+                    <td>&nbsp;</td>
+                    <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Deactivate" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center"><i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Block" data-original-title="Tooltip on top"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+       
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+</div>
+</div>
+
+<!-- Sweet Alert js -->
+<script src="/files/client/common/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
+<script src="/files/client/common/js/jquery.sweet-alert.init.js"></script>
+
+
+
+
+{% endblock %}

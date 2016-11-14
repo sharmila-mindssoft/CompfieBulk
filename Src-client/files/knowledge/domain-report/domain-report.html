@@ -1,0 +1,90 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <!-- <h4 class="page-title">Domain Master Report</h4> -->
+      <div class="portlet">
+        <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Domain Master Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+          <div class="table-responsive">
+              <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Domain Name</th>
+                    <th>Country Name</th>
+                    <th>Status</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" placeholder="Domain Name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm" placeholder="Country Name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
+                                All
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">All</a></li>
+                                <li><a href="#"> Active</a></li>
+                                <li><a href="#"> Inactive</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Labour Law</td>
+                    <td>India, Singapore</td>
+                    <td>Active</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Finance Law</td>
+                    <td>India</td>
+                    <td>Inactive</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Industrial Law</td>
+                    <td>Srilanka</td>
+                    <td>Active</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="rpt-count">Showing 3 records</p>
+          </div>
+          </div>
+        </div>
+        </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+
+{% endblock %}

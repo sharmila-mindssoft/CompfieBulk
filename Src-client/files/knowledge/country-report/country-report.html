@@ -1,0 +1,89 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-3"> </div>
+            <div class="col-sm-6">
+            <!-- <h4 class="page-title">Country Master Report</h4> -->
+                <div class="portlet">
+                    <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Country Master Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                    <div class="table-responsive">
+                        <table id="datatable-responsive"  class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th width="60%">Country Name</th>
+                                    <th width="15%">Status</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                      <div class="form-group col-sm-12 no-padding">
+                                        <input type="text" class="form-control input-sm" placeholder="Country Name" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                                All
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">All</a></li>
+                                                <li><a href="#"> Active</a></li>
+                                                <li><a href="#"> Inactive</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>India</td>
+                                    <td>Active</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Australia</td>
+                                    <td>Inactive</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Pakistan</td>
+                                    <td>Active</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Singapore</td>
+                                    <td>Active</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Srilanka</td>
+                                    <td>Active</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="rpt-count">Showing 5 records</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,646 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="card-box p-b-0 no-padding-top">
+                <button type="button" class="btn btn-success btn-sm waves-effect waves-light pull-right m-t-5" onclick="parent.location='/statutory-mapping/list'"><span><i class="fa fa-mail-reply"></i></span> Back </button>
+                <h4 class="page-title">Statutory Mapping</h4>
+                <form>
+                    <div id="basicwizard" >
+                        <ul class="nav nav-tabs navtab-wizard nav-justified">
+                            <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Select Domain</a></li>
+                            <li><a href="#tab2" data-toggle="tab">Select Statutory</a></li>
+                            <li><a href="#tab3" data-toggle="tab">Compliances</a></li>
+                            <li><a href="#tab4" data-toggle="tab">Applicable Location</a></li>
+                        </ul>
+                        <div class="tab-content b-0 m-b-0">
+                            <div class="tab-pane m-t-10 fade active in box-height-350" id="tab1">
+                                <div class="row">
+                                    <div class="col-sm-12 scroll_box">
+                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr class="sub_title_td">
+                                                    <th class="col-sm-3">Country</th>
+                                                    <th class="col-sm-3">Domain</th>
+                                                    <th class="col-sm-3">Organization</th>
+                                                    <th class="col-sm-3">Statutory Nature</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Country" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-250">
+                                                            <li>India</li>
+                                                            <li class="active">Malaysia<i class="fa fa-check pull-right"></i></li>
+                                                            <li>Singapore</li>
+                                                            <li>Sri Lanka</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Domain" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-250">
+                                                            <li id="finance">Finance Law</li>
+                                                            <li id="industrial">Industrial Law</li>
+                                                            <li class="active">Labour Law<i class="fa fa-check pull-right"></i></li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Organization" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-250">
+                                                            <li class="active">Select All <i class="fa fa-check pull-right"></i></li>
+                                                            <li>Factory</li>
+                                                            <li>Office</li>
+                                                            <li>Contractor</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Statutory Nature" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-250">
+                                                            <li class="active">Central <i class="fa fa-check pull-right"></i></li>
+                                                            <li>State</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane m-t-10 fade box-height-350" id="tab2">
+                                <div class="row">
+                                    <div class="col-sm-12 scroll_box">
+                                        <table id="datatable-fixed-header" style="width: 2500px;" class="table table-striped nowrap table-list" cellspacing="0">
+                                            <thead>
+                                                <tr class="sub_title_td">
+                                                    <th width="300">Primary Legislation</th>
+                                                    <th width="300">Secondary Legislation</th>
+                                                    <th width="300">Section</th>
+                                                    <th width="300">Sub Section</th>
+                                                    <th width="300">Rule </th>
+                                                    <th width="300">Sub Rule</th>
+                                                    <th width="300">Clause</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Primary Legislation" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li class="active"><i class="fa fa-pencil text-primary c-pointer"></i> Gratuity Act, 1972 <i class="fa fa-check pull-right"></i></li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Batteries Act</li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Industrial Disputes (Central) Rules, 1957</li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Indian Partnership Act, 1932</li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Indian Partnership Act, 1932</li>
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Act Name" ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Secondary Legislation" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li class="active">Tamil Nadu Gratuity Act, 1972 <i class="fa fa-check pull-right"></i></li>
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Rule Name" ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Section" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Section" ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Sub Section" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Sub Section " ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Rule" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 4</li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 9(1) </li>
+                                                            <li class="active"><i class="fa fa-pencil text-primary  c-pointer"></i> Rule 3 <i class="fa fa-check pull-right"></i></li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 4 (iii) </li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 5  </li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 6 (ii) </li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 7 (i) </li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 8 (iii) </li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 9 (i) </li>
+                                                            <li><i class="fa fa-pencil text-primary c-pointer"></i> Rule 9 (iv) </li>
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Sub Rule" ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Sub Rule" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Sub Rule " ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Clause" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Clause " ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Sub Clause" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                        </ul>
+                                                        <div class="input-group">
+                                                            <input class="form-control input-sm" placeholder="Enter Sub Clause " ><span class="input-group-btn"><button class="btn btn-primary btn-sm" type="button"><i class="fa fa-plus"></i></button></span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <center>
+                                        <div class="m-t-5">
+                                            <a href="#" class="btn btn-primary btn-sm waves-effect waves-light m-t-5">Add</a>
+                                        </div>
+                                    </center>
+                                    <div class="col-sm-12 scroll_box box-height-80">
+                                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0">
+                                            <thead>
+                                                <tr class="sub_title_td">
+                                                    <th width="2%">#</th>
+                                                    <th>Statutory</th>
+                                                    <th width="10%" class="text-center">Remove</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Gratuity Act, 1972 <i class="ti-angle-double-right "></i> Tamil Nadu Gratuity Act, 1972 <i class="ti-angle-double-right "></i> Rule 3</td>
+                                                    <td class="icon-3x text-center"><i class="fa fa-trash text-primary c-pointer"></i></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane m-t-10 fade box-height-350" id="tab3">
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Statutory Provision <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <textarea class="form-control input-sm" rows="1" > </textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Task <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <input class="form-control input-sm" type="text" value="Notice of Opening">
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Description <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <textarea class="form-control input-sm" rows="1">Within 30 days of opening a branch</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Document</label>
+                                            <div class="col-sm-7">
+                                                <input class="form-control input-sm" value="FORM VIII" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Format</label>
+                                            <div class="col-sm-7">
+                                                <input class="form-control input-sm no-padding-top" type="file">
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Penal Consequences</label>
+                                            <div class="col-sm-7">
+                                                <textarea class="form-control input-sm" rows="1">Imprisonment With Fine</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-7">
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Reference Link</label>
+                                            <div class="col-sm-7">
+                                                <textarea class="form-control input-sm" rows="1" >http://incometaxindiaefiling.gov.in/</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Frequency <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <select class="form-control input-sm tasktype">
+                                                    <option value="Recurring">Periodical</option>
+                                                    <option value="Review">Review</option>
+                                                    <option value="FlexiReview">Flexi Review</option>
+                                                    <option value="One_Time" selected="selected">One Time</option>
+                                                    <option value="onoccur">On Occurrence</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="card-box p-10 one_time scroll_box box-height-190" id="One_Time" style="display: block;">
+                                                <h4 class="header-title m-t-0 m-b-10">One Time</h4>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 control-label">Statutory Date</label>
+                                                    <div class="col-sm-2">
+                                                        <select class="form-control input-sm"><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option selected="selected">Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <select class="form-control input-sm"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option selected="selected">20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 control-label">Trigger Day(s)</label>
+                                                    <div class="col-sm-2">
+                                                        <input class="form-control input-sm col-sm-3" value="15" type="text">
+                                                    </div>
+                                                    <div class="col-sm-2">Days</div>
+                                                </div>
+                                            </div>
+                                            <div class="card-box p-10 recurring scroll_box box-height-190" id="Recurring" style="display: none;">
+                                                <h4 class="header-title m-t-0 m-b-10">Periodical</h4>
+                                                <div class="form-group clearfix m-b-5">
+                                                    <label class="col-sm-3 control-label">Repeats Every <span class="mandatory remove-manditory">*</span></label>
+                                                    <div class="col-sm-2">
+                                                        <select class="form-control input-sm"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+                                                    </div>
+                                                    <div class="col-sm-2 no-padding-right">
+                                                        <select class="form-control input-sm">
+                                                            <option>Day(s)</option>
+                                                            <option selected="selected">Month(s)</option>
+                                                            <option>Year(s)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-5">
+                                                        <div class="checkbox checkbox-primary">
+                                                            <input id="checkbox3" type="checkbox">
+                                                            <label for="checkbox3">
+                                                            Multiple Input Selection
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-3 control-label">Repeat by <span class="mandatory remove-manditory">*</span></label>
+                                                    <div class="col-sm-4 clearfix m-b-0 ">
+                                                        <div class="radio radio-success radio-single m-t-0">
+                                                            <input id="singleRadio1" name="radioSingle1" type="radio">
+                                                            <label for="singleRadio1">Day of the month</label>
+                                                        </div>
+                                                        <div class="radio radio-success radio-single m-t-0 m-b-0">
+                                                            <input id="singleRadio2" name="radioSingle1" checked="" type="radio">
+                                                            <label for="singleRadio2">End day of the month</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-5 clearfix m-b-10">
+                                                        <label class="col-sm-5 control-label no-padding-left"> Statutory Date</label>
+                                                        <div class="col-sm-4 no-padding-left">
+                                                            <select class="form-control input-sm"><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option selected="selected">Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+                                                        </div>
+                                                        <div class="col-sm-3 no-padding">
+                                                            <select class="form-control input-sm"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option selected="selected">20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-3 control-label">Summary</label>
+                                                    <div class="col-sm-5"> Repeats Every 6 Month(s)</div>
+                                                </div>
+                                            </div>
+                                            <div class="card-box p-10 occasional scroll_box box-height-190" id="Occasional" style="display: none;">
+                                                <h4 class="header-title m-t-0 m-b-10">On Occurrence</h4>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 control-label">To Complete Within</label>
+                                                    <div class="col-sm-1 no-padding-right">
+                                                        <input class="form-control input-sm" value="2" type="text">
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <select class="form-control input-sm">
+                                                            <option selected="selected" value="month">Months</option>
+                                                            <option selected="selected" value="day">Days</option>
+                                                            <option selected="selected" value="hour">Hours</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 control-label">Summary</label>
+                                                    <div class="col-sm-7">
+                                                        To Complete within 2 hours
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="left:52%; top:62%; position: absolute;" align="center">
+                                        <a href="#" class="btn btn-primary waves-effect waves-light">Add</a>
+                                    </div>
+                                    <div class="col-sm-12 scroll_box box-height-80">
+                                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0">
+                                            <thead>
+                                                <tr class="sub_title_td">
+                                                    <th align="center">#</th>
+                                                    <th>Statutory Provision</th>
+                                                    <th>Task</th>
+                                                    <th>Description</th>
+                                                    <th>Frequency</th>
+                                                    <th>Repeats</th>
+                                                    <th class="text-center">Edit</th>
+                                                    <th class="text-center">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td align="center">1</td>
+                                                    <td>Rule 10, Section 1, Sub-Sec 1A</td>
+                                                    <td>FORM VIII - Notice of Opening</td>
+                                                    <td>Within 30 days of opening a branch</td>
+                                                    <td>One Time</td>
+                                                    <td>-</td>
+                                                    <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer"></i></td>
+                                                    <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer"></i></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="center">2</td>
+                                                    <td>Rule 10, Section 1, Sub-Sec 1B</td>
+                                                    <td>FORM VIII - Notice of Opening</td>
+                                                    <td>Within 30 days of opening a branch</td>
+                                                    <td>One Time</td>
+                                                    <td>-</td>
+                                                    <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer"></i></td>
+                                                    <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer"></i></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane m-t-10 fade box-height-350" id="tab4">
+                                <div class="row">
+                                    <div class="col-sm-12 scroll_box">
+                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr class="sub_title_td">
+                                                    <th class="col-sm-3">Region</th>
+                                                    <th class="col-sm-3">Union Territory</th>
+                                                    <th class="col-sm-3">State</th>
+                                                    <th class="col-sm-3">District</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Region" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li>Select All</li>
+                                                            <li class="active">East<i class="fa fa-check pull-right"></i></li>
+                                                            <li>North</li>
+                                                            <li>South</li>
+                                                            <li>West</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Union Territory" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li id="finance">Select All</li>
+                                                            <li id="industrial">Andaman and Nicobar</li>
+                                                            <li class="active">Lakshadweep<i class="fa fa-check pull-right"></i></li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="State" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li class="active">Select All <i class="fa fa-check pull-right"></i></li>
+                                                            <li>Andhra Pradesh</li>
+                                                            <li>Karnataka</li>
+                                                            <li>Kerala</li>
+                                                            <li>Tamil Nadu</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="District" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li>Select All</li>
+                                                            <li class="heading">Tamil Nadu</li>
+                                                            <li>Chennai</li>
+                                                            <li class="active">Madurai <i class="fa fa-check pull-right"></i></li>
+                                                            <li>Cuddalore</li>
+                                                            <li>Ariyalur</li>
+                                                            <li>Dharmapuri</li>
+                                                            <li>Dindigul</li>
+                                                            <li>Erode</li>
+                                                            <li>Kanchipuram</li>
+                                                            <li>Kanyakumari</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 scroll_box">
+                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr class="sub_title_td">
+                                                    <th class="col-sm-3">Corporation</th>
+                                                    <th class="col-sm-3">Municipality</th>
+                                                    <th class="col-sm-3">Town</th>
+                                                    <th class="col-sm-3">Panchayat</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Corporation" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li>Select All</li>
+                                                            <li class="heading">Madurai</li>
+                                                            <li>Madurai Corporation</li>
+                                                            <li class="heading">Coimbatore</li>
+                                                            <li>Coimbatore Corporation</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Municipality" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li>Select All</li>
+                                                            <li class="heading">Madurai</li>
+                                                            <li>Anaiyur</li>
+                                                            <li class="active">Avaniyapuram<i class="fa fa-check pull-right"></i></li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Town" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li class="active">Select All <i class="fa fa-check pull-right"></i></li>
+                                                            <li>Alanganallur</li>
+                                                            <li>Sholavandan </li>
+                                                            <li>Vilangudi</li>
+                                                            <li>Palamedu</li>
+                                                            <li>Paravai</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Panchayat" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                        <ul class="list-unstyled box-height-100">
+                                                            <li>Select All</li>
+                                                            <li>Alanganallur</li>
+                                                            <li>Alagapuri</li>
+                                                            <li class="active">Chinnailanthaikulam  <i class="fa fa-check pull-right"></i></li>
+                                                            <li>Kalvelipatti</li>
+                                                            <li>Kotankipatti</li>
+                                                            <li>Muduvarpatty</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="pager wizard m-b-0">
+                                <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                <li class="finish pull-right"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+                <div class="clearfix"></div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/files/knowledge/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#basicwizard').bootstrapWizard({'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'});
+
+    $('.tasktype').change(function(){
+    if($(this).val()=="Recurring" || $(this).val()=="Review")
+    { 
+      $('.legentclass').text('Periodical');
+      $('.remove-manditory').text('*');
+      $('#Recurring').show();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+   
+    else if($(this).val() == "onoccur" )
+    {
+      $('#Recurring').hide();
+      $('#Occasional').show();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+    
+    else if($(this).val() == "One_Time")
+    {
+      $('#Recurring').hide();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').show();
+    }
+
+    else if($(this).val() == "FlexiReview")
+    {
+      $('.remove-manditory').text('');
+      $('.legentclass').text('Flexi Review');
+      $('#Recurring').show();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+
+    else
+    {
+      $('#Recurring').hide();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+  });
+});
+</script>
+{% endblock %}

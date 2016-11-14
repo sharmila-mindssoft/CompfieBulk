@@ -1,0 +1,40 @@
+.column .dragbox{
+    margin:10px 0;
+    background:#fff;
+    position:"relative";
+    border:1px solid #fff;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+}
+.column .dragbox h2{
+    margin:0;
+    font-size:12px;
+    border-bottom:1px solid #fff;
+    cursor:move;
+    padding:0 7px;
+    border-radius:5px 5px 0 0;
+}
+
+.dragbox-content{
+    background:#fff;
+    min-height:100px; margin:5px;
+}
+.column .placeholder{
+    background: #eeeeee;
+    border:1px dashed #946553;
+}
+
+.maxmin
+{
+    margin-right: 10px;
+}
+
+.delete,.maxmin
+{
+    padding-top:1px;
+    float: right;
+    margin-right: 5px;
+    font-size: 20px;
+    line-height: 15px;
+    color:#fff;
+}

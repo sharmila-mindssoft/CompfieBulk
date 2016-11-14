@@ -1,0 +1,148 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<!-- Notification css (Toastr) -->
+<link href="/files/client/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<div class="content-page">
+<div class="content">
+<div class="container">
+  <div class="row">
+  <div id="animationSandbox">
+  <div class="col-sm-2"> </div>
+    <div class="col-sm-8">
+
+      <div class="portlet">
+        <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Service Provider
+            </h3>
+            <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/service-provider/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+                <div class="col-lg-6">
+                    <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Service Provider <span class="mandatory">*</span></label>
+                        <div class="col-sm-6 controls">
+                          <input type="text"  class="form-control input-sm" placeholder="user@domain.com" value="ART Solutions">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Short Name <span class="mandatory">*</span></label>
+                        <div class="col-sm-6 controls">
+                         <input type="text"  class="form-control input-sm" placeholder="user@domain.com" value="art">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contract From <span class="mandatory">*</span></label>
+                        <div class="col-sm-6 controls">
+                          <input type="text"  class="form-control input-sm" placeholder="DD-MMM-YYYY" value="12-Aug-2016">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contract To <span class="mandatory">*</span></label>
+                        <div class="col-sm-6 controls">
+                          <input type="text"  class="form-control input-sm" placeholder="DD-MMM-YYYY" value="12-Aug-2017">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contract Person <span class="mandatory">*</span></label>
+                        <div class="col-sm-6 controls">
+                          <input type="text"  class="form-control input-sm" placeholder="Enter Contact Person" value="Ram Kumar">
+                        </div>
+                      </div>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contact No. <span class="mandatory">*</span></label>
+                        <div class="col-md-6">
+                        <div class="col-md-3 no-padding">
+                          <input type="text"  class="form-control input-sm" placeholder="+00" value="+91">
+                        </div>
+                        <div class="col-md-3 no-padding">
+                          <input type="text"  class="form-control input-sm" placeholder="000" value="452">
+                        </div>
+                        <div class="col-md-6 no-padding">
+                          <input type="text"  class="form-control input-sm" placeholder="1234567" value="1234567">
+                        </div>
+                        <span class="help-desk"><small>[+91 452 1234567]</small></span>
+                      </div>
+                      </div>
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Mobile No.</label>
+                        <div class="col-md-6">
+                        <div class="col-md-3 no-padding">
+                          <input type="text"  class="form-control input-sm" placeholder="+00" value="+91">
+                        </div>
+                        <div class="col-md-9 no-padding">
+                          <input type="text"  class="form-control input-sm" placeholder="9876543210" value="9876543210">
+                        </div>
+                        <span class="help-desk"><small>[+91 9876543210]</small></span>
+                      </div>
+                      </div>
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Email ID <span class="mandatory">*</span></label>
+                        <div class="col-sm-6 controls">
+                          <input type="text"  class="form-control input-sm" placeholder="Enter Email ID" value="ram@domain.com">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Address</label>
+                        <div class="col-sm-6 controls">
+                          <textarea class="form-control input-sm" rows="2" placeholder="Enter Address">242, West Street, K.K. Nagar, Madurai, Tamil Nadu, India</textarea>
+                        </div>
+                      </div>
+                    </form>
+                </div>
+                <div class="form-group text-center">
+                  <button class="btn btn-primary waves-effect waves-light" type="submit" id="showtoast" > Submit </button>
+                  <!--button class="btn btn-info waves-effect waves-light" type="submit" onclick="location.href='/service-provider/list'" > Cancel</button-->
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</div>
+</div>
+</div>
+<!-- Toastr js -->
+<script src="/files/client/common/js/toastr/toastr.min.js"></script>
+  
+<script type="text/javascript">
+    $(function () {
+        $('#showtoast').click(function () {
+            
+            Command: toastr["success"]("Record was saved successfully!", "Success")
+
+            toastr.options = {
+              "closeButton": false,
+              "debug": false,
+              "newestOnTop": false,
+              "progressBar": false,
+              "positionClass": "toast-top-center",
+              "preventDuplicates": true,
+              "onclick": null,
+              "showDuration": "300",
+              "hideDuration": "1000",
+              "timeOut": "5000",
+              "extendedTimeOut": "10000",
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            }
+    })
+});
+</script>
+{% endblock %}

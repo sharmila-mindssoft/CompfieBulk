@@ -1,0 +1,526 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="card-box">
+                <!--button type="button" class="btn btn-success btn-sm waves-effect waves-light pull-right m-t-5" onclick="parent.location='/client-group/list'"><span><i class="fa fa-mail-reply"></i></span> Back </button-->
+                <h4 class="page-title">Add Client</h4>
+                <hr class="no-top-margin">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">Group <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" value="RG Group">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">View Only Licence(s) <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" value="5">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" value="rggroup">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" value="groupadmin@domain.com">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+
+                    <button type="button" class="btn btn-primary btn-sm waves-effect waves-light pull-right m-t-5">
+                      <span><i class="fa fa-plus"></i></span> 
+                    </button>
+                    <h4 class="page-title">Legal Entity Configuration</h4>
+
+                    <div class="card-box p-10">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Country</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <select placeholder="Select Country" class="form-control input-sm">
+                                    <option value="India" selected="">India</option>
+                                    <option value="Untied States">United States</option>
+                                    <option value="Malaysia">Malaysia</option>
+                                  </select>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Contract From</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm" value="01-Jan-2016" type="text">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Upload Logo</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm"  type="file">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4">Business Group</label>
+                              <div class="select_business_group">
+                                <div class="col-sm-6 no-padding-right">
+                                    <select class="form-control input-sm">
+                                      <option selected="">ABC Business Group</option>
+                                      <option>DEF Business Group</option>
+                                      <option>GHI Business Group</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                  <button class="btn btn-success waves-effect waves-light btn-sm m-b-5" onclick="business_group_change('1')">
+                                    <i class="fa fa-plus"></i>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="input_business_group" style="display: none;">
+                                <div class="col-sm-6 no-padding-right">
+                                    <input class="form-control input-sm" placeholder="Enter Business Group" type="text">
+                                </div>
+                                <div class="col-sm-2">
+                                  <button class="btn btn-success waves-effect waves-light btn-sm m-b-5" onclick="business_group_change('2')">
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Contract To</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm" value="31-Dec-2016" type="text">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">File Space</label>
+                              <div class="col-sm-2 no-padding-right">
+                                  <input class="form-control input-sm" value="20" type="text">
+                              </div>
+                              <div class="col-sm-4">GB</div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4">Legal Entity</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm" value="ABC Legal Entity" type="text">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-4 ">Total Licence(s)</label>
+                              <div class="col-sm-2 no-padding-right">
+                                  <input class="form-control input-sm" value="15" type="text">
+                              </div>
+                          </div>
+                      </div>
+
+                      <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="30%">Domain <span class="mandatory">*</span></th>
+                                <th width="30%">Activation Date <span class="mandatory">*</span></th>
+                                <th width="30%">Organization <span class="mandatory">*</span></th>
+                                <th width="10%" class="text-center">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <select class="form-control input-sm">
+                                        <option selected="selected">Labour Law</option>
+                                        <option>Finance Law</option>
+                                        <option>Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <input class="form-control input-sm" type="text" value="20-Aug-2016" >
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <a href="#" data-toggle="modal" data-target="#myModal">
+                                      <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Establishment: 5 Units, S & E: 4 Units"></i>
+                                       Add Organization
+                                    </a>
+                                  </div>
+                                </td>
+                                <td class="icon-3x text-center">
+                                    <i class="fa fa-trash text-primary c-pointer"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <select class="form-control input-sm">
+                                        <option>Labour Law</option>
+                                        <option selected="selected">Finance Law</option>
+                                        <option>Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <input class="form-control input-sm" type="text" value="30-Aug-2016" >
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <a href="#" data-toggle="modal" data-target="#myModal">
+                                      <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Establishment: 5 Units, S & E: 4 Units"></i>
+                                       Add Organization
+                                    </a>
+                                  </div>
+                                </td>
+                                <td class="icon-3x text-center">
+                                    <i class="fa fa-trash text-primary c-pointer"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                      </table>
+                      <button type="button" class="btn btn-info btn-sm waves-effect waves-light pull-right m-t-5">
+                        <span><i class="fa fa-plus"></i></span> 
+                      </button>
+                      <div class="clear"></div>
+                    </div>
+
+
+                    <div class="card-box p-10">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Country</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <select placeholder="Select Country" class="form-control input-sm">
+                                    <option value="India">India</option>
+                                    <option value="Untied States">United States</option>
+                                    <option value="Malaysia">Malaysia</option>
+                                    <option value="Malaysia" selected="selected">Singapore</option>
+                                  </select>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Contract From</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm" value="01-Apr-2016" type="text">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Upload Logo</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm"  type="file">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4">Business Group</label>
+                              <div class="select_business_group">
+                                <div class="col-sm-6 no-padding-right">
+                                    <select class="form-control input-sm">
+                                      <option selected="">JKL Business Group</option>
+                                      <option>DEF Business Group</option>
+                                      <option>GHI Business Group</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                  <button class="btn btn-success waves-effect waves-light btn-sm m-b-5" onclick="business_group_change('1')">
+                                    <i class="fa fa-plus"></i>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="input_business_group" style="display: none;">
+                                <div class="col-sm-6 no-padding-right">
+                                    <input class="form-control input-sm" placeholder="Enter Business Group" type="text">
+                                </div>
+                                <div class="col-sm-2">
+                                  <button class="btn btn-success waves-effect waves-light btn-sm m-b-5" onclick="business_group_change('2')">
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">Contract To</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm" value="31-Mar-2017" type="text">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class=" col-sm-4 ">File Space</label>
+                              <div class="col-sm-2 no-padding-right">
+                                  <input class="form-control input-sm" value="20" type="text">
+                              </div>
+                              <div class="col-sm-4">GB</div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4">Legal Entity</label>
+                              <div class="col-sm-6 no-padding-right">
+                                  <input class="form-control input-sm" value="JKL Legal Entity" type="text">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-4 ">Total Licence(s)</label>
+                              <div class="col-sm-2 no-padding-right">
+                                  <input class="form-control input-sm" value="15" type="text">
+                              </div>
+                          </div>
+                      </div>
+
+                      <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="30%">Domain <span class="mandatory">*</span></th>
+                                <th width="30%">Activation Date <span class="mandatory">*</span></th>
+                                <th width="30%">Organization <span class="mandatory">*</span></th>
+                                <th width="10%" class="text-center">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <select class="form-control input-sm">
+                                        <option selected="selected">Employee Law</option>
+                                        <option>Finance Law</option>
+                                        <option>Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <input class="form-control input-sm" type="text" value="30-Aug-2016" >
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <a href="#" data-toggle="modal" data-target="#myModal">
+                                      <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Establishment: 5 Units, S & E: 4 Units"></i>
+                                       Add Organization
+                                    </a>
+                                  </div>
+                                </td>
+                                <td class="icon-3x text-center">
+                                    <i class="fa fa-trash text-primary c-pointer"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <select class="form-control input-sm">
+                                        <option>Labour Law</option>
+                                        <option selected="selected">Economic Law</option>
+                                        <option>Industrial Law</option>
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <input class="form-control input-sm" type="text" value="30-Aug-2016" >
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-6 m-b-0">
+                                    <a href="#" data-toggle="modal" data-target="#myModal">
+                                      <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Establishment: 5 Units, S & E: 4 Units"></i>
+                                       Add Organization
+                                    </a>
+                                  </div>
+                                </td>
+                                <td class="icon-3x text-center">
+                                    <i class="fa fa-trash text-primary c-pointer"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                      </table>
+                      <button type="button" class="btn btn-info btn-sm waves-effect waves-light pull-right m-t-5">
+                        <span><i class="fa fa-plus"></i></span> 
+                      </button>
+                      <div class="clear"></div>
+                    </div>
+
+                    <h4 class="page-title">Legal Entity Configuration</h4>
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="35%">Domain</th>
+                                <th width="65%" colspan="2" class="text-center">Timeline</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                              <td><mark>India</mark></td>
+                              <td align="center">From</td>
+                              <td align="center">To</td>
+                            </tr>
+                            <tr>
+                              <td>Finance Law</td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option>January</option><option>February</option><option>March</option><option selected="">April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+                                </div>
+                              </td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option>January</option><option>February</option><option selected="">March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Labour Law</td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option selected="">January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+                                </div>
+                              </td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option selected="">December</option></select>
+                                </div>
+                              </td>
+                            </tr>
+
+
+                            <tr>
+                              <td><mark>Singapore</mark></td>
+                              <td align="center">From</td>
+                              <td align="center">To</td>
+                            </tr>
+                            <tr>
+                              <td>Economic Law</td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option selected="">January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+                                </div>
+                              </td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option selected="">December</option></select>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Employee Law</td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option selected="">January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+                                </div>
+                              </td>
+                              <td align="center">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                  <select class="form-control input-sm"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option selected="">December</option></select>
+                                </div>
+                              </td>
+                            </tr>
+                        </tbody>
+                      </table>
+
+                      <center>
+                          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+                          <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/client-group/list'"> Cancel </button>
+                      </center>
+                    <div class="clear"></div>
+                </form>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <i class="fa fa-times text-primary c-pointer"></i>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Add Organization</h4>
+          </div>
+          <div class="modal-body">
+
+              <h4>Domain: Labour Law</h4>
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="40%">Organization</th>
+                        <th width="40%">Unit(s)</th>
+                        <th width="20%">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                          <div class="form-group has-feedback col-sm-12 no-padding">
+                              <input class="form-control input-sm" value="Establishment" type="text">
+                              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="form-group col-sm-6 m-b-0">
+                            <input class="form-control input-sm" type="text" value="5" >
+                          </div>
+                        </td>
+                        <td class="icon-3x text-center">
+                            <i class="fa fa-trash text-primary c-pointer"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                          <div class="form-group has-feedback col-sm-12 no-padding">
+                              <input class="form-control input-sm" value="S & E" type="text">
+                              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="form-group col-sm-6 m-b-0">
+                            <input class="form-control input-sm" type="text" value="4" >
+                          </div>
+                        </td>
+                        <td class="icon-3x text-center">
+                            <i class="fa fa-trash text-primary c-pointer"></i>
+                        </td>
+                    </tr>
+                </tbody>
+              </table>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary waves-effect waves-light">Save</button>
+          </div>
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+  function business_group_change(id) {
+    if(id == "2") {
+      $(".select_business_group").show();
+      $(".input_business_group").hide();
+    } else {
+      $(".select_business_group").hide();
+      $(".input_business_group").show();
+    }
+  }
+</script>
+{% endblock %}

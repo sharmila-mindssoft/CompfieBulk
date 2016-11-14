@@ -1,0 +1,1060 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
+<link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+  $(function(){
+    $(".left-menu-button").show();
+    $(".content-page").removeClass('m-l-0');
+  });
+</script>
+
+
+<div class="left side-menu">
+  <div class="sidebar-inner slimscrollleft">
+    <div id="sidebar-menu">
+      <ul>
+        <li class="text-muted menu-title">Chart List</li>
+        <li class="has_sub"> <a href="/dashboard" class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/escalation" class="waves-effect"><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/not-complied" class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/assignee-wise" class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/trend-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
+        <li class="has_sub active"> <a href="/dashboard/risk-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div>
+
+
+
+<div class="content-page">
+  <div class="content">
+    <div class="container">
+      <!-- Page-Title -->
+      <div class="row">
+        <div class="col-sm-12 h4-title">
+          <h4 class="page-title pull-left">Risk Chart</h4>
+		  <div class="pull-right">
+			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
+					<i class="zmdi zmdi-sort"></i> <small>Filter</small>
+               </a>
+			</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12"> 
+          <div id="level-filter" class="card-box">
+            <input type="hidden" id="hidden"/>           
+            <div class="graph-box">
+              <input type="button" id="viewaspie" class="btn btn-primary pull-right" value="View as pie chart"/>
+              <input type="button" id="viewasbar" class="btn btn-primary pull-right m-r-10" value="View as bar chart"/>
+              <input type="button" id="back"  onClick="loadGroup()" class="btn btn-primary pull-right m-r-10" value="Back"/>
+              <p id="year-para" >
+                <span >Select Year:</span><select id="year" multiple="multiple" placeholder="Select Years" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2" >
+                  <option value="2009" >2009</option>
+                  <option value="2010" >2010</option>
+                  <option value="2011" >2011</option>
+                  <option value="2012" >2012</option>
+                  <option value="2013" selected>2013</option>
+                  <option value="2014" selected>2014</option>
+                  <option value="2015" selected>2015</option>
+                </select>
+              </p>
+              <div class="clearfix"></div>
+              <div id="container" ></div>
+              <input type="button" id="previous" class="btn btn-primary" value="<< Previous"/>
+              <input type="button" id="next" class="btn btn-primary pull-right" value="Next >>"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- content -->
+  </div>
+</div>
+<div class="side-bar right-bar"> <a href="javascript:void(0);" class="right-bar-toggle close-button"> <i class="zmdi zmdi-close-circle-o"></i> </a>
+  <h4 class="filter-text">Filter By</h4>
+  <div class="notification-list nicescroll">
+    <div class="form-group col-sm-12">
+      <label class="control-label">Country</label>
+    <div class="pull-right">
+      <select class="form-control input-sm" id="country" multiple="multiple">
+        <option selected="selected">India</option>
+        <option selected="selected">US</option>
+        <option selected="selected">Malaysia</option>
+        <option selected="selected">Singapore</option>
+        <option selected="selected">China</option>
+      </select>
+    </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Domain</label>
+    <div class="pull-right">
+      <select class="form-control input-sm pull-right" id="domain" multiple="multiple">
+        <option selected="selected">Finance Law</option>
+        <option selected="selected">Labour Law</option>
+        <option selected="selected">Industrial Law</option>
+      </select>
+    </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioGroup" type="checkbox" checked="checked">
+        <label for="radioGroup"> Group </label>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin ">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioBusinessGroup" type="checkbox">
+        <label for="radioBusinessGroup"> Business Group </label>
+      </div>
+      <div class="has-feedback textboxbusiness" id="filter-business-group">
+        <input type="text" class="form-control input-sm pull-right" value="KG">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioLegalEntity" type="checkbox">
+        <label for="radioLegalEntity"> Legal Entity </label>
+      </div>
+      <div class="has-feedback textboxlegalentity" id="filter-legal-entity">
+        <input type="text" class="form-control input-sm pull-right" value="RG Legal Entity 1">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioDivision" type="checkbox">
+        <label for="radioDivision"> Division </label>
+      </div>
+      <div class="has-feedback textboxdivision" id="filter-division">
+        <input type="text" class="form-control input-sm pull-right" value="KG Manufacturing Division">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radiocategorys" type="checkbox">
+        <label for="radiocategorys"> Category </label>
+      </div>
+      <div class="has-feedback textboxcategory" id="filter-category">
+        <input type="text" class="form-control input-sm pull-right" value="KG Category 1">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioUnit" type="checkbox">
+        <label for="radioUnit"> Unit </label>
+      </div>
+      <div class="has-feedback textboxunit" id="filter-unit">
+        <input type="text" class="form-control input-sm pull-right" value="Branch Office - 1">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <div class="checkbox checkbox-primary">
+        <input id="radioConsolidated" type="checkbox">
+        <label for="radioConsolidated"> Consolidated </label>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <button class="btn btn-primary" id="go">Go</button>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
+<script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $('#country').multiselect();
+    $('#domain').multiselect();	
+</script>
+
+<script type="text/javascript">
+ 
+    $(document).ready(function() {
+      $("#year-para").hide();
+      $(".textboxbusiness").hide();
+      $(".dropdown-box-container").click(function() {
+        $(".filter-dropdown-container").slideToggle();
+      })
+     
+    })
+
+    $(document).ready(function () {
+        $(".textboxgroup").hide();
+            $(".textboxlegalentity").hide();
+            $(".textboxdivision").hide();
+            $(".textboxcategory").hide();
+            $(".textboxunit").hide();
+            $(".textboxbusiness").hide();
+
+            $("#radioGroup").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", true);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadPieChart();
+            });
+            $("#radioBusinessGroup").click(function() {
+                $(".textboxbusiness").show();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", true);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadPieChartBusinessGroup("KG Business Group");
+            });
+            $("#radioLegalEntity").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").show();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", true);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadPieChartLegalEntity("KG & Sons");
+            });
+            $("#radioDivision").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").show();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", true);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadPieChartDivision('KG Manufacturing Division');
+            });
+            $("#radiocategorys").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").show();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+                
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", true);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadPieChartCategorys('KG Category');
+            });
+            $("#radioUnit").click(function() {
+                $(".textboxgroup").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").show();
+                $(".textboxbusiness").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+                
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", true);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadPieChartUnit('Branch Office - 1');
+            });
+            $("#radioConsolidated").click(function() {
+                $(".textboxgroup").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+                $(".textboxbusiness").hide();
+
+                $("#previousyear").hide();
+                $("#nextyear").hide();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", true);
+
+                loadPieChartDivision('KG');
+            });
+    });
+
+    $(document).ready(function() {
+      loadPieChart();
+      $("#viewaspie").hide();
+
+      $("#previous").click(function() {
+        loadPieChart();
+       })
+
+      $("#next").click(function() {
+          loadPieChart();
+       })
+
+      $("#viewaspie").click(function() {
+              loadPieChart();
+       })
+
+      $("#viewasbar").click(function() {
+              loadPieChart();
+       })
+
+      $("#back").click(function() {
+              $("#entity-para1").hide();
+              $("#entity-para2").show();
+              $("#division-para1").hide();
+              $("#division-para2").show();
+              $("#unit-para1").hide();
+              $("#unit-para2").show();
+              loadPieChart();
+       })
+
+      $("#go-le").click(function() {
+              loadPieChart();
+       })
+
+      $("#go-d").click(function() {
+              loadPieChart();
+       })
+
+      $("#go-u").click(function() {
+              loadPieChart();
+       })
+
+      $("#radio1").click(function() {
+              loadPieChart();
+       })
+
+      $("#radio2").click(function() {
+              loadPieChart();
+       })
+
+      $("#radio3").click(function() {
+              loadPieChart();
+       })
+
+      $("#radio4").click(function() {
+              loadPieChart();
+           
+      })
+
+      $("#radio6").click(function() {
+              loadPieChart();
+      })
+
+      $('#domainradio').click(function() {
+         if( $(".textboxdomain").is(":hidden") ) {
+           $(".textboxdomain").show();
+           $("#domainradio").prop('checked', true);
+         }
+         else
+         {
+           $(".textboxdomain").hide();
+           $("#domainradio").prop('checked', false);
+         }
+      });
+      $('#countryradio').click(function() {
+          if( $(".textboxcountry").is(":hidden") ) {
+            $(".textboxcountry").show();
+            $("#countryradio").prop('checked', true);
+          }
+          else
+          {
+            $(".textboxcountry").hide();
+            $("#countryradio").prop('checked', false);
+          }
+      });
+
+
+      
+      $(".compliance-tab").click(function() {
+        $("#year-para").hide();
+        $(".compliance-tab").addClass("active")
+        $(".ageing-tab").removeClass("active")
+        $(".esc-tab").removeClass("active")
+        $(".trend-tab").removeClass("active")
+        $(".usecom-tab").removeClass("active")
+        $(".task-status-tab").removeClass("active")
+        $(".graph-box").show();
+        $(".grid-table-dash").hide();
+        $(".grid-table-dash1").hide();
+        $("#level-filter").fadeIn();
+        $("#viewaspie").fadeIn();
+        $("#unit-auto").show();
+        $("#entity-auto").show();
+        $("#division").hide();
+        $("#unit").hide();
+        loadPieChart();
+      })
+    })
+
+    function loadPieChart(){
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#division-para2").show();
+      $("#unit-para1").hide();
+      $("#unit-para2").show();
+      $("#back").hide();
+        $(function () {
+            var color = [6];
+            var applied = 0;
+            var not_opted = 0;
+            var not_applicable = 0;
+            var unassigned = 0;
+            var drill1 = "";
+            var drill2 = "";
+            var drill3 = "";
+            var drill4 = "";
+            title="";
+                applied = 815;
+                not_opted = 20;
+                not_applicable = 12
+                unassigned = 80
+                var dataSum = (815+20+12+80);
+                drill1="unitapp";
+                drill2="unitnotapp";
+                drill3="unitnotopt";
+                drill4="unitunassigned";
+                title=" - Branch Office - 1";
+          
+             $('#container').highcharts({
+              colors: ['#66FF66','#FFDC52','#CE253C', '#E244FF'],
+              chart: {
+                  type: 'pie',
+                  options3d: {
+                      enabled: true,
+                      alpha: 45,
+                      beta: 0
+                  }
+              },
+              title: {
+                   text: 'Risk Chart '+title
+              },
+              legend: {
+                reversed: true,
+                itemStyle: {
+                    fontWeight:'normal',
+                    fontSize:'11px'
+                }
+              },
+              tooltip: {
+                  headerFormat:'',
+                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
+              },
+             plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format:'{point.percentage:.0f}%',
+                            formatter: function() {
+                            
+                            var pcnt = (this.y / dataSum) * 100;
+                            return Highcharts.numberFormat(pcnt,0) + '%';
+                            }
+                    },
+                    showInLegend: true,
+                    point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown;
+                            if (drilldown) {
+                             loadDrillDownData(drilldown); 
+                            }
+                        }
+                      }
+                    }
+                }
+            },
+            series: [{
+                name: "Compliance",
+                colorByPoint: true,
+                data: [{
+                    name: "Not opted",
+                    y: not_opted,
+                    drilldown:drill3
+                },
+                {
+                    name: "Unassigned",
+                    y: unassigned,
+                    drilldown:drill4
+                }]
+            }]
+          });
+        });
+    }
+
+    function loadPieChartBusinessGroup(title){
+
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#division-para2").show();
+      $("#unit-para1").hide();
+      $("#unit-para2").show();
+      $("#back").hide();
+      
+        $(function () {
+            var color = [6];
+            var applied = 0;
+            var not_opted = 0;
+            var not_applicable = 0;
+            var unassigned = 0;
+            var drill1 = "";
+            var drill2 = "";
+            var drill3 = "";
+            var drill4 = "";
+          
+            applied = 32;
+            not_opted = 434;
+            not_applicable = 122
+            unassigned = 80
+            var dataSum = (815+20+12+80);
+            drill1="unitapp";
+            drill2="unitnotapp";
+            drill3="unitnotopt";
+            drill4="unitunassigned";
+             $('#container').highcharts({
+              colors: ['#66FF66','#FFDC52','#CE253C', '#E244FF'],
+              chart: {
+                  type: 'pie',
+                  options3d: {
+                      enabled: true,
+                      alpha: 45,
+                      beta: 0
+                  }
+              },
+              title: {
+                   text: 'Compliance Appplicability Chart '+title
+              },
+              legend: {
+                reversed: true,
+                itemStyle: {
+                    fontWeight:'normal',
+                    fontSize:'11px'
+                }
+              },
+              tooltip: {
+                  headerFormat:'',
+                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
+              },
+             plotOptions: {
+                          pie: {
+                              allowPointSelect: true,
+                              cursor: 'pointer',
+                              depth: 35,
+                              dataLabels: {
+                                  enabled: true,
+                                  format:'{point.percentage:.0f}%',
+                                      formatter: function() {
+                                      
+                                      var pcnt = (this.y / dataSum) * 100;
+                                      return Highcharts.numberFormat(pcnt,0) + '%';
+                                      }
+                              },
+                              showInLegend: true,
+                              point: {
+                              events: {
+                                  click: function() {
+                                      var drilldown = this.drilldown;
+                                      if (drilldown) {
+                                       loadDrillDownData(drilldown); 
+                                      }
+                                  }
+                                }
+                              }
+                          }
+                      },
+              series: [{
+                      name: "Compliance",
+                      colorByPoint: true,
+                      data: [{
+                          name: "Not opted",
+                          y: not_opted,
+                          drilldown:drill3
+                      },
+                      {
+                          name: "Unassigned",
+                          y: unassigned,
+                          drilldown:drill4
+                      }]
+                  }]
+          });
+        });
+    }
+
+
+
+function loadPieChartLegalEntity(title){
+
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#division-para2").show();
+      $("#unit-para1").hide();
+      $("#unit-para2").show();
+      $("#back").hide();
+      
+        $(function () {
+            var color = [6];
+            var applied = 0;
+            var not_opted = 0;
+            var not_applicable = 0;
+            var unassigned = 0;
+            var drill1 = "";
+            var drill2 = "";
+            var drill3 = "";
+            var drill4 = "";
+          
+                applied = 56;
+                not_opted = 23;
+                not_applicable = 98
+                unassigned = 17
+                var dataSum = (815+20+12+80);
+                drill1="unitapp";
+                drill2="unitnotapp";
+                drill3="unitnotopt";
+                drill4="unitunassigned";
+          
+             $('#container').highcharts({
+              colors: ['#66FF66','#FFDC52','#CE253C', '#E244FF'],
+              chart: {
+                  type: 'pie',
+                  options3d: {
+                      enabled: true,
+                      alpha: 45,
+                      beta: 0
+                  }
+              },
+              title: {
+                   text: 'Compliance Appplicability Chart '+title
+              },
+              legend: {
+                reversed: true,
+                itemStyle: {
+                    fontWeight:'normal',
+                    fontSize:'11px'
+                }
+              },
+              tooltip: {
+                  headerFormat:'',
+                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
+              },
+             plotOptions: {
+                          pie: {
+                              allowPointSelect: true,
+                              cursor: 'pointer',
+                              depth: 35,
+                              dataLabels: {
+                                  enabled: true,
+                                  format:'{point.percentage:.0f}%',
+                                      formatter: function() {
+                                      
+                                      var pcnt = (this.y / dataSum) * 100;
+                                      return Highcharts.numberFormat(pcnt,0) + '%';
+                                      }
+                              },
+                              showInLegend: true,
+                              point: {
+                              events: {
+                                  click: function() {
+                                      var drilldown = this.drilldown;
+                                      if (drilldown) {
+                                       loadDrillDownData(drilldown); 
+                                      }
+                                  }
+                                }
+                              }
+                          }
+                      },
+              series: [{
+                      name: "Compliance",
+                      colorByPoint: true,
+                      data: [{
+                          name: "Not opted",
+                          y: not_opted,
+                          drilldown:drill3
+                      },
+                      {
+                          name: "Unassigned",
+                          y: unassigned,
+                          drilldown:drill4
+                      }]
+                  }]
+          });
+        });
+    }
+
+
+
+  function loadPieChartDivision(title){
+
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#division-para2").show();
+      $("#unit-para1").hide();
+      $("#unit-para2").show();
+      $("#back").hide();
+      
+        $(function () {
+            var color = [6];
+            var applied = 0;
+            var not_opted = 0;
+            var not_applicable = 0;
+            var unassigned = 0;
+            var drill1 = "";
+            var drill2 = "";
+            var drill3 = "";
+            var drill4 = "";
+          
+                applied = 78;
+                not_opted = 34;
+                not_applicable = 12
+                unassigned = 57
+                var dataSum = (815+20+12+80);
+                drill1="unitapp";
+                drill2="unitnotapp";
+                drill3="unitnotopt";
+                drill4="unitunassigned";
+          
+             $('#container').highcharts({
+              colors: ['#66FF66','#FFDC52','#CE253C', '#E244FF'],
+              chart: {
+                  type: 'pie',
+                  options3d: {
+                      enabled: true,
+                      alpha: 45,
+                      beta: 0
+                  }
+              },
+              title: {
+                   text: 'Compliance Appplicability Chart '+title
+              },
+              legend: {
+                reversed: true,
+                itemStyle: {
+                    fontWeight:'normal',
+                    fontSize:'11px'
+                }
+              },
+              tooltip: {
+                  headerFormat:'',
+                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
+              },
+             plotOptions: {
+                          pie: {
+                              allowPointSelect: true,
+                              cursor: 'pointer',
+                              depth: 35,
+                              dataLabels: {
+                                  enabled: true,
+                                  format:'{point.percentage:.0f}%',
+                                      formatter: function() {
+                                      
+                                      var pcnt = (this.y / dataSum) * 100;
+                                      return Highcharts.numberFormat(pcnt,0) + '%';
+                                      }
+                              },
+                              showInLegend: true,
+                              point: {
+                              events: {
+                                  click: function() {
+                                      var drilldown = this.drilldown;
+                                      if (drilldown) {
+                                       loadDrillDownData(drilldown); 
+                                      }
+                                  }
+                                }
+                              }
+                          }
+                      },
+              series: [{
+                      name: "Compliance",
+                      colorByPoint: true,
+                      data: [{
+                          name: "Not opted",
+                          y: not_opted,
+                          drilldown:drill3
+                      },
+                      {
+                          name: "Unassigned",
+                          y: unassigned,
+                          drilldown:drill4
+                      }]
+                  }]
+          });
+        });
+    }
+
+
+    function loadPieChartCategorys(title){
+
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#division-para2").show();
+      $("#unit-para1").hide();
+      $("#unit-para2").show();
+      $("#back").hide();
+      
+        $(function () {
+            var color = [6];
+            var applied = 0;
+            var not_opted = 0;
+            var not_applicable = 0;
+            var unassigned = 0;
+            var drill1 = "";
+            var drill2 = "";
+            var drill3 = "";
+            var drill4 = "";
+          
+                applied = 23;
+                not_opted = 67;
+                not_applicable = 12
+                unassigned = 23
+                var dataSum = (815+20+12+80);
+                drill1="unitapp";
+                drill2="unitnotapp";
+                drill3="unitnotopt";
+                drill4="unitunassigned";
+          
+             $('#container').highcharts({
+              colors: ['#66FF66','#FFDC52','#CE253C', '#E244FF'],
+              chart: {
+                  type: 'pie',
+                  options3d: {
+                      enabled: true,
+                      alpha: 45,
+                      beta: 0
+                  }
+              },
+              title: {
+                   text: 'Compliance Appplicability Chart '+title
+              },
+              legend: {
+                reversed: true,
+                itemStyle: {
+                    fontWeight:'normal',
+                    fontSize:'11px'
+                }
+              },
+              tooltip: {
+                  headerFormat:'',
+                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
+              },
+             plotOptions: {
+                          pie: {
+                              allowPointSelect: true,
+                              cursor: 'pointer',
+                              depth: 35,
+                              dataLabels: {
+                                  enabled: true,
+                                  format:'{point.percentage:.0f}%',
+                                      formatter: function() {
+                                      
+                                      var pcnt = (this.y / dataSum) * 100;
+                                      return Highcharts.numberFormat(pcnt,0) + '%';
+                                      }
+                              },
+                              showInLegend: true,
+                              point: {
+                              events: {
+                                  click: function() {
+                                      var drilldown = this.drilldown;
+                                      if (drilldown) {
+                                       loadDrillDownData(drilldown); 
+                                      }
+                                  }
+                                }
+                              }
+                          }
+                      },
+              series: [{
+                      name: "Compliance",
+                      colorByPoint: true,
+                      data: [{
+                          name: "Not opted",
+                          y: not_opted,
+                          drilldown:drill3
+                      },
+                      {
+                          name: "Unassigned",
+                          y: unassigned,
+                          drilldown:drill4
+                      }]
+                  }]
+          });
+        });
+    }
+
+
+    function loadPieChartUnit(title){
+
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#division-para2").show();
+      $("#unit-para1").hide();
+      $("#unit-para2").show();
+      $("#back").hide();
+      
+        $(function () {
+            var color = [6];
+            var applied = 0;
+            var not_opted = 0;
+            var not_applicable = 0;
+            var unassigned = 0;
+            var drill1 = "";
+            var drill2 = "";
+            var drill3 = "";
+            var drill4 = "";
+          
+                applied = 76;
+                not_opted = 21;
+                not_applicable = 90
+                unassigned = 67
+                var dataSum = (815+20+12+80);
+                drill1="unitapp";
+                drill2="unitnotapp";
+                drill3="unitnotopt";
+                drill4="unitunassigned";
+          
+             $('#container').highcharts({
+              colors: ['#66FF66','#FFDC52','#CE253C', '#E244FF'],
+              chart: {
+                  type: 'pie',
+                  options3d: {
+                      enabled: true,
+                      alpha: 45,
+                      beta: 0
+                  }
+              },
+              title: {
+                   text: 'Compliance Appplicability Chart '+title
+              },
+              legend: {
+                reversed: true,
+                itemStyle: {
+                    fontWeight:'normal',
+                    fontSize:'11px'
+                }
+              },
+              tooltip: {
+                  headerFormat:'',
+                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
+              },
+             plotOptions: {
+                          pie: {
+                              allowPointSelect: true,
+                              cursor: 'pointer',
+                              depth: 35,
+                              dataLabels: {
+                                  enabled: true,
+                                  format:'{point.percentage:.0f}%',
+                                      formatter: function() {
+                                      
+                                      var pcnt = (this.y / dataSum) * 100;
+                                      return Highcharts.numberFormat(pcnt,0) + '%';
+                                      }
+                              },
+                              showInLegend: true,
+                              point: {
+                              events: {
+                                  click: function() {
+                                      var drilldown = this.drilldown;
+                                      if (drilldown) {
+                                       loadDrillDownData(drilldown); 
+                                      }
+                                  }
+                                }
+                              }
+                          }
+                      },
+              series: [{
+                      name: "Compliance",
+                      colorByPoint: true,
+                      data: [{
+                          name: "Not opted",
+                          y: not_opted,
+                          drilldown:drill3
+                      },
+                      {
+                          name: "Unassigned",
+                          y: unassigned,
+                          drilldown:drill4
+                      }]
+                  }]
+          });
+        });
+    }
+
+  </script>
+{% endblock %}

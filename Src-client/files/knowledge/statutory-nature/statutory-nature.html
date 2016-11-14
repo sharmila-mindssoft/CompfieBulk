@@ -1,0 +1,50 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <div class="portlet">
+          <!-- <h4 class="page-title">Statutory Nature Master</h4>
+          <hr class="no-top-margin"> -->
+        <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Statutory Nature Master
+            </h3>
+            <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/statutory-nature/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+          
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="India">
+                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Statutory Nature <span class="mandatory">*</span></label>
+            <div class="col-sm-6">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Statutory Nature Name" value="Central">
+            </div>
+          </div>
+      <div class="form-group text-center">
+          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+        <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/statutory-nature/list'"> Cancel </button> -->
+      </div>
+      </form>
+      </div>
+        </div>
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+  </div>
+{% endblock %}

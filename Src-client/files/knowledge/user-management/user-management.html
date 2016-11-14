@@ -1,0 +1,183 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<!-- Multiselect -->
+<link href="/files/knowledge/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<div class="container">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-1"> </div>
+    <div class="col-sm-10">
+      <div class="portlet">
+        <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                User Management
+            </h3>
+            <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/user-management/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+          <div class="portlet-body">
+            <div class="row">
+              <div class="col-lg-6">
+
+                <form class="form-horizontal" role="form">
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Category Name:<span class="mandatory">*</span></label>
+                    <div class="col-sm-8">
+                      <select class="form-control input-sm">
+                        <option>Select</option>
+                        <option>Knowledge Manager</option>
+                        <option>Knowledge Executive</option>
+                        <option selected="selected">Techno Manager</option>
+                        <option>Techno Executive</option>
+                        <option>Domain Manager</option>
+                        <option>Domain Executive</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">Employee Name:<span class="mandatory">*</span></label>
+                    <div class="col-md-8">
+                      <input type="text" class="form-control input-sm" value="Sivaraman">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">Employee ID:<span class="mandatory">*</span></label>
+                    <div class="col-md-8">
+                      <input type="text" class="form-control input-sm" value="EMP001">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">Address:</label>
+                    <div class="col-md-8">
+                      <textarea class="form-control" rows="3">145, East Cross Street, Madurai.</textarea>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <!-- end col -->
+              <div class="col-lg-6">
+                <form class="form-horizontal" role="form">
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Email ID:<span class="mandatory">*</span></label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control input-sm" placeholder="" value="sivaraman@domain.com">
+                      <span class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small></span> </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">Contact No.:<span class="mandatory">*</span></label>
+                    <div class="col-md-8">
+                      <div class="col-md-3 no-padding-left">
+                        <input type="text" class="form-control input-sm col-md-3"  value="+91">
+                      </div>
+                      <div class="col-md-3">
+                        <input type="text" class="form-control input-sm col-md-3" value="452">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="text" class="form-control input-sm col-md-6" value="4577123">
+                      </div>
+                      <span class="help-block"><small><small>[+91 452 1234567]</small></small></span> </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">Mobile No.:<span class="mandatory">*</span></label>
+                    <div class="col-md-8">
+                      <div class="col-md-3 no-padding-left">
+                        <input type="text" class="form-control input-sm col-md-3"  value="+91">
+                      </div>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control input-sm col-md-9"  value="9876541230">
+                      </div>
+                      <span class="help-block"><small><small>[+91 9876541230]</small></small></span>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label">User Group:<span class="mandatory">*</span></label>
+                    <div class="col-md-8">
+                      <input type="text" class="form-control input-sm" value="Manager Group B">
+                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Designation:</label>
+                    <div class="col-md-8">
+                      <input type="text" class="form-control input-sm" value="Manager">
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <!-- end col -->
+            </div>
+            <hr class="m-t-5 m-b-10">
+              <h4 class="header-title p-l-10">Settings</h4>
+    		    <div class="row">
+          	  <form class="form-horizontal" role="form">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">Countries:<span class="mandatory">*</span></label>
+                    <div class="col-md-8 controls">
+                      <select  id="countries"  class="form-control input-sm example-multiple" multiple="multiple">
+            				    <option value="India" selected>India</option>
+            					  <option value="Malaysia" >Malaysia</option>
+            					  <option value="Singapore" >Singapore</option>
+            				  </select>
+                    </div>
+                  </div>
+                  </div>
+                  <!-- end col -->
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                    <label class="col-sm-4 control-label">Domains:<span class="mandatory">*</span></label>
+                    <div class="col-md-8">
+                        <select  id="domains" class="example-multiple-optgroups" multiple="multiple">
+                        <optgroup label="India">
+                              <option value="1" selected>Finance Law</option>
+                              <option value="2" >Labour Law</option>
+                              <option value="3">Industrial Law</option>
+                          </optgroup>
+                          <optgroup label="Singapore">
+                              <option value="4" >Economic Law</option>
+                              <option value="5">Employee Law</option>
+                          </optgroup>
+                        </select>
+                    </div>
+                  </div>
+                </div>
+                <!-- end col -->
+              </form>
+            </div>
+            <!-- end row -->
+      		  <div class="form-group text-center">
+                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+                <!-- <button class="btn btn-info waves-effect waves-light" type="submit" onclick="location.href='/user-management/list'" > Cancel</button> -->
+            </div>
+        </div>
+      </div>
+      </div>
+	  
+    </div>
+	  <!-- end col -->
+  </div>
+</div>
+
+<!-- Multiselect -->
+<script src="/files/knowledge/common/js/multiselect/bootstrap-multiselect.js"></script>
+<!-- <script type="text/javascript">
+    $('#countries').multiselect();
+    $('#domains').multiselect();	
+</script> -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.example-multiple-optgroups').multiselect({
+            buttonWidth: '100%',
+            enableClickableOptGroups: true /*,
+            enableCollapsibleOptGroups: true*/
+        });
+        $('.example-multiple').multiselect({
+            buttonWidth: '100%'
+        });
+    });
+</script>
+{% endblock %}

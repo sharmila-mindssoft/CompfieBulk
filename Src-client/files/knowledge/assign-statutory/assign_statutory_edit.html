@@ -1,0 +1,577 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<script type="text/javascript">
+ $(function() {
+   $('#clientdecision').change(function () {
+    if($(this).is(':checked'))
+      $('#clienttextarea').hide();
+    else
+      $('#clienttextarea').show();
+  });
+     $('#ch_h3').click(function () {
+    if($(this).is(':checked'))
+      $('.ch_h3_remarks').hide();
+    else
+      $('.ch_h3_remarks').show();
+  });
+  
+}); 
+</script>
+<style type="text/css">
+        .onoffswitch {
+        position: relative; width: 90px;
+        -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    }
+    .onoffswitch-checkbox {
+        display: none !important;
+    }
+    .onoffswitch-label {
+        display: block !important; overflow: hidden; cursor: pointer;
+        border: 2px solid #999999; border-radius: 20px;
+        width: 60%; height: 25px;
+    }
+    .onoffswitch-inner {
+        display: block; width: 200%; margin-left: -100%;
+        transition: margin 0.3s ease-in 0s;
+    }
+    .onoffswitch-inner:before, .onoffswitch-inner:after {
+        display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 21px;
+        font-size: 10px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+        box-sizing: border-box;
+    }
+    .onoffswitch-inner:before {
+        content: "ON";
+        padding-left: 7px;
+        background-color: #34A7C1; color: #FFFFFF;
+    }
+    .onoffswitch-inner:after {
+        content: "OFF";
+        padding-right: 7px;
+        background-color: #EEEEEE; color: #999999;
+        text-align: right;
+    }
+    .onoffswitch-switch {
+        display: block; width: 17px; margin: 4px;
+        background: #FFFFFF;
+        position: absolute; top: 0; bottom: 0;
+        right: 64px;
+        border: 2px solid #999999; border-radius: 20px;
+        transition: all 0.3s ease-in 0s; 
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+        margin-left: 0;
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+        right: 37px; 
+        width: 19px;
+        margin: 4px
+    }
+</style>
+<style type="text/css">
+  .input-row, .single-column-input-row {
+    float: left;
+    padding-bottom: 0.58em;
+    width: 100%;
+}
+#navbar {
+  width:auto;
+ } 
+
+ #navbar #holder {
+  height:auto;
+  border-bottom:0px solid #000;
+  width:auto;  
+  font-size:12px;
+  padding-left:5px; 
+ } 
+
+ #navbar #holder ul {
+  list-style:none;
+  margin:0;
+  padding:0; 
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a { 
+  text-decoration:none;
+  float:left;
+  color:#5E5E5E;
+  font-size:12px;
+  border:0px solid #000;
+  border-bottom:none;
+  padding:10px;
+  width:auto;
+  text-align:center;
+  display:block;
+  background:#CCCCCC;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px; 
+ } 
+
+ #navbar #holder ul li a:hover {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a.onlink {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a.onlink:hover {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ }
+ .tasks{
+  height:auto;
+  overflow: auto;
+}
+
+.onlink{
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+}
+
+.paddingleft20{
+  padding-left:40px;
+}
+
+.form-container-grid-table-sm table tr td ul {
+    height: 445px;
+    overflow-y: scroll;
+    width: 100%;
+}
+.form-container-grid-table  table tr td ul {
+    height: 220px;
+    overflow-y: scroll;
+    width: 100%;
+}
+#example-basic h3
+{
+    border-radius: 5px;
+    display: block;
+    margin: 0 0.1em;
+    padding: 0.7em 1em;
+    text-decoration: none;
+    width: auto;
+    background: none repeat scroll 0 0 #662d91;
+    color: #fff;
+}
+  </style>
+  <style>
+.gt input[type="checkbox"] {
+    display: none !important;
+}
+
+.gt input[type="radio"] {
+    display: none !important;
+}
+.gt input[type="radio"]+label {    
+    background: url('/images/tick1boldinactive.png') no-repeat;
+    height:17px;
+    padding-left: 18px;
+    cursor: pointer;
+}
+.gt input[type="radio"]:checked + label {
+    background: url('/images/tick1bold.png') no-repeat;
+    height:17px;
+    cursor: pointer;
+}
+.gt-cross input[type="radio"] {
+    display: none !important;
+}
+.gt-cross input[type="radio"]+label {    
+    background: url('/images/deleteboldinactive.png') no-repeat;
+    height:17px;
+    padding-left: 18px;
+    cursor: pointer;
+}
+.gt-cross input[type="radio"]:checked + label {
+    background: url('/images/deletebold.png') no-repeat;
+    height:17px;
+    cursor: pointer;
+}
+.gt-minus input[type="radio"] {
+    display: none !important;
+}
+.gt-minus input[type="radio"]+label {    
+    background: url('/images/iconminusinactive.png') no-repeat;
+    height:17px;
+    padding-left: 18px;
+    cursor: pointer;
+}
+.gt-minus input[type="radio"]:checked + label {
+    background: url('/images/iconminusactive.png') no-repeat;
+    height:17px;
+    cursor: pointer;
+}
+.gt-one input[type="checkbox"] {
+    display: none !important;
+    }
+    .gt-one input[type="checkbox"]+label {    
+        background: url('/images/deletebold.png') no-repeat;
+        height:17px;
+        padding-left: 18px;
+        cursor: pointer;
+    }
+    .gt-one input[type="checkbox"]:checked + label {
+        background: url('/images/tick-icon.png') no-repeat;
+        height:17px;
+        cursor: pointer;
+    }
+  </style>
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
+<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
+<div class="content-container width75">
+  <div class="content-area">
+    <h1>Assign Statutory</h1>
+    <div class="add-container">
+      <div class="form-container-outer">
+        <div id="example-basic">
+          
+          <!-- -->
+          <h3>Select Statutory</h3>
+          <section>
+          <h2>India <img src="/images/chevron_black_right.png"> VRM Motors <img src="/images/chevron_black_right.png"> VRM Motors Business Group <img src="/images/chevron_black_right.png"> VRM & Sons  <img src="/images/chevron_black_right.png">&nbsp;&nbsp;JK Category  <img src="/images/chevron_black_right.png">&nbsp;&nbsp; VRM Auto Parts -  Manufacturing <img src="/images/chevron_black_right.png"> Industrial Law </h2>
+         <div class="grid-table">
+                            <table class="font1">
+                                <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+                                    <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"
+                                        class="gt">
+                                        <label class="change_status" for="1" style="margin-top:10px;"><img src="/images/tick1bold.png"></label>
+                                    </th>
+                                    <th style="background-color:#eae8e8; color:#000000; font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
+                                </tr>
+                                <tr style="border:1px solid #cccccc;">
+                                    <td colspan="2" style="padding-left:0px;">
+                                        <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">
+                                            <tr align="left">
+                                                <td width="2%"><span style="font-weight:bold;">#</span></td>
+                                                <td width="15%" ><span style="font-weight:bold;">Statutory Provision</span></td>
+                                                <td width="25%" ><span style="font-weight:bold;">Compliance Task</span></td>
+                                                <td width="30%" colspan="3"><span style="font-weight:bold; ">Compliance Description</span></td>
+                                                <td width="8%" align="center"><span style="font-weight:bold;">Applicable Units</span></td>
+                                            </tr>
+                                            <tr class="subheader-bg">
+                                                <td>1</td>
+                                                <td>Rule 4 (iii)</td>
+                                                <td><abbr class="page-load tipso_style" title="Organisation: Factory, Mines <br/> <br/> Geography Location: South >> Tamil Nadu >> Chennai"><img src="/images/icon-info.png" style="padding-right: 3px;" />FORM I - Half yearly returns Submission</abbr></td>
+                                                <td colspan="3">Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned
+                                                </td>
+                                                <!-- <td><a href="#" class="toggleModal">2 / 3</a></td> -->
+                                                <td align="center"><a href="#" >2 / 3</a></td>
+                                                <!-- <td><div class="onoffswitch">
+                                                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" >
+                                                        <label class="onoffswitch-label" for="myonoffswitch">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch3" name="ch3" checked="checked"><label for="ch3"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx3" name="ch3"><label for="chx3"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm3" name="ch3"><label for="chm3"></label></td> -->
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td style="font-weight:bold;">Location</td>
+                                                <td style="font-weight:bold;">Unit Name</td>
+                                                <td style="font-weight:bold;" align="center">Vendor Applicable</td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Not Applicable" ></span></td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Minus" ></span></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                <td>South</td>
+                                                <td>VRM1003 - Regional Office</td>
+                                                <td align="center" class="gt-one">
+                                                    <input type="checkbox" checked="checked" id="chv1">
+                                                    <label for="chv1"></label>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch3" name="ch1" checked="checked"><label for="ch1"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx1" name="ch1"><label for="chx1"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm1" name="ch1"><label for="chm1"></label></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                <td>Chennai</td>
+                                                <td>VRM1005 - Branch  Office</td>
+                                                <td align="center" class="gt-one">
+                                                    <input type="checkbox" id="chv2">
+                                                    <label for="chv2"></label>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch2" name="ch3" ><label for="ch2"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx2" name="ch3" checked="checked"><label for="chx2"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm2" name="ch3"><label for="chm2"></label></td>
+                                              </tr>
+                                            <tr class="rejected_row subheader-bg">
+                                                <td>2</td>
+                                                <td>Rule 5 and Rule 6 (ii)</td>
+                                                <td ><abbr class="page-load tipso_style" title="Organisation: Factory <br/> <br/> Geography Location: South >> Tamil Nadu >> Madurai"><img src="/images/icon-info.png" style="padding-right: 3px;" />FORM II - Registration</abbr></td>
+                                                <td colspan="3">Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                                                <td align="center"><a href="#" >2 / 3</a></td>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td style="font-weight:bold;">Location</td>
+                                                <td style="font-weight:bold;">Unit Name</td>
+                                                <td style="font-weight:bold;" align="center">Vendor Applicable</td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Not Applicable" ></span></td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Minus" ></span></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                <td>South</td>
+                                                <td>VRM1003 - Regional Office</td>
+                                                <td align="center" class="gt-one">
+                                                    <input type="checkbox" checked="checked" id="chv3">
+                                                    <label for="chv3"></label>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch3" name="ch3" checked="checked"><label for="ch3"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx3" name="ch3"><label for="chx3"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm3" name="ch3"><label for="chm3"></label></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                <td>Chennai</td>
+                                                <td>VRM1005 - Branch  Office</td>
+                                                <td align="center" class="gt-one">
+                                                    <input type="checkbox" checked="checked" id="chv4">
+                                                    <label for="chv4"></label>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch4" name="ch3" checked="checked"><label for="ch4"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx4" name="ch3"><label for="chx4"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm4" name="ch3"><label for="chm4"></label></td>
+                                              </tr>
+                                            <tr class="subheader-bg">
+                                                <td>3</td>
+                                                <td>Rule 6(iii)</td>
+                                                <td ><abbr class="page-load tipso_style" title="Organisation: Factory, Mines <br/> <br/> Geography Location: South >> Tamil Nadu >> Chennai"><img src="/images/icon-info.png" style="padding-right: 3px;" />FORM III - Undertaking submission</abbr></td>
+                                                <td colspan="3">Whether undertaking submitted by importer to authority.</td>
+                                                <td align="center"><a href="#" >3 / 3</a></td>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td style="font-weight:bold;">Location</td>
+                                                <td style="font-weight:bold;">Unit Name</td>
+                                                <td style="font-weight:bold;" align="center">Vendor Applicable</td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Not Applicable" ></span></td>
+                                                <td width="3%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Minus" ></span></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                <td>South</td>
+                                                <td>VRM1003 - Regional Office</td>
+                                                <td align="center" class="gt-one">
+                                                    <input type="checkbox" checked="checked" id="chv5">
+                                                    <label for="chv5"></label>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch5" name="ch5" checked="checked"><label for="ch5"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx5" name="ch3"><label for="chx5"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm5" name="ch3"><label for="chm5"></label></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                <td>North</td>
+                                                <td>VRM1004 - Regional Office</td>
+                                                <td align="center" class="gt-one">
+                                                    <input type="checkbox" checked="checked" id="chv3">
+                                                    <label for="chv3"></label>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch6" name="ch3" checked="checked"><label for="ch6"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx6" name="ch3"><label for="chx6"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm6" name="ch3"><label for="chm6"></label></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                <td>Chennai</td>
+                                                <td>VRM1005 - Branch  Office</td>
+                                                <td align="center" class="gt-one">
+                                                    <input type="checkbox" checked="checked" id="chv3">
+                                                    <label for="chv3"></label>
+                                                </td>
+                                                <td align="center" class="gt"><input type="radio" id="ch7" name="ch3" checked="checked"><label for="ch7"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx7" name="ch3"><label for="chx7"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm7" name="ch3"><label for="chm7"></label></td>
+                                              </tr>
+                                            <tr>
+                                                <td colspan="100%"><span class="dconfig-country-name heading">Tamilnadu State Act</span></td>
+                                            </tr>
+                                            <tr class="subheader-bg">
+                                                <td>4</td>
+                                                <td>Rule 7(iv)</td>
+                                                <td><abbr class="page-load tipso_style" title="Organisation: Factory, Mines <br/> <br/> Geography Location: South >> Tamil Nadu >> Chennai"><img src="/images/icon-info.png" style="padding-right: 3px;" />FORM V - Dealer Half yearly returns</abbr></td>
+                                                <td colspan="3">Whether half yearly returns submitted by dealer to manufacturer</td>
+                                                <td><a href="#" class="toggleModal">3 / 3</a></td>
+                                                
+                                            </tr>
+                                            <tr class="subheader-bg">
+                                                <td>5</td>
+                                                <td>Rule 8(i) & 9(1) & 9 (5)</td>
+                                                <td><abbr class="page-load tipso_style" title="Organisation: Factory, Mines <br/> <br/> Geography Location: South >> Tamil Nadu >> Chennai"><img src="/images/icon-info.png" style="padding-right: 3px;" />FORM VI - Recycler Registration and Review</abbr></td>
+                                                
+                                                <td colspan="3">Whether registration and renewal obtained by recycler</td>
+                                                <td><a href="#" class="toggleModal">3 / 3</a></td>
+                                            </tr>
+                                            <tr class="subheader-bg">
+                                                <td>6</td>
+                                                <td>Rule 8 (iii)</td>
+                                                <td><abbr class="page-load tipso_style" title="Organisation: Factory, Mines <br/> <br/> Geography Location: South >> Tamil Nadu >> Chennai"><img src="/images/icon-info.png" style="padding-right: 3px;" />FORM VII - Recycler Half yearly returns</abbr></td>
+                                                
+                                                <td colspan="3">Whether half yearly returns submitted by recyclers</td>
+                                                <td><a href="#" class="toggleModal">2 / 3</a></td>
+                                            </tr>
+                                            <!--tr>
+                                                <td>7</td>
+                                                <td>Rule 5 (iv)</td>
+                                                <td><abbr class="page-load tipso_style" title="Organisation: Factory, Mines <br/> <br/> Geography Location: South >> Tamil Nadu >> Chennai"><img src="/images/icon-info.png" style="padding-right: 3px;" />FORM VIII - Recycler Quarterly returns</abbr></td>
+                                                <td><a href="#" class="toggleModal">2 / 3</a></td>
+                                                <td>Whether Quarterly returns submitted by recyclers</td>
+                                                <td align="center" class="gt"><input type="radio" id="ch8" name="ch8" checked="checked"><label for="ch8"></label></td>
+                                                <td align="center" class="gt-cross"><input type="radio" id="chx8" name="ch8"><label for="chx8"></label></td>
+                                                <td align="center" class="gt-minus"><input type="radio" id="chm8" name="ch8"><label for="chm8"></label></td>
+                                            </tr-->
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+                                    <!-- <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%" class="gt"><input type="checkbox" checked="checked" id="ch_h2" style="margin-top:10px;"><label for="ch_h2" style="margin-top:10px;"></label></th> -->
+                                    <th style="background-color:#eae8e8; color:#000000; font-weight: bold;" width="5%" class="gt">
+                                        <input type="checkbox" checked="checked" id="ch_h1" style="margin-top:10px;"><label class="change_status" for="1" style="margin-top:10px;">
+                                        <img src="/images/tick1bold.png"></label>
+                                    </th>
+                                    <th style="background-color:#eae8e8; color:#000000; font-weight: bold;" width="95%">Indian Partnership Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
+                                </tr>
+                                <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+                                    <th style="background-color:#eae8e8; color:#000000; font-weight: bold;" width="5%" class="gt">
+                                        <input type="checkbox" checked="checked" id="ch_h1" style="margin-top:10px;"><label class="change_status" for="1" style="margin-top:10px;">
+                                        <img src="/images/deletebold.png"></label>
+                                    </th>
+                                    <th style="background-color:#eae8e8; color:#000000; font-weight: bold;vertical-align:middle;" width="95%">
+                                        The Factories Act, 1948 <span><img src="/images/chevron_black_right.png"></span>
+                                        <div style="float:right; width:500px;" class="ch_h3_remarks" >
+                                            <div style="float:right;  width:250px;"> <input type="text" class="input-box"  style="width:200px;margin-top:-3px;" placeholder="Enter Remarks" ></div>
+                                            <div style="float:right; width:70px;"> Remarks</div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+                                    <!-- <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%" class="gt"><input type="checkbox" checked="checked" id="ch_h2" style="margin-top:10px;"><label for="ch_h2" style="margin-top:10px;"></label></th> -->
+                                    <th style="background-color:#eae8e8; color:#000000; font-weight: bold;" width="5%" class="gt">
+                                        <input type="checkbox" checked="checked" id="ch_h1" style="margin-top:10px;"><label class="change_status" for="1" style="margin-top:10px;">
+                                        <img src="/images/tick1bold.png"></label>
+                                    </th>
+                                    <th style="background-color:#eae8e8; color:#000000; font-weight: bold;" width="95%">General Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
+                                </tr>
+                            </table>
+                            <br>
+           <div class="submit-button-container" style="padding:0em;">             
+              <input type="submit" name="submit" value="Submit" class="btn-submit" onClick="$('.modal1').toggleClass('active');" />
+            </div>
+                        </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="clearfix"></div>
+<br>
+<div class="modal">
+  <header>
+    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">Applicable Units</h1>
+     <div class="close toggleModal"></div>
+  </header>  
+  <section><p style="font-size:0.7em; padding-top:10px;">
+    <table width="100%" class="content">
+      <tr>
+        <td >VRM1003 - Regional Office - South, (Factory, Mines)</td>
+      </tr>
+      <tr>
+        <td>VRM1005 - Branch Office - Chennai, (Factory, Mines)</td>
+      </tr>
+    </table>
+  </p>
+  </section>
+</div>
+<div class="modal1" style="width:20%; margin-left: -12.5%;">
+  <header>
+     <div class="close1 toggleModal1"></div>
+  </header>  
+  <section>
+  <p style="font-size:0.8em; padding-top:10px;">
+
+      <table width="100%">
+        <tr style="height:30px">
+          <td>
+            Enter Password
+          </td>
+        </tr>
+        <tr style="height:30px">
+          <td>
+            <input type="password" class="input-box" placeholder="Password" style="margin-bottom:20px"/>
+          </td>
+        </tr>
+        <tr style="height:30px;padding-top:20px">
+          <td>
+            <input type="submit" name="cancel" value="Submit" class="btn-submit" >
+          </td>
+        </tr>
+      </table>
+    </p>
+  </section>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#section-flip-1").show();
+    $("#section-flip-4").hide();
+    $(".change_status").click(function() {
+      if($(this).attr('for') == "1") {
+        $(this).html('<img src="/images/deletebold.png">').attr('for','2');
+      } else if($(this).attr('for') == "2") {
+        $(this).html('<img src="/images/iconminusactive.png">').attr('for','3');
+      } else {
+        $(this).html('<img src="/images/tick1bold.png">').attr('for','1');
+      }
+    });
+  })
+
+  $("#example-basic").steps({
+    headerTag: "h3",
+    bodyTag: "section",
+    transitionEffect: "slideLeft",
+    autoFocus: true
+  });
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+});
+
+});
+</script> 
+<script type="text/javascript">
+  $('.toggleModal').on('click', function (e) {
+    $('.modal').toggleClass('active');
+  });
+  
+  $('.toggleModal1').on('click', function (e) {
+  $('.modal1').toggleClass('active');
+});
+</script>
+{% endblock %}

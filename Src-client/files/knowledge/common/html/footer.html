@@ -1,0 +1,89 @@
+<script type="text/javascript">
+    /*$('#theme-setting > a').click(function(){
+        $(this).next().animate({width:'toggle'}, 500, function(){
+            if($(this).is(":hidden")) {
+                $('#theme-setting > a > i').attr('class', 'fa fa-gears fa-2x');
+            } else {
+                $('#theme-setting > a > i').attr('class', 'fa fa-times fa-2x');
+            }
+        });
+        $(this).next().css('display', 'inline-block');
+    });
+    //Change skin and colors
+    $('#theme-setting ul.colors a').click(function(){
+        var parent_li = $(this).parent().get(0);
+        var parent_ul = $(parent_li).parent().get(0);
+        var target = $(parent_ul).data('target');
+        var prefix = $(parent_ul).data('prefix');
+        var color = $(this).attr('class');
+        var regx = new RegExp('\\b' + prefix + '.*\\b', 'g');
+        $(parent_ul).children('li').removeClass('active');
+        $(parent_li).addClass('active');
+        //Remove current skin class if it has
+        if ($(target).attr('class') != undefined) {
+            $(target).attr('class', $(target).attr('class').replace(regx, '').trim());
+        }
+        $(target).addClass(prefix + color)
+        if (target == 'body') {
+            var parent_ul_li = $(parent_ul).parent().get(0);
+            var next_li = $(parent_ul_li).nextAll('li:lt(2)');
+            $(next_li).find('li.active').removeClass('active');
+            $(next_li).find('a.' + color).parent().addClass('active');
+            //Remove static color class from Navbar & Sidebar 
+            $('.navbar').attr('class', $('#navbar').attr('class').replace(/\bnavbar-.*\b/g, '').trim());
+            $('.container').attr('class', $('#main-container').attr('class').replace(/\bsidebar-.*\b/g, '').trim());
+        }
+        $.cookie(prefix + 'color', color);
+    });
+    //Handel selected color
+    var theme_colors = ["blue", "red", "green", "orange", "yellow", "pink", "magenta", "gray", "black"];
+    $.each(theme_colors, function(k, v) {
+        if ($('body').hasClass('skin-' + v)) {
+            $('#theme-setting ul.colors > li').removeClass('active');
+            $('#theme-setting ul.colors > li:has(a.'+ v +')').addClass('active');
+        }
+    });
+
+    $.each(theme_colors, function(k, v) {
+        if ($('.navbar').hasClass('navbar-' + v)) {
+            $('#theme-setting ul[data-prefix="navbar-"] > li').removeClass('active');
+            $('#theme-setting ul[data-prefix="navbar-"] > li:has(a.'+ v +')').addClass('active');
+        }
+
+        if ($('#main-container').hasClass('sidebar-' + v)) {
+            $('#theme-setting ul[data-prefix="sidebar-"] > li').removeClass('active');
+            $('#theme-setting ul[data-prefix="sidebar-"] > li:has(a.'+ v +')').addClass('active');
+        }
+    });
+    //Handle fixed navbar & sidebar
+    if ($('.sidebar').hasClass('sidebar-fixed')) {
+        $('#theme-setting > ul > li > a[data-target="sidebar"] > i').attr('class', 'fa fa-check-square-o green')
+    }
+    if ($('.navbar').hasClass('navbar-fixed')) {
+        $('#theme-setting > ul > li > a[data-target="navbar"] > i').attr('class', 'fa fa-check-square-o green')
+    }
+    $('#theme-setting > ul > li > a').click(function(){
+        var target = $(this).data('target');
+        var check = $(this).children('i');
+        if (check.hasClass('fa-square-o')) {
+            check.attr('class', 'fa fa-check-square-o green');
+            $('#' + target).addClass(target + '-fixed');
+            $.cookie(target + '-fixed', 'true');
+        } else {
+            check.attr('class', 'fa fa-square-o');
+            $('#' + target).removeClass(target + '-fixed');
+            $.cookie(target + '-fixed', 'false');
+        }
+        if (target == "sidebar") {
+            if (check.hasClass('fa-square-o')) {
+                $("#sidebar ul.nav-list").parent('.slimScrollDiv').replaceWith($("#sidebar ul.nav-list"));
+            }
+            scrollableSidebar();
+        }
+    });*/
+</script>
+<script src="/files/knowledge/common/js/jquery.core.js"></script>
+<script src="/files/knowledge/common/js/jquery.app.js"></script>
+<footer class="footer">
+	<center>&copy; Aparajitha Corporate Services Private Limited</center>
+</footer>
