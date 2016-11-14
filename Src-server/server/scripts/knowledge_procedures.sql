@@ -3332,11 +3332,12 @@ BEGIN
     -- 4
 
     select t1.geography_id, t1.geography_name, t1.level_id,
-    t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id
+    t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id,
+    t2.level_position
     from tbl_geographies as t1 inner join tbl_geography_levels as t2
     on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
     t3.country_id = t2.country_id where t3.user_id = userid
-    order by geography_name;
+    order by t2.level_position, t1.geography_name;
     -- 5
     select t1.level_id, t1.level_position, t1.level_name,
     t1.country_id from tbl_geography_levels as t1
@@ -3368,7 +3369,8 @@ CREATE  PROCEDURE `sp_tbl_statutory_masterdata`(
 in userid int(11))
 BEGIN
     select t1.statutory_id, t1.level_id, t1.statutory_name,
-    t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id
+    t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id,
+    t2.level_position
     from tbl_statutories as t1
     inner join tbl_statutory_levels as t2 on t2.level_id = t1.level_id
     inner join tbl_user_countries as t3 on t3.country_id = t2.country_id

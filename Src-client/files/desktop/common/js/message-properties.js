@@ -191,7 +191,7 @@ var message = {
   'validity_gt_nextduedate': 'Validity Date must be Greater than or equal to Next Due Date',
   'category_max50': 'Category Name is not exceeded 50 Characters',
   'shouldnot_empty': ' should not be empty',
-  'invalid_levelone': 'Invalid level one selection. ',
+  'invalid_levelone': 'You cannot select different statutory in ',
   'selectin_firstlevel': ' should select in first level.',
   'compliancename_exists': 'Compliance name already exists - ',
   'statutory_already_assigned_unit': 'Statutes already assigned for unit - ',

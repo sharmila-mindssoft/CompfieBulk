@@ -357,8 +357,8 @@ function clientUserValidate() {
 var max_length = {
   'employeename': 50,
   'employeeid': 50,
-  'email_id': 50,
-  'mcountrycode': 5,
+  'email_id': 100,
+  'mcountrycode': 4,
   'mobileno': 10,
   'address': 250,
   'designation': 50,
@@ -375,9 +375,9 @@ function expectationError(expected, received){
 function validateLength(key_name, value) {
   v = max_length[key_name];
   console.log(value);
-  if (!value.length <= v) {
-    msg = "a " + key_name + " with max length " + v
-    return expectationError(msg, value)
+  if (value.length > v) {
+    msg = " should not exceed" + v + "characters";
+    return msg;
   }
   return true
 }

@@ -377,7 +377,10 @@ class GetStatutories(Request):
         }
 
 class SaveStatutory(Request):
-    def __init__(self, domain_id, statutory_level_id, statutory_name, parent_ids, parent_names):
+    def __init__(
+        self, domain_id, statutory_level_id, statutory_name,
+        parent_ids, parent_names
+    ):
         self.domain_id = domain_id
         self.statutory_level_id = statutory_level_id
         self.statutory_name = statutory_name
@@ -386,21 +389,26 @@ class SaveStatutory(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["d_id", "s_l_id", "s_name", "p_ids", "p_names"])
+        data = parse_dictionary(data, [
+            "d_id", "s_l_id", "s_name", "s_pids", "s_pnames"
+        ])
         domain_id = data.get("d_id")
         statutory_level_id = data.get("s_l_id")
         statutory_name = data.get("s_name")
-        parent_ids = data.get("p_ids")
-        parent_names = data.get("p_names")
-        return SaveStatutory(domain_id, statutory_level_id, statutory_name, parent_ids, parent_names)
+        parent_ids = data.get("s_pids")
+        parent_names = data.get("s_pnames")
+        return SaveStatutory(
+            domain_id, statutory_level_id, statutory_name,
+            parent_ids, parent_names
+        )
 
     def to_inner_structure(self):
         return {
             "d_id": self.domain_id,
             "s_l_id": self.statutory_level_id,
             "s_name": self.statutory_name,
-            "p_ids": self.parent_ids,
-            "p_names": self.parent_names
+            "s_pids": self.parent_ids,
+            "s_pnames": self.parent_names
         }
 
 class UpdateStatutory(Request):

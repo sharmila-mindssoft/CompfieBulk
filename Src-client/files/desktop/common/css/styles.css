@@ -845,7 +845,6 @@ a:hover {
 .single-column-input-row {
     width: 100%;
     float: left;
-    padding-bottom: 0.7em;
 }
 
 .input-notes {
@@ -3891,4 +3890,11 @@ div.scrollable {
 .btn-back:hover {
 	background: #ccc url(../images/icon-back.png) no-repeat 0.5em center;
 	color: #000;
+}
+
+.remove {
+    background: url(../images/icon-delete.png) no-repeat center;
+    border: none;
+    outline: none;
+    cursor: pointer;
 }

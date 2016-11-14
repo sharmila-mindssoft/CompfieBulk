@@ -278,10 +278,10 @@ function displayEdit(userId) {
 }
 // Submit button process
 function submitUserData(){
-  function validateMaxLength(key_name, value) {
+  function validateMaxLength(key_name, value, show_name) {
     e_n_msg = validateLength(key_name, value.trim())
     if (e_n_msg != true) {
-      displayMessage(e_n_msg);
+      displayMessage(show_name + e_n_msg);
       return false;
     }
   }
@@ -294,7 +294,7 @@ function submitUserData(){
       return false;
     }
     else {
-      validateMaxLength('employeename', Emp_name.val());
+      validateMaxLength('employeename', Emp_name.val(), "Employee name");
     }
 
     if (length(Emp_code.val().trim()) == 0) {
@@ -303,7 +303,7 @@ function submitUserData(){
       return false;
     }
     else {
-      validateMaxLength('employeeid', Emp_code.val());
+      validateMaxLength('employeeid', Emp_code.val(), "Employee id");
     }
 
     if (length(Email_id.val().trim()) == 0) {
@@ -312,7 +312,7 @@ function submitUserData(){
       return false;
     }
     else {
-      validateMaxLength('email_id', Email_id.val());
+      validateMaxLength('email_id', Email_id.val(), "Email id");
       var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
       if (reg.test(Email_id.val().trim()) == false) {
         displayMessage(msg.invalid_emailid);

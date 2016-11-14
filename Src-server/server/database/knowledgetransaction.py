@@ -444,23 +444,25 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
         duration = data.duration
         duration_type = data.duration_type_id
         is_active = int(data.is_active)
+        reference = data.reference
 
         table_name = "tbl_compliances"
         columns = [
             "statutory_provision",
             "compliance_task", "compliance_description",
             "document_name", "format_file", "format_file_size",
-            "penal_consequences", "frequency_id",
+            "penal_consequences", "reference_link", "frequency_id",
             "statutory_dates", "statutory_mapping_id",
             "is_active", "created_by", "created_on", "domain_id",
             "duration", "duration_type_id", "repeats_every", "repeats_type_id"
+
         ]
         values = [
             provision, compliance_task,
             compliance_description, document_name,
-            file_name, file_size, penal_consequences,
+            file_name, file_size, penal_consequences, reference,
             compliance_frequency, statutory_dates,
-            mapping_id, is_active, created_by, created_on, domain_id
+            mapping_id, is_active, created_by, created_on, domain_id,
         ]
         if compliance_frequency == 1:
             values.extend([0, 0, 0, 0])
@@ -1126,14 +1128,22 @@ def return_stautory(data):
         p_id = p_ids[-1:]
         if len(p_id) > 0:
             p_id = p_id[0]
-        p_names = [y for y in d["parent_names"].split('>>') if y != '']
+        else :
+            p_id = 0
+            p_ids = None
+        p_names = [y.strip() for y in d["parent_names"].split('>>') if y != '']
+        if len(p_names) == 0:
+            p_names = None
         result.append(
             knowledgetransaction.StatutoryInfo(
                 d["statutory_id"], d["statutory_name"],
                 d["level_id"], p_ids, p_id, p_names,
-                d["country_id"], d["domain_id"]
+                d["country_id"], d["domain_id"],
+                d["level_position"]
             )
         )
+    print result
+    print '-' * 50
     return result
 
 def return_geography(data):
@@ -1143,12 +1153,13 @@ def return_geography(data):
         p_id = p_ids[-1:]
         if len(p_id) > 0:
             p_id = p_id[0]
-        p_names = [y for y in d["parent_names"].split('>>') if y != '']
+        p_names = [y.strip() for y in d["parent_names"].split('>>') if y != '']
         result.append(
             knowledgetransaction.GeographyInfo(
                 d["geography_id"], d["geography_name"],
                 d["level_id"], p_ids, p_id, p_names,
                 bool(d["is_active"]), d["country_id"],
+                d["level_position"]
             )
         )
     return result

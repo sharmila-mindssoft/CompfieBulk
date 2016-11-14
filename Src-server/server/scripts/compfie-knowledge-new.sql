@@ -292,8 +292,8 @@ CREATE TABLE `tbl_geographies` (
   `geography_id` int(11) NOT NULL AUTO_INCREMENT,
   `geography_name` varchar(50) NOT NULL,
   `level_id` int(11) NOT NULL,
-  `parent_ids` varchar(50) DEFAULT NULL,
-  `parent_names` longtext,
+  `parent_ids` Text DEFAULT NULL,
+  `parent_names` Text DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
@@ -329,8 +329,8 @@ CREATE TABLE `tbl_statutories` (
   `statutory_id` int(11) NOT NULL AUTO_INCREMENT,
   `level_id` int(11) NOT NULL,
   `statutory_name` varchar(100) NOT NULL,
-  `parent_ids` varchar(50) DEFAULT NULL,
-  `parent_names` longtext,
+  `parent_ids` Text DEFAULT NULL,
+  `parent_names` Text DEFAULT NULL,
   `statutory_mapping_ids` varchar(50) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
@@ -870,6 +870,18 @@ CREATE TABLE `tbl_email_verification` (
   CONSTRAINT `fk_tbl_email_verification_verification_type_id` FOREIGN KEY (`verification_type_id`) REFERENCES `tbl_verification_type` (`verification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+DROP TABLE IF EXISTS `tbl_client_email_verification`;
+CREATE TABLE `tbl_client_email_verification` (
+  `client_id` int(11) NOT NULL,
+  `email_id` varchar(50) NOT NULL,
+  `verification_code` varchar(50) NOT NULL,
+  `verification_type_id` int(11) NOT NULL,
+  `expiry_date` timestamp NULL DEFAULT NULL,
+  UNIQUE KEY (`client_id`, `verification_code`, `verification_type_id`),
+  KEY `fk_tbl_client_email_verification_verification_type_id` (`verification_type_id`),
+  CONSTRAINT `fk_tbl_client_email_verification_verification_type_id` FOREIGN KEY (`verification_type_id`) REFERENCES `tbl_verification_type` (`verification_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_mobile_registration`;
 CREATE TABLE `tbl_mobile_registration` (

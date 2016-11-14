@@ -378,7 +378,7 @@ class TemplateHandler(tornado.web.RequestHandler):
         output = self.update_static_urls(output)
         token = str(time.time())
         # print token
-        self.set_secure_cookie("_xsrf", token)
+        self.set_cookie("_xsrf", token)
         # self.set_cookie("_test", to)
         # if not self.get_cookie("_xsrf"):
         #     token = self.xsrf_token

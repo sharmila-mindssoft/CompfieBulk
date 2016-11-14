@@ -137,7 +137,7 @@ function initMirror() {
     };
     $.ajax({
       url: BASE_URL + callerName,
-      // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+      headers: {'X-Xsrftoken': getCookie('_xsrf')},
       type: 'POST',
       contentType: 'application/json',
       data: toJSON(requestFrame),
@@ -539,8 +539,8 @@ function initMirror() {
         'd_id': dId,
         's_l_id': lId,
         's_name': name,
-        'p_ids': pIds,
-        'p_names': pNames
+        's_pids': pIds,
+        's_pnames': pNames
       }
     ];
     apiRequest('knowledge_master', request, callback);

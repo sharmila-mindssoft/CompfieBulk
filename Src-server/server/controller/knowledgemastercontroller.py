@@ -455,8 +455,15 @@ def process_save_statutory(db, request_frame, user_id):
     statutory_level_id = request_frame.statutory_level_id
     statutory_name = request_frame.statutory_name
     parent_ids_list = request_frame.parent_ids
-    parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
-    parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
+    parent_names_list = request_frame.parent_names
+    if parent_ids_list:
+        parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
+    else :
+        parent_ids = ''
+    if parent_names_list:
+        parent_names = " >> ".join(str(x) for x in parent_names_list)
+    else :
+        parent_names = ''
     statutory_id = None
     domain_id = request_frame.domain_id
     saved_names = [

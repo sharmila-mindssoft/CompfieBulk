@@ -280,7 +280,7 @@ class GetStatutoryMaster(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, [])
+        data = parse_dictionary(data)
         return GetStatutoryMaster()
 
     def to_inner_structure(self):
@@ -723,7 +723,8 @@ class StatutoryNatureInfo(object):
 class StatutoryInfo(object):
     def __init__(
         self, statutory_id, statutory_name, level_id, parent_ids,
-        parent_id, parent_mappings, country_id, domain_id
+        parent_id, parent_mappings, country_id, domain_id,
+        level_position
     ):
         self.statutory_id = statutory_id
         self.statutory_name = statutory_name
@@ -733,12 +734,14 @@ class StatutoryInfo(object):
         self.parent_mappings = parent_mappings
         self.country_id = country_id
         self.domain_id = domain_id
+        self.level_position = level_position
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "s_id", "s_name", "l_id", "p_ids",
-            "p_id", "p_maps", "c_id", "d_id"
+            "p_id", "p_maps", "c_id", "d_id",
+            "l_position"
         ])
         statutory_id = data.get("s_id")
         statutory_name = data.get("s_name")
@@ -748,10 +751,12 @@ class StatutoryInfo(object):
         parent_mappings = data.get("p_maps")
         country_id = data.get("c_id")
         domain_id = data.get("d_id")
+        level_position = data.get("l_position")
         return StatutoryInfo(
             statutory_id, statutory_name, level_id, parent_ids,
             parent_id, parent_mappings,
-            country_id, domain_id
+            country_id, domain_id,
+            level_position
         )
 
     def to_structure(self):
@@ -763,13 +768,15 @@ class StatutoryInfo(object):
             "p_id": self.parent_id,
             "p_maps": self.parent_mappings,
             "c_id": self.country_id,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "l_position": self.level_position
         }
 
 class GeographyInfo(object):
     def __init__(
         self, geography_id, geography_name, level_id,
-        parent_ids, parent_id, parent_names, is_active, country_id
+        parent_ids, parent_id, parent_names, is_active, country_id,
+        level_position
     ):
         self.geography_id = geography_id
         self.geography_name = geography_name
@@ -779,12 +786,14 @@ class GeographyInfo(object):
         self.parent_names = parent_names
         self.is_active = is_active
         self.country_id = country_id
+        self.level_position = level_position
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "g_id", "g_name", "l_id", "p_ids",
-            "p_id", "p_maps",  "is_active", "c_id"
+            "p_id", "p_maps", "is_active", "c_id",
+            "l_position"
         ])
         geography_id = data.get("g_id")
         geography_name = data.get("g_name")
@@ -794,9 +803,11 @@ class GeographyInfo(object):
         parent_mappings = data.get("p_maps")
         is_active = data.get("is_active")
         country_id = data.get("c_id")
+        level_position = data.get('l_position')
         return GeographyInfo(
             geography_id, geography_name, level_id, parent_ids, parent_id,
-            parent_mappings, is_active, country_id
+            parent_mappings, is_active, country_id,
+            level_position
         )
 
     def to_structure(self):
@@ -808,6 +819,7 @@ class GeographyInfo(object):
             "p_id": self.parent_id,
             "p_maps": self.parent_names,
             "is_active": self.is_active,
-            "c_id": self.country_id
+            "c_id": self.country_id,
+            "l_position": self.level_position
         }
         return data

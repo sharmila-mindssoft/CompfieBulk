@@ -1191,7 +1191,7 @@ class Compliance(object):
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id,
         duration, is_active,
-        frequency, summary
+        frequency, summary, reference
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1209,6 +1209,7 @@ class Compliance(object):
         self.is_active = is_active
         self.frequency = frequency
         self.summary = summary
+        self.reference = reference
 
     @staticmethod
     def parse_structure(data):
@@ -1220,7 +1221,8 @@ class Compliance(object):
             "statu_dates", "r_type_id",
             "r_every", "d_type_id",
             "duration", "is_active",
-            "frequency", "summary"
+            "frequency", "summary",
+            "reference"
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_provision")
@@ -1238,6 +1240,7 @@ class Compliance(object):
         is_active = data.get("is_active")
         frequency = data.get("frequency")
         summary = data.get("summary")
+        reference = data.get("reference")
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -1246,7 +1249,7 @@ class Compliance(object):
             statutory_dates, repeats_type_id,
             repeats_every, duration_type_id,
             duration, is_active,
-            frequency, summary
+            frequency, summary, reference
         )
 
     def to_structure(self):
@@ -1266,7 +1269,8 @@ class Compliance(object):
             "duration": self.duration,
             "is_active": self.is_active,
             "frequency": self.frequency,
-            "summary": self.summary
+            "summary": self.summary,
+            "reference": self.reference
         }
 
 #

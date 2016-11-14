@@ -27,10 +27,16 @@ class RequestHandler(tornado.web.RequestHandler) :
     def initialize(self, handler_map) :
         self.__handler_map = handler_map
         self.__close_callback = None
+        print '-----' * 10
+        print self.__handler_map
         for method, handler in self.__handler_map.items() :
             assert method in METHODS
             obj_method = self.__make_object_method(handler)
+            print method, handler
+            print obj_method
+
             setattr(self, method.lower(), obj_method)
+        print '-----' * 10
 
     def set_default_headers(self) :
         for name, value in self.__default_headers.items() :
@@ -224,7 +230,7 @@ class WebServer(object) :
 
         settings = {
             # "xsrf_cookies": True,
-            "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
+            # "cookie_secret": "61oETzKXQAG9zayoKe0YdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
             "gzip": True
         }
         self._application = tornado.web.Application(

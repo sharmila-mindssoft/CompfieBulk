@@ -71,7 +71,7 @@ api_params = {
     'statutory_nature_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
     'statutory_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    'statutory_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': False},
+    'statutory_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "document_name": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'compliance_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'compliance_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -80,6 +80,7 @@ api_params = {
     'comp_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'reference': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': True},
     'c_task': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'description': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'doc_name': {'type': 'STRING', 'length': 50, 'validation_method': None, 'is_optional': True},
@@ -395,7 +396,10 @@ api_params = {
     "statutory_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "StatutoryInfo"},
     "geography_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "GeographyInfo"},
     "geography_level_info" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitGeographyLevel"},
-    "mapped_compliances": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'core', "class_name": "MappedCompliance"}
+    "mapped_compliances": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'core', "class_name": "MappedCompliance"},
+
+    "s_pids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "s_pnames": {'type': 'VECTOR_TYPE_SRTING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
 }
 
@@ -418,14 +422,14 @@ api_params['not_at_all_applicable'] = api_params.get('is_active')
 api_params['is_saved'] = api_params.get('is_active')
 api_params['parent_id'] = api_params.get('geography_id')
 api_params['parent_mappings'] = api_params.get('mapping')
-api_params['p_maps'] = api_params.get('mapping')
+api_params['p_maps'] = api_params.get('s_pnames')
 api_params['level_1_statutory_id'] = api_params.get('statutory_id')
 api_params['level_1_s_id'] = api_params.get('statutory_id')
 api_params['level_1_statutory_name'] = api_params.get('statutory_name')
 api_params['g_l_id'] = api_params.get('level_id')
 api_params['g_name'] = api_params.get('geography_name')
-api_params['p_ids'] = api_params.get('parent_ids')
-api_params['p_names'] = api_params.get('mapping')
+api_params['p_ids'] = api_params.get('s_pids')
+api_params['p_names'] = api_params.get('s_pnames')
 api_params['g_id'] = api_params.get('geography_id')
 api_params['p_id'] = api_params.get('geography_id')
 api_params['g_ids'] = api_params.get('geography_id')
