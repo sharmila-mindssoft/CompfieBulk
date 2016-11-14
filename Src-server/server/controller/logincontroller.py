@@ -79,15 +79,12 @@ def process_login(db, request, session_user_ip):
     verified_login = response[1]
     user_info = response[2]
     forms = response[3]
-    user_id = verified_username.get('user_id')
-
+    uid = verified_username.get('user_id')
+    user_id = verified_login.get('user_id')
     user_category_id = verified_login.get('user_category_id')
-
-    if verified_username.get('username') is None:
-        return login.InvalidUserName()
-    elif user_id is None:
-        save_login_failure(db, user_id, session_user_ip)
-        rows = get_login_attempt_and_time(db, user_id)
+    if user_id is None and uid is not None:
+        save_login_failure(db, uid, session_user_ip)
+        rows = get_login_attempt_and_time(db, uid)
         no_of_attempts = 0
         if rows:
             no_of_attempts = rows[0]["login_attempt"]
@@ -96,6 +93,9 @@ def process_login(db, request, session_user_ip):
         else:
             captcha_text = None
         return login.InvalidCredentials(captcha_text)
+
+    elif verified_username.get('username') is None:
+        return login.InvalidCredentials(None)
 
     else:
         if login_type.lower() == "web":
