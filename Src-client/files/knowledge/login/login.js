@@ -1,4 +1,4 @@
-
+var btnLogin = $('#btn-login');
 var landingPage = null;
 var captchaStatus = false;
 var captchaText = null;
@@ -237,7 +237,7 @@ function initializeLogin() {
     if (e.keyCode == 13 && $(this).val() != '')
       performLogin($(this), $('#username'), $('#password'), $('#txt-captcha'));
   });
-  $('#btn-login').on('click', function () {
+  btnLogin.on('click', function () {
     performLogin($(this), $('#username'), $('#password'), $('#txt-captcha'));
   });
 }

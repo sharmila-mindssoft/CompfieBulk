@@ -527,7 +527,7 @@ class Database(object):
         query = "INSERT INTO %s (%s) VALUES " % (table, columns)
 
         for index, value in enumerate(valueList):
-            if index < len(valueList)-1:
+            if index < len(valueList) - 1 :
                 query += "%s," % str(value)
             else:
                 query += "%s" % str(value)
@@ -536,10 +536,11 @@ class Database(object):
 
         for index, updateColumn in enumerate(updateColumnsList):
 
-            if index < len(updateColumnsList)-1:
+            if index < len(updateColumnsList) - 1 :
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
+        print query
         return self.execute(query)
 
     ########################################################

@@ -193,7 +193,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/forgot-password",
-        "files/knowledge/forgotpassword.html",
+        "files/knowledge/forgot-password/forgot-password.html",
         None, {}
     ),
     (
@@ -242,7 +242,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/user-master",
-        "files/knowledge/user-management/user-management.html",
+        "files/knowledge/user-management/user-management-list.html",
         None, {}
     ),
     (

@@ -66,7 +66,8 @@ function initializeNavBar() {
     if (!(key in navBarItems))
       continue;
     var liObject = $('#nav-bar-templates .sub-menu-name li').clone();
-    $('.menu-name', liObject).text(key.toUpperCase());
+    $('.menu-name', liObject).append(key.toUpperCase());
+    $('.menu-name', liObject).append('<span class="caret"></span>')
     $('.menu-items-ul', liObject).addClass('menu');
     var forms = sortForms(navBarItems[key]);
     var forms2 = {};
