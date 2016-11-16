@@ -201,19 +201,9 @@ TEMPLATE_PATHS = [
         "files/knowledge/resetpassword.html",
         None, {}
     ),
-    # (
-    #     "/knowledge/login",
-    #     "files/login/login.html",
-    #     "files/mobile/login/login.html", {}
-    # ),
+
     ("/knowledge/test", "test_apis.html", None, {}),
     ("/knowledge/home", "files/knowledge/home/home.html", None, {}),
-    # (
-    #     "/knowledge/custom-controls",
-    #     "files/custom-controls/custom-controls.html",
-    #     None, {}
-    # ),
-    # common
     (
         "/knowledge/profile",
         "files/knowledge/profile.html",
@@ -221,7 +211,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/change-password",
-        "files/knowledge/changepassword.html",
+        "files/knowledge/change-password/change-password.html",
         None, {}
     ),
     # IT Admin Master
