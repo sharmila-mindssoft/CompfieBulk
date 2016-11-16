@@ -34,7 +34,16 @@ var User_group_ac = $("#usergroupval");
 var Countries = $("#countries");
 var Domains = $('#domains');
 
-var Search_status_list = $('.search-status-list');
+var Search_status = $('#search-status');
+var Search_status_ul = $('.search-status-list'); 
+var Search_status_li = $('.search-status-li');
+
+var Search_disable = $('#search-disable');
+var Search_disable_ul = $('.search-disable-list'); 
+var Search_disable_li = $('.search-disable-li');
+
+var ACUserGroup = $('#ac-usergroup');
+
 
 var Domain_ids = [];
 var Country_ids = [];
@@ -46,14 +55,14 @@ function sendCredentials(_u_id, _u_name, _e_id ) {
     'username': _u_name,
     'email_id': _e_id
   };
-  custom_alert(req_dict);
+  //custom_alert(req_dict);
   mirror.sendRegistration(req_dict, function(error, response) {
 
     if (error == null) {
-      custom_alert(msg.resend);
+      displaySuccessMessage(msg.resend);
     }
     else {
-      custom_alert(error);
+      displayMessage(error);
     }
 
   });
@@ -145,7 +154,7 @@ function renderUserList(response) {
     fetchUserData = function() {
       mirror.getAdminUserList(function(error, response) {
         if (error != null) {
-          custom_alert(error);
+          displayMessage(error);
         }
         else {
           UsersList = response.user_details;
@@ -489,8 +498,9 @@ function processFilter() {
   uname_search = $('#search-user-id').val().toLowerCase();
   email_search = $('#search-email-id').val().toLowerCase();
   cat_search = $('#search-category-name').val().toLowerCase();
-  //usr_status = UserStatus.val();
-  usr_status = 'All';
+
+  usr_status = $('.search-status-li.active').attr('value');
+  usr_disable = $('.search-disable-li.active').attr('value');
 
   filteredList = []
   for(var v in UsersList) {
@@ -509,29 +519,77 @@ function processFilter() {
       (~concat.indexOf(ename_search)) && (~uname.indexOf(uname_search)) &&
       (~email.indexOf(email_search)) && (~cat.indexOf(cat_search))
     ){
-      if (usr_status == 'All'){
+      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active) &&
+        (usr_disable == 'all' || Boolean(parseInt(usr_disable)) == data.is_disable)){
         filteredList.push(data);
       }
-      else if (Boolean(parseInt(usr_status)) == data.is_active){
-        filteredList.push(data);
-      }
+      
     }
   }
   renderUserList(filteredList);
 }
 
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+    value_element.focus();
+}
+
 function pageControls() {
 
-  /*Search_status_list.click(function (event) {
-
-    $('.search-status-list').each(function (index, el) {
-      alert('hi')
+  Search_status_ul.click(function (event) {
+    Search_status_li.each(function (index, el) {
       $(el).removeClass('active');
     });
-    //$(event).addClass('active');
-  });*/
+    $(event.target).parent().addClass('active');
 
-  User_group_ac.keyup(function(e) {
+    var currentClass = $(event.target).find('i').attr('class');
+    Search_status.removeClass();
+    if(currentClass != undefined){
+      Search_status.addClass(currentClass);
+      Search_status.text('');
+    }else{
+      Search_status.addClass('fa');
+      Search_status.text('All');
+    }
+    processFilter();
+  });
+
+  Search_disable_ul.click(function (event) {
+    Search_disable_li.each(function (index, el) {
+      $(el).removeClass('active');
+    });
+    $(event.target).parent().addClass('active');
+
+    var currentClass = $(event.target).find('i').attr('class');
+    Search_disable.removeClass();
+    if(currentClass != undefined){
+      Search_disable.addClass(currentClass);
+      Search_disable.text('');
+    }else{
+      Search_disable.addClass('fa');
+      Search_disable.text('All');
+    }
+    processFilter();
+  });
+
+  User_group_ac.keyup(function(e){
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
+    if(User_category.val() != ''){
+      condition_fields.push("user_category_id");
+      condition_values.push(User_category.val());
+    }
+
+    var text_val = $(this).val();
+    commonAutoComplete(
+      e, ACUserGroup, User_group_val, text_val, 
+      UserGroupList, "user_group_name", "user_group_id", function (val) {
+          onAutoCompleteSuccess(User_group_ac, User_group_val, val);
+      }, condition_fields, condition_values);
+  });
+
+/*  User_group_ac.keyup(function(e) {
     var textVal = $(this).val();
     getUserGroupAutocomplete(e, User_category.val(), textVal, UserGroupList, function(val) {
       User_group_ac.val(val[1]);
@@ -539,7 +597,7 @@ function pageControls() {
       User_group_ac.focus();
     });
   });
-
+*/
   FilterBox.keyup(function() {
     processFilter();
   });
