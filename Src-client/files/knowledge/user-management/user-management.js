@@ -9,9 +9,10 @@ var UserGroupList;
 var AddScreen = $('#user-add');
 var ViewScreen = $('#user-view');
 var FilterBox = $('.filter-text-box');
+var UserStatus = $('.usr-status');
 var AddButton = $('#btn-user-add');
-var CancelButton = $('.btn-user-cancel');
-
+var CancelButton = $('#btn-user-cancel');
+var SubmitButton = $('#btn-submit');
 
 var User_id = $('#userid');
 var Emp_name = $('#employeename');
@@ -23,49 +24,42 @@ var Area_code = $('#areacode');
 var Contact_no = $('#contactno');
 var mCountry_code = $('#mcountrycode');
 var Mobile_no = $('#mobileno');
-var Designation = $("designation");
+var Designation = $("#designation");
 // select box
 var User_category = $('#usercatval');
 // auto complete
 var User_group_val = $('#usergroup');
 var User_group_ac = $("#usergroupval");
 // multi select textbox
-var Country = $("#countryselected");
-var Domains = $('#domainselected');
-var Select_Box = $('#selectboxview');
-var Select_Box_Country = $('#selectboxview-country');
-var Domain_li_list = $('#ulist');
-var Country_li_list = $('#ulist-country');
-var Domain_li_active = "active_selectbox";
-var Country_li_active = "active_selectbox_country";
+var Countries = $("#countries");
+var Domains = $('#domains');
+
+var Search_status_list = $('.search-status-list');
 
 var Domain_ids = [];
 var Country_ids = [];
-var item_selected = '';
 var msg = message;
-// Confirmation dialog
-function popupWarning(message, callback) {
-  var Warning_popup = $('.warning-confirm');
-  Warning_popup.dialog({
-    title: msg.title_status_change,
-    buttons: {
-      Ok: function() {
-        $(this).dialog('close');
-        callback(true);
-      },
-      Cancel: function() {
-        $(this).dialog('close');
-        callback(false);
-      }
-    },
-    open: function() {
-      $('.warning-message').html(message);
+
+function sendCredentials(_u_id, _u_name, _e_id ) {
+  req_dict = {
+    'user_id': _u_id,
+    'username': _u_name,
+    'email_id': _e_id
+  };
+  custom_alert(req_dict);
+  mirror.sendRegistration(req_dict, function(error, response) {
+
+    if (error == null) {
+      custom_alert(msg.resend);
     }
+    else {
+      custom_alert(error);
+    }
+
   });
 }
 // User List render process
 function renderUserList(response) {
-    FilterBox.val('');
     renderUserData = function() {
       _userList = []
       if (response == null) {
@@ -78,32 +72,72 @@ function renderUserList(response) {
       var j = 1;
       $.each(_userList, function(k, v) {
         var tableRow = $('#templates .table-user-master .table-row');
-        var clone = tableRow.clone();
+        var rowClone = tableRow.clone();
 
-        $('.sno', clone).text(j);
-        $('.employee-name', clone).html(v.employee_code + ' - ' + v.employee_name);
-        $('.username',clone).html(v.username);
-        $('.email-id', clone).html(v.email_id);
-        $('.cat-name', clone).html(v.u_cat_id);
-        $('.registration-email', clone).html("");
-        // $('.user-group', clone).text(usergroup);
-        // $('.designation', clone).text(designation);
-        $('.edit-icon').attr('title', 'Edit');
-        $('.edit-icon', clone).on('click', function () {
-          displayEdit(userId);
+        $('.sno', rowClone).text(j);
+        ename = v.employee_code + ' - ' + v.employee_name;
+        $('.employee-name', rowClone).html(ename);
+        $('.username',rowClone).html(v.username_id);
+        $('.email-id', rowClone).html(v.email_id);
+        $('.cat-name', rowClone).html(v.user_category_name);
+        if (v.username_id == null){
+          $('.popup-link', rowClone).show();
+          $('.popup-link', rowClone).on('click', function() {
+            sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
+          });
+        }
+        else {
+          $('.popup-link', rowClone).hide();
+        }
+       
+        $('.edit').attr('title', 'Click Here to Edit');
+        $('.edit', rowClone).addClass('fa-pencil text-primary');
+        $('.edit', rowClone).on('click', function () {
+          displayEdit(v.user_id);
         });
-        $('.status', clone).addClass(classValue);
-        $('.active-icon').attr('title', 'Deactivate');
-        $('.inactive-icon').attr('title', 'Activate');
-        $('.status', clone).on('click', function () {
-          changeStatus(userId, passStatus);
+
+        if (v.is_active == true){
+          statusmsg = message.deactive_message;
+          $('.status').attr('title', 'Click Here to Deactivate');
+          $('.status', rowClone).removeClass('fa-times text-danger');
+          $('.status', rowClone).addClass('fa-check text-success');
+        }
+        else{
+          statusmsg = message.active_message;
+          $('.status').attr('title', 'Click Here to Activate');
+          $('.status', rowClone).removeClass('fa-check text-success');
+          $('.status', rowClone).addClass('fa-times text-danger');
+        }
+        $('.status', rowClone).on('click', function () {
+          confirm_alert(statusmsg, function(isConfirm){
+            if(isConfirm){
+              changeStatus(v.user_id, v.is_active);
+            }
+          });
         });
-        $('.disable', clone).addClass(classValue);
-        $('.enable-icon').attr('title', 'Click here to disable');
-        $('.disable-icon').attr('title', 'Client here to enable');
-        $('.disable', clone).on('click', function () {
-          changeDisable(userId, passDstatus);
+
+        if (v.is_disable == true) {
+          disablemsg = message.enable_message;
+          $('.disable').attr('title', 'Click Here to Disable');
+          $('.disable', rowClone).removeClass('fa-ban text-muted');
+          $('.disable', rowClone).addClass('fa-ban text-danger');
+        }
+        else{
+          disablemsg = message.disable_message;
+          $('.disable').attr('title', 'Click Here to Enable');
+          $('.disable', rowClone).removeClass('fa-ban text-danger');
+          $('.disable', rowClone).addClass('fa-ban text-muted');
+        }
+        $('.disable', rowClone).on('click', function () {
+          confirm_alert(disablemsg, function(isConfirm){
+            if(isConfirm){
+              changeDisable(v.user_id, v.is_disable);
+            }
+          });
         });
+
+
+        $('.tbody-user-list').append(rowClone);
         j = j + 1;
       });
     }
@@ -126,6 +160,29 @@ function renderUserList(response) {
     if (response == null) {
       fetchUserData();
     }
+    else {
+      renderUserData();
+    }
+}
+
+function resetValues(){
+  User_id.val('');
+  Emp_name.val('');
+  Emp_code.val('');
+  Address.val('');
+  Email_id.val('');
+  Area_code.val('');
+  Contact_no.val('');
+  Mobile_no.val('');
+  User_group_val.val('');
+  User_group_ac.val('');
+  Designation.val('');
+  Country_ids = [];
+  Domain_ids = [];
+  loadUserCategories();
+  loadCountries();
+  loadDomains();
+  User_category.focus();
 }
 
 function showList() {
@@ -137,20 +194,41 @@ function showList() {
 function showAddScreen() {
   ViewScreen.hide();
   AddScreen.show();
-  User_id.val('');
-  displayMessage('');
-  loadUserCategories();
-  Country_ids = [];
-  Domain_ids = [];
-  Emp_name.focus();
+  resetValues();
 }
 
 function loadUserCategories() {
-  var User_category = $('#usercatval');
-  $.each(userCategoryList, function (key, value) {
-    User_category.append($('<option></option>').val(userCategoryList[key].user_category_id).html(userCategoryList[key].user_category_name));
+  User_category.empty();
+  User_category.append($('<option></option>').val('').html('Select'));
+  $.each(CategoryList, function (key, value) {
+    User_category.append($('<option></option>').val(CategoryList[key].user_category_id).html(CategoryList[key].user_category_name));
   });
 }
+
+function loadCountries() {
+  Countries.empty();
+  $.each(CountryList, function (key, value) {
+    var optText = '<option></option>';
+    if($.inArray(CountryList[key].country_id, Country_ids) >= 0){
+      optText = '<option selected="selected"></option>';
+    }
+    Countries.append($(optText).val(CountryList[key].country_id).html(CountryList[key].country_name));
+  });
+  Countries.multiselect('rebuild');
+}
+
+function loadDomains() {
+  Domains.empty();
+  $.each(DomainsList, function (key, value) {
+    var optText = '<option></option>';
+    if($.inArray(DomainsList[key].domain_id, Domain_ids) >= 0){
+      optText = '<option selected="selected"></option>';
+    }
+    Domains.append($(optText).val(DomainsList[key].domain_id).html(DomainsList[key].domain_name));
+  });
+  Domains.multiselect('rebuild');
+}
+
 
 // Api failure messages
 function possibleFailures(error) {
@@ -175,37 +253,44 @@ function possibleFailures(error) {
 }
 // View field values in edit mode
 function displayEdit(userId) {
-  displayMessage('');
-  User_id.val(userId);
+  showAddScreen();
+  //displayMessage('');
+  User_id.val(parseInt(userId));
   for (var v in UsersList) {
     data = UsersList[v];
     if (data.user_id == userId) {
-      loadFormCategories();
-      $('#categoryName option[value = ' + userCatId + ']').attr('selected', 'selected');
+      userCatId = data.user_category_id;
+      // loadFormCategories();
+      $('#usercatval option[value = ' + userCatId + ']').attr('selected', 'selected');
       Emp_name.val(data.employee_name);
       Emp_code.val(data.employee_code);
       Address.val(data.address);
       Designation.val(data.designation);
-      var conatct = data.contact_no.split('-');
-      Country_code.val(contact[0]);
-      Area_code.val(contact[1]);
-      Contact_no.val(contact[2]);
+      if (data.contact_no != null) {
+        var contact = data.contact_no.split('-');
+        Country_code.val(contact[0]);
+        Area_code.val(contact[1]);
+        Contact_no.val(contact[2]);
+      }
       var mobile = data.mobile_no.split('-');
       mCountry_code.val(mobile[0]);
       Mobile_no.val(mobile[1]);
       User_group_val.val(data.user_group_id);
       for (var k in UserGroupList) {
-        if (userGroupsList[k].user_group_id == data.user_group_id) {
+        if (UserGroupList[k].user_group_id == data.user_group_id) {
           User_group_ac.val(UserGroupList[k].user_group_name);
           break;
         }
       }
       Designation.val(data.designation);
       Address.val(data.address);
+
       Domain_ids = data.domain_ids;
-      Domains.val(Domain_ids.length + ' Selected');
+      loadDomains();
+
       Country_ids = data.country_ids;
-      Country.val(Country_ids.length + ' Selected');
+      loadCountries()
+
       Email_id.val(data.email_id);
       break;
     }
@@ -213,41 +298,48 @@ function displayEdit(userId) {
 }
 // Submit button process
 function submitUserData(){
-  function validateMaxLength(key_name, value) {
+  function validateMaxLength(key_name, value, show_name) {
     e_n_msg = validateLength(key_name, value.trim())
     if (e_n_msg != true) {
-      displayMessage(e_n_msg);
+      displayMessage(show_name + e_n_msg);
       return false;
     }
+    return true;
   }
 
   function validateMandatory() {
-    displayMessage('');
-    if (length(Emp_name.val().trim()) == 0) {
+    //displayMessage('');
+    if (User_category.val().trim().length == 0) {
+      displayMessage(msg.user_category_required);
+      User_category.focus();
+      return false;
+    }
+
+    if (Emp_name.val().trim().length == 0) {
       displayMessage(msg.employeename_required);
       Emp_name.focus();
       return false;
     }
     else {
-      validateMaxLength('employeename', Emp_name.val());
+      validateMaxLength('employeename', Emp_name.val(), "Employee name");
     }
 
-    if (length(Emp_code.val().trim()) == 0) {
+    if (Emp_code.val().trim().length == 0) {
       displayMessage(msg.employeeid_required);
       Emp_code.focus();
       return false;
     }
     else {
-      validateMaxLength('employeeid', Emp_code.val());
+      validateMaxLength('employeeid', Emp_code.val(), "Employee id");
     }
 
-    if (length(Email_id.val().trim()) == 0) {
+    if (Email_id.val().trim().length == 0) {
       displayMessage(msg.emailid_required);
       Email_id.focus();
       return false;
     }
     else {
-      validateMaxLength('email_id', Email_id.val());
+      validateMaxLength('email_id', Email_id.val(), "Email id");
       var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
       if (reg.test(Email_id.val().trim()) == false) {
         displayMessage(msg.invalid_emailid);
@@ -256,36 +348,43 @@ function submitUserData(){
       }
     }
 
-    if (length(User_group_val.val().trim()) == 0) {
+    if (User_group_val.val().trim().length == 0) {
       displayMessage(msg.usergroup_required);
       User_group_ac.focus();
       return false;
     }
-    else if (Country_ids.length == 0) {
+    
+    if (Countries.val() == null) {
       displayMessage(msg.country_required);
-      Country.focus().click();
+      Countries.focus();
       return false;
+    }else{
+      Country_ids = Countries.val().map(Number);
     }
-    else if (Domain_ids.length == 0) {
+
+    if (Domains.val() == null) {
       displayMessage(msg.domain_required);
-      Domains.focus().click();
+      Domains.focus();
       return false;
+    }else{
+      Domain_ids=Domains.val().map(Number);
     }
+
     return true;
   }
 
   function process_submit() {
-    if (validateMandatory == false)
+    if (validateMandatory() == false)
     {
       return false;
     }
     else {
       userDetail = {
-        'u_cat_id': User_category,
-        'email_id': Email_id.val().trim(),
-        'ug_id': User_group_val.val().trim(),
+        'u_cat_id': parseInt(User_category.val()),
+        'ug_id': parseInt(User_group_val.val().trim()),
         'employee_name': Emp_name.val().trim(),
         'employee_code': Emp_code.val().trim(),
+        'email_id': Email_id.val().trim(),
         'contact_no': Country_code.val().trim() + '-' + Area_code.val().trim() + '-' + Contact_no.val().trim(),
         'mobile_no':  mCountry_code.val().trim() + '-' + Mobile_no.val().trim(),
         'address': Address.val().trim(),
@@ -293,9 +392,11 @@ function submitUserData(){
         'country_ids':  Country_ids,
         'domain_ids': Domain_ids,
       };
+      console.log(userDetail);
       if (User_id.val() == '') {
         mirror.saveAdminUser(userDetail, function(error, response) {
           if (error == null) {
+            displaySuccessMessage(msg.save_success);
             showList();
           }
           else {
@@ -304,9 +405,10 @@ function submitUserData(){
         });
       }
       else {
-        userDetail["user_id"] = User_id.val().trim();
-        mirror.saveAdminUser(userDetail, function(error, response) {
+        userDetail["user_id"] = parseInt(User_id.val());
+        mirror.updateAdminUser(userDetail, function(error, response) {
           if (error == null) {
+            displaySuccessMessage(msg.update_success);
             showList();
           }
           else {
@@ -316,45 +418,41 @@ function submitUserData(){
       }
     }
   }
+  process_submit();
 }
 // change status event action
 function changeStatus(userId, isActive) {
-  var msgstatus = msg.deactive_message;
-  if (isActive) {
-    msgstatus = msg.active_message;
+  if(isActive == true){
+    isActive = false;
+  }else{
+    isActive = true;
   }
-  popupWarning(msgstatus , function(isConfirm) {
-    if (isConfirm) {
-      mirror.changeAdminUserStatus(userId, isActive, function(error, response) {
-        if (error == null) {
-          renderUserList(null);
-        }
-        else {
-          possibleFailures(error);
-        }
-      });
+  mirror.changeAdminUserStatus(userId, isActive, function(error, response) {
+    if (error == null) {
+      showList();
+    }
+    else {
+      possibleFailures(error);
     }
   });
 }
 // disable action
 function changeDisable(userId, isDisable) {
-  var msgstatus = msg.disable_message;
-  if (isDisable) {
-    msgstatus = msg.enable_message;
+  if(isDisable == true){
+    isDisable = false;
+  }else{
+    isDisable = true;
   }
-  popupWarning(msgstatus , function(isConfirm) {
-    if (isConfirm) {
-      mirror.changeAdminUserStatus(userId, isDisable, function(error, response) {
-        if (error == null) {
-          renderUserList(null);
-        }
-        else {
-          possibleFailures(error);
-        }
-      });
+  mirror.changeAdminDisaleStatus(userId, isDisable, function(error, response) {
+    if (error == null) {
+      showList();
+    }
+    else {
+      possibleFailures(error);
     }
   });
 }
+
 // tab key order
 function fieldOrder() {
   Emp_name.on('input', function (e) {
@@ -388,10 +486,11 @@ function fieldOrder() {
 // List filter process
 function processFilter() {
   ename_search = $('#search-employee-name').val().toLowerCase();
-  uname_search = $('#search-username').val().toLowerCase();
-  email_search = $('#search-email').val().toLowerCase();
-  cat_search = $('#search-category').val().toLowerCase();
-  status_search = $('#search-status').val();
+  uname_search = $('#search-user-id').val().toLowerCase();
+  email_search = $('#search-email-id').val().toLowerCase();
+  cat_search = $('#search-category-name').val().toLowerCase();
+  //usr_status = UserStatus.val();
+  usr_status = 'All';
 
   filteredList = []
   for(var v in UsersList) {
@@ -399,213 +498,42 @@ function processFilter() {
     en = data.employee_name.toLowerCase();
     ec = data.employee_code.toLowerCase();
     concat = ec + ' - ' + en;
-    uname = data.username.toLowerCase();
+    uname = data.username_id;
+    if (uname)
+      uname = uname.toLowerCase();
+    else
+      uname = '';
     email = data.email_id.toLowerCase();
-    cat = data.category_name.toLowerCase();
+    cat = data.user_category_name.toLowerCase();
     if (
       (~concat.indexOf(ename_search)) && (~uname.indexOf(uname_search)) &&
       (~email.indexOf(email_search)) && (~cat.indexOf(cat_search))
     ){
-      filteredList.push(data);
+      if (usr_status == 'All'){
+        filteredList.push(data);
+      }
+      else if (Boolean(parseInt(usr_status)) == data.is_active){
+        filteredList.push(data);
+      }
     }
   }
   renderUserList(filteredList);
 }
 
 function pageControls() {
-  function onKeyUpDownSelect(e, item) {
-    // Key code : 40- down arrow , 38- up arrow , 32- space , 13- enter key.
 
-    function highlight_row(n_item) {
-      li_val = $('#' + item + ' li');
-      li_val.removeClass('auto-selected');
-      $('#' + item + ' li:eq('+ n_item + ')').addClass('auto-selected');
-    }
+  /*Search_status_list.click(function (event) {
 
-    function remove_select(n_item, rklass) {
-      $('#' + item + ' li:eq('+ n_item + ')').removeClass(rklass);
-    }
-
-    function add_select(n_item, aklass) {
-      $('#' + item + ' li:eq('+ n_item + ')').addClass(aklass);
-    }
-
-    function get_id(n_item) {
-      $('#' + item + ' li:eq('+ n_item + ')').attr('id');
-    }
-
-    function get_class(item) {
-      $('#' + item + ' li:eq('+ n_item + ')').attr('class');
-    }
-
-    if(e.keyCode != 40 && e.keyCode != 38 && e,keyCode != 32) {
-      item_selected = '';
-    }
-    if (e.keyCode == 13) {
-      Select_Box.hide();
-      Select_Box_Country.hide()
-    }
-
-    if (e.keyCode == 40) {
-      if(item_selected == '') {
-        item_selected = 0;
-      }
-      else if (item_selected + 1 < li_val.length) {
-        item_selected += 1;
-      }
-      highlight_row(item_selected);
-      return false;
-    }
-
-    if (e.keyCode == 38) {
-      if(item_selected == '') {
-        item_selected = 0;
-      }
-      else if (item_selected > 0) {
-        item_selected -= 1;
-      }
-      highlight_row(item_selected);
-      return false;
-    }
-
-    if (e.keyCode == 32) {
-      remove_select(item_selected, 'auto-selected');
-      var multi_select_id = parseInt(get_id(item_selected));
-      var item_class = get_class(item_selected);
-
-      if (item == 'ulist') {
-        // Domain select box
-        domain_klass = 'active_selectbox';
-        if (item_class == domain_klass) {
-          remove_select(item_selected, domain_klass);
-          Domain_ids.splice(Domain_ids.indexOf(multi_select_id));
-        }
-        else {
-          add_select(item_selected, domain_klass);
-          Domain_ids.push(multi_select_id);
-        }
-        Domains.val(Domain_ids.length + ' Selected');
-      }
-      else {
-        // country select box
-        country_klass = "active_selectbox_country"
-        if (item == country_klass) {
-          remove_select(item_selected, country_klass);
-          Country_ids.splice(Country_ids.indexOf(multi_select_id));
-        }
-        else {
-          add_select(item_selected, country_klass);
-          Country_ids.push(multi_select_id);
-        }
-        Country.val(Country_ids.length + ' Selected');
-      }
-      return false;
-    }
-  }
-
-  $('.hideselect').mouseleave(function() {
-    item_selected = '';
-    Select_Box.hide();
-    Select_Box_Country.hide();
-  });
-
-  function chkbox_select( item, id, name, active) {
-    if (item = 'ulist') {
-      klass = Domain_li_active;
-    }
-    else {
-      klass = Country_li_active;
-    }
-    eveClick = "active_click(this)";
-    li_string= ''
-    if (active == true) {
-      li_string  = '<li id="'+ id +'" class="'+ klass + '" onclick="'+ eveClick + '" >'+ name +'</li>'
-    }
-    else {
-     li_string  = '<li id="'+ id +'" onclick="'+ eveClick + '" >'+ name +'</li>'
-    }
-    return li_string;
-  }
-
-  Domains.focus(function() {
-    Select_Box.show();
-    Domain_li_list.empty();
-    var str = '';
-    for (var i in DomainsList) {
-      d = DomainsList[i];
-      if (d.is_active == true) {
-        active = false;
-        if ($.inArray(d.domain_id, Domain_ids) >= 0) {
-          active = true;
-        }
-        else {
-          active = false;
-        }
-        str += chkbox_select('ulist', d.domain_id, d.domain_name, active);
-      }
-    }
-    Domain_li_list.append(str);
-  });
-  Domains.keyup(function(e) {
-    onKeyUpDownSelect(e, 'ulist');
-  });
-
-  Country.focus(function() {
-    Select_Box_Country.show();
-    Country_li_list.empty();
-    var str = '';
-    for (var i in CountryList) {
-      d = DomainsList[i];
-      if (d.is_active == true) {
-        active = false;
-        if ($.inArray(d.country_id, Country_ids) >= 0) {
-          active = true;
-        }
-        else {
-          active = false;
-        }
-        str += chkbox_select('ulist-country', d.country_id, d.country_name, active);
-      }
-    }
-    Country_li_list.append(str);
-  });
-  Country.keyup(function(e) {
-    onKeyUpDownSelect(e, 'ulist-country');
-  });
-
-  function active_click(element) {
-    domains_class = 'active_selectbox';
-    country_class = 'active_selectbox_country';
-
-    e_type = ''
-    klass = $(element).attr('class');
-    if (e_type) {
-      if (klass == domains_class) {
-        $(element).removeClass(domains_class);
-        Domain_ids.splice(Domain_ids.indexOf(parseInt(element.id)));
-      }
-      else {
-        $(element).addClass(domains_class);
-        Domain_ids.push(parseInt(element.id));
-      }
-      Domains.val(Domain_ids.length + ' Selected');
-    }
-    else {
-      if (klass == country_class) {
-        $(element).removeClass(country_class);
-        Country_ids.splice(Country_ids.indexOf(parseInt(element.id)));
-      }
-      else {
-        $(element).addClass(country_class);
-        Country_ids.push(parseInt(element.id));
-      }
-      Country.val(Country_ids.length + ' Selected');
-    }
-  }
+    $('.search-status-list').each(function (index, el) {
+      alert('hi')
+      $(el).removeClass('active');
+    });
+    //$(event).addClass('active');
+  });*/
 
   User_group_ac.keyup(function(e) {
     var textVal = $(this).val();
-    getUserGroupAutocomplete(e, textVal, UserGroupList, function(val) {
+    getUserGroupAutocomplete(e, User_category.val(), textVal, UserGroupList, function(val) {
       User_group_ac.val(val[1]);
       User_group_val.val(val[0]);
       User_group_ac.focus();
@@ -618,17 +546,21 @@ function pageControls() {
   CancelButton.click(function() {
     showList();
   });
-  AddButton.on('click', function() {
-    alert('hi');
+  AddButton.click(function() {
     showAddScreen();
   });
+  SubmitButton.click(function() {
+    submitUserData();
+  });
+  UserStatus.change(function() {
+    processFilter();
+  });
 }
-
 // page load
 function initialize() {
   renderUserList(null);
   pageControls();
-  Emp_name.focus();
+  //Emp_name.focus();
   fieldOrder();
 }
 

@@ -218,10 +218,10 @@ var message = {
   'should_not_exceed': ' should not exceed ',
   'remarks_required': 'Remarks Required',
   'password_weak': 'Password should not be Weak',
-  'active_message': 'Are you sure want to activate?',
-  'deactive_message': 'Are you sure want to deactivate?',
-  'disable_message': 'Are you sure want to disable?',
-  'enable_message': 'Are you sure want to enable?',
+  'active_message': 'You want to activate this record',
+  'deactive_message': 'You want to deactivate this record',
+  'disable_message': 'You want to disable this record',
+  'enable_message': 'You want to enable this record',
   'title_status_change': 'Change Status',
   'title_promote_admin': 'Promote Admin',
   'cannot_promote_sp_admin': 'Cannot promote a service provider as admin',
@@ -297,7 +297,10 @@ var message = {
   "unit_saved": "Unit(s) Saved successfully",
   "unit_updated": "Units(s) Updated Successfully",
   "no_legal_entity_selected" : "Atleast one legalentity should select",
-  "no_user_selected" : "No user selected for assign"
+  "no_user_selected" : "No user selected for assign",
+  "save_success" : "Record Saved Successfully",
+  "update_success" : "Record Updated Successfully",
+  'user_category_required': 'User Category Required',
 };
 
 function clearMessage() {

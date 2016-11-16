@@ -242,7 +242,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/user-master",
-        "files/knowledge/user-management/user-management-list.html",
+        "files/knowledge/user-management/user-management.html",
         None, {}
     ),
     (
