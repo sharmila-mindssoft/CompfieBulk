@@ -65,9 +65,6 @@
 .multiselect-parent .dropdown-menu {
   width: 300px;
 }
-.margin-10 {
-  margin: 10px !important;
-}
 .no-margin {
   margin:0px !important;
 }
@@ -100,7 +97,7 @@
 }
 .height-250 {
   max-height: 300px;
-  overflow-y: auto; 
+  overflow-y: auto;
 }
 .table-list>tbody>tr:nth-of-type(odd) {
   background-color: #fff !important;
@@ -677,50 +674,7 @@ li.sortable-placeholder {
   resize: vertical;
   overflow: auto
 }
-.table {
-  font-size: 12px !important
-}
+
 .default-display-none {
     display: none;
-}
-
-.ac-textbox li
-{
-list-style-type:none; line-height:25px;
-
-}
-.ac-textbox ul {
-  background: #ffffff none repeat scroll 0 0;
-    border: 1px solid gray;
-    line-height: 30px;
-    list-style: outside none none;
-    max-height: 200px;
-    overflow-y: scroll;
-    padding-left: 0px;
-    position: absolute;
-    width: 94%;
-    z-index: 1;
-}
-.ac-textbox ul li {
-  font-size: 0.8em;
-  padding-right: 0.3em;
-  padding-left:0.3em;
-  vertical-align: center;
-  cursor: pointer;
-}
-.ac-textbox ul li:hover{
-  background: #EAE8E8;
-}
-
-.auto-selected {
-    background: #EAE8E8;
-}
-.search-status-li a {
-  cursor: pointer;
-}
-.search-disable-li a {
-  cursor: pointer;
-}
-#btn-user-cancel {
-  cursor: pointer;
 }
