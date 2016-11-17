@@ -357,6 +357,12 @@ function submitUserData(){
       }
     }
 
+    if (Mobile_no.val().trim().length == 0) {
+      displayMessage(msg.mobile_required);
+      Mobile_no.focus();
+      return false;
+    }
+
     if (User_group_val.val().trim().length == 0) {
       displayMessage(msg.usergroup_required);
       User_group_ac.focus();
@@ -579,25 +585,16 @@ function pageControls() {
     if(User_category.val() != ''){
       condition_fields.push("user_category_id");
       condition_values.push(User_category.val());
+
+      var text_val = $(this).val();
+      commonAutoComplete(
+        e, ACUserGroup, User_group_val, text_val, 
+        UserGroupList, "user_group_name", "user_group_id", function (val) {
+            onAutoCompleteSuccess(User_group_ac, User_group_val, val);
+        }, condition_fields, condition_values);
     }
-
-    var text_val = $(this).val();
-    commonAutoComplete(
-      e, ACUserGroup, User_group_val, text_val, 
-      UserGroupList, "user_group_name", "user_group_id", function (val) {
-          onAutoCompleteSuccess(User_group_ac, User_group_val, val);
-      }, condition_fields, condition_values);
   });
 
-/*  User_group_ac.keyup(function(e) {
-    var textVal = $(this).val();
-    getUserGroupAutocomplete(e, User_category.val(), textVal, UserGroupList, function(val) {
-      User_group_ac.val(val[1]);
-      User_group_val.val(val[0]);
-      User_group_ac.focus();
-    });
-  });
-*/
   FilterBox.keyup(function() {
     processFilter();
   });

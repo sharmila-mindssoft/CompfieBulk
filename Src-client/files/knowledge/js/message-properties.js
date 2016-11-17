@@ -301,7 +301,8 @@ var message = {
   "save_success" : "Record Saved Successfully",
   "update_success" : "Record Updated Successfully",
   'user_category_required': 'User Category Required',
-  "resend": 'Resend Email Successfully'
+  "resend": 'Resend Email Successfully',
+  'mobile_required': 'Mobile Number Required',
 };
 
 function clearMessage() {

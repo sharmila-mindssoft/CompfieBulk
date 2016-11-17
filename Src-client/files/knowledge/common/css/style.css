@@ -715,6 +715,12 @@ list-style-type:none; line-height:25px;
 .auto-selected {
     background: #EAE8E8;
 }
-.search-status a {
+.search-status-li a {
+  cursor: pointer;
+}
+.search-disable-li a {
+  cursor: pointer;
+}
+#btn-user-cancel {
   cursor: pointer;
 }
