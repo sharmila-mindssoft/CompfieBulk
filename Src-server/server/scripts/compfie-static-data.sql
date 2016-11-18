@@ -24,11 +24,11 @@ INSERT INTO tbl_form_type VALUES(4, "My Accounts");
 INSERT INTO tbl_forms VALUES(1, 1, 'Country', '/knowledge/country-master', 1,  null);
 INSERT INTO tbl_forms VALUES(2, 1, 'Domain', '/knowledge/domain-master', 2, null);
 INSERT INTO tbl_forms VALUES(3, 1, 'User Group', '/knowledge/user-group-master', 3, null);
-INSERT INTO tbl_forms VALUES(4, 1, 'Geography Level Master', '/knowledge/geography-level-master', 4, 'Geography');
+INSERT INTO tbl_forms VALUES(4, 1, 'Geography Level', '/knowledge/geography-level-master', 4, 'Geography');
 INSERT INTO tbl_forms VALUES(5, 1, 'Geography Master', '/knowledge/geography-master', 5, 'Geography');
 INSERT INTO tbl_forms VALUES(6, 1, 'Organization Master', '/knowledge/industry-master', 6, null);
-INSERT INTO tbl_forms VALUES(7, 1, 'Statutory Nature Master', '/knowledge/statutory-nature-master', 7, 'Statutory');
-INSERT INTO tbl_forms VALUES(8, 1, 'Statutory Level Master', '/knowledge/statutory-level-master', 8, 'Statutory');
+INSERT INTO tbl_forms VALUES(7, 1, 'Statutory Nature', '/knowledge/statutory-nature-master', 7, 'Statutory');
+INSERT INTO tbl_forms VALUES(8, 1, 'Statutory Level', '/knowledge/statutory-level-master', 8, 'Statutory');
 INSERT INTO tbl_forms VALUES(9, 1, 'Validity Date Settings', '/knowledge/validity-date-settings', 9, null);
 -- Transaction
 INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-master', 10, null);
