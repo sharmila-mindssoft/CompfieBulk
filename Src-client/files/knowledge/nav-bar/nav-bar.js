@@ -88,6 +88,7 @@ function initializeNavBar() {
         $('.menu-items-ul.menu', liObject).append(item);
       } else {
         var parentLi = $('#nav-bar-templates .sub-menu-name li').clone();
+        parentLi.addClass('dropdown-submenu')
         $('.menu-name', parentLi).text(toUpperCamelCase(form));
         for (var j = 0; j < forms2[form].length; j++) {
           var item = getItemObject(forms2[form][j].form_url, forms2[form][j].form_name);
