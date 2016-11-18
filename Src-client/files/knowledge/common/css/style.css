@@ -691,15 +691,15 @@ list-style-type:none; line-height:25px;
 }
 .ac-textbox ul {
   background: #ffffff none repeat scroll 0 0;
-    border: 1px solid gray;
-    line-height: 30px;
-    list-style: outside none none;
-    max-height: 200px;
-    overflow-y: scroll;
-    padding-left: 0px;
-    position: absolute;
-    width: 94%;
-    z-index: 1;
+  border: 1px solid gray;
+  line-height: 30px;
+  list-style: outside none none;
+  max-height: 200px;
+  overflow-y: scroll;
+  padding-left: 0px;
+  position: absolute;
+  width: 94%;
+  z-index: 1;
 }
 .ac-textbox ul li {
   font-size: 0.8em;
@@ -723,4 +723,7 @@ list-style-type:none; line-height:25px;
 }
 #btn-user-cancel {
   cursor: pointer;
+}
+.custom-modal-text div{
+  width:360px;
 }

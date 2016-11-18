@@ -1876,7 +1876,7 @@ BEGIN
     WHERE T1.user_category_id > 2
 	ORDER BY T1.employee_name;
 
-    SELECT user_id, domain_id from tbl_user_domains;
+    SELECT user_id, domain_id, countryid from tbl_user_domains;
     SELECT user_id, country_id from tbl_user_countries;
 
 END //

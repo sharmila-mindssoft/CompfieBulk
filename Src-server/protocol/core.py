@@ -2602,7 +2602,7 @@ class UserDetails(object):
             "email_id", "user_group_id",
             "contact_no", "mobile_no",
             "address", "designation",
-            "country_ids", "domain_ids",
+            "country_ids", "country_wise_domain",
             "is_active", "is_disable", "username_id"
         ])
         user_id = data.get("user_id")
@@ -2617,7 +2617,7 @@ class UserDetails(object):
         address = data.get("address")
         designation = data.get("designation")
         country_ids = data.get("country_ids")
-        domain_ids = data.get("domain_ids")
+        domain_ids = data.get("country_wise_domain")
         is_active = data.get("is_active")
         is_disable = data.get("is_disable")
         username = data.get("username_id")
@@ -2645,7 +2645,7 @@ class UserDetails(object):
             "address": self.address,
             "designation": self.designation,
             "country_ids": self.country_ids,
-            "domain_ids": self.domain_ids,
+            "country_wise_domain": self.domain_ids,
             "is_active": self.is_active,
             "is_disable": self.is_disable,
             "username_id": self.username,

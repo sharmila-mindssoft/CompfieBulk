@@ -677,10 +677,12 @@ def save_user_countries(
 def save_user_domains(
     db, domain_ids, user_id, session_user
 ):
+    print '----------------------------------------'
+    print domain_ids
     current_time_stamp = get_date_time()
-    domain_columns = ["user_id", "domain_id", "assigned_by", "assigned_on"]
+    domain_columns = ["user_id", "domain_id", "country_id", "assigned_by", "assigned_on"]
     domain_values_list = [
-        (user_id, int(domain_id), session_user, current_time_stamp) for domain_id in domain_ids
+        (user_id, int(d.domain_id), int(d.country_id), session_user, current_time_stamp) for d in domain_ids
     ]
     result = db.bulk_insert(
         tblUserDomains, domain_columns, domain_values_list
@@ -763,10 +765,10 @@ def update_user_status(db, user_id, is_active, session_user):
 # Return Type : Returns True on Successfull update, Other wise raises process
 #               error
 ###############################################################################
-def update_disable_status(db, user_id, is_disable, session_user):
+def update_disable_status(db, user_id, is_disable, remarks, session_user):
     result = db.call_update_proc(
         "sp_users_disable_status",
-        (user_id, is_disable, session_user, get_date_time())
+        (user_id, is_disable, remarks, session_user, get_date_time())
     )
     if result is False:
         raise process_error("E039")

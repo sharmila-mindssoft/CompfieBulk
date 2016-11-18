@@ -6,12 +6,13 @@ from server.constants import (
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
     CLIENT_DOCS_BASE_PATH
 )
-from server.common import (save_file_in_path)
+from server.common import (save_file_in_path, encrypt)
 from server.database.admin import *
 from server.database.general import (
     get_user_form_ids,
     get_notifications, get_audit_trails,
-    update_profile
+    update_profile,
+    verify_password
 )
 
 __all__ = [
@@ -25,7 +26,8 @@ __all__ = [
     "process_change_country_status", "process_get_countries",
     "process_get_notifications",
     "process_update_notification_status",
-    "process_uploaded_file"
+    "process_uploaded_file",
+    "process_verify_password"
 ]
 
 forms = [1, 2]
@@ -102,11 +104,18 @@ def process_general_request(request, db):
         result = process_update_notification_status(db, request_frame, user_id)
         logger.logKnowledgeApi("UpdateNotificationStatus", "process end")
 
+    elif type(request_frame) is general.VerifyPassword:
+        logger.logKnowledgeApi("VerifyPassword", "process begin")
+        result = process_verify_password(db, request_frame, user_id)
+        logger.logKnowledgeApi("VerifyPassword", "process end")
+
     elif type(request_frame) is general.GetNotifications:
         logger.logKnowledgeApi("GetNotifications", "process begin")
         result = process_get_notifications(db, request_frame, user_id)
         logger.logKnowledgeApi("GetNotifications", "process end")
     return result
+
+    
 
 
 def validate_user_session(db, session_token, client_id=None):
@@ -382,3 +391,17 @@ def process_uploaded_file(info, f_type, client_id=None):
     else:
         print "is_valid ", is_valid
     return res
+
+########################################################
+# To Handle the verify password request
+########################################################
+def process_verify_password(db, request, user_id):
+    password = request.password
+    encrypt_password = encrypt(password)
+    response = verify_password(db, user_id, encrypt_password)
+
+    
+    if response == 0:
+        return general.InvalidPassword()
+    else:
+        return general.VerifyPasswordSuccess()

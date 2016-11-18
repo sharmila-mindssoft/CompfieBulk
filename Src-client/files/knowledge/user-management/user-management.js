@@ -1,4 +1,3 @@
-
 var UsersList;
 var DomainsList;
 var CountryList;
@@ -13,6 +12,12 @@ var UserStatus = $('.usr-status');
 var AddButton = $('#btn-user-add');
 var CancelButton = $('#btn-user-cancel');
 var SubmitButton = $('#btn-submit');
+var PasswordSubmitButton = $('#password-submit');
+
+var CurrentPassword = $('#current-password');
+var Remark = $('#remark');
+var RemarkView = $('.remark-view');
+var isAuthenticate;
 
 var User_id = $('#userid');
 var Emp_name = $('#employeename');
@@ -44,10 +49,10 @@ var Search_disable_li = $('.search-disable-li');
 
 var ACUserGroup = $('#ac-usergroup');
 
-
 var Domain_ids = [];
 var Country_ids = [];
 var msg = message;
+
 
 function sendCredentials(_u_id, _u_name, _e_id ) {
   req_dict = {
@@ -117,10 +122,26 @@ function renderUserList(response) {
           $('.status', rowClone).removeClass('fa-check text-success');
           $('.status', rowClone).addClass('fa-times text-danger');
         }
-        $('.status', rowClone).on('click', function () {
+        $('.status', rowClone).on('click', function (e) {
+          CurrentPassword.val('');
+          Remark.val('');
+          RemarkView.hide();
           confirm_alert(statusmsg, function(isConfirm){
             if(isConfirm){
-              changeStatus(v.user_id, v.is_active);
+              Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+                complete:   function() {
+                  CurrentPassword.focus();
+                  isAuthenticate = false;
+                },
+                close:   function() {
+                  if(isAuthenticate){
+                    changeStatus(v.user_id, v.is_active);
+                  }
+                },
+              });
+              e.preventDefault();
             }
           });
         });
@@ -137,10 +158,26 @@ function renderUserList(response) {
           $('.disable', rowClone).removeClass('fa-ban text-danger');
           $('.disable', rowClone).addClass('fa-ban text-muted');
         }
-        $('.disable', rowClone).on('click', function () {
+        $('.disable', rowClone).on('click', function (e) {
+          CurrentPassword.val('');
+          Remark.val('');
+          RemarkView.show();
           confirm_alert(disablemsg, function(isConfirm){
             if(isConfirm){
-              changeDisable(v.user_id, v.is_disable);
+              Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+                complete:   function() {
+                  CurrentPassword.focus();
+                  isAuthenticate = false;
+                },
+                close:   function() {
+                  if(isAuthenticate){
+                    changeDisable(v.user_id, v.is_disable);
+                  }
+                },  
+              });
+              e.preventDefault();
             }
           });
         });
@@ -228,16 +265,37 @@ function loadCountries() {
 
 function loadDomains() {
   Domains.empty();
-  $.each(DomainsList, function (key, value) {
-    var optText = '<option></option>';
-    if($.inArray(DomainsList[key].domain_id, Domain_ids) >= 0){
-      optText = '<option selected="selected"></option>';
-    }
-    Domains.append($(optText).val(DomainsList[key].domain_id).html(DomainsList[key].domain_name));
-  });
-  Domains.multiselect('rebuild');
-}
+  if(Countries.val() != null){
+    var sCountries = Countries.val().map(Number);
+    var str = '';
+    $.each(CountryList, function (key, value) {
+      var cId = CountryList[key].country_id;
+      if($.inArray(cId, sCountries) >= 0){
+        var flag = true;
+        $.each(DomainsList, function (key1, value1) {
+          if($.inArray(cId, DomainsList[key1].country_ids) >= 0){
+            var sText = '';
+            $.each(Domain_ids, function (key2, value2) {
+              if(DomainsList[key1].domain_id == Domain_ids[key2].d_id && cId == Domain_ids[key2].c_id){
+                sText = 'selected="selected"'
+              }
 
+            });
+            if(flag){
+              str += '<optgroup label="'+CountryList[key].country_name+'">';
+            }
+            var dVal = cId+ '-' +DomainsList[key1].domain_id;
+            str += '<option value="'+dVal+'" '+ sText +'>'+ DomainsList[key1].domain_name + '</option>';
+            flag = false;
+          }
+        });
+        if(flag == false) str += '</optgroup>'
+      }
+    });
+    Domains.append(str);
+    Domains.multiselect('rebuild');
+  }
+}
 
 // Api failure messages
 function possibleFailures(error) {
@@ -253,8 +311,8 @@ function possibleFailures(error) {
   else if (error == 'InvalidUserId') {
     displayMessage(msg.invalid_userid);
   }
-  else if (error == 'InvalidUserId') {
-    displayMessage(message.invalid_userid);
+  else if (error == 'InvalidPassword') {
+    displayMessage(message.invalid_password);
   }
   else {
     displayMessage(error);
@@ -294,28 +352,53 @@ function displayEdit(userId) {
       Designation.val(data.designation);
       Address.val(data.address);
 
-      Domain_ids = data.domain_ids;
-      loadDomains();
-
       Country_ids = data.country_ids;
       loadCountries()
 
+      Domain_ids = data.country_wise_domain;
+      loadDomains();
+
+      
       Email_id.val(data.email_id);
       break;
     }
   }
 }
+
+//validate
+function validateAuthentication(){
+  var password = CurrentPassword.val().trim();
+  if (password.length == 0) {
+    displayMessage(msg.password_required);
+    CurrentPassword.focus();
+    return false;
+  }
+  else {
+    validateMaxLength('password', password, "Password");
+  }
+  mirror.verifyPassword(password, function(error, response) {
+    if (error == null) {
+      isAuthenticate = true;
+      Custombox.close();
+    }
+    else {
+      possibleFailures(error);
+    }
+  });
+}
+
+//validate max length
+function validateMaxLength(key_name, value, show_name) {
+  e_n_msg = validateLength(key_name, value.trim())
+  if (e_n_msg != true) {
+    displayMessage(show_name + e_n_msg);
+    return false;
+  }
+  return true;
+}
+
 // Submit button process
 function submitUserData(){
-  function validateMaxLength(key_name, value, show_name) {
-    e_n_msg = validateLength(key_name, value.trim())
-    if (e_n_msg != true) {
-      displayMessage(show_name + e_n_msg);
-      return false;
-    }
-    return true;
-  }
-
   function validateMandatory() {
     //displayMessage('');
     if (User_category.val().trim().length == 0) {
@@ -382,9 +465,16 @@ function submitUserData(){
       Domains.focus();
       return false;
     }else{
-      Domain_ids=Domains.val().map(Number);
+      Domain_ids = [];
+      for(var i=0; i<Domains.val().length; i++){
+        split = Domains.val()[i].split('-');
+        var dom = {};
+        dom.c_id = parseInt(split[0]);
+        dom.d_id = parseInt(split[1]);
+        Domain_ids.push(dom);
+      }
+      //Domain_ids=Domains.val().map(Number);
     }
-
     return true;
   }
 
@@ -405,7 +495,7 @@ function submitUserData(){
         'address': Address.val().trim(),
         'designation': Designation.val().trim(),
         'country_ids':  Country_ids,
-        'domain_ids': Domain_ids,
+        'country_wise_domain': Domain_ids,
       };
       console.log(userDetail);
       if (User_id.val() == '') {
@@ -458,7 +548,16 @@ function changeDisable(userId, isDisable) {
   }else{
     isDisable = true;
   }
-  mirror.changeAdminDisaleStatus(userId, isDisable, function(error, response) {
+  var remarkText = Remark.val().trim();
+  if (remarkText.length == 0) {
+    displayMessage(msg.remarks_required);
+    remarkText.focus();
+    return false;
+  }else {
+    validateMaxLength('remark', remarkText, "Remark");
+  }
+
+  mirror.changeAdminDisaleStatus(userId, isDisable, remarkText, function(error, response) {
     if (error == null) {
       showList();
     }
@@ -467,7 +566,6 @@ function changeDisable(userId, isDisable) {
     }
   });
 }
-
 // tab key order
 function fieldOrder() {
   Emp_name.on('input', function (e) {
@@ -595,6 +693,10 @@ function pageControls() {
     }
   });
 
+  Countries.change(function() {
+    loadDomains();
+  });
+
   FilterBox.keyup(function() {
     processFilter();
   });
@@ -610,6 +712,10 @@ function pageControls() {
   UserStatus.change(function() {
     processFilter();
   });
+  PasswordSubmitButton.click(function() {
+    validateAuthentication();
+  });
+  
 }
 // page load
 function initialize() {

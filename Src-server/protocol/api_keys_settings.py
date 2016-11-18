@@ -401,6 +401,8 @@ api_params = {
     "s_pids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "s_pnames": {'type': 'VECTOR_TYPE_SRTING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
+    "country_wise_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')

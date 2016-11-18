@@ -336,6 +336,7 @@ class TemplateHandler(tornado.web.RequestHandler):
         return new_url
 
     def update_static_urls(self, content):
+        data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
@@ -357,7 +358,7 @@ class TemplateHandler(tornado.web.RequestHandler):
                 if node.tag == "link":
                     new_url += "?v=%s" % (FILE_VERSION)
             node.set('href', new_url)
-        data = etree.tostring(tree, method="html")
+        data += etree.tostring(tree, method="html")
         return data
 
     def get(self, url=None):
