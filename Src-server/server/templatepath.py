@@ -258,8 +258,8 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/industry-master",
-        "files/knowledge/industry-master/industrymaster.html",
+        "/knowledge/organization",
+        "files/knowledge/organization/organization-master.html",
         None, {}
     ),
     (
