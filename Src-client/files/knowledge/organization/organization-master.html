@@ -1,57 +1,156 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-<div class="container">
+<div class="container" id="organization-view">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <div class="btn-group pull-right m-t-5 m-b-20">
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" id="btn-orgn-add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
+      </div>
+      <h4 class="page-title">Organization</h4>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-2"> </div>
+      <div class="col-sm-8">
+        <div class="card-box table-responsive">
+          <div class="col-sm-12">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Country</th>
+                  <th>Domain</th>
+                  <th>Organization</th>
+                  <th class="text-center">Edit</th>
+                  <th class="text-center" width="15%">Status</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm filter-text-box"
+                      placeholder="Country Name" id="search-country-name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm filter-text-box"
+                      placeholder="Domain" id="search-domain-name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm filter-text-box"
+                      placeholder="Organization" id="search-organization-name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td></td>
+                  <td align="center" >
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                            <i id="search-status" class="fa">All</i>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu search-status-list">
+                            <li value="all" class="search-status-li active"><a>All</a></li>
+                            <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                            <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                        </ul>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody class="tbody-organization-list">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<div id="templates">
+<table class="table-orgn-master">
+  <tr class="table-row">
+    <td class="sno"></td>
+    <td class="country-name"></td>
+    <td class="domain-name"></td>
+    <td class="organization-name"></td>
+    <td class="icon-3x text-center">
+      <i class="fa c-pointer edit"></i>
+    </td>
+
+    <td class="icon-3x text-center">
+      <i class="fa c-pointer status"></i>
+    </td>
+  </tr>
+</table>
+</div>
+
+<div class="container default-display-none" id="organization-add">
   <div class="row" id="animationSandbox">
     <div class="col-sm-3"> </div>
     <div class="col-sm-6">
       <div class="portlet">
-          <!-- <h4 class="page-title">Organization Master</h4>
-           <hr class="no-top-margin"> -->
-           <div class="portlet-heading bg-info">
+        <div class="portlet-heading bg-info">
             <h3 class="portlet-title">
                 Organization Master
             </h3>
             <div class="portlet-widgets">
-                <a href="#" onclick="location.href='/organization/list'" >
+                <a id="btn-orgn-cancel" >
                     <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                 </a>
             </div>
             <div class="clearfix"></div>
         </div>
         <div id="bg-primary1" class="panel-collapse collapse in">
-            <div class="portlet-body">
-          <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-          <div class="form-group has-feedback">
-            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
-            <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="India">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+          <div class="portlet-body">
+            <div class="form-horizontal group-border-dashed">
+              <div class="form-group has-feedback">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name
+                <span class="mandatory">*</span></label>
+                <div class="col-sm-6 controls">
+                  <input type="text" id="countryname" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
+                  <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                  <input id="countryid" type="hidden" >
+                  <div id="ac-country" class="ac-textbox default-display-none">
+                    <ul style="width:94%;"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain Name
+                <span class="mandatory">*</span></label>
+                <div class="col-sm-6 controls">
+                  <input type="text" id="domainname" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="" tabindex="2">
+                  <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                  <input id="domainid" type="hidden" >
+                  <div id="ac-domain" class="ac-textbox default-display-none">
+                    <ul style="width:94%;"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Organization
+                <span class="mandatory">*</span></label>
+                <div class="col-sm-6">
+                  <input type="text" id="organizationname" name="example-input-small" class="form-control input-sm" placeholder="Organization Name" value="" tabindex="3">
+                  <input id="organizationid" type="hidden" >
+                </div>
+              </div>
+              <div class="form-group text-center">
+                <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit" tabindex="4"> Submit </button>
+              </div>
             </div>
           </div>
-          <div class="form-group has-feedback">
-            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain Name <span class="mandatory">*</span></label>
-            <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="Labour Law">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Organization <span class="mandatory">*</span></label>
-            <div class="col-sm-6">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Organization Name" value="Factory">
-            </div>
-          </div>
-          
-      <div class="form-group text-center">
-          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
-        <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/organization/list'"> Cancel </button> -->
-      </div>
-      </form>
-      </div>
         </div>
+      </div>
     </div>
-    <!-- end col -->
   </div>
 </div>
-</div>
-{% endblock %} 
+<script type="text/javascript" src="/script/organization/organization.js"></script>
+{% endblock %}
