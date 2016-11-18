@@ -412,7 +412,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/user-mapping",
-        "files/knowledge/user-mapping/usermapping.html",
+        "files/knowledge/user-mapping/user-mapping.html",
         None, {}
     ),
     (
