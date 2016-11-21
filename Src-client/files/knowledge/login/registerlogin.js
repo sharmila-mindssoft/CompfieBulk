@@ -54,9 +54,6 @@ function setCaptcha(val) {
     tCtx.strokeText(val, 10, 20);
 }
 
-displayMessage = function(message){
-    Msg_pan.text(message);
-};
 
 displayLoader = function(){
     Spin_icon.show();
@@ -139,6 +136,7 @@ validateMandatory = function() {
     }
 
     else if (Pword.val().trim().length == 0){
+        alert('req')
         displayMessage("Password required");
         return false;
     }
