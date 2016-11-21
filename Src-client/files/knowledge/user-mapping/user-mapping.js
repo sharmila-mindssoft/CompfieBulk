@@ -130,7 +130,7 @@ function loadParentUsers(){
             index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
             if(index_of_selected_country != -1 && index_of_selected_domain != -1){
                 var clone = parent_user_row.clone();
-                clone.text(value.employee_name);
+                clone.html(value.employee_name + '<i></i>');
                 $(".parent-user-list").append(clone);
                 clone.click(function(){
                     activateParentUser(this, value.user_id);
@@ -149,7 +149,7 @@ function loadChildUsers(){
             index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
             if(index_of_selected_country != -1 && index_of_selected_domain != -1){
                 var clone = child_user_row.clone();
-                clone.text(value.employee_name);
+                clone.html(value.employee_name + '<i></i>');
                 $(".child-user-list").append(clone);
                 clone.click(function(){
                     activateChildUser(this, value.user_id);
@@ -220,8 +220,10 @@ function activateParentUser(element, user_id){
     var chkstatus = $(element).attr('class');
     if (chkstatus == 'active') {
         $(element).removeClass('active');
+        $(element).find('i').removeClass('fa fa-check pull-right');
     }else{
         $(element).addClass('active');
+        $(element).find('i').addClass('fa fa-check pull-right');
     }
     ACTIVE_PARENT_USER = user_id;
     activateChildUsers();
@@ -243,13 +245,14 @@ function activateChildUsers(){
                 index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
                 if(index_of_selected_country != -1 && index_of_selected_domain != -1){
                     var clone = child_user_row.clone();
-                    clone.text(value.employee_name);
+                    clone.html(value.employee_name + '<i> </i>');
                     $(".child-user-list").append(clone);
                     clone.click(function(){
                         activateChildUser(this, value.user_id);
                     });
                     if(ACTIVE_CHILD_USERS.indexOf(value.user_id) != -1){
                         clone.addClass('active');
+                        clone.find('i').addClass('fa fa-check pull-right');
                     }
                 }
             });
@@ -262,9 +265,11 @@ function activateChildUser(element, user_id){
     var chkstatus = $(element).attr('class');
     if (chkstatus == 'active'){
         $(element).removeClass('active');
+        $(element).find('i').removeClass('fa fa-check pull-right');
         ACTIVE_CHILD_USERS.splice(index, 1);
     }else{
         $(element).addClass('active');
+        $(element).find('i').addClass('fa fa-check pull-right');
         index = ACTIVE_CHILD_USERS.indexOf(user_id)
         ACTIVE_CHILD_USERS.push(user_id);
     }
