@@ -3736,3 +3736,22 @@ BEGIN
 	end if;
 END//
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- verify password
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_verify_password`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_verify_password`(
+	IN userid_ INT(11), password_ VARCHAR(50)
+BEGIN
+	SELECT 
+		count(u.user_id) as count
+	FROM
+		tbl_user_login_details u
+	WHERE
+		u.user_id = userid_ AND u.password = password_ AND u.is_active = 1;
+END//
+DELIMITER ;
