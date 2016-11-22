@@ -77,10 +77,14 @@ def return_business_groups(business_groups):
 #  Return Type : List of object of Domain
 ##########################################################################
 def get_user_domains(db, session_user):
-    domains = db.call_proc(
-        "sp_domains_for_user", (session_user,)
-    )
-    return return_domains(domains)
+    # domains = db.call_proc(
+    #     "sp_domains_for_user", (session_user,)
+    # )
+    # return return_domains(domains)
+    procedure = 'sp_tbl_domains_for_user'
+    result = db.call_proc_with_multiresult_set(procedure, (session_user,), 3)
+    result.pop(0)
+    return return_domains(result)
 
 
 ##########################################################################
@@ -88,14 +92,14 @@ def get_user_domains(db, session_user):
 #  Parameters : Data fetched from database (Tuple of tuples)
 #  Return Type : List of object of Domain
 ##########################################################################
-def return_domains(data):
-    fn = core.Domain
-    results = [
-        fn(
-            d["domain_id"], d["domain_name"], bool(d["is_active"])
-        ) for d in data
-    ]
-    return results
+# def return_domains(data):
+#     fn = core.Domain
+#     results = [
+#         fn(
+#             d["domain_id"], d["domain_name"], bool(d["is_active"])
+#         ) for d in data
+#     ]
+#     return results
 
 
 ##########################################################################
@@ -119,7 +123,7 @@ def return_industries(data):
     fn = core.Industries
     results = [
         fn(
-            d["industry_id"], d["industry_name"], bool(d["is_active"])
+            d["organisation_id"], d["organisation_name"], bool(d["is_active"])
         ) for d in data
     ]
     return results

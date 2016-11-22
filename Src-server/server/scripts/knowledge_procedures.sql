@@ -2698,9 +2698,9 @@ BEGIN
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id = tui.domain_id
 	) as domain_name, (
-		SELECT industry_name FROM tbl_industries ti
-		WHERE ti.industry_id = tui.industry_id
-	) as industry_name FROM tbl_unit_industries tui
+		SELECT ti.organisation_name FROM tbl_organisation ti
+		WHERE ti.organisation_id = tui.organisation_id
+	) as industry_name FROM tbl_units_organizations tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
 	) and tui.domain_id=domainid;
