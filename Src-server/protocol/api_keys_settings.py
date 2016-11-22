@@ -190,6 +190,7 @@ api_params = {
     'contract_to_optional': {'type': 'TEXT', 'length': 11, 'validation_method': None, 'is_optional': True},
     "legal_entity_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityDetails"},
     "date_configurations": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientConfiguration"},
+    "org": {},
     "period_from": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "period_to": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "notification_type": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
