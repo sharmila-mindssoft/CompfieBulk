@@ -107,7 +107,7 @@ class Database(object):
     def begin(self):
         assert self._connection is not None
         # assert self._cursor is None
-        self._cursor = self._connection.cursor()
+        self._cursor = self._connection.cursor(mysql.cursors.DictCursor)
         return self._cursor
 
     ########################################################
@@ -527,7 +527,7 @@ class Database(object):
         query = "INSERT INTO %s (%s) VALUES " % (table, columns)
 
         for index, value in enumerate(valueList):
-            if index < len(valueList) - 1 :
+            if index < len(valueList)-1:
                 query += "%s," % str(value)
             else:
                 query += "%s" % str(value)
@@ -536,11 +536,10 @@ class Database(object):
 
         for index, updateColumn in enumerate(updateColumnsList):
 
-            if index < len(updateColumnsList) - 1 :
+            if index < len(updateColumnsList)-1:
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-        print query
         return self.execute(query)
 
     ########################################################
@@ -631,10 +630,10 @@ class Database(object):
     ########################################################
     def get_new_id(self, field, table_name, client_id=None):
         new_id = 1
-        query = "SELECT max(%s) from %s " % (field, table_name)
+        query = "SELECT max(%s) as maxid from %s " % (field, table_name)
         row = self.select_one(query)
-        if row[0] is not None:
-            new_id = int(row[0]) + 1
+        if row["maxid"] is not None:
+            new_id = int(row["maxid"]) + 1
         return new_id
 
     def save_activity(self, user_id, form_id, action):
@@ -657,7 +656,7 @@ class Database(object):
         row = self.select_one(query, param)
         user_id = None
         if row:
-            user_id = row[0]
+            user_id = row["user_id"]
             self.update_session_time(session_token)
         return user_id
 
@@ -695,7 +694,8 @@ class Database(object):
         else:
             cols = []
         rows = []
-        rows = convert_to_dict(cursor.fetchall(), cols)
+        rows = list(cursor.fetchall())
+        # rows = convert_to_dict(cursor.fetchall(), cols)
         cursor.nextset()
         return rows
 
@@ -712,9 +712,9 @@ class Database(object):
             raise process_procedure_error(procedure_name, args, e)
 
         cursor.nextset()
-        cursor.execute("SELECT LAST_INSERT_ID()")
+        cursor.execute("SELECT LAST_INSERT_ID() as newid")
         r = cursor.fetchone()
-        new_id = r[0]
+        new_id = r["newid"]
         return new_id
 
     def call_update_proc(self, procedure_name, args):
@@ -753,8 +753,9 @@ class Database(object):
                 cols = [x[0] for x in cols]
             else:
                 cols = []
-            r = convert_to_dict(cursor.fetchall(), cols)
-            rows.append(r)
+            # r = convert_to_dict(cursor.fetchall(), cols)
+            rows.append(list(cursor.fetchall()))
             cursor.nextset()
+        print rows
 
         return rows

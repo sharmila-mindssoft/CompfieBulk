@@ -347,28 +347,33 @@ def check_duplicate_compliance_name(db, request_frame):
 
 
 def save_statutory_mapping(db, data, created_by):
+    # Yet to submit : 0, Pending: 1, Approved: 2, Approve and Notify: 3, Reject: 4
+    # tr_type 1: save, 2: submit
     country_id = data.country_id
     domain_id = data.domain_id
-    industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
+    # industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
     nature_id = data.statutory_nature_id
-    statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
+    # statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
     compliances = data.compliances
-    geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+    # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = ', '.join(data.mappings)
     created_on = get_date_time()
     is_active = 1
+    if data.tr_type == 1 :
+        is_approve = 0
+    else:
+        is_approve = 1
 
     mapping_column = [
         "country_id", "domain_id",
-        "industry_ids", "statutory_nature_id", "statutory_ids",
-        "geography_ids", "is_active", "statutory_mapping",
+        "statutory_nature_id",
+        "is_active", "is_approved",
         "created_by", "created_on"
     ]
     mapping_value = [
         int(country_id), int(domain_id),
-        industry_ids, int(nature_id), statutory_ids,
-        geography_ids, int(is_active),
-        statutory_mapping, int(created_by), str(created_on)
+        int(nature_id), int(is_active), is_approve,
+        int(created_by), str(created_on)
     ]
     statutory_mapping_id = db.insert(
         tblStatutoryMappings, mapping_column, mapping_value
@@ -379,24 +384,24 @@ def save_statutory_mapping(db, data, created_by):
 
         ids, names = save_compliance(
             db,
-            statutory_mapping_id, domain_id,
+            statutory_mapping_id, domain_id, country_id, is_approve,
             compliances, created_by
         )
-        compliance_ids = ','.join(str(x) for x in ids) + ","
+        # compliance_ids = ','.join(str(x) for x in ids) + ","
 
-        db.update(
-            tblStatutoryMappings, ["compliance_ids"],
-            [compliance_ids, statutory_mapping_id],
-            "statutory_mapping_id = %s",
-        )
+        # db.update(
+        #     tblStatutoryMappings, ["compliance_ids"],
+        #     [compliance_ids, statutory_mapping_id],
+        #     "statutory_mapping_id = %s",
+        # )
         save_statutory_industry(
-            db, statutory_mapping_id, data.industry_ids, True
+            db, statutory_mapping_id, data.industry_ids, created_by, True
         )
         save_statutory_geography_id(
-            db, statutory_mapping_id, data.geography_ids, True
+            db, statutory_mapping_id, data.geography_ids, created_by, True
         )
         save_statutory_statutories_id(
-            db, statutory_mapping_id, data.statutory_ids, True
+            db, statutory_mapping_id, data.statutory_ids, created_by, True
         )
         notification_log_text = "New statutory mapping has been created %s" % (
             statutory_mapping
@@ -405,14 +410,16 @@ def save_statutory_mapping(db, data, created_by):
         save_notifications(
             db, notification_log_text, link,
             domain_id, country_id, created_by,
-            user_id=None
+            user_id=None, user_cat_id=3
         )
         action = "New statutory mappings added"
         db.save_activity(created_by, 10, action)
         return True
 
 
-def save_compliance(db, mapping_id, domain_id, datas, created_by):
+def save_compliance(
+    db, mapping_id, domain_id, country_id, is_approve, datas, created_by
+):
     compliance_ids = []
     compliance_names = []
     # is_format = False
@@ -453,8 +460,8 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
             "document_name", "format_file", "format_file_size",
             "penal_consequences", "reference_link", "frequency_id",
             "statutory_dates", "statutory_mapping_id",
-            "is_active", "created_by", "created_on", "domain_id",
-            "duration", "duration_type_id", "repeats_every", "repeats_type_id"
+            "is_active", "created_by", "created_on",
+            "domain_id", "country_id", "is_approved"
 
         ]
         values = [
@@ -462,23 +469,21 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
             compliance_description, document_name,
             file_name, file_size, penal_consequences, reference,
             compliance_frequency, statutory_dates,
-            mapping_id, is_active, created_by, created_on, domain_id,
+            mapping_id, is_active, created_by, created_on,
+            domain_id, country_id, is_approve
         ]
         if compliance_frequency == 1:
-            values.extend([0, 0, 0, 0])
+            # values.extend([0, 0, 0, 0])
+            pass
 
         elif compliance_frequency == 4:
-            if duration is None:
-                duration = ""
-            if duration_type is None:
-                duration_type = ""
-            values.extend([duration, duration_type, 0, 0])
+            if duration is not None and duration_type is not None:
+                columns.extend(["duration", "duration_type_id"])
+                values.extend([duration, duration_type])
         else:
-            if repeats_every is None:
-                repeats_every = ""
-            if repeats_type is None:
-                repeats_type = ""
-            values.extend([0, 0, repeats_every, repeats_type])
+            if repeats_every is not None and repeats_type is not None :
+                columns.extend(["repeats_every", "repeats_type_id"])
+                values.extend([repeats_every, repeats_type])
         compliance_id = db.insert(table_name, columns, values)
         if compliance_id is False:
             raise process_error("E019")
@@ -496,8 +501,10 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by):
     return compliance_ids, compliance_names
 
 
-def save_statutory_industry(db, mapping_id, industry_ids, is_new):
-    columns = ["statutory_mapping_id", "industry_id"]
+def save_statutory_industry(
+    db, mapping_id, industry_ids, updated_by, is_new
+):
+    columns = ["statutory_mapping_id", "organisation_id", "assigned_by"]
 
     if is_new is False:
         db.delete(
@@ -505,14 +512,14 @@ def save_statutory_industry(db, mapping_id, industry_ids, is_new):
         )
 
     for i_id in industry_ids:
-        values = [mapping_id, i_id]
+        values = [mapping_id, i_id, updated_by]
         db.insert(tblStatutoryIndustry, columns, values)
 
 
 def save_statutory_geography_id(
-    db, mapping_id, geography_ids, is_new
+    db, mapping_id, geography_ids, updated_by, is_new
 ):
-    columns = ["statutory_mapping_id", "geography_id"]
+    columns = ["statutory_mapping_id", "geography_id", "assigned_by"]
 
     if is_new is False:
         db.delete(
@@ -520,14 +527,14 @@ def save_statutory_geography_id(
         )
 
     for g_id in geography_ids:
-        values = [mapping_id, g_id]
+        values = [mapping_id, g_id, updated_by]
         db.insert(tblStatutoryGeographies, columns, values)
 
 
 def save_statutory_statutories_id(
-    db, mapping_id, statutory_ids, is_new
+    db, mapping_id, statutory_ids, updated_by, is_new
 ):
-    columns = ["statutory_mapping_id", "statutory_id"]
+    columns = ["statutory_mapping_id", "statutory_id", "assigned_by"]
 
     if is_new is False:
         db.delete(
@@ -535,18 +542,18 @@ def save_statutory_statutories_id(
         )
 
     for s_id in statutory_ids:
-        values = [mapping_id, s_id]
+        values = [mapping_id, s_id, updated_by]
         db.insert(tblStatutoryStatutories, columns, values)
 
 
 def save_notifications(
     db, notification_text, link,
-    domain_id, country_id, current_user, user_id
+    domain_id, country_id, current_user, user_id, user_cat_id
 ):
     # internal notification
 
     notification_id = db.insert(
-        tblNotifications, ["notification_text", "link"],
+        tblNotifications, ["message_text", "link"],
         [notification_text, link]
     )
     if notification_id is False:
@@ -562,18 +569,25 @@ def save_notifications_status(
     user_id=None
 ):
     user_ids = []
-    q = "INSERT INTO tbl_notifications_status " + \
-        " (notification_id, user_id, read_status) VALUES " + \
+    q = "INSERT INTO tbl_messages " + \
+        " (message_id, user_id, read_status) VALUES " + \
         " (%s, %s, 0) "
 
-    query = "SELECT distinct user_id from tbl_users WHERE " + \
-        " user_group_id in " + \
-        "(select user_group_id from tbl_user_groups " + \
-        " where form_ids like %s) AND " + \
-        " user_id in (select user_id from " + \
-        " tbl_user_domains where domain_id = %s )" + \
-        " AND user_id in (select distinct user_id from " + \
-        " tbl_user_countries where country_id = %s)"
+    query = "SELECT t1.user_id FROM tbl_users t1 INNER JOIN " + \
+        "tbl_user_group_forms t2 ON t1.user_group_id = t2.user_group_id " + \
+        "INNER JOIN tbl_user_domains as t3 ON t1.user_id = t3.user_id " + \
+        "INNER JOIN tbl_user_countries as t4 ON t1.user_id = t4.user_id " + \
+        "WHERE t1.is_active = 1 AND t1.is_disable = 0 AND t2.form_id = %s " + \
+        " AND t3.domain_id = %s AND t4.country_id = %s"
+
+    # query = "SELECT distinct user_id from tbl_users WHERE " + \
+    #     " user_group_id in " + \
+    #     "(select user_group_id from tbl_user_groups " + \
+    #     " where form_ids like %s) AND " + \
+    #     " user_id in (select user_id from " + \
+    #     " tbl_user_domains where domain_id = %s )" + \
+    #     " AND user_id in (select distinct user_id from " + \
+    #     " tbl_user_countries where country_id = %s)"
     rows = db.select_all(query, [
         str('%11,%'),
         domain_id,
@@ -1197,21 +1211,22 @@ def statutory_mapping_master(db, user_id):
 
 def statutory_mapping_list(db, user_id, approve_status, rcount):
 
-    def return_compliance(mapping_id, com_info):
+    def return_compliance(mapping_id, comp_info):
         compliances = []
         for c in comp_info:
             if c["statutory_mapping_id"] != mapping_id :
                 continue
 
-            dname = d["document_name"]
-            cname = d["compliance_task"]
+            dname = c["document_name"]
+            cname = c["compliance_task"]
             if dname :
-                cname = "%s - %s" % (dname, d["compliance_task"])
+                cname = "%s - %s" % (dname, c["compliance_task"])
 
             compliances.append(
                 core.MappedCompliance(
                     c["compliance_id"], cname, bool(c["is_active"]),
-                    core.getMappingApprovalStatus(d["is_approved"]),
+                    c["is_approved"],
+                    core.getMappingApprovalStatus(c["is_approved"]),
                     c["remarks"]
                 )
             )
@@ -1226,15 +1241,15 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     def return_location(mapping_id, location_info):
         locations = [
-            l["parent_names"] for l in location_info
+            l["geography_name"] for l in location_info
             if l["statutory_mapping_id"] == mapping_id
         ]
         return locations
 
     def return_statutory(mapping_id, statutory_info):
         statutory = [
-            s["parent_names"] for s in statutory_info
-            if l["statutory_mapping_id"] == mapping_id
+            s["statutory_name"] for s in statutory_info
+            if s["statutory_mapping_id"] == mapping_id
         ]
         return statutory
 
@@ -1246,7 +1261,7 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
     )
     mapping = result[0]
     compliance = result[1]
-    organnisation = result[2]
+    organisation = result[2]
     statutory = result[3]
     location = result[4]
     total_record = result[5][0].get("total")
@@ -1256,9 +1271,9 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         map_id = m["statutory_mapping_id"]
         data.append(core.StatutoryMapping(
             m["country_name"], m["domain_name"],
-            return_organisation(map_id, organnisation),
+            return_organisation(map_id, organisation),
             m["nature"],
-            return_statutry(map_id, statutory),
+            return_statutory(map_id, statutory),
             return_compliance(map_id, compliance),
             return_location(map_id, location),
             m["is_approved"],

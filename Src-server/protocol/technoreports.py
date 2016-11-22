@@ -64,7 +64,7 @@ from protocol.to_structure import (
     to_structure_CustomTextType_500,
     to_structure_OptionalType_CustomTextType_50,
     to_structure_Text,
-    to_structure_OptionalType_CustomTextType_250
+    to_structure_OptionalType_CustomTextType_250,
 )
 
 #
@@ -75,6 +75,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -163,6 +165,144 @@ class GetClientDetailsReportData(Request):
             "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
+class GetClientAgreementReportFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetClientAgreementReportFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetClientAgreementReportData(Request):
+    def __init__(
+        self, country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
+    ):
+        self.country_id = country_id
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "client_id", "business_group_id", "legal_entity_id", "domain_id_optional", "contract_from_optional", "contract_to_optional", "csv", "from_count", "page_count"
+        ])
+        country_id = data.get("country_id")
+        client_id = data.get("client_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id_optional")
+        contract_from = data.get("contract_from_optional")
+        contract_to = data.get("contract_to_optional")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+
+        
+        return GetClientAgreementReportData(
+            country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "client_id": self.client_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id_optional": self.domain_id_optional,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
+class GetDomainwiseAgreementReportData(Request):
+    def __init__(
+        self, country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
+    ):
+        self.country_id = country_id
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "client_id", "business_group_id", "legal_entity_id", "domain_id", "contract_from_optional", "contract_to_optional", "csv", "from_count", "page_count"
+        ])
+        country_id = data.get("country_id")
+        client_id = data.get("client_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        contract_from = data.get("contract_from_optional")
+        contract_to = data.get("contract_to_optional")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+
+        
+        return GetDomainwiseAgreementReportData(
+            country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "client_id": self.client_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id_optional": self.domain_id_optional,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
+class GetOrganizationWiseUnitCount(Request):
+    def __init__(
+        self, legal_entity_id, domain_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "legal_entity_id", "domain_id"
+        ])
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+
+        return GetOrganizationWiseUnitCount(
+            legal_entity_id, domain_id
+        )
+
+    def to_inner_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+        }
+
 class GetStatutoryNotificationsFilters(Request):
     def __init__(self):
         pass
@@ -179,42 +319,45 @@ class GetStatutoryNotificationsFilters(Request):
 class GetStatutoryNotificationsReportData(Request):
     def __init__(
         self, country_id, domain_id, level_1_statutory_id,
-        from_date, to_date
+        from_date, to_date, from_count, page_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
         self.level_1_statutory_id = level_1_statutory_id
         self.from_date = from_date
         self.to_date = to_date
+        self.from_count = from_count
+        self.page_count = page_count
+
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "domain_id", "level_1_statutory_id",
-            "from_date", "to_date"
+            "country_id", "domain_id", "statutory_id_optional",
+            "from_date_optional", "to_date_optional", "from_count", "page_count"
         ])
         country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
-        from_date = data.get("from_date")
-        from_date = parse_structure_OptionalType_CustomTextType_50(from_date)
-        to_date = data.get("to_date")
-        to_date = parse_structure_OptionalType_CustomTextType_50(to_date)
+        level_1_statutory_id = data.get("statutory_id_optional")
+        from_date = data.get("from_date_optional")
+        to_date = data.get("to_date_optional")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+
         return GetStatutoryNotificationsReportData(
             country_id, domain_id, level_1_statutory_id,
-            from_date, to_date
+            from_date, to_date, from_count, page_count
         )
 
     def to_inner_structure(self):
         return {
-            "country_id" : to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id" : to_structure_SignedIntegerType_8(self.domain_id),
-            "level_1_statutory_id" : to_structure_OptionalType_UnsignedIntegerType_32(self.level_1_statutory_id),
-            "from_date": to_structure_OptionalType_CustomTextType_50(self.from_date),
-            "to_date": to_structure_OptionalType_CustomTextType_50(self.from_date)
+            "country_id" : self.country_id,
+            "domain_id" : self.domain_id,
+            "level_1_statutory_id" : self.level_1_statutory_id,
+            "from_date": self.from_date,
+            "to_date": self.from_date,
+            "from_count": self.from_count,
+            "page_count": self.page_count
         }
 
 class GetAssignedStatutoryReportFilters(Request):
@@ -231,52 +374,41 @@ class GetAssignedStatutoryReportFilters(Request):
         }
 
 class GetAssignedStatutoryReport(Request):
-    def __init__(self, country_id, domain_id, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status):
+    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, statutory_id, unit_id, compliance_id):
         self.country_id = country_id
-        self.domain_id = domain_id
+        self.domain_id_optional = domain_id_optional
         self.group_id = group_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
-        self.division_id = division_id
+        self.statutory_id = statutory_id
         self.unit_id = unit_id
-        self.level_1_statutory_id = level_1_statutory_id
-        self.applicability_status = applicability_status
+        self.compliance_id = compliance_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "d_id", "g_id", "b_group_id", "l_entity_id", "div_id", "u_id", "level_1_s_id", "a_status"])
+        data = parse_dictionary(data, ["c_id", "domain_id_optional", "client_id", "bg_id", "le_id", "statutory_id", "unit_id", "comp_id"])
         country_id = data.get("c_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("d_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        group_id = data.get("g_id")
-        group_id = parse_structure_OptionalType_SignedIntegerType_8(group_id)
-        business_group_id = data.get("b_group_id")
-        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
-        legal_entity_id = data.get("l_entity_id")
-        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
-        division_id = data.get("div_id")
-        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
-        unit_id = data.get("u_id")
-        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
-        level_1_statutory_id = data.get("level_1_s_id")
-        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
-        applicability_status = data.get("a_status")
-        applicability_status = parse_structure_OptionalType_Bool(applicability_status)
-        return GetAssignedStatutoryReport(country_id, domain_id, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status)
+        domain_id_optional = data.get("domain_id_optional")
+        group_id = data.get("client_id")
+        business_group_id = data.get("bg_id")
+        legal_entity_id = data.get("le_id")
+        statutory_id = data.get("statutory_id")
+        unit_id = data.get("unit_id")
+        compliance_id = data.get("comp_id")
+        return GetAssignedStatutoryReport(country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, statutory_id, unit_id, compliance_id)
 
     def to_inner_structure(self):
-        return {
-            "c_id": to_structure_SignedIntegerType_8(self.country_id),
-            "d_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "g_id": to_structure_OptionalType_SignedIntegerType_8(self.group_id),
-            "b_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "l_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
-            "div_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "u_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "level_1_s_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
-            "a_status": to_structure_OptionalType_Bool(self.applicability_status),
+        data = {
+            "c_id": self.country_id,
+            "domain_id_optional": self.domain_id_optional,
+            "client_id": self.group_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "statutory_id": self.statutory_id,
+            "unit_id": self.unit_id,
+            "comp_id": self.compliance_id,
         }
+        return data
 
 
 class GetComplianceTaskFilter(Request):
@@ -360,30 +492,33 @@ class GetUserMappingReportFilters(Request):
 
 class GetUserMappingDetailsReportData(Request):
     def __init__(
-        self, country_id, client_id, legal_entity_id
+        self, country_id, client_id, legal_entity_id, u_m_none
     ):
         self.country_id = country_id
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
+        self.u_m_none = u_m_none
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "client_id", "legal_entity_id"
+            "country_id", "client_id", "legal_entity_id", "u_m_none"
         ])
         country_id = data.get("country_id")
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
+        u_m_none = data.get("u_m_none")
 
         return GetUserMappingDetailsReportData(
-            country_id, client_id, legal_entity_id
+            country_id, client_id, legal_entity_id, u_m_none
         )
 
     def to_inner_structure(self):
         return {
             "country_id": self.country_id,
             "client_id": self.client_id,
-            "legal_entity_id": self.legal_entity_id
+            "legal_entity_id": self.legal_entity_id,
+            "u_m_none": self.u_m_none
         }
 
 def _init_Request_class_map():
@@ -396,9 +531,14 @@ def _init_Request_class_map():
         GetAssignedStatutoryReport,
         GetComplianceTaskFilter,
         GetComplianceTaskReport,
+        GetClientAgreementReportFilters,
+        GetClientAgreementReportData,
+        GetDomainwiseAgreementReportData,
+        GetOrganizationWiseUnitCount,
         GetUserMappingReportFilters,
         GetUserMappingDetailsReportData
     ]
+
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -414,6 +554,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -563,116 +705,97 @@ class GetClientDetailsReportDataSuccess(Response):
         }
 
 class GetStatutoryNotificationsFiltersSuccess(Response):
-    def __init__(self, countries, domains, level_1_statutories):
+    def __init__(self, countries, domains, level_one_statutories):
         self.countries = countries
         self.domains = domains
-        self.level_1_statutories = level_1_statutories
+        self.level_one_statutories = level_one_statutories
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "level_1_statutories"])
+        data = parse_dictionary(data, ["countries", "domains", "level_one_statutories"])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
-        return GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories)
+        level_one_statutories = data.get("level_one_statutories")
+        return GetStatutoryNotificationsFiltersSuccess(countries, domains, level_one_statutories)
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories)
+            "countries": self.countries,
+            "domains": self.domains,
+            "level_one_statutories": self.level_one_statutories
         }
 
 class GetStatutoryNotificationsReportDataSuccess(Response):
-    def __init__(self, countries, domains, level_1_statutories, country_wise_notifications):
-        self.countries = countries
-        self.domains = domains
-        self.level_1_statutories = level_1_statutories
-        self.country_wise_notifications = country_wise_notifications
-
+    def __init__(self, statutory_notifictions_list, total_count):
+        self.statutory_notifictions_list = statutory_notifictions_list
+        self.total_count = total_count
+        
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "level_1_statutories", "country_wise_notifications"])
-        countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
-        country_wise_notifications = data.get("country_wise_notifications")
-        country_wise_notifications = parse_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS(country_wise_notifications)
-        return GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories, country_wise_notifications)
+        data = parse_dictionary(data, ["statutory_notifictions_list"])
+        statutory_notifictions_list = data.get("statutory_notifictions_list")
+        total_count = data.get("total_count")
+
+        return GetStatutoryNotificationsReportDataSuccess(statutory_notifictions_list, total_count)
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
-            "country_wise_notifications": to_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS(self.country_wise_notifications),
+            "statutory_notifictions_list": self.statutory_notifictions_list,
+            "total_count": self.total_count
         }
 
 class GetAssignedStatutoryReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, groups, business_groups, legal_entities, divisions, units, level_1_statutories):
+    def __init__(self, countries, domains, statutory_groups, statutory_business_groups, statutory_units, statutory_compliances):
         self.countries = countries
         self.domains = domains
-        self.groups = groups
-        self.business_groups = business_groups
-        self.legal_entities = legal_entities
-        self.divisions = divisions
-        self.units = units
-        self.level_1_statutories = level_1_statutories
+        self.statutory_groups = statutory_groups
+        self.statutory_business_groups = statutory_business_groups
+        self.statutory_units = statutory_units
+        self.statutory_compliances = statutory_compliances
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "groups", "business_groups", "legal_entities", "divisions", "units", "level_1_statutories"])
+        data = parse_dictionary(data, ["countries", "domains", "statutory_groups", "statutory_business_groups", "statutory_units", "statutory_compliances"])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        groups = data.get("groups")
-        groups = parse_structure_VectorType_RecordType_core_GroupCompany(groups)
-        business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup()
-        legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
-        divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
-        level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
-        return GetAssignedStatutoryReportFiltersSuccess(countries, domains, groups, business_groups, legal_entities, divisions, units, level_1_statutories)
+        statutory_groups = data.get("statutory_groups")
+        statutory_business_groups = data.get("statutory_business_groups")
+        statutory_units = data.get("statutory_units")
+        statutory_compliances = data.get("statutory_compliances")
+        return GetAssignedStatutoryReportFiltersSuccess(countries, domains, statutory_groups, statutory_business_groups, statutory_units, statutory_compliances)
 
     def to_inner_structure(self):
-        return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "groups": to_structure_VectorType_RecordType_core_GroupCompany(self.groups),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
+        data = {
+            "countries": self.countries,
+            "domains": self.domains,
+            "statutory_groups": self.statutory_groups,
+            "statutory_business_groups": self.statutory_business_groups,
+            "statutory_units": self.statutory_units,
+            "statutory_compliances": self.statutory_compliances,
         }
+        return to_structure_dictionary_values(data)
 
 class GetAssignedStatutoryReportSuccess(Response):
-    def __init__(self, unit_wise_assigned_statutories):
-        self.unit_wise_assigned_statutories = unit_wise_assigned_statutories
+    def __init__(self, unit_groups, act_groups, compliance_statutories_list):
+        self.unit_groups = unit_groups
+        self.act_groups = act_groups
+        self.compliance_statutories_list = compliance_statutories_list
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_wise_assigned_statutories"])
-        unit_wise_assigned_statutories = data.get("unit_wise_assigned_statutories")
-        unit_wise_assigned_statutories = parse_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(unit_wise_assigned_statutories)
-        return GetAssignedStatutoryReportSuccess(unit_wise_assigned_statutories)
+        data = parse_dictionary(data, ["unit_groups", "act_groups", "compliance_statutories_list"])
+        unit_groups = data.get("unit_groups")
+        act_groups = data.get("act_groups")
+        compliance_statutories_list = data.get("compliance_statutories_list")
+        return GetAssignedStatutoryReportSuccess(unit_groups, act_groups, compliance_statutories_list)
 
     def to_inner_structure(self):
-        return {
-            "unit_wise_assigned_statutories": to_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(self.unit_wise_assigned_statutories),
+        data =  {
+            "unit_groups": self.unit_groups,
+            "act_groups": self.act_groups,
+            "compliance_statutories_list": self.compliance_statutories_list,
         }
+        return to_structure_dictionary_values(data)
 
 # user mapping report - filter success
 
@@ -707,31 +830,126 @@ class GetUserMappingReportFiltersSuccess(Response):
 # user mapping report - filter success
 
 class GetUserMappingReportDataSuccess(Response):
-    def __init__(self, techno_details, unit_domains, domains):
+    def __init__(self, techno_details, unit_domains, usermapping_domain):
         self.techno_details = techno_details
         self.unit_domains = unit_domains
-        self.domains = domains
+        self.usermapping_domain = usermapping_domain
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["techno_details", "unit_domains", "domains"])
+        data = parse_dictionary(data, ["techno_details", "unit_domains", "usermapping_domain"])
         techno_details = data.get("techno_details")
         unit_domains = data.get("unit_domains")
-        domains = data.get("domains")
-        return GetUserMappingReportDataSuccess(techno_details, unit_domains, domains)
+        usermapping_domain = data.get("usermapping_domain")
+        return GetUserMappingReportDataSuccess(techno_details, unit_domains, usermapping_domain)
 
     def to_inner_structure(self):
         data = {
             "techno_details": self.techno_details,
             "unit_domains": self.unit_domains,
-            "domains": self.domains,
+            "usermapping_domain": self.usermapping_domain,
         }
         return to_structure_dictionary_values(data)
 
+class GetClientAgreementReportFiltersSuccess(Response):
+    def __init__(self, countries, domains, groups, business_groups, unit_legal_entity):
+        self.countries = countries
+        self.domains = domains
+        self.groups = groups
+        self.business_groups = business_groups
+        self.unit_legal_entity = unit_legal_entity
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries", "domains", "groups", "business_groups", "unit_legal_entity"])
+        countries = data.get("countries")
+        domains = data.get("domains")
+        groups = data.get("client_group_master")
+        business_groups = data.get("business_groups")
+        unit_legal_entity = data.get("unit_legal_entity")
+        
+        return GetClientAgreementReportFiltersSuccess(countries, domains, groups, business_groups, unit_legal_entity)
+
+    def to_inner_structure(self):
+        return {
+            "countries": self.countries,
+            "domains": self.domains,
+            "client_group_master": self.groups,
+            "business_groups": self.business_groups,
+            "unit_legal_entity": self.unit_legal_entity
+        }
+
+class GetClientAgreementReportDataSuccess(Response):
+    def __init__(self, client_agreement_list, total_count):
+        self.client_agreement_list = client_agreement_list
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_agreement_list", "total_count"])
+        client_agreement_list = data.get("client_agreement_list")
+        total_count = data.get("total_count")
+        return GetClientAgreementReportDataSuccess(client_agreement_list, total_count)
+
+    def to_inner_structure(self):
+        return {
+            "client_agreement_list": self.client_agreement_list,
+            "total_count": self.total_count
+        }
+
+class GetDomainwiseAgreementReportDataSuccess(Response):
+    def __init__(self, domainwise_agreement_list, total_count):
+        self.domainwise_agreement_list = domainwise_agreement_list
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domainwise_agreement_list", "total_count"])
+        domainwise_agreement_list = data.get("domainwise_agreement_list")
+        total_count = data.get("total_count")
+        return GetDomainwiseAgreementReportDataSuccess(domainwise_agreement_list, total_count)
+
+    def to_inner_structure(self):
+        return {
+            "domainwise_agreement_list": self.domainwise_agreement_list,
+            "total_count": self.total_count
+        }
+
+class GetOrganizationWiseUnitCountSuccess(Response):
+    def __init__(self, organizationwise_unit_count_list):
+        self.organizationwise_unit_count_list = organizationwise_unit_count_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["organizationwise_unit_count_list"])
+        organizationwise_unit_count_list = data.get("organizationwise_unit_count_list")
+        return GetOrganizationWiseUnitCountSuccess(organizationwise_unit_count_list)
+
+    def to_inner_structure(self):
+        return {
+            "organizationwise_unit_count_list": self.organizationwise_unit_count_list
+        }
+class ExportToCSVSuccess(Response):
+    def __init__(self, link):
+        self.link = link
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["link"])
+        link = data.get("link")
+        return ExportToCSVSuccess(link)
+
+    def to_inner_structure(self):
+        return {
+            "link" : self.link
+        }
+
 def _init_Response_class_map():
-    classes = [GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess,
-                GetStatutoryNotificationsReportDataSuccess, GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess,
-                GetUserMappingReportFiltersSuccess, GetUserMappingReportDataSuccess]
+    classes = [GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess, 
+                GetStatutoryNotificationsReportDataSuccess, GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess, 
+                GetClientAgreementReportFiltersSuccess, GetClientAgreementReportDataSuccess, GetDomainwiseAgreementReportDataSuccess, 
+                GetOrganizationWiseUnitCountSuccess, ExportToCSVSuccess, GetUserMappingReportFiltersSuccess, GetUserMappingReportDataSuccess]
+
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -866,3 +1084,524 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
             "address": to_structure_CustomTextType_250(self.address),
             "assigned_statutories": to_structure_VectorType_RecordType_core_AssignedStatutory(self.assigned_statutories),
         }
+
+
+class ClientAgreementList(object):
+    def __init__(
+        self, legal_entity_id, domain_id, legal_entity_name, total_licence, used_licence, file_space, used_file_space, 
+        contract_from, contract_to, group_name, group_admin_email, is_active, domain_count,
+        d_name, domain_total_unit, activation_date, domain_used_unit, legal_entity_admin_contactno, 
+        legal_entity_admin_email, business_group_name
+    ): 
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.legal_entity_name = legal_entity_name
+        self.total_licence = total_licence
+        self.used_licence = used_licence
+        self.file_space = file_space
+        self.used_file_space = used_file_space
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.group_name = group_name
+        self.group_admin_email = group_admin_email
+        self.is_active = is_active
+        self.domain_count = domain_count
+        self.d_name = d_name
+        self.domain_total_unit = domain_total_unit
+        self.activation_date = activation_date
+        self.domain_used_unit = domain_used_unit
+        self.legal_entity_admin_contactno = legal_entity_admin_contactno
+        self.legal_entity_admin_email = legal_entity_admin_email
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+            "legal_entity_id",
+            "domain_id"
+            "legal_entity_name",
+            "total_licence",
+            "used_licence",
+            "file_space",
+            "used_file_space",
+            "contract_from",
+            "contract_to",
+            "group_name",
+            "group_admin_email",
+            "is_active",
+            "domain_count",
+            "d_name",
+            "domain_total_unit",
+            "activation_date",
+            "domain_used_unit",
+            "legal_entity_admin_contactno",
+            "legal_entity_admin_email",
+            "business_group_name"
+            ]
+        )
+        
+        legal_entity_id = data.get("legal_entity_id"),
+        domain_id = data.get("domain_id"),
+        legal_entity_name = data.get("legal_entity_name"),
+        total_licence = data.get("total_licence"),
+        used_licence = data.get("used_licence"),
+        file_space = data.get("file_space"),
+        used_file_space = data.get("used_file_space"),
+        contract_from = data.get("contract_from"),
+        contract_to = data.get("contract_to"),
+        group_name = data.get("group_name"),
+        group_admin_email = data.get("group_admin_email"),
+        is_active = data.get("is_active"),
+        domain_count = data.get("domain_count"),
+        d_name = data.get("d_name"),
+        domain_total_unit = data.get("domain_total_unit"),
+        activation_date = data.get("activation_date"),
+        domain_used_unit = data.get("domain_used_unit"),
+        legal_entity_admin_contactno = data.get("legal_entity_admin_contactno"),
+        legal_entity_admin_email = data.get("legal_entity_admin_email"),
+        business_group_name = data.get("business_group_name")
+        
+        return ClientAgreementList(
+            legal_entity_id, domain_id,legal_entity_name, total_licence, used_licence, file_space, 
+            used_file_space, 
+            contract_from, contract_to, group_name, group_admin_email, is_active, domain_count,
+            d_name, domain_total_unit, activation_date, domain_used_unit, legal_entity_admin_contactno, 
+            legal_entity_admin_email, business_group_name
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "legal_entity_name": self.legal_entity_name,
+            "total_licence": self.total_licence,
+            "used_licence": self.used_licence,
+            "file_space": self.file_space,
+            "used_file_space": self.used_file_space,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "group_name": self.group_name,
+            "group_admin_email": self.group_admin_email,
+            "is_active": self.is_active,
+            "domain_count": self.domain_count,
+            "d_name": self.d_name,
+            "domain_total_unit": self.domain_total_unit,
+            "activation_date": self.activation_date,
+            "domain_used_unit": self.domain_used_unit,
+            "legal_entity_admin_contactno": self.legal_entity_admin_contactno,
+            "legal_entity_admin_email": self.legal_entity_admin_email,
+            "business_group_name": self.business_group_name
+        }
+
+class DomainwiseAgreementList(object):
+    def __init__(
+        self, legal_entity_id, domain_id, legal_entity_name, 
+        contract_from, contract_to, group_name, group_admin_email,
+        domain_total_unit, activation_date, domain_used_unit, legal_entity_admin_contactno, 
+        legal_entity_admin_email, business_group_name
+    ): 
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.legal_entity_name = legal_entity_name
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.group_name = group_name
+        self.group_admin_email = group_admin_email
+        self.domain_total_unit = domain_total_unit
+        self.activation_date = activation_date
+        self.domain_used_unit = domain_used_unit
+        self.legal_entity_admin_contactno = legal_entity_admin_contactno
+        self.legal_entity_admin_email = legal_entity_admin_email
+        self.business_group_name = business_group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+            "legal_entity_id",
+            "domain_id",
+            "legal_entity_name",
+            "contract_from",
+            "contract_to",
+            "group_name",
+            "group_admin_email",
+            "domain_total_unit",
+            "activation_date",
+            "domain_used_unit",
+            "legal_entity_admin_contactno",
+            "legal_entity_admin_email",
+            "business_group_name"
+            ]
+        )
+        
+        legal_entity_id = data.get("legal_entity_id"),
+        domain_id = data.get("domain_id"),
+        legal_entity_name = data.get("legal_entity_name"),
+        contract_from = data.get("contract_from"),
+        contract_to = data.get("contract_to"),
+        group_name = data.get("group_name"),
+        group_admin_email = data.get("group_admin_email"),
+        domain_total_unit = data.get("domain_total_unit"),
+        activation_date = data.get("activation_date"),
+        domain_used_unit = data.get("domain_used_unit"),
+        legal_entity_admin_contactno = data.get("legal_entity_admin_contactno"),
+        legal_entity_admin_email = data.get("legal_entity_admin_email"),
+        business_group_name = data.get("business_group_name")
+        
+        return DomainwiseAgreementList(
+            legal_entity_id, domain_id, legal_entity_name,
+            contract_from, contract_to, group_name, group_admin_email,
+            domain_total_unit, activation_date, domain_used_unit, legal_entity_admin_contactno, 
+            legal_entity_admin_email, business_group_name
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "legal_entity_name": self.legal_entity_name,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "group_name": self.group_name,
+            "group_admin_email": self.group_admin_email,
+            "domain_total_unit": self.domain_total_unit,
+            "activation_date": self.activation_date,
+            "domain_used_unit": self.domain_used_unit,
+            "legal_entity_admin_contactno": self.legal_entity_admin_contactno,
+            "legal_entity_admin_email": self.legal_entity_admin_email,
+            "business_group_name": self.business_group_name
+        }
+
+class OrganizationwiseUnitCountList(object):
+    def __init__(
+        self, domain_name, organization_name,
+        domain_total_unit, domain_used_unit
+    ): 
+        self.domain_name = domain_name
+        self.organization_name = organization_name
+        self.domain_total_unit = domain_total_unit
+        self.domain_used_unit = domain_used_unit
+        
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+            "domain_name",
+            "organization_name",
+            "domain_total_unit",
+            "domain_used_unit"
+            ]
+        )
+        
+        domain_name = data.get("domain_name"),
+        organization_name = data.get("organization_name"),
+        domain_total_unit = data.get("domain_total_unit"),
+        domain_used_unit = data.get("domain_used_unit")
+
+        return OrganizationwiseUnitCountList(
+            domain_name, organization_name,
+            domain_total_unit, domain_used_unit
+        )
+
+    def to_structure(self):
+        return {
+            "domain_name": self.domain_name,
+            "organization_name": self.organization_name,
+            "domain_total_unit": self.domain_total_unit,
+            "domain_used_unit": self.domain_used_unit
+        }
+
+#
+# Statutory setting report
+#
+
+class ClientGroup(object):
+    def __init__(self, country_id, client_id, short_name, is_active):
+        self.country_id = country_id
+        self.client_id = client_id
+        self.short_name = short_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_id", "client_id", "short_name", "is_active"])
+        country_id = data.get("country_id")
+        client_id = data.get("client_id")
+        short_name = data.get("short_name")
+        is_active = data.get("is_active")
+        return ClientGroup(country_id, client_id, short_name, is_active)
+
+    def to_structure(self):
+        data = {
+            "country_id": self.country_id,
+            "client_id": self.client_id,
+            "short_name": self.short_name,
+            "is_active": self.is_active,
+        }
+        return data
+
+class ClientBusinessGroup(object):
+    def __init__(self, client_id, legal_entity_id, legal_entity_name, business_group_id, business_group_name):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+        
+    @staticmethod
+    def parse_structure(data):
+
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", "business_group_name"])
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_id = data.get("business_group_id")
+        business_group_name = data.get("business_group_name")
+        return ClientBusinessGroup(client_id, legal_entity_id, legal_entity_name, business_group_id, business_group_name)
+
+    def to_structure(self):
+        data = {
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id,
+            "business_group_name": self.business_group_name,
+        }
+        return data
+
+class ComplianceUnits(object):
+    def __init__(self, client_id, legal_entity_id, unit_id, unit_code, unit_name):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "unit_code", "unit_name"])
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        unit_id = data.get("unit_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        return ComplianceUnits(client_id, legal_entity_id, unit_id, unit_code, unit_name)
+
+    def to_structure(self):
+        data = {
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "unit_id": self.unit_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+        }
+        return data
+
+class ComplianceStatutory(object):
+    def __init__(self, client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.statutory_id = statutory_id
+        self.compliance_id = compliance_id
+        self.c_task = c_task
+        self.document_name = document_name
+        self.statutory_name = statutory_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "domain_id", "statutory_id", "compliance_id", "c_task", "document_name", "statutory_name"])
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        unit_id = data.get("unit_id")
+        domain_id = data.get("domain_id")
+        statutory_id = data.get("statutory_id")
+        compliance_id = data.get("compliance_id")
+        c_task = data.get("c_task")
+        document_name = data.get("document_name")
+        statutory_name = data.get("statutory_name")
+        return ComplianceStatutory(client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name)
+
+    def to_structure(self):
+        data = {
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "unit_id": self.unit_id,
+            "domain_id": self.domain_id,
+            "statutory_id": self.statutory_id,
+            "compliance_id": self.compliance_id,
+            "c_task": self.c_task,
+            "document_name": self.document_name,
+            "statutory_name": self.statutory_name,
+        }
+        return data
+
+class StatutorySettingUnitGroup(object):
+    def __init__(self, unit_id, unit_code, unit_name, address):
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit_code", "unit_name", "address"])
+        unit_id = data.get("unit_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        address = data.get("address")
+        return ComplianceStatutory(unit_id, unit_code, unit_name, address)
+
+    def to_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "address": self.address,
+        }
+        return data
+
+class StatutorySettingActGroup(object):
+    def __init__(self, unit_id, statutory_id, statutory_name):
+        self.unit_id = unit_id
+        self.statutory_id = statutory_id
+        self.statutory_name = statutory_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "statutory_id", "statutory_name"])
+        unit_id = data.get("unit_id")
+        statutory_id = data.get("statutory_id")
+        statutory_name = data.get("statutory_name")
+        return ComplianceStatutory(unit_id, statutory_id, statutory_name)
+
+    def to_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "statutory_id": self.statutory_id,
+            "statutory_name": self.statutory_name,
+        }
+        return data
+
+class StatutorySettingCompliances(object):
+    def __init__(self, unit_id, statutory_id, statutory_provision, c_task, document_name, remarks, statutory_applicability_status, statutory_opted_status, compfie_admin, admin_update, client_admin, client_update, statutory_nature_name):
+        self.unit_id = unit_id
+        self.statutory_id = statutory_id
+        self.statutory_provision = statutory_provision
+        self.c_task = c_task
+        self.document_name = document_name
+        self.remarks = remarks
+        self.statutory_applicability_status = statutory_applicability_status
+        self.statutory_opted_status = statutory_opted_status
+        self.compfie_admin = compfie_admin
+        self.admin_update = admin_update
+        self.client_admin = client_admin
+        self.client_update = client_update
+        self.statutory_nature_name = statutory_nature_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "statutory_id", "statutory_provision", "c_task", "document_name", "remarks", "statutory_applicability_status", "statutory_opted_status", "compfie_admin", "admin_update", "client_admin", "client_update", "statutory_nature_name"])
+        unit_id = data.get("unit_id")
+        statutory_id = data.get("statutory_id")
+        statutory_provision = data.get("statutory_provision")
+        c_task = data.get("c_task")
+        document_name = data.get("document_name")
+        remarks = data.get("remarks")
+        statutory_applicability_status = data.get("statutory_applicability_status")
+        statutory_opted_status = data.get("statutory_opted_status")
+        compfie_admin = data.get("compfie_admin")
+        admin_update = data.get("admin_update")
+        client_admin = data.get("client_admin")
+        client_update = data.get("client_update")
+        statutory_nature_name = data.get("statutory_nature_name")
+        return ComplianceStatutory(unit_id, statutory_id, statutory_provision, c_task, document_name, remarks, statutory_applicability_status, statutory_opted_status, compfie_admin, admin_update, client_admin, client_update, statutory_nature_name)
+
+    def to_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "statutory_id": self.statutory_id,
+            "statutory_provision": self.statutory_provision,
+            "c_task": self.c_task,
+            "document_name": self.document_name,
+            "remarks": self.remarks,
+            "statutory_applicability_status": self.statutory_applicability_status,
+            "statutory_opted_status": self.statutory_opted_status,
+            "compfie_admin": self.compfie_admin,
+            "admin_update": self.admin_update,
+            "client_admin": self.client_admin,
+            "client_update": self.client_update,
+            "statutory_nature_name": self.statutory_nature_name
+        }
+        return data
+
+class StatutoryNotificationList(object):
+    def __init__(
+        self, statutory_name, compliance_task, notification_text, date
+    ): 
+        self.statutory_name = statutory_name
+        self.compliance_task = compliance_task
+        self.notification_text = notification_text
+        self.date = date
+        
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+            "statutory_name",
+            "compliance_task",
+            "notification_text",
+            "notification_date"
+            ]
+        )
+        
+        statutory_name = data.get("statutory_name"),
+        compliance_task = data.get("compliance_task"),
+        notification_text = data.get("notification_text"),
+        date = data.get("notification_date")
+        
+        return StatutoryNorificationList(
+            statutory_name, compliance_task, notification_text,
+            date
+        )
+
+    def to_structure(self):
+        return {
+            "statutory_name": self.statutory_name,
+            "compliance_task": self.compliance_task,
+            "notification_text": self.notification_text,
+            "notification_date": self.date
+        }
+
+#
+# Domain
+#
+
+class UserMappingDomain(object):
+    def __init__(
+        self, domain_id, domain_name, is_active
+    ):
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "domain_id", "domain_name", "is_active"
+        ])
+        domain_id = data.get("domain_id")
+        domain_name = data.get("domain_name")
+        is_active = data.get("is_active")
+        return UserMappingDomain(
+            domain_id, domain_name, is_active
+        )
+
+    def to_structure(self):
+        data = {
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "is_active": self.is_active,
+        }
+        return to_structure_dictionary_values(data)

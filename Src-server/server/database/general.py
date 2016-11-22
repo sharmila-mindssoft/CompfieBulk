@@ -472,15 +472,3 @@ def update_profile(db, contact_no, address, session_user):
     condition = "user_id= %s"
     values = [contact_no, address, session_user]
     db.update(tblUsers, columns, values, condition)
-
-
-#
-#   Verify Password
-#
-def verify_password(db, user_id, encrypt_password):
-    
-    row = db.call_proc("sp_verify_password", (user_id,encrypt_password,))
-    # if int(row[0]["count"]) == 0:
-    #     raise process_error("E065")
-    # else
-    return int(row[0]["count"])

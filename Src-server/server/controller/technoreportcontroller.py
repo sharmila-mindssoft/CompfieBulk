@@ -1,10 +1,12 @@
 import time
+from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import login, technoreports, knowledgereport, core
 from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 from server.database.admin import (
-    get_countries_for_user, get_domains_for_user
+    get_countries_for_user, get_domains_for_user, 
+    get_countries_for_user_filter, get_level_1_statutories
 )
 from server.database.general import (
     get_compliance_frequency
@@ -14,6 +16,8 @@ from server.database.technomaster import (
     get_business_groups_for_user,
     get_legal_entities_for_user,
     get_divisions_for_user,
+    get_units,get_groups,
+    get_client_groups_for_user
 )
 from server.database.knowledgemaster import (
     get_country_wise_level_1_statutoy,
@@ -23,16 +27,27 @@ from server.database.knowledgemaster import (
 from server.database.technoreport import (
     get_assigned_statutories_report,
     get_statutory_notifications_report_data,
+    get_statutory_notifications_report_count,
     get_client_details_report,
     get_client_details_report_count,
     get_compliance_list_report_techno,
+    get_client_agreement_report,
+    get_client_agreement_report_count,
+    get_domainwise_agreement_report,
+    get_domainwise_agreement_report_count,
+    get_organizationwise_unit_count,
     get_user_category_details,
     get_countries_for_usermapping_report_filter,
     get_group_details_for_usermapping_report_filter,
     get_business_groups_for_usermapping_report,
     get_legal_entities_for_usermapping_report,
     get_unit_details_for_usermapping_report,
-    get_usermapping_report_dataset
+    get_usermapping_report_dataset,
+    get_group_companies_for_statutorysetting_report,
+    get_business_groups_for_statutorysetting_report,
+    get_units_for_statutorysetting_report,
+    get_compliance_statutoy_for_statutorysetting_report,
+    get_assigned_statutories_report_data
 )
 
 __all__ = [
@@ -151,49 +166,88 @@ def process_techno_report_request(request, db):
         logger.logKnowledgeApi("GetUserMappingDetailsReportData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif type(request_frame) is technoreports.GetClientAgreementReportFilters:
+        logger.logKnowledgeApi(
+            "GetClientAgreementReportFilters", "process begin"
+        )
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_client_agreement_report_filters(
+            db, request_frame, user_id
+        )
+        logger.logKnowledgeApi("GetClientAgreementReportFilters", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif type(request_frame) is technoreports.GetClientAgreementReportData:
+        logger.logKnowledgeApi("GetClientAgreementReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_client_agreement_report_data(
+            db, request_frame, user_id
+        )
+        logger.logKnowledgeApi("GetClientAgreementReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif type(request_frame) is technoreports.GetDomainwiseAgreementReportData:
+        logger.logKnowledgeApi("GetDomainwiseAgreementReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_domainwise_agreement_report_data(
+            db, request_frame, user_id
+        )
+        logger.logKnowledgeApi("GetDomainwiseAgreementReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif type(request_frame) is technoreports.GetOrganizationWiseUnitCount:
+        logger.logKnowledgeApi("GetOrganizationWiseUnitCount", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_organizationwise_unit_count(
+            db, request_frame, user_id
+        )
+        logger.logKnowledgeApi("GetDomainwiseAgreementReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
 def process_get_assigned_statutory_report_filters(db, user_id):
     countries = get_countries_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
-    group_companies = get_group_companies_for_user(db, user_id)
-    business_groups = get_business_groups_for_user(db, user_id)
-    legal_entities = get_legal_entities_for_user(db, user_id)
-    divisions = get_divisions_for_user(db, user_id)
-    units = get_units_for_user(db, user_id)
-    level_1_statutories = get_country_wise_level_1_statutoy(db)
+    group_companies = get_group_companies_for_statutorysetting_report(db, user_id)
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+    unit_list = get_units_for_statutorysetting_report(db, user_id)
+    compliance_statutories = get_compliance_statutoy_for_statutorysetting_report(db, user_id)
     return technoreports.GetAssignedStatutoryReportFiltersSuccess(
         countries, domains, group_companies,
-        business_groups, legal_entities, divisions, units,
-        level_1_statutories
+        business_groups, unit_list, compliance_statutories
     )
 
 
 def process_get_assigned_statutory_report_data(db, request_frame, user_id):
-    return get_assigned_statutories_report(db, request_frame, user_id)
+    result = get_assigned_statutories_report_data(db, request_frame, user_id)
+    unit_groups = result[0]
+    act_groups = result[1]
+    compliance_statutories_list = result[2]
+    return technoreports.GetAssignedStatutoryReportSuccess(unit_groups, act_groups, compliance_statutories_list)
 
 
 def process_get_statutory_notifications_filters(db, request_frame, user_id):
-    countries = get_countries_for_user(db, user_id)
+    countries = get_countries_for_user_filter(db, user_id)
     domains = get_domains_for_user(db, user_id)
-    level_1_statutories = get_country_wise_level_1_statutoy(db)
+    level_one_statutories = get_level_1_statutories(db)
+
     return technoreports.GetStatutoryNotificationsFiltersSuccess(
         countries=countries,
         domains=domains,
-        level_1_statutories=level_1_statutories
+        level_one_statutories=level_one_statutories
     )
-
 
 def process_get_statutory_notifications_report_data(db, request, user_id):
-    countries = get_countries_for_user(db, user_id)
-    domains = get_domains_for_user(db, user_id)
-    level_1_statutories = get_country_wise_level_1_statutoy(db)
     result = get_statutory_notifications_report_data(db, request)
-    return technoreports.GetStatutoryNotificationsReportDataSuccess(
-        countries, domains, level_1_statutories, result
-    )
 
+    total_count = get_statutory_notifications_report_count(
+            db, request
+        )
+    return technoreports.GetStatutoryNotificationsReportDataSuccess(
+        statutory_notifictions_list = result, total_count = total_count
+    )
 
 def process_get_client_details_report_filters(db, request_frame, session_user):
     countries = get_countries_for_user(db, session_user)
@@ -202,7 +256,7 @@ def process_get_client_details_report_filters(db, request_frame, session_user):
     business_groups = get_business_groups_for_user(db, session_user)
     legal_entities = get_legal_entities_for_user(db, session_user)
     divisions = get_divisions_for_user(db, session_user)
-    units = get_units_for_user(db, session_user)
+    units = get_units(db, session_user)
     return technoreports.GetClientDetailsReportFiltersSuccess(
         countries=countries,
         domains=domains,
@@ -264,6 +318,74 @@ def process_get_compliance_task_report(db, request_frame, user_id):
         country_id, domain_id, report_data, total_count
     )
 
+def process_get_client_agreement_report_filters(db, request_frame, session_user):
+    countries = get_countries_for_user_filter(db, session_user)
+    domains = get_domains_for_user(db, session_user)
+    groups = get_client_groups_for_user(db, session_user)
+    business_groups = get_business_groups_for_user(db, session_user)
+    unit_legal_entity = get_legal_entities_for_user(db, session_user)
+    
+    return technoreports.GetClientAgreementReportFiltersSuccess(
+        countries=countries,
+        domains=domains,
+        groups=groups,
+        business_groups=business_groups,
+        unit_legal_entity=unit_legal_entity
+    )
+
+def process_get_client_agreement_report_data(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "ClientAgreementReport"
+        )
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        client_agreement_list = get_client_agreement_report(
+            db, request.country_id, request.client_id, request.business_group_id, request.legal_entity_id,
+            request.domain_id, request.contract_from, request.contract_to,
+            request.from_count, request.page_count, session_user
+        )
+        total_count = get_client_agreement_report_count(
+            db, request.country_id, request.client_id, request.business_group_id, request.legal_entity_id,
+            request.domain_id, request.contract_from, request.contract_to, session_user
+        )
+        return technoreports.GetClientAgreementReportDataSuccess(
+            client_agreement_list=client_agreement_list, total_count=total_count
+        )
+
+def process_get_domainwise_agreement_report_data(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "DomainwiseAgreementReport"
+        )
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        client_agreement_list = get_domainwise_agreement_report(
+            db, request.country_id, request.client_id, request.business_group_id, request.legal_entity_id,
+            request.domain_id, request.contract_from, request.contract_to,
+            request.from_count, request.page_count, session_user
+        )
+        total_count = get_domainwise_agreement_report_count(
+            db, request.country_id, request.client_id, request.business_group_id, request.legal_entity_id,
+            request.domain_id, request.contract_from, request.contract_to, session_user
+        )
+        return technoreports.GetDomainwiseAgreementReportDataSuccess(
+            domainwise_agreement_list=client_agreement_list, total_count=total_count
+        )
+
+def process_get_organizationwise_unit_count(db, request, session_user):
+    unit_count_list = get_organizationwise_unit_count(
+        db, request.legal_entity_id, request.domain_id
+    )
+   
+    return technoreports.GetOrganizationWiseUnitCountSuccess(
+        organizationwise_unit_count_list=unit_count_list
+    )
+
 def process_get_user_mapping_reports_filter(db, request_frame, session_user):
     print "inside user mapping report controller"
     user_category_details = get_user_category_details(db, session_user)
@@ -288,8 +410,15 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
     country_id = request_frame.country_id
     client_id = request_frame.client_id
     legal_entity_id = request_frame.legal_entity_id
+    user_mapping_none_values = request_frame.u_m_none
+    bgrp_id = division_id = catagory_id = unit_id = 0
+    if user_mapping_none_values.find(",") > 0:
+        bgrp_id = user_mapping_none_values.split(",")[0]
+        division_id = user_mapping_none_values.split(",")[1]
+        catagory_id = user_mapping_none_values.split(",")[2]
+        unit_id = user_mapping_none_values.split(",")[3]
     usermapping_report_dataset = []
-    usermapping_report_dataset = get_usermapping_report_dataset(db, int(session_user), client_id, legal_entity_id, country_id)
+    usermapping_report_dataset = get_usermapping_report_dataset(db, int(session_user), client_id, legal_entity_id, country_id, int(bgrp_id), int(division_id), int(catagory_id), int(unit_id))
     print "length of mapping after db"
     print usermapping_report_dataset
     techno_details = []
@@ -313,7 +442,7 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
         print "unit_domains"
         print unit_domains
         for domain in usermapping_report_dataset[2]:
-            domains.append(core.Domain(
+            domains.append(technoreports.UserMappingDomain(
                 domain["domain_id"], domain["domain_name"], bool(domain["is_active"])
             ))
         '''if(len(usermapping_report_dataset[0]) > 0):
@@ -334,5 +463,5 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
         return technoreports.GetUserMappingReportDataSuccess(
             techno_details = techno_details,
             unit_domains = unit_domains,
-            domains = domains
+            usermapping_domain = domains
         )

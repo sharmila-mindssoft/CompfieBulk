@@ -280,27 +280,12 @@ class GetAuditTrails(Request):
             "page_count": self.page_count
         }
 
-class VerifyPassword(Request):
-    def __init__(self, password):
-        self.password = password
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["password"])
-        password = data.get("password")
-        return VerifyPassword(password)
-
-    def to_inner_structure(self):
-        return {
-            "password": self.password,
-        }
-
 def _init_Request_class_map():
     classes = [
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
         ChangeDomainStatus, GetCountriesForUser, GetCountries, SaveCountry, UpdateCountry,
         ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
-        GetAuditTrails, VerifyPassword
+        GetAuditTrails
     ]
     class_map = {}
     for c in classes:
@@ -657,32 +642,6 @@ class FileUploadSuccess(Response):
             "file_list": self.file_list
         }
 
-class InvalidPassword(Response):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return InvalidPassword()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-class VerifyPasswordSuccess(Response):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return VerifyPasswordSuccess()
-
-    def to_inner_structure(self):
-        return {
-        }
-
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess, ContactNumberAlreadyExists,
@@ -690,7 +649,7 @@ def _init_Response_class_map():
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
         MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
-        FileUploadSuccess, InvalidPassword, VerifyPasswordSuccess
+        FileUploadSuccess
     ]
     class_map = {}
     for c in classes:

@@ -4,7 +4,6 @@ from server.database.tables import *
 from server.database.forms import *
 from server.common import (
     get_date_time, get_current_date,
-    generate_and_return_password,
     addHours, new_uuid
 )
 from server.emailcontroller import EmailHandler as email
@@ -34,7 +33,8 @@ __all__ = [
     "save_validity_date_settings", "get_user_mapping_form_data",
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
     "save_reassigned_user_account", "get_assigned_legal_entities",
-    "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status"
+    "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status",
+    "get_countries_for_user_filter"
 ]
 
 
@@ -49,6 +49,7 @@ __all__ = [
 def get_domains_for_user(db, user_id):
     procedure = 'sp_tbl_domains_for_user'
     result = db.call_proc_with_multiresult_set(procedure, (user_id,), 3)
+    result.pop(0)
     return return_domains(result)
 
 
@@ -69,9 +70,9 @@ def return_country_list_of_domain(domain_id, countries):
 
 def return_domains(data):
     results = []
-    for d in data[1]:
+    for d in data[0]:
         d_id = d["domain_id"]
-        c_ids, c_names = return_country_list_of_domain(d_id, data[2])
+        c_ids, c_names = return_country_list_of_domain(d_id, data[1])
         results.append(core.Domain(
             c_ids, c_names, d_id, d["domain_name"], bool(d["is_active"])
         ))
@@ -230,6 +231,23 @@ def get_user_domains(db, user_id):
         domain_ids.append(int(r["domain_id"]))
     return domain_ids
 
+#
+# Level One Statutory
+#
+#############################################################################
+# To get level one statutory list
+# Parameter(s) : Object of database
+# Return Type : List of level one statutoriesdetails
+#############################################################################
+def get_level_1_statutories(db):
+    results = []
+    rows = db.call_proc("sp_levelone_statutories", ())
+    for row in rows:
+        results.append(core.Level1StatutoryList(
+            row["statutory_id"], row["statutory_name"], row["country_id"], row["domain_id"])
+        )
+    return results
+
 
 #############################################################################
 # To get countries configured under a user
@@ -254,6 +272,30 @@ def return_countries(data):
         ))
     return results
 
+
+#############################################################################
+# To get countries configured under a user for report filters
+# Parameter(s) : Object of database, user id
+# Return Type : List of Object of Countries
+#############################################################################
+def get_countries_for_user_filter(db, user_id):
+    result = db.call_proc_with_multiresult_set("sp_countries_for_user_filter", (user_id,), 2)
+    return return_countries_filter(result)
+
+
+###############################################################################
+# To convert the data fetched from database into List of object of Country
+# Parameter(s) : Data fetched from database
+# Return Type : List of Object of Country
+###############################################################################
+def return_countries_filter(data):
+    results = []
+    for d in data[1]:
+        print d["country_id"]
+        results.append(core.Country(
+            d["country_id"], d["country_name"], bool(d["is_active"])
+        ))
+    return results
 
 ###############################################################################
 # To Get the country name  by it's id
@@ -677,12 +719,10 @@ def save_user_countries(
 def save_user_domains(
     db, domain_ids, user_id, session_user
 ):
-    print '----------------------------------------'
-    print domain_ids
     current_time_stamp = get_date_time()
-    domain_columns = ["user_id", "domain_id", "country_id", "assigned_by", "assigned_on"]
+    domain_columns = ["user_id", "domain_id", "assigned_by", "assigned_on"]
     domain_values_list = [
-        (user_id, int(d.domain_id), int(d.country_id), session_user, current_time_stamp) for d in domain_ids
+        (user_id, int(domain_id), session_user, current_time_stamp) for domain_id in domain_ids
     ]
     result = db.bulk_insert(
         tblUserDomains, domain_columns, domain_values_list
@@ -765,10 +805,10 @@ def update_user_status(db, user_id, is_active, session_user):
 # Return Type : Returns True on Successfull update, Other wise raises process
 #               error
 ###############################################################################
-def update_disable_status(db, user_id, is_disable, remarks, session_user):
+def update_disable_status(db, user_id, is_disable, session_user):
     result = db.call_update_proc(
         "sp_users_disable_status",
-        (user_id, is_disable, remarks, session_user, get_date_time())
+        (user_id, is_disable, session_user, get_date_time())
     )
     if result is False:
         raise process_error("E039")
@@ -801,8 +841,8 @@ def get_mapped_countries(db):
 # Return Type : List of Object of Domain
 #####################################################################
 def get_mapped_domains(db):
-    result = db.call_proc(
-        "sp_domain_mapped_list", None
+    result = db.call_proc_with_multiresult_set(
+        "sp_domain_mapped_list", None, 2
     )
     return return_domains(result)
 

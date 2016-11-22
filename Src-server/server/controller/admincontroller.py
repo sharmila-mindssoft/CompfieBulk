@@ -311,7 +311,7 @@ def get_users(db, request_frame, session_user):
         domain_ids = []
         for r in data:
             if int(r["user_id"]) == user_id:
-                domain_ids.append(admin.CountryWiseDomain(int(r["country_id"]), int(r["domain_id"])) )
+                domain_ids.append(int(r["domain_id"]))
         return domain_ids
 
     def get_user_country(user_id, data):
@@ -450,12 +450,10 @@ def change_user_status(db, request, session_user):
 def change_disable_status(db, request, session_user):
     user_id = request.user_id
     is_active = int(request.is_active)
-    remarks = request.remarks
-
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
 
-    elif update_disable_status(db, user_id, is_active, remarks, session_user):
+    elif update_disable_status(db, user_id, is_active, session_user):
         return admin.ChangeUserStatusSuccess()
 
 ################################################################
