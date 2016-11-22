@@ -476,6 +476,7 @@ api_params = {
     'grp_mode': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
     "u_m_none": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     "usermapping_domain" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "UserMappingDomain"},
+    "country_wise_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -720,9 +720,9 @@ def save_user_domains(
     db, domain_ids, user_id, session_user
 ):
     current_time_stamp = get_date_time()
-    domain_columns = ["user_id", "domain_id", "assigned_by", "assigned_on"]
+    domain_columns = ["user_id", "domain_id", "country_id", "assigned_by", "assigned_on"]
     domain_values_list = [
-        (user_id, int(domain_id), session_user, current_time_stamp) for domain_id in domain_ids
+        (user_id, int(d.domain_id), int(d.country_id), session_user, current_time_stamp) for d in domain_ids
     ]
     result = db.bulk_insert(
         tblUserDomains, domain_columns, domain_values_list

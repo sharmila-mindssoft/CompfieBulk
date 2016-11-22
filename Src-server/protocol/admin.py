@@ -185,7 +185,7 @@ class SaveUser(Request):
             "u_cat_id",  "employee_name", "employee_code",
             "email_id", "contact_no", "mobile_no",
             "ug_id", "address", "designation", "country_ids",
-            "domain_ids"])
+            "country_wise_domain"])
         user_category_id = data.get("u_cat_id")
         employee_name = data.get("employee_name")
         employee_code = data.get("employee_code")
@@ -196,7 +196,7 @@ class SaveUser(Request):
         address = data.get("address")
         designation = data.get("designation")
         country_ids = data.get("country_ids")
-        domain_ids = data.get("domain_ids")
+        domain_ids = data.get("country_wise_domain")
         return SaveUser(
             user_category_id, employee_name, employee_code, email_id,
             contact_no, mobile_no, user_group_id, address,
@@ -215,7 +215,7 @@ class SaveUser(Request):
             "address": self.address,
             "designation": self.designation,
             "country_ids": self.country_ids,
-            "domain_ids": self.domain_ids
+            "country_wise_domain": self.domain_ids
         }
 
 
@@ -245,7 +245,7 @@ class UpdateUser(Request):
             "user_id", "u_cat_id",  "employee_name", "employee_code",
             "email_id", "contact_no", "mobile_no",
             "ug_id", "address", "designation", "country_ids",
-            "domain_ids"])
+            "country_wise_domain"])
         user_id = data.get("user_id")
         user_category_id = data.get("u_cat_id")
         employee_name = data.get("employee_name")
@@ -257,7 +257,7 @@ class UpdateUser(Request):
         address = data.get("address")
         designation = data.get("designation")
         country_ids = data.get("country_ids")
-        domain_ids = data.get("domain_ids")
+        domain_ids = data.get("country_wise_domain")
         return UpdateUser(
             user_id, user_category_id, employee_name, employee_code, email_id,
             contact_no, mobile_no, user_group_id, address,
@@ -277,7 +277,7 @@ class UpdateUser(Request):
             "address": self.address,
             "designation": self.designation,
             "country_ids": self.country_ids,
-            "domain_ids": self.domain_ids
+            "country_wise_domain": self.domain_ids
         }
 
 class ChangeUserStatus(Request):
@@ -1057,6 +1057,28 @@ class AssignedClient(object):
         return {
             "user_id": self.user_id,
             "client_id": self.client_id
+        }
+
+class CountryWiseDomain(object):
+    def __init__(
+        self, country_id, domain_id
+    ):
+        self.country_id = country_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "d_id"
+        ])
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        return CountryWiseDomain(country_id, domain_id)
+
+    def to_structure(self):
+        return {
+            "c_id": self.country_id,
+            "d_id": self.domain_id
         }
 
 

@@ -311,7 +311,7 @@ def get_users(db, request_frame, session_user):
         domain_ids = []
         for r in data:
             if int(r["user_id"]) == user_id:
-                domain_ids.append(int(r["domain_id"]))
+                domain_ids.append(admin.CountryWiseDomain(int(r["country_id"]), int(r["domain_id"])) )
         return domain_ids
 
     def get_user_country(user_id, data):

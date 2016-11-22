@@ -770,7 +770,7 @@ CREATE PROCEDURE `sp_client_configurations_delete`(
     IN clientid INT(11)
 )
 BEGIN
-    DELETE FROM tbl_client_configurations WHERE client_id=clientid;
+    DELETE FROM tbl_client_configuration WHERE client_id=clientid;
 END //
 DELIMITER ;
 
@@ -1897,7 +1897,7 @@ BEGIN
     WHERE T1.user_category_id > 2
 	ORDER BY T1.employee_name;
 
-    SELECT user_id, domain_id from tbl_user_domains;
+    SELECT user_id, domain_id, country_id from tbl_user_domains;
     SELECT user_id, country_id from tbl_user_countries;
 
 END //

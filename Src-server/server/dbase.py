@@ -603,11 +603,11 @@ class Database(object):
     # True otherwise returns false
     ########################################################
     def is_already_exists(self, table, condition, condition_val):
-        query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
+        query = "SELECT count(0) as count FROM %s WHERE %s " % (table, condition)
         rows = None
         rows = self.select_one(query, condition_val)
         if rows:
-            if rows[0] > 0:
+            if rows["count"] > 0:
                 return True
             else:
                 return False
