@@ -336,6 +336,7 @@ class TemplateHandler(tornado.web.RequestHandler):
         return new_url
 
     def update_static_urls(self, content):
+        data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
@@ -357,7 +358,7 @@ class TemplateHandler(tornado.web.RequestHandler):
                 if node.tag == "link":
                     new_url += "?v=%s" % (FILE_VERSION)
             node.set('href', new_url)
-        data = etree.tostring(tree, method="html")
+        data += etree.tostring(tree, method="html")
         return data
 
     def get(self, url=None):
@@ -489,14 +490,18 @@ def run_server(port):
 
         static_path = os.path.join(ROOT_PATH, "Src-client")
         files_path = os.path.join(static_path, "files")
-        desktop_path = os.path.join(files_path, "desktop")
-        common_path = os.path.join(desktop_path, "common")
+        know_path = os.path.join(files_path, "knowledge")
+        common_path = os.path.join(know_path, "common")
+        css_path = os.path.join(common_path, "css")
+
+        # desktop_path = os.path.join(files_path, "desktop")
+        # common_path = os.path.join(desktop_path, "common")
         images_path = os.path.join(common_path, "images")
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
-        script_path = os.path.join(desktop_path, "knowledge")
-        login_path = os.path.join(desktop_path, "login")
-        exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
+        fonts = os.path.join(common_path, "fonts")
+        # script_path = os.path.join(know_path, "knowledge")
+        login_path = os.path.join(know_path, "login")
 
         web_server.low_level_url(
             r"/images/(.*)",
@@ -515,6 +520,10 @@ def run_server(port):
             StaticFileHandler, dict(path=js_path)
         )
         web_server.low_level_url(
+            r"/knowledge/fonts/(.*)",
+            StaticFileHandler, dict(path=fonts)
+        )
+        web_server.low_level_url(
             r"/knowledge/common/(.*)",
             StaticFileHandler,
             dict(path=common_path)
@@ -522,7 +531,7 @@ def run_server(port):
         web_server.low_level_url(
             r"/knowledge/script/(.*)",
             StaticFileHandler,
-            dict(path=script_path)
+            dict(path=know_path)
         )
         web_server.low_level_url(
             r"/knowledge/login/(.*)",
@@ -544,11 +553,6 @@ def run_server(port):
         web_server.low_level_url(
             r"/(.*)", StaticFileHandler,
             dict(path=static_path)
-        )
-
-        web_server.low_level_url(
-            r"/download/csv/(.*)", StaticFileHandler,
-            dict(path=exported_reports_path)
         )
         print "Listening port: %s" % port
         web_server.start(port, backlog=1000)
