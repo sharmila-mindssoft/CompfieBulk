@@ -312,7 +312,7 @@ TEMPLATE_PATHS = [
     # Techno Manager master
     (
         "/knowledge/client-master",
-        "files/knowledge/client-master/clientmaster-new.html",
+        "files/knowledge/client-master/clientmaster.html",
         None, {}
     ),
     (
