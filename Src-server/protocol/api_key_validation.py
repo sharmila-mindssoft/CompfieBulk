@@ -42,6 +42,7 @@ def is_alpha_numeric(value):
 def is_address(value):
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
+    print type(value)
     if r.match(value):
         return value
     else:
@@ -60,13 +61,13 @@ def is_mapping(value):
     def is_validate(val):
         r = re.compile("^[a-zA-Z ]*$")  # a-z with space
         if not r.match(val):
-            raise expectation_error('a string', val)
+            raise expectation_error("a string", val)
 
-    if type(value) is list :
-        for v in value :
-            is_validate(v)
-        return value
-    else :
+    if type(value) is list:
+        for val in value:
+            is_validate(val)
+            return value
+    else:
         is_validate(value)
         return value
 

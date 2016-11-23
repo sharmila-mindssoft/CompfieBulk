@@ -473,7 +473,6 @@ def update_profile(db, contact_no, address, session_user):
     values = [contact_no, address, session_user]
     db.update(tblUsers, columns, values, condition)
 
-
 #
 #   Verify Password
 #

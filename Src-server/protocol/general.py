@@ -295,6 +295,7 @@ class VerifyPassword(Request):
             "password": self.password,
         }
 
+
 def _init_Request_class_map():
     classes = [
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
@@ -690,7 +691,7 @@ def _init_Response_class_map():
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
         MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
-        FileUploadSuccess, InvalidPassword, VerifyPasswordSuccess
+        FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword
     ]
     class_map = {}
     for c in classes:

@@ -307,6 +307,43 @@ def return_units(units):
         return results
 
 
+def get_units_for_user_assign(db, unit_ids):
+    columns = [
+        "unit_id", "unit_code", "unit_name", "address", "division_id",
+        "domain_ids", "country_id", "legal_entity_id", "business_group_id",
+        "is_active", "is_closed"
+    ]
+    condition = "is_closed = 0"
+    condition_val = None
+    if unit_ids is not None:
+        condition = " find_in_set(unit_id, %s) "
+        condition_val = [unit_ids]
+    order = "ORDER BY unit_name"
+    rows = db.get_data(
+        tblUnits, columns, condition, condition_val, order
+    )
+    return return_units(rows)
+
+
+def return_units_assign(units):
+        results = []
+        for unit in units:
+            division_id = None
+            b_group_id = None
+            if unit["division_id"] > 0:
+                division_id = unit["division_id"]
+            if unit["business_group_id"] > 0:
+                b_group_id = unit["business_group_id"]
+            results.append(core.ClientUnit(
+                unit["unit_id"], division_id, unit["legal_entity_id"],
+                b_group_id, unit["unit_code"],
+                unit["unit_name"], unit["address"], bool(unit["is_active"]),
+                [int(x) for x in unit["domain_ids"].split(",")],
+                unit["country_id"],
+                bool(unit["is_closed"])
+            ))
+        return results
+
 def get_client_users(db, unit_ids=None):
     columns = "user_id, employee_name, employee_code, is_active"
     condition = "1"

@@ -1,15 +1,22 @@
+import threading
 from protocol import core, technotransactions
 from server.exceptionmessage import process_error
 from server.database.tables import *
 from server.common import (
-    get_date_time
+    get_date_time, get_current_date,
+    generate_and_return_password,
+    addHours, new_uuid
 )
+from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL
+from server.emailcontroller import EmailHandler as email
 
 __all__ = [
     "get_categories_for_user", "return_assigned_compliances_by_id",
     "get_assigned_statutory_wizard_two_data", "save_assigned_statutory",
     "get_assigned_statutories_list", "get_assigned_statutories_by_id",
-    "update_assigned_statutory"
+    "update_assigned_statutory", "get_groupadmin_registration_grouplist",
+    "get_groupadmin_registration_unitlist", "send_groupadmin_registration_mail",
+    "resave_registraion_token"
 ]
 
 
@@ -156,144 +163,32 @@ def return_assigned_compliances_by_id(
 
 
 def get_assigned_statutory_wizard_two_data(
-    db, client_id, busienss_group_id, legal_entity_id,
-    division_id, category_id, domain_id, unit_ids
+    db, domain_id, unit_ids
 ):
-    (
-        unit_loc_details, unit_org_details
-    ) = db.call_proc_with_multiresult_set(
-        "sp_unit_unit_organiation_details",
-        (",".join(str(x) for x in unit_ids),), 2
-    )
-    country_count_map = {}
-    domain_count_map = {}
-    geo_count_map = {}
-    org_count_map = {}
+    statutories = db.call_proc("sp_get_compliances_by_unit", (domain_id,unit_ids))
 
-    unit_count = len(unit_ids)  # Unit count
-
-    # To separate country wise units and geo wise units
-    for unit in unit_loc_details:
-        country_id = unit["country_id"]
-        geography_id = unit["geography_id"]
-        if country_id not in country_count_map:
-            country_count_map[country_id] = []
-        if geography_id not in geo_count_map:
-            geo_count_map[geography_id] = []
-        country_count_map[country_id].append(unit["unit_id"])
-        geo_count_map[geography_id].append(unit["unit_id"])
-
-    # To separate domain wise and org wise units
-    for unit in unit_org_details:
-        domain_id = unit["domain_id"]
-        org_id = unit["organisation_id"]
-        unit_id = unit["unit_id"]
-        if domain_id not in domain_count_map:
-            domain_count_map[domain_id] = []
-        if org_id not in org_count_map:
-            org_count_map[org_id] = []
-        domain_count_map[domain_id].append(unit_id)
-        org_count_map[org_id].append(unit_id)
-
-    common_countries = []
-    common_geographies = []
-    common_domains = []
-    common_orgs = []
-    for country_id in country_count_map:
-        unit_ids = country_count_map[country_id]
-        if len(unit_ids) >= unit_count:
-            common_countries.append(country_id)
-
-    for geography_id in geo_count_map:
-        unit_ids = geo_count_map[geography_id]
-        if len(unit_ids) >= unit_count:
-            common_geographies.append(geography_id)
-
-    for domain_id in domain_count_map:
-        unit_ids = domain_count_map[domain_id]
-        if len(unit_ids) >= unit_count:
-            common_domains.append(domain_id)
-
-    for org_id in org_count_map:
-        unit_ids = org_count_map[org_id]
-        if len(unit_ids) >= unit_count:
-            common_orgs.append(org_id)
-
-    if(len(common_countries) <= 0):
-        raise process_error("EO83")
-    elif(len(common_geographies) <= 0):
-        raise process_error("E084")
-    elif(len(common_domains) <= 0):
-        raise process_error("E085")
-    elif(len(common_orgs) <= 0):
-        raise process_error("E086")
-
-    (
-        statutories, level_1_statutories,
-        mapping_orgs, mapping_locations
-    ) = db.call_proc_with_multiresult_set(
-        "sp_compliances_by_unit_details", (
-            ",".join(str(x) for x in common_domains),
-            ",".join(str(x) for x in common_countries),
-            ",".join(str(x) for x in common_geographies),
-            ",".join(str(x) for x in common_orgs),
-        ), 4
-    )
     return return_wizard_two_data(
-        statutories, level_1_statutories, mapping_orgs, mapping_locations
+        statutories
     )
 
 
 def return_wizard_two_data(
-    statutories, level_1_statutories, mapping_orgs, mapping_locations
+    statutories
 ):
-    mapping_wise_level_1_statutory = {}
-    for level_1_statutory in level_1_statutories:
-        statutory_mapping_id = level_1_statutory["statutory_mapping_id"]
-        mapping_wise_level_1_statutory[
-            statutory_mapping_id] = level_1_statutory["statutory_name"]
-
-    mapping_wise_orgs = {}
-    for org in mapping_orgs:
-        statutory_mapping_id = org["statutory_mapping_id"]
-        organisation_name = org["org_name"]
-        if statutory_mapping_id not in mapping_wise_orgs:
-            mapping_wise_orgs[statutory_mapping_id] = []
-        mapping_wise_orgs[statutory_mapping_id].append(
-            organisation_name
-        )
-
-    mapping_wise_locations = {}
-    for location in mapping_locations:
-        statutory_mapping_id = location["statutory_mapping_id"]
-        geography_name = location["geography_name"]
-        if statutory_mapping_id not in mapping_wise_locations:
-            mapping_wise_locations[statutory_mapping_id] = []
-        mapping_wise_locations[statutory_mapping_id].append(
-            geography_name
-        )
-
-    level_1_statutories = []
     compliances = []
     fn = technotransactions.AssignStatutoryCompliance
     for statutory in statutories:
-        statutory_mapping_id = int(statutory["statutory_mapping_id"])
-        level_1_statutories.append(
-            mapping_wise_level_1_statutory[statutory_mapping_id]
-        )
         compliances.append(
             fn(
-                level_1_statutory_index=len(level_1_statutories) - 1,
+                level_1_statutory_name=statutory["statutory_name"],
                 statutory_provision=statutory["statutory_provision"],
                 compliance_id=statutory["compliance_id"],
                 document_name=statutory["document_name"],
                 compliance_name=statutory["compliance_task"],
-                description=statutory["compliance_description"],
-                organizations=mapping_wise_orgs[statutory_mapping_id],
-                locations=mapping_wise_locations[statutory_mapping_id]
+                description=statutory["compliance_description"]
             )
         )
-    return level_1_statutories, compliances
+    return compliances
 
 
 def update_assigned_statutory(
@@ -315,7 +210,7 @@ def update_assigned_statutory(
     for compliances in compliances_list:
         for unit_id in unit_ids:
             compliance_id = compliances.compliance_id
-            compliance_applicable_status = compliances.compliance_applicability_status 
+            compliance_applicable_status = compliances.compliance_applicability_status
             statutory_applicable_status = compliances.statutory_applicability_status
             value_list.append(
                 (
@@ -395,7 +290,7 @@ def save_assigned_statutory(
             compliance_id = compliances.compliance_id
             compliance_applicable_status = compliances.compliance_applicability_status
             statutory_applicable_status = compliances.statutory_applicability_status
-            level_1_statutory_id = None 
+            level_1_statutory_id = None
             for level_1 in level_1_statutory_compliance:
                 if compliance_id in level_1_statutory_compliance[level_1]:
                     level_1_statutory_id = level_1
@@ -442,7 +337,7 @@ def return_assigned_statutories(client_statutories, unit_details):
                 domain_names=[str(x) for x in unit_details["domain_name"].split(",")],
                 category_id=unit_details["category_id"],
                 category_name=unit_details["category_name"]
-            ) 
+            )
         )
     return result
 
@@ -459,7 +354,7 @@ def return_assigned_statutories_by_id(statutories):
     compliances = []
     fn = technotransactions.AssignStatutoryCompliance
     for statutory in statutories:
-        statutory_mapping_id = int(statutory["statutory_mapping_id"]) 
+        statutory_mapping_id = int(statutory["statutory_mapping_id"])
         if statutory["statutory_name"] not in level_1_statutories:
             level_1_statutories.append(
                 statutory["statutory_name"]
@@ -478,3 +373,122 @@ def return_assigned_statutories_by_id(statutories):
             )
         )
     return level_1_statutories, compliances
+
+def get_groupadmin_registration_grouplist(db, user_id):
+    groupadmin_grouplist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_groupslist", (user_id,), 2)
+    print "group admin group list"
+    print groupadmin_grouplist
+    result = []
+    result = groupadmin_grouplist[1]
+    return return_groupadmin_registration_grouplist(result)
+
+def return_groupadmin_registration_grouplist(groupslist):
+    groupadmin_grouplist = []
+    for groups in groupslist:
+        groupadmin_grouplist.append(technotransactions.GroupAdmin_GroupList(
+                groups["client_id"], groups["group_name"], groups["no_of_legal_entities"],
+                groups["country_name"], groups["ug_name"], groups["email_id"],
+                groups["user_id"], groups["emp_code_name"]
+            ))
+    return groupadmin_grouplist
+
+def get_groupadmin_registration_unitlist(db, user_id):
+    groupadmin_unitlist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_unitslist", (user_id,), 2)
+    result = []
+    print "group admin unit list"
+    print groupadmin_unitlist
+    result = groupadmin_unitlist[1]
+    return return_groupadmin_registration_unitlist(result)
+
+def return_groupadmin_registration_unitlist(unitslist):
+    groupadmin_unitlist = []
+    for units in unitslist:
+        unit_creation_informed = 0
+        statutory_assigned_informed = 0
+        if units["unit_creation_informed"] is not None:
+            unit_creation_informed = units["unit_creation_informed"]
+        if units["statutory_assigned_informed"] is not None:
+            statutory_assigned_informed = units["statutory_assigned_informed"]
+        groupadmin_unitlist.append(technotransactions.GroupAdmin_UnitList(
+                units["client_id"], units["legal_entity_id"], units["legal_entity_name"],
+                units["country_name"], units["unit_count"],
+                unit_creation_informed, statutory_assigned_informed, units["email_id"],
+                units["user_id"], units["emp_code_name"], units["statutory_count"]
+            ))
+    return groupadmin_unitlist
+
+def resave_registraion_token(db, client_id, email_id):
+    def _del_olddata():
+        condition = "client_id = %s and verification_type_id = %s"
+        condition_val = [client_id, 1]
+        db.delete(tblClientEmailVerification, condition, condition_val)
+        return True
+
+    current_time_stamp = get_current_date()
+    registration_token = new_uuid()
+    expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
+
+    link = "%s/userregistration/%s" % (
+        KNOWLEDGE_URL, registration_token
+    )
+
+    notify_user_thread = threading.Thread(
+        target=notify_user, args=[
+            email_id, link
+        ]
+    )
+    notify_user_thread.start()
+
+    if (_del_olddata()) :
+        db.call_insert_proc(
+            "sp_tbl_client_email_verification_save",
+            (client_id, email_id, registration_token, 1, expiry_date)
+        )
+        return True
+    else :
+        return False
+
+def send_groupadmin_registration_mail(db, request, user_id):
+    group_mode = request.grp_mode
+    email_id = request.email_id
+    emp_name = request.username
+    group_name = request.group_name
+    current_time_stamp = get_date_time()
+    legal_entity_name = request.legal_entity_name
+    insert_result = False
+    try:
+        print group_mode
+        notify_grp_admin_thread = threading.Thread(
+            target=notify_grp_admin_mail, args=[
+                group_mode, email_id, group_name, legal_entity_name
+            ]
+        )
+        notify_grp_admin_thread.start()
+        result = db.call_proc("sp_tbl_groupadmin_email_notification_insert",
+                        (group_mode, int(request.client_id), int(request.legal_entity_id),
+                        email_id, 1, current_time_stamp, int(user_id))
+                        )
+        if result > 0 :
+            insert_result = True
+    except Exception, e:
+        print "Error with group admin registration"
+        print e
+    return insert_result
+
+def notify_user(email_id, link):
+    try:
+        email().resend_registraion_link(email_id, link)
+    except Exception, e:
+        print "Error while sending email"
+        print e
+
+
+def notify_grp_admin_mail(mode, email_id, group_name, legal_entity_name):
+    try:
+        if mode == "unit" :
+            email().send_notification_groupadmin_unit(email_id, group_name, legal_entity_name)
+        elif mode == "statutory" :
+            email().send_notification_groupadmin_statutory(email_id, group_name, legal_entity_name)
+    except Exception, e:
+            print "Error while sending email"
+            print e

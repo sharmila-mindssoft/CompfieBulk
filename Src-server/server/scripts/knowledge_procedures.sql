@@ -94,6 +94,8 @@ BEGIN
 		SELECT distinct domain_id
 		FROM tbl_statutory_levels
 	);
+    select c.country_id, c.country_name, d.domain_id from tbl_countries c inner join
+        tbl_domain_countries d on c.country_id = d.country_id;
 END //
 DELIMITER ;
 
@@ -375,7 +377,7 @@ CREATE procedure `sp_tbl_domains_for_user`(
 	IN u_id INT(11)
 )
 BEGIN
-	SELECT @u_cat_id := user_category_id from tbl_users where user_id = u_id;
+	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = u_id;
 	IF @u_cat_id > 2 THEN
 		SELECT DISTINCT t1.domain_id, t1.domain_name, t1.is_active
 		FROM tbl_domains t1
@@ -518,10 +520,7 @@ BEGIN
         select count(legal_entity_id) from tbl_legal_entities tle
         WHERE tle.client_id=tcg.client_id
     ) as no_of_legal_entities,
-    (
-        select sum(is_active) from tbl_legal_entities tle
-        WHERE tle.client_id=tcg.client_id
-    ) as is_active, is_approved, remarks
+    is_active, is_approved, remarks
     FROM tbl_client_groups tcg;
 END //
 DELIMITER ;
@@ -557,17 +556,18 @@ CREATE PROCEDURE `sp_domains_for_user`(
     IN session_user INT(11)
 )
 BEGIN
-    IF session_user > 2 THEN
-		SELECT domain_id, domain_name, is_active
-		FROM tbl_domains WHERE is_active=1
-		and domain_id in (
-			SELECT domain_id FROM tbl_user_domains
-			WHERE user_id=session_user
-		);
-	ELSE
-		SELECT domain_id, domain_name, is_active
-		FROM tbl_domains WHERE is_active=1;
-	END IF;
+    select distinct(t1.legal_entity_id), t2.domain_id,
+	(select domain_name from tbl_domains where
+	domain_id = t2.domain_id) as domain_name, t2.organisation_id as industry_id,
+	(select organisation_name from tbl_organisation where
+	organisation_id = t2.organisation_id ) as industry_name,
+	t2.count as unit_count
+	from
+	tbl_user_legalentity as t1,
+	tbl_legal_entity_domains as t2
+	where
+	t2.legal_entity_id = t1.legal_entity_id and
+	t1.user_id = session_user;
 END //
 DELIMITER ;
 
@@ -770,7 +770,7 @@ CREATE PROCEDURE `sp_client_configurations_delete`(
     IN clientid INT(11)
 )
 BEGIN
-    DELETE FROM tbl_client_configurations WHERE client_id=clientid;
+    DELETE FROM tbl_client_configuration WHERE client_id=clientid;
 END //
 DELIMITER ;
 
@@ -864,7 +864,7 @@ CREATE PROCEDURE `sp_client_groups_details_by_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT group_name, short_name, email_id, total_view_licence
+    SELECT short_name, email_id, total_view_licence
     FROM tbl_client_groups WHERE client_id=clientid;
 END //
 DELIMITER ;
@@ -898,8 +898,15 @@ CREATE PROCEDURE `sp_client_domains_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT client_id, legal_entity_id, domain_id
-    FROM tbl_client_domains WHERE client_id = clientid;
+    select t1.client_id, t1.legal_entity_id, t2.domain_id
+	from
+	tbl_user_legalentity as t1,
+	tbl_legal_entity_domains as t2
+	where
+	t2.legal_entity_id = t1.legal_entity_id and
+	t1.client_id = clientid and
+	t1.user_id = userId
+	group by t1.user_id;
 END //
 DELIMITER ;
 
@@ -959,7 +966,7 @@ CREATE PROCEDURE `sp_client_countries_by_group_id`(
     IN group_id INT(11)
 )
 BEGIN
-    SELECT country_id FROM tbl_client_countries
+    SELECT country_id FROM tbl_legal_entities
     WHERE client_id = group_id;
 END //
 DELIMITER ;
@@ -1053,7 +1060,7 @@ CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
 	DECLARE user_category INT(11);
 	SELECT user_category_id INTO user_category
-	FROM tbl_users WHERE user_id = userid;
+	FROM tbl_user_login_details WHERE user_id = userid;
 	IF user_category in (1,2) then
 		select client_id, group_name, is_active from tbl_client_groups
 		order by group_name ASC;
@@ -1241,36 +1248,46 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser`(in userId INT(11))
 BEGIN
-	select t1.unit_id, t1.client_id, t1.business_group_id,
-    t1.legal_entity_id, t1.division_id,
-	t1.geography_id, t1.unit_code,t1.country_id,
-	t1.unit_name, t1.address, t1.postal_code,
-	t1.approve_status, t1.is_active,
-	t4.category_name,
-	t6.domain_id as domain_ids, t6.organisation_id as i_ids,
-	(select business_group_name from tbl_business_groups where
-    business_group_id = t1.business_group_id) as b_group,
-    (select legal_entity_name from tbl_legal_entities where
-    legal_entity_id = t1.legal_entity_id) as l_entity,
-    (select division_name from tbl_divisions where
-    division_id = t1.division_id) as division,
-    (select group_name from tbl_client_groups where
-    client_id = t1.client_id) as group_name
-    from
-    tbl_units as t1, tbl_user_clients as t2, tbl_user_countries as t3,
-	tbl_category_master as t4,
-	tbl_user_domains as t5, tbl_unit_industries as t6
-    where
-	t6.domain_id = t5.domain_id and
-	t5.user_id = t2.user_id and
-	t4.category_id = t1.category_id and
-	t4.client_id = t1.client_id and
-	t1.country_id = t3.country_id and
-    t3.user_id = t2.user_id and
-	t1.client_id = t2.client_id and
-    t2.user_id = userId
-	group by t1.unit_id
-    order by group_name, b_group, l_entity, division;
+	select t2.unit_id, t2.client_id, t2.business_group_id,
+    t2.legal_entity_id, t2.division_id,
+	t2.geography_id, t2.unit_code,t2.country_id,
+	t2.unit_name, t2.address, t2.postal_code,
+	t2.is_approved, t2.is_closed as is_active,
+	t4.legal_entity_name as l_entity,
+	(select business_group_name from tbl_business_groups
+		where business_group_id = t2.business_group_id) as b_group,
+	(select division_name from tbl_divisions
+		where division_id = t2.division_id) as division,
+	(select category_name from tbl_categories
+		where category_id = t2.category_id) as category_name,
+	t9.short_name as group_name,
+	t8.country_name, t2.category_id, t2.remarks
+	from
+	tbl_user_legalentity as t1,
+	tbl_units as t2,
+	tbl_legal_entities as t4,
+	tbl_countries as t8,
+	tbl_client_groups as t9
+	where
+	t9.client_id = t2.client_id and
+	t8.country_id = t2.country_id and
+	t4.legal_entity_id = t2.legal_entity_id and
+	t2.legal_entity_id = t1.legal_entity_id and
+	t2.client_id = t1.client_id and
+	t1.user_id = userId
+	group by group_name, b_group, l_entity, country_name
+	order by group_name, b_group, l_entity, country_name;
+
+	select t3.unit_id, t3.domain_id, t3.organisation_id
+	from
+	tbl_user_legalentity as t1,
+	tbl_units as t2,
+	tbl_units_organizations as t3
+	where
+	t3.unit_id = t2.unit_id and
+	t2.legal_entity_id = t1.legal_entity_id and
+	t2.client_id = t1.client_id and
+	t1.user_id =userId;
 END //
 DELIMITER ;
 
@@ -1283,8 +1300,10 @@ CREATE PROCEDURE `sp_geography_levels_getlevelsforusers`(in userId INT(11))
 BEGIN
 	select level_id, country_id, level_position, level_name
     from tbl_geography_levels
-    where country_id in (select country_id from tbl_user_countries
-    where user_id = userId) order by level_position;
+    where country_id in (select t2.country_id from tbl_user_legalentity as t1,
+	tbl_legal_entities as t2 where
+    t2.legal_entity_id = t1.legal_entity_id and
+	t2.client_id = t1.client_id and t1.user_id  = userId) order by level_position;
 END //
 DELIMITER ;
 
@@ -1302,8 +1321,10 @@ BEGIN
     tbl_countries as t3
     where
     t1.level_id = t2.level_id and t2.country_id = t3.country_id
-    and t2.country_id in (select country_id from tbl_user_countries
-    where user_id  = userId);
+    and t2.country_id in (select t2.country_id from tbl_user_legalentity as t1,
+	tbl_legal_entities as t2 where
+    t2.legal_entity_id = t1.legal_entity_id and
+	t2.client_id = t1.client_id and t1.user_id  = userId);
 END //
 DELIMITER ;
 
@@ -1876,7 +1897,7 @@ BEGIN
     WHERE T1.user_category_id > 2
 	ORDER BY T1.employee_name;
 
-    SELECT user_id, domain_id, countryid from tbl_user_domains;
+    SELECT user_id, domain_id, country_id from tbl_user_domains;
     SELECT user_id, country_id from tbl_user_countries;
 
 END //
@@ -2417,18 +2438,17 @@ DROP PROCEDURE IF EXISTS `sp_countries_for_unit`;
 DELIMITER //
 CREATE PROCEDURE `sp_countries_for_unit`(IN session_user INT(11))
 BEGIN
-	IF session_user > 0 THEN
-		SELECT country_id, country_name, is_active FROM tbl_countries
-		WHERE country_id in (
-			SELECT country_id FROM tbl_client_countries
-			where client_id in (
-				select user_id from tbl_user_countries
-				WHERE user_id = session_user))
-					ORDER BY country_name;
-	ELSE
-		SELECT country_id, country_name, is_active
-		FROM tbl_countries ORDER BY country_name;
-    END IF;
+	select t4.country_id, t4.country_name, t3.business_group_id, t1.client_id
+	from
+	tbl_user_legalentity as t1,
+	tbl_legal_entities as t2,
+	tbl_business_groups as t3,
+	tbl_countries as t4
+	where
+	t4.country_id = t2.country_id and
+	t3.business_group_id = t2.business_group_id and
+	t2.client_id = t1.client_id and
+	t1.user_id = session_user;
 END//
 DELIMITER ;
 
@@ -2678,9 +2698,9 @@ BEGIN
 		SELECT domain_name FROM tbl_domains td
 		WHERE td.domain_id = tui.domain_id
 	) as domain_name, (
-		SELECT industry_name FROM tbl_industries ti
-		WHERE ti.industry_id = tui.industry_id
-	) as industry_name FROM tbl_unit_industries tui
+		SELECT ti.organisation_name FROM tbl_organisation ti
+		WHERE ti.organisation_id = tui.organisation_id
+	) as industry_name FROM tbl_units_organizations tui
 	WHERE tui.unit_id in (
 		SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
 	) and tui.domain_id=domainid;
@@ -2738,7 +2758,7 @@ in tableName varchar(50), param varchar(50))
 BEGIN
 	if tableName = 'catg_name' then
 		select count(0) as catg_cnt from
-		tbl_category_master where category_name = param;
+		tbl_categories where category_name = param;
 	end if;
 	if tableName = 'div_name' then
 		select count(0) as div_name_cnt from
@@ -2779,7 +2799,7 @@ CREATE PROCEDURE `sp_tbl_units_save_category`(
 	createdOn timestamp
 	)
 BEGIN
-	insert into tbl_category_master
+	insert into tbl_categories
 	(client_id, business_group_id, legal_entity_id, division_id,
 	category_name, created_by, created_on)
 	values
@@ -2873,7 +2893,7 @@ DROP PROCEDURE IF EXISTS `sp_assign_legal_entities_list`;
 DELIMITER //
 CREATE PROCEDURE `sp_assign_legal_entities_list`()
 BEGIN
-    select client_id, group_name,
+	select client_id, group_name,
     (
         select group_concat(country_name) from tbl_countries
         where country_id in (
@@ -2961,6 +2981,303 @@ DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
+-- To get list of client agreement details
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_client_agreement_details`(
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
+ IN contractto_ VARCHAR(50), IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11))
+BEGIN
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category
+	FROM tbl_user_login_details WHERE user_id = userid_;
+    
+	select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
+	t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
+	(select count(domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
+	(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
+	(select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
+	t3.activation_date,
+	(select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id 
+	where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
+	(select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+	(select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+	from tbl_legal_entities t1 
+	inner join tbl_client_groups t2 on t1.client_id = t2.client_id
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    where
+	t1.country_id = countryid_ and
+    IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
+    IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
+    IF(domainid_ IS NOT NULL, t3.domain_id = domainid_, 
+    IF (user_category > 2,
+    t3.domain_id in (select domain_id from tbl_user_domains 
+		WHERE user_id = userid_
+	), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF (user_category = 5,
+    t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
+		WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
+		)), 
+    IF (user_category = 6,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
+			WHERE user_id=userid_)
+    ,
+    IF (user_category = 7 OR user_category = 8,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+			SELECT unit_id FROM tbl_user_units
+			WHERE user_id=userid_
+		))
+    ,1
+    )))))
+    group by t3.legal_entity_id, t3.domain_id
+    order by t1.legal_entity_name limit fromcount_, pagecount_;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of client agreement details record count
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_client_agreement_details_count`(
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
+ IN contractto_ VARCHAR(50), IN userid_ INT(11))
+BEGIN
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category
+	FROM tbl_user_login_details WHERE user_id = userid_;
+    
+	select count(t1.legal_entity_id) as total_record
+	from tbl_legal_entities t1 
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+    where
+	t1.country_id = countryid_ and
+    IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
+    IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
+    IF(domainid_ IS NOT NULL, t3.domain_id = domainid_, 
+    IF (user_category > 2,
+    t3.domain_id in (select domain_id from tbl_user_domains 
+		WHERE user_id = userid_
+	), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF (user_category = 5,
+    t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
+		WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
+		)), 
+    IF (user_category = 6,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
+			WHERE user_id=userid_)
+    ,
+    IF (user_category = 7 OR user_category = 8,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+			SELECT unit_id FROM tbl_user_units
+			WHERE user_id=userid_
+		))
+    ,1
+    )))));
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of domainwise agreement details
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_domainwise_agreement_details`(
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
+ IN contractto_ VARCHAR(50), IN fromcount_ INT(11), IN pagecount_ INT(11),IN userid_ INT(11) )
+BEGIN
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category
+	FROM tbl_user_login_details WHERE user_id = userid_;
+    
+	select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.contract_from,
+	t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t4.business_group_name,
+	(select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
+	t3.activation_date,
+    (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id 
+	where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
+	(select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+	(select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+	from tbl_legal_entities t1 
+	inner join tbl_client_groups t2 on t1.client_id = t2.client_id
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    where
+	t1.country_id = countryid_ and t3.domain_id = domainid_ and
+    IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
+    IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF (user_category = 5,
+    t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
+		WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
+		)), 
+    IF (user_category = 6,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
+			WHERE user_id=userid_)
+    ,
+    IF (user_category = 7 OR user_category = 8,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+			SELECT unit_id FROM tbl_user_units
+			WHERE user_id=userid_
+		))
+    ,1
+    ))))
+    group by t1.legal_entity_id
+    order by t1.legal_entity_name limit fromcount_, pagecount_;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of domainwise agreement details record count
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_domainwise_agreement_details_count`(
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
+ IN contractto_ VARCHAR(50), IN userid_ INT(11))
+BEGIN
+	DECLARE user_category INT(11);
+	SELECT user_category_id INTO user_category
+	FROM tbl_user_login_details WHERE user_id = userid_;
+    
+	select count(distinct t1.legal_entity_id) as total_record
+	from tbl_legal_entities t1 
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+    where
+	t1.country_id = countryid_ and t3.domain_id = domainid_ and
+    IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
+    IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF (user_category = 5,
+    t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
+		WHERE client_id in (
+			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
+		)), 
+    IF (user_category = 6,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
+			WHERE user_id=userid_)
+    ,
+    IF (user_category = 7 OR user_category = 8,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+			SELECT unit_id FROM tbl_user_units
+			WHERE user_id=userid_
+		))
+    ,1
+    ))));
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of statutory notification report details
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_statutory_notification_details`(
+ countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11), 
+IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
+IN fromcount_ INT(11), IN pagecount_ INT(11))
+BEGIN
+	SELECT 
+    ts.statutory_name,
+    tc.compliance_task,
+    tsnl.notification_text,
+    tsnl.created_on
+FROM
+    tbl_statutory_notifications tsnl
+        INNER JOIN
+    tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
+        INNER JOIN
+    tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
+        INNER JOIN
+    tbl_statutories ts ON ts.statutory_id = tms.statutory_id
+WHERE
+    tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
+    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+    IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
+    IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+limit fromcount_, pagecount_;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of statutory notification details record count
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_statutory_notification_details_count`(
+ countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11), 
+IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50))
+BEGIN
+	SELECT COUNT(tsnl.notification_id) as total_record
+FROM
+    tbl_statutory_notifications tsnl
+        INNER JOIN
+    tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
+        INNER JOIN
+    tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
+        INNER JOIN
+    tbl_statutories ts ON ts.statutory_id = tms.statutory_id
+WHERE
+    tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
+    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+    IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
+    IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1);
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of level one statutory names
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_levelone_statutories`()
+BEGIN
+	SELECT 
+		t1.statutory_id,
+		t1.statutory_name,
+		t2.country_id,
+		t2.domain_id
+	FROM
+		tbl_statutories t1
+			INNER JOIN
+		tbl_statutory_levels t2 ON t1.level_id = t2.level_id
+	WHERE
+		t2.level_position = 1;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get organizationwise unit count details
+-- --------------------------------------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE `sp_organizationwise_unit_count`(IN legalentityid_ INT(11), IN domainid_ INT(11))
+BEGIN
+	select
+	t1.organisation_id,  
+	t1.count as domain_total_unit,
+	(select count(t4.unit_id) from tbl_units_organizations t4
+	inner join tbl_units t5 on t4.unit_id = t5.unit_id and t5.legal_entity_id = legalentityid_
+	where t4.domain_id = domainid_ and t4.organisation_id = t1.organisation_id
+	) as domain_used_unit,
+	(select organisation_name from tbl_organisation where organisation_id = t1.organisation_id) as organization_name,
+    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name
+	from tbl_legal_entity_domains t1 where t1.legal_entity_id = legalentityid_ and t1.domain_id = domainid_;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
 -- To get categories assigned to an user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_categories_by_user`;
@@ -3008,7 +3325,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_by_user`;
 DELIMITER //
-CREATE PROCEDURE `sp_units_by_user`()
+CREATE PROCEDURE `sp_units_by_user`(IN userid INT(11))
 BEGIN
 	DECLARE user_category INT(11);
 	SELECT user_category_id INTO user_category
@@ -3043,6 +3360,7 @@ BEGIN
 		) order by unit_name ASC;
 	END IF;
 DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To verify token
 -- --------------------------------------------------------------------------------
@@ -3357,8 +3675,6 @@ BEGIN
     select repeat_type_id, repeat_type from tbl_compliance_repeat_type;
     -- 9
     select duration_type_id, duration_type from tbl_compliance_duration_type;
-
-
 END //
 DELIMITER ;
 
@@ -3393,7 +3709,7 @@ BEGIN
         set approvestatus = '%';
     end if;
     select t1.statutory_mapping_id, t1.country_id, t1.domain_id, t1.statutory_nature_id,
-    t1.is_active, t1.is_approved, t1.remarks
+    t1.is_active, t1.is_approved, t1.remarks,
     (select country_name from tbl_countries where country_id = t1.country_id) as country_name,
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
     (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id) as nature
@@ -3421,7 +3737,7 @@ BEGIN
     where t3.user_id = userid and t4.user_id = userid and t2.is_approved = approvestatus;
 
     select t1.statutory_mapping_id, t1.statutory_id,
-    (select parent_names from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
+    (select concat(parent_names, ' >> ', statutory_name) from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
     from tbl_mapped_statutories as t1
     inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
@@ -3616,16 +3932,20 @@ BEGIN
 	SELECT @_user_category_id := user_category_id as user_category_id
     FROM tbl_users WHERE user_id = userId;
 
-	if(@_user_category_id = 1)then
+	if(userId = 1)then
 		select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user
 		from
 		tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
 		tbl_users as t_usr,tbl_user_units as t3
 		where
+		case when _unit_id <> 0 then t3.unit_id = _unit_id else
+		t3.unit_id = t3.unit_id end and
 		t3.client_id = t1.client_id and
 		t3.legal_entity_id = t1.legal_entity_id and
 		t_usr.user_id = t1.user_id and
 		t_mgr.user_id = t2.created_by and
+		case when bgrp_id <> 0 then t2.business_group_id = bgrp_id else
+		t2.business_group_id = t2.business_group_id end and
 		t2.country_id = counrtyId and
 		t2.client_id = t1.client_id and
 		t2.legal_entity_id = t1.legal_entity_id and
@@ -3640,8 +3960,14 @@ BEGIN
 		where
 		t3.user_category_id = t1.user_category_id and
 		t2.user_id = t1.user_id and
+		case when _cg_id <> 0 then t4.category_id = _cg_id else
+		t4.category_id = t4.category_id end and
+		case when _divi_id <> 0 then t4.division_id = _divi_id else
+		t4.division_id = t4.division_id end and
 		t4.unit_id = t1.unit_id and
 		t4.country_id = counrtyId and
+		case when _unit_id <> 0 then t1.unit_id = _unit_id else
+		t1.unit_id = t1.unit_id end and
 		t1.legal_entity_id =legalId and
 		t1.client_id = clientId;
 
@@ -3651,6 +3977,8 @@ BEGIN
 		where
 		t3.domain_id = t2.domain_id and
 		t2.unit_id = t1.unit_id and
+		case when _unit_id <> 0 then t1.unit_id = _unit_id else
+		t1.unit_id = t1.unit_id end and
 		t1.legal_entity_id =legalId and
 		t1.client_id = clientId
 		order by t3.domain_name;
@@ -3660,11 +3988,15 @@ BEGIN
 		tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
 		tbl_users as t_usr,tbl_user_units as t3
 		where
+		case when _unit_id <> 0 then t3.unit_id = _unit_id else
+		t3.unit_id = t3.unit_id end and
 		t3.client_id = t1.client_id and
 		t3.legal_entity_id = t1.legal_entity_id and
 		t_usr.user_id = t1.user_id and
 		t_mgr.user_id = t2.created_by and
 		t2.created_by = userId and
+		case when bgrp_id <> 0 then t2.business_group_id = bgrp_id else
+		t2.business_group_id = t2.business_group_id end and
 		t2.country_id = counrtyId and
 		t2.client_id = t1.client_id and
 		t2.legal_entity_id = t1.legal_entity_id and
@@ -3679,8 +4011,14 @@ BEGIN
 		where
 		t3.user_category_id = t1.user_category_id and
 		t2.user_id = t1.user_id and
+		case when _cg_id <> 0 then t4.category_id = _cg_id else
+		t4.category_id = t4.category_id end and
+		case when _divi_id <> 0 then t4.division_id = _divi_id else
+		t4.division_id = t4.division_id end and
 		t4.unit_id = t1.unit_id and
 		t4.country_id = counrtyId and
+		case when _unit_id <> 0 then t1.unit_id = _unit_id else
+		t1.unit_id = t1.unit_id end and
 		t1.legal_entity_id =legalId and
 		t1.client_id = clientId;
 
@@ -3690,6 +4028,8 @@ BEGIN
 		where
 		t3.domain_id = t2.domain_id and
 		t2.unit_id = t1.unit_id and
+		case when _unit_id <> 0 then t1.unit_id = _unit_id else
+		t1.unit_id = t1.unit_id end and
 		t1.legal_entity_id =legalId and
 		t1.client_id = clientId
 		order by t3.domain_name;
@@ -3699,10 +4039,14 @@ BEGIN
 		tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
 		tbl_users as t_usr,tbl_user_units as t3
 		where
+		case when _unit_id <> 0 then t3.unit_id = _unit_id else
+		t3.unit_id = t3.unit_id end and
 		t3.client_id = t1.client_id and
 		t3.legal_entity_id = t1.legal_entity_id and
 		t_usr.user_id = t1.user_id and
 		t_mgr.user_id = t2.created_by and
+		case when bgrp_id <> 0 then t2.business_group_id = bgrp_id else
+		t2.business_group_id = t2.business_group_id end and
 		t2.country_id = counrtyId and
 		t2.client_id = t1.client_id and
 		t2.legal_entity_id = t1.legal_entity_id and
@@ -3717,9 +4061,15 @@ BEGIN
 		where
 		t3.user_category_id = t1.user_category_id and
 		t2.user_id = t1.user_id and
+		case when _cg_id <> 0 then t4.category_id = _cg_id else
+		t4.category_id = t4.category_id end and
+		case when _divi_id <> 0 then t4.division_id = _divi_id else
+		t4.division_id = t4.division_id end and
 		t4.unit_id = t1.unit_id and
 		t4.country_id = counrtyId and
 		t1.user_id = userId and
+		case when _unit_id <> 0 then t1.unit_id = _unit_id else
+		t1.unit_id = t1.unit_id end and
 		t1.legal_entity_id =legalId and
 		t1.client_id = clientId;
 
@@ -3730,28 +4080,540 @@ BEGIN
 		t3.domain_id = t2.domain_id and
 		t2.unit_id = t1.unit_id and
 		t1.user_id = userId and
+		case when _unit_id <> 0 then t1.unit_id = _unit_id else
+		t1.unit_id = t1.unit_id end and
 		t1.legal_entity_id =legalId and
 		t1.client_id = clientId
 		order by t3.domain_name;
 	end if;
 END//
-DELIMITER ;
-
+DELIMITER;
 
 -- --------------------------------------------------------------------------------
--- verify password
+-- Get country based on user - report filter
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_verify_password`;
+DROP PROCEDURE IF EXISTS `sp_countries_for_user_filter`;
 DELIMITER //
 
-CREATE PROCEDURE `sp_verify_password`(
-	IN userid_ INT(11), password_ VARCHAR(50)
+CREATE PROCEDURE `sp_countries_for_user_filter`( IN u_id INT(11) )
 BEGIN
-	SELECT 
-		count(u.user_id) as count
-	FROM
-		tbl_user_login_details u
-	WHERE
-		u.user_id = userid_ AND u.password = password_ AND u.is_active = 1;
+	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = u_id;
+	IF @u_cat_id > 2 THEN
+		SELECT DISTINCT t1.country_id, t1.country_name, t1.is_active
+		FROM tbl_countries t1
+		INNER JOIN tbl_user_countries t2 on t1.country_id = t2.country_id
+		WHERE t2.user_id = u_id
+		ORDER BY t1.country_name;
+	ELSE
+		SELECT country_id, country_name, is_active FROM tbl_countries
+		ORDER BY country_name;
+	END IF;
+END //
+DELIMITER;
+
+- --------------------------------------------------------------------------------
+-- Get client groups based on user - report filter
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_groups_for_user`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_groups_for_user`( IN u_id INT(11) )
+BEGIN
+	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = u_id;
+	IF @u_cat_id > 2 THEN
+		SELECT DISTINCT t1.client_id, t1.group_name, 
+		(
+			select group_concat(country_name) from tbl_countries
+			where country_id in (
+			select country_id from tbl_legal_entities
+			where client_id=t1.client_id)
+		) as country_names,
+		(
+			select count(legal_entity_id) from tbl_legal_entities
+			WHERE client_id=t1.client_id
+		) as no_of_legal_entities,
+		t1.is_active, t1.is_approved, t1.remarks
+		FROM tbl_client_groups t1
+		INNER JOIN tbl_user_clients t2 on t1.client_id = t2.client_id
+		WHERE t2.user_id = u_id
+		ORDER BY t1.group_name;
+	ELSE
+		SELECT DISTINCT t1.client_id, t1.group_name, 
+		(
+			select group_concat(country_name) from tbl_countries
+			where country_id in (
+			select country_id from tbl_legal_entities
+			where client_id=t1.client_id)
+		) as country_names,
+		(
+			select count(legal_entity_id) from tbl_legal_entities
+			WHERE client_id=t1.client_id
+		) as no_of_legal_entities,
+		t1.is_active, t1.is_approved, t1.remarks
+		FROM tbl_client_groups t1
+		ORDER BY t1.group_name;
+	END IF;
+
+	select DISTINCT l.country_id, l.client_id from tbl_legal_entities l;
+END //
+
+-- --------------------------------------------------------------------------------
+-- Load Countries for client unit form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_getCountries`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_getCountries`(
+in clientId int(11))
+BEGIN
+	select t1.country_id
+	from
+	tbl_user_legalentity as tul,
+	tbl_legal_entities as t1,
+	tbl_business_groups as t2
+	where
+	t2.business_group_id = t1.business_group_id and
+	t2.client_id = t1.client_id and
+	t1.client_id  = tul.client_id and
+	tul.client_id = clientID and
+	tul.user_id = userId
+	group by t2.business_group_id;
 END//
-DELIMITER ;
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get geography levels for client unit
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getgeographylevels`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_unit_getgeographylevels`(in userId int(11))
+BEGIN
+	select level_id, country_id, level_position, level_name
+    from tbl_geography_levels
+    where country_id in (select t2.country_id from tbl_user_legalentity as t1,
+	tbl_legal_entities as t2 where t2.client_id = t1.client_id and
+	t2.legal_entity_id = t1.legal_entity_id and
+	t1.user_id = userId) order by level_position;
+END//
+-- --------------------------------------------------------------------------------
+-- Get geographies for client unit
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_get_geographies`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_unit_get_geographies`(in userId int(11))
+BEGIN
+	select tg.geography_id, tg.geography_name, tg.parent_names,
+    tg.level_id,tg.parent_ids, tg.is_active, tgl.country_id
+    from
+    tbl_geographies as tg, tbl_geography_levels as tgl
+    where
+		t2.level_id = t1.level_id and t2.country_id in (select t2.country_id from
+		tbl_user_legalentity as t1,
+		tbl_legal_entities as t2 where t2.client_id = t1.client_id and
+		t2.legal_entity_id = t1.legal_entity_id and
+		t1.user_id = userId);
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- to delete the domains, organization under unit id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_delete_unitorganizations`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_delete_unitorganizations`(in
+unitId int(11))
+BEGIN
+	delete from tbl_units_organizations
+	where
+	unit_id in (unitId);
+END//
+DELIMITER;
+
+
+-- --------------------------------------------------------------------------------
+-- To get client details for statutory settings report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_clientdetails`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_setting_report_clientdetails`(
+in _user_id int(11))
+BEGIN
+	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+	IF @u_cat_id = 1  THEN
+		select t1.client_id, t1.short_name, t1.is_active, t2.country_id
+		from tbl_client_groups as t1, tbl_legal_entities as t2
+		where t2.client_id = t1.client_id order by t1.short_name asc;
+	end if;
+	if @u_cat_id = 5  THEN
+		select t2.client_id, t2.short_name, t2.is_active, t3.country_id
+		from tbl_user_clients as t1, tbl_client_groups as t2,
+		tbl_legal_entities as t3 where t3.client_id = t2.client_id and
+		t2.client_id  = t1.client_id and t1.user_category_id = @u_cat_id and
+		t1.user_id = _user_id;
+	END IF;
+	if @u_cat_id = 6  THEN
+		select t3.client_id,t3.short_name,t3.is_active, t2.country_id
+		from tbl_user_legalentity as t1, tbl_legal_entities as t2,
+		tbl_client_groups as t3 where t3.client_id = t2.client_id and
+		t2.client_id = t1.client_id and t1.user_id = _user_id  order by t3.short_name asc;
+	end if;
+	if @u_cat_id = 7 or @u_cat_id = 8 THEN
+		select t3.client_id,t3.short_name, t3.is_active, t2.country_id
+		from tbl_user_units as t1, tbl_legal_entities as t2,
+		tbl_client_groups as t3 where t3.client_id = t2.client_id and
+		t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
+		and t1.user_id = _user_id order by t3.short_name asc;
+	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get business group, legal entity details for statutory settings report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_businessgroupdetails`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_setting_report_businessgroupdetails`(in _user_id int(11))
+BEGIN
+	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+	IF @u_cat_id = 1  THEN
+		select t1.client_id, t3.business_group_id, t3.business_group_name,
+		t2.legal_entity_id, t2.legal_entity_name
+		from tbl_client_groups as t1, tbl_legal_entities as t2,
+		tbl_business_groups as t3 where t3.business_group_id = t2.business_group_id and
+		t2.client_id = t1.client_id order by t3.business_group_name asc;
+	end if;
+	if @u_cat_id = 5  THEN
+		select t1.client_id, t3.legal_entity_id, t3.legal_entity_name, t4.business_group_id,
+		t4.business_group_name from tbl_user_clients as t1,
+		tbl_legal_entities as t3, tbl_business_group as t4 where
+		t4.business_group_id = t3.business_group_id and
+		t3.client_id  = t1.client_id and
+		t1.user_category_id = @u_cat_id and t1.user_id = _user_id
+		order by t4.business_group_name asc;
+	END IF;
+	if @u_cat_id = 6  THEN
+		select t1.client_id,t2.legal_entity_id,t2.legal_entity_name,
+		t3.business_group_id, t3.business_group_name
+		from tbl_user_legalentity as t1, tbl_legal_entities as t2,
+		tbl_business_group as t3 where t3.business_group_id = t2.business_group_id and
+		t2.legal_entity_id = t1.legal_entity_id and
+		t2.client_id = t1.client_id and t1.user_id = _user_id
+		 order by t3.business_group_name asc;
+	end if;
+	if @u_cat_id = 7 or @u_cat_id = 8 THEN
+		select t1.client_id,t2.legal_entity_id,t2.legal_entity_name,
+		t3.business_group_id, t3.business_group_name
+		from tbl_user_units as t1, tbl_legal_entities as t2,
+		tbl_business_group as t3 where t3.business_group_id = t2.business_group_id and
+		t2.legal_entity_id = t1.legal_entity_id and
+		t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
+		and t1.user_id = _user_id order by t3.business_group_name asc;
+	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_unitdetails`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_setting_report_unitdetails`(in _user_id int(11))
+BEGIN
+	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+	IF @u_cat_id = 1  THEN
+		select t3.client_id, t3.legal_entity_id, t3.unit_id, t4.unit_code, t4.unit_name
+		from tbl_client_groups as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_units as t4 where t4.unit_id = t3.unit_id and
+		t3.legal_entity_id = t2.legal_entity_id and
+		t3.client_id = t2.client_id and t2.client_id = t1.client_id
+		order by t4.unit_name asc;
+	end if;
+	if @u_cat_id = 5  THEN
+		select t1.client_id, t2.legal_entity_id, t3.unit_id, t4.unit_code, t4.unit_name
+		from tbl_user_clients as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_units as t4 where
+		t4.unit_id = t3.unit_id and t3.legal_entity_id = t2.legal_entity_id and
+		t3.client_id = t2.client_id and t2.client_id  = t1.client_id and
+		t1.user_category_id = @u_cat_id and t1.user_id = _user_id
+		order by t4.unit_name asc;
+	END IF;
+	if @u_cat_id = 6  THEN
+		select t1.client_id, t2.legal_entity_id, t3.unit_id, t4.unit_code, t4.unit_name
+		from tbl_user_legalentity as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_units as t4 where
+		t4.unit_id = t3.unit_id and
+		t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id and
+		t2.client_id = t1.client_id and t1.user_id = _user_id order by t4.unit_name asc;
+	end if;
+	if @u_cat_id = 7 or @u_cat_id = 8 THEN
+		select t1.client_id, t2.legal_entity_id, t3.unit_id, t4.unit_code, t4.unit_name
+		from tbl_user_units as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_units as t4 where
+		t4.unit_id = t3.unit_id and
+		t3.legal_entity_id = t2.legal_entity_id and	t3.client_id = t2.client_id and
+		t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
+		and t1.user_id = _user_id order by t4.unit_name asc;
+	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To get compliance name, statutory name under unit
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_domains_compliances`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_setting_report_domains_compliances`(in
+_user_id int(11))
+BEGIN
+	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+	IF @u_cat_id = 1  THEN
+		select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
+		t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+		from tbl_client_groups as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_compliances as t4, tbl_statutories as t5
+		where
+		t5.statutory_id = t3.statutory_id and t4.compliance_id = t3.compliance_id and
+		t3.legal_entity_id = t2.legal_entity_id and
+		t3.client_id = t2.client_id and t2.client_id = t1.client_id;
+	end if;
+	if @u_cat_id = 5  THEN
+		select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
+		t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+		from tbl_user_clients as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_compliances as t4, tbl_statutories as t5 where
+		t5.statutory_id = t3.statutory_id and
+		t4.compliance_id = t3.compliance_id and t3.legal_entity_id = t2.legal_entity_id and
+		t3.client_id = t2.client_id and t2.client_id  = t1.client_id and
+		t1.user_category_id = @u_cat_id and t1.user_id = _user_id;
+	END IF;
+	if @u_cat_id = 6  THEN
+		select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
+		t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+		from tbl_user_legalentity as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_compliances as t4, tbl_statutories as t5 where
+		t5.statutory_id = t3.statutory_id and t4.compliance_id = t3.compliance_id and
+		t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id and
+		t2.client_id = t1.client_id and t1.user_id = _user_id;
+	end if;
+	if @u_cat_id = 7 or @u_cat_id = 8 THEN
+		select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
+		t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+		from tbl_user_units as t1, tbl_legal_entities as t2,
+		tbl_client_compliances as t3, tbl_compliances as t4, tbl_statutories as t5 where
+		t5.statutory_id = t3.statutory_id and t4.compliance_id = t3.compliance_id and
+		t3.legal_entity_id = t2.legal_entity_id and	t3.client_id = t2.client_id and
+		t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
+		and t1.user_id = _user_id;
+	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_recordset`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
+in _c_id int(11), _d_id int(11), _bg_id int(11), _le_id int(11), _u_id int(11),
+_cl_id int(11), _st_id int(11), _cp_id int(11))
+BEGIN
+	select t1.unit_id, t1.unit_code, t1.unit_name, t1.address
+	from
+	tbl_units as t1, tbl_client_compliances as t2
+	where
+	t2.is_approved = 1 and
+	t2.unit_id = t1.unit_id and
+	case when _u_id <> 0 then t1.unit_id = _u_id else t1.unit_id = t1.unit_id end and
+	case when _bg_id <> 0 then t1.business_group_id = _bg_id else t1.business_group_id = t1.business_group_id end and
+	t1.legal_entity_id = _le_id and t1.client_id = _cl_id and
+	t1.country_id = _c_id
+	group by t1.unit_id;
+
+	select t1.unit_id, t3.statutory_id, t3.statutory_name
+	from
+	tbl_client_compliances as t1, tbl_statutories as t3
+	where
+	t3.statutory_id = t1.statutory_id and
+	case when _st_id <> 0 then t1.statutory_id = _st_id else t1.statutory_id = t1.statutory_id end and
+	case when _cp_id <> 0 then t1.compliance_id = _cp_id else t1.compliance_id = t1.compliance_id end and
+	case when _d_id <> 0 then t1.domain_id = _d_id else t1.domain_id = t1.domain_id end and
+	case when _u_id <> 0 then t1.unit_id = _u_id else t1.unit_id = t1.unit_id end and
+	t1.legal_entity_id = _le_id and	t1.client_id = _cl_id
+	group by t3.statutory_id;
+
+	select t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
+	t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
+	t1.statutory_opted_status, 'user@compfie.com'  as compfie_admin,
+	DATE_FORMAT(t1.updated_on, '%d/%m/%Y') as admin_update,
+	(select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
+	DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
+	(select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
+	where tsn.statutory_nature_id = tsm.statutory_nature_id and
+	tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
+	from
+	tbl_client_compliances as t1, tbl_compliances as t2
+	where
+	t2.compliance_id = t1.compliance_id and
+	t2.country_id = _c_id and
+	t1.is_approved = 1 and
+	case when _st_id <> 0 then t1.statutory_id = _st_id else t1.statutory_id = t1.statutory_id end and
+	case when _cp_id <> 0 then t1.compliance_id = _cp_id else t1.compliance_id = t1.compliance_id end and
+	case when _d_id <> 0 then t1.domain_id = _d_id else t1.domain_id = t1.domain_id end and
+	case when _u_id <> 0 then t1.unit_id = _u_id else t1.unit_id = t1.unit_id end and
+	t1.legal_entity_id = _le_id and	t1.client_id = _cl_id
+	group by t2.compliance_id;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Group list with legal entity count for group admin registration email
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_groupslist`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_groupadmin_registration_email_groupslist`(
+in _user_id int(11))
+BEGIN
+	case when _user_id = 1 then
+		SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+		select t3.client_id, t3.short_name as group_name, count(t2.legal_entity_id ) as
+		no_of_legal_entities, (select country_name from tbl_countries where country_id =
+		t2.country_id) as country_name, t3.group_admin_username	as ug_name, t4.email_id as email_id,
+		t4.user_id, concat(t4.employee_name,'-',(case when t4.employee_code is null then
+			'' else t4.employee_code end)) as emp_code_name
+		from
+		tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
+		tbl_client_users as t4
+		where
+		t4.client_id = t3.client_id and
+		t3.client_id = t2.client_id and t2.client_id = t1.client_id
+		group by t2.country_id order by t3.short_name;
+	else
+		SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+		if @u_cat_id = 5 then
+			select t3.client_id, t3.short_name as group_name, count(t2.legal_entity_id )
+			as no_of_legal_entities, (select country_name from tbl_countries where country_id
+			= t2.country_id) as country_name, t3.group_admin_username as ug_name,
+			t4.email_id as email_id, t4.user_id, concat(t4.employee_name,'-',(case when t4.employee_code is null then
+			'' else t4.employee_code end)) as emp_code_name
+			from
+			tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
+			tbl_client_users as t4
+			where
+			t4.client_id = t3.client_id and
+			t3.client_id = t2.client_id and t2.client_id = t1.client_id and
+			t1.user_category_id = @u_cat_id and t1.user_id = _user_id
+			group by t2.country_id order by t3.short_name;
+		end if;
+	end case;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_unitslist`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
+in _user_id int(11))
+BEGIN
+	case when _user_id = 1 then
+		SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+		select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
+		unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
+		country_name, (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
+		t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
+		(select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
+		t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
+		t5.email_id, t5.user_id, concat(t5.employee_name,'-',(case when t5.employee_code is null then
+		'' else t5.employee_code end)) as emp_code_name,
+		(select count(*) from tbl_client_statutories where client_id = t4.client_id and
+		unit_id = t4.unit_id) as statutory_count
+		from
+		tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
+		tbl_units as t4, tbl_client_users as t5
+		where
+		t5.client_id = t3.client_id and
+		t4.country_id = t2.country_id and t4.legal_entity_id = t2.legal_entity_id and
+		t4.client_id = t3.client_id and t3.client_id = t2.client_id and
+		t2.client_id = t1.client_id order by t2.legal_entity_name;
+	else
+		SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+		if @u_cat_id = 5 then
+			select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
+			unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
+			country_name, (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
+			t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
+			(select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
+			t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
+			t5.email_id, t5.user_id, concat(t5.employee_name,'-',(case when t5.employee_code is null then
+			'' else t5.employee_code end)) as emp_code_name,
+			(select count(*) from tbl_client_statutories where client_id = t4.client_id and
+			unit_id = t4.unit_id) as statutory_count
+			from
+			tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
+			tbl_units as t4, tbl_client_users as t5
+			where
+			t5.client_id = t3.client_id and
+			t4.country_id = t2.country_id and t4.legal_entity_id = t2.legal_entity_id and
+			t4.client_id = t2.client_id and t3.client_id = t2.client_id and
+			t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id and
+			t1.user_id = _user_id order by t2.legal_entity_name;
+		end if;
+	end case;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Insert while sending email for group admin registration email
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_groupadmin_email_notification_insert`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_groupadmin_email_notification_insert`(
+in _ins_mode varchar(10), _cl_id int(11), _le_id int(11), _admin_mail_id varchar(50),
+_mode_creation tinyint, _mode_sent_on timestamp, _mode_sent_by int(11))
+BEGIN
+	if _ins_mode = 'unit' then
+		insert into tbl_group_admin_email_notification
+		(client_id, legal_entity_id, group_admin_email_id, unit_creation_informed,
+		unit_sent_by, unit_sent_on)
+		values
+		(_cl_id, _le_id, _admin_mail_id, _mode_creation, _mode_sent_by, _mode_sent_on);
+	end if;
+	if _ins_mode = 'statutory' then
+		insert into tbl_group_admin_email_notification
+		(client_id, legal_entity_id, group_admin_email_id, assign_statutory_informed,
+		statu_sent_by, statu_sent_on)
+		values
+		(_cl_id, _le_id, _admin_mail_id, _mode_creation, _mode_sent_by, _mode_sent_on);
+	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- To save resend mail response from group admin registration email form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_client_email_verification_save`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_client_email_verification_save`(
+	IN cl_id INT(11), e_id varchar(50), r_token TEXT, t_type INT(11), e_date datetime
+)
+BEGIN
+	INSERT INTO tbl_client_email_verification(client_id, email_id, verification_code, verification_type_id, expiry_date)
+	VALUES (cl_id, e_id, r_token, t_type, e_date);
+END//
+DELIMITER;

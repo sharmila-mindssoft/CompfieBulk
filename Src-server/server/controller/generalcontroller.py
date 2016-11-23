@@ -27,7 +27,7 @@ __all__ = [
     "process_get_notifications",
     "process_update_notification_status",
     "process_uploaded_file",
-    "process_verify_password"
+    "process_verify_password"   
 ]
 
 forms = [1, 2]
@@ -104,18 +104,16 @@ def process_general_request(request, db):
         result = process_update_notification_status(db, request_frame, user_id)
         logger.logKnowledgeApi("UpdateNotificationStatus", "process end")
 
-    elif type(request_frame) is general.VerifyPassword:
-        logger.logKnowledgeApi("VerifyPassword", "process begin")
-        result = process_verify_password(db, request_frame, user_id)
-        logger.logKnowledgeApi("VerifyPassword", "process end")
-
     elif type(request_frame) is general.GetNotifications:
         logger.logKnowledgeApi("GetNotifications", "process begin")
         result = process_get_notifications(db, request_frame, user_id)
         logger.logKnowledgeApi("GetNotifications", "process end")
-    return result
 
-    
+    elif type(request_frame) is general.VerifyPassword:
+        logger.logKnowledgeApi("VerifyPassword", "process begin")
+        result = process_verify_password(db, request_frame, user_id)
+        logger.logKnowledgeApi("VerifyPassword", "process end")
+    return result
 
 
 def validate_user_session(db, session_token, client_id=None):

@@ -130,6 +130,7 @@ CREATE TABLE `tbl_users` (
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
   `disabled_on` timestamp NULL DEFAULT NULL,
+  `disable_reason` Text DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -173,6 +174,7 @@ DROP TABLE IF EXISTS `tbl_user_domains`;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
+  `country_id` int(11) NOT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`domain_id`,`user_id`),
@@ -351,6 +353,7 @@ CREATE TABLE `tbl_statutory_mappings` (
   `is_active` tinyint(4) DEFAULT '1',
   `is_approved` tinyint(4) DEFAULT '0',
   `remarks` varchar(500) DEFAULT NULL,
+  `statutory_mapping` Text DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -396,10 +399,9 @@ CREATE TABLE `tbl_compliances` (
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `is_updated` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`compliance_id`),
-  KEY `fk_compliances_statutory_mappings` (`statutory_mapping_id`),
+  UNIQUE KEY(`compliance_id`, `statutory_mapping_id`),
   KEY `fk_compliance_frequency_id` (`frequency_id`),
-  CONSTRAINT `fk_compliance_frequency_id` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`),
-  CONSTRAINT `fk_compliances_statutory_mappings` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
+  CONSTRAINT `fk_compliance_frequency_id` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_mapped_industries`;
@@ -407,11 +409,10 @@ CREATE TABLE `tbl_mapped_industries` (
   `statutory_mapping_id` int(11) NOT NULL,
   `organisation_id` int(11) NOT NULL,
   `assigned_by` int(11) DEFAULT NULL,
-  `assigned_on` timestamp NULL DEFAULT NULL,
-  KEY `fk_tbl_mapped_industries_statutory_mapping_id` (`statutory_mapping_id`),
+  `assigned_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY(`statutory_mapping_id`, `organisation_id`),
   KEY `fk_tbl_mapped_industries_organisation_id` (`organisation_id`),
-  CONSTRAINT `fk_tbl_mapped_industries_organisation_id` FOREIGN KEY (`organisation_id`) REFERENCES `tbl_organisation` (`organisation_id`),
-  CONSTRAINT `fk_tbl_mapped_industries_statutory_mapping_id` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
+  CONSTRAINT `fk_tbl_mapped_industries_organisation_id` FOREIGN KEY (`organisation_id`) REFERENCES `tbl_organisation` (`organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_mapped_locations`;
@@ -419,11 +420,10 @@ CREATE TABLE `tbl_mapped_locations` (
   `statutory_mapping_id` int(11) NOT NULL,
   `geography_id` int(11) NOT NULL,
   `assigned_by` int(11) DEFAULT NULL,
-  `assigned_on` timestamp NULL DEFAULT NULL,
-  KEY `fk_tbl_mapped_locations_statutory_mapping_id` (`statutory_mapping_id`),
+  `assigned_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY( `statutory_mapping_id`, `geography_id`).
   KEY `fk_tbl_mapped_locations_geography_id` (`geography_id`),
-  CONSTRAINT `fk_tbl_mapped_locations_geography_id` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`),
-  CONSTRAINT `fk_tbl_mapped_locations_statutory_mapping_id` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
+  CONSTRAINT `fk_tbl_mapped_locations_geography_id` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -432,11 +432,10 @@ CREATE TABLE `tbl_mapped_statutories` (
   `statutory_mapping_id` int(11) NOT NULL,
   `statutory_id` int(11) NOT NULL,
   `assigned_by` int(11) DEFAULT NULL,
-  `assigned_on` timestamp NULL DEFAULT NULL,
-  KEY `fk_tbl_mapped_statutories_statutory_mapping_id` (`statutory_mapping_id`),
+  `assigned_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY(`statutory_mapping_id`, `statutory_id`),
   KEY `fk_tbl_mapped_statutories_statutory_id` (`statutory_id`),
-  CONSTRAINT `fk_tbl_mapped_statutories_statutory_id` FOREIGN KEY (`statutory_id`) REFERENCES `tbl_statutories` (`statutory_id`),
-  CONSTRAINT `fk_tbl_mapped_statutories_statutory_mapping_id` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
+  CONSTRAINT `fk_tbl_mapped_statutories_statutory_id` FOREIGN KEY (`statutory_id`) REFERENCES `tbl_statutories` (`statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_statutory_mappings_approved_history`;
@@ -921,7 +920,8 @@ DROP TABLE IF EXISTS `tbl_messages`;
 CREATE TABLE `tbl_messages` (
   `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
-  `message_text` longtext,
+  `message_text` Text DEFAULT NULL,
+  `link` Text DEFAULT NUL,L
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`message_id`),

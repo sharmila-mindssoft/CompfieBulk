@@ -79,12 +79,15 @@ def process_login(db, request, session_user_ip):
     verified_login = response[1]
     user_info = response[2]
     forms = response[3]
-    uid = verified_username.get('user_id')
-    user_id = verified_login.get('user_id')
+    user_id = verified_username.get('user_id')
+
     user_category_id = verified_login.get('user_category_id')
-    if user_id is None and uid is not None:
-        save_login_failure(db, uid, session_user_ip)
-        rows = get_login_attempt_and_time(db, uid)
+
+    if verified_username.get('username') is None:
+        return login.InvalidUserName()
+    elif user_id is None:
+        save_login_failure(db, user_id, session_user_ip)
+        rows = get_login_attempt_and_time(db, user_id)
         no_of_attempts = 0
         if rows:
             no_of_attempts = rows[0]["login_attempt"]
@@ -93,9 +96,6 @@ def process_login(db, request, session_user_ip):
         else:
             captcha_text = None
         return login.InvalidCredentials(captcha_text)
-
-    elif verified_username.get('username') is None:
-        return login.InvalidCredentials(None)
 
     else:
         if login_type.lower() == "web":
@@ -147,6 +147,12 @@ def user_login_response(db, ip, data, forms):
     address = None if data["address"] == "" else data["address"]
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
+    #form_ids = data["form_ids"]
+    #menu = process_user_forms(db, form_ids)
+    #print "menu before user login success: %s" % menu
+    # form_ids = data["form_ids"]
+    # menu = process_user_forms(db, form_ids)
+
     menu = process_admin_forms(forms)
     # db.save_user_login_history(user_id)
     return login.UserLoginSuccess(

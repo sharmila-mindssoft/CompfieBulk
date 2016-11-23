@@ -77,10 +77,14 @@ def return_business_groups(business_groups):
 #  Return Type : List of object of Domain
 ##########################################################################
 def get_user_domains(db, session_user):
-    domains = db.call_proc(
-        "sp_domains_for_user", (session_user,)
-    )
-    return return_domains(domains)
+    # domains = db.call_proc(
+    #     "sp_domains_for_user", (session_user,)
+    # )
+    # return return_domains(domains)
+    procedure = 'sp_tbl_domains_for_user'
+    result = db.call_proc_with_multiresult_set(procedure, (session_user,), 3)
+    result.pop(0)
+    return return_domains(result)
 
 
 ##########################################################################
@@ -88,14 +92,14 @@ def get_user_domains(db, session_user):
 #  Parameters : Data fetched from database (Tuple of tuples)
 #  Return Type : List of object of Domain
 ##########################################################################
-def return_domains(data):
-    fn = core.Domain
-    results = [
-        fn(
-            d["domain_id"], d["domain_name"], bool(d["is_active"])
-        ) for d in data
-    ]
-    return results
+# def return_domains(data):
+#     fn = core.Domain
+#     results = [
+#         fn(
+#             d["domain_id"], d["domain_name"], bool(d["is_active"])
+#         ) for d in data
+#     ]
+#     return results
 
 
 ##########################################################################
@@ -119,7 +123,7 @@ def return_industries(data):
     fn = core.Industries
     results = [
         fn(
-            d["industry_id"], d["industry_name"], bool(d["is_active"])
+            d["organisation_id"], d["organisation_name"], bool(d["is_active"])
         ) for d in data
     ]
     return results
@@ -825,6 +829,65 @@ def return_group(groups):
             )
     return client_list
 
+##########################################################################
+#  To get list of groups
+#  Parameters : Object of database
+#  Return Type : Returns List of object of ClientGroup
+##########################################################################
+def get_client_groups_for_user(db, user_id):
+    groups = db.call_proc_with_multiresult_set("sp_client_groups_for_user", (user_id,), 3)
+    return return_client_groups_for_user(groups)
+
+
+##########################################################################
+#  To get list of groups
+#  Parameters : Object of database
+#  Return Type : Returns List of object of ClientGroup
+##########################################################################
+def return_country_list_of_client_group(client_id, countries):
+    c_ids = []
+    for c in countries :
+        if int(c["client_id"]) == client_id:
+            c_ids.append(int(c["country_id"]))
+
+    return c_ids
+
+def return_client_groups_for_user(data):
+    results = []
+    for d in data[1]:
+        c_id = d["client_id"]
+        c_ids = return_country_list_of_client_group(c_id, data[2])
+        results.append(core.ClientGroupMaster(
+            c_ids, c_id, d["group_name"], bool(d["is_active"]), int(d["is_approved"])
+        ))
+    return results
+
+###############################################################################
+# To convert the data fetched from database into List of object of Domain
+# Parameter(s) : Data fetched from database
+# Return Type : List of Object of Domain
+###############################################################################
+def return_country_list_of_domain(domain_id, countries):
+    c_ids = []
+    c_names = []
+    for c in countries :
+        if int(c["domain_id"]) == domain_id:
+            c_ids.append(int(c["country_id"]))
+            c_names.append(c["country_name"])
+
+    return c_ids, c_names
+
+def return_domains(data):
+    results = []
+    for d in data[1]:
+        d_id = d["domain_id"]
+        c_ids, c_names = return_country_list_of_domain(d_id, data[2])
+        results.append(core.Domain(
+            c_ids, c_names, d_id, d["domain_name"], bool(d["is_active"])
+        ))
+    return results
+
+
 
 ##########################################################################
 #  To check Wheteher the entered no of licence is less than already
@@ -1169,7 +1232,7 @@ def save_unit (
     current_time_stamp = str(get_date_time())
     columns = [
         "client_id", "geography_id", "unit_code", "unit_name",
-        "address", "postal_code", "country_id", "is_active", "created_by", "created_on",
+        "address", "postal_code", "country_id", "created_by", "created_on",
         "division_id", "category_id"
     ]
     if business_group_id is not None:
@@ -1187,7 +1250,7 @@ def save_unit (
         vals = [
             client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
             units[int_i].unit_address, units[int_i].postal_code, country_id,
-            1, session_user, current_time_stamp,
+            session_user, current_time_stamp,
         ]
         unit_names.append("\"%s - %s\"" % (
             str(units[int_i].unit_code).upper(), units[int_i].unit_name)
@@ -1199,13 +1262,13 @@ def save_unit (
             vals.append(units[int_i].get("div_id"))
         else:
             vals.append(None)
-        int_i = int_i +1
+        int_i = int_i + 1
 
         if units[int_i].get("catg_id") is not None:
             vals.append(units[int_i].get("catg_id"))
         else:
             vals.append(None)
-        int_i = int_i +1
+        int_i = int_i + 1
 
         if business_group_id is not None:
             vals.append(business_group_id)
@@ -1223,12 +1286,18 @@ def save_unit (
     db.save_activity(session_user, 19, action)
 
     max_unit_id = None
-    rows = db.call_proc("sp_tbl_units_max_unitid",())
+    unit_length = 0
+    rows = db.call_proc("sp_tbl_units_max_unitid", ())
     for id in rows:
         if(int(id["max_id"]) > 0):
             max_unit_id = int(id["max_id"])
-    columns = ["unit_id", "domain_id", "industry_id"]
-    unit_id_start = len(units)
+    columns = ["unit_id", "domain_id", "organisation_id"]
+    if len(units) > 3:
+        unit_id_start = int(len(units))/3
+        unit_length = int(len(units))/3
+    else:
+        unit_id_start = 1
+        unit_length = 1
     print "unit length"
     print unit_id_start
     print max_unit_id
@@ -1244,18 +1313,104 @@ def save_unit (
             unit_id = max_unit_id
         else :
             unit_id = (max_unit_id - unit_id_start) + i
-            i = i +1
+            i = i + 1
         print"unit_id"
         print unit_id
         vals = [unit_id, domain_ids, industry_ids]
         values_list.append(vals)
 
     result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
-    if result == True and result_1 == True:
+    if result is True and result_1 is True:
         return True
 
+def update_unit(db, client_id, units, session_user):
+    print "inside update db"
+    print units
+    print type(units)
+    print len(units)
+    current_time_stamp = str(get_date_time())
+    columns = [
+        "geography_id", "unit_code", "unit_name",
+        "address", "postal_code", "updated_by", "updated_on",
+        "division_id", "category_id"
+    ]
 
-def update_unit(db, client_id,  units, session_user):
+    values_list = []
+    unit_names = []
+    unit_ids = []
+    conditions = []
+    int_i = 0
+    while int_i < len(units):
+        vals = [
+            units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
+            units[int_i].unit_address, units[int_i].postal_code,
+            session_user, current_time_stamp,
+        ]
+        condition = "client_id=%s and unit_id=%s" % (
+                client_id, units[int_i].unit_id)
+        conditions.append(condition)
+        unit_names.append("\"%s - %s\"" % (
+            str(units[int_i].unit_code).upper(), units[int_i].unit_name)
+        )
+        unit_ids.append(units[int_i].unit_id)
+
+        int_i = int_i + 1
+        if units[int_i].get("div_id") is not None:
+            #print units[int_i].get("div_id")
+            vals.append(units[int_i].get("div_id"))
+        else:
+            vals.append(None)
+        int_i = int_i + 1
+
+        if units[int_i].get("catg_id") is not None:
+            vals.append(units[int_i].get("catg_id"))
+        else:
+            vals.append(None)
+        int_i = int_i + 1
+
+        values_list.append(vals)
+        print vals
+
+    result = db.bulk_update(tblUnits, columns, values_list, conditions)
+    print "result"
+    print result
+    if result is False:
+        raise process_error("E057")
+
+    action = "Updated following Units %s" % (",".join(unit_names))
+    db.save_activity(session_user, 19, action)
+
+    print "unit ids"
+    print unit_ids
+    if result is True:
+        delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (unit_ids,))
+        columns = ["unit_id", "domain_id", "organisation_id"]
+        values_list = []
+        unit_id = None
+        j = 0
+        if len(units) == 3:
+            print"unit_id"
+            print units[j].unit_id
+            domain_ids = ",".join(str(x) for x in units[j].domain_ids)
+            industry_ids = ",".join(str(x) for x in units[j].industry_ids)
+
+            vals = [units[j].unit_id, domain_ids, industry_ids]
+            values_list.append(vals)
+        else:
+            while j < len(units):
+                print"unit_id"
+                print units[j].unit_id
+                domain_ids = ",".join(str(x) for x in units[j].domain_ids)
+                industry_ids = ",".join(str(x) for x in units[j].industry_ids)
+
+                vals = [units[j].unit_id, domain_ids, industry_ids]
+                values_list.append(vals)
+                j = j + 3
+        result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
+    if result_1 is True:
+        return True
+
+def update_unit_old(db, client_id,  units, session_user):
     current_time_stamp = str(get_date_time())
     columns = [
         "country_id", "geography_id", "industry_id", "domain_ids",
@@ -1309,14 +1464,25 @@ def get_clients_by_user(db, user_id):
 def get_countries_for_unit(db, user_id):
     rows = db.call_proc("sp_countries_for_unit", (user_id,))
 
-    fn = core.Country
+    fn = core.UnitCountries
     results = [
         fn(
-           d["country_id"], d["country_name"], bool(d["is_active"])
+           d["client_id"], d["business_group_id"], d["country_id"], d["country_name"]
         ) for d in rows
     ]
     return results
 
+def get_domains_for_unit(db, user_id):
+    rows = db.call_proc("sp_domains_for_user", (user_id,))
+
+    fn = core.UnitDomainOrganisation
+    results = [
+        fn(
+           d["legal_entity_id"], d["domain_id"], d["domain_name"], d["industry_id"], d["industry_name"],
+           d["unit_count"]
+        ) for d in rows
+    ]
+    return results
 
 def get_business_groups_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientbusinessgroup", (user_id,))
@@ -1357,6 +1523,58 @@ def return_divisions(divisions):
         results.append(division_obj)
     return results
 
+def return_unit_geography_levels(data):
+    geography_levels = []
+    for d in data:
+        #country_id = d["country_id"]
+        level = core.UnitGeographyLevel(
+            d["level_id"], d["level_position"], d["level_name"], d["country_id"]
+        )
+        #_list = geography_levels.get(country_id)
+        #if _list is None:
+        #    _list = []
+        #_list.append(level)
+        #geography_levels[country_id] = _list
+        geography_levels.append(level)
+    return geography_levels
+
+
+def get_unit_geograhpy_levels_for_user(db, user_id):
+    assert user_id is not None
+    condition_val = [user_id]
+
+    result = db.call_proc(
+        "sp_tbl_unit_getgeographylevels", (condition_val,)
+    )
+    return return_unit_geography_levels(result)
+
+
+def get_geographies_for_unit(db, user_id):
+
+    where_condition_val = [user_id]
+    result = db.call_proc("sp_get_geographies_for_users_mapping", (where_condition_val,))
+
+    geographies = []
+    if result:
+        for d in result:
+            parent_ids = [int(x) for x in d["parent_ids"].split(',') if x != '']
+            parent_names = [str(y) for y in d["parent_names"].split(',') if y != '']
+            geography = core.UnitGeographyMapping(
+                d["geography_id"], d["geography_name"],
+                d["level_id"],
+                parent_names,
+                parent_ids,
+                d["country_id"],
+                bool(d["is_active"])
+            )
+            #country_id = d["country_id"]
+            #_list = geographies.get(country_id)
+            #if _list is None:
+            #    _list = []
+            #_list.append(geography)
+            #geographies[country_id] = _list
+            geographies.append(geography)
+    return geographies
 
 def get_client_industries(db, user_id,):
     columns = [
@@ -1402,66 +1620,114 @@ def get_units_for_user(db, user_id):
 def return_units(units):
     results = []
     for unit in units:
+        domain_ids = [int(x) for x in unit["domain_ids"].split(',') if x != '']
         results.append(core.Unit(
             unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
             unit["business_group_id"], unit["client_id"], unit["unit_code"],
-            unit["unit_name"], unit["address"], bool(unit["is_active"])
+            unit["unit_name"], unit["address"], bool(unit["is_active"]), domain_ids
+        ))
+    return results
+
+def get_units_for_user_assign(db, user_id):
+    result = db.call_proc(
+        "sp_units_by_user_assign", (user_id,))
+    return return_units(result)
+
+
+def return_units_assign(units):
+    results = []
+    for unit in units:
+        domain_ids = [int(x) for x in unit["domain_ids"].split(',') if x != '']
+        results.append(core.Unit(
+            unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
+            unit["business_group_id"], unit["client_id"], unit["unit_code"],
+            unit["unit_name"], unit["address"], bool(unit["is_active"]), domain_ids
         ))
     return results
 
 
 def get_unit_details_for_user(db, user_id):
     where_condition_val = [user_id, ]
-    result = db.call_proc(
-        "sp_tbl_unit_getunitdetailsforuser", (where_condition_val,))
+    result = db.call_proc_with_multiresult_set(
+        "sp_tbl_unit_getunitdetailsforuser", (where_condition_val,), 2)
     return return_unit_details(result)
 
 
 def return_unit_details(result):
     unitdetails = []
-
-    for r in result:
-        unitdetails.append(core.Unit(
-                int(r["unit_id"]), int(r["client_id"]),
-                int(r["business_group_id"]), int(r["legal_entity_id"]),
-                int(r["country_id"]), int(r["division_id"]),
-                r["category_name"], int(r["geography_id"]),
-                r["unit_code"], r["unit_name"],
-                r["address"], r["postal_code"],
-                [int(x) for x in r["domain_ids"].split(",")],
-                [int(y) for y in r["i_ids"].split(",")],
-                bool(r["is_active"]),
-                bool(r["approve_status"])
-            ))
+    print "inside unit details"
+    print result
+    for r in result[0]:
+        print r
+        unit_id = int(r.get("unit_id"))
+        client_id = int(r.get("client_id"))
+        business_group_id = int(r.get("business_group_id"))
+        legal_entity_id = int(r.get("legal_entity_id"))
+        country_id = int(r.get("country_id"))
+        division_id = int(r.get("division_id"))
+        category_name = r.get("category_name")
+        geography_id = int(r.get("geography_id"))
+        unit_code = r.get("unit_code")
+        unit_name = r.get("unit_name")
+        address = r.get("address")
+        postal_code = r.get("postal_code")
+        is_active = bool(r.get("is_active"))
+        is_approved = int(r.get("is_approved"))
+        category_id = int(r.get("category_id"))
+        remarks = r.get("remarks")
+        d_ids = []
+        i_ids = []
+        for domain in result[1]:
+            if unit_id == domain.get("unit_id"):
+                d_ids.append(int(domain.get("domain_id")))
+                i_ids.append(int(domain.get("organisation_id")))
+        unitdetails.append(core.UnitDetails(
+            unit_id, client_id,
+            business_group_id, legal_entity_id,
+            country_id, division_id,
+            category_name, geography_id,
+            unit_code, unit_name,
+            address, postal_code,
+            d_ids, i_ids,
+            is_active, is_approved, category_id, remarks
+        ))
+    print "unitdetails"
+    print unitdetails
     return unitdetails
 
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
     result = db.call_proc("sp_tbl_unit_getuserclients", (user_id,))
-    return return_group_companies_with_max_unit_count(db, result)
+    return return_group_companies_with_max_unit_count(db, result, user_id)
 
 
-def return_group_companies_with_max_unit_count(db, group_companies):
+def return_group_companies_with_max_unit_count(db, group_companies, user_id):
     results = []
     for group_company in group_companies:
-        countries = get_client_countries(db, group_company["client_id"])
-        domain_result = db.call_proc("sp_client_domains_by_group_id", (group_company["client_id"],))
+        countries = get_client_countries_for_unit(db, group_company["client_id"], user_id)
+        domain_result = db.call_proc("sp_client_domains_by_group_id", (group_company["client_id"], user_id))
         domain_ids = [int(r["domain_id"]) for r in domain_result]
         next_auto_gen_no = get_next_auto_gen_number(
-            db, group_company["group_name"], group_company["client_id"]
+            db, group_company["short_name"], group_company["client_id"]
         )
         results.append(core.GroupCompanyForUnitCreation(
-            group_company["client_id"], group_company["group_name"],
+            group_company["client_id"], group_company["short_name"],
             countries, domain_ids, next_auto_gen_no
         ))
     return results
 
+def get_client_countries_for_unit(db, client_id, user_id):
+    rows = db.call_proc(
+        "sp_tbl_units_getCountries", (client_id, user_id)
+    )
+    country_ids = [int(r["country_id"]) for r in rows]
+    return country_ids
 
 def get_next_auto_gen_number(db, group_name=None, client_id=None):
     if group_name is None:
         condition_val = [client_id]
         rows = db.call_proc("sp_client_groups_details_by_id", (condition_val,))
         if rows:
-            group_name = rows[0]["group_name"]
+            group_name = rows[0]["short_name"]
 
     condition_val = [client_id]
     rows = db.call_proc("sp_tbl_unit_getunitcount", (condition_val,))
