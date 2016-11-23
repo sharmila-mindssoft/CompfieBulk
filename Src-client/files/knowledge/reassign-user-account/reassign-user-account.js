@@ -599,7 +599,7 @@ function validateAndSave(){
         displayMessage(message.remarks_required);
     }else{
         function onSuccess(data) {
-            displayMessage(message.reassign_users_account_success);
+            displaySuccessMessage(message.reassign_users_account_success);
         }
         function onFailure(error) {
             custom_alert(error);
