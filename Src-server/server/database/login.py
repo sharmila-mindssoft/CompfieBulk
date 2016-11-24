@@ -35,35 +35,26 @@ def verify_login(db, username, password):
     uname = res = user_info = forms = response = {}
 
     # print uname
-    # if (len(result[1]) == 0):
-    #     uname = result[0][0]
-    #     return (uname, response, user_info, forms)
+    if (len(result[1]) == 0):
+        return (uname, response, user_info, forms)
 
-    # if (len(result[0]) == 0):
-    #     return (uname, response, user_info, forms)
+    if (len(result[0]) == 0):
+        return (uname, response, user_info, forms)
 
     res = result[1]
-    if len(res) > 0:
-        res = res[0]
-    else:
-        res = {}
-    response = res
-    if len(result[0]) > 0:
-        uname = result[0][0]
-    else:
-        uname = {}
-
-    if res.get('user_id') is None:
+    response = res[0]
+    uname = result[0][0]
+    if res[0]['user_id'] is None:
         user_info = None
         forms = None
-    elif res.get('user_category_id') <= 2:
+    elif res[0]['user_category_id'] <= 2:
         user_info = None
         forms = result[2]
-    elif res.get('user_category_id') > 2:
+    elif res[0]['user_category_id'] > 2:
         user_info = result[2]
         forms = result[3]
-    # print "user_category: %s" % res[0]["user_category_id"]
-    # print "user_info: %s" % user_info
+    print "user_category: %s" % res[0]["user_category_id"]
+    print "user_info: %s" % user_info
     return (uname, response, user_info, forms)
 
 ########################################################
@@ -265,7 +256,6 @@ def save_login_failure(db, user_id, session_user_ip):
     columns = "user_id, ip, login_time"
     valueList = [(int(user_id), session_user_ip, get_date_time())]
     updateColumnsList = ["login_time", "ip"]
-    print updateColumnsList
     if (
         db.on_duplicate_key_update(
             tblUserLoginHistory, columns, valueList, updateColumnsList

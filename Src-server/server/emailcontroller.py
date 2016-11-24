@@ -39,6 +39,7 @@ class Email(object):
         if is_credential:
             _is_send = True
         if _is_send:
+            print _is_send
             # server = SMTP("mail.aparajitha.com", 465)
             server = SMTP("smtp.mindssoft.com", 25)
             print server
@@ -46,6 +47,7 @@ class Email(object):
             server.login(self.sender, self.password)
 
             msg = MIMEMultipart()
+            print msg
             msg['From'] = self.sender
             print msg['From']
             if type(cc) is list:
@@ -132,6 +134,55 @@ class EmailHandler(Email):
             Compfie Support Team
         ''' % (employee_name, reset_link)
         self.send_email(receiver, subject, message, is_credential=True)
+
+    def resend_registraion_link(
+        self, receiver, reset_link
+    ):
+        subject = "Confirm Your Registration"
+        message = '''
+            Dear Group Admin, <br> \
+            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>%s</p>  <br>\
+            <p> Thanks & Regards, </p>  <br>\
+            Compfie Support Team
+        ''' % (reset_link)
+        self.send_email(receiver, subject, message, is_credential=True)
+
+    def send_notification_groupadmin_unit(
+        self, receiver, group_name, legal_entity_name
+    ):
+        print "inside mail"
+        subject = "Unit Creation Notification"
+        message = '''
+            Dear Group Admin, <br> \
+            <p>For your kind information. </p>\
+            <p>Unit(s) has been created for the below details :<br> \
+            <br>Client Name: %s \
+            <br>Legal Entity Name: %s </p>\
+            <p> Thanks & Regards, <br>\
+            Compfie Support Team''' % (
+            group_name, legal_entity_name)
+        self.send_email(
+            receiver, subject, message, cc=None, is_credential=True
+        )
+
+    def send_notification_groupadmin_statutory(
+        self, receiver, group_name, legal_entity_name
+    ):
+        print "unit Creation mail"
+        subject = "Statutory Assigned Notification"
+        message = '''
+            Dear Group Admin, <br> \
+            <p>For your kind information. </p>\
+            <p>Statutory has been assigned for the below details :<br> \
+            <br>Client Name: %s \
+            <br>Legal Entity Name: %s </p>\
+            <p> Thanks & Regards, <br>\
+            Compfie Support Team''' % (
+            group_name, legal_entity_name)
+        self.send_email(
+            receiver, subject, message, cc=None, is_credential=True
+        )
 
     def send_client_credentials(
         self, short_name, receiver, password

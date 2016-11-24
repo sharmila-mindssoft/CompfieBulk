@@ -1,7 +1,7 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
 <!-- Multiselect -->
-<link href="/files/knowledge/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 
 <div class="container" id="user-view">
   <div class="row">
@@ -133,6 +133,7 @@
     <td class="icon-3x text-center">
       <i class="fa c-pointer disable"></i>
     </td>
+
   </tr>
 </table>
 </div>
@@ -268,17 +269,6 @@
                     <div class="form-group">
                     <label class="col-sm-4 control-label">Domains:<span class="mandatory">*</span></label>
                     <div class="col-md-8">
-                        <!-- <select  id="domains" class="example-multiple-optgroups" multiple="multiple">
-                        <optgroup label="India">
-                              <option value="1" selected>Finance Law</option>
-                              <option value="2" >Labour Law</option>
-                              <option value="3">Industrial Law</option>
-                          </optgroup>
-                          <optgroup label="Singapore">
-                              <option value="4" >Economic Law</option>
-                              <option value="5">Employee Law</option>
-                          </optgroup>
-                        </select> -->
                         <select class="form-control input-sm example-multiple" tabindex="14" id="domains" multiple="multiple">
 
                         </select>
@@ -291,7 +281,6 @@
             <!-- end row -->
             <div class="form-group text-center">
                 <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit"> Submit </button>
-                <!-- <button class="btn btn-info waves-effect waves-light" type="submit" onclick="location.href='/user-management/list'" > Cancel</button> -->
             </div>
         </div>
       </div>
@@ -301,6 +290,26 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <div class="form-group default-display-none remark-view">
+                <label for="remark" class="pull-left">Remarks <span class="mandatory">*</span></label>
+                <textarea class="form-control input-sm" id="remark" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript" src="/script/user-management/user-management.js"></script>
 <!-- Multiselect -->
@@ -321,4 +330,6 @@
         });
     });
 </script>
+
+<script src="/js/custombox/custombox.min.js"></script>
 {% endblock %}

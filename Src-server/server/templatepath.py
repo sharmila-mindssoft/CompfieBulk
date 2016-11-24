@@ -317,7 +317,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/client-master-approval",
-        "files/knowledge/client-master-approval/clientmasterapproval.html",
+        "files/knowledge/approve-client-group/approve-client-group.html",
         None, {}
     ),
     (
@@ -412,7 +412,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/user-mapping",
-        "files/knowledge/user-mapping/usermapping.html",
+        "files/knowledge/user-mapping/user-mapping.html",
         None, {}
     ),
     (
@@ -427,7 +427,7 @@ TEMPLATE_PATHS = [
     ),
     (
         r"/knowledge/userregistration/([a-zA-Z-0-9]+)",
-        "files/common/html/CreateLoginDetails.html",
+        "files/knowledge/login/create-login-details.html",
         None, {}
     )
 ]

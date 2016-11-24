@@ -877,7 +877,7 @@ function initMirror() {
       'address': add,
       'designation': desig,
       'country_ids': cIds,
-      'domain_ids': dIds
+      'country_wise_domain': dIds
     };
   }
 
@@ -919,7 +919,7 @@ function initMirror() {
       'address': add,
       'designation': desig,
       'country_ids': cIds,
-      'domain_ids': dIds
+      'country_wise_domain': dIds
     };
   }
   function updateAdminUser(userDetail, callback) {
@@ -941,13 +941,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function changeAdminDisaleStatus(uId, active, callback) {
+  function changeAdminDisaleStatus(uId, active, remarks, callback) {
     callerName = 'admin';
     var request = [
       'ChangeDisableStatus',
       {
         'user_id': uId,
-        'is_disable': active
+        'is_disable': active,
+        'remarks': remarks
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1889,6 +1890,17 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  //Verify Password
+  function verifyPassword(password, callback) {
+    var request = [
+      'VerifyPassword',
+      {
+        'password': password
+      }
+    ];
+    apiRequest('general', request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2054,7 +2066,8 @@ function initMirror() {
     getAssignedStatutoriesById: getAssignedStatutoriesById,
     changeAdminDisaleStatus: changeAdminDisaleStatus,
     getUserMappingReportFilters: getUserMappingReportFilters,
-    getUsermappingDetailsReport: getUsermappingDetailsReport
+    getUsermappingDetailsReport: getUsermappingDetailsReport,
+    verifyPassword: verifyPassword
   };
 }
 var mirror = initMirror();

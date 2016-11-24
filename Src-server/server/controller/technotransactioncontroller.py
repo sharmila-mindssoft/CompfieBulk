@@ -10,7 +10,7 @@ from server.database.admin import (
 from server.database.technomaster import (
     get_clients_by_user, get_business_groups_for_user,
     get_legal_entities_for_user, get_divisions_for_user,
-    get_units_for_user
+    get_units_for_user_assign
 )
 from server.database.technotransaction import *
 
@@ -92,6 +92,25 @@ def process_techno_transaction_request(request, db):
         logger.logKnowledgeApi("GetCountriesForGroup", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif type(request_frame) is technotransactions.GetGroupAdminGroupUnitList:
+        logger.logKnowledgeApi("GetGroupAdminGroupUnitList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_groupadmingroup_unit_list(db, user_id)
+        logger.logKnowledgeApi("GetGroupAdminGroupUnitList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif type(request_frame) is technotransactions.ResendGroupAdminRegnMail:
+        logger.logKnowledgeApi("SendRegistraion", "process begin")
+        result = resend_user_registration_mail(db, request_frame, user_id)
+        logger.logKnowledgeApi("SendRegistraion", "process end")
+
+    elif type(request_frame) is technotransactions.SendGroupAdminRegnMail:
+        logger.logKnowledgeApi("SendGroupAdminRegnMail", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_Send_GroupAdminRegn_Mail(db, request_frame, user_id)
+        logger.logKnowledgeApi("SendGroupAdminRegnMail", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
@@ -102,7 +121,7 @@ def process_get_assigned_statutory_wizard_one(db, user_id):
     divisions = get_divisions_for_user(db, user_id)
     categories = get_categories_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
-    units = get_units_for_user(db, user_id)
+    units = get_units_for_user_assign(db, user_id)
     return technotransactions.GetAssignedStatutoryWizardOneDataSuccess(
         group_companies, business_groups, legal_entities, divisions,
         categories, domains, units
@@ -110,13 +129,10 @@ def process_get_assigned_statutory_wizard_one(db, user_id):
 
 
 def process_get_assigned_statutory_wizard_two(db, request, session_user):
-    level_1_statutories, statutories = get_assigned_statutory_wizard_two_data(
-        db, request.client_id, request.business_group_id,
-        request.legal_entity_id, request.division_id, request.category_id,
-        request.domain_id_optional, request.unit_ids
+    statutories = get_assigned_statutory_wizard_two_data(
+        db, request.domain_id, request.unit_ids
     )
     return technotransactions.GetAssignedStatutoryWizardTwoDataSuccess(
-        level_1_statutories_list=level_1_statutories,
         statutories_for_assigning=statutories
     )
 
@@ -153,5 +169,29 @@ def process_get_assigned_statutories_by_id(db, request, session_user):
     level_1_statutories, assigned_statutories = get_assigned_statutories_by_id(db, client_statutory_id)
     return technotransactions.GetAssignedStatutoriesByIdSuccess(
         level_1_statutories_list=level_1_statutories,
-        statutories_for_assigning=assigned_statutories 
+        statutories_for_assigning=assigned_statutories
     )
+
+def process_get_groupadmingroup_unit_list(db, session_user):
+    print "inside controller"
+    groupadmin_groupsList = get_groupadmin_registration_grouplist(db, session_user)
+    groupadmin_unitsList = get_groupadmin_registration_unitlist(db, session_user)
+    print "controller"
+    print groupadmin_unitsList
+    return technotransactions.getGroupAdminGroupsUnitsSuccess(
+        groupadmin_groupList=groupadmin_groupsList,
+        groupadmin_unitList=groupadmin_unitsList
+    )
+
+def resend_user_registration_mail(db, request, session_user):
+    res = resave_registraion_token(db, request.user_id, request.email_id)
+    if res :
+        return technotransactions.ResendRegistraionSuccess()
+    else :
+        print "send email failed"
+
+def process_Send_GroupAdminRegn_Mail(db, request_frame, session_user):
+    print "inside group admin controller"
+    result = send_groupadmin_registration_mail(db, request_frame, session_user)
+    if result is True:
+        return technotransactions.SaveGroupAdminRegnSuccess()

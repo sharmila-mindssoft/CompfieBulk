@@ -381,7 +381,7 @@ class DIVISION(Request):
         }
 
 
-class UnitDivision(Request):
+class UnitDivision(object):
     def __init__(self, division_id, division_name, category_name, division_cnt, unit_cnt):
         self.division_id = division_id
         self.division_name = division_name
@@ -390,7 +390,7 @@ class UnitDivision(Request):
         self.unit_cnt = unit_cnt
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, ["dv_id", "dv_name", "cg", "div_cnt", "unit_cnt"])
         division_id = data.get("dv_id")
         division_name = data.get("dv_name")
@@ -400,8 +400,8 @@ class UnitDivision(Request):
 
         return UnitDivision(division_id, division_name, category_name, division_cnt, unit_cnt)
 
-    def to_inner_structure(self):
-        data =  {
+    def to_structure(self):
+        data = {
             "division_id": self.division_id,
             "division_name": self.division_name,
             "category_name": self.category_name,
@@ -412,7 +412,7 @@ class UnitDivision(Request):
 
 class UNIT(object):
     def __init__(
-        self, unit_id, geography_id, unit_code, unit_name,unit_address,
+        self, unit_id, geography_id, unit_code, unit_name, unit_address,
         postal_code, domain_ids, industry_ids
     ):
         self.unit_id = unit_id
@@ -427,18 +427,18 @@ class UNIT(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-                "u_id", "geo_id", "u_code", "u_name",
-                "u_add", "p_code",  "d_ids",
+                "unit_id", "geography_id", "unit_code", "unit_name",
+                "address", "postal_code",  "d_ids",
                 "i_ids"
             ]
         )
         print "inside class uint after append"
-        unit_id = data.get("u_id")
-        geography_id = data.get("geo_id")
-        unit_code = data.get("u_code")
-        unit_name = data.get("u_name")
-        unit_address = data.get("u_add")
-        postal_code = data.get("p_code")
+        unit_id = data.get("unit_id")
+        geography_id = data.get("geography_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        unit_address = data.get("address")
+        postal_code = data.get("postal_code")
         domain_ids = data.get("d_ids")
         industry_ids = data.get("i_ids")
         return UNIT(
@@ -490,14 +490,14 @@ class SaveClient(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "cl_id", "bg_id", "le_id", "c_id", "div_dict", "units"
+                "cl_id", "bg_id", "le_id", "c_id", "division_units", "units"
             ]
         )
         client_id = data.get("cl_id")
         business_group_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         country_id = data.get("c_id")
-        division_units = data.get("div_dict")
+        division_units = data.get("division_units")
         units = data.get("units")
         return SaveClient(
             client_id, business_group_id, legal_entity_id, country_id, division_units, units
@@ -1349,60 +1349,51 @@ class GetEditClientGroupFormDataSuccess(Response):
 
 class GetClientsSuccess(Response):
     def __init__(
-        self, countries, domains, group_company_list, business_group_list,
-        unit_legal_entity, divisions, unit_list, unit_geography_level_list, unit_geographies_list,
-        unit_industries_list, client_domains
+        self, unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
+        domains_organization_list, divisions, unit_geography_level_list, unit_geographies_list
     ):
-        self.countries = countries
-        self.domains = domains
+        self.unit_list = unit_list
         self.group_company_list = group_company_list
         self.business_group_list = business_group_list
+        self.countries_units = countries_units
         self.unit_legal_entity = unit_legal_entity
+        self.domains_organization_list = domains_organization_list
         self.divisions = divisions
-        self.unit_list = unit_list
         self.unit_geography_level_list = unit_geography_level_list
         self.unit_geographies_list = unit_geographies_list
-        self.unit_industries_list = unit_industries_list
-        self.client_domains = client_domains
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "domains", "group_company_list",
-            "business_group_list", "unit_legal_entity", "divisions", "unit_list",
-            "unit_geography_level_list", "unit_geographies_list", "unit_industries_list", "client_domains"
+            "unit_list", "group_company_list", "business_group_list", "countries_units", "unit_legal_entity",
+            "domains_organization_list", "divisions", "unit_geography_level_list", "unit_geographies_list"
         ])
-        countries = data.get("countries")
-        domains = data.get("domains")
-        client_domains = data.get("client_domains")
+        unit_list = data.get("unit_list")
         group_company_list = data.get("group_company_list")
         business_group_list = data.get("business_group_list")
+        countries_units = data.get("countries_units")
         unit_legal_entity = data.get("unit_legal_entity")
+        domains_organization_list = data.get("domains_organization_list")
         divisions = data.get("divisions")
-        unit_list = data.get("unit_list")
         unit_geography_level_list = data.get("unit_geography_level_list")
         unit_geographies_list = data.get("unit_geographies_list")
-        unit_industries_list = data.get("unit_industries_list")
 
         return GetClientsSuccess(
-            countries, domains, group_company_list,
-            business_group_list, unit_legal_entity, divisions, unit_list, unit_geography_level_list,
-            unit_geographies_list, unit_industries_list, client_domains
+            unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
+            domains_organization_list, divisions, unit_geography_level_list, unit_geographies_list
         )
 
     def to_inner_structure(self):
         data = {
-            "countries": self.countries,
-            "domains": self.domains,
+            "unit_list": self.unit_list,
             "group_company_list": self.group_company_list,
             "business_group_list": self.business_group_list,
+            "countries_units": self.countries_units,
             "unit_legal_entity": self.unit_legal_entity,
+            "domains_organization_list": self.domains_organization_list,
             "divisions": self.divisions,
-            "unit_list": self.unit_list,
-            "unit_industries_list": self.unit_industries_list,
             "unit_geography_level_list": self.unit_geography_level_list,
             "unit_geographies_list": self.unit_geographies_list,
-            "client_domains": self.client_domains
         }
         return data
 

@@ -303,6 +303,7 @@ var message = {
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',
   'mobile_required': 'Mobile Number Required',
+  'invalid_password': 'Invalid Password'
 };
 
 function clearMessage() {
