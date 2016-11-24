@@ -1,23 +1,23 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
 <div class="container">
- <div class="row" id="animationSandbox">
-  <div class="col-sm-2"> </div>
-  <div class="col-sm-8">
-    <!-- <h4 class="page-title">Organization Master Report</h4> -->
-    <div class="portlet">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-2"> </div>
+    <div class="col-sm-8">
+      <div class="portlet">
         <div class="portlet-heading bg-info">
-        <h3 class="portlet-title">Organization Master Report</h3>
-        <div class="portlet-widgets">
+          <h3 class="portlet-title">Organization Master Report</h3>
+          <div class="portlet-widgets">
             <!-- <a href="#" onclick="location.href='/service-provider/list'">
                 <i class="zmdi zmdi-close zmdi-hc-2x"></i>
             </a> -->
+          </div>
+          <div class="clearfix"></div>
         </div>
-        <div class="clearfix"></div>
-    </div>
-    <div id="bg-primary1" class="panel-collapse collapse in">
-        <div class="portlet-body">
-            <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+        <div id="bg-primary1" class="panel-collapse collapse in">
+          <div class="portlet-body">
+            <table id="datatable-responsive" class="table dt-responsive nowrap highlight"
+            cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th width="1%">#</th>
@@ -30,89 +30,61 @@
                   <td></td>
                   <td>
                     <div class="form-group has-feedback">
-                      <input type="text" class="form-control input-sm" />
+                      <input type="text" class="form-control input-sm filter-text-box" id="search-country-name" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
                     <div class="form-group has-feedback">
-                      <input type="text" class="form-control input-sm" />
+                      <input type="text" class="form-control input-sm filter-text-box" id="search-domain-name" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
                     <div class="form-group has-feedback">
-                      <input type="text" class="form-control input-sm" />
+                      <input type="text" class="form-control input-sm filter-text-box" id="search-organization-name" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
-                                All
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">All</a></li>
-                                <li><a href="#"> Active</a></li>
-                                <li><a href="#"> Inactive</a></li>
-                            </ul>
-                        </div>
-                    </td>
+                     <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                            <i id="search-status" class="fa">All</i>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu search-status-list">
+                            <li value="all" class="search-status-li active"><a>All</a></li>
+                            <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                            <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                        </ul>
+                    </div>
+                  </td>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>India</td>
-                  <td>Labour Law</td>
-                  <td>Factory</td>
-                  <td>Active</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Singapore</td>
-                  <td>Labour Law</td>
-                  <td>Office</td>
-                  <td>Active</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>India</td>
-                  <td>Labour Law</td>
-                  <td>Plantation</td>
-                  <td>Inactive</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>India</td>
-                  <td>Labour Law</td>
-                  <td>Contractor</td>
-                  <td>Active</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>India</td>
-                  <td>Finance Law</td>
-                  <td>S & E</td>
-                  <td>Active</td>
-                </tr>
-                <tr>
-                  <td>6</td>
-                  <td>India</td>
-                  <td>Labour Law</td>
-                  <td>Mines</td>
-                  <td>Active</td>
-                </tr>
+              <tbody class="tbody-organization-list">
               </tbody>
             </table>
-            <p class="rpt-count">Showing 6 records</p>
           </div>
         </div>
-     </div>
+      </div>
+    </div>
   </div>
   <!-- end col -->
 </div>
 
-
-{% endblock %} 
+<div id="templates">
+<table class="table-industry-report">
+  <tr class="table-row">
+    <td align="center" class="sno"></td>
+    <td class="country-name"></td>
+    <td class="domain-name"></td>
+    <td class="organization-name"></td>
+    <td class="icon-3x text-center">
+      <i class="fa c-pointer status"></i>
+    </td>
+  </tr>
+</table>
+</div>
+<script type="text/javascript" src="/script/organization-report/organization-report.js">
+</script>
+{% endblock %}

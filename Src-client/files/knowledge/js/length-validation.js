@@ -364,6 +364,7 @@ var max_length = {
   'designation': 50,
   'db_server_name': 50,
   'username': 50,
+  'organization_name': 100
   'password': 20,
   'remark': 500,
 }
