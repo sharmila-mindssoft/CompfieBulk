@@ -226,12 +226,12 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/user-group-master",
+        "/knowledge/user-privileges",
         "files/knowledge/user-privileges/user-privileges.html",
         None, {}
     ),
     (
-        "/knowledge/user-master",
+        "/knowledge/user-management",
         "files/knowledge/user-management/user-management.html",
         None, {}
     ),
@@ -249,12 +249,12 @@ TEMPLATE_PATHS = [
     # knowledge user master
     (
         "/knowledge/geography-master",
-        "files/knowledge/geography-master/geographymaster.html",
+        "files/knowledge/geography-master/geography-master.html",
         None, {}
     ),
     (
         "/knowledge/geography-level-master",
-        "files/knowledge/geography-level-master/geographylevelmaster.html",
+        "files/knowledge/geography-level-master/geography-level-master.html",
         None, {}
     ),
     (
@@ -263,13 +263,13 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/statutory-nature-master",
-        "files/knowledge/statutory-nature-master/statutorynaturemaster.html",
+        "/knowledge/statutory-nature",
+        "files/knowledge/statutory-nature/statutory-nature.html",
         None, {}
     ),
     (
         "/knowledge/statutory-level-master",
-        "files/knowledge/statutory-level-master/statutorylevelmaster.html",
+        "files/knowledge/statutory-level-master/statutory-level-master.html",
         None, {}
     ),
     # knowledge user Transaction
@@ -300,13 +300,13 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/industry-report",
-        "files/knowledge/knowledge-master-report/industry-master-report/industrymasterreport.html",
+        "/knowledge/organization-report",
+        "files/knowledge/organization-report/organization-report.html",
         None, {}
     ),
     (
         "/knowledge/statutory-nature-report",
-        "files/knowledge/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html",
+        "files/knowledge/statutory-nature-report/statutory-nature-report.html",
         None, {}
     ),
     # Techno Manager master

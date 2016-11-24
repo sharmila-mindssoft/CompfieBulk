@@ -1,10 +1,9 @@
-var industriesList;
+var statutorynatureList;
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
 var FilterCountry = $('#search-country-name');
-var FilterDomain = $('#search-domain-name');
-var FilterOrgn = $('#search-organization-name');
+var FilterStatutorynature = $('#search-statutory-nature-name');
 
 //search status controls
 var Search_status = $('#search-status');
@@ -12,7 +11,7 @@ var Search_status_ul = $('.search-status-list');
 var Search_status_li = $('.search-status-li');
 
 //table controls
-var viewTable = $('.tbody-organization-list');
+var viewTable = $('.tbody-statutory-nature-list');
 
 //Pagination variable declaration
 var ItemsPerPage = $('#items_per_page');
@@ -24,17 +23,17 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
-// get industries list from api
-function getIndustries() {
+// get statutory nature list from api
+function getStatutorynature() {
 	function onSuccess(data) {
-		industriesList = data.industries;
-    totalRecord = industriesList.length;
+		statutorynatureList = data.statutory_natures;
+		totalRecord = statutorynatureList.length;
     processPaging();
 	}
 	function onFailure(error) {
 		custom_alert(error);
 	}
-	mirror.getIndustryList(function (error, response) {
+	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
 		  onSuccess(response);
 		} else {
@@ -46,44 +45,39 @@ function getIndustries() {
 function processSearch()
 {
   c_name = FilterCountry.val().toLowerCase();
-  d_name = FilterDomain.val().toLowerCase();
-  o_name = FilterOrgn.val().toLowerCase();
+  s_n_name = FilterStatutorynature.val().toLowerCase();
 
-  usr_status = $('.search-status-li.active').attr('value');
+  nature_status = $('.search-status-li.active').attr('value');
 
   searchList = []
 
-  for(var i in industriesList){
-    data = industriesList[i];
+  for(var i in statutorynatureList){
+    data = statutorynatureList[i];
 
     data_c_name = data.country_name.toLowerCase();
-    data_d_name = data.domain_name.toLowerCase();
-    data_o_name = data.industry_name.toLowerCase();
+    data_s_n_name = data.statutory_nature_name.toLowerCase();
     data_is_active = data.is_active;
 
-    if (
-      (~data_c_name.indexOf(c_name)) && (~data_d_name.indexOf(d_name)) &&
-      (~data_o_name.indexOf(o_name)))
+    if ((~data_c_name.indexOf(c_name)) && (~data_s_n_name.indexOf(s_n_name)))
     {
-      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+      if ((nature_status == 'all' || Boolean(parseInt(nature_status)) == data.is_active)){
         searchList.push(data);
       }
     }
   }
-  loadIndustryList(searchList);
+  loadStatNatureData(searchList);
 }
 
-//display industry list in view page
-function loadIndustryList(data) {
+//display statutory nature list in view page
+function loadStatNatureData(data) {
   var j = 1;
   viewTable.find('tr').remove();
+
   $.each(data, function (key, value) {
     var country_id = value.country_id;
     var country_name = value.country_name;
-    var domain_id = value.domain_id;
-    var domain_name = value.domain_name;
-    var industryId = value.industry_id;
-    var industryName = value.industry_name;
+    var statutory_nature_id = value.statutory_nature_id;
+    var statutory_nature_name = value.statutory_nature_name;
     var isActive = value.is_active;
     var passStatus = null;
 
@@ -93,12 +87,18 @@ function loadIndustryList(data) {
       passStatus = true;
     }
 
-    var tableRow = $('#templates .table-organization-report .table-row');
+    var tableRow = $('#templates .table-statutory-nature-report .table-row');
     var clone = tableRow.clone();
     $('.sno', clone).text(j);
     $('.country-name', clone).text(country_name);
-    $('.domain-name', clone).text(domain_name);
-    $('.organization-name', clone).text(industryName);
+    $('.statutory-nature-name', clone).text(statutory_nature_name);
+
+    //edit icon
+    $('.edit').attr('title', 'Click Here to Edit');
+    $('.edit', clone).addClass('fa-pencil text-primary');
+    $('.edit', clone).on('click', function () {
+      statNature_edit(statNatureId, statNatureName, countryId);
+    });
 
     if (isActive == true){
       statusmsg = message.deactive_message;
@@ -112,16 +112,36 @@ function loadIndustryList(data) {
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
+    $('.status', clone).on('click', function () {
+      CurrentPassword.val('');
+      confirm_alert(statusmsg, function(isConfirm){
+        if(isConfirm){
+            Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete:   function() {
+              CurrentPassword.focus();
+              isAuthenticate = false;
+            },
+            close:   function() {
+              if(isAuthenticate){
+                statNature_active(statNatureId, passStatus);
+              }
+            },
+          });
+          e.preventDefault();
+        }
+      });
+    });
 
     viewTable.append(clone);
     j = j + 1;
   });
 }
 
-
 //render controls
 function renderControls(){
-	getIndustries();
+	getStatutorynature();
 
   ItemsPerPage.on('change', function (e) {
     perPage = parseInt($(this).val());
@@ -199,14 +219,14 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = industriesList.length;
+  totalRecord = statutorynatureList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
-    $('.table-organization-list').empty();
+    $('.table-statutory-nature-list').empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.table-organization-list').append(clone4);
+    $('.table-statutory-nature-list').append(clone4);
     PaginationView.hide();
     hideLoader();
   } else {
@@ -214,8 +234,7 @@ function processPaging(){
       createPageView(totalRecord);
     }
     PaginationView.show();
-    //ReportView.show();
-    loadIndustryList(ReportData);
+    loadStatNatureData(ReportData);
   }
 }
 
@@ -225,10 +244,10 @@ function pageData(on_current_page){
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  for(i=sno;i<industriesList.length;i++)
+  for(i=sno;i<statutorynatureList.length;i++)
   {
     is_null = false;
-    data.push(industriesList[i]);
+    data.push(statutorynatureList[i]);
     if(i == (recordLength-1))
     {
       break;

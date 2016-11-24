@@ -422,7 +422,7 @@ function initMirror() {
     var snName = statutoryNatureDetail[1];
     var cIds = statutoryNatureDetail[2];
     return {
-      's_n_ids': snIds,
+      's_n_id': snIds,
       's_n_name': snName,
       'c_id': cIds
     };
