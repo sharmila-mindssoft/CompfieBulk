@@ -82,8 +82,6 @@ function initMirror() {
   }
   function getUserMenu() {
     var info = getUserInfo();
-    console.log(typeof(info));
-    console.log(info.menu);
     if (info != null) {
       return info.menu.menus;
     } else {

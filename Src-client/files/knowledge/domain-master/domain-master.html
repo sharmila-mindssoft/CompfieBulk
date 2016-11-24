@@ -1,10 +1,5 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-<!-- Multiselect -->
-<link href="/files/knowledge/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-
-<!-- Notification css (Toastr) -->
-<link href="/files/knowledge/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 
 <div class="container" id="domain-view">
   <div class="row">
@@ -153,7 +148,7 @@
     </div>
 </div>
 <script type="text/javascript" src="/script/domain-master/domainmaster.js"></script>
-<script src="/files/knowledge/common/js/multiselect/bootstrap-multiselect.js"></script>
+
 <!-- <script type="text/javascript">
     $('#countries').multiselect();
     $('#domains').multiselect();
@@ -171,33 +166,4 @@
     });
 </script>
 
-<!-- Toastr js -->
-<script src="/files/knowledge/common/js/toastr/toastr.min.js"></script>
-
-<script type="text/javascript">
-    $(function () {
-        $('#showtoast').click(function () {
-
-        Command: toastr["error"]("Please enter domain name.")
-
-        toastr.options = {
-          "closeButton": false,
-          "debug": false,
-          "newestOnTop": false,
-          "progressBar": false,
-          "positionClass": "toast-top-center",
-          "preventDuplicates": false,
-          "onclick": null,
-          "showDuration": "300",
-          "hideDuration": "1000",
-          "timeOut": "5000",
-          "extendedTimeOut": "1000",
-          "showEasing": "swing",
-          "hideEasing": "linear",
-          "showMethod": "fadeIn",
-          "hideMethod": "fadeOut"
-        }
-    })
-});
-</script>
 {% endblock %}
