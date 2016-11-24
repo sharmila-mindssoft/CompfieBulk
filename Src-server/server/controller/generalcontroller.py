@@ -27,7 +27,7 @@ __all__ = [
     "process_get_notifications",
     "process_update_notification_status",
     "process_uploaded_file",
-    "process_verify_password"   
+    "process_verify_password"
 ]
 
 forms = [1, 2]
@@ -398,7 +398,6 @@ def process_verify_password(db, request, user_id):
     encrypt_password = encrypt(password)
     response = verify_password(db, user_id, encrypt_password)
 
-    
     if response == 0:
         return general.InvalidPassword()
     else:

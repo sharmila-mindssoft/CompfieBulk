@@ -30,8 +30,6 @@ def is_numeric(value):
 
 
 def is_alpha_numeric(value):
-    print value
-    print type(value)
     r = re.compile("^[A-Za-z0-9 ]*$")  # a-z and 0-9 with space
     if r.match(value):
         return value
@@ -42,7 +40,6 @@ def is_alpha_numeric(value):
 def is_address(value):
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
-    print type(value)
     if r.match(value):
         return value
     else:

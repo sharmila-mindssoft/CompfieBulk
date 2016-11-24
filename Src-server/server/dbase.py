@@ -756,6 +756,5 @@ class Database(object):
             # r = convert_to_dict(cursor.fetchall(), cols)
             rows.append(list(cursor.fetchall()))
             cursor.nextset()
-        print rows
 
         return rows
