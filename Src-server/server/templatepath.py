@@ -317,7 +317,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/client-master-approval",
-        "files/knowledge/client-master-approval/clientmasterapproval.html",
+        "files/knowledge/approve-client-group/approve-client-group.html",
         None, {}
     ),
     (

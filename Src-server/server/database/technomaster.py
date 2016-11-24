@@ -598,6 +598,8 @@ def get_client_details(db, client_id):
     domain_map = return_organization_by_legalentity_domain(
         organizations
     )
+    print '----------'
+    print domain_map
     legal_entities = return_legal_entities(
         legal_entities, domain_map
     )
@@ -656,7 +658,7 @@ def return_organization_by_legalentity_domain(organizations):
     for row in organizations:
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
-        industry_id = row["organization_id"]
+        industry_id = row["organisation_id"]
         no_of_units = row["count"]
         activation_date = row["activation_date"]
         if legal_entity_id not in domain_map:
@@ -879,9 +881,9 @@ def return_country_list_of_domain(domain_id, countries):
 
 def return_domains(data):
     results = []
-    for d in data[1]:
+    for d in data[0]:
         d_id = d["domain_id"]
-        c_ids, c_names = return_country_list_of_domain(d_id, data[2])
+        c_ids, c_names = return_country_list_of_domain(d_id, data[1])
         results.append(core.Domain(
             c_ids, c_names, d_id, d["domain_name"], bool(d["is_active"])
         ))
