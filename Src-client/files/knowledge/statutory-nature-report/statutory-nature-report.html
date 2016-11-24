@@ -28,70 +28,79 @@
                 <tr>
                   <td></td>
                   <td>
-                    <div class="form-group col-sm-12 no-padding m-b-0">
-                      <input type="text" class="form-control input-sm" />
+                    <div class="form-group has-feedback">
+                      <input type="text" class="form-control input-sm filter-text-box" id="search-country-name" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
-                    <div class="form-group col-sm-12 no-padding m-b-0">
-                      <input type="text" class="form-control input-sm" />
+                    <div class="form-group has-feedback">
+                      <input type="text" class="form-control input-sm filter-text-box" id="search-statutory-nature-name" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
-                                All
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">All</a></li>
-                                <li><a href="#"> Active</a></li>
-                                <li><a href="#"> Inactive</a></li>
-                            </ul>
-                        </div>
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                            <i id="search-status" class="fa">All</i>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu search-status-list">
+                            <li value="all" class="search-status-li active"><a>All</a></li>
+                            <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                            <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                        </ul>
+                      </div>
                     </td>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>India</td>
-                  <td>Central</td>
-                  <td>Active</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>India</td>
-                  <td>State</td>
-                  <td>Active</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Singapore</td>
-                  <td>Concurrent</td>
-                  <td>Inactive</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>Srilanka</td>
-                  <td>Central</td>
-                  <td>Active</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>Srilanka</td>
-                  <td>State</td>
-                  <td>Active</td>
-                </tr>
+              <tbody class="tbody-statutory-nature-list">
               </tbody>
             </table>
-            <p class="rpt-count">Showing 5 records</p>
+            <table class="pagination-view default-display-none">
+              <tr>
+                <td>
+                  <span class="compliance_count"> </span>
+                  <span class="divider-view"> | </span>
+                  <span class="items-per-page">
+                  Show
+                  <select id="items_per_page">
+                  </select>
+                  entries
+                  </span>
+                </td>
+                <td style="width:50px;"></td>
+                <td style="text-align:right;padding-right:10px;">
+                  <ul id="pagination-rpt"></ul>
+                </td>
+              </tr>
+            </table>
           </div>
         </div>
      </div>
   </div>
   <!-- end col -->
 </div>
+<div id="templates">
+<table class="table-statutory-nature-report">
+  <tr class="table-row">
+    <td align="center" class="sno"></td>
+    <td class="country-name"></td>
+    <td class="statutory-nature-name"></td>
+    <td class="icon-3x text-center">
+      <i class="fa c-pointer status"></i>
+    </td>
+  </tr>
+</table>
+</div>
+
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/script/statutory-nature-report/statutory-nature-report.js">
+</script>
 {% endblock %}
