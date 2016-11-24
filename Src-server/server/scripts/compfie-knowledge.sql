@@ -118,7 +118,6 @@ DROP TABLE IF EXISTS `tbl_user_domains`;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
-  `country_id` int(11) NOT NULL,
   PRIMARY KEY (`domain_id`,`user_id`),
   CONSTRAINT `fk_tbl_user_domains_domains_id` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
   CONSTRAINT `fk_tbl_user_domains_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)

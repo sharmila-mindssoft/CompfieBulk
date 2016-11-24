@@ -200,7 +200,7 @@ def return_client_groups_approval_list(groups):
             is_active=True if(group["count"] > 0) else False,
             country_ids=[
                 int(x) for x in group["client_countries"].split(",")
-            ]
+            ], short_name=group["short_name"]
         ) for group in groups
     ]
     return result

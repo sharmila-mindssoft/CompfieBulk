@@ -106,7 +106,8 @@ class SaveStatutoryMapping(Request):
     def __init__(
         self, country_id, domain_id, industry_ids,
         statutory_nature_id, statutory_ids,
-        compliances, geography_ids, mappings
+        compliances, geography_ids, mappings,
+        tr_type
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -116,13 +117,14 @@ class SaveStatutoryMapping(Request):
         self.compliances = compliances
         self.geography_ids = geography_ids
         self.mappings = mappings
+        self.tr_type = tr_type
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "d_id", "i_ids",
             "s_n_id", "s_ids",
-            "compliances", "g_ids", "mappings"
+            "compliances", "g_ids", "mappings", "tr_type"
         ])
         country_id = data.get("c_id")
         domain_id = data.get("d_id")
@@ -132,10 +134,11 @@ class SaveStatutoryMapping(Request):
         compliances = data.get("compliances")
         geography_ids = data.get("g_ids")
         mappings = data.get("mappings")
+        tr_type = data.get("tr_type")
         return SaveStatutoryMapping(
             country_id, domain_id, industry_ids,
             statutory_nature_id, statutory_ids,
-            compliances, geography_ids, mappings
+            compliances, geography_ids, mappings, tr_type
         )
 
     def to_inner_structure(self):
@@ -147,7 +150,8 @@ class SaveStatutoryMapping(Request):
             "s_ids": self.statutory_ids,
             "compliances": self.compliances,
             "g_ids": self.geography_ids,
-            "mappings": self.mappings
+            "mappings": self.mappings,
+            "tr_type": self.tr_type
         }
 
 class UpdateStatutoryMapping(Request):

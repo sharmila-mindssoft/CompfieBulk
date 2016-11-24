@@ -137,43 +137,26 @@ class GetAssignedStatutoryWizardOneData(Request):
 
 class GetAssignedStatutoryWizardTwoData(Request):
     def __init__(
-        self, client_id, business_group_id, legal_entity_id, division_id,
-        category_id, domain_id_optional, unit_ids
+        self, domain_id, unit_ids
     ):
-        self.client_id = client_id
-        self.business_group_id = business_group_id
-        self.legal_entity_id = legal_entity_id
-        self.division_id = division_id
-        self.category_id = category_id
-        self.domain_id_optional = domain_id_optional
+        self.domain_id = domain_id
         self.unit_ids = unit_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "client_id", "business_group_id", "legal_entity_id", "division_id",
-            "category_id", "domain_id_optional", "unit_ids"
+            "domain_id", "unit_ids"
         ])
-        client_id = data.get("client_id")
-        business_group_id = data.get("business_group_id")
-        legal_entity_id = data.get("legal_entity_id")
-        division_id = data.get("division_id")
-        category_id = data.get("category_id")
-        domain_id_optional = data.get("domain_id_optional")
+        
+        domain_id = data.get("domain_id")
         unit_ids = data.get("unit_ids")
         return GetAssignedStatutoryWizardTwoData(
-            client_id, business_group_id, legal_entity_id, division_id,
-            category_id, domain_id_optional, unit_ids
+           domain_id, unit_ids
         )
 
     def to_inner_structure(self):
         return {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "division_id": self.division_id,
-            "category_id": self.category_id,
-            "domain_id_optional": self.domain_id_optional,
+            "domain_id": self.domain_id,
             "unit_ids": self.unit_ids
         }
 
@@ -280,7 +263,67 @@ class SaveAssignedStatutory(Request):
             "unit_ids": self.unit_ids,
             "submission_type": self.submission_type
         }
+class ResendGroupAdminRegnMail(Request):
+    def __init__(self, user_id, username, email_id):
+        self.user_id = user_id
+        self.email_id = email_id
+        self.username = username
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id", "username", "email_id"])
+        user_id = data.get("user_id")
+        username = data.get("username")
+        email_id = data.get("email_id")
+        return ResendGroupAdminRegnMail(user_id, username, email_id)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+            "email_id": self.email_id
+        }
+
+class SendGroupAdminRegnMail(Request):
+    def __init__(
+        self, grp_mode, user_id, username, email_id, client_id, group_name, legal_entity_id,
+        legal_entity_name
+    ):
+        self.grp_mode = grp_mode
+        self.user_id = user_id
+        self.username = username
+        self.email_id = email_id
+        self.client_id = client_id
+        self.group_name = group_name
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "grp_mode", "user_id", "username", "email_id",
+                "client_id", "group_name", "legal_entity_id",
+                "legal_entity_name"
+            ]
+        )
+        return SendGroupAdminRegnMail(
+            data.get("grp_mode"), data.get("user_id"),  data.get("username"),
+            data.get("email_id"), data.get("client_id"), data.get("group_name"),
+            data.get("legal_entity_id"), data.get("legal_entity_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "grp_mode": self.grp_mode,
+            "user_id": self.user_id,
+            "username": self.username,
+            "email_id": self.email_id,
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+        }
 
 class GetCountriesForGroup(Request):
     def __init__(self):
@@ -295,6 +338,18 @@ class GetCountriesForGroup(Request):
         return {
         }
 
+class GetGroupAdminGroupUnitList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetGroupAdminGroupUnitList()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Request_class_map():
     classes = [
@@ -303,7 +358,10 @@ def _init_Request_class_map():
         GetAssignedStatutoryWizardOneData,
         GetAssignedStatutoryWizardTwoData,
         SaveAssignedStatutory,
-        GetCountriesForGroup
+        GetCountriesForGroup,
+        GetGroupAdminGroupUnitList,
+        ResendGroupAdminRegnMail,
+        SendGroupAdminRegnMail
     ]
     class_map = {}
     for c in classes:
@@ -380,6 +438,28 @@ class GetAssignedStatutoriesByIdSuccess(Response):
             "statutories_for_assigning": self.statutories_for_assigning,
         }
 
+class getGroupAdminGroupsUnitsSuccess(Response):
+    def __init__(self, groupadmin_groupList, groupadmin_unitList):
+        self.groupadmin_groupList = groupadmin_groupList
+        self.groupadmin_unitList = groupadmin_unitList
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "groupadmin_groupList", "groupadmin_unitList"
+        ])
+        groupadmin_groupList = data.get("groupadmin_groupList")
+        groupadmin_unitList = data.get("groupadmin_unitList")
+        return getGroupAdminGroupsUnitsSuccess(
+            groupadmin_groupList, groupadmin_unitList
+        )
+
+    def to_inner_structure(self):
+        print "inside protocol"
+        return {
+            "groupadmin_groupList": self.groupadmin_groupList,
+            "groupadmin_unitList": self.groupadmin_unitList,
+        }
 
 class GetAssignedStatutoryWizardOneDataSuccess(Response):
     def __init__(
@@ -427,71 +507,61 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
 
 class AssignStatutoryCompliance(object):
     def __init__(
-        self, level_1_statutory_index, statutory_provision, compliance_id,
-        document_name, compliance_name, description, organizations, locations
+        self, level_1_statutory_name, statutory_provision, compliance_id,
+        document_name, compliance_name, description
     ):
-        self.level_1_statutory_index = level_1_statutory_index
+        self.level_1_statutory_name = level_1_statutory_name
         self.statutory_provision = statutory_provision
         self.compliance_id = compliance_id
         self.document_name = document_name
         self.compliance_name = compliance_name
         self.description = description
-        self.organizations = organizations
-        self.locations = locations
-
+        
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "level_1_statutory_index", "statutory_provision", "compliance_id",
-            "document_name", "compliance_name", "description",
-            "organizations", "locations"
+            "level_1_statutory_name", "statutory_provision", "compliance_id",
+            "document_name", "compliance_name", "description"
         ])
-        level_1_statutory_index = data.get("level_1_statutory_index")
+        level_1_statutory_name = data.get("level_1_statutory_name")
         statutory_provision = data.get("statutory_provision")
         compliance_id = data.get("compliance_id")
         document_name = data.get("document_name")
         compliance_name = data.get("compliance_name")
         description = data.get("description")
-        organizations = data.get("organizations")
-        locations = data.get("locations")
+        
         return AssignStatutoryCompliance(
-            level_1_statutory_index, statutory_provision, compliance_id,
-            document_name, compliance_name, description,
-            organizations, locations
+            level_1_statutory_name, statutory_provision, compliance_id,
+            document_name, compliance_name, description
         )
 
     def to_structure(self):
         return {
-            "level_1_statutory_index": self.level_1_statutory_index,
+            "level_1_statutory_name": self.level_1_statutory_name,
             "statutory_provision": self.statutory_provision,
             "compliance_id": self.compliance_id,
             "document_name": self.document_name,
             "compliance_name": self.compliance_name,
-            "description": self.description,
-            "organizations": self.organizations,
-            "locations": self.locations
+            "description": self.description
         }
 
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
-    def __init__(self, level_1_statutories_list, statutories_for_assigning):
-        self.level_1_statutories_list = level_1_statutories_list
+    def __init__(self, statutories_for_assigning):
         self.statutories_for_assigning = statutories_for_assigning
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "level_1_statutories_list", "statutories_for_assigning"
+             "statutories_for_assigning"
         ])
-        level_1_statutories_list = data.get("level_1_statutories_list")
         statutories_for_assigning = data.get("statutories_for_assigning")
         return GetAssignedStatutoryWizardTwoDataSuccess(
-            level_1_statutories_list, statutories_for_assigning
+            statutories_for_assigning
         )
 
     def to_inner_structure(self):
         return {
-            "level_1_statutories_list": self.level_1_statutories_list,
             "statutories_for_assigning": self.statutories_for_assigning,
         }
 
@@ -509,13 +579,41 @@ class SaveAssignedStatutorySuccess(Response):
         return {
         }
 
+class SaveGroupAdminRegnSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveGroupAdminRegnSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class ResendRegistraionSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ResendRegistraionSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Response_class_map():
     classes = [
         GetAssignedStatutoriesSuccess, GetAssignedStatutoriesByIdSuccess,
         GetAssignedStatutoryWizardOneDataSuccess,
         GetAssignedStatutoryWizardTwoDataSuccess,
-        SaveAssignedStatutorySuccess
+        SaveAssignedStatutorySuccess,
+        getGroupAdminGroupsUnitsSuccess,
+        SaveGroupAdminRegnSuccess,
+        ResendRegistraionSuccess
     ]
     class_map = {}
     for c in classes:
@@ -559,7 +657,7 @@ class AssignedStatutories(object):
     def __init__(
         self, submission_status, client_statutory_id, country_id, country_name,
         client_id, group_name, business_group_id, business_group_name,
-        legal_entity_id, legal_entity_name, division_id, division_name, unit_id, unit_code_with_name, 
+        legal_entity_id, legal_entity_name, division_id, division_name, unit_id, unit_code_with_name,
         geography_id, geography_name, domain_ids, domain_names, category_id, category_name
     ):
         self.submission_status = submission_status
@@ -644,3 +742,104 @@ class AssignedStatutories(object):
             "category_name": self.category_name
         }
 
+class GroupAdmin_GroupList(object):
+    def __init__(
+        self, client_id, group_name, no_of_legal_entities, country_name, ug_name, email_id,
+        user_id, emp_code_name
+    ):
+        self.client_id = client_id
+        self.group_name = group_name
+        self.no_of_legal_entities = no_of_legal_entities
+        self.country_name = country_name
+        self.ug_name = ug_name
+        self.email_id = email_id
+        self.user_id = user_id
+        self.emp_code_name = emp_code_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "client_id", "group_name", "no_of_legal_entities", "country_name",
+            "ug_name", "email_id", "user_id", "emp_code_name"
+        ])
+        client_id = data.get("client_id")
+        group_name = data.get("group_name")
+        no_of_legal_entities = data.get("no_of_legal_entities")
+        country_name = data.get("country_name")
+        ug_name = data.get("ug_name")
+        email_id = data.get("email_id")
+        user_id = data.get("user_id")
+        emp_code_name = data.get("emp_code_name")
+        return GroupAdmin_GroupList(
+            client_id, group_name, no_of_legal_entities, country_name, ug_name, email_id,
+            user_id, emp_code_name
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "no_of_legal_entities": self.no_of_legal_entities,
+            "country_name": self.country_name,
+            "ug_name": self.ug_name,
+            "email_id": self.email_id,
+            "user_id": self.user_id,
+            "emp_code_name": self.emp_code_name
+        }
+
+class GroupAdmin_UnitList(object):
+    def __init__(
+        self, client_id, legal_entity_id, legal_entity_name, country_name, unit_count,
+        unit_creation_informed, statutory_assigned_informed, email_id, user_id, emp_code_name,
+        statutory_count
+    ):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.country_name = country_name
+        self.unit_count = unit_count
+        self.unit_creation_informed = unit_creation_informed
+        self.statutory_assigned_informed = statutory_assigned_informed
+        self.email_id = email_id
+        self.user_id = user_id
+        self.emp_code_name = emp_code_name
+        self.statutory_count = statutory_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "client_id", "legal_entity_id", "legal_entity_name", "country_name",
+            "unit_count", "unit_creation_informed", "statutory_assigned_informed", "email_id",
+            "user_id", "emp_code_name", "statutory_count"
+        ])
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        country_name = data.get("country_name")
+        unit_count = data.get("unit_count")
+        unit_creation_informed = data.get("unit_creation_informed")
+        statutory_assigned_informed = data.get("statutory_assigned_informed")
+        email_id = data.get("email_id")
+        user_id = data.get("user_id")
+        emp_code_name = data.get("emp_code_name")
+        statutory_count = data.get("statutory_count")
+        return GroupAdmin_UnitList(
+            client_id, legal_entity_id, legal_entity_name, country_name, unit_count,
+            unit_creation_informed, statutory_assigned_informed, email_id, user_id,
+            emp_code_name, statutory_count
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "country_name": self.country_name,
+            "unit_count": self.unit_count,
+            "unit_creation_informed": self.unit_creation_informed,
+            "statutory_assigned_informed": self.statutory_assigned_informed,
+            "email_id": self.email_id,
+            "user_id": self.user_id,
+            "emp_code_name": self.emp_code_name,
+            "statutory_count": self.statutory_count,
+        }

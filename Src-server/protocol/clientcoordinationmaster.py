@@ -323,7 +323,7 @@ class ApproveUnitSuccess(Response):
 class ClientGroupApproval(object):
     def __init__(
         self, client_id, group_name, username, le_count,
-        is_active, country_ids
+        is_active, country_ids, short_name
     ):
         self.client_id = client_id
         self.group_name = group_name
@@ -331,12 +331,13 @@ class ClientGroupApproval(object):
         self.le_count = le_count
         self.is_active = is_active
         self.country_ids = country_ids
+        self.short_name = short_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "client_id", "group_name", "username", "le_count",
-            "is_active", "country_ids"
+            "is_active", "country_ids", "short_name"
         ])
         client_id = data.get("client_id")
         group_name = data.get("group_name")
@@ -344,9 +345,10 @@ class ClientGroupApproval(object):
         le_count = data.get("le_count")
         is_active = data.get("is_active")
         country_ids = data.get("country_ids")
+        short_name = data.get("short_name")
         return UnitApprovalDetails(
             client_id, group_name, username, le_count,
-            is_active, country_ids
+            is_active, country_ids, short_name
         )
 
     def to_structure(self):
@@ -356,7 +358,8 @@ class ClientGroupApproval(object):
             "username": self.username,
             "le_count": self.le_count,
             "is_active": self.is_active,
-            "country_ids": self.country_ids
+            "country_ids": self.country_ids,
+            "short_name": self.short_name
         }
 
 
