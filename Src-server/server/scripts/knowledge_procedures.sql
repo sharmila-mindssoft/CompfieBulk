@@ -920,8 +920,8 @@ CREATE PROCEDURE `sp_client_configuration_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT country_id, domain_id, period_from, period_to
-    FROM tbl_client_configurations WHERE client_id = clientid;
+    SELECT country_id, domain_id, month_from, month_to
+    FROM tbl_client_configuration WHERE client_id = clientid;
 END //
 DELIMITER ;
 
@@ -934,7 +934,7 @@ CREATE PROCEDURE `sp_le_d_industry_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, domain_id, organization_id, count,
+    SELECT legal_entity_id, domain_id, organisation_id, count,
     activation_date
     FROM tbl_legal_entity_domains WHERE legal_entity_id in (
     	select legal_entity_id from tbl_legal_entities
@@ -1460,9 +1460,9 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
 	IN session_user INT(11)
 )
 BEGIN
-	SELECT client_id, group_name, email_id, count, client_countries
+	SELECT client_id, group_name, email_id, count, client_countries, short_name
 	FROM (
-		SELECT client_id, group_name, email_id,
+		SELECT client_id, group_name, email_id, short_name,
 		(
 			SELECT count(legal_entity_id) FROM tbl_legal_entities tle
 			WHERE tle.client_id = tcg.client_id and is_active=1
