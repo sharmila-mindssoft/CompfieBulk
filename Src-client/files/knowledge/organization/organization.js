@@ -30,11 +30,13 @@ var AcDomain = $('#ac-domain')
 //input controls
 var orgn_name = $('#organizationname');
 var orgn_id = $('#organizationid');
+var CurrentPassword = $('#current-password');
 
 //button controls
 var AddButton = $('#btn-orgn-add');
 var CancelButton = $('#btn-orgn-cancel');
 var SubmitButton = $('#btn-submit');
+var PasswordSubmitButton = $('#password-submit');
 
 //table controls
 var viewTable = $('.tbody-organization-list');
@@ -99,6 +101,7 @@ function loadIndustryList(data) {
   viewTable.find('tr').remove();
 
   $.each(data, function (key, value) {
+    statusmsg = "";
     var country_id = value.country_id;
     var country_name = value.country_name;
     var domain_id = value.domain_id;
@@ -128,28 +131,93 @@ function loadIndustryList(data) {
       displayEdit(country_id, domain_id, industryId, industryName);
     });
 
-    if (isActive == true){
-      statusmsg = message.deactive_message;
-      $('.status').attr('title', 'Click Here to Deactivate');
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
-    }
-    else{
-      statusmsg = message.active_message;
-      $('.status').attr('title', 'Click Here to Activate');
+    if (value.is_active == false){
+      //$('.status').attr('title', 'Click Here to Deactivate');
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
-    $('.status', clone).on('click', function () {
-      confirm_alert(statusmsg, function(isConfirm){
-        if(isConfirm){
-          changeStatus(industryId, passStatus);
-        }
-      });
+    else{
+      //$('.status').attr('title', 'Click Here to Activate');
+      $('.status', clone).removeClass('fa-times text-danger');
+      $('.status', clone).addClass('fa-check text-success');
+    }
+    $('.status', clone).on('click', function (e) {
+      showModalDialog(e, industryId, isActive);
+    });
+
+    $('.status').hover(function(){
+      showTitle(this);
     });
 
     viewTable.append(clone);
     j = j + 1;
+  });
+}
+
+//Status Title
+function showTitle(e){
+  if(e.className == "fa c-pointer status fa-times text-danger"){
+    e.title = 'Click Here to Activate';
+  }
+  else if(e.className == "fa c-pointer status fa-check text-success")
+  {
+    e.title = 'Click Here to Deactivate';
+  }
+}
+
+//open password dialog
+function showModalDialog(e, industryId, isActive){
+  var passStatus = null;
+  if (isActive == true) {
+    passStatus = false;
+    statusmsg = message.deactive_message;
+  } else {
+    passStatus = true;
+    statusmsg = message.active_message;
+  }
+  CurrentPassword.val('');
+  confirm_alert(statusmsg, function(isConfirm){
+    if(isConfirm){
+        Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+        complete:   function() {
+          CurrentPassword.focus();
+          isAuthenticate = false;
+        },
+        close:   function() {
+          if(isAuthenticate){
+            changeStatus(industryId, isActive);
+          }
+        },
+      });
+      e.preventDefault();
+    }
+  });
+}
+
+
+//validate password
+function validateAuthentication(){
+  var password = CurrentPassword.val().trim();
+  if (password.length == 0) {
+    displayMessage(msg.password_required);
+    CurrentPassword.focus();
+    return false;
+  }
+  else {
+    validateMaxLength('password', password, "Password");
+  }
+  mirror.verifyPassword(password, function(error, response) {
+    if (error == null) {
+      isAuthenticate = true;
+      Custombox.close();
+    }
+    else {
+      if (error == 'InvalidPassword') {
+        displayMessage(message.invalid_password);
+      }
+    }
   });
 }
 
@@ -325,46 +393,25 @@ function displayEdit(countryId, domainId, industryId, industryName) {
 
 // activate / deactivate industry master
 function changeStatus(industryId, isActive) {
-  var msgstatus = message.deactive_message;
-  if (isActive) {
-    msgstatus = message.active_message;
+  if(isActive == true){
+    isActive = false;
+  }else{
+    isActive = true;
   }
-  $('.warning-confirm').dialog({
-    title: message.title_status_change,
-    buttons: {
-      Ok: function () {
-        $(this).dialog('close');
-        function onSuccess(response) {
-          getIndustries();
-        }
-        function onFailure(error) {
-          if (error == 'TransactionExists') {
-            custom_alert(message.trasaction_exists);
-          } else {
-            custom_alert(error);
-          }
-        }
-        mirror.changeIndustryStatus(industryId, isActive, function (error, response) {
-          if (error == null) {
-            if (isActive) {
-              alert(message.organization_status_active_success);
-            }
-            else
-            {
-              alert(message.organization_status_deactive_success);
-            }
-            onSuccess(response);
-          } else {
-            onFailure(error);
-          }
-        });
-      },
-      Cancel: function () {
-        $(this).dialog('close');
+
+  mirror.changeIndustryStatus(industryId, isActive, function (error, response) {
+    if (error == null) {
+      if (isActive) {
+        alert(message.organization_status_active_success);
       }
-    },
-    open: function () {
-      $('.warning-message').html(msgstatus);
+      else
+      {
+        alert(message.organization_status_deactive_success);
+      }
+      getIndustries();
+      onSuccess(response);
+      } else {
+      onFailure(error);
     }
   });
 }
@@ -388,6 +435,13 @@ function displayAddMode(){
 function displayViewMode(){
   viewScreen.show();
   AddSCreen.hide();
+  FilterCountry.val('');
+  FilterDomain.val('');
+  FilterOrgn.val('');
+  var currentClass = $('.search-status-li.active').attr('class');
+  Search_status.removeClass();
+  Search_status.addClass('fa');
+  Search_status.text('All');
   loadIndustryList(industriesList);
 }
 
@@ -467,6 +521,9 @@ function renderControls(){
   Search_status.change(function() {
 	    processSearch();
 	});
+  PasswordSubmitButton.click(function() {
+    validateAuthentication();
+  });
 }
 
 
