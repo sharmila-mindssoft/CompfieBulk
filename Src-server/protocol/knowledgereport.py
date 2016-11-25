@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list,  to_structure_dictionary_values)
 from protocol.parse_structure import (
     parse_structure_VariantType_knowledgereport_Request
 
@@ -349,10 +349,11 @@ class GetGeographyReportSuccess(Response):
         return GetGeographyReportSuccess(countries, geographies)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "countries": self.countries,
             "geography_report": self.geographies,
         }
+        return to_structure_dictionary_values(data)
 
 
 def _init_Response_class_map():
