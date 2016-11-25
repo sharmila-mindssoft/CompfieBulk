@@ -373,6 +373,7 @@ def renderTemplate(pathname):
         return new_url
 
     def update_static_urls(content):
+        data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
@@ -386,7 +387,7 @@ def renderTemplate(pathname):
             else:
                 new_url = url
             node.set('href', new_url)
-        data = etree.tostring(tree, method="html")
+        data += etree.tostring(tree, method="html")
         return data
 
     # temp = template_env.get_template(pathname)
