@@ -286,17 +286,17 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/country-report",
-        "files/knowledge/knowledge-master-report/country-master-report/countrymasterreport.html",
+        "files/knowledge/country-report/country-report.html",
         None, {}
     ),
     (
         "/knowledge/domain-report",
-        "files/knowledge/knowledge-master-report/domain-master-report/domainmasterreport.html",
+        "files/knowledge/domain-report/domain-report.html",
         None, {}
     ),
     (
         "/knowledge/geography-report",
-        "files/knowledge/knowledge-master-report/geography-master-report/geographymasterreport.html",
+        "files/knowledge/geography-report/geography-report.html",
         None, {}
     ),
     (
