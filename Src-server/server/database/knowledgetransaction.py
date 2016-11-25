@@ -351,11 +351,8 @@ def save_statutory_mapping(db, data, created_by):
     # tr_type 1: save, 2: submit
     country_id = data.country_id
     domain_id = data.domain_id
-    # industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
     nature_id = data.statutory_nature_id
-    # statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
     compliances = data.compliances
-    # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = ', '.join(data.mappings)
     created_on = get_date_time()
     is_active = 1
@@ -387,13 +384,7 @@ def save_statutory_mapping(db, data, created_by):
             statutory_mapping_id, domain_id, country_id, is_approve,
             compliances, created_by
         )
-        # compliance_ids = ','.join(str(x) for x in ids) + ","
 
-        # db.update(
-        #     tblStatutoryMappings, ["compliance_ids"],
-        #     [compliance_ids, statutory_mapping_id],
-        #     "statutory_mapping_id = %s",
-        # )
         save_statutory_industry(
             db, statutory_mapping_id, data.industry_ids, created_by, True
         )
@@ -403,9 +394,10 @@ def save_statutory_mapping(db, data, created_by):
         save_statutory_statutories_id(
             db, statutory_mapping_id, data.statutory_ids, created_by, True
         )
-        notification_log_text = "New statutory mapping has been created %s" % (
-            statutory_mapping
-        )
+        notification_log_text = "New statutory mapping has been created %s " + \
+            "with following compliances %s" % (
+                statutory_mapping, ",".join(names)
+            )
         link = "/knowledge/approve-statutory-mapping"
         save_notifications(
             db, notification_log_text, link,
@@ -422,7 +414,6 @@ def save_compliance(
 ):
     compliance_ids = []
     compliance_names = []
-    # is_format = False
     for data in datas:
 
         created_on = get_date_time()
