@@ -848,6 +848,11 @@ list-style-type:none; line-height:25px;
     color: #111;
     border: 1px solid #DCA;
     background: #fffAF0;
+    float: left;
+}
+
+.pw-hint input{
+    float: left;
 }
 
 .pw-callout {
