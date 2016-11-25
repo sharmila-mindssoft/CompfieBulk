@@ -353,7 +353,7 @@ class GetGeographyReportSuccess(Response):
             "countries": self.countries,
             "geography_report": self.geographies,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 
 def _init_Response_class_map():
@@ -405,7 +405,8 @@ class GeographyMapping(object):
         return GeographyMapping(geography, is_active)
 
     def to_structure(self):
-        return {
+        data = {
             "geography": self.geography,
             "is_active": self.is_active,
         }
+        return to_structure_dictionary_values(data)
