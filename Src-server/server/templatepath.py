@@ -285,6 +285,11 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/knowledge/client-agreement-master-report",
+        "files/knowledge/client-agreement-master-report/client-agreement-master-report.html",
+        None, {}
+    ),
+    (
         "/knowledge/country-report",
         "files/knowledge/country-report/country-report.html",
         None, {}
