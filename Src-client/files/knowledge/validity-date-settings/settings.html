@@ -14,15 +14,16 @@
         <div id="bg-primary1" class="panel-collapse collapse in">
           <div class="portlet-body">
             <div class="form-horizontal group-border-dashed">
-              <table style="padding:20px;width:100%;">
+              <table style="padding:20px;width:100%;" cellspacing="3" cellpadding="3">
                 <tr align="left">
                 </tr>
                 <tbody class="tbody-validity-config-list">
+
                 </tbody>
               </table>
             </div>
             <div class="form-group text-center">
-              <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-clientgroup-submit" value="Submit"> Submit
+              <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit" value="Submit"> Submit
               </button>
           </div>
           </div>
@@ -33,41 +34,34 @@
   </div>
 </div>
 <div id="templates">
-  <table class="table-dconfig-list">
-    <tr class="form-group bg-muted">
-      <td colspan="3" class="col-sm-5" width="50%">
-        <h4 class="header-title ">
-          <span class="dconfig-country-name"></span>
-        </h4>
+  <table class="table-dconfig-list" cellpadding="1" cellspacing="2">
+    <tr class="table-dconfig-countries-row">
+      <td colspan="3"  width="50%"><span class="dconfig-country-name"></span>
+
       </td>
-      <td align="center" width="50%" class="col-sm-6">
+      <td align="center" width="50%">
         <span class="pw-result" style="font-weight: bold;">Validity Before/ After</span>
       </td>
     </tr>
-    <tr class="form-group">
-      <td colspan="3"  width="50%"><span class="col-sm-offset-1 col-sm-4 control-label"></span>
+    <tr class="table-dconfig-domain-row">
+      <td colspan="3"  width="50%"><span class="dconfig-domain-name"></span>
         <input type="hidden" class="inputDomain" value="">
       </td>
       <td align="center" width="50%">
-        <div class="col-sm-6">
-          <div class="input-group width-40">
-            <input type="hidden" class="validity-day-setting-id" value="">
-            <input type="text" class="form-control input-sm" style="width:50px" maxlength="3" placeholder="00" />
-            <span class="input-group-addon bg-info">Days</span>
-          </div>
-        </div>
+        <input type="hidden" class="validity-day-setting-id" value="">
+        <input type="text" class="input-box dconfig-validity-days" style="width:50px" maxlength="3" />
       </td>
     </tr>
   </table>
-  <div class="no-records">
-    <table>
-      <tr>
-        <td colspan="2">
-          No Records Found
-        </td>
-      </tr>
-    </table>
-  </div>
+</div>
+<div class="no-records" style="display: none;">
+  <table>
+    <tr>
+      <td colspan="2">
+        No Records Found
+      </td>
+    </tr>
+  </table>
 </div>
 <script type="text/javascript" src="/script/validity-date-settings/validitydatesettings.js"></script>
 {% endblock %}
