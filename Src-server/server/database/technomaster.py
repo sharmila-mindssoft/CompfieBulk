@@ -2012,8 +2012,8 @@ def return_assign_legalentities(assign_legalentities_list):
     fn = core.AssignLegalEntity
     assign_legalentities_list = [
         fn(
-            legalentity["client_id"], legalentity["group_name"],
-            legalentity["country_names"], legalentity["no_of_legal_entities"],
+            legalentity["client_id"], legalentity["country_names"],
+            legalentity["group_name"], legalentity["no_of_legal_entities"],
             legalentity["no_of_assigned_legal_entities"]
         ) for legalentity in assign_legalentities_list
     ]

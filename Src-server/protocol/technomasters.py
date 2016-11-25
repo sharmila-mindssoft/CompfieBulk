@@ -1114,10 +1114,10 @@ class ViewAssignLegalEntitySuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "assigned_legal_entities"
+            "view_assigned_legal_entities"
         ])
        
-        assigned_legal_entities = data.get("assigned_legal_entities")
+        assigned_legal_entities = data.get("view_assigned_legal_entities")
         
         return ViewAssignLegalEntitySuccess(
             assigned_legal_entities
@@ -1126,7 +1126,7 @@ class ViewAssignLegalEntitySuccess(Response):
     def to_inner_structure(self):
         
         return {
-            "assigned_legal_entities": self.assigned_legal_entities
+            "view_assigned_legal_entities": self.assigned_legal_entities
         }
 
 class Unit(object):
