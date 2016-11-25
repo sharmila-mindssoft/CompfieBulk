@@ -98,7 +98,7 @@ def return_approval_units_under_entity(units, industry_domain_unitwise_map):
                 domain_names=industry_domain_unitwise_map[
                     unit_id]["domain_names"],
                 org_names=industry_domain_unitwise_map[
-                    unit_id]["industry_names"]
+                    unit_id]["organisation_name"]
             )
         )
     return result
@@ -118,12 +118,12 @@ def return_unit_wise_industry_domain_map(industry_domain_data):
             unit_wise_industry_domain_map[unit_id] = {}
         if "domain_names" not in unit_wise_industry_domain_map[unit_id]:
             unit_wise_industry_domain_map[unit_id]["domain_names"] = []
-        if "industry_names" not in unit_wise_industry_domain_map[unit_id]:
-            unit_wise_industry_domain_map[unit_id]["industry_names"] = []
+        if "organisation_name" not in unit_wise_industry_domain_map[unit_id]:
+            unit_wise_industry_domain_map[unit_id]["organisation_name"] = []
         unit_wise_industry_domain_map[
             unit_id]["domain_names"].append(data["domain_name"])
         unit_wise_industry_domain_map[
-            unit_id]["industry_names"].append(data["industry_name"])
+            unit_id]["organisation_name"].append(data["organisation_name"])
     return unit_wise_industry_domain_map
 
 

@@ -1389,8 +1389,8 @@ BEGIN
 	) as group_name,
 	(
 		SELECT count(unit_id) FROM tbl_units tu
-		WHERE is_active=1 and tu.legal_entity_id=tle.legal_entity_id
-		and approve_status=0
+		WHERE is_closed=0 and tu.legal_entity_id=tle.legal_entity_id
+		and is_approved=0
 	) as unit_count FROM tbl_legal_entities tle;
 END //
 DELIMITER ;
@@ -1409,7 +1409,7 @@ BEGIN
 		WHERE td.division_id = tu.division_id
 	) as division_name,
 	(
-		SELECT category_name FROM tbl_category_master tcm
+		SELECT category_name FROM tbl_categories tcm
 		WHERE tcm.category_id = tu.category_id
 	) as category_name,
 	unit_id, unit_code, unit_name, address, postal_code,
@@ -1418,7 +1418,7 @@ BEGIN
 		WHERE tg.geography_id=tu.geography_id
 	) as geography_name
 	FROM tbl_units tu
-	WHERE is_active=1 and approve_status=0
+	WHERE is_closed=0 and is_approved=0
 	and legal_entity_id=le_id;
 
 	SELECT unit_id, (
@@ -1428,7 +1428,7 @@ BEGIN
 		SELECT organisation_name FROM tbl_organisation ti
 		WHERE ti.organisation_id=tui.organisation_id
 	) as organisation_name
-	FROM tbl_unit_industries tui WHERE unit_id in (
+	FROM tbl_units_organizations tui WHERE unit_id in (
 		SELECT unit_id FROM tbl_units
 		WHERE legal_entity_id=le_id
 	);
