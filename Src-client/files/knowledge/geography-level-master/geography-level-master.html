@@ -1,155 +1,155 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-<script>
-  $(document).ready(function() {
-    $(".insert-level").hide();
-  });
-
-  function loadForm(){
-     $(".insert-level").show();
-     $("#add").hide();
-  }
-
-  function hideForm(){
-     $(".insert-level").hide();
-     $("#add").show();
-  }
-
-</script>
 <div class="container">
   <div class="row" id="animationSandbox">
     <div class="col-sm-3"> </div>
     <div class="col-sm-6">
       <div class="portlet">
-          <!-- <h4 class="page-title">Geography Level Master</h4>
-          <hr class="no-top-margin"> -->
         <div class="portlet-heading bg-info">
-            <h3 class="portlet-title">
-                Geography Level Master
-            </h3>
-            <div class="portlet-widgets">
-                <a href="#" onclick="location.href='/geography-level-master/list'" >
-                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                </a>
-            </div>
-            <div class="clearfix"></div>
+          <h3 class="portlet-title">
+              Geography Level Master
+          </h3>
+          <div class="portlet-widgets">
+            <a id="btn-cancel insert-level-cancel" >
+                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+            </a>
+          </div>
+          <div class="clearfix"></div>
         </div>
         <div id="bg-primary1" class="panel-collapse collapse in">
-            <div class="portlet-body">
-        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-          <div class="form-group has-feedback">
-            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name:<span class="mandatory">*</span></label>
-            <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="India">
-              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-              <!-- <select class="form-control chosen" data-placeholder="Choose a Country" tabindex="1">
-                <option value="0"> Select</option>
-                <option value="1" selected="selected">India</option>
-                <option value="2">Pakistan</option>
-                <option value="3">Srilanka</option>
-                <option value="4">USA</option>
-              </select> -->
-            </div>
-          </div>
-          <div class="insert-level">
-            <div class="col-lg-6" >
-              <div class="form-group">
-                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Level:<span class="mandatory">*</span></label>
+          <div class="portlet-body">
+            <div class="form-horizontal group-border-dashed">
+              <div class="form-group has-feedback">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name:<span class="mandatory">*</span></label>
                 <div class="col-sm-6 controls">
-                  <select class="form-control input-sm" data-placeholder="Choose a Category" tabindex="1">
-                    <option value="0"> Select</option>
-                    <option value="1" selected="selected">2</option>
-                    <option value="2">3</option>
-                    <option value="3">4</option>
-                    <option value="4">5</option>
-                    <option value="5">6</option>
-                    <option value="5">7</option>
-                    <option value="5">8</option>
-                    <option value="5">9</option>
-                    <option value="5">10</option>
-                  </select>
+                  <input type="text" id="countryval" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
+                  <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                  <input id="country" type="hidden" >
+                  <div id="ac-country" class="ac-textbox default-display-none">
+                    <ul style="width:94%;"></ul>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="col-lg-6" >
-              <div class="form-group">
-                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Title:<span class="mandatory">*</span></label>
-                <div class="col-sm-6 controls">
-                  <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="">
+              <div class="input-row default-display-none" id="view-insert-level">
+                <div class="col-lg-6" >
+                  <div class="form-group">
+                    <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Level:<span class="mandatory">*</span></label>
+                    <div class="col-sm-6 controls">
+                      <select class="input-box" id="insertlevel">
+                        <!-- <option value="1">Level 1</option> -->
+                        <option value="2">Level 2</option>
+                        <option value="3">Level 3</option>
+                        <option value="4">Level 4</option>
+                        <option value="5">Level 5</option>
+                        <option value="6">Level 6</option>
+                        <option value="7">Level 7</option>
+                        <option value="8">Level 8</option>
+                        <option value="9">Level 9</option>
+                        <option value="10">Level 10</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
+                <div class="col-lg-6" >
+                  <div class="form-group">
+                    <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Title:<span class="mandatory">*</span></label>
+                    <div class="col-sm-6 controls">
+                      <input type="text" id="insertvalue" class="form-control input-sm" value="" maxlength="30" placeholder="Title Name" value="" />
+                    </div>
+                  </div>
+                </div>
+                <center>
+                  <div class="form-group text-center" >
+                    <button class="btn btn-primary waves-effect waves-light" type="submit" id="insert-record" class="btn-submit"> Insert</button>
+                  </div>
+                </center>
               </div>
             </div>
-          <center>
-            <div class="form-group text-center" >
-              <button class="btn btn-primary waves-effect waves-light" type="submit" > Insert</button>
-              <button class="btn btn-info waves-effect m-l-5" type="submit" onclick="hideForm()" > Cancel </button>
-            </div>
-          </center>  
           </div>
-        </form>
-        <div class="form-group text-right" id="add">
-          <button class="btn btn-info waves-effect waves-light" type="submit" onclick="loadForm()" ><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Insert Level </button>
-      </div>
-      </div>
-      </div>
-
+        </div>
         <div class=" table-responsive">
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                <thead>
-                  <tr>
-                    <th class="col-sm-1">Level</th>
-                    <th class="col-sm-5">Title Name</th>
-                    <th class="col-sm-1">Level</th>
-                    <th class="col-sm-5">Title Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Region"></td>
-                    <td>6</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Corporation"></td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Union Territory"></td>
-                    <td>7</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Municipality"></td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="State"></td>
-                    <td>8</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Taluk"></td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="District"></td>
-                    <td>9</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="Panchayat"></td>
-                  </tr>
-                  <tr>
-                    <td>5</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value="City"></td>
-                    <td>10</td>
-                    <td><input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Title Name" value=""></td>
-                  </tr>
-                </tbody>
-              </table>
-             
-     
-      </div>
+          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th class="col-sm-1">Level</th>
+                <th class="col-sm-5">Title Name</th>
+                <th class="col-sm-1">Level</th>
+                <th class="col-sm-5">Title Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>
+                  <input type="text" id="level1" class="form-control input-sm" placeholder="Title Name" maxlength="30" tabindex="2" />
+                  <input type="hidden" id="levelid1" class="input-box hiddenvalue"/>
+                </td>
+                <td>6</td>
+                <td>
+                  <input type="text" id="level6" class="form-control input-sm" placeholder="Title Name" maxlength="30" tabindex="7"/>
+                  <input type="hidden" id="levelid6" class="input-box hiddenvalue"/>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>
+                  <input type="text" id="level2" name="example-input-small" class="form-control input-sm" placeholder="Title Name"  tabindex="3">
+                  <input type="hidden" id="levelid2" class="input-box hiddenvalue"/>
+                </td>
+                <td>7</td>
+                <td>
+                  <input type="text" id="level7" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="8">
+                  <input type="hidden" id="levelid7" class="input-box hiddenvalue"/>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>
+                  <input type="text" id="level3" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="4">
+                  <input type="hidden" id="levelid3" class="input-box hiddenvalue"/>
+                </td>
+                <td>8</td>
+                <td>
+                  <input type="text" id="level8" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="9">
+                  <input type="hidden" id="levelid8" class="input-box hiddenvalue"/>
+                </td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>
+                  <input type="text" id="level4" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="5">
+                  <input type="hidden" id="levelid4" class="input-box hiddenvalue"/>
+                </td>
+                <td>9</td>
+                <td>
+                  <input type="text" id="level9" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="10">
+                  <input type="hidden" id="levelid9" class="input-box hiddenvalue"/>
+                </td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>
+                <input type="text" id="level5" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="6">
+                  <input type="hidden" id="levelid5" class="input-box hiddenvalue"/>
+                </td>
+                <td>10</td>
+                <td>
+                  <input type="text" id="level10" name="example-input-small" class="form-control input-sm" placeholder="Title Name"  tabindex="11">
+                  <input type="hidden" id="levelid10" class="input-box hiddenvalue"/>
+                </td>
+              </tr>
+            </tbody>
 
+          </table>
+      </div>
       <div class="form-group text-center">
-        <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit" tabindex="12"> Submit </button>
         <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/geography-level-master/list'"> Cancel </button> -->
       </div>
-    
-    <!-- end col -->
-
+      </div>
+    </div>
+  </div>
 </div>
-
-</div>
-
-
-{% endblock %} 
+<script type="text/javascript" src="/script/geography-level-master/geographylevelmaster.js">
+</script>
+{% endblock %}

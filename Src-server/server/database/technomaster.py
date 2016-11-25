@@ -599,6 +599,8 @@ def get_client_details(db, client_id):
     domain_map = return_organization_by_legalentity_domain(
         organizations
     )
+    print '----------'
+    print domain_map
     legal_entities = return_legal_entities(
         legal_entities, domain_map
     )
@@ -2015,8 +2017,8 @@ def return_assign_legalentities(assign_legalentities_list):
     fn = core.AssignLegalEntity
     assign_legalentities_list = [
         fn(
-            legalentity["client_id"], legalentity["group_name"],
-            legalentity["country_names"], legalentity["no_of_legal_entities"],
+            legalentity["client_id"], legalentity["country_names"],
+            legalentity["group_name"], legalentity["no_of_legal_entities"],
             legalentity["no_of_assigned_legal_entities"]
         ) for legalentity in assign_legalentities_list
     ]

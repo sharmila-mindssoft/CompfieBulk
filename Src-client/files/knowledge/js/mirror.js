@@ -405,7 +405,7 @@ function initMirror() {
     var snName = statutoryNatureDetail[1];
     var cIds = statutoryNatureDetail[2];
     return {
-      's_n_ids': snIds,
+      's_n_id': snIds,
       's_n_name': snName,
       'c_id': cIds
     };
@@ -1890,6 +1890,85 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getGroupAdminGroupList(callback)
+  {
+    console.log("mirror")
+    callerName = 'techno_transaction';
+    var request = [
+      'GetGroupAdminGroupUnitList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function resendGroupAdminRegnmail(clientInfo, callback) {
+    var request = ['ResendGroupAdminRegnMail', clientInfo];
+    apiRequest("techno_transaction", request, callback);
+  }
+
+  function sendGroupAdminRegnmail(clientInfo, callback) {
+    var request = ['SendGroupAdminRegnMail', clientInfo];
+    apiRequest("techno_transaction", request, callback);
+  }
+
+  function getGroupAdminReportData(callback){
+    console.log("mirror")
+    callerName = 'techno_report';
+    var request = [
+      'GetGroupAdminReportData',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getAssignedUserClientGroups(callback)
+  {
+    console.log("mirror")
+    callerName = 'techno_report';
+    var request = [
+      'GetAssignedUserClientGroups',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getReassignUserReportData(cg_id, u_id, g_id, callback)
+  {
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getLegalEntityClosureData(callback){
+    callerName = 'techno_transaction';
+    var request = [
+      'GetLegalEntityClosureReportData',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function saveLegalEntityClosureData(password, remarks, le_id, action_mode, callback)
+  {
+    callerName = 'techno_transaction';
+    var request = [
+      'SaveLegalEntityClosureData',
+      {
+        "password": password,
+        "closed_remarks": remarks,
+        "legal_entity_id": le_id,
+        "grp_mode": action_mode
+      }
+    ];
+    //apiRequest(callerName, request, callback);
+  }
   //Verify Password
   function verifyPassword(password, callback) {
     var request = [
@@ -2067,6 +2146,14 @@ function initMirror() {
     changeAdminDisaleStatus: changeAdminDisaleStatus,
     getUserMappingReportFilters: getUserMappingReportFilters,
     getUsermappingDetailsReport: getUsermappingDetailsReport,
+    getGroupAdminGroupList: getGroupAdminGroupList,
+    sendGroupAdminRegnmail: sendGroupAdminRegnmail,
+    resendGroupAdminRegnmail: resendGroupAdminRegnmail,
+    getGroupAdminReportData: getGroupAdminReportData,
+    getAssignedUserClientGroups: getAssignedUserClientGroups,
+    getReassignUserReportData: getReassignUserReportData,
+    getLegalEntityClosureData: getLegalEntityClosureData,
+    saveLegalEntityClosureData: saveLegalEntityClosureData,
     verifyPassword: verifyPassword
   };
 }

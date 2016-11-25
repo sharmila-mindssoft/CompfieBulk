@@ -298,7 +298,7 @@ class UpdateStatutoryNature(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["s_n_id", "s_n_name", "c_ids"])
+        data = parse_dictionary(data, ["s_n_id", "s_n_name", "c_id"])
         statutory_nature_id = data.get("s_n_id")
         statutory_nature_name = data.get("s_n_name")
         country_id = data.get("c_id")

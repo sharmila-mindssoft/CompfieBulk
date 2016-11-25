@@ -7,10 +7,11 @@ from server import logger
 from server.database.admin import (
     get_domains_for_user
 )
+from server.database.login import verify_password
 from server.database.technomaster import (
     get_clients_by_user, get_business_groups_for_user,
     get_legal_entities_for_user, get_divisions_for_user,
-    get_units_for_user_assign
+    get_units_for_user, is_invalid_id
 )
 from server.database.technotransaction import *
 
@@ -111,6 +112,21 @@ def process_techno_transaction_request(request, db):
         logger.logKnowledgeApi("SendGroupAdminRegnMail", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif type(request_frame) is technotransactions.GetLegalEntityClosureReportData:
+        logger.logKnowledgeApi("GetLegalEntityClosureReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_LegalEntityClosureReportData(db, user_id)
+        logger.logKnowledgeApi("GetLegalEntityClosureReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif type(request_frame) is technotransactions.SaveLegalEntityClosureData:
+        logger.logKnowledgeApi("SaveLegalEntityClosureData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_Save_LegalEntityClosureData(db, request_frame, user_id)
+        logger.logKnowledgeApi("SaveLegalEntityClosureData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+
     return result
 
 
@@ -121,7 +137,7 @@ def process_get_assigned_statutory_wizard_one(db, user_id):
     divisions = get_divisions_for_user(db, user_id)
     categories = get_categories_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
-    units = get_units_for_user_assign(db, user_id)
+    units = get_units_for_user(db, user_id)
     return technotransactions.GetAssignedStatutoryWizardOneDataSuccess(
         group_companies, business_groups, legal_entities, divisions,
         categories, domains, units
@@ -129,10 +145,13 @@ def process_get_assigned_statutory_wizard_one(db, user_id):
 
 
 def process_get_assigned_statutory_wizard_two(db, request, session_user):
-    statutories = get_assigned_statutory_wizard_two_data(
-        db, request.domain_id, request.unit_ids
+    level_1_statutories, statutories = get_assigned_statutory_wizard_two_data(
+        db, request.client_id, request.business_group_id,
+        request.legal_entity_id, request.division_id, request.category_id,
+        request.domain_id_optional, request.unit_ids
     )
     return technotransactions.GetAssignedStatutoryWizardTwoDataSuccess(
+        level_1_statutories_list=level_1_statutories,
         statutories_for_assigning=statutories
     )
 
@@ -195,3 +214,32 @@ def process_Send_GroupAdminRegn_Mail(db, request_frame, session_user):
     result = send_groupadmin_registration_mail(db, request_frame, session_user)
     if result is True:
         return technotransactions.SaveGroupAdminRegnSuccess()
+
+#
+# To get the legal entity list under the techno manager for closure prrocess
+#
+def process_get_LegalEntityClosureReportData(db, session_user):
+    result = get_LegalEntityClosureReportData(db, session_user)
+    return technotransactions.LegalEntityClosureReportDataSuccess(
+        legalentity_closure=result
+    )
+
+def process_Save_LegalEntityClosureData(db, request_frame, session_user):
+    session_user = int(session_user)
+    legal_entity_id = request_frame.legal_entity_id
+    action_mode = request_frame.grp_mode
+    password = request_frame.password
+    remarks = request_frame.closed_remarks
+
+    if not is_invalid_id(db, "legal_entity_id", legal_entity_id):
+        print "invalid le"
+        return technomasters.InvalidLegalEntityId()
+    else:
+        if verify_password(db, password, session_user):
+            print "valid pwd"
+            result = save_legalentity_closure_data(db, session_user, password, legal_entity_id, remarks, action_mode)
+            print result
+            if result is True:
+                return technotransactions.SaveLegalEntityClosureSuccess()
+        else:
+            return technomasters.InvalidPassword()
