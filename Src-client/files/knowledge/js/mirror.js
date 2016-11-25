@@ -958,17 +958,17 @@ function initMirror() {
       return {
         'country_id': cId,
         'domain_id': dId,
-        'period_from': pFrom,
-        'period_to': pTo
+        'month_from': pFrom,
+        'month_to': pTo
       };
   }
 
   function getDomainRow(
-    d_id, org
+    d_id, a_date, org
   ){
       return {
         "d_id": d_id,
-        "activation_date": null,
+        "activation_date": a_date,
         "org": org
       }
   }
