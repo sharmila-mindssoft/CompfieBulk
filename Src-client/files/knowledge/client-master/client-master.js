@@ -226,7 +226,8 @@ function loadGroups(){
   Handling Button Clicks
 */
 $(".btn-clientgroup-add").click(function(){
-    initialize("add");
+    initialize("add");    
+    
 });
 $(".add-business-group").click(function(){
     addOrSelectBusinessGroup("add");
@@ -241,11 +242,9 @@ $(".add-le").click(function(){
     addClient();
 });
 $(".save").click(function(){
-    closePopup();
     saveClient();
 });
 $(".cancel").click(function(){
-    closePopup();
     initialize("list");
 });
 $(".org-submit").click(function(){
@@ -294,7 +293,7 @@ function saveOrganization(){
                         parseInt(industry_id_map[selected_org])
                     ] = parseInt(no_of_units)
                 clearMessage();
-                closePopup();
+                Custombox.close();
             }
         }
     }
@@ -368,13 +367,11 @@ function saveClient(){
             if (contractToVal != '') {
               convertDate = convert_date(contractToVal);
             }
-            if(
-                country_id == 0 || country_id == '0' || country_id == null
-            ){
+            if(country_id == 0 || country_id == '0' || country_id == null){
                 displayMessage(message.country_required);
                 break;
             }else if(le_name == '') {
-                displayMessage(mbessage.legalentity_required);
+                displayMessage(message.legalentity_required);
                 break;
             }else if(le_name.length > 50) {
                 displayMessage(message.le_50);
@@ -426,6 +423,7 @@ function saveClient(){
                 var domain_ids = []
                 for (var j = 1; j <= domain_count; j++) {
                     var domain_id = $(".domain-"+i+"-"+j+" option:selected").val();
+                    var activationdate = $(".activationdate-"+i+"-"+j).val();
                     if(domain_ids.indexOf(domain_id) > -1){
                         displayMessage(message.duplicate_domain + " for "+le_name);
                         break;
@@ -450,7 +448,7 @@ function saveClient(){
                     domain_ids.push(domain_id);
                     domains.push(
                         mirror.getDomainRow(
-                            parseInt(domain_id), organization_details[i][j]
+                            parseInt(domain_id), activationdate, organization_details[i][j]
                         )
                     )
                 }
@@ -533,7 +531,7 @@ function callSaveClientApi(
 ){
     clearMessage();
     function onSuccess(data){
-        displayMessage(message.client_save_success);
+        displaySuccessMessage(message.client_save_success);
         initialize("list");
     }
     function onFailure(error){
@@ -557,7 +555,7 @@ function callUpdateClientApi(
 ){
     clearMessage();
     function onSuccess(data){
-        displayMessage(message.client_update_success);
+        displaySuccessMessage(message.client_update_success);
         initialize("list");
     }
     function onFailure(error){
@@ -576,6 +574,7 @@ function callUpdateClientApi(
 }
 
 function convert_date(data) {
+  console.log(convert_date);
   var date = data.split('-');
   var months = [
     'Jan',
@@ -651,12 +650,12 @@ function editClient(){
         var country_id = value.country_id
         var domain_id = value.domain_id
         showNonEditable(
-            $('.tl-from-' + country_id + '-' + domain_id), value.period_from,
-            month_id_name_map[value.period_from]
+            $('.tl-from-' + country_id + '-' + domain_id), value.month_from,
+            month_id_name_map[value.month_from]
         );
         showNonEditable(
-            $('.tl-to-' + country_id + '-' + domain_id), value.period_to,
-            month_id_name_map[value.period_to]
+            $('.tl-to-' + country_id + '-' + domain_id), value.month_to,
+            month_id_name_map[value.month_to]
         );
     });
 }
@@ -833,10 +832,10 @@ $(".edit-date-config").click(function(){
                 var country_id = value.country_id
                 var domain_id = value.domain_id
                 showEditable(
-                    $('.tl-from-' + country_id + '-' + domain_id), value.period_from
+                    $('.tl-from-' + country_id + '-' + domain_id), value.month_from
                 );
                 showEditable(
-                    $('.tl-to-' + country_id + '-' + domain_id), value.period_to
+                    $('.tl-to-' + country_id + '-' + domain_id), value.month_to
                 );
             });
             $(".edit-date-config").attr("src", "/images/delete-icon-black.png");
@@ -845,12 +844,12 @@ $(".edit-date-config").click(function(){
                 var country_id = value.country_id
                 var domain_id = value.domain_id
                 showNonEditable(
-                    $('.tl-from-' + country_id + '-' + domain_id), value.period_from,
-                    month_id_name_map[value.period_from]
+                    $('.tl-from-' + country_id + '-' + domain_id), value.month_from,
+                    month_id_name_map[value.month_from]
                 );
                 showNonEditable(
-                    $('.tl-to-' + country_id + '-' + domain_id), value.period_to,
-                    month_id_name_map[value.period_to]
+                    $('.tl-to-' + country_id + '-' + domain_id), value.month_to,
+                    month_id_name_map[value.month_to]
                 );
             });
             $(".edit-date-config").attr("src", "/images/icon-edit.png");
@@ -878,11 +877,11 @@ function addClient(){
 
     var le_table_class = "le-table-"+le_count
     $('.letable', clone).addClass(le_table_class);
-
+    
     var country_class = "country-"+le_count
     $('.country', clone).addClass(country_class);
     loadCountries(country_class);
-
+    
     var bg_class = "bg-"+le_count
     $(".business-group", clone).addClass(bg_class);
     loadBusinessGroups(bg_class);
@@ -900,7 +899,7 @@ function addClient(){
             }
         });
     });
-
+    
     var add_domain_class = "domain-"+le_count;
     var domain_list_class = "domain-list-"+le_count;
     var domain_count_class = "domain-count-"+le_count;
@@ -911,9 +910,11 @@ function addClient(){
     $("."+add_domain_class).click(function(){
         addDomain(domain_list_class, domain_count_class)
     });
+
 }
 
 function addOrganization(){
+
     var le_cnt = $("#le-cnt").val();
     var d_cnt = $("#d-cnt").val();
     var o_cnt = $("#o-cnt").val();
@@ -958,15 +959,34 @@ function addDomain(domain_list_class, domain_count_class){
     var remove_class = "remove-domain-"+le_count+"-"+domain_count;
     $(".domain_row", clone).addClass(remove_class);
 
-    var domain_class = "domain-"+le_count+"-"+domain_count
+    var domain_class = "domain-"+le_count+"-"+domain_count;
     $(".domain", clone).addClass(domain_class)
     $(".domain", clone).change(function(){
         generateDateConfigurationList();
     });
+    var activationdate_class = "activationdate-"+le_count+"-"+domain_count;
+    $(".activationdate", clone).addClass(activationdate_class)
+    clone.find(".activationdate")
+        .removeClass('hasDatepicker')
+        .removeAttr('id')
+        .datepicker({
+            changeMonth: false,
+            changeYear: false,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        });
     $(".addOrganizationType", clone).attr("id", le_count+"-"+domain_count);
     $(".addOrganizationType", clone).addClass(le_count+"-"+domain_count);
     $(".addOrganizationType", clone).click(function(){
-        displayPopup($(this).attr("id"));
+      Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+        open:   function() {
+          displayPopup($(".addOrganizationType", clone).attr("id"));
+        } 
+      });
     });
 
     $(".remove-domain", clone).click(function(e){
@@ -1048,13 +1068,15 @@ function loadDomains(domain_class){
     $('.' + domain_class).html(domain_html);
 }
 
-function loadBusinessGroups(bg_class){
-    $('.' + bg_class + "  option:gt(0)").remove();
-    bg_html = "<option value ='0'>(Select Business Group)</option>"
-    $.each(BUSSINESSGROUPS, function(key, value){
-        bg_html += "<option value = "+parseInt(value.business_group_id)+">"+value.business_group_name+"</option>"
-    });
-    $('.' + bg_class).html(bg_html);
+function loadBusinessGroups(bg_class){    
+    $('.'+bg_class+" option:gt(0)").remove();    
+    bg_html = "<option value ='0'>(Select Business Group)</option>";
+    if(BUSSINESSGROUPS,length > 0){
+      $.each(BUSSINESSGROUPS, function(key, value){
+          bg_html += "<option value = "+parseInt(value.business_group_id)+">"+value.business_group_name+"</option>"
+      });    
+    }
+    $('.'+bg_class).html(bg_html);
 }
 
 
@@ -1081,8 +1103,9 @@ function addOrSelectBusinessGroup(type_of_icon){
 }
 
 function displayPopup(counts) {
-    $('.overlay').css('visibility', 'visible');
-    $('.overlay').css('opacity', '1');
+    console.log(counts);
+    //$('.overlay').css('visibility', 'visible');
+    //$('.overlay').css('opacity', '1');
     count_list = counts.split("-");
     le_cnt = count_list[0]
     d_cnt = count_list[1]
@@ -1090,6 +1113,7 @@ function displayPopup(counts) {
     $("#d-cnt").val(d_cnt);
     $("#o-cnt").val(0);
     $('.organization-list').empty();
+    console.log(organization_details);
     if(le_cnt in organization_details){
         if(d_cnt in organization_details[le_cnt]){
             o_cnt = 0;
@@ -1104,10 +1128,10 @@ function displayPopup(counts) {
     }
 }
 
-function closePopup(){
-    $('.overlay').css('visibility', 'hidden');
-    $('.overlay').css('opacity', '0');
-}
+// function closePopup(){
+//     $('.overlay').css('visibility', 'hidden');
+//     $('.overlay').css('opacity', '0');
+// }
 
 function changeClientStatus(pass_value, group_id){
     function onSuccess(data) {
