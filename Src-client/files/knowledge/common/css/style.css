@@ -834,3 +834,6 @@ list-style-type:none; line-height:25px;
 .custom-modal-text div{
   width:360px;
 }
+#templates{
+  display: none;
+}

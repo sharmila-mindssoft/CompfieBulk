@@ -317,7 +317,7 @@ TEMPLATE_PATHS = [
     # Techno Manager master
     (
         "/knowledge/client-master",
-        "files/knowledge/client-master/clientmaster-new.html",
+        "files/knowledge/client-master/client-master.html",
         None, {}
     ),
     (
@@ -327,7 +327,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/assign-legal-entity",
-        "files/knowledge/assign-legal-entity/assignlegalentity.html",
+        "files/knowledge/assign-legal-entity/assign-legal-entity.html",
         None, {}
     ),
     # Techno user master
