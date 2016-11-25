@@ -55,13 +55,14 @@ function initialize(){
 	resetValues();
   mirror.getClientAgreementReportFilters(function (error, data) {
       if (error == null) {
+        console.log(data)
         CountryList = data.countries;
         DomainList = data.domains;
         GroupList = data.client_group_master;
         BusinessGroupList = data.business_groups;
         LegalEntityList = data.unit_legal_entity;
       }else {
-        custom_alert(error);
+        displayMessage(error);
       }
   });
 }
