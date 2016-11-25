@@ -151,6 +151,9 @@ class API(object):
     def handle_api_request(
         self, unbound_method, request_data_type
     ):
+        self._ip_addess = request.remote_addr
+        # print request.environ['REMOTE_ADDR']
+
         # ip_address = str(request.remote_ip())
         # self._ip_addess = ip_address
         if request_data_type == "knowledgeformat":
