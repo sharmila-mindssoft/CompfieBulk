@@ -64,6 +64,31 @@ BEGIN
 END //
 
 DELIMITER ;
+----
+---- save login failure
+----
+DROP PROCEDURE IF EXISTS `sp_save_login_failure`;
+DELIMITER //
+CREATE PROCEDURE `sp_save_login_failure`(
+    IN userid INT(11), userip varchar(50), logintime varchar(50)
+)
+BEGIN
+    SELECT @cnt := count(user_id), @_attempt := login_attempt from tbl_user_login_history where user_id = userid;
+    if @cnt = 0 THEN
+        INSERT INTO tbl_user_login_history(user_id, ip, login_time, login_attempt) values
+        (userid, userip, logintime, 1);
+    else
+        UPDATE tbl_user_login_history set login_attempt = @_attempt + 1,
+        ip = userip, login_time = logintime where user_id = userid;
+    end if;
+    SELECT user_id, login_attempt, login_time from tbl_user_login_history where user_id = userid;
+
+END //
+
+DELIMITER ;
+
+
+
 
 -- --------------------------------------------------------------------------------
 -- Returns Coutries that has been mapped with domain
@@ -2985,45 +3010,45 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE `sp_client_agreement_details`(
- IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
  IN contractto_ VARCHAR(50), IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11))
 BEGIN
 	DECLARE user_category INT(11);
 	SELECT user_category_id INTO user_category
 	FROM tbl_user_login_details WHERE user_id = userid_;
-    
+
 	select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
 	t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
 	(select count(domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
 	(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
 	(select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
 	t3.activation_date,
-	(select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id 
+	(select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
 	where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
 	(select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
 	(select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
-	from tbl_legal_entities t1 
+	from tbl_legal_entities t1
 	inner join tbl_client_groups t2 on t1.client_id = t2.client_id
-	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
     inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
 	t1.country_id = countryid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(domainid_ IS NOT NULL, t3.domain_id = domainid_, 
+    IF(domainid_ IS NOT NULL, t3.domain_id = domainid_,
     IF (user_category > 2,
-    t3.domain_id in (select domain_id from tbl_user_domains 
+    t3.domain_id in (select domain_id from tbl_user_domains
 		WHERE user_id = userid_
 	), 1) and
     IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
     IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
-    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
 		WHERE client_id in (
 			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
-		)), 
+		)),
     IF (user_category = 6,
     t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
 			WHERE user_id=userid_)
@@ -3045,34 +3070,34 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE `sp_client_agreement_details_count`(
- IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
  IN contractto_ VARCHAR(50), IN userid_ INT(11))
 BEGIN
 	DECLARE user_category INT(11);
 	SELECT user_category_id INTO user_category
 	FROM tbl_user_login_details WHERE user_id = userid_;
-    
+
 	select count(t1.legal_entity_id) as total_record
-	from tbl_legal_entities t1 
-	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+	from tbl_legal_entities t1
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
     where
 	t1.country_id = countryid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(domainid_ IS NOT NULL, t3.domain_id = domainid_, 
+    IF(domainid_ IS NOT NULL, t3.domain_id = domainid_,
     IF (user_category > 2,
-    t3.domain_id in (select domain_id from tbl_user_domains 
+    t3.domain_id in (select domain_id from tbl_user_domains
 		WHERE user_id = userid_
 	), 1) and
     IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
     IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
-    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
 		WHERE client_id in (
 			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
-		)), 
+		)),
     IF (user_category = 6,
     t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
 			WHERE user_id=userid_)
@@ -3092,25 +3117,25 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE `sp_domainwise_agreement_details`(
- IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
  IN contractto_ VARCHAR(50), IN fromcount_ INT(11), IN pagecount_ INT(11),IN userid_ INT(11) )
 BEGIN
 	DECLARE user_category INT(11);
 	SELECT user_category_id INTO user_category
 	FROM tbl_user_login_details WHERE user_id = userid_;
-    
+
 	select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.contract_from,
 	t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t4.business_group_name,
 	(select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
 	t3.activation_date,
-    (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id 
+    (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
 	where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
 	(select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
 	(select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
-	from tbl_legal_entities t1 
+	from tbl_legal_entities t1
 	inner join tbl_client_groups t2 on t1.client_id = t2.client_id
-	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
     inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
 	t1.country_id = countryid_ and t3.domain_id = domainid_ and
@@ -3118,12 +3143,12 @@ BEGIN
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
     IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
     IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
-    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
 		WHERE client_id in (
 			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
-		)), 
+		)),
     IF (user_category = 6,
     t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
 			WHERE user_id=userid_)
@@ -3145,29 +3170,29 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE `sp_domainwise_agreement_details_count`(
- IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11), 
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
  IN contractto_ VARCHAR(50), IN userid_ INT(11))
 BEGIN
 	DECLARE user_category INT(11);
 	SELECT user_category_id INTO user_category
 	FROM tbl_user_login_details WHERE user_id = userid_;
-    
+
 	select count(distinct t1.legal_entity_id) as total_record
-	from tbl_legal_entities t1 
-	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id 
+	from tbl_legal_entities t1
+	inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
     where
 	t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
     IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
     IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
-    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_, 
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
 		WHERE client_id in (
 			SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
-		)), 
+		)),
     IF (user_category = 6,
     t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
 			WHERE user_id=userid_)
@@ -3187,11 +3212,11 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE `sp_statutory_notification_details`(
- countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11), 
+ countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
 IN fromcount_ INT(11), IN pagecount_ INT(11))
 BEGIN
-	SELECT 
+	SELECT
     ts.statutory_name,
     tc.compliance_task,
     tsnl.notification_text,
@@ -3218,7 +3243,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE `sp_statutory_notification_details_count`(
- countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11), 
+ countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50))
 BEGIN
 	SELECT COUNT(tsnl.notification_id) as total_record
@@ -3244,7 +3269,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE `sp_levelone_statutories`()
 BEGIN
-	SELECT 
+	SELECT
 		t1.statutory_id,
 		t1.statutory_name,
 		t2.country_id,
@@ -3265,7 +3290,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_organizationwise_unit_count`(IN legalentityid_ INT(11), IN domainid_ INT(11))
 BEGIN
 	select
-	t1.organisation_id,  
+	t1.organisation_id,
 	t1.count as domain_total_unit,
 	(select count(t4.unit_id) from tbl_units_organizations t4
 	inner join tbl_units t5 on t4.unit_id = t5.unit_id and t5.legal_entity_id = legalentityid_
@@ -4121,7 +4146,7 @@ CREATE PROCEDURE `sp_client_groups_for_user`( IN u_id INT(11) )
 BEGIN
 	SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = u_id;
 	IF @u_cat_id > 2 THEN
-		SELECT DISTINCT t1.client_id, t1.group_name, 
+		SELECT DISTINCT t1.client_id, t1.group_name,
 		(
 			select group_concat(country_name) from tbl_countries
 			where country_id in (
@@ -4138,7 +4163,7 @@ BEGIN
 		WHERE t2.user_id = u_id
 		ORDER BY t1.group_name;
 	ELSE
-		SELECT DISTINCT t1.client_id, t1.group_name, 
+		SELECT DISTINCT t1.client_id, t1.group_name,
 		(
 			select group_concat(country_name) from tbl_countries
 			where country_id in (

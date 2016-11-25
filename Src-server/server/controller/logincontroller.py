@@ -70,27 +70,33 @@ def process_login_request(request, db, session_user_ip):
 
 
 def process_login(db, request, session_user_ip):
+    print session_user_ip
     login_type = request.login_type
     username = request.username
     password = request.password
     encrypt_password = encrypt(password)
     response = verify_login(db, username, encrypt_password)
-    verified_username = response[0]
-    verified_login = response[1]
-    user_info = response[2]
-    forms = response[3]
-    user_id = verified_username.get('user_id')
+    is_success = response[0]
+    user_id = response[1]
+    username = response[2]
+
+    # verified_username = response[0]
+    verified_login = response[3]
+    user_info = response[4]
+    forms = response[5]
+    # user_id = verified_username.get('user_id')
 
     user_category_id = verified_login.get('user_category_id')
 
-    if verified_username.get('username') is None:
-        return login.InvalidUserName()
-    elif user_id is None:
-        save_login_failure(db, user_id, session_user_ip)
-        rows = get_login_attempt_and_time(db, user_id)
+    if is_success is False and username is None:
+        return login.InvalidCredentials(None)
+    elif is_success is False :
+        rows = save_login_failure(db, user_id, session_user_ip)
+        # rows = get_login_attempt_and_time(db, user_id)
         no_of_attempts = 0
+        print rows
         if rows:
-            no_of_attempts = rows[0]["login_attempt"]
+            no_of_attempts = rows.get("login_attempt")
         if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
             captcha_text = generate_random(CAPTCHA_LENGTH)
         else:

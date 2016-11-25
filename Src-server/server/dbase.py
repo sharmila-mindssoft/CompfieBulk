@@ -586,8 +586,10 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1, condition_val=None):
         rows = self.get_data(table, column, condition, condition_val)
-        currentValue = int(rows[0][column[0]]) if(
-            rows[0][column[0]] is not None) else 0
+        print rows
+        print column
+        currentValue = int(rows[column[0]][column[0]]) if(
+            rows[column[0]][column[0]] is not None) else 0
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
