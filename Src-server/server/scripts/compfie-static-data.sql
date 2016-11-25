@@ -71,10 +71,12 @@ INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/assigned-statutory-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail', 43, null);
 -- My Account
-INSERT INTO tbl_forms VALUES(44, 3, 'View Profile', '/knowledge/profile', 44, null);
-INSERT INTO tbl_forms VALUES(45, 3, 'Change Password', '/knowledge/change-password', 45, null);
-INSERT INTO tbl_forms VALUES(46, 3, 'Messages', '/knowledge/messages', 46, null);
-INSERT INTO tbl_forms VALUES(47, 3, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
+INSERT INTO tbl_forms VALUES(44, 4, 'View Profile', '/knowledge/profile', 44, null);
+INSERT INTO tbl_forms VALUES(45, 4, 'Change Password', '/knowledge/change-password', 45, null);
+INSERT INTO tbl_forms VALUES(46, 4, 'Messages', '/knowledge/messages', 46, null);
+INSERT INTO tbl_forms VALUES(47, 4, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
+
+-- reports
 INSERT INTO tbl_forms VALUES(48, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 48, null);
 
 -- form_id, category_id_1, category_id_2, category_id_3, category_id_4, category_id_5, category_id_6, category_id_7, category_id_8
@@ -131,6 +133,7 @@ INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
+
 INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 1, 0, 1, 0);
 
 
