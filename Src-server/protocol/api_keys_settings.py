@@ -143,7 +143,7 @@ api_params = {
     'levels': {'type': 'VECTOR_TYPE', 'module_name': 'knowledgemaster', 'class_name': 'Level'},
     "geography_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "GeographyLevel"},
     "geographies": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Geography"},
-    "geography_report": {'type': 'MAP_TYPE', 'validation_method': is_alphabet, 'module_name': 'knowledgereport', "class_name": "GeographyMapping"},
+    "geography_report": {'type': 'MAP_TYPE', 'validation_method': None, 'module_name': 'knowledgereport', "class_name": "GeographyMapping"},
     "statutory_natures": {'type': 'VECTOR_TYPE', 'validation_method': None, 'module_name': 'core', "class_name": "StatutoryNature"},
     "statutory_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Level"},
     "statutories": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', 'class_name': 'Statutory'},
@@ -380,7 +380,7 @@ api_params = {
     "domainwise_agreement_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "DomainwiseAgreementList"},
     "organizationwise_unit_count_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "OrganizationwiseUnitCountList"},
     "client_group_master" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientGroupMaster"},
-    
+
     "level_1_statutories_list": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statutories_for_assigning": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "AssignStatutoryCompliance"},
     "category_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
