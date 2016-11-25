@@ -151,14 +151,11 @@ def verify_username(db, username, is_mobile=False):
 
 
 def verify_password(db, password, user_id):
-    columns = "count(1)"
     encrypted_password = encrypt(password)
-    condition = "1"
-
-    condition = "password=%s and user_id=%s"
-    condition_val = [encrypted_password, user_id]
-    rows = db.get_data("tbl_user_login_details", columns, condition, condition_val)
-    if(int(rows[0]["count(1)"]) <= 0):
+    print encrypted_password
+    print user_id
+    row = db.call_proc("sp_verify_password", (user_id,encrypted_password,))
+    if(int(row[0]["count"]) <= 0):
         return False
     else:
         return True
