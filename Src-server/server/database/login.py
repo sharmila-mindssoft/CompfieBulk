@@ -9,7 +9,7 @@ from dateutil import relativedelta
 __all__ = [
     "verify_login",
     "add_session",
-    "verify_username", "verify_password",
+    "verify_password",
     "validate_reset_token", "update_password",
     "delete_used_token", "remove_session",
     "save_login_failure", "delete_login_failure_history",

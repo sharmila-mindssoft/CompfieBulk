@@ -4,7 +4,7 @@ import json
 import traceback
 # import mimetypes
 import jinja2
-from flask import Flask, request, send_from_directory, Response, render_template, session
+from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
 # import tornado.web
@@ -12,7 +12,7 @@ from functools import wraps
 # from user_agents import parse
 
 from lxml import etree
-from datetime import timedelta
+# from datetime import timedelta
 # from basics.webserver import WebServer
 # from basics.ioloop import IOLoop
 from protocol import (
@@ -131,6 +131,7 @@ class API(object):
         request_data = None
         try:
             data = request.get_json(force=True)
+            # data = request.data
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -154,8 +155,6 @@ class API(object):
         self._ip_addess = request.remote_addr
         # print request.environ['REMOTE_ADDR']
 
-        # ip_address = str(request.remote_ip())
-        # self._ip_addess = ip_address
         if request_data_type == "knowledgeformat":
             # request_data = request
             pass
@@ -220,16 +219,9 @@ class API(object):
     @csrf.exempt
     @api_request(GetChanges)
     def handle_replication(self, request, db):
-        # actual_count = gen.get_trail_id(db)
-        # print "actual_count ", actual_count
 
         client_id = request.client_id
         received_count = request.received_count
-        # print "received_count", received_count
-        # if received_count > actual_count:
-        #     return InvalidReceivedCount()
-        # print "replication client_id = %s, received_count = %s" % (
-        # client_id, received_count)
         res = GetChangesSuccess(
             gen.get_trail_log(db, client_id, received_count)
         )
@@ -298,6 +290,7 @@ class API(object):
     def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
+    @csrf.exempt
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
@@ -340,7 +333,6 @@ class API(object):
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
 )
-# template_env = jinja2.Environment(loader=template_loader)
 app.jinja_loader = template_loader
 
 TEMP_PATH = os.path.join(ROOT_PATH, "Src-client", "files")
