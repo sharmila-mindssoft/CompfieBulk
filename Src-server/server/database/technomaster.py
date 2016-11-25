@@ -1492,7 +1492,7 @@ def get_business_groups_for_user(db, user_id):
 
 
 def get_legal_entities_for_user(db, user_id):
-    result = db.call_proc("sp_tbl_unit_getclientlegalentity",(user_id,))
+    result = db.call_proc("sp_tbl_unit_getclientlegalentity", (user_id,))
     return return_legal_entities_for_unit(result)
 
 
