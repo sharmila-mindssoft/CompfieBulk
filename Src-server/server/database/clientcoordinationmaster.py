@@ -135,7 +135,7 @@ def return_unit_wise_industry_domain_map(industry_domain_data):
 def approve_unit(db, request, session_user):
     unit_approval_details = request.unit_approval_details
     current_time_stamp = get_date_time()
-    columns = ["approve_status", "remarks", "updated_by", "updated_on"]
+    columns = ["is_approved", "remarks", "updated_by", "updated_on"]
     values = []
     conditions = []
     for detail in unit_approval_details:
