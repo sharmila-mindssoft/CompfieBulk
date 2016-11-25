@@ -101,23 +101,34 @@ function loadIndustryList(data) {
     $('.organization-name', clone).text(industryName);
 
     if (isActive == true){
-      statusmsg = message.deactive_message;
-      $('.status').attr('title', 'Click Here to Deactivate');
       $('.status', clone).removeClass('fa-times text-danger');
       $('.status', clone).addClass('fa-check text-success');
     }
     else{
       statusmsg = message.active_message;
-      $('.status').attr('title', 'Click Here to Activate');
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
+
+    $('.status').hover(function(){
+      showTitle(this);
+    });
 
     viewTable.append(clone);
     j = j + 1;
   });
 }
 
+//Status Title
+function showTitle(e){
+  if(e.className == "fa c-pointer status fa-times text-danger"){
+    e.title = 'Active';
+  }
+  else if(e.className == "fa c-pointer status fa-check text-success")
+  {
+    e.title = 'Inactive';
+  }
+}
 
 //render controls
 function renderControls(){
