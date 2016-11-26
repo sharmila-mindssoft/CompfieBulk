@@ -41,6 +41,7 @@ BEGIN
 		SELECT T1.user_id, T1.user_category_id, T1.employee_code, T1.employee_name,
         T1.email_id, T1.contact_no, T1.mobile_no,
 		T1.address, T1.designation, @_user_group_id := T1.user_group_id as user_group_id,
+		(select ld.username from tbl_user_login_details ld where ld.user_id = T1.user_id) as user_name,
         (select tg.user_group_name from tbl_user_groups tg where tg.user_group_id = T1.user_group_id) as user_group_name
 		FROM tbl_users as T1 WHERE T1.user_id = @_user_id;
 

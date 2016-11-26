@@ -467,10 +467,10 @@ def get_audit_trails(
 #
 #   Update Profile
 #
-def update_profile(db, contact_no, address, session_user):
-    columns = ["contact_no", "address"]
+def update_profile(db, contact_no, address, mobile_no, email_id, session_user):
+    columns = ["contact_no", "address", "mobile_no", "email_id"]
     condition = "user_id= %s"
-    values = [contact_no, address, session_user]
+    values = [contact_no, address, mobile_no, email_id, session_user]
     db.update(tblUsers, columns, values, condition)
 
 #

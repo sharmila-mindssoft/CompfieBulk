@@ -18,8 +18,8 @@
                 </a> -->
             </div>
             <div class="clearfix"></div>
-        </div>
-         <div id="bg-primary1" class="panel-collapse collapse in">
+          </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
           <div class="portlet-body">
         <form class="form-horizontal group-border-dashed" action="#" novalidate="">
         <div class="col-lg-6">
@@ -38,7 +38,7 @@
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Email ID <span class="mandatory">*</span></label>
             <div class="col-sm-6 controls">
-              <input type="text" class="form-control input-sm email-id" value="">
+              <input type="text" class="form-control input-sm email-id" value="" maxlength="100">
             </div>
           </div>
           <div class="form-group">
@@ -60,10 +60,10 @@
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Mobile No. <span class="mandatory">*</span></label>
             <div class="col-md-6">
             <div class="col-md-3 no-padding">
-              <input type="text" class="form-control input-sm mcountrycode" placeholder="+00" value="">
+              <input type="text" class="form-control input-sm mcountrycode" placeholder="+00" value="" maxlength="4">
             </div>
             <div class="col-md-9 no-padding">
-              <input type="text" class="form-control input-sm mobileno" placeholder="" value="">
+              <input type="text" class="form-control input-sm mobileno" maxlength="10" value="">
             </div>
             <span class="help-desk"><small>[+91 9876543210]</small></span>
           </div>
@@ -91,23 +91,21 @@
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Address</label>
             <div class="col-sm-6 controls">
-              <textarea class="form-control input-sm address" rows="3" placeholder="Enter Address"></textarea>
+              <textarea class="form-control input-sm address" rows="3" maxlength="500" placeholder="Enter Address"></textarea>
             </div>
           </div>
         </div>
         </form>
         <div class="clear"></div>
         </div>
-       </div> 
+      </div> 
       <div class="form-group text-center">
-          <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Submit </button>
-          <button class="btn btn-info waves-effect waves-light" type="submit" onclick="location.href='/knowledge/change-password'" > Change Password</button>
+        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Submit </button>
+        <button class="btn btn-info waves-effect waves-light" type="submit" onclick="location.href='/knowledge/change-password'"> Change Password</button>
       </div>
-    
     <!-- end col -->
   </div>
 </div>
-
 </div>
 
 <script type="text/javascript" src="/script/profile/profile.js"></script>
