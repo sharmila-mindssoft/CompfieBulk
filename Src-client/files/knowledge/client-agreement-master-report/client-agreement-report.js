@@ -147,6 +147,7 @@ function displayPopup(LE_ID, D_ID){
               var unit_count_list = response.organizationwise_unit_count_list;
 
               $.each(unit_count_list, function (key, value) {
+                $('.table-popup-list').show();
                  var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;
                 $('.popup-heading').text(value.domain_name);
                 var tableRow = $('#templates .table-popup-list .table-row');
@@ -162,6 +163,7 @@ function displayPopup(LE_ID, D_ID){
 
 function loadCompliances(data){
     $('.table-client-agreement-list').empty();
+    $('..table-agreement-list').show();
     var tableRow_tr = $('#templates .table-agreement-list .heading-list');
     var clonetr = tableRow_tr.clone();
     $('.table-client-agreement-list').append(clonetr);
