@@ -15,7 +15,7 @@
       <div class="panel panel-default panel-info">
         <div class="panel-body">
           <div class="dataTable_wrapper">
-            <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+            <table  class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th align="center" width="2%">#</th>
@@ -29,13 +29,13 @@
                   <td align="center"></td>
                   <td>
                     <div class="form-group col-sm-12 no-padding">
-                      <input type="text" class="form-control input-sm list-filter" id="list-filter-country" />
+                      <input type="text" class="form-control input-sm js-filter" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
                     <div class="form-group col-sm-12 no-padding">
-                      <input type="text" class="form-control input-sm list-filter" id="list-filter-group"/>
+                      <input type="text" class="form-control input-sm js-filter">
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
@@ -64,8 +64,8 @@
         <div class="portlet-heading bg-info">
             <h3 class="portlet-title">Assign Legal Entity</h3>
             <div class="portlet-widgets">
-                <a href="#" class="">
-                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                <a class="c-pointer">
+                    <i class="zmdi zmdi-close zmdi-hc-2x btn-cancel"></i>
                 </a>
             </div>
             <div class="clearfix"></div>
@@ -96,12 +96,12 @@
               <div class="col-lg-2"> </div>
             </div>
             <div class="legalentity-view view_legal_entity" id="view-legal-entity">
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable-add" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th width="2%" align="center">
                       <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                          <input id="checkbox1" type="checkbox">
+                          <input id="checkbox1" type="checkbox" class="select_all">
                           <label for="checkbox1"></label>
                       </div>
                     </th>
@@ -113,19 +113,19 @@
                     <td></td>
                     <td>
                       <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm add-filter" id="add-filter-country" />
+                        <input type="text" class="form-control input-sm js-filter-add" id="add-filter-country" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm add-filter" id="add-filter-bg" />
+                        <input type="text" class="form-control input-sm js-filter-add" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm add-filter" id="add-filter-le"/>
+                        <input type="text" class="form-control input-sm js-filter-add"/>
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
@@ -175,7 +175,7 @@
                 Assigned Legal Entity
             </h3>
             <div class="portlet-widgets">
-                <a href="#"  class="btn-cancel">
+                <a class="btn-cancel c-pointer">
                     <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                 </a>
             </div>
