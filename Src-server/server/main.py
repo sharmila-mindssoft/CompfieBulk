@@ -4,9 +4,11 @@ import json
 import traceback
 # import mimetypes
 import jinja2
-from flask import Flask, request, send_from_directory, Response, render_template
+import mysql.connector
+from flask import Flask, request, send_from_directory, Response, render_template, g
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
+
 # import tornado.web
 # from tornado.web import StaticFileHandler
 # from user_agents import parse
@@ -23,7 +25,7 @@ from protocol import (
 )
 # from server.database import KnowledgeDatabase
 import controller
-from server.dbase import Database
+from server.dbase import BaseDatabase, Database
 from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
@@ -46,6 +48,7 @@ from server.templatepath import (
 
 import logger
 
+
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 app = Flask(__name__)
@@ -60,7 +63,8 @@ csrf.init_app(app)
 if IS_DEVELOPMENT:
     app.config["debug"] = True
 else:
-    app.config["debug"] == False
+    app.config["debug"] = False
+
 
 # @app.before_request
 # def make_session_time():
@@ -88,15 +92,28 @@ def api_request(request_data_type):
     return wrapper
 
 
+def before_first_request():
+    return mysql.connector.pooling.MySQLConnectionPool(
+        pool_name="con_pool",
+        pool_size=10,
+        autocommit=False,
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME
+    )
+
 #
 # API
 #
 class API(object):
     def __init__(
-        self, db
+        self, con_pool
     ):
-        self._db = db
+        self._con_pool = con_pool
+        # self._db_con = dbcon
         self._ip_addess = None
+        self._db = None
         # self._remove_old_session()
 
     # def _remove_old_session(self):
@@ -120,8 +137,12 @@ class API(object):
     def _send_response(
         self, response_data, status_code
     ):
-        data = response_data.to_structure()
-        s = json.dumps(data, indent=2)
+        print type(response_data)
+        if type(response_data) is not str :
+            data = response_data.to_structure()
+            s = json.dumps(data, indent=2)
+        else :
+            s = response_data
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -172,6 +193,17 @@ class API(object):
             )
 
         try:
+            # db = BaseDatabase(
+            #     KNOWLEDGE_DB_HOST,
+            #     KNOWLEDGE_DB_PORT,
+            #     KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
+            #     KNOWLEDGE_DATABASE_NAME
+            # )
+            # db.dbConfig(app)
+            # self._db_con = db.connect()
+            self._db_con = self._con_pool.get_connection()
+            print self._db_con
+            self._db = Database(self._db_con)
             self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
             if response_data is None or type(response_data) is bool:
@@ -290,9 +322,20 @@ class API(object):
     def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
-    @csrf.exempt
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db):
+        return controller.process_knowledge_transaction_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_getstatumaster(self, request, db):
+        return controller.process_knowledge_transaction_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_getmappingmaster(self, request, db):
+        return controller.process_knowledge_transaction_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_getmapping(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
 
     @api_request(knowledgereport.RequestFormat)
@@ -394,15 +437,10 @@ def renderTemplate(pathname):
 def run_server(port):
 
     def delay_initialize():
-        db = Database(
-            KNOWLEDGE_DB_HOST,
-            KNOWLEDGE_DB_PORT,
-            KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-            KNOWLEDGE_DATABASE_NAME
-        )
-        db.connect()
-
-        api = API(db)
+        # dbcon = None
+        mysqlConPool = before_first_request()
+        api = API(mysqlConPool)
+        print "%" * 50
 
         # post urls
         api_urls_and_handlers = [
@@ -428,6 +466,35 @@ def run_server(port):
                 "/knowledge/api/knowledge_transaction",
                 api.handle_knowledge_transaction
             ),
+            (
+                "/knowledge/api/knowledge_statutorymasters",
+                api.handle_knowledge_getstatumaster
+            ),
+            (
+                "/knowledge/api/knowledge_mappingmaster",
+                api.handle_knowledge_getmappingmaster
+            ),
+            (
+                "/knowledge/api/knowledge_mapping",
+                api.handle_knowledge_getmapping
+            ),
+            (
+                "/knowledge/api/knowledge_savemapping",
+                api.handle_knowledge_transaction
+            ),
+            (
+                "/knowledge/api/knowledge_updatemapping",
+                api.handle_knowledge_transaction
+            ),
+            (
+                "/knowledge/api/knowledge_duplicatemapping",
+                api.handle_knowledge_transaction
+            ),
+            (
+                "/knowledge/api/knowledge_mappingstatus",
+                api.handle_knowledge_transaction
+            ),
+
             ("/knowledge/api/knowledge_report", api.handle_knowledge_report),
             (
                 "/knowledge/api/techno_transaction",

@@ -664,7 +664,7 @@ function initMirror() {
         's_ids': sIds
       }
     ];
-    apiRequest('knowledge_transaction', request, callback);
+    apiRequest('knowledge_duplicatemapping', request, callback);
   }
   function statutoryMapping(cId, dId, iIds, sNId, sIds, compliances, gIds, mappings, mId) {
     var mappingData = {};
@@ -686,7 +686,7 @@ function initMirror() {
       'SaveStatutoryMapping',
       mappingData
     ];
-    apiRequest('knowledge_transaction', request, callback);
+    apiRequest('knowledge_savemapping', request, callback);
   }
 
   function updateStatutoryMapping(mappingData, callback) {
@@ -694,7 +694,7 @@ function initMirror() {
       'UpdateStatutoryMapping',
       mappingData
     ];
-    apiRequest('knowledge_transaction', request, callback);
+    apiRequest('knowledge_updatemapping', request, callback);
   }
 
   function getStatutoryMaster(callback) {
@@ -702,7 +702,7 @@ function initMirror() {
       'GetStatutoryMaster',
       {}
     ];
-    apiRequest('knowledge_transaction', request, callback);
+    apiRequest('knowledge_statutorymasters', request, callback);
   }
 
   function getStatutoryMappingsMaster(callback) {
@@ -710,7 +710,7 @@ function initMirror() {
       'GetStatutoryMappingsMaster',
       {}
     ];
-    apiRequest('knowledge_transaction', request, callback);
+    apiRequest('knowledge_mappingmaster', request, callback);
   }
   function getStatutoryMappings(approval_status, rcount, callback) {
     var request = [
@@ -720,7 +720,7 @@ function initMirror() {
         "rcount": parseInt(rcount)
       }
     ];
-    apiRequest('knowledge_transaction', request, callback);
+    apiRequest('knowledge_mapping', request, callback);
   }
   function changeStatutoryMappingStatus(mId, isActive, callback) {
     var request = [
@@ -730,7 +730,7 @@ function initMirror() {
         'is_active': isActive
       }
     ];
-    apiRequest('knowledge_transaction', request, callback);
+    apiRequest('knowledge_mappingstatus', request, callback);
   }
   function getApproveStatutoryMapings(callback) {
     var request = [
