@@ -31,7 +31,7 @@ INSERT INTO tbl_forms VALUES(7, 1, 'Statutory Nature Master', '/knowledge/statut
 INSERT INTO tbl_forms VALUES(8, 1, 'Statutory Level Master', '/knowledge/statutory-level-master', 8, 'Statutory');
 INSERT INTO tbl_forms VALUES(9, 1, 'Validity Date Settings', '/knowledge/validity-date-settings', 9, null);
 -- Transaction
-INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-master', 10, null);
+INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-management', 10, null);
 INSERT INTO tbl_forms VALUES(11, 2, 'User Mapping', '/knowledge/user-mapping', 11, null);
 INSERT INTO tbl_forms VALUES(12, 2, 'Reassign User Account ', '/knowledge/reassign-user-account', 12, null);
 INSERT INTO tbl_forms VALUES(13, 2, 'Approve Client Group', '/knowledge/client-master-approval', 13, null);
@@ -44,7 +44,7 @@ INSERT INTO tbl_forms VALUES(17, 2, 'Client Group', '/knowledge/client-master', 
 INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '/knowledge/assign-legal-entity', 18, null);
 INSERT INTO tbl_forms VALUES(19, 2, 'Assign Client Unit', '/knowledge/assign-client-unit', 19, null);
 
-INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit', 20, null);
+INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit-approval', 20, null);
 INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '', 21, null);
 INSERT INTO tbl_forms VALUES(22, 2, 'Client Unit', '/knowledge/client-unit', 22, null);
 

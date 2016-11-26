@@ -3,7 +3,6 @@ var LE_DICT = '';
 var LE_ID = '';
 var LE_APPROVAL_LIST = '';
 var DIV_CAT_COMBINATIONS = '';
-
 var unit_approval_details = [];
 
 function initialize(type_of_form){
@@ -98,7 +97,6 @@ function loadApprovalList(){
         }
     });
 }
-
 function generateDivisionCategoryCombinations(){
     DIV_CAT_COMBINATIONS = {}
     $.each(LE_APPROVAL_LIST, function(key, value){
@@ -122,7 +120,6 @@ function generateDivisionCategoryCombinations(){
         }
     });
 }
-
 function loadApprovalForm(){
     $(".tbody-approval-list").empty();
     generateDivisionCategoryCombinations();
@@ -134,7 +131,6 @@ function loadApprovalForm(){
         var division_name = value["division_name"];
         var category_name = value["category_name"];
         class_name = DIV_CAT_COMBINATIONS[division_name][category_name];
-
         var selected_div = $(".tbody-approval-list").find("."+class_name);
 
         if(selected_div.length <= 0){
@@ -147,25 +143,21 @@ function loadApprovalForm(){
             var unit_list = selected_div.find(".unit-tbody");
             var group_unit_row = $(".unit-head-template tr");
             var clone3 = group_unit_row.clone();
+            $('.group-approve-control', clone3).attr('id', class_name);
+            $('.group-approve-control', clone3).on('change', function () {
+                updateGroupUnitStatus(this);
+            });
+            $(".group-reason", clone3).attr('id', 'reason-'+class_name);
+            $('.group-reason', clone3).on('change', function () {
+                updateGroupUnitReason(this);
+            });
             unit_list.append(clone3);
-
-
 
             if(division_name == null) division_name = "Divison : Nil"; else  division_name = "Divison : " + division_name;
             if(category_name == null) category_name = "Category : Nil"; else category_name = "Category : " + category_name;
-            
             selected_div.find(".division").text(division_name);
             selected_div.find(".category").text(category_name);
-
-
-            /*var clone3 = $(".approve-drop-down select").clone();
-            //clone2.addClass("approval-drop-down-"+(key+1));
-            clone3.addClass("group-"+class_name);
-            $(".group-approve-control", group_unit_row).html(clone3);
-            unit_list.append(clone3);*/
         }
-
-        
 
         var unit_list = selected_div.find(".unit-tbody");
         var unit_row = $(".unit-row-template tr");
@@ -179,9 +171,10 @@ function loadApprovalForm(){
         $(".domains", clone1).text(value["domain_names"]);
         $(".orgs", clone1).text(value["org_names"]);
         $(".reason", clone1).addClass("reason-"+(key+1));
+        $(".reason", clone1).addClass("group-reason-"+class_name);
         var clone2 = $(".approve-drop-down select").clone();
         clone2.addClass("approval-drop-down-"+(key+1));
-        clone2.addClass("group-"+class_name);
+        clone2.addClass("group-select-"+class_name);
 
         
         $(".approve-control", clone1).html(clone2);
@@ -201,16 +194,34 @@ function loadApprovalForm(){
         ++ count;
     });
 }
-
 function updateUnitStatus(selectbox_class, reason_class){
     var selected_option = $("."+selectbox_class).val();
     if(selected_option == 2){
         $("."+reason_class).show();    
     }else{
         $("."+reason_class).hide();   
+        //$("."+reason_class).val('');
     } 
 }
-
+function updateGroupUnitStatus(e){
+    var selected_class = $(e).attr('id');
+    var selected_option = $("#"+selected_class).val();
+    $('.group-select-'+selected_class).each(function() {
+        $('.group-select-'+selected_class).val(selected_option);
+    });
+    if(selected_option == 2){
+        $("#reason-"+selected_class).show();    
+    }else{
+        $("#reason-"+selected_class).hide();
+    } 
+}
+function updateGroupUnitReason(e){
+    var selected_class = $(e).attr('id');
+    var selected_value = $(e).val();
+    $('.group-'+selected_class).each(function() {
+        $('.group-'+selected_class).val(selected_value);
+    });
+}
 function getApprovalRow(unit_id, approval_status, reason){
     if(approval_status == 1){
         approval_status = true;
@@ -223,7 +234,6 @@ function getApprovalRow(unit_id, approval_status, reason){
         "reason": reason
     }
 }
-
 function validateForm(){
     var result = true;
     $.each(LE_APPROVAL_LIST, function(key, value){
@@ -243,7 +253,7 @@ function validateForm(){
             }
         }else if(selected_option == 1){
             unit_approval_details.push(
-                getApprovalRow(unit_id, selected_option, reason)
+                getApprovalRow(unit_id, selected_option, "")
             )
         }
     });
@@ -254,13 +264,12 @@ function validateForm(){
     }
     
 }
-
 function submitApprovalForm(){
     validation_result = validateForm();
     if(validation_result){
         if(unit_approval_details.length > 0){
             function onSuccess(data) {
-                displayMessage(message.unit_approve_success);
+                displaySuccessMessage(message.unit_approve_success);
                 initialize("list");
             }
             function onFailure(error) {
@@ -279,7 +288,6 @@ function submitApprovalForm(){
         }
     }    
 }
-
 //initialization
 $(function () {
     initialize("list");
