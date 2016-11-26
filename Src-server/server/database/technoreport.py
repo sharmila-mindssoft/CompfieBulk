@@ -89,6 +89,48 @@ def return_compliance_statutory(db, stat_compl_list):
         )
     return results
 
+def get_units_for_clientdetails_report(db, session_user):
+    result = db.call_proc_with_multiresult_set("sp_client_details_report_unitlist", (int(session_user),), 3)
+    return return_unit_details(result)
+
+def return_unit_details(result):
+    unitdetails = []
+    print "inside unit details"
+    print result
+    for r in result[1]:
+        print r
+        country_id = int(r.get("country_id"))
+        client_id = int(r.get("client_id"))
+        legal_entity_id = int(r.get("legal_entity_id"))
+        business_group_id = r.get("business_group_id")
+        unit_id = int(r.get("unit_id"))
+        unit_code = r.get("unit_code")
+        unit_name = r.get("unit_name")
+        address = r.get("address")
+        postal_code = r.get("postal_code")
+        is_active = bool(r.get("is_active"))
+        closed_on = r.get("closed_on")
+        check_date = r.get("check_date")
+        emp_code_name = r.get("emp_code_name")
+        created_on = r.get("created_on")
+        division_name = r.get("division_name")
+        category_name = r.get("category_name")
+        d_ids = []
+        i_ids = []
+        for domain in result[2]:
+            if unit_id == domain.get("unit_id"):
+                d_ids.append(int(domain.get("domain_id")))
+                i_ids.append(int(domain.get("organisation_id")))
+        unitdetails.append(technoreports.ClientUnitDetailsReport(
+            country_id, client_id, legal_entity_id, business_group_id,
+            unit_id, unit_code, unit_name, address, postal_code, is_active,
+            closed_on, check_date, emp_code_name, created_on, division_name,
+            category_name, d_ids, i_ids
+        ))
+    print "unitdetails"
+    print unitdetails
+    return unitdetails
+
 def get_assigned_statutories_report_data(db, request_data, user_id):
     country_id = request_data.country_id
     group_id = request_data.group_id
@@ -307,17 +349,17 @@ def return_assigned_statutory_report(
     )
 # old code ends for statutory setting report--------------------------------------------
 
-def get_domainwise_agreement_report(db, country_id, client_id, business_group_id, 
+def get_domainwise_agreement_report(db, country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to,
     from_count, page_count, session_user):
-    
+
     if contract_from is not None:
         contract_from = string_to_datetime(contract_from).date()
     if contract_to is not None:
         contract_to = string_to_datetime(contract_to).date()
 
     domainwise_agreement_list = db.call_proc(
-        "sp_domainwise_agreement_details", (country_id, client_id, business_group_id, 
+        "sp_domainwise_agreement_details", (country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
     )
 
@@ -373,7 +415,7 @@ def get_statutory_notifications_report_data(db, request_data):
         to_date = string_to_datetime(to_date).date()
 
     statutory_notifictions_list = db.call_proc(
-        "sp_statutory_notification_details", (country_id, domain_id, 
+        "sp_statutory_notification_details", (country_id, domain_id,
             level_1_statutory_id, from_date, to_date, from_count, page_count)
     )
 
@@ -385,7 +427,6 @@ def get_statutory_notifications_report_data(db, request_data):
         statutory_notifictions_list
     )
 
-    
 def return_statutory_notifications(
     statutory_notifications
 ):
@@ -399,25 +440,25 @@ def return_statutory_notifications(
                 date=datetime_to_string(notification["created_on"])
             )
         )
-    
+
     return notifications
 
 def get_statutory_notifications_report_count(
     db, request_data
-):  
+):
     country_id = request_data.country_id
     domain_id = request_data.domain_id
     level_1_statutory_id = request_data.level_1_statutory_id
     from_date = request_data.from_date
     to_date = request_data.to_date
-   
+
     if from_date is not None:
         from_date = string_to_datetime(from_date).date()
     if to_date is not None:
         to_date = string_to_datetime(to_date).date()
 
     statutory_notifictions_list_count = db.call_proc(
-        "sp_statutory_notification_details_count", (country_id, domain_id, 
+        "sp_statutory_notification_details_count", (country_id, domain_id,
             level_1_statutory_id, from_date, to_date)
     )
 
@@ -788,18 +829,17 @@ def return_knowledge_report(
         report_list.append(info)
     return report_list, total_count
 
-
-def get_client_agreement_report(db, country_id, client_id, business_group_id, 
+def get_client_agreement_report(db, country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to,
-    from_count, page_count):
-    
+    from_count, page_count, session_user):
+
     if contract_from is not None:
         contract_from = string_to_datetime(contract_from).date()
     if contract_to is not None:
         contract_to = string_to_datetime(contract_to).date()
 
     client_agreement_list = db.call_proc(
-        "sp_client_agreement_details", (country_id, client_id, business_group_id, 
+        "sp_client_agreement_details", (country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
     )
 
@@ -848,8 +888,8 @@ def return_client_agreement_report(client_agreement_list):
     return results
 
 def get_client_agreement_report_count(
-    db, country_id, client_id, business_group_id, 
-    legal_entity_id, domain_id, contract_from, contract_to
+    db, country_id, client_id, business_group_id,
+    legal_entity_id, domain_id, contract_from, contract_to, session_user
 ):
     if contract_from is not None:
         contract_from = string_to_datetime(contract_from).date()
@@ -857,22 +897,22 @@ def get_client_agreement_report_count(
         contract_to = string_to_datetime(contract_to).date()
 
     client_agreement_list_count = db.call_proc(
-        "sp_client_agreement_details_count", (country_id, client_id, business_group_id, 
+        "sp_client_agreement_details_count", (country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to, session_user)
     )
     return client_agreement_list_count[0]["total_record"]
 
-def get_domainwise_agreement_report(db, country_id, client_id, business_group_id, 
+def get_domainwise_agreement_report(db, country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to,
     from_count, page_count, session_user):
-    
+
     if contract_from is not None:
         contract_from = string_to_datetime(contract_from).date()
     if contract_to is not None:
         contract_to = string_to_datetime(contract_to).date()
 
     domainwise_agreement_list = db.call_proc(
-        "sp_domainwise_agreement_details", (country_id, client_id, business_group_id, 
+        "sp_domainwise_agreement_details", (country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
     )
 
@@ -914,7 +954,7 @@ def return_domainwise_agreement_report(domainwise_agreement_list):
     return results
 
 def get_domainwise_agreement_report_count(
-    db, country_id, client_id, business_group_id, 
+    db, country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to, session_user
 ):
     if contract_from is not None:
@@ -923,7 +963,7 @@ def get_domainwise_agreement_report_count(
         contract_to = string_to_datetime(contract_to).date()
 
     domainwise_agreement_list_count = db.call_proc(
-        "sp_domainwise_agreement_details_count", (country_id, client_id, business_group_id, 
+        "sp_domainwise_agreement_details_count", (country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to, session_user)
     )
     return domainwise_agreement_list_count[0]["total_record"]
@@ -946,7 +986,7 @@ def get_organizationwise_unit_count(db, legal_entity_id, domain_id):
     return results
 
 def get_user_category_details(db, session_user):
-    result = db.call_proc("sp_get_user_category_details",(int(session_user), ))
+    result = db.call_proc("sp_get_user_category_details", (int(session_user),))
     return result
 
 
@@ -1034,3 +1074,62 @@ def get_usermapping_report_dataset(db, user_id, client_id, legal_entity_id, coun
                     domain["domain_id"], domain["domain_name"], domain["is_active"]
                 ))'''
     return (techno_details, unit_domains, domains)
+
+def get_GroupAdminReportData(db, user_id):
+    result = db.call_proc_with_multiresult_set("sp_group_admin_registration_email_report_data", (user_id,), 3)
+    return result
+
+def get_AssignedUserClientGroupsDetails(db, user_id):
+    result = db.call_proc_with_multiresult_set("sp_reassignuser_report_usercategories", (), 4)
+    print len(result)
+    client_categories = []
+    for categories in result[1]:
+        user_id = int(categories.get("user_id"))
+        user_category_id = int(categories.get("user_category_id"))
+        emp_code_name = categories.get("emp_code_name")
+        client_ids = []
+        for user_clients in result[2]:
+            if user_id == user_clients.get("user_id"):
+                client_ids.append(int(user_clients.get("client_id")))
+        client_categories.append([
+            user_id, user_category_id, emp_code_name, client_ids
+        ])
+    print "user clients"
+    print client_categories
+    return (result[0], client_categories, result[3])
+
+def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
+    if group_id is None:
+        args = [user_id, user_category_id, 0]
+    else:
+        args = [ user_id, user_category_id, group_id]
+    print "inside args"
+    print args
+    result = db.call_proc_with_multiresult_set("sp_reassign_user_report_getdata", args, 2)
+    reassign_group_list = []
+    print len(result)
+    print result
+    for cl in result[0]:
+        print "inside 1 loop"
+        client_id = int(cl.get("client_id"))
+        print client_id
+        group_name = cl.get("group_name")
+        print group_name
+        assigned_on = cl.get("assigned_on")
+        emp_code_name = cl.get("emp_code_name")
+        remarks = cl.get("remarks")
+        le_count = int(cl.get("le_count"))
+        for country in result[1]:
+            print "inside 2 loop"
+            c_names = []
+            print client_id
+            if client_id == country.get("client_id"):
+                print country.get("client_id")
+                c_names.append(country.get("country_name"))
+
+        reassign_group_list.append(technoreports.ReassignedUserList(
+            client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks
+        ))
+        print "inside database"
+        print reassign_group_list
+        return reassign_group_list

@@ -184,7 +184,7 @@ def save_legal_entities(db, request, group_id, session_user):
         "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
         "file_space_limit", "total_licence",
-        'is_active', "created_by", "created_on", 'updated_by', "updated_on"
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on"
     ]
     values = []
     current_time_stamp = get_date_time()
@@ -344,18 +344,19 @@ def save_date_configurations(
         "sp_client_configurations_delete", (client_id, )
     )
     columns = [
-        "client_id", "country_id", "domain_id", "period_from",
-        "period_to", "updated_by", "updated_on"
+        "client_id", "country_id", "domain_id", "month_from",
+        "month_to", "updated_by", "updated_on"
     ]
     for configuration in date_configurations:
+        print client_id, configuration.country_id, configuration.domain_id, configuration.month_from, configuration.month_to, session_user, current_time_stamp
         value_tuple = (
             client_id, configuration.country_id, configuration.domain_id,
-            configuration.period_from, configuration.period_to,
+            configuration.month_from, configuration.month_to,
             session_user, current_time_stamp
         )
         values_list.append(value_tuple)
     res = db.bulk_insert(
-        tblClientConfigurations, columns, values_list
+        tblClientConfiguration, columns, values_list
     )
     if res is False:
         raise process_error("E047")
@@ -451,7 +452,7 @@ def save_organization(
         "sp_le_domain_industry_delete", (group_id, )
     )
     columns = [
-        "legal_entity_id", "domain_id", "organization_id",
+        "legal_entity_id", "domain_id", "organisation_id",
         "activation_date", "count", "created_by", "created_on"
     ]
     values_list = []
@@ -618,6 +619,7 @@ def get_client_details(db, client_id):
 #  Return Type : List of object of Legal entities
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
+    print domains
     results = []
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
@@ -694,8 +696,8 @@ def return_date_configurations(date_configurations):
         core.ClientConfiguration(
             country_id=config["country_id"],
             domain_id=config["domain_id"],
-            period_from=config["period_from"],
-            period_to=config["period_to"]
+            month_from=config["month_from"],
+            month_to=config["month_to"]
         ) for config in date_configurations
     ]
     return results
@@ -831,6 +833,7 @@ def return_group(groups):
             )
     return client_list
 
+
 ##########################################################################
 #  To get list of groups
 #  Parameters : Object of database
@@ -848,11 +851,12 @@ def get_client_groups_for_user(db, user_id):
 ##########################################################################
 def return_country_list_of_client_group(client_id, countries):
     c_ids = []
-    for c in countries :
+    for c in countries:
         if int(c["client_id"]) == client_id:
             c_ids.append(int(c["country_id"]))
 
     return c_ids
+
 
 def return_client_groups_for_user(data):
     results = []
@@ -864,6 +868,7 @@ def return_client_groups_for_user(data):
         ))
     return results
 
+
 ###############################################################################
 # To convert the data fetched from database into List of object of Domain
 # Parameter(s) : Data fetched from database
@@ -872,12 +877,13 @@ def return_client_groups_for_user(data):
 def return_country_list_of_domain(domain_id, countries):
     c_ids = []
     c_names = []
-    for c in countries :
+    for c in countries:
         if int(c["domain_id"]) == domain_id:
             c_ids.append(int(c["country_id"]))
             c_names.append(c["country_name"])
 
     return c_ids, c_names
+
 
 def return_domains(data):
     results = []
@@ -888,7 +894,6 @@ def return_domains(data):
             c_ids, c_names, d_id, d["domain_name"], bool(d["is_active"])
         ))
     return results
-
 
 
 ##########################################################################
@@ -970,20 +975,20 @@ def get_client_domains(db, client_id):
 
 
 def get_user_client_domains(db, session_user):
-    result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user,0))
+    result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user, 0))
     if result:
         return return_domains(result)
     else:
-        result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user,1))
+        result = db.call_proc("sp_tbl_unit_getclientdomains", (session_user, 1))
         return return_domains(result)
 
 
 def get_date_configurations(db, client_id):
-    columns = "country_id, domain_id, period_from, period_to"
+    columns = "country_id, domain_id, month_from, month_to"
     condition = "client_id=%s"
     condition_val = [client_id]
     result = db.get_data(
-        tblClientConfigurations, columns, condition,
+        tblClientConfiguration, columns, condition,
         condition_val
     )
     return return_client_configuration(result)
@@ -994,7 +999,7 @@ def return_client_configuration(configurations):
     results = [
         fn(
             configuration["country_id"], configuration["domain_id"],
-            configuration["period_from"], configuration["period_to"]
+            configuration["month_from"], configuration["month_to"]
         ) for configuration in configurations
     ]
     return results
@@ -1492,7 +1497,7 @@ def get_business_groups_for_user(db, user_id):
 
 
 def get_legal_entities_for_user(db, user_id):
-    result = db.call_proc("sp_tbl_unit_getclientlegalentity",(user_id,))
+    result = db.call_proc("sp_tbl_unit_getclientlegalentity", (user_id,))
     return return_legal_entities_for_unit(result)
 
 
@@ -2012,8 +2017,8 @@ def return_assign_legalentities(assign_legalentities_list):
     fn = core.AssignLegalEntity
     assign_legalentities_list = [
         fn(
-            legalentity["client_id"], legalentity["group_name"],
-            legalentity["country_names"], legalentity["no_of_legal_entities"],
+            legalentity["client_id"], legalentity["country_names"],
+            legalentity["group_name"], legalentity["no_of_legal_entities"],
             legalentity["no_of_assigned_legal_entities"]
         ) for legalentity in assign_legalentities_list
     ]

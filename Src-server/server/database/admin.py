@@ -901,6 +901,8 @@ def return_country_domain_mappings(data):
             country_domain_map[country_id] = []
         if domain_id not in country_domain_map[country_id]:
             country_domain_map[country_id].append(domain_id)
+    print "country_domain_map"
+    print country_domain_map
     return country_domain_map
 
 

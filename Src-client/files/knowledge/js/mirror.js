@@ -973,17 +973,17 @@ function initMirror() {
       return {
         'country_id': cId,
         'domain_id': dId,
-        'period_from': pFrom,
-        'period_to': pTo
+        'month_from': pFrom,
+        'month_to': pTo
       };
   }
 
   function getDomainRow(
-    d_id, org
+    d_id, a_date, org
   ){
       return {
         "d_id": d_id,
-        "activation_date": null,
+        "activation_date": a_date,
         "org": org
       }
   }
@@ -1385,19 +1385,18 @@ function initMirror() {
     callerName = 'techno_report';
     apiRequest(callerName, request, callback);
   }
-  function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, divId, uId, level1SId, aStatus, callback) {
+  function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statId, uId, complId, callback) {
     var request = [
       'GetAssignedStatutoryReport',
       {
         'c_id': cId,
-        'd_id': dId,
-        'g_id': clientId,
-        'b_group_id': bGroupId,
-        'l_entity_id': lEntityId,
-        'div_id': divId,
-        'u_id': uId,
-        'level_1_s_id': level1SId,
-        'a_status': aStatus
+        'domain_id_optional': dId,
+        'client_id': clientId,
+        'bg_id': bGroupId,
+        'le_id': lEntityId,
+        'statutory_id': statId,
+        'unit_id': uId,
+        'comp_id': complId
       }
     ];
     callerName = 'techno_report';
@@ -1906,6 +1905,85 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getGroupAdminGroupList(callback)
+  {
+    console.log("mirror")
+    callerName = 'techno_transaction';
+    var request = [
+      'GetGroupAdminGroupUnitList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function resendGroupAdminRegnmail(clientInfo, callback) {
+    var request = ['ResendGroupAdminRegnMail', clientInfo];
+    apiRequest("techno_transaction", request, callback);
+  }
+
+  function sendGroupAdminRegnmail(clientInfo, callback) {
+    var request = ['SendGroupAdminRegnMail', clientInfo];
+    apiRequest("techno_transaction", request, callback);
+  }
+
+  function getGroupAdminReportData(callback){
+    console.log("mirror")
+    callerName = 'techno_report';
+    var request = [
+      'GetGroupAdminReportData',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getAssignedUserClientGroups(callback)
+  {
+    console.log("mirror")
+    callerName = 'techno_report';
+    var request = [
+      'GetAssignedUserClientGroups',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getReassignUserReportData(cg_id, u_id, g_id, callback)
+  {
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getLegalEntityClosureData(callback){
+    callerName = 'techno_transaction';
+    var request = [
+      'GetLegalEntityClosureReportData',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function saveLegalEntityClosureData(password, remarks, le_id, action_mode, callback)
+  {
+    callerName = 'techno_transaction';
+    var request = [
+      'SaveLegalEntityClosureData',
+      {
+        "password": password,
+        "closed_remarks": remarks,
+        "legal_entity_id": le_id,
+        "grp_mode": action_mode
+      }
+    ];
+    //apiRequest(callerName, request, callback);
+  }
   //Verify Password
   function verifyPassword(password, callback) {
     var request = [
@@ -1915,6 +1993,68 @@ function initMirror() {
       }
     ];
     apiRequest('general', request, callback);
+  }
+
+  // Client Agreement Master Report
+  function getClientAgreementReportFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+        'GetClientAgreementReportFilters',
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetClientAgreementReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'business_group_id': businessGroupId,
+        'legal_entity_id': legalEntityId,
+        'domain_id_optional': domainId,
+        'contract_from_optional': contractFrom,
+        'contract_to_optional': contractTo,
+        'csv': csv,
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetDomainwiseAgreementReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'business_group_id': businessGroupId,
+        'legal_entity_id': legalEntityId,
+        'domain_id': domainId,
+        'contract_from_optional': contractFrom,
+        'contract_to_optional': contractTo,
+        'csv': csv,
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getOrganizationWiseUnitCount(legalEntityId, domainId, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetOrganizationWiseUnitCount',
+      {
+        'legal_entity_id': legalEntityId,
+        'domain_id': domainId
+      }
+    ];
+    apiRequest(callerName, request, callback);
   }
 
   return {
@@ -2083,7 +2223,20 @@ function initMirror() {
     changeAdminDisaleStatus: changeAdminDisaleStatus,
     getUserMappingReportFilters: getUserMappingReportFilters,
     getUsermappingDetailsReport: getUsermappingDetailsReport,
-    verifyPassword: verifyPassword
+    getGroupAdminGroupList: getGroupAdminGroupList,
+    sendGroupAdminRegnmail: sendGroupAdminRegnmail,
+    resendGroupAdminRegnmail: resendGroupAdminRegnmail,
+    getGroupAdminReportData: getGroupAdminReportData,
+    getAssignedUserClientGroups: getAssignedUserClientGroups,
+    getReassignUserReportData: getReassignUserReportData,
+    getLegalEntityClosureData: getLegalEntityClosureData,
+    saveLegalEntityClosureData: saveLegalEntityClosureData,
+    verifyPassword: verifyPassword,
+    getClientAgreementReportFilters: getClientAgreementReportFilters,
+    getClientAgreementReport: getClientAgreementReport,
+    getDomainwiseAgreementReport: getDomainwiseAgreementReport,
+    getOrganizationWiseUnitCount: getOrganizationWiseUnitCount
+
   };
 }
 var mirror = initMirror();

@@ -10,20 +10,7 @@ from server.database.knowledgemaster import (
 
 
 def get_geography_report(db):
-    q = "SELECT t1.geography_id, t1.geography_name, " + \
-        " t1.parent_names, t1.is_active, " + \
-        " (select distinct country_id FROM tbl_geography_levels " + \
-        " where level_id = t1.level_id) country_id, " + \
-        " (select level_position FROM tbl_geography_levels " + \
-        " where level_id = t1.level_id) position " + \
-        " FROM tbl_geographies t1 " + \
-        " ORDER BY position, parent_names, geography_name"
-    rows = db.select_all(q)
-    columns = [
-        "geography_id", "geography_name", "parent_names",
-        "is_active", "country_id", "position"
-    ]
-    result = convert_to_dict(rows, columns)
+    result = db.call_proc("sp_geographymaster_report_data",())
 
     def return_report_data(result):
         mapping_dict = {}
@@ -41,8 +28,11 @@ def get_geography_report(db):
                 )
             )
             mapping_dict[country_id] = _list
-
+        print "mapping_dict"
+        print mapping_dict
         return mapping_dict
+
+    print bool(GEOGRAPHY_PARENTS)
 
     if bool(GEOGRAPHY_PARENTS) is False:
         get_geographies(db)

@@ -285,18 +285,23 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/knowledge/client-agreement-master-report",
+        "files/knowledge/client-agreement-master-report/client-agreement-master-report.html",
+        None, {}
+    ),
+    (
         "/knowledge/country-report",
-        "files/knowledge/knowledge-master-report/country-master-report/countrymasterreport.html",
+        "files/knowledge/country-report/country-report.html",
         None, {}
     ),
     (
         "/knowledge/domain-report",
-        "files/knowledge/knowledge-master-report/domain-master-report/domainmasterreport.html",
+        "files/knowledge/domain-report/domain-report.html",
         None, {}
     ),
     (
         "/knowledge/geography-report",
-        "files/knowledge/knowledge-master-report/geography-master-report/geographymasterreport.html",
+        "files/knowledge/geography-report/geography-report.html",
         None, {}
     ),
     (
@@ -312,7 +317,7 @@ TEMPLATE_PATHS = [
     # Techno Manager master
     (
         "/knowledge/client-master",
-        "files/knowledge/client-master/clientmaster-new.html",
+        "files/knowledge/client-master/client-master.html",
         None, {}
     ),
     (
@@ -322,7 +327,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/assign-legal-entity",
-        "files/knowledge/assign-legal-entity/assignlegalentity.html",
+        "files/knowledge/assign-legal-entity/assign-legal-entity.html",
         None, {}
     ),
     # Techno user master
@@ -333,7 +338,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/client-unit-approval",
-        "files/knowledge/client-unit-approval/clientunitapproval.html",
+        "files/knowledge/client-unit-approval/client-unit-approval.html",
         None, {}
     ),
     (
@@ -354,8 +359,13 @@ TEMPLATE_PATHS = [
     ),
     # Techno reports
     (
-        "/knowledge/client-details-report",
-        "files/knowledge/client-details-report/clientdetailsreport.html",
+        "/knowledge/client-unit-details",
+        "files/knowledge/client-unit-details/client-unit-details.html",
+        None, {}
+    ),
+    (
+        "/knowledge/domain-agreement-master-report",
+        "files/knowledge/domain-agreement-master-report/domain-agreement-master-report.html",
         None, {}
     ),
     (
@@ -376,6 +386,11 @@ TEMPLATE_PATHS = [
     (
         "/knowledge/user-mapping-report",
         "files/knowledge/user-mapping-report/usermappingreport.html",
+        None, {}
+    ),
+    (
+        "/knowledge/statutory-setting-report",
+        "files/knowledge/statutory-setting-report/statutory-setting-report.html",
         None, {}
     ),
     # audit trial

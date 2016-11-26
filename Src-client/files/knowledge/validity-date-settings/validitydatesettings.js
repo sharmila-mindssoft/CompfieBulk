@@ -9,6 +9,7 @@ values_to_save = []
 
 function initialize(){
   function onSuccess(data) {
+    console.log(data)
     COUNTRIES = data["countries"];
     DOMAINS = data["domains"];
     VALIDITY_DATES = data["validity_date_settings"];
@@ -48,6 +49,7 @@ function loadValidityDatesList(){
     if(domain_list.length > 0){
       var tableRow = $('#templates .table-dconfig-list .table-dconfig-countries-row');
       var clone = tableRow.clone();
+      console.log(country_names[parseInt(country_id)])
       $('.dconfig-country-name', clone).text(
         country_names[parseInt(country_id)]
       );
@@ -73,14 +75,14 @@ function loadValidityDatesList(){
     }
   });
   if(count <= 0){
-    $(".btn-submit").hide();
+    $("#btn-submit").hide();
     var clone = $(".no-records tr").clone();
     $('.tbody-validity-config-list').append(clone);
 
   }
 }
 
-$(".btn-submit").click(function(){
+$("#btn-submit").click(function(){
   save_validity_date_settings();
 });
 
@@ -111,6 +113,7 @@ function collect_and_validate_values(){
       domain_id = parseInt(domain_list[dcount])
       validity_days = $(".val-"+country_id+"-"+domain_id).val()
       validity_days_id = $(".id-"+country_id+"-"+domain_id).val()
+      console.log("validity_days_id:"+validity_days_id)
       if(
           validity_days != "" &&
           validity_days != "undefined" &&

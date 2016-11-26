@@ -93,50 +93,32 @@ function loadStatNatureData(data) {
     $('.country-name', clone).text(country_name);
     $('.statutory-nature-name', clone).text(statutory_nature_name);
 
-    //edit icon
-    $('.edit').attr('title', 'Click Here to Edit');
-    $('.edit', clone).addClass('fa-pencil text-primary');
-    $('.edit', clone).on('click', function () {
-      statNature_edit(statNatureId, statNatureName, countryId);
-    });
-
     if (isActive == true){
-      statusmsg = message.deactive_message;
-      $('.status').attr('title', 'Click Here to Deactivate');
       $('.status', clone).removeClass('fa-times text-danger');
       $('.status', clone).addClass('fa-check text-success');
     }
     else{
-      statusmsg = message.active_message;
-      $('.status').attr('title', 'Click Here to Activate');
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
-    $('.status', clone).on('click', function () {
-      CurrentPassword.val('');
-      confirm_alert(statusmsg, function(isConfirm){
-        if(isConfirm){
-            Custombox.open({
-            target: '#custom-modal',
-            effect: 'contentscale',
-            complete:   function() {
-              CurrentPassword.focus();
-              isAuthenticate = false;
-            },
-            close:   function() {
-              if(isAuthenticate){
-                statNature_active(statNatureId, passStatus);
-              }
-            },
-          });
-          e.preventDefault();
-        }
-      });
-    });
 
+    $('.status').hover(function(){
+      showTitle(this);
+    });
     viewTable.append(clone);
     j = j + 1;
   });
+}
+
+//Status Title
+function showTitle(e){
+  if(e.className == "fa c-pointer status fa-times text-danger"){
+    e.title = 'Active';
+  }
+  else if(e.className == "fa c-pointer status fa-check text-success")
+  {
+    e.title = 'Inactive';
+  }
 }
 
 //render controls
@@ -150,6 +132,7 @@ function renderControls(){
       createPageView(totalRecord);
       processPaging();
   });
+
 
 	//status of the list
 	Search_status_ul.click(function (event) {

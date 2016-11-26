@@ -1516,33 +1516,33 @@ class GroupCompany(object):
 #
 
 class ClientConfiguration(object):
-    def __init__(self, country_id, domain_id, period_from, period_to):
+    def __init__(self, country_id, domain_id, month_from, month_to):
         self.country_id = country_id
         self.domain_id = domain_id
-        self.period_from = period_from
-        self.period_to = period_to
+        self.month_from = month_from
+        self.month_to = month_to
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "domain_id", "period_from", "period_to"
+                "country_id", "domain_id", "month_from", "month_to"
             ]
         )
         country_id = data.get("country_id")
         domain_id = data.get("domain_id")
-        period_from = data.get("period_from")
-        period_to = data.get("period_to")
+        month_from = data.get("month_from")
+        month_to = data.get("month_to")
         return ClientConfiguration(
-            country_id, domain_id, period_from, period_to
+            country_id, domain_id, month_from, month_to
         )
 
     def to_structure(self):
         return {
             "country_id": self.country_id,
             "domain_id": self.domain_id,
-            "period_from": self.period_from,
-            "period_to": self.period_to,
+            "month_from": self.month_from,
+            "month_to": self.month_to,
         }
 
 #
