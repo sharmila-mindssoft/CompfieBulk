@@ -143,7 +143,7 @@ api_params = {
     'levels': {'type': 'VECTOR_TYPE', 'module_name': 'knowledgemaster', 'class_name': 'Level'},
     "geography_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "GeographyLevel"},
     "geographies": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Geography"},
-    "geography_report": {'type': 'MAP_TYPE', 'validation_method': is_alphabet, 'module_name': 'knowledgereport', "class_name": "GeographyMapping"},
+    "geography_report": {'type': 'MAP_TYPE', 'validation_method': None, 'module_name': 'knowledgereport', "class_name": "GeographyMapping"},
     "statutory_natures": {'type': 'VECTOR_TYPE', 'validation_method': None, 'module_name': 'core', "class_name": "StatutoryNature"},
     "statutory_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Level"},
     "statutories": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', 'class_name': 'Statutory'},
@@ -379,7 +379,6 @@ api_params = {
     "domainwise_agreement_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "DomainwiseAgreementList"},
     "organizationwise_unit_count_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "OrganizationwiseUnitCountList"},
     "client_group_master": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientGroupMaster"},
-    
     "level_1_statutories_list": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statutories_for_assigning": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "AssignStatutoryCompliance"},
     "category_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -476,6 +475,21 @@ api_params = {
     "u_m_none": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     "usermapping_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "UserMappingDomain"},
     "country_wise_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
+    "units_report" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "ClientUnitDetailsReport"},
+    "closed_on": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
+    "check_date": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
+    "created_on": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
+    "unit_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
+    "statutory_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
+    "groupadmin_clients": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'technoreports', "class_name": "GroupAdminClientGroup"},
+    "group_admin_countries": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'technoreports', "class_name": "GroupAdminCountry"},
+    "group_admin_list": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'technoreports', "class_name": "GroupAdminClientGroupData"},
+    "client_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "reassign_user_clients": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technoreports', "class_name": "ReassignUserClients"},
+    "reassign_user_list": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technoreports', "class_name": "ReassignedUserList"},
+    'group_id_none': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "legalentity_closure": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technotransactions', "class_name": "LegalEntityClosure"},
+    "closed_remarks": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -831,7 +831,7 @@ def return_knowledge_report(
 
 def get_client_agreement_report(db, country_id, client_id, business_group_id,
     legal_entity_id, domain_id, contract_from, contract_to,
-    from_count, page_count):
+    from_count, page_count, session_user):
 
     if contract_from is not None:
         contract_from = string_to_datetime(contract_from).date()
@@ -889,7 +889,7 @@ def return_client_agreement_report(client_agreement_list):
 
 def get_client_agreement_report_count(
     db, country_id, client_id, business_group_id,
-    legal_entity_id, domain_id, contract_from, contract_to
+    legal_entity_id, domain_id, contract_from, contract_to, session_user
 ):
     if contract_from is not None:
         contract_from = string_to_datetime(contract_from).date()
