@@ -1370,19 +1370,18 @@ function initMirror() {
     callerName = 'techno_report';
     apiRequest(callerName, request, callback);
   }
-  function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, divId, uId, level1SId, aStatus, callback) {
+  function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statId, uId, complId, callback) {
     var request = [
       'GetAssignedStatutoryReport',
       {
         'c_id': cId,
-        'd_id': dId,
-        'g_id': clientId,
-        'b_group_id': bGroupId,
-        'l_entity_id': lEntityId,
-        'div_id': divId,
-        'u_id': uId,
-        'level_1_s_id': level1SId,
-        'a_status': aStatus
+        'domain_id_optional': dId,
+        'client_id': clientId,
+        'bg_id': bGroupId,
+        'le_id': lEntityId,
+        'statutory_id': statId,
+        'unit_id': uId,
+        'comp_id': complId
       }
     ];
     callerName = 'techno_report';
