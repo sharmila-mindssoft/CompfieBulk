@@ -54,6 +54,8 @@ function initMirror() {
     var info = getUserInfo();
     info.contact_no = response.contact_no;
     info.address = response.address;
+    info.mobile_no = response.mobile_no;
+    info.email_id = response.email_id;
     window.sessionStorage.userInfo = toJSON(info);
   }
   function getUserProfile() {

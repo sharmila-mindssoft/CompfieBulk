@@ -360,6 +360,7 @@ var max_length = {
   'email_id': 100,
   'mcountrycode': 4,
   'mobileno': 10,
+  'contactno': 10,
   'address': 250,
   'designation': 50,
   'db_server_name': 50,

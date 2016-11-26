@@ -4991,3 +4991,21 @@ BEGIN
 	end if;
 END//
 DELIMITER;
+
+
+-- --------------------------------------------------------------------------------
+-- update knowledge user view profile
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_profile`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_profile`(
+IN contactno_ VARCHAR(20), IN address_ VARCHAR(250), 
+    IN mobileno_ VARCHAR(20), IN emailid_ VARCHAR(100), IN userid_ INT(11) 
+)
+BEGIN
+	UPDATE tbl_users set contact_no = contactno_, address = address_, 
+    mobile_no = mobileno_, email_id = emailid_  WHERE user_id= userid_;
+    UPDATE tbl_user_login_details set email_id = emailid_  WHERE user_id= userid_;
+END//
+DELIMITER;

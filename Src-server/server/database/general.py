@@ -468,10 +468,12 @@ def get_audit_trails(
 #   Update Profile
 #
 def update_profile(db, contact_no, address, mobile_no, email_id, session_user):
-    columns = ["contact_no", "address", "mobile_no", "email_id"]
-    condition = "user_id= %s"
-    values = [contact_no, address, mobile_no, email_id, session_user]
-    db.update(tblUsers, columns, values, condition)
+    db.call_proc("sp_update_profile", (contact_no,address,mobile_no,email_id,session_user,))
+
+    # columns = ["contact_no", "address", "mobile_no", "email_id"]
+    # condition = "user_id= %s"
+    # values = [contact_no, address, mobile_no, email_id, session_user]
+    # db.update(tblUsers, columns, values, condition)
 
 #
 #   Verify Password

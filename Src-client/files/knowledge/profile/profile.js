@@ -10,13 +10,11 @@ var EmployeeId  = $('.employee-id');
 var UserId  = $('.user-id');
 var UserGroup = $('.user-group');
 var Address = $('.address');
-
 var SubmitBtn = $('#submit');
 
 function initialize() {
   var userprofile = mirror.getUserProfile();
   clearMessage();
-  console.log(userprofile)
 
   EmployeeName.text(userprofile.employee_name);
 
@@ -50,7 +48,6 @@ function initialize() {
   }
 }
 
-
 //validate max length
 function validateMaxLength(key_name, value, show_name) {
   e_n_msg = validateLength(key_name, value.trim())
@@ -60,7 +57,6 @@ function validateMaxLength(key_name, value, show_name) {
   }
   return true;
 }
-
 
 function validateMandatory() {
   if (EmailId.val().trim().length == 0) {
@@ -82,14 +78,42 @@ function validateMandatory() {
     displayMessage(msg.mobile_required);
     MobileNo.focus();
     return false;
+  }else{
+    validateMaxLength('mobileno', MobileNo.val(), "Mobile No");
+  }
+
+  if (ContactNo.val().trim().length > 0) {
+    validateMaxLength('contactno', ContactNo.val(), "Contact No");
+  }
+
+  if (Address.val().trim().length > 0) {
+    validateMaxLength('address', Address.val(), "Address");
   }
   return true;
 }
 
-SubmitBtn.click(function () {
-/*  var checkLength = profileValidate();
-  if (checkLength) {*/
+function pageControls() {
 
+  Address.on('input', function (e) {
+    this.value = isCommon_Address($(this));
+  });
+  ContactNo.on('input', function (e) {
+    this.value = isNumbers($(this));
+  });
+  AreaCode.on('input', function (e) {
+    this.value = isNumbers($(this));
+  });
+  CountryCode.on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
+  });
+  MCountryCode.on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
+  });
+  MobileNo.on('input', function (e) {
+    this.value = isNumbers($(this));
+  });
+
+  SubmitBtn.click(function () {
     if (validateMandatory())
     {
       var countrycode_ = CountryCode.val().trim();
@@ -119,29 +143,11 @@ SubmitBtn.click(function () {
         });
       }
     }
-  
-});
+  });
 
+}
 
 $(function () {
   initialize();
-});
-
-Address.on('input', function (e) {
-  this.value = isCommon_Address($(this));
-});
-ContactNo.on('input', function (e) {
-  this.value = isNumbers($(this));
-});
-AreaCode.on('input', function (e) {
-  this.value = isNumbers($(this));
-});
-CountryCode.on('input', function (e) {
-  this.value = isNumbers_Countrycode($(this));
-});
-MCountryCode.on('input', function (e) {
-  this.value = isNumbers_Countrycode($(this));
-});
-MobileNo.on('input', function (e) {
-  this.value = isNumbers($(this));
+  pageControls();
 });
