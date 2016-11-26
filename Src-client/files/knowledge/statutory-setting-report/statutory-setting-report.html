@@ -15,165 +15,195 @@
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                <!-- <h4 class="page-title">Statutory Settings Report</h4>
-                <hr class="no-top-margin"> -->
-                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="1">
+                                        <input type="hidden" id="country-id">
+                                        <div id="ac-country" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Group Name: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2">
+                                        <input type="hidden" id="group-id">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="businessgroupsval" value=""  tabindex="3">
+                                        <input type="hidden" id="businessgroupid">
+                                        <div id="ac-businessgroup" class="ac-textbox default-display-none" >
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4">
+                                        <input type="hidden" id="legalentityid">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Group Name: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Group Name" value="RG Group">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="6">
+                                        <input type="hidden" id="unitid">
+                                        <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="domainid">
+                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="7">
+                                        <div id="ac-domain" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Act:</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="statutoryid" value="">
+                                        <input type="text" class="form-control input-sm" id="statutoryval" value="" tabindex="6">
+                                        <div id="ac-statutory" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="compliance-task" value="" tabindex="8">
+                                        <input type="hidden" id="complianceid">
+                                        <div id="ac-compliancetask" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show-button"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                    </div>
+                                </center>
                             </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity 01">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
+                            <div class="clear"></div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Unit" value="">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
-                            </div>
-                        </center>
-                    </div>
-                    <div class="clear"></div>
-                </form>
                 </div>
-                </div>
-                </div>
+            </div>
+            <div class="grid-table-rpt default-display-none">
                 <div class="card-box">
-                <div class="table-responsive">
-                  <div class="col-sm-12">
-                    <div class="col-sm-12 text-center"><h4>Statutory Settings Report</h4></div>
-                    <div class="col-sm-4 text-center"><h6>Country: India</h6></div>
-                    <div class="col-sm-4 text-center"><h6>Business Group: -</h6></div>
-                    <div class="col-sm-4 text-center"><h6>Domain: Labour Law</h6></div>
-                    <div class="col-sm-4 text-center"><h6>Group: RG Group</h6></div>
-                    <div class="col-sm-4 text-center"><h6>Legal Entity: RG Legal Entity 01</h6></div>
-                    <div class="col-sm-4 text-center"><h6>&nbsp;</h6></div>
-                  </div>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th width="01%">#</th>
-                                <th width="20%">Statutory Provision</th>
-                                <th width="15%">Compliance Task</th>
-                                <th width="08%">Statutory Nature</th>
-                                <th width="05%" class="text-center"><i class="fa fa-edit c-pointer" title="Applicable"></i></th>
-                                <th width="05%" class="text-center"><i class="fa fa-check-square-o c-pointer" title="Opted"></i></th>
-                                <th width="10%" class="text-center">Modified By Compfie</th>
-                                <th width="10%" class="text-center">Modified By Client</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="100%" class="bg-lightdark">
-                                    <div class="col-sm-12 no-padding">
-                                        RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="100%">
-                                    <div class="col-sm-4 no-padding">
-                                        <input type="text" class="form-control input-sm" placeholder="RG Group" value="Act: The Tamil Nadu Shops and Establishments Rules, 1948" readonly="true" />
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>The Tamil Nadu Shops and Establishments Rules, 1948 - Section 9 & 14 (2)</td>
-                                <td>Rest Interval</td>
-                                <td>State</td>
-                                <td class="text-center"><i class="glyphicon glyphicon-ok text-blue"></i></td>
-                                <td class="text-center"><i class="glyphicon glyphicon-remove"></i></td>
-                                <td class="text-center">user@compfie.com<br/>09-Mar-2016</td>
-                                <td class="text-center">admin@acsl.com<br/>09-Mar-2016</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>The Tamil Nadu Shops and Establishments Rules, 1948 - Section 10 & 15</td>
-                                <td>Spread Over</td>
-                                <td>State</td>
-                                <td class="text-center"><i class="glyphicon glyphicon-remove"></i></td>
-                                <td class="text-center"><i class="glyphicon glyphicon-ok text-orange"></i></td>
-                                <td class="text-center">user@compfie.com<br/>09-Mar-2016</td>
-                                <td class="text-center">admin@acsl.com<br/>09-Mar-2016</td>
-                            </tr>
-                            <tr>
-                                <td colspan="100%">
-                                    <div class="col-sm-4 no-padding">
-                                        <input type="text" class="form-control input-sm" placeholder="RG Group" value="Act: Payment Of Gratuity Act" readonly="true" />
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Payment Of Gratuity Act - Section 1 & 2</td>
-                                <td>Rest Interval</td>
-                                <td>State</td>
-                                <td class="text-center"><i class="glyphicon glyphicon-ok text-blue"></i></td>
-                                <td class="text-center"><i class="glyphicon glyphicon-ok text-orange"></i></td>
-                                <td class="text-center">user@compfie.com<br/>09-Mar-2016</td>
-                                <td class="text-center">admin@acsl.com<br/>09-Mar-2016</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p class="rpt-count">Total : 3 record(s)</p>
+                    <div class="table-responsive">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12 text-center"><h4>Statutory Settings Report</h4></div>
+                            <div class="col-sm-4 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countrynameval"></span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Business Group: <span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Legal Entity: <span style="margin-left:10px; font-weight:bold;" class="lentityval"></span></h6>
+                            </div>
+                            <div class="col-sm-4 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="domainval"></span></h6>
+                            </div>
+                        </div>
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <tbody class="tbody-assigned-statutory-list">
+                            </tbody>
+                        </table>
+                        <table class="pagination-view default-display-none">
+                          <tr>
+                            <td>
+                              <span class="compliance_count"> </span>
+                              <span class="divider-view"> | </span>
+                              <span class="items-per-page">
+                              Show
+                              <select id="items_per_page">
+                              </select>
+                              entries
+                              </span>
+                            </td>
+                            <td style="width:650px;"></td>
+                            <td style="text-align:right;padding-right:10px;">
+                              <ul id="pagination-rpt"></ul>
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- end col -->
     </div>
 </div>
+<div id="act-heading" class="default-display-none">
+<table class="table-act-heading-list">
+  <tr class="tablerow">
+    <td colspan="8"><span class="heading" style="font-size:1.0em;"></span></td>
+    <!--<td class="act-applicable"></td>
+    <td class="act-opted"></td>
+    <td class="act-remarks"></td>-->
+</tr>
+</table>
+</div>
+<div id="statutory-list" class="default-display-none">
+    <table class="table-statutory-list">
+        <tr align="left" class="tr-heading">
+          <th width="3%" align="center" class="header-bg">#</th>
+          <th width="30%" class="header-bg">Statutory Provision</th>
+          <th width="18%" class="header-bg">Compliance Task</th>
+          <th width="10%" class="header-bg">Statutory Nature</th>
+          <th width="5%" class="header-bg"><img src="/images/icon-client-comply.png" title="Applicability Status"></th>
+          <th width="5%" class="header-bg"><img src="/images/icon-client-tick.png" title="Opted"></th>
+          <th width="15%" class="header-bg">Modified By Compfie</th>
+          <th width="15%" class="header-bg">Modified By Client</th>
+        </tr>
+
+        <tr class="tablerow">
+            <td align="center" class="sno"></td>
+            <td class="statutory-provision"></td>
+            <td class="compliance-task"> </td>
+            <td class="statutory-nature"></td>
+            <td class="applicability-status"></td>
+            <td class="opted-status"></td>
+            <td class="compfiedmin"></td>
+            <td class="clientadmin"></td>
+        </tr>
+    </table>
+</div>
+<div id="unit-details-list" class="default-display-none">
+    <table class="table-unit-details-list">
+        <tr class="tablerow">
+            <td colspan="8" style="background:#D4B7EB; padding:10px 5px;font-weight:bold; font-size:0.8em;" class="unit-name-address"></td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript" src="/script/statutory-setting-report/assignedstatutoryreport.js"></script>
 {% endblock %}
