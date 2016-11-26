@@ -39,7 +39,7 @@ def verify_login(db, username, password):
         username = result[0][0].get("username")
         is_login = False
 
-    elif len(result[1]) == 0 and len(result[0] == 0) :
+    elif len(result[1]) == 0 and len(result[0]) == 0 :
         user_id = None
         username = None
         is_login = False
@@ -161,7 +161,6 @@ def update_password(db, password, user_id):
         "sp_tbl_user_login_details_update",
         (user_id, encrypt(password)), 1
     )
-    print result
     employee_name = result[0][0]["username"]
 
     action = "\"%s\" has updated his/her password" % (employee_name)
@@ -245,7 +244,6 @@ def save_login_details(db, token, username, password):
     return True
 
 def check_username_duplicate(db, uname):
-    print uname
     res = db.call_proc("sp_tbl_user_login_checkusername", (uname, ))
     count = res[0]['uname']
     if count > 0 :

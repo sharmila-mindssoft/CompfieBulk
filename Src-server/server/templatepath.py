@@ -275,7 +275,7 @@ TEMPLATE_PATHS = [
     # knowledge user Transaction
     (
         "/knowledge/statutory-mapping",
-        "files/knowledge/statutory-mapping/statutory-mapping-create.html",
+        "files/knowledge/statutory-mapping/statutory-mapping-list.html",
         None, {}
     ),
     # knowledge Reports

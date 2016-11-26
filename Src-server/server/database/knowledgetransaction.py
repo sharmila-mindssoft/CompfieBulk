@@ -19,7 +19,7 @@ from server.database.knowledgemaster import (
     get_industry_by_id, return_geography_levels,
     return_statutory_levels
 )
-from server.exceptionmessage import process_error
+from server.exceptionmessage import process_error, fetch_error
 
 from server.constants import RECORD_DISPLAY_COUNT
 
@@ -827,7 +827,6 @@ def save_statutory_backup(db, statutory_mapping_id, created_by):
     geo_map = []
     for gid in [int(x) for x in old_record["geography_ids"].split(',') if x != '']:
         data = get_geography_by_id(db, gid)
-        print data
         if type(data) is dict :
             data = data["parent_names"]
             geo_map.append(data)
@@ -1139,6 +1138,7 @@ def return_stautory(data):
         p_names = [y.strip() for y in d["parent_names"].split('>>') if y != '']
         if len(p_names) == 0:
             p_names = None
+
         result.append(
             knowledgetransaction.StatutoryInfo(
                 d["statutory_id"], d["statutory_name"],
@@ -1147,8 +1147,6 @@ def return_stautory(data):
                 d["level_position"]
             )
         )
-    print result
-    print '-' * 50
     return result
 
 def return_geography(data):
@@ -1250,6 +1248,8 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
     )
+    if len(result) == 0 :
+        raise fetch_error()
     mapping = result[0]
     compliance = result[1]
     organisation = result[2]
