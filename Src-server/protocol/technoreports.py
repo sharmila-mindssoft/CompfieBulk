@@ -657,7 +657,7 @@ class GetClientDetailsReportFiltersSuccess(Response):
             "units_report": self.units_report,
             "industry_name_id": self.industry_name_id,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 class GroupedUnits(object):
     def __init__(self, division_name, legal_entity_name, business_group_name, units):
@@ -818,7 +818,7 @@ class GetAssignedStatutoryReportFiltersSuccess(Response):
             "statutory_units": self.statutory_units,
             "statutory_compliances": self.statutory_compliances,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 class GetAssignedStatutoryReportSuccess(Response):
     def __init__(self, unit_groups, act_groups, compliance_statutories_list):
@@ -840,7 +840,7 @@ class GetAssignedStatutoryReportSuccess(Response):
             "act_groups": self.act_groups,
             "compliance_statutories_list": self.compliance_statutories_list,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 # user mapping report - filter success
 
@@ -1222,6 +1222,7 @@ class ClientAgreementList(object):
         self.domain_used_unit = domain_used_unit
         self.legal_entity_admin_contactno = legal_entity_admin_contactno
         self.legal_entity_admin_email = legal_entity_admin_email
+        self.business_group_name = business_group_name
 
     @staticmethod
     def parse_structure(data):

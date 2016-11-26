@@ -4924,7 +4924,6 @@ BEGIN
 END//
 DELIMITER;
 
-
 -- --------------------------------------------------------------------------------
 -- To veryfy user password
 -- --------------------------------------------------------------------------------
@@ -4941,5 +4940,54 @@ BEGIN
 		tbl_user_login_details u
 	WHERE
 		u.user_id = userid_ AND u.password = password_ AND u.is_active = 1;
+
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_geographymaster_report_data`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_geographymaster_report_data`()
+BEGIN
+	SELECT t1.geography_id, t1.geography_name, t1.parent_names, t1.is_active,
+	(select distinct country_id FROM tbl_geography_levels
+	where level_id = t1.level_id) country_id,
+         (select level_position FROM tbl_geography_levels
+         where level_id = t1.level_id) position
+         FROM tbl_geographies t1
+         ORDER BY position, parent_names, geography_name;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_geographymaster_geographies_list`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_geographymaster_geographies_list`(
+in countryId int(11))
+BEGIN
+	if countryId is not null then
+		SELECT distinct t1.geography_id, t1.geography_name, t1.level_id,
+		t1.parent_ids, t1.is_active, t2.country_id,
+			(select country_name from tbl_countries where country_id = t2.country_id)
+			as country_name, t2.level_position, t1.parent_names FROM tbl_geographies t1
+			INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id
+			AND t2.country_id=countryId
+			ORDER BY country_name, level_position, geography_name;
+	else
+		SELECT distinct t1.geography_id, t1.geography_name, t1.level_id,
+		t1.parent_ids, t1.is_active, t2.country_id,
+			(select country_name from tbl_countries where country_id = t2.country_id)
+			as country_name, t2.level_position, t1.parent_names FROM tbl_geographies t1
+			INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id
+			ORDER BY country_name, level_position, geography_name;
+	end if;
 END//
 DELIMITER;

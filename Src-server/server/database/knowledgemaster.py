@@ -469,39 +469,11 @@ def save_geography_levels(db, country_id, levels, user_id):
 
 
 def get_geographies(db, user_id=None, country_id=None):
-    query = "SELECT distinct t1.geography_id, " + \
-        " t1.geography_name, " + \
-        " t1.level_id, " + \
-        " t1.parent_ids, t1.is_active, " + \
-        " t2.country_id, " + \
-        " (select country_name from tbl_countries where " + \
-        " country_id = t2.country_id)as country_name, " + \
-        " t2.level_position, t1.parent_names " + \
-        " FROM tbl_geographies t1 " + \
-        " INNER JOIN tbl_geography_levels t2 " + \
-        " on t1.level_id = t2.level_id "
-
-    param = []
-
     if country_id:
-        query = query + " AND t2.country_id=%s"
-        param.append(country_id)
-
-    query = query + " ORDER BY country_name, level_position, geography_name"
-    if len(param) > 0:
-        rows = db.select_all(query, param)
+        result = db.call_proc("sp_geographymaster_geographies_list", (country_id, ))
     else:
-        rows = db.select_all(query)
-
-    result = []
-    if rows:
-        columns = [
-            "geography_id", "geography_name", "level_id",
-            "parent_ids", "is_active", "country_id", "country_name",
-            "level_position", "parent_names"
-        ]
-        result = convert_to_dict(rows, columns)
-        frame_geography_parent_mapping(result)
+        result = db.call_proc("sp_geographymaster_geographies_list", (None, ))
+    frame_geography_parent_mapping(result)
     return return_geographies(result)
 
 

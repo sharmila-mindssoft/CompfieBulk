@@ -332,7 +332,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         elif _type == 'MAP_TYPE':
             assert _module_name is not None
             assert _class_name is not None
-            assert _validation_method is not None
+            # assert _validation_method is not None
             val = parse_MapType(
                 _module_name, _class_name,
                 _validation_method, val

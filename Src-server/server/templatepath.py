@@ -285,6 +285,11 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/knowledge/client-agreement-master-report",
+        "files/knowledge/client-agreement-master-report/client-agreement-master-report.html",
+        None, {}
+    ),
+    (
         "/knowledge/country-report",
         "files/knowledge/country-report/country-report.html",
         None, {}
@@ -354,8 +359,13 @@ TEMPLATE_PATHS = [
     ),
     # Techno reports
     (
-        "/knowledge/client-details-report",
-        "files/knowledge/client-details-report/clientdetailsreport.html",
+        "/knowledge/client-unit-details",
+        "files/knowledge/client-unit-details/client-unit-details.html",
+        None, {}
+    ),
+    (
+        "/knowledge/domain-agreement-master-report",
+        "files/knowledge/domain-agreement-master-report/domain-agreement-master-report.html",
         None, {}
     ),
     (
@@ -376,6 +386,11 @@ TEMPLATE_PATHS = [
     (
         "/knowledge/user-mapping-report",
         "files/knowledge/user-mapping-report/usermappingreport.html",
+        None, {}
+    ),
+    (
+        "/knowledge/statutory-setting-report",
+        "files/knowledge/statutory-setting-report/statutory-setting-report.html",
         None, {}
     ),
     # audit trial

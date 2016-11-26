@@ -16,166 +16,254 @@
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                        <div class="form-horizontal group-border-dashed">
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Group Name:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Group Name">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Contract From:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="datepicker-autoclose">
-                                <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Contract To:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="datepicker-autoclose">
-                                <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
-                            </div>
-                        </center>
-                    </div>
-                    <div class="clear"></div>
-                </form>
-                </div>
-                </div>
-                </div>
-                <div class="card-box">
-                <div class="table-responsive">
-                  <div class="col-sm-12">
-                    <div class="col-sm-12 text-center"><h4>Domain wise Agreement Master Report</h4></div>
-                    <div class="col-sm-6 text-center"><h6>Country: India</h6></div>
-                    <div class="col-sm-6 text-center"><h6>Domain: Labour Law</h6></div>
-                  </div>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th width="01%">#</th>
-                                <th width="13%">Legal Entity</th>
-                                <th width="12%">LE/ Group Admin Details</th>
-                                <th width="10%">Contact Number</th>
-                                <th width="10%" class="text-center">Units Per Domain Used/Total</th>
-                                <th width="10%" class="text-center">Date of Agreement Inception</th>
-                                <th width="06%" class="text-center">Contract From</th>
-                                <th width="07%" class="text-center">Contract To</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="2">
-                                    <div class="col-sm-4 no-padding">
-                                        <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value="RG Group" readonly="true" />
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="country" value="">
+                                        <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1"/>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <div id="ac-country" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-1"></div>
-                                    <div class="col-sm-7 no-padding">
-                                        <input type="text" class="form-control input-sm text-center" placeholder="RG - FACTORIES" value="RG - FACTORIES" readonly="true"  />
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Group Name:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupval" placeholder="Enter Group" tabindex="2">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="group">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                            <ul style="width:85%;" ></ul>
+                                        </div>
                                     </div>
-                                </td>
-                                <td>admin@rgg.com</td>
-                                <td>+91-9876543210</td>
-                                <td colspan="100%">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>RG Legal Entity 01</td>
-                                <td>leadmin@rgg.com</td>
-                                <td>+91-9876543211</td>
-                                <td class="text-center"><a class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg">45/50</a></td>
-                                <td class="text-center">01-Jan-2015</td>
-                                <td class="text-center">01-Jan-2016</td>
-                                <td class="text-center">31-Dec-2016</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>RG Legal Entity 02</td>
-                                <td>leadmin@rgg.com</td>
-                                <td>+91-9876543212</td>
-                                <td class="text-center"><a class="c-pointer" >35/50</a></td>
-                                <td class="text-center">01-Jan-2016</td>
-                                <td class="text-center">01-Jan-2017</td>
-                                <td class="text-center">31-Dec-2017</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p class="rpt-count">Total : 2 record(s)</p>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="businessgroupval" placeholder="Enter Business Group"
+                                        tabindex="3">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="businessgroup">
+                                        <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                                            <ul style="width:85%;" ></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" placeholder="Enter Legal Entity"
+                                        tabindex="4">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="legalentity">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none" >
+                                            <ul style="width:85%;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="domainval" placeholder="Enter Domain Name"
+                                        tabindex="5">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="domain" value="">
+                                        <div id="ac-domain" class="ac-textbox default-display-none">
+                                            <ul style="width:85%;" class="hidemenu"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Contract From:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Contract To:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit"  id="export"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="grid-table-rpt default-display-none">
+                <div class="card-box">
+                    <div class="table-responsive">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12 text-center"><h4>Domain wise Agreement Master Report</h4></div>
+                            <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="disp_country"></span></h6></div>
+                            <div class="col-sm-6 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
+                        </div>
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <tbody class="table-client-agreement-list">
+
+                            </tbody>
+                        </table>
+                        <p class="rpt-count">Total : 2 record(s)</p>
+                    </div>
+                </div>
+            </div>
+            <table class="pagination-view default-display-none">
+                <tr>
+                    <td>
+                        <span class="compliance_count"> </span>
+                        <span class="divider-view"> | </span>
+                        <span class="items-per-page">
+                        Show
+                        <select id="items_per_page">
+                        </select>
+                        entries
+                        </span>
+                    </td>
+
+                    <td style="text-align:right;padding-right:10px;">
+                        <ul id="pagination-rpt"></ul>
+                    </td>
+                </tr>
+            </table>
         </div>
         <!-- end col -->
     </div>
 </div>
 
+<div id="templates">
+<table class="table-agreement-list">
+  <tr align="left" style="height:30px;" class="heading-list">
+    <th class="header-bg" width="2%" align="center">#</th>
+    <th class="header-bg" width="25%" align="left">Legal Entity</th>
+    <th class="header-bg" width="18%" align="left">LE/ Group Admin Details</th>
+    <th class="header-bg" width="15%" align="left">Contact Number</th>
+    <th class="header-bg" width="10%" align="left">Units Per Domain<br/>Used/Total</th>
+    <th class="header-bg" width="10%" align="left">Date of Agreement Inception</th>
+    <th class="header-bg" width="10%" align="left">Contract From</th>
+    <th class="header-bg" width="10%" align="left">Contract To</th>
+  </tr>
 
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="page-title">Labour Law</h4>
-            <hr class="no-top-margin no-bottom-margin">
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                        <tbody>
-                          <tr class="table_bg_01">
-                            <td class="header-bg1" align="center">Organization Type 1</td>
-                            <td class="header-bg1" align="center">Organization Type 2</td>
-                            <td class="header-bg1" align="center">Organization Type 3</td>
-                            <td class="header-bg1" align="center">Organization Type 4</td>
-                          </tr>
-                          <tr>
-                            <td align="center">15/20</td>
-                            <td align="center">10/10</td>
-                            <td align="center">8/8</td>
-                            <td align="center">12/12</td>
-                          </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div><!-- /.modal-dialog -->
+ <tr class="group-list">
+  <td colspan="2">
+  <div style="background:#eee;padding:4px 8px; width: 80px;border:1px dotted #CCCCCC; border-radius: 0.3em;" class="group-name">
+  </div>
+  </td>
+  <td class="group-admin-email"></td>
+  <td ></td>
+  <td ></td>
+  <td ></td>
+  <td ></td>
+  <td ></td>
+</tr>
+
+ <tr class="business-group-list">
+  <td colspan="2">
+  <div style="background:#eee;padding:4px 8px; width: 80px;border:1px dotted #CCCCCC; border-radius: 0.3em;" class="business-group-name">
+  </div>
+  </td>
+  <td ></td>
+  <td ></td>
+  <td ></td>
+  <td ></td>
+  <td ></td>
+  <td ></td>
+</tr>
+
+<tr class="tbody-agreement-list">
+  <td class="sno"></td>
+  <td class="le"></td>
+  <td class="le-email"></td>
+  <td class="le-contactno"></td>
+  <td>
+    <a href="#" class="domain-units"></a>
+  </td>
+  <td class="activation-date"></td>
+  <td class="contract-from"></td>
+  <td class="contract-to"></td>
+</tr>
+
+</table>
 </div>
+
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+
+<div id="popup1" class="overlay" style="display: none;">
+  <div class="popup">
+    <a class="close">x</a>
+    <div class="content">
+
+     <table width="100%" id="popup_table">
+     <tr>
+     <th colspan="2" align="center" class="popup-heading"></th>
+     </tr>
+
+     <tr class="header-bg">
+     <th> Organization Name</th>
+     <th> Units Used / Total</th>
+     </tr>
+     <tbody class="popup-list">
+    </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<div id="templates">
+  <table class="table-popup-list" style="display: none;">
+    <tr class="table-row">
+      <td class="popup_organization_name"></td>
+      <td class="popup_unit_count" align="center"></td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/script/domain-agreement-master-report/domainwise-agreement-report.js"></script>
+
+<script type="text/javascript">
+$(function() {
+  $("#fromdate" ).datepicker({
+    changeMonth: true,
+    changeYear: true,
+    numberOfMonths: 1,
+    dateFormat: "dd-M-yy",
+    monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    onClose: function( selectedDate ) {
+    $( "#todate" ).datepicker( "option", "minDate", selectedDate );
+    }
+});
+$( "#todate" ).datepicker({
+  changeMonth: true,
+  changeYear: true,
+  numberOfMonths: 1,
+  dateFormat: "dd-M-yy",
+  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  onClose: function( selectedDate ) {
+  $( "#fromdate" ).datepicker( "option", "maxDate", selectedDate );
+  }
+});
+});
+</script>
 {% endblock %}
