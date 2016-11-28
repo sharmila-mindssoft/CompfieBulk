@@ -3251,6 +3251,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of level one statutory names
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_levelone_statutories`;
 DELIMITER //
 CREATE PROCEDURE `sp_levelone_statutories`()
 BEGIN
