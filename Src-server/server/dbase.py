@@ -670,7 +670,7 @@ class Database(object):
         rows = None
         rows = self.select_one(query, condition_val)
         if rows:
-            if rows[0] > 0:
+            if rows["count"] > 0:
                 return True
             else:
                 return False
