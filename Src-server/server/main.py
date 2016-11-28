@@ -213,6 +213,7 @@ class API(object):
             else:
                 _db.rollback()
             # print response_data
+            _db_con.close()
             return respond(response_data)
         except Exception, e:
             # print "handle_api_request"
@@ -462,8 +463,6 @@ def run_server(port):
             ("/knowledge/api/techno", api.handle_techno),
             ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
-            ("/knowledge/api/domain_master", api.handle_general_domain),
-            ("/knowledge/api/country_master", api.handle_general_country),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
             ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),
             ("/knowledge/api/knowledge_statutorymasters", api.handle_knowledge_getstatumaster),
