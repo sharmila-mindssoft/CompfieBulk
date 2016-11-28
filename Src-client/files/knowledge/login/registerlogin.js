@@ -10,6 +10,7 @@ Pword_hint = $("#password-hint");
 passwordStrength = 'Weak';
 Status_check = $('#status-check');
 Status_msg = $('.status-msg');
+var csrf_token = $('meta[name=csrf-token]').attr('content')
 register_page = null;
 _rtoken = null;
 _captcha = null;
@@ -21,9 +22,9 @@ function call_api(request, callback) {
         url: '/knowledge/api/login',
         type: 'POST',
         contentType: 'application/json',
+        headers: { 'X-CSRFToken': csrf_token },
         data: JSON.stringify(request, null, ''),
         success: function(data, textStatus, jqXHR) {
-            var data = JSON.parse(data);
 
             var status = data[0];
             var response = data[1];

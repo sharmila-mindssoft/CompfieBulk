@@ -197,7 +197,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/knowledge/reset-password/([a-zA-Z-0-9]+)",
+        "/knowledge/reset-password/<code>",
         "files/knowledge/resetpassword.html",
         None, {}
     ),
@@ -441,7 +441,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/knowledge/userregistration/([a-zA-Z-0-9]+)",
+        "/knowledge/userregistration/<code>",
         "files/knowledge/login/create-login-details.html",
         None, {}
     )
