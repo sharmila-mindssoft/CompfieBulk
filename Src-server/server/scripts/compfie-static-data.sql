@@ -57,7 +57,7 @@ INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configu
 INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
 -- Reports
-INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping', 30, null);
+INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
 INSERT INTO tbl_forms VALUES(31, 3, 'Country Report', '/knowledge/country-report', 31, 'Master');
 INSERT INTO tbl_forms VALUES(32, 3, 'Domain Report', '/knowledge/domain-report', 32, 'Master');
 INSERT INTO tbl_forms VALUES(33, 3, 'Geography Report', '/knowledge/geography-report', 33, 'Master');
@@ -78,8 +78,6 @@ INSERT INTO tbl_forms VALUES(45, 4, 'Change Password', '/knowledge/change-passwo
 INSERT INTO tbl_forms VALUES(46, 4, 'Messages', '/knowledge/messages', 46, null);
 INSERT INTO tbl_forms VALUES(47, 4, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
 
--- reports
-INSERT INTO tbl_forms VALUES(48, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 48, null);
 
 -- form_id, category_id_1, category_id_2, category_id_3, category_id_4, category_id_5, category_id_6, category_id_7, category_id_8
 -- Masters
@@ -115,7 +113,7 @@ INSERT INTO tbl_form_category VALUES(27, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(28, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(29, 0, 1, 0, 0, 0, 0, 0, 0);
 -- Reports
-INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(31, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(32, 1, 0, 0, 0, 0, 0, 0, 1);
 INSERT INTO tbl_form_category VALUES(33, 1, 0, 0, 0, 0, 0, 0, 0);
@@ -136,7 +134,6 @@ INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
 
-INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 1, 0, 1, 0);
 
 
 
