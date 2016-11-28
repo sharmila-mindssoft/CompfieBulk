@@ -1924,7 +1924,7 @@ BEGIN
     WHERE T1.user_category_id > 2
     ORDER BY T1.employee_name;
 
-    SELECT user_id, domain_id from tbl_user_domains;
+    SELECT user_id, domain_id, country_id from tbl_user_domains;
     SELECT user_id, country_id from tbl_user_countries;
 
 END //
@@ -3685,7 +3685,8 @@ BEGIN
     -- 4
 
     select t1.geography_id, t1.geography_name, t1.level_id,
-    t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id
+    t1.parent_ids, t1.parent_names, t1.is_active, t2.country_id,
+    t2.level_position
     from tbl_geographies as t1 inner join tbl_geography_levels as t2
     on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
     t3.country_id = t2.country_id where t3.user_id = userid

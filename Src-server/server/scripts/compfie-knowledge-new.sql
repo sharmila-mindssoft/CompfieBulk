@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `compfie_knowledge_new`;
-USE `compfie_knowledge_new`;
+CREATE DATABASE  IF NOT EXISTS `compfie_knowledge_news`;
+USE `compfie_knowledge_news`;
 
 
 DROP TABLE IF EXISTS `tbl_audit_log`;
@@ -435,7 +435,7 @@ CREATE TABLE `tbl_mapped_locations` (
   `geography_id` int(11) NOT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY( `statutory_mapping_id`, `geography_id`).
+  UNIQUE KEY( `statutory_mapping_id`, `geography_id`),
   KEY `fk_tbl_mapped_locations_geography_id` (`geography_id`),
   CONSTRAINT `fk_tbl_mapped_locations_geography_id` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -936,7 +936,7 @@ CREATE TABLE `tbl_messages` (
   `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
   `message_text` Text DEFAULT NULL,
-  `link` Text DEFAULT NUL,L
+  `link` Text DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`message_id`),
