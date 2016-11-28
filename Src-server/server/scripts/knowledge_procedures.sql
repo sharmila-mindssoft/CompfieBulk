@@ -1623,9 +1623,9 @@ BEGIN
 END //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp-domaincountries_delete`;
+DROP PROCEDURE IF EXISTS `sp_domaincountries_delete`;
 DELIMITER //
-CREATE PROCEDURE `sp-domaincountries_delete`(
+CREATE PROCEDURE `sp_domaincountries_delete`(
     IN d_id INT(11)
 )
 BEGIN
