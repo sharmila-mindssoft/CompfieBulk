@@ -264,7 +264,6 @@ def get_statutory_levels(db):
 
 
 def return_statutory_levels(data):
-    print data
     statutory_levels = {}
     for d in data:
         country_id = d["country_id"]

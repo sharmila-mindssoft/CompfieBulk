@@ -291,7 +291,6 @@ def get_countries_for_user_filter(db, user_id):
 def return_countries_filter(data):
     results = []
     for d in data[1]:
-        print d["country_id"]
         results.append(core.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
         ))

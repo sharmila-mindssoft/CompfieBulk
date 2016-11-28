@@ -29,7 +29,7 @@
             var next_li = $(parent_ul_li).nextAll('li:lt(2)');
             $(next_li).find('li.active').removeClass('active');
             $(next_li).find('a.' + color).parent().addClass('active');
-            //Remove static color class from Navbar & Sidebar 
+            //Remove static color class from Navbar & Sidebar
             $('.navbar').attr('class', $('#navbar').attr('class').replace(/\bnavbar-.*\b/g, '').trim());
             $('.container').attr('class', $('#main-container').attr('class').replace(/\bsidebar-.*\b/g, '').trim());
         }
@@ -82,8 +82,8 @@
         }
     });*/
 </script>
-<script src="/files/knowledge/common/js/jquery.core.js"></script>
-<script src="/files/knowledge/common/js/jquery.app.js"></script>
+<script src="/js/jquery.core.js"></script>
+<script src="/js/jquery.app.js"></script>
 <footer class="footer">
 	<center>&copy; Aparajitha Corporate Services Private Limited</center>
 </footer>

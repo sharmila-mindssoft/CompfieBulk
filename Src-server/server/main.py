@@ -1,15 +1,22 @@
 import os
-import time
+# import time
 import json
 import traceback
-import mimetypes
-import tornado.web
-from tornado.web import StaticFileHandler
-from user_agents import parse
+# import mimetypes
 import jinja2
+import mysql.connector
+from flask import Flask, request, send_from_directory, Response, render_template, g
+from flask_wtf.csrf import CsrfProtect
+from functools import wraps
+
+# import tornado.web
+# from tornado.web import StaticFileHandler
+# from user_agents import parse
+
 from lxml import etree
-from basics.webserver import WebServer
-from basics.ioloop import IOLoop
+# from datetime import timedelta
+# from basics.webserver import WebServer
+# from basics.ioloop import IOLoop
 from protocol import (
     admin, consoleadmin, clientadminsettings,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
@@ -18,7 +25,7 @@ from protocol import (
 )
 # from server.database import KnowledgeDatabase
 import controller
-from server.dbase import Database
+from server.dbase import BaseDatabase, Database
 from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
@@ -32,7 +39,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    VERSION, IS_DEVELOPMENT, SESSION_CUTOFF
+    IS_DEVELOPMENT
 )
 
 from server.templatepath import (
@@ -41,23 +48,36 @@ from server.templatepath import (
 
 import logger
 
+
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
-if IS_DEVELOPMENT:
-    FILE_VERSION = time.time()
-else:
-    FILE_VERSION = VERSION
+app = Flask(__name__)
 
+# base config
+
+csrf = CsrfProtect()
+app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
+# app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
+csrf.init_app(app)
+
+if IS_DEVELOPMENT:
+    app.config["debug"] = True
+else:
+    app.config["debug"] = False
+
+
+# @app.before_request
+# def make_session_time():
+#     session.permanent = True
+#     app.permanent_session_lifetime = timedelta(minutes=1)
 
 #
 # cors_handler
 #
-def cors_handler(request, response):
-    response.set_header("Access-Control-Allow-Origin", "*")
-    response.set_header("Access-Control-Allow-Headers", "Content-Type")
-    response.set_header("Access-Control-Allow-Methods", "POST")
-    response.set_status(204)
-    response.send("")
+def cors_handler(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "Post"
 
 
 #
@@ -65,59 +85,74 @@ def cors_handler(request, response):
 #
 def api_request(request_data_type):
     def wrapper(f):
-        def wrapped(self, request, response):
-            self.handle_api_request(
-                f, request, response,
-                request_data_type
-            )
+        @wraps(f)
+        def wrapped(self):
+            return self.handle_api_request(f, request_data_type)
         return wrapped
     return wrapper
 
+
+def before_first_request():
+    return mysql.connector.pooling.MySQLConnectionPool(
+        pool_name="con_pool",
+        pool_size=32,
+        pool_reset_session=True,
+        autocommit=False,
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME
+    )
 
 #
 # API
 #
 class API(object):
     def __init__(
-        self, io_loop, db
+        self, con_pool
     ):
-        self._io_loop = io_loop
-        self._db = db
+        self._con_pool = con_pool
+        # self._db_con = dbcon
         self._ip_addess = None
-        self._remove_old_session()
+        # self._remove_old_session()
 
-    def _remove_old_session(self):
-        def on_return():
-            self._remove_old_session()
+    # def _remove_old_session(self):
+    #     def on_return():
+    #         self._remove_old_session()
 
-        def on_session_timeout():
-            self._db.begin()
-            try:
-                self._db.clear_session(SESSION_CUTOFF)
-                self._db.commit()
-                on_return()
-            except Exception, e:
-                print e
-                self._db.rollback()
+    #     def on_session_timeout():
+    #         self._db.begin()
+    #         try:
+    #             self._db.clear_session(SESSION_CUTOFF)
+    #             self._db.commit()
+    #             on_return()
+    #         except Exception, e:
+    #             print e
+    #             self._db.rollback()
 
-        self._io_loop.add_timeout(
-            time.time() + 1080, on_session_timeout
-        )
+    #     self._io_loop.add_timeout(
+    #         time.time() + 1080, on_session_timeout
+    #     )
 
     def _send_response(
-        self, response_data, response
+        self, response_data, status_code
     ):
-        assert response is not None
-        data = response_data.to_structure()
-        s = json.dumps(data, indent=2)
-        response.send(s)
+        print type(response_data)
+        if type(response_data) is not str :
+            data = response_data.to_structure()
+            s = json.dumps(data, indent=2)
+        else :
+            s = response_data
+        resp = Response(s, status=status_code, mimetype="application/json")
+        return resp
 
     def _parse_request(
-        self, request_data_type, request, response
+        self, request_data_type
     ):
         request_data = None
         try:
-            data = json.loads(request.body())
+            data = request.get_json(force=True)
+            # data = request.data
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -131,44 +166,55 @@ class API(object):
             logger.logKnowledge("error", "main.py-parse-request", e)
             print(traceback.format_exc())
             logger.logKnowledge("error", "main.py", traceback.format_exc())
-            response.set_status(400)
-            response.send(str(e))
+            # response.set_status(400)
+            # response.send(str(e))
             return None
 
     def handle_api_request(
-        self, unbound_method, request, response,
-        request_data_type
+        self, unbound_method, request_data_type
     ):
-        response.set_default_header("Access-Control-Allow-Origin", "*")
-        ip_address = str(request.remote_ip())
-        self._ip_addess = ip_address
+        self._ip_addess = request.remote_addr
+        # print request.environ['REMOTE_ADDR']
+
         if request_data_type == "knowledgeformat":
-            request_data = request
+            # request_data = request
+            pass
         else:
             request_data = self._parse_request(
-                request_data_type, request, response
+                request_data_type
             )
 
         if request_data is None:
             return
 
         def respond(response_data):
-            self._send_response(
-                response_data, response
+            return self._send_response(
+                response_data, 200
             )
 
         try:
-            self._db.begin()
-            response_data = unbound_method(self, request_data, self._db)
+            # db = BaseDatabase(
+            #     KNOWLEDGE_DB_HOST,
+            #     KNOWLEDGE_DB_PORT,
+            #     KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
+            #     KNOWLEDGE_DATABASE_NAME
+            # )
+            # db.dbConfig(app)
+            # self._db_con = db.connect()
+            _db_con = self._con_pool.get_connection()
+            _db = Database(_db_con)
+            _db.begin()
+            response_data = unbound_method(self, request_data, _db)
             if response_data is None or type(response_data) is bool:
                 # print response_data
-                self._db.rollback()
+                _db.rollback()
             if type(response_data) != technomasters.ClientCreationFailed:
-                self._db.commit()
+                _db.commit()
             else:
-                self._db.rollback()
+                _db.rollback()
             # print response_data
-            respond(response_data)
+            _db_con.close()
+            return respond(response_data)
         except Exception, e:
             # print "handle_api_request"
             # print e
@@ -176,15 +222,17 @@ class API(object):
             # print ip_address
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
-            logger.logKnowledgeApi(ip_address, "")
+            # logger.logKnowledgeApi(ip_address, "")
 
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             if str(e).find("expected a") is False:
                 self._db.rollback()
-            response.set_status(400)
-            response.send(str(e))
+            # response.set_status(400)
+            # response.send(str(e))
+            return self._send_response(str(e), 400)
 
+    @csrf.exempt
     @api_request(
         DistributionRequest
     )
@@ -193,29 +241,25 @@ class API(object):
             gen.get_servers(db)
         )
 
+    @csrf.exempt
     @api_request(GetClientChanges)
     def handle_client_list(self, request, db):
         return GetClientChangesSuccess(
             gen.get_client_replication_list(db)
         )
 
+    @csrf.exempt
     @api_request(GetChanges)
     def handle_replication(self, request, db):
-        # actual_count = gen.get_trail_id(db)
-        # print "actual_count ", actual_count
 
         client_id = request.client_id
         received_count = request.received_count
-        # print "received_count", received_count
-        # if received_count > actual_count:
-        #     return InvalidReceivedCount()
-        # print "replication client_id = %s, received_count = %s" % (
-        # client_id, received_count)
         res = GetChangesSuccess(
             gen.get_trail_log(db, client_id, received_count)
         )
         return res
 
+    @csrf.exempt
     @api_request(GetDomainChanges)
     def handle_domain_replication(self, request, db):
         actual_count = gen.get_trail_id(db)
@@ -235,6 +279,7 @@ class API(object):
         )
         return res
 
+    @csrf.exempt
     @api_request(GetChanges)
     def handle_delreplicated(self, request, db):
         actual_count = gen.get_trail_id(db)
@@ -273,12 +318,32 @@ class API(object):
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
 
+    @api_request(general.RequestFormat)
+    def handle_general_country(self, request, db):
+        return controller.process_general_request(request, db)
+
+    @api_request(general.RequestFormat)
+    def handle_general_domain(self, request, db):
+        return controller.process_general_request(request, db)
+
     @api_request(knowledgemaster.RequestFormat)
     def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db):
+        return controller.process_knowledge_transaction_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_getstatumaster(self, request, db):
+        return controller.process_knowledge_transaction_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_getmappingmaster(self, request, db):
+        return controller.process_knowledge_transaction_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_getmapping(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
 
     @api_request(knowledgereport.RequestFormat)
@@ -319,118 +384,71 @@ class API(object):
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
 )
-template_env = jinja2.Environment(loader=template_loader)
+app.jinja_loader = template_loader
+
+TEMP_PATH = os.path.join(ROOT_PATH, "Src-client", "files")
+KNOW_PATH = os.path.join(TEMP_PATH, "knowledge")
+COMMON_PATH = os.path.join(KNOW_PATH, "common")
+JS_PATH = os.path.join(COMMON_PATH, "js")
+CSS_PATH = os.path.join(COMMON_PATH, "css")
+IMG_PATH = os.path.join(COMMON_PATH, "images")
+FONT_PATH = os.path.join(COMMON_PATH, "fonts")
+SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
+
+STATIC_PATHS = [
+    ("/knowledge/css/<path:filename>", CSS_PATH),
+    ("/knowledge/js/<path:filename>", JS_PATH),
+    ("/knowledge/images/<path:filename>", IMG_PATH),
+    ("/knowledge/fonts/<path:filename>", FONT_PATH),
+    ("/knowledge/script/<path:filename>", SCRIPT_PATH)
+]
+
+def staticTemplate(pathname, filename):
+    return send_from_directory(pathname, filename)
 
 
-class TemplateHandler(tornado.web.RequestHandler):
-    def initialize(self, path_desktop, path_mobile, parameters):
-        self.__path_desktop = path_desktop
-        self.__path_mobile = path_mobile
-        self.__parameters = parameters
-
-    def set_path(self, url):
+def renderTemplate(pathname):
+    def set_path(url):
         if url.startswith("/"):
             new_url = "/knowledge" + url
-        else:
+        else :
             new_url = "/knowledge/" + url
         return new_url
 
-    def update_static_urls(self, content):
+    def update_static_urls(content):
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
-            new_url = self.set_path(url)
-            if node.tag == "script":
-                new_url += "?v=%s" % (FILE_VERSION)
-            if node.tag == "img":
-                new_url += "?v=%s" % (FILE_VERSION)
+            new_url = set_path(url)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
-                new_url = self.set_path(url)
-                if node.tag == "link":
-                    new_url += "?v=%s" % (FILE_VERSION)
+                new_url = set_path(url)
             else:
                 new_url = url
-                if node.tag == "link":
-                    new_url += "?v=%s" % (FILE_VERSION)
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
         return data
 
-    def get(self, url=None):
-        if url is not None:
-            print "url:{}".format(url)
-        path = self.__path_desktop
-        if self.__path_mobile is not None:
-            useragent = self.request.headers.get("User-Agent")
-            if useragent is None:
-                useragent = ""
-            user_agent = parse(useragent)
-            if user_agent.is_mobile:
-                path = self.__path_mobile
-        mime_type, encoding = mimetypes.guess_type(path)
-        self.set_header("Content-Type", mime_type)
-        template = template_env.get_template(path)
-        output = template.render(**self.__parameters)
-        output = self.update_static_urls(output)
-        token = str(time.time())
-        # print token
-        self.set_cookie("_xsrf", token)
-        # self.set_cookie("_test", to)
-        # if not self.get_cookie("_xsrf"):
-        #     token = self.xsrf_token
-        #     self.set_cookie("_xsrf", token)
-        self.write(output)
-
-
-class TokenHandler(tornado.web.RedirectHandler):
-    def initialize(self):
-        pass
-
-    def get(self):
-        print "token handler called"
-        if not self.get_cookie("_xsrf"):
-            print "not cookie"
-            token = self.xsrf_token
-            self.set_cookie("_xsrf", token)
-            self.write(dict(xsrf=token))
-        else:
-            self.write(dict(xsrf=self.get_cookie('_xsrf')))
-
+    # temp = template_env.get_template(pathname)
+    # output = temp.render()
+    output = render_template(pathname)
+    output = update_static_urls(output)
+    return output
 
 #
 # run_server
 #
 def run_server(port):
-    io_loop = IOLoop()
 
     def delay_initialize():
-        db = Database(
-            KNOWLEDGE_DB_HOST,
-            KNOWLEDGE_DB_PORT,
-            KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-            KNOWLEDGE_DATABASE_NAME
-        )
-        db.connect()
-
-        web_server = WebServer(io_loop)
-
-        # web_server.url("/", GET=handle_root)
-
-        for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS:
-            args = {
-                "path_desktop": path_desktop,
-                "path_mobile": path_mobile,
-                "parameters": parameters
-            }
-            web_server.low_level_url(url, TemplateHandler, args)
-
-        web_server.low_level_url("/knowledge/token", TokenHandler)
-        api = API(io_loop, db)
+        # dbcon = None
+        mysqlConPool = before_first_request()
+        api = API(mysqlConPool)
+        print "%" * 50
 
         # post urls
         api_urls_and_handlers = [
@@ -441,121 +459,38 @@ def run_server(port):
             ("/knowledge/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
-            (
-                "/knowledge/api/console_admin",
-                api.handle_console_admin
-            ),
+            ("/knowledge/api/console_admin", api.handle_console_admin),
             ("/knowledge/api/techno", api.handle_techno),
-            (
-                "/knowledge/api/handle_client_admin_settings",
-                api.handle_client_admin_settings
-            ),
+            ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
-            (
-                "/knowledge/api/knowledge_transaction",
-                api.handle_knowledge_transaction
-            ),
+            ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),
             ("/knowledge/api/knowledge_report", api.handle_knowledge_report),
-            (
-                "/knowledge/api/techno_transaction",
-                api.handle_techno_transaction
-            ),
+            ("/knowledge/api/techno_transaction", api.handle_techno_transaction),
             ("/knowledge/api/techno_report", api.handle_techno_report),
             ("/knowledge/api/files", api.handle_format_file),
-            (
-                "/knowledge/api/client_coordination_master",
-                api.handle_client_coordination_master
-            )
+            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master)
         ]
-        for url, handler in api_urls_and_handlers:
-            web_server.url(url, POST=handler, OPTIONS=cors_handler)
 
-        server_path = os.path.join(ROOT_PATH, "Src-server")
-        server_path = os.path.join(server_path, "server")
-        format_path = os.path.join(server_path, "knowledgeformat")
-        logo_path = os.path.join(server_path, "clientlogo")
+        for idx, path in enumerate(TEMPLATE_PATHS):
+            app.add_url_rule(
+                path[0], view_func=renderTemplate, methods=['GET'],
+                defaults={'pathname': path[1]}
+            )
 
-        web_server.low_level_url(
-            r"/knowledge/compliance_format/(.*)",
-            StaticFileHandler,
-            dict(path=format_path)
-        )
+        for path in STATIC_PATHS:
+            app.add_url_rule(
+                path[0], view_func=staticTemplate, methods=['GET'],
+                defaults={'pathname': path[1]}
+            )
 
-        web_server.low_level_url(
-            r"/knowledge/clientlogo/(.*)",
-            StaticFileHandler,
-            dict(path=logo_path)
-        )
+        for u in api_urls_and_handlers:
+            app.add_url_rule(u[0], view_func=u[1], methods=['POST'])
 
-        static_path = os.path.join(ROOT_PATH, "Src-client")
-        files_path = os.path.join(static_path, "files")
-        know_path = os.path.join(files_path, "knowledge")
-        common_path = os.path.join(know_path, "common")
-        css_path = os.path.join(common_path, "css")
-
-        # desktop_path = os.path.join(files_path, "desktop")
-        # common_path = os.path.join(desktop_path, "common")
-        images_path = os.path.join(common_path, "images")
-        css_path = os.path.join(common_path, "css")
-        js_path = os.path.join(common_path, "js")
-        fonts = os.path.join(common_path, "fonts")
-        # script_path = os.path.join(know_path, "knowledge")
-        login_path = os.path.join(know_path, "login")
-
-        web_server.low_level_url(
-            r"/images/(.*)",
-            StaticFileHandler, dict(path=images_path)
-        )
-        web_server.low_level_url(
-            r"/knowledge/images/(.*)",
-            StaticFileHandler, dict(path=images_path)
-        )
-        web_server.low_level_url(
-            r"/knowledge/css/(.*)",
-            StaticFileHandler, dict(path=css_path)
-        )
-        web_server.low_level_url(
-            r"/knowledge/js/(.*)",
-            StaticFileHandler, dict(path=js_path)
-        )
-        web_server.low_level_url(
-            r"/knowledge/fonts/(.*)",
-            StaticFileHandler, dict(path=fonts)
-        )
-        web_server.low_level_url(
-            r"/knowledge/common/(.*)",
-            StaticFileHandler,
-            dict(path=common_path)
-        )
-        web_server.low_level_url(
-            r"/knowledge/script/(.*)",
-            StaticFileHandler,
-            dict(path=know_path)
-        )
-        web_server.low_level_url(
-            r"/knowledge/login/(.*)",
-            StaticFileHandler,
-            dict(path=login_path)
-        )
-
-        api_design_path = os.path.join(
-            ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html"
-        )
-        web_server.low_level_url(
-            r"/knowledge/api-design/(.*)", StaticFileHandler,
-            dict(path=api_design_path)
-        )
-        web_server.low_level_url(
-            r"/knowledge/(.*)", StaticFileHandler,
-            dict(path=static_path)
-        )
-        web_server.low_level_url(
-            r"/(.*)", StaticFileHandler,
-            dict(path=static_path)
-        )
         print "Listening port: %s" % port
-        web_server.start(port, backlog=1000)
 
-    io_loop.add_callback(delay_initialize)
-    io_loop.run()
+    delay_initialize()
+    settings = {
+        "threaded": True
+    }
+    app.run(host="127.0.0.1", port=port, **settings)

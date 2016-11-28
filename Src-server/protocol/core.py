@@ -1337,7 +1337,7 @@ class MappedCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id," "comp_name", "is_active",
-            "is_approved", "approval_status_text",
+            "is_approved", "a_s_t",
             "remarks"
         ])
         compliance_id = data.get("comp_id")
@@ -1386,26 +1386,26 @@ class StatutoryMapping(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "country_name",
-            "domain_name", "industry_names",
-            "statutory_nature_name",
-            "statutory_mappings",
-            "mapped_compliances",
-            "geography_mappings", "approval_status_id", "is_active",
-            "approval_status_text", "mapping_id"
+            "c_name",
+            "d_name", "i_names",
+            "s_n_name",
+            "s_maps",
+            "mapped_comps",
+            "geo_maps", "a_s_id", "is_active",
+            "a_s_t", "m_id"
         ])
-        country_name = data.get("country_name")
-        domain_name = data.get("domain_name")
-        industry_names = data.get("industry_names")
-        statutory_nature_name = data.get("statutory_nature_name")
-        statutory_mappings = data.get("statutory_mappings")
-        mapped_compliances = data.get("mapped_compliances")
-        geography_mappings = data.get("geography_mappings")
-        approval_status = data.get("approval_status_id")
+        country_name = data.get("c_name")
+        domain_name = data.get("d_name")
+        industry_names = data.get("i_names")
+        statutory_nature_name = data.get("s_n_name")
+        statutory_mappings = data.get("s_maps")
+        mapped_compliances = data.get("mapped_comps")
+        geography_mappings = data.get("geo_maps")
+        approval_status = data.get("a_s_id")
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        approval_status_text = data.get("approval_status_text")
-        mapping_id = data.get("mapping_id")
+        approval_status_text = data.get("a_s_t")
+        mapping_id = data.get("m_id")
         return StatutoryMapping(
             country_name, domain_name,
             industry_names, statutory_nature_name, statutory_mappings,
@@ -1416,17 +1416,17 @@ class StatutoryMapping(object):
 
     def to_structure(self):
         return {
-            "country_name": self.country_name,
-            "domain_name": self.domain_name,
-            "industry_names": self.industry_names,
-            "statutory_nature_name": self.statutory_nature_name,
-            "statutory_mappings": self.statutory_mappings,
-            "mapped_compliances": self.mapped_compliances,
-            "geography_mappings": self.geography_mappings,
-            "approval_status_id": self.approval_status,
+            "c_name": self.country_name,
+            "d_name": self.domain_name,
+            "i_names": self.industry_names,
+            "s_n_name": self.statutory_nature_name,
+            "s_maps": self.statutory_mappings,
+            "mapped_comps": self.mapped_compliances,
+            "geo_maps": self.geography_mappings,
+            "a_s_id": self.approval_status,
             "is_active": self.is_active,
-            "approval_status_text": self.approval_status_text,
-            "mapping_id": self.mapping_id
+            "a_s_t": self.approval_status_text,
+            "m_id": self.mapping_id
         }
 
 #
@@ -3186,18 +3186,18 @@ class ValidityDates(object):
 class ClientGroupMaster(object):
     def __init__(
         self, country_ids, group_id, group_name, is_active, is_approved
-    ):  
+    ):
         self.country_ids = country_ids
         self.group_id = group_id
         self.group_name = group_name
         self.is_active = is_active
         self.is_approved = is_approved
-        
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "country_ids", "group_id", "group_name", 
+                "country_ids", "group_id", "group_name",
                 "is_active", "is_approved", "remarks"
             ]
         )
@@ -3206,7 +3206,7 @@ class ClientGroupMaster(object):
         group_name = data.get("group_name")
         is_active = data.get("is_active")
         is_approved = data.get("is_approved")
-        
+
         return ClientGroupMaster(
             country_ids, group_id, group_name,
             is_active, is_approved

@@ -1,6 +1,7 @@
 // var BASE_URL = "http://127.0.0.1:8082/";
 var BASE_URL = '/knowledge/api/';
 var login_url = '/knowledge/login';
+var csrf_token = $('meta[name=csrf-token]').attr('content')
 var my_ip = null;
 function initMirror() {
   var DEBUG = true;
@@ -16,6 +17,7 @@ function initMirror() {
     return JSON.stringify(data, null, ' ');
   }
   function parseJSON(data) {
+    data = JSON.stringify(data);
     return JSON.parse(data);
   }
   function initSession(userProfile) {
@@ -46,7 +48,7 @@ function initMirror() {
     if (typeof info === 'undefined') {
       user = null;
     } else {
-      user = parseJSON(info);
+      user = JSON.parse(info);
     }
     return user;
   }
@@ -124,6 +126,17 @@ function initMirror() {
     else
       return null;
   }
+  function local_session_timeout(){
+    var myVar = setInterval(function(){ myTimer() }, 1000);
+    var t = 0;
+    function myTimer() {
+        t += 1;
+        console.log(t);
+      if (t == 2) {
+        clearInterval(myVar);
+      }
+    }
+  }
   function get_ip() {
     $.getJSON('http://jsonip.com?callback=?', function (data) {
       window.sessionStorage.my_ip = data.ip;
@@ -141,12 +154,12 @@ function initMirror() {
     };
     $.ajax({
       url: BASE_URL + callerName,
-      headers: {'X-Xsrftoken': getCookie('_xsrf')},
+      headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
       data: toJSON(requestFrame),
       success: function (data) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -180,11 +193,12 @@ function initMirror() {
     $.ajax({
       url: BASE_URL + callerName,
       // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+      headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
       data: toJSON(request),
       success: function (data) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -216,12 +230,13 @@ function initMirror() {
     ];
     $.ajax({
       url: BASE_URL + 'login',
+      headers: { 'X-CSRFToken': csrf_token },
       // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
       type: 'POST',
       contentType: 'application/json',
       data: toJSON(request),
       success: function (data) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -1514,13 +1529,14 @@ function initMirror() {
       },
 
       url: '/knowledge/api/files',
+      headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       crossDomain: true,
       data: formdata,
       processData: false,
       contentType: false,
       success: function (data, textStatus, jqXHR) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         if (Object.keys(response).length == 0)

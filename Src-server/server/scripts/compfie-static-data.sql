@@ -23,13 +23,14 @@ INSERT INTO tbl_form_type VALUES(4, "My Accounts");
 -- masters
 INSERT INTO tbl_forms VALUES(1, 1, 'Country', '/knowledge/country-master', 1,  null);
 INSERT INTO tbl_forms VALUES(2, 1, 'Domain', '/knowledge/domain-master', 2, null);
-INSERT INTO tbl_forms VALUES(3, 1, 'User Group', '/knowledge/user-group-master', 3, null);
+INSERT INTO tbl_forms VALUES(3, 1, 'User Group', '/knowledge/user-privileges', 3, null);
 INSERT INTO tbl_forms VALUES(4, 1, 'Geography Level Master', '/knowledge/geography-level-master', 4, 'Geography');
 INSERT INTO tbl_forms VALUES(5, 1, 'Geography Master', '/knowledge/geography-master', 5, 'Geography');
-INSERT INTO tbl_forms VALUES(6, 1, 'Organization Master', '/knowledge/industry-master', 6, null);
-INSERT INTO tbl_forms VALUES(7, 1, 'Statutory Nature Master', '/knowledge/statutory-nature-master', 7, 'Statutory');
+INSERT INTO tbl_forms VALUES(6, 1, 'Organization Master', '/knowledge/organization', 6, null);
+INSERT INTO tbl_forms VALUES(7, 1, 'Statutory Nature Master', '/knowledge/statutory-nature', 7, 'Statutory');
 INSERT INTO tbl_forms VALUES(8, 1, 'Statutory Level Master', '/knowledge/statutory-level-master', 8, 'Statutory');
 INSERT INTO tbl_forms VALUES(9, 1, 'Validity Date Settings', '/knowledge/validity-date-settings', 9, null);
+
 -- Transaction
 INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-management', 10, null);
 INSERT INTO tbl_forms VALUES(11, 2, 'User Mapping', '/knowledge/user-mapping', 11, null);
@@ -56,26 +57,27 @@ INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configu
 INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
 -- Reports
-INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping', 30, null);
+INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
 INSERT INTO tbl_forms VALUES(31, 3, 'Country Report', '/knowledge/country-report', 31, 'Master');
 INSERT INTO tbl_forms VALUES(32, 3, 'Domain Report', '/knowledge/domain-report', 32, 'Master');
 INSERT INTO tbl_forms VALUES(33, 3, 'Geography Report', '/knowledge/geography-report', 33, 'Master');
-INSERT INTO tbl_forms VALUES(34, 3, 'Organization Report', '/knowledge/industry-report', 34, 'Master');
+INSERT INTO tbl_forms VALUES(34, 3, 'Organization Report', '/knowledge/organization-report', 34, 'Master');
 INSERT INTO tbl_forms VALUES(35, 3, 'Statutory Nature Report', '/knowledge/statutory-nature-report', 35, 'Master');
 INSERT INTO tbl_forms VALUES(36, 3, 'Statutory Mapping Report', '/knowledge/statutory-mapping-report', 36, null);
 INSERT INTO tbl_forms VALUES(37, 3, 'Statutory Notifications List', '/knowledge/statutory-notifications-list', 37, null);
 INSERT INTO tbl_forms VALUES(38, 3, 'Client Agreement Master Report', '/knowledge/client-agreement-report', 38, null);
-INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Agreement Report', '/knowledge/domainwise-agreement-report', 39, null);
-INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-details-report', 40, null);
+INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Report', '/knowledge/domain-agreement-master-report', 39, null);
+INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-unit-details', 40, null);
 INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
-INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/assigned-statutory-report', 42, null);
+INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail', 43, null);
+
 -- My Account
-INSERT INTO tbl_forms VALUES(44, 3, 'View Profile', '/knowledge/profile', 44, null);
-INSERT INTO tbl_forms VALUES(45, 3, 'Change Password', '/knowledge/change-password', 45, null);
-INSERT INTO tbl_forms VALUES(46, 3, 'Messages', '/knowledge/messages', 46, null);
-INSERT INTO tbl_forms VALUES(47, 3, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
-INSERT INTO tbl_forms VALUES(48, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 48, null);
+INSERT INTO tbl_forms VALUES(44, 4, 'View Profile', '/knowledge/profile', 44, null);
+INSERT INTO tbl_forms VALUES(45, 4, 'Change Password', '/knowledge/change-password', 45, null);
+INSERT INTO tbl_forms VALUES(46, 4, 'Messages', '/knowledge/messages', 46, null);
+INSERT INTO tbl_forms VALUES(47, 4, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
+
 
 -- form_id, category_id_1, category_id_2, category_id_3, category_id_4, category_id_5, category_id_6, category_id_7, category_id_8
 -- Masters
@@ -111,7 +113,7 @@ INSERT INTO tbl_form_category VALUES(27, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(28, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(29, 0, 1, 0, 0, 0, 0, 0, 0);
 -- Reports
-INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(31, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(32, 1, 0, 0, 0, 0, 0, 0, 1);
 INSERT INTO tbl_form_category VALUES(33, 1, 0, 0, 0, 0, 0, 0, 0);
@@ -131,7 +133,7 @@ INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
-INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 1, 0, 1, 0);
+
 
 
 

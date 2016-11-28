@@ -1,4 +1,5 @@
 import os
+import time
 from protocol import core, login, general, possiblefailure
 from server import logger
 from server.constants import (
@@ -27,7 +28,7 @@ __all__ = [
     "process_get_notifications",
     "process_update_notification_status",
     "process_uploaded_file",
-    "process_verify_password"   
+    "process_verify_password"
 ]
 
 forms = [1, 2]
@@ -52,6 +53,7 @@ def process_general_request(request, db):
     elif type(request_frame) is general.GetDomains:
         logger.logKnowledgeApi("GetDomains", "process begin")
         result = process_get_domains(db, user_id)
+        time.sleep(10)
         logger.logKnowledgeApi("GetDomains", "process end")
 
     elif type(request_frame) is general.SaveDomain:
@@ -398,7 +400,6 @@ def process_verify_password(db, request, user_id):
     encrypt_password = encrypt(password)
     response = verify_password(db, user_id, encrypt_password)
 
-    
     if response == 0:
         return general.InvalidPassword()
     else:

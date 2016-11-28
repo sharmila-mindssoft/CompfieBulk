@@ -9,8 +9,22 @@ CREATE TABLE `tbl_audit_log` (
   `tbl_auto_id` int(10),
   `column_name` varchar(100),
   `value` longtext,
+  `audit_type` tinyint(4),
   `client_id` int(10),
   `action` varchar(20)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_client_activity_log`;
+CREATE TABLE `tbl_client_activity_log` (
+  `client_activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `user_category_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `form_id` int(11) NOT NULL,
+  `action` varchar(500) NOT NULL,
+  `created_on` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_activity_log`;
@@ -740,6 +754,7 @@ CREATE TABLE `tbl_client_compliances` (
   `compliance_id` int(11) NOT NULL,
   `compliance_applicable_status` tinyint(4) DEFAULT '0',
   `compliance_opted_status` tinyint(4) DEFAULT '0',
+  `not_opted_remarks` longtext,
   `is_saved` tinyint(4) DEFAULT '0',
   `saved_by` int(11) DEFAULT NULL,
   `saved_on` timestamp NULL DEFAULT NULL,

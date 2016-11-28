@@ -251,7 +251,6 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
-        print "inner before: %s " % inner
         if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
