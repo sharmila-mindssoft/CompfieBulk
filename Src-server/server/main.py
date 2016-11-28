@@ -95,7 +95,8 @@ def api_request(request_data_type):
 def before_first_request():
     return mysql.connector.pooling.MySQLConnectionPool(
         pool_name="con_pool",
-        pool_size=10,
+        pool_size=32,
+        pool_reset_session=True,
         autocommit=False,
         user=KNOWLEDGE_DB_USERNAME,
         password=KNOWLEDGE_DB_PASSWORD,
@@ -113,7 +114,6 @@ class API(object):
         self._con_pool = con_pool
         # self._db_con = dbcon
         self._ip_addess = None
-        self._db = None
         # self._remove_old_session()
 
     # def _remove_old_session(self):
@@ -201,18 +201,17 @@ class API(object):
             # )
             # db.dbConfig(app)
             # self._db_con = db.connect()
-            self._db_con = self._con_pool.get_connection()
-            print self._db_con
-            self._db = Database(self._db_con)
-            self._db.begin()
-            response_data = unbound_method(self, request_data, self._db)
+            _db_con = self._con_pool.get_connection()
+            _db = Database(_db_con)
+            _db.begin()
+            response_data = unbound_method(self, request_data, _db)
             if response_data is None or type(response_data) is bool:
                 # print response_data
-                self._db.rollback()
+                _db.rollback()
             if type(response_data) != technomasters.ClientCreationFailed:
-                self._db.commit()
+                _db.commit()
             else:
-                self._db.rollback()
+                _db.rollback()
             # print response_data
             return respond(response_data)
         except Exception, e:
@@ -316,6 +315,14 @@ class API(object):
 
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
+        return controller.process_general_request(request, db)
+
+    @api_request(general.RequestFormat)
+    def handle_general_country(self, request, db):
+        return controller.process_general_request(request, db)
+
+    @api_request(general.RequestFormat)
+    def handle_general_domain(self, request, db):
         return controller.process_general_request(request, db)
 
     @api_request(knowledgemaster.RequestFormat)
@@ -451,61 +458,27 @@ def run_server(port):
             ("/knowledge/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
-            (
-                "/knowledge/api/console_admin",
-                api.handle_console_admin
-            ),
+            ("/knowledge/api/console_admin", api.handle_console_admin),
             ("/knowledge/api/techno", api.handle_techno),
-            (
-                "/knowledge/api/handle_client_admin_settings",
-                api.handle_client_admin_settings
-            ),
+            ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
+            ("/knowledge/api/domain_master", api.handle_general_domain),
+            ("/knowledge/api/country_master", api.handle_general_country),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
-            (
-                "/knowledge/api/knowledge_transaction",
-                api.handle_knowledge_transaction
-            ),
-            (
-                "/knowledge/api/knowledge_statutorymasters",
-                api.handle_knowledge_getstatumaster
-            ),
-            (
-                "/knowledge/api/knowledge_mappingmaster",
-                api.handle_knowledge_getmappingmaster
-            ),
-            (
-                "/knowledge/api/knowledge_mapping",
-                api.handle_knowledge_getmapping
-            ),
-            (
-                "/knowledge/api/knowledge_savemapping",
-                api.handle_knowledge_transaction
-            ),
-            (
-                "/knowledge/api/knowledge_updatemapping",
-                api.handle_knowledge_transaction
-            ),
-            (
-                "/knowledge/api/knowledge_duplicatemapping",
-                api.handle_knowledge_transaction
-            ),
-            (
-                "/knowledge/api/knowledge_mappingstatus",
-                api.handle_knowledge_transaction
-            ),
+            ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),
+            ("/knowledge/api/knowledge_statutorymasters", api.handle_knowledge_getstatumaster),
+            ("/knowledge/api/knowledge_mappingmaster", api.handle_knowledge_getmappingmaster),
+            ("/knowledge/api/knowledge_mapping", api.handle_knowledge_getmapping),
+            ("/knowledge/api/knowledge_savemapping", api.handle_knowledge_transaction),
+            ("/knowledge/api/knowledge_updatemapping", api.handle_knowledge_transaction),
+            ("/knowledge/api/knowledge_duplicatemapping", api.handle_knowledge_transaction),
+            ("/knowledge/api/knowledge_mappingstatus", api.handle_knowledge_transaction),
 
             ("/knowledge/api/knowledge_report", api.handle_knowledge_report),
-            (
-                "/knowledge/api/techno_transaction",
-                api.handle_techno_transaction
-            ),
+            ("/knowledge/api/techno_transaction", api.handle_techno_transaction),
             ("/knowledge/api/techno_report", api.handle_techno_report),
             ("/knowledge/api/files", api.handle_format_file),
-            (
-                "/knowledge/api/client_coordination_master",
-                api.handle_client_coordination_master
-            )
+            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master)
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):
