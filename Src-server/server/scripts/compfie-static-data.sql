@@ -165,7 +165,7 @@ INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
 INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
 
---tbl_verification_type
+-- tbl_verification_type
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");

@@ -5,6 +5,7 @@ from server.common import (
 )
 from server.constants import SESSION_CUTOFF
 from dateutil import relativedelta
+from server.exceptionmessage import fetch_error
 
 __all__ = [
     "verify_login",
@@ -158,10 +159,14 @@ def update_password(db, password, user_id):
         "sp_tbl_user_login_details_update",
         (user_id, encrypt(password)), 1
     )
+    
+    if len(result) == 0:
+        raise fetch_error()
+    
     employee_name = result[0][0]["username"]
-
     action = "\"%s\" has updated his/her password" % (employee_name)
     db.save_activity(user_id, 0, action)
+
 
     if result:
         return True

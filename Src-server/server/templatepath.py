@@ -444,5 +444,10 @@ TEMPLATE_PATHS = [
         r"/knowledge/userregistration/([a-zA-Z-0-9]+)",
         "files/knowledge/login/create-login-details.html",
         None, {}
+    ),
+    (
+        r"/knowledge/group-admin-registration-email",
+        "files/desktop/knowledge/group-admin-registration-email/group-admin-registration-email.html",
+        None, {}
     )
 ]

@@ -13,7 +13,6 @@ var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
 
 $('#btn-country-add').click(function () {
-  alert("hi")
   $('#ctry-view').hide();
   $('#country-add').show();
   $('#country-name').val('');
