@@ -3719,7 +3719,8 @@ CREATE  PROCEDURE `sp_tbl_statutory_masterdata`(
 in userid int(11))
 BEGIN
     select t1.statutory_id, t1.level_id, t1.statutory_name,
-    t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id
+    t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id,
+    t2.level_position
     from tbl_statutories as t1
     inner join tbl_statutory_levels as t2 on t2.level_id = t1.level_id
     inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
