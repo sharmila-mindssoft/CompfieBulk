@@ -81,8 +81,15 @@ function bindLegalEntityClosureData(data, j)
 		$('#close', clone).show();
 		$('#close', clone).addClass('-'+val.legal_entity_id)
 		$('#close', clone).on('click', function() {
+      Custombox.open({
+          target: '#custom-modal',
+          effect: 'contentscale',
+          open:   function() {
             popup_toggle(this.className, val.legal_entity_id, 'close');
-          });
+          } 
+        });
+            
+    });
 		//$('.modal')
 		$('#reactive', clone).hide();
 		$('.closed', clone).hide();
@@ -107,8 +114,15 @@ function bindLegalEntityClosureData(data, j)
 			$('#reactive', clone).show();
 			$('#reactive', clone).addClass('-'+val.legal_entity_id)
 			$('#reactive', clone).on('click', function() {
-	            popup_toggle(this.className, val.legal_entity_id, 'reactive');
-	          });
+				Custombox.open({
+	        target: '#custom-modal',
+	        effect: 'contentscale',
+	        open:   function() {
+	          popup_toggle(this.className, val.legal_entity_id, 'reactive');
+	        } 
+  			});
+          
+      });
 			$('#reactive', clone).attr('title', val.validity_days+' days left')
 			$('.closed', clone).hide();
 			$('.closed', clone).text('');
@@ -122,7 +136,7 @@ function bindLegalEntityClosureData(data, j)
 function popup_toggle(e, le_id, mode)
 {
 	var split_e_le_id = e.split("-")[2].trim();
-	$('.modal').show();
+	//$('.modal').show();
 	$('#techno_pwd').val('');
 	$('#remarks').val('');
 	toggle_le_id = split_e_le_id+","+mode;
