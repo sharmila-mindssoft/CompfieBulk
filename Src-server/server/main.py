@@ -407,7 +407,7 @@ def staticTemplate(pathname, filename):
     return send_from_directory(pathname, filename)
 
 
-def renderTemplate(pathname):
+def renderTemplate(pathname, code=None):
     def set_path(url):
         if url.startswith("/"):
             new_url = "/knowledge" + url
