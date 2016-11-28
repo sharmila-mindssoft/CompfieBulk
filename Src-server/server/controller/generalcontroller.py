@@ -53,7 +53,6 @@ def process_general_request(request, db):
     elif type(request_frame) is general.GetDomains:
         logger.logKnowledgeApi("GetDomains", "process begin")
         result = process_get_domains(db, user_id)
-        time.sleep(10)
         logger.logKnowledgeApi("GetDomains", "process end")
 
     elif type(request_frame) is general.SaveDomain:
