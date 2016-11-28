@@ -191,7 +191,7 @@ CREATE TABLE `tbl_user_domains` (
   `country_id` int(11) NOT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`domain_id`,`user_id`),
+  UNIQUE KEY (`user_id`, `domain_id`, `country_id`),
   KEY `fk_tbl_users_domains_user_id` (`user_id`),
   CONSTRAINT `fk_tbl_user_domains_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
   CONSTRAINT `fk_tbl_users_domains_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
