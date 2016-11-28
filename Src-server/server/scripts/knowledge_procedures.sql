@@ -2987,6 +2987,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of client agreement details
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_agreement_details`;
 DELIMITER //
 CREATE PROCEDURE `sp_client_agreement_details`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
@@ -3047,6 +3048,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of client agreement details record count
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_agreement_details_count`;
 DELIMITER //
 CREATE PROCEDURE `sp_client_agreement_details_count`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
@@ -3094,6 +3096,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of domainwise agreement details
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domainwise_agreement_details`;
 DELIMITER //
 CREATE PROCEDURE `sp_domainwise_agreement_details`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
@@ -3147,6 +3150,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of domainwise agreement details record count
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domainwise_agreement_details_count`;
 DELIMITER //
 CREATE PROCEDURE `sp_domainwise_agreement_details_count`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
@@ -3189,6 +3193,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of statutory notification report details
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_notification_details`;
 DELIMITER //
 CREATE PROCEDURE `sp_statutory_notification_details`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
@@ -3220,6 +3225,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of statutory notification details record count
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_notification_details_count`;
 DELIMITER //
 CREATE PROCEDURE `sp_statutory_notification_details_count`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
