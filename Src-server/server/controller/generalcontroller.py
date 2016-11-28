@@ -217,9 +217,9 @@ def process_get_domains(db, user_id):
 # To update the profile of the given user
 ########################################################
 def procees_update_user_profile(db, request, session_user):
-    update_profile(db, request.contact_no, request.address, session_user)
+    update_profile(db, request.contact_no, request.address, request.mobile_no, request.email_id, session_user)
     return general.UpdateUserProfileSuccess(
-        request.contact_no, request.address
+        request.contact_no, request.address, request.mobile_no, request.email_id
     )
 
 

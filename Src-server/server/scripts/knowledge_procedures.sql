@@ -41,6 +41,7 @@ BEGIN
 		SELECT T1.user_id, T1.user_category_id, T1.employee_code, T1.employee_name,
         T1.email_id, T1.contact_no, T1.mobile_no,
 		T1.address, T1.designation, @_user_group_id := T1.user_group_id as user_group_id,
+		(select ld.username from tbl_user_login_details ld where ld.user_id = T1.user_id) as user_name,
         (select tg.user_group_name from tbl_user_groups tg where tg.user_group_id = T1.user_group_id) as user_group_name
 		FROM tbl_users as T1 WHERE T1.user_id = @_user_id;
 
@@ -4949,6 +4950,26 @@ END//
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
+-- To veryfy user password
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_verify_password`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_verify_password`(
+IN userid_ INT(11), password_ VARCHAR(50)
+)
+BEGIN
+	SELECT
+		count(u.user_id) as count
+	FROM
+		tbl_user_login_details u
+	WHERE
+		u.user_id = userid_ AND u.password = password_ AND u.is_active = 1;
+
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
@@ -4993,5 +5014,22 @@ BEGIN
 			INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id
 			ORDER BY country_name, level_position, geography_name;
 	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- update knowledge user view profile
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_profile`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_profile`(
+IN contactno_ VARCHAR(20), IN address_ VARCHAR(250),
+    IN mobileno_ VARCHAR(20), IN emailid_ VARCHAR(100), IN userid_ INT(11)
+)
+BEGIN
+	UPDATE tbl_users set contact_no = contactno_, address = address_,
+    mobile_no = mobileno_, email_id = emailid_  WHERE user_id= userid_;
+    UPDATE tbl_user_login_details set email_id = emailid_  WHERE user_id= userid_;
 END//
 DELIMITER;

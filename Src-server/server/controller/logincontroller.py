@@ -142,6 +142,7 @@ def mobile_user_login_respone(db, data, request, ip):
 
 def user_login_response(db, ip, data, forms):
     data = data[0]
+    user_name = data["user_name"]
     user_id = data["user_id"]
     email_id = data["email_id"]
     session_type = 1  # web
@@ -153,6 +154,7 @@ def user_login_response(db, ip, data, forms):
     address = None if data["address"] == "" else data["address"]
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
+    mobile_no = data["mobile_no"]
     #form_ids = data["form_ids"]
     #menu = process_user_forms(db, form_ids)
     #print "menu before user login success: %s" % menu
@@ -164,7 +166,7 @@ def user_login_response(db, ip, data, forms):
     return login.UserLoginSuccess(
         int(user_id), session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        designation, None, bool(1)
+        designation, None, bool(1), user_name, mobile_no
     )
 
 def admin_login_response(db, ip, result, forms):

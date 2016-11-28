@@ -275,7 +275,7 @@ class UserLoginSuccess(Response):
     def __init__(
         self, user_id, session_token, email_id, user_group_name, menu,
         employee_name, employee_code, contact_no, address, designation, client_id,
-        is_admin
+        is_admin, username, mobile_no
     ):
         self.user_id = user_id
         self.session_token = session_token
@@ -289,13 +289,15 @@ class UserLoginSuccess(Response):
         self.designation = designation
         self.client_id = client_id
         self.is_admin = is_admin
+        self.username = username
+        self.mobile_no = mobile_no
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "user_id", "session_token", "email_id",
             "user_group_name", "menu", "employee_name", "employee_code",
-            "contact_no", "address", "designation", "user_client_id", "is_admin"])
+            "contact_no", "address", "designation", "user_client_id", "is_admin", "username", "mobile_no"])
         user_id = data.get("user_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
@@ -308,10 +310,12 @@ class UserLoginSuccess(Response):
         designation = data.get("designation")
         client_id = data.get("user_client_id")
         is_admin = data.get("is_admin")
+        username = data.get("username")
+        mobile_no = data.get("mobile_no")
         return UserLoginSuccess(
             user_id, session_token, email_id, user_group_name, menu,
             employee_name, employee_code, contact_no, address,
-            designation, client_id, is_admin)
+            designation, client_id, is_admin, username, mobile_no)
 
     def to_inner_structure(self):
         return {
@@ -326,7 +330,9 @@ class UserLoginSuccess(Response):
             "address": self.address,
             "designation": self.designation,
             "user_client_id": self.client_id,
-            "is_admin": self.is_admin
+            "is_admin": self.is_admin,
+            "username": self.username,
+            "mobile_no": self.mobile_no
         }
 
 class AdminLoginSuccess(Response):

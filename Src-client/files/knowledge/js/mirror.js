@@ -56,6 +56,8 @@ function initMirror() {
     var info = getUserInfo();
     info.contact_no = response.contact_no;
     info.address = response.address;
+    info.mobile_no = response.mobile_no;
+    info.email_id = response.email_id;
     window.sessionStorage.userInfo = toJSON(info);
   }
   function getUserProfile() {
@@ -68,8 +70,10 @@ function initMirror() {
       'employee_code': info.employee_code,
       'email_id': info.email_id,
       'contact_no': info.contact_no,
+      'mobile_no': info.mobile_no,
       'address': info.address,
-      'designation': info.designation
+      'designation': info.designation,
+      'user_name': info.username
     };
     return userDetails;
   }
@@ -1417,13 +1421,15 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function updateUserProfile(contact_no, address, callback) {
+  function updateUserProfile(contact_no, address, mobile_no, email_id, callback) {
     callerName = 'general';
     var request = [
       'UpdateUserProfile',
       {
         'contact_no': contact_no,
-        'address': address
+        'address': address,
+        'mobile_no': mobile_no,
+        'email_id': email_id
       }
     ];
     apiRequest(callerName, request, callback);

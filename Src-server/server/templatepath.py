@@ -206,7 +206,7 @@ TEMPLATE_PATHS = [
     ("/knowledge/home", "files/knowledge/home/home.html", None, {}),
     (
         "/knowledge/profile",
-        "files/knowledge/profile.html",
+        "files/knowledge/profile/profile.html",
         None, {}
     ),
     (

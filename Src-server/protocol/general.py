@@ -39,21 +39,27 @@ class Request(object):
 
 
 class UpdateUserProfile(Request):
-    def __init__(self, contact_no, address):
+    def __init__(self, contact_no, address, mobile_no, email_id):
         self.contact_no = contact_no
         self.address = address
+        self.mobile_no = mobile_no
+        self.email_id = email_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["contact_no", "address"])
+        data = parse_dictionary(data, ["contact_no", "address", "mobile_no", "email_id"])
         contact_no = data.get("contact_no")
         address = data.get("address")
-        return UpdateUserProfile(contact_no, address)
+        mobile_no = data.get("mobile_no")
+        email_id = data.get("email_id")
+        return UpdateUserProfile(contact_no, address, mobile_no, email_id)
 
     def to_inner_structure(self):
         return {
             "contact_no": self.contact_no,
             "address": self.address,
+            "mobile_no": self.mobile_no,
+            "email_id": self.email_id
         }
 
 
@@ -340,21 +346,27 @@ class Response(object):
 
 
 class UpdateUserProfileSuccess(Response):
-    def __init__(self, contact_no, address):
+    def __init__(self, contact_no, address, mobile_no, email_id):
         self.contact_no = contact_no
         self.address = address
+        self.mobile_no = mobile_no
+        self.email_id = email_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["contact_no", "address"])
+        data = parse_dictionary(data, ["contact_no", "address", "mobile_no", "email_id"])
         contact_no = data.get("contact_no")
         address = data.get("address")
-        return UpdateUserProfile(contact_no, address)
+        mobile_no = data.get("mobile_no")
+        email_id = data.get("email_id")
+        return UpdateUserProfile(contact_no, address, mobile_no, email_id)
 
     def to_inner_structure(self):
         return {
             "contact_no": self.contact_no,
             "address": self.address,
+            "mobile_no": self.mobile_no,
+            "email_id": self.email_id
         }
 
 
