@@ -3272,6 +3272,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get organizationwise unit count details
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_organizationwise_unit_count`;
 DELIMITER //
 CREATE PROCEDURE `sp_organizationwise_unit_count`(IN legalentityid_ INT(11), IN domainid_ INT(11))
 BEGIN
