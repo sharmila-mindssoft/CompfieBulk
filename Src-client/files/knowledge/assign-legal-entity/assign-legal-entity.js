@@ -314,7 +314,9 @@ function pageControls() {
     if (textval.length > 0) {
         for (var i in users) {
             if (~users[i].employee_name.toLowerCase().indexOf(textval.toLowerCase()) && users[i].is_active == true){
+              console.log(users[i]);
               if (checkusercountries(users[i].user_id, users[i].country_ids) == 1) {
+                console.log(users[i].user_id);
               suggestions.push([
                 users[i].user_id,
                 users[i].employee_name
