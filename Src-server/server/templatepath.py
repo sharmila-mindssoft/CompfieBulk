@@ -330,6 +330,11 @@ TEMPLATE_PATHS = [
         "files/knowledge/assign-legal-entity/assign-legal-entity.html",
         None, {}
     ),
+    (
+        "/knowledge/legal-entity-closure",
+        "files/knowledge/legal-entity-closure/legal-entity-closure.html",
+        None, {}
+    ),
     # Techno user master
     (
         "/knowledge/client-unit",
