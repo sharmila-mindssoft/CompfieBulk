@@ -1387,7 +1387,7 @@ function initMirror() {
     callerName = 'techno_report';
     apiRequest(callerName, request, callback);
   }
-  function getAuditTrail(fromDate, toDate, userId, formId, recordCount, pageCount, callback) {
+  function getAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, recordCount, pageCount, callback) {
     callerName = 'general';
     var request = [
       'GetAuditTrails',
@@ -1396,6 +1396,8 @@ function initMirror() {
         'to_date': toDate,
         'user_id': userId,
         'form_id': formId,
+        'country_id': countryId,
+        'category_id': categoryId,
         'record_count': recordCount,
         'page_count': pageCount
       }
@@ -1876,7 +1878,7 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, callback) {
+  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, callback) {
     callerName = 'techno_report';
     var request = [
       'GetUserMappingDetailsReportData',
@@ -1884,6 +1886,7 @@ function initMirror() {
         'country_id': countryId,
         'client_id': clientId,
         'legal_entity_id': legalEntityId,
+        'u_m_none': u_m_none,
       }
     ];
     apiRequest(callerName, request, callback);
