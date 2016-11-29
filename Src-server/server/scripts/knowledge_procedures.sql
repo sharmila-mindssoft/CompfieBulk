@@ -424,18 +424,23 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_audit_trails`(
 	IN _from_date varchar(10), IN _to_date varchar(10),
 	IN _user_id varchar(10), IN _form_id varchar(10),
+	IN _country_id int(11), IN _category_id int(11),
 	IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
 	SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
-	SELECT user_id, employee_name, employee_code, is_active
+	SELECT user_id, user_category_id, concat(employee_name, '-',employee_code) as employee_name, is_active
 	FROM tbl_users;
-	SELECT user_id, form_id, action, created_on
-	FROM tbl_activity_log
+	SELECT t1.user_id, t1.form_id, t1.action, t1.created_on
+	FROM tbl_activity_log as t1, tbl_users as t2, tbl_user_countries as t3
 	WHERE
-		date(created_on) >= _from_date
-		AND date(created_on) <= _to_date
-		AND user_id LIKE _user_id AND form_id LIKE _form_id
+		date(t1.created_on) >= _from_date
+		AND date(t1.created_on) <= _to_date
+		AND t1.form_id LIKE _form_id
+		AND t1.user_id LIKE t2._user_id
+		AND t3.user_id = t2.user_id
+		AND t2.user_id LIKE _user_id
+		AND t2.user_category_id LIKE _category_id
 		ORDER BY user_id ASC, DATE(created_on) DESC
 		limit _from_limit, _to_limit;
 
@@ -4968,5 +4973,64 @@ BEGIN
 			INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id
 			ORDER BY country_name, level_position, geography_name;
 	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get Statutory level details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutorymapping_report_levl1_list`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutorymapping_report_levl1_list`()
+BEGIN
+	SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+	t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+	INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+	INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+	INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
+	WHERE t2.level_position=1;
+END//
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutorymapping_report_statutorymaster`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutorymapping_report_statutorymaster`(
+in statutoryId int(11))
+BEGIN
+	if statutoryId is not null then
+		SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+		t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+		INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+		INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
+		where t1.statutory_id = statutoryId;
+	else
+		SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+		t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+		INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+		INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id;
+	end if;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- countries list for audir trail
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_countries_for_audit_trails`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_countries_for_audit_trails`()
+BEGIN
+	select t1.user_id, t1.country_id,
+	(select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
+	(select country_name from tbl_countries where country_id = t1.country_id) as country_id
+	from
+	tbl_user_coutries as t1;
 END//
 DELIMITER;
