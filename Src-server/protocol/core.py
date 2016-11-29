@@ -921,7 +921,7 @@ class Industry(object):
             "industry_name": self.industry_name,
             "is_active": self.is_active
         }
-        return data
+        return to_structure_dictionary_values(data)
 
 
 class Industries(object):
@@ -2615,27 +2615,27 @@ class UserGroupDetails(object):
 #
 
 class User(object):
-    def __init__(self, user_id, employee_name, is_active):
+    def __init__(self, user_id, user_category_id, employee_name, is_active):
         self.user_id = user_id
+        self.user_category_id = user_category_id
         self.employee_name = employee_name
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "employee_name", "is_active"])
+        data = parse_dictionary(data, ["user_id", "user_category_id", "employee_name", "is_active"])
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        user_category_id = data.get("user_category_id")
         employee_name = data.get("employee_name")
-        employee_name = parse_structure_CustomTextType_250(employee_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
-        return User(user_id, employee_name, is_active)
+        return User(user_id, user_category_id, employee_name, is_active)
 
     def to_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "employee_name": to_structure_CustomTextType_250(self.employee_name),
-            "is_active": to_structure_Bool(self.is_active),
+            "user_id": self.user_id,
+            "user_category_id": self.user_category_id,
+            "employee_name": self.employee_name,
+            "is_active": self.is_active
         }
 
 #
@@ -2918,15 +2918,13 @@ class FormCategory(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["form_category_id", "form_category"])
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
         form_category = data.get("form_category")
-        form_category = parse_structure_CustomTextType_50(form_category)
         return FormCategory(form_category_id, form_category)
 
     def to_structure(self):
         return {
-            "form_category_id": to_structure_UnsignedIntegerType_32(self.form_category_id),
-            "form_category": to_structure_CustomTextType_50(self.form_category),
+            "form_category_id": self.form_category_id,
+            "form_category": self.form_category,
         }
 
 class UserCategory(object):
@@ -3186,18 +3184,18 @@ class ValidityDates(object):
 class ClientGroupMaster(object):
     def __init__(
         self, country_ids, group_id, group_name, is_active, is_approved
-    ):  
+    ):
         self.country_ids = country_ids
         self.group_id = group_id
         self.group_name = group_name
         self.is_active = is_active
         self.is_approved = is_approved
-        
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "country_ids", "group_id", "group_name", 
+                "country_ids", "group_id", "group_name",
                 "is_active", "is_approved", "remarks"
             ]
         )
@@ -3206,7 +3204,7 @@ class ClientGroupMaster(object):
         group_name = data.get("group_name")
         is_active = data.get("is_active")
         is_approved = data.get("is_approved")
-        
+
         return ClientGroupMaster(
             country_ids, group_id, group_name,
             is_active, is_approved
@@ -3678,9 +3676,10 @@ class UserMappingReportDomain(object):
         )
 
     def to_structure(self):
-        return {
+        data = {
             "unit_id": self.unit_id,
             "employee_name": self.employee_name,
             "user_category_name": self.user_category_name,
             "domain_id": self.domain_id
         }
+        return data
