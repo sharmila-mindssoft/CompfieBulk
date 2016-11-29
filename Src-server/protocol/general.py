@@ -247,26 +247,31 @@ class UpdateNotificationStatus(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self, from_date, to_date, user_id, form_id, record_count, page_count):
+    def __init__(self, from_date, to_date, user_id, form_id, country_id, category_id, record_count, page_count):
         self.from_date = from_date
         self.to_date = to_date
         self.user_id = user_id
         self.form_id = form_id
+        self.country_id = country_id
+        self.category_id = category_id
         self.record_count = record_count
         self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id", "record_count", "page_count"])
+        data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id", "country_id", "category_id", "record_count", "page_count"])
         from_date = data.get("from_date")
         to_date = data.get("to_date")
         user_id = data.get("user_id_search")
         form_id = data.get("form_id_search")
+        country_id = data.get("country_id")
+        category_id = data.get("category_id")
         record_count = data.get("record_count")
         page_count = data.get("page_count")
         return GetAuditTrails(
             from_date, to_date,
             user_id, form_id,
+            country_id, category_id,
             record_count, page_count
         )
 
@@ -276,6 +281,8 @@ class GetAuditTrails(Request):
             "to_date": self.to_date,
             "user_id_search": self.user_id,
             "form_id_search": self.form_id,
+            "country_id": self.country_id,
+            "category_id": self.category_id,
             "record_count": self.record_count,
             "page_count": self.page_count
         }
@@ -578,27 +585,36 @@ class UpdateNotificationStatusSuccess(Response):
 
 
 class GetAuditTrailSuccess(Response):
-    def __init__(self, audit_trails, users, forms, total_records):
+    def __init__(self, audit_trails, users, forms, total_records, user_categories, countries):
         self.audit_trails = audit_trails
         self.users = users
         self.forms = forms
         self.total_records = total_records
+        self.user_categories = user_categories
+        self.countries = countries
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["audit_trails", "users", "forms_list", "total_records"])
+        data = parse_dictionary(data, [
+                "audit_trails", "users", "forms_list", "total_records",
+                "user_categories", "countries"
+            ])
         audit_trails = data.get("audit_trails")
         users = data.get("users")
         forms = data.get("forms_list")
         total_records = data.get("total_records")
-        return GetAuditTrailSuccess(audit_trails, users, forms, total_records)
+        user_categories = data.get("user_categories")
+        countries = data.get("countries")
+        return GetAuditTrailSuccess(audit_trails, users, forms, total_records, user_categories, countries)
 
     def to_inner_structure(self):
         return {
             "audit_trail_details": self.audit_trails,
             "users": self.users,
             "forms_list": self.forms,
-            "total_records": self.total_records
+            "total_records": self.total_records,
+            "user_categories": self.user_categories,
+            "countries": self.countries
         }
 
 
