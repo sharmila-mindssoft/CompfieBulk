@@ -5104,3 +5104,15 @@ BEGIN
 	tbl_user_coutries as t1;
 END//
 DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_geography_levels_getlist`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_geography_levels_getlist`()
+BEGIN
+    select level_id, level_position, level_name, country_id from
+    tbl_geography_levels order by level_position;
+
+END//
+DELIMITER;

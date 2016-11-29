@@ -353,11 +353,13 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
 
 
 def get_geography_levels(db):
-    columns = [
-        "level_id", "level_position", "level_name", "country_id"
-    ]
-    condition = " 1 ORDER BY level_position"
-    result = db.get_data("tbl_geography_levels", columns, condition)
+    # columns = [
+    #     "level_id", "level_position", "level_name", "country_id"
+    # ]
+    # condition = " 1 ORDER BY level_position"
+    # result = db.get_data("tbl_geography_levels", columns, condition)
+    # print result
+    result = db.call_proc("sp_tbl_geography_levels_getlist")
     geography_levels = {}
     for d in result :
         country_id = d["country_id"]

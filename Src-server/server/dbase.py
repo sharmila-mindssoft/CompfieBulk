@@ -737,7 +737,7 @@ class Database(object):
         self.close()
         self.connect()
 
-    def call_proc(self, procedure_name, args, columns=None):
+    def call_proc(self, procedure_name, args=None, columns=None):
         # columns no longer need here, so remove argument once removed from the reference place
         # args can be tuple/list e.g, (parm1, parm2)/[param1, param2]
         cursor = self.cursor()
