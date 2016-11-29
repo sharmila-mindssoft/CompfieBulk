@@ -27,7 +27,7 @@ __all__ = [
     "process_get_notifications",
     "process_update_notification_status",
     "process_uploaded_file",
-    "process_verify_password"   
+    "process_verify_password"
 ]
 
 forms = [1, 2]
@@ -302,10 +302,13 @@ def process_get_audit_trails(db, request, session_user):
     to_date = request.to_date
     user_id = request.user_id
     form_id = request.form_id
+    country_id = request.country_id
+    category_id = request.category_id
     audit_trails = get_audit_trails(
         db,
         session_user, from_count, to_count,
-        from_date, to_date, user_id, form_id
+        from_date, to_date, user_id, form_id,
+        country_id, category_id
     )
     return audit_trails
 
@@ -398,7 +401,7 @@ def process_verify_password(db, request, user_id):
     encrypt_password = encrypt(password)
     response = verify_password(db, user_id, encrypt_password)
 
-    
+
     if response == 0:
         return general.InvalidPassword()
     else:
