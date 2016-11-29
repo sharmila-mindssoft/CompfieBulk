@@ -446,8 +446,8 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/knowledge/group-admin-registration-email",
-        "files/desktop/knowledge/group-admin-registration-email/group-admin-registration-email.html",
+        "/knowledge/group-admin-registration-email",
+        "files/knowledge/group-admin-registration-email/group-admin-registration-email.html",
         None, {}
     )
 ]

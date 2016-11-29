@@ -36,7 +36,7 @@ INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-manageme
 INSERT INTO tbl_forms VALUES(11, 2, 'User Mapping', '/knowledge/user-mapping', 11, null);
 INSERT INTO tbl_forms VALUES(12, 2, 'Reassign User Account ', '/knowledge/reassign-user-account', 12, null);
 INSERT INTO tbl_forms VALUES(13, 2, 'Approve Client Group', '/knowledge/client-master-approval', 13, null);
-INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/client-master-approval', 14, null);
+INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/group-admin-registration-email', 14, null);
 INSERT INTO tbl_forms VALUES(15, 2, 'Statutory Mapping', '/knowledge/statutory-mapping', 15, null);
 INSERT INTO tbl_forms VALUES(16, 2, 'Approve Statutory Mapping', '/knowledge/approve-statutory-mapping', 16, null);
 
