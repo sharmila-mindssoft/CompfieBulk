@@ -1,0 +1,113 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="clientunit-view">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="col-sm-10">
+		        <h4 class="page-title">Clients Unit</h4>
+			</div>
+			<div class="col-sm-2">
+		        <button type="submit" class="btn btn-success waves-effect waves-light m-l-10 btn-md pull-right" id="btn-clientunit-add"> <i class="fa fa-plus-circle"></i> Add</button>
+			</div>
+		</div>
+	</div>
+	<div class="row" id="animationSandbox">
+		<div class="col-lg-12">
+			<div class="panel panel-default panel-info">
+				<div class="panel-body">
+					<div class="dataTable_wrapper">
+		            <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+						<thead>
+			                <tr>
+			                  <th align="center" width="2%">#</th>
+			                  <th width="20%">Group</th>
+			                  <th width="20%">Business Group</th>
+			                  <th width="20%">Country</th>
+			                  <th width="20%">Legal Entity</th>
+			                  <th width="10%" class="text-center">Edit</th>
+			                  <th width="10%" class="text-center">Status</th>
+			                </tr>
+			                <tr>
+			                  <td align="center"></td>
+			                  <td>
+			                    <div class="form-group has-feedback col-sm-12 no-padding">
+			                        <input class="form-control input-sm  filter-text-box" placeholder="Group" type="text">
+			                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+			                    </div>
+			                  </td>
+			                  <td>
+			                    <div class="form-group has-feedback col-sm-12 no-padding">
+			                        <input class="form-control input-sm  filter-text-box" placeholder="Business Group" type="text">
+			                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+			                    </div>
+			                  </td>
+			                  <td>
+			                    <div class="form-group has-feedback col-sm-12 no-padding">
+			                        <input class="form-control input-sm filter-text-box" placeholder="Country" type="text">
+			                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+			                    </div>
+			                  </td>
+			                  <td>
+			                    <div class="form-group has-feedback col-sm-12 no-padding">
+			                        <input class="form-control input-sm filter-text-box" placeholder="Legal Entity" type="text">
+			                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+			                    </div>
+			                  </td>
+			                  <td align="center"></td>
+			                  <!--td align="center"></td-->
+			                  <td align="center">
+			                    <div class="btn-group">
+			                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+										<i id="search-status" class="fa">All</i>
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu search-status-list">
+										<li value="all" class="search-status-li active"><a>All</a></li>
+										<li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+										<li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+									</ul>
+			                    </div>
+			                  </td>
+			                </tr>
+		                </thead>
+		                <tbody class="tbody-clientunit-list">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="templates">
+    <table class="table-clientunit-list">
+      <tr class="table-row">
+        <td align="center" class="sno"></td>
+        <td class="group-name"></td>
+        <td class="business-group-name"></td>
+        <td class="Country-name"></td>
+        <td class="legal-entity-name"></td>
+        <td align="center">
+          <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
+        </td>
+        <td align="center" class="is-active"></td>
+      </tr>
+    </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/script/client-unit-details/clientunit-new.js"></script>
+{% endblock %}

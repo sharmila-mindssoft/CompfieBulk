@@ -27,16 +27,20 @@ function clearMessage() {
   $('.error-message').text('');
 }
 
+function current_date(){
+  return date_format(new Date());
+}
+
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
-  var toastPan = import_toast(); 
+  var toastPan = import_toast();
   Command: toastPan["error"](message)
 
 }
 
 function displaySuccessMessage(message) {
-  var toastPan = import_toast(); 
+  var toastPan = import_toast();
   Command: toastPan["success"](message)
 
 }
@@ -931,7 +935,7 @@ month_id_name_map[12] = "December"
 function commonAutoComplete(
     e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
     condition_fields, condition_values
-){  
+){
     ac_div.show();
     id_element.val('');
     var suggestions = [];

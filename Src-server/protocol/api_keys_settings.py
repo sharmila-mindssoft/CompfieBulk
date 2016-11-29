@@ -415,7 +415,7 @@ api_params = {
     'total_records': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     'job_id': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     "audit_trails": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrail"},
-    "users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "User"},
+    "users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "User"},
     "forms_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrailForm"},
     'user_id_search': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'form_id_search': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -493,6 +493,7 @@ api_params = {
     'group_id_none': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "legalentity_closure": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technotransactions', "class_name": "LegalEntityClosure"},
     "closed_remarks": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    "level_1_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -11,6 +11,7 @@ from server.common import (
     string_to_datetime, datetime_to_string_time
 )
 from server.database.tables import *
+from server.database.admin import *
 from protocol import (general, core)
 #
 # Companies
@@ -426,18 +427,31 @@ def return_users(users):
         )
     return result
 
+def get_user_cetegories_db(db):
+    userCategoryList = []
+    rows = get_form_categories(db)
+    for row in rows:
+        userCategoryList.append(core.FormCategory(
+            row["user_category_id"], row["user_category_name"])
+        )
+    return userCategoryList
 
 def get_audit_trails(
     db, session_user, from_count, to_count,
-    from_date, to_date, user_id, form_id
+    from_date, to_date, user_id, form_id,
+    country_id, category_id
 ):
     if user_id is None:
         user_id = '%'
     if form_id is None :
         form_id = '%'
+    if country_id is None :
+        country_id = '%'
+    if category_id is None :
+        category_id = '%'
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
-    args = [from_date, to_date, user_id, form_id, from_count, to_count]
+    args = [from_date, to_date, user_id, form_id, country_id, category_id, from_count, to_count]
     expected_result = 4
     result = db.call_proc_with_multiresult_set('sp_get_audit_trails', args, expected_result)
     '''
@@ -448,6 +462,8 @@ def get_audit_trails(
     users = return_users(result[1])
     activity_log = result[2]
     total = result[3]
+    user_categories = get_user_cetegories_db(db)
+    countries = db.call_proc("sp_countries_for_audit_trails", ())
 
     assert len(total) > 0
     c_total = total[0]["total"]
@@ -461,7 +477,7 @@ def get_audit_trails(
         audit_trail_details.append(
             general.AuditTrail(user_id, form_id, action, date)
         )
-    return general.GetAuditTrailSuccess(audit_trail_details, users, forms, c_total)
+    return general.GetAuditTrailSuccess(audit_trail_details, users, forms, c_total, user_categories, countries)
 
 
 #
@@ -479,7 +495,7 @@ def update_profile(db, contact_no, address, mobile_no, email_id, session_user):
 #   Verify Password
 #
 def verify_password(db, user_id, encrypt_password):
-    
+
     row = db.call_proc("sp_verify_password", (user_id,encrypt_password,))
     # if int(row[0]["count"]) == 0:
     #     raise process_error("E065")
