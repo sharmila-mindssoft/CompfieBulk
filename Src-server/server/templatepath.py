@@ -281,7 +281,7 @@ TEMPLATE_PATHS = [
     # knowledge Reports
     (
         "/knowledge/statutory-mapping-report",
-        "files/knowledge/statutory-mapping-report/statutorymappingreport.html",
+        "files/knowledge/statutory-mapping-report/statutory-mapping-report.html",
         None, {}
     ),
     (
@@ -370,7 +370,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/statutory-notifications-list",
-        "files/knowledge/statutory-notifications-list-report/statutorynotificationslistreport.html",
+        "files/knowledge/statutory-notifications-list-report/statutory-notifications-list.html",
         None, {}
     ),
     (
@@ -385,7 +385,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/user-mapping-report",
-        "files/knowledge/user-mapping-report/usermappingreport.html",
+        "files/knowledge/user-mapping-report/user-mapping-report.html",
         None, {}
     ),
     (
@@ -393,10 +393,11 @@ TEMPLATE_PATHS = [
         "files/knowledge/statutory-setting-report/statutory-setting-report.html",
         None, {}
     ),
+
     # audit trial
     (
-        "/knowledge/audit-trail",
-        "files/knowledge/audit-trail/audittrail.html",
+        "/knowledge/audit-trail-login-trace",
+        "files/knowledge/audit-trail-login-trace/audit-trail-login-trace.html",
         None, {}
     ),
     # Console Admin
