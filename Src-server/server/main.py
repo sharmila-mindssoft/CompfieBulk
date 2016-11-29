@@ -193,33 +193,22 @@ class API(object):
             )
 
         try:
-            # db = BaseDatabase(
-            #     KNOWLEDGE_DB_HOST,
-            #     KNOWLEDGE_DB_PORT,
-            #     KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-            #     KNOWLEDGE_DATABASE_NAME
-            # )
-            # db.dbConfig(app)
-            # self._db_con = db.connect()
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
             response_data = unbound_method(self, request_data, _db)
+            print response_data
             if response_data is None or type(response_data) is bool:
                 # print response_data
                 _db.rollback()
-            if type(response_data) != technomasters.ClientCreationFailed:
+            elif type(response_data) != technomasters.ClientCreationFailed:
                 _db.commit()
             else:
                 _db.rollback()
-            # print response_data
             _db_con.close()
             return respond(response_data)
         except Exception, e:
             # print "handle_api_request"
-            # print e
-            # print(traceback.format_exc())
-            # print ip_address
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
             # logger.logKnowledgeApi(ip_address, "")
@@ -294,9 +283,12 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        # print self._ip_addess
         return controller.process_login_request(request, db, self._ip_addess)
-        # return login.ResetPasswordSuccess()
+
+    @csrf.exempt
+    @api_request(login.Request)
+    def handle_mobile_request(self, request, db):
+        return controller.process_mobile_request(request, db, self._ip_addess)
 
     @api_request(admin.RequestFormat)
     def handle_admin(self, request, db):
@@ -469,7 +461,8 @@ def run_server(port):
             ("/knowledge/api/techno_transaction", api.handle_techno_transaction),
             ("/knowledge/api/techno_report", api.handle_techno_report),
             ("/knowledge/api/files", api.handle_format_file),
-            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master)
+            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
+            ("/knowledge/api/mobile", api.handle_mobile_request)
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):
