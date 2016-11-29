@@ -115,8 +115,6 @@ def add_session(
 
 def verify_password(db, password, user_id):
     encrypted_password = encrypt(password)
-    print encrypted_password
-    print user_id
     row = db.call_proc("sp_verify_password", (user_id,encrypted_password,))
     if(int(row[0]["count"]) <= 0):
         return False
@@ -166,7 +164,6 @@ def update_password(db, password, user_id):
     employee_name = result[0][0]["username"]
     action = "\"%s\" has updated his/her password" % (employee_name)
     db.save_activity(user_id, 0, action)
-
 
     if result:
         return True

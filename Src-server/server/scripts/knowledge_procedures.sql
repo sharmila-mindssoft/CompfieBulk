@@ -666,15 +666,20 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_client_group_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_client_group_save`(
-    IN groupname VARCHAR(50), email_id VARCHAR(100)
+    IN groupname VARCHAR(50), 
+    emailid VARCHAR(100),
+    shortname varchar(50),
+    no_of_view_licence int(11),
+    session_user int(11)
 )
 BEGIN
     INSERT INTO tbl_client_groups (
     group_name, short_name, email_id, total_view_licence,
     is_active, status_changed_on, is_approved, created_by,
     created_on) VALUES (groupname, shortname, emailid,
-    no_of_view_licence, 1, current_ist_datetime(), 0, session_user, current_ist_datetime());
-END //
+    no_of_view_licence, 1, current_ist_datetime(), 
+    0, session_user, current_ist_datetime());
+END//
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -797,7 +802,7 @@ CREATE PROCEDURE `sp_client_configurations_delete`(
     IN clientid INT(11)
 )
 BEGIN
-    DELETE FROM tbl_client_configurations WHERE client_id=clientid;
+    DELETE FROM tbl_client_configuration WHERE client_id=clientid;
 END //
 DELIMITER ;
 
@@ -891,7 +896,7 @@ CREATE PROCEDURE `sp_client_groups_details_by_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT short_name, email_id, total_view_licence
+    SELECT group_name, short_name, email_id, total_view_licence
     FROM tbl_client_groups WHERE client_id=clientid;
 END //
 DELIMITER ;
@@ -947,8 +952,8 @@ CREATE PROCEDURE `sp_client_configuration_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT country_id, domain_id, period_from, period_to
-    FROM tbl_client_configurations WHERE client_id = clientid;
+    SELECT country_id, domain_id, month_from, month_to
+    FROM tbl_client_configuration WHERE client_id = clientid;
 END //
 DELIMITER ;
 
@@ -961,7 +966,7 @@ CREATE PROCEDURE `sp_le_d_industry_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, domain_id, organization_id, count,
+    SELECT legal_entity_id, domain_id, organisation_id, count,
     activation_date
     FROM tbl_legal_entity_domains WHERE legal_entity_id in (
         select legal_entity_id from tbl_legal_entities
@@ -2938,7 +2943,7 @@ BEGIN
     ) as no_of_assigned_legal_entities
 
     FROM tbl_client_groups tcg;
-END ;
+END //
 DELIMITER ;
 
 
@@ -3434,7 +3439,7 @@ DROP PROCEDURE IF EXISTS `sp_compliances_by_unit_details`;
 DELIMITER //
 CREATE PROCEDURE `sp_compliances_by_unit_details`(
     IN domain_ids TEXT, country_ids TEXT, geography_ids TEXT,
-    organization_ids TEXT
+    organisation_ids TEXT
 )
 BEGIN
     CREATE TEMPORARY TABLE statutory_mappings
@@ -3444,7 +3449,7 @@ BEGIN
     WHERE find_in_set(country_id, country_ids)
     and find_in_set(domain_id, domain_ids)
     and find_in_set(geography_id, geography_ids)
-    and find_in_set(organisation_id, organization_ids);
+    and find_in_set(organisation_id, organisation_ids);
 
     SELECT compliance_id, statutory_provision, document_name, compliance_task,
     compliance_description, statutory_mapping_id
