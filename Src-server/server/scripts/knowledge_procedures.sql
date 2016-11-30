@@ -428,20 +428,17 @@ CREATE PROCEDURE `sp_get_audit_trails`(
 	IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
-	SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
-	SELECT user_id, user_category_id, concat(employee_name, '-',employee_code) as employee_name, is_active
-	FROM tbl_users;
 	SELECT t1.user_id, t1.form_id, t1.action, t1.created_on
 	FROM tbl_activity_log as t1, tbl_users as t2, tbl_user_countries as t3
 	WHERE
 		date(t1.created_on) >= _from_date
 		AND date(t1.created_on) <= _to_date
 		AND t1.form_id LIKE _form_id
-		AND t1.user_id LIKE t2._user_id
+		AND t1.user_id LIKE t2.user_id
 		AND t3.user_id = t2.user_id
 		AND t2.user_id LIKE _user_id
 		AND t2.user_category_id LIKE _category_id
-		ORDER BY user_id ASC, DATE(created_on) DESC
+		ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
 		limit _from_limit, _to_limit;
 
 	SELECT count(0) as total FROM tbl_activity_log
@@ -5029,8 +5026,15 @@ CREATE PROCEDURE `sp_countries_for_audit_trails`()
 BEGIN
 	select t1.user_id, t1.country_id,
 	(select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
-	(select country_name from tbl_countries where country_id = t1.country_id) as country_id
+	(select country_name from tbl_countries where country_id = t1.country_id) as country_name
 	from
-	tbl_user_coutries as t1;
+	tbl_user_countries as t1;
+
+	SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
+
+	SELECT user_id, user_category_id, employee_name, employee_code, is_active
+	FROM tbl_users;
+
+	SELECT user_id, form_id, action, created_on FROM tbl_activity_log;
 END//
 DELIMITER;
