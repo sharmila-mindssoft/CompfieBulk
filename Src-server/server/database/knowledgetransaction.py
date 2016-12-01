@@ -1274,3 +1274,6 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         ))
 
     return data, total_record
+
+def approve_statutory_mapping_list(db, user_id, rcount):
+    pass
