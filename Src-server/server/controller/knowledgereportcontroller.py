@@ -90,7 +90,7 @@ def process_get_statutory_mapping_filters(db, request_frame, user_id):
     industries = get_industries(db)
     statutory_nature = get_statutory_nature(db)
     geographies = get_geographies(db)
-    level_1_statutories = get_country_wise_level_1_statutoy(db)
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
     compliance_frequency = get_compliance_frequency(db)
     return knowledgereport.GetStatutoryMappingReportFiltersSuccess(
         countries, domains, industries, statutory_nature,

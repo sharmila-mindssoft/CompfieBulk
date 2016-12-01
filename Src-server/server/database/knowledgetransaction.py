@@ -19,7 +19,7 @@ from server.database.knowledgemaster import (
     get_industry_by_id, return_geography_levels,
     return_statutory_levels
 )
-from server.exceptionmessage import process_error
+from server.exceptionmessage import process_error, fetch_error
 
 from server.constants import RECORD_DISPLAY_COUNT
 
@@ -351,11 +351,8 @@ def save_statutory_mapping(db, data, created_by):
     # tr_type 1: save, 2: submit
     country_id = data.country_id
     domain_id = data.domain_id
-    # industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
     nature_id = data.statutory_nature_id
-    # statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
     compliances = data.compliances
-    # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = ', '.join(data.mappings)
     created_on = get_date_time()
     is_active = 1
@@ -387,13 +384,7 @@ def save_statutory_mapping(db, data, created_by):
             statutory_mapping_id, domain_id, country_id, is_approve,
             compliances, created_by
         )
-        # compliance_ids = ','.join(str(x) for x in ids) + ","
 
-        # db.update(
-        #     tblStatutoryMappings, ["compliance_ids"],
-        #     [compliance_ids, statutory_mapping_id],
-        #     "statutory_mapping_id = %s",
-        # )
         save_statutory_industry(
             db, statutory_mapping_id, data.industry_ids, created_by, True
         )
@@ -403,9 +394,10 @@ def save_statutory_mapping(db, data, created_by):
         save_statutory_statutories_id(
             db, statutory_mapping_id, data.statutory_ids, created_by, True
         )
-        notification_log_text = "New statutory mapping has been created %s" % (
-            statutory_mapping
-        )
+        notification_log_text = "New statutory mapping has been created %s " + \
+            "with following compliances %s" % (
+                statutory_mapping, ",".join(names)
+            )
         link = "/knowledge/approve-statutory-mapping"
         save_notifications(
             db, notification_log_text, link,
@@ -422,7 +414,6 @@ def save_compliance(
 ):
     compliance_ids = []
     compliance_names = []
-    # is_format = False
     for data in datas:
 
         created_on = get_date_time()
@@ -836,7 +827,6 @@ def save_statutory_backup(db, statutory_mapping_id, created_by):
     geo_map = []
     for gid in [int(x) for x in old_record["geography_ids"].split(',') if x != '']:
         data = get_geography_by_id(db, gid)
-        print data
         if type(data) is dict :
             data = data["parent_names"]
             geo_map.append(data)
@@ -1148,6 +1138,7 @@ def return_stautory(data):
         p_names = [y.strip() for y in d["parent_names"].split('>>') if y != '']
         if len(p_names) == 0:
             p_names = None
+
         result.append(
             knowledgetransaction.StatutoryInfo(
                 d["statutory_id"], d["statutory_name"],
@@ -1156,8 +1147,6 @@ def return_stautory(data):
                 d["level_position"]
             )
         )
-    print result
-    print '-' * 50
     return result
 
 def return_geography(data):
@@ -1259,6 +1248,8 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
     )
+    if len(result) == 0 :
+        raise fetch_error()
     mapping = result[0]
     compliance = result[1]
     organisation = result[2]
@@ -1283,3 +1274,6 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         ))
 
     return data, total_record
+
+def approve_statutory_mapping_list(db, user_id, rcount):
+    pass

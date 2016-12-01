@@ -1,6 +1,7 @@
 // var BASE_URL = "http://127.0.0.1:8082/";
 var BASE_URL = '/knowledge/api/';
 var login_url = '/knowledge/login';
+var csrf_token = $('meta[name=csrf-token]').attr('content')
 var my_ip = null;
 function initMirror() {
   var DEBUG = true;
@@ -16,6 +17,7 @@ function initMirror() {
     return JSON.stringify(data, null, ' ');
   }
   function parseJSON(data) {
+    data = JSON.stringify(data);
     return JSON.parse(data);
   }
   function initSession(userProfile) {
@@ -46,7 +48,7 @@ function initMirror() {
     if (typeof info === 'undefined') {
       user = null;
     } else {
-      user = parseJSON(info);
+      user = JSON.parse(info);
     }
     return user;
   }
@@ -54,6 +56,8 @@ function initMirror() {
     var info = getUserInfo();
     info.contact_no = response.contact_no;
     info.address = response.address;
+    info.mobile_no = response.mobile_no;
+    info.email_id = response.email_id;
     window.sessionStorage.userInfo = toJSON(info);
   }
   function getUserProfile() {
@@ -122,6 +126,17 @@ function initMirror() {
     else
       return null;
   }
+  function local_session_timeout(){
+    var myVar = setInterval(function(){ myTimer() }, 1000);
+    var t = 0;
+    function myTimer() {
+        t += 1;
+        console.log(t);
+      if (t == 2) {
+        clearInterval(myVar);
+      }
+    }
+  }
   function get_ip() {
     $.getJSON('http://jsonip.com?callback=?', function (data) {
       window.sessionStorage.my_ip = data.ip;
@@ -139,12 +154,12 @@ function initMirror() {
     };
     $.ajax({
       url: BASE_URL + callerName,
-      headers: {'X-Xsrftoken': getCookie('_xsrf')},
+      headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
       data: toJSON(requestFrame),
       success: function (data) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -178,11 +193,12 @@ function initMirror() {
     $.ajax({
       url: BASE_URL + callerName,
       // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+      headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
       data: toJSON(request),
       success: function (data) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -214,12 +230,13 @@ function initMirror() {
     ];
     $.ajax({
       url: BASE_URL + 'login',
+      headers: { 'X-CSRFToken': csrf_token },
       // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
       type: 'POST',
       contentType: 'application/json',
       data: toJSON(request),
       success: function (data) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -1389,7 +1406,7 @@ function initMirror() {
     callerName = 'techno_report';
     apiRequest(callerName, request, callback);
   }
-  function getAuditTrail(fromDate, toDate, userId, formId, recordCount, pageCount, callback) {
+  function getAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, recordCount, pageCount, callback) {
     callerName = 'general';
     var request = [
       'GetAuditTrails',
@@ -1397,10 +1414,20 @@ function initMirror() {
         'from_date': fromDate,
         'to_date': toDate,
         'user_id': userId,
-        'form_id': formId,
+        'form_id_search': formId,
+        'country_id': countryId,
+        'category_id': categoryId,
         'record_count': recordCount,
         'page_count': pageCount
       }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAuditTrailFilter(callback) {
+    callerName = 'general';
+    var request = [
+      'GetAuditTrailsFilter',
+      {}
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1512,13 +1539,14 @@ function initMirror() {
       },
 
       url: '/knowledge/api/files',
+      headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       crossDomain: true,
       data: formdata,
       processData: false,
       contentType: false,
       success: function (data, textStatus, jqXHR) {
-        var data = parseJSON(data);
+        // var data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         if (Object.keys(response).length == 0)
@@ -1880,7 +1908,7 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, callback) {
+  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, callback) {
     callerName = 'techno_report';
     var request = [
       'GetUserMappingDetailsReportData',
@@ -1888,6 +1916,7 @@ function initMirror() {
         'country_id': countryId,
         'client_id': clientId,
         'legal_entity_id': legalEntityId,
+        'u_m_none': u_m_none,
       }
     ];
     apiRequest(callerName, request, callback);
@@ -2164,6 +2193,7 @@ function initMirror() {
     getComplianceTaskReport: getComplianceTaskReport,
     get_ip: get_ip,
     getAuditTrail: getAuditTrail,
+    getAuditTrailFilter: getAuditTrailFilter,
     updateUserProfile: updateUserProfile,
     getNotifications: getNotifications,
     updateNotificationStatus: updateNotificationStatus,

@@ -66,14 +66,6 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 
-//Pagination variable declaration
-var ItemsPerPage = $('#items_per_page');
-var PaginationView = $('.pagination-view');
-var Pagination = $('#pagination-rpt');
-var CompliacneCount = $('.compliance_count');
-var on_current_page = 1;
-var sno = 0;
-var totalRecord;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -532,15 +524,14 @@ $('#legalentityval').keyup(function (e) {
   var le_list = [];
   if($('#group-id').val() > 0)
   {
+    var condition_fields = [];
+    var condition_values = [];
+    if(Group.val() != ''){
+      condition_fields.push("client_id");
+      condition_values.push(Group.val());
+    }
     for(var i=0;i<businessgroupsList.length;i++)
     {
-      var condition_fields = [];
-      var condition_values = [];
-      if(Group.val() != ''){
-        condition_fields.push("client_id");
-        condition_values.push(Group.val());
-      }
-
       if($('#group-id').val() == businessgroupsList[i].client_id)
       {
         le_list.push({

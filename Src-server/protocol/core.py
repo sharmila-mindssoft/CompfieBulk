@@ -921,7 +921,7 @@ class Industry(object):
             "industry_name": self.industry_name,
             "is_active": self.is_active
         }
-        return data
+        return to_structure_dictionary_values(data)
 
 
 class Industries(object):
@@ -1337,7 +1337,7 @@ class MappedCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id," "comp_name", "is_active",
-            "is_approved", "approval_status_text",
+            "is_approved", "a_s_t",
             "remarks"
         ])
         compliance_id = data.get("comp_id")
@@ -1386,26 +1386,26 @@ class StatutoryMapping(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "country_name",
-            "domain_name", "industry_names",
-            "statutory_nature_name",
-            "statutory_mappings",
-            "mapped_compliances",
-            "geography_mappings", "approval_status_id", "is_active",
-            "approval_status_text", "mapping_id"
+            "c_name",
+            "d_name", "i_names",
+            "s_n_name",
+            "s_maps",
+            "mapped_comps",
+            "geo_maps", "a_s_id", "is_active",
+            "a_s_t", "m_id"
         ])
-        country_name = data.get("country_name")
-        domain_name = data.get("domain_name")
-        industry_names = data.get("industry_names")
-        statutory_nature_name = data.get("statutory_nature_name")
-        statutory_mappings = data.get("statutory_mappings")
-        mapped_compliances = data.get("mapped_compliances")
-        geography_mappings = data.get("geography_mappings")
-        approval_status = data.get("approval_status_id")
+        country_name = data.get("c_name")
+        domain_name = data.get("d_name")
+        industry_names = data.get("i_names")
+        statutory_nature_name = data.get("s_n_name")
+        statutory_mappings = data.get("s_maps")
+        mapped_compliances = data.get("mapped_comps")
+        geography_mappings = data.get("geo_maps")
+        approval_status = data.get("a_s_id")
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        approval_status_text = data.get("approval_status_text")
-        mapping_id = data.get("mapping_id")
+        approval_status_text = data.get("a_s_t")
+        mapping_id = data.get("m_id")
         return StatutoryMapping(
             country_name, domain_name,
             industry_names, statutory_nature_name, statutory_mappings,
@@ -1416,17 +1416,17 @@ class StatutoryMapping(object):
 
     def to_structure(self):
         return {
-            "country_name": self.country_name,
-            "domain_name": self.domain_name,
-            "industry_names": self.industry_names,
-            "statutory_nature_name": self.statutory_nature_name,
-            "statutory_mappings": self.statutory_mappings,
-            "mapped_compliances": self.mapped_compliances,
-            "geography_mappings": self.geography_mappings,
-            "approval_status_id": self.approval_status,
+            "c_name": self.country_name,
+            "d_name": self.domain_name,
+            "i_names": self.industry_names,
+            "s_n_name": self.statutory_nature_name,
+            "s_maps": self.statutory_mappings,
+            "mapped_comps": self.mapped_compliances,
+            "geo_maps": self.geography_mappings,
+            "a_s_id": self.approval_status,
             "is_active": self.is_active,
-            "approval_status_text": self.approval_status_text,
-            "mapping_id": self.mapping_id
+            "a_s_t": self.approval_status_text,
+            "m_id": self.mapping_id
         }
 
 #
@@ -2615,27 +2615,27 @@ class UserGroupDetails(object):
 #
 
 class User(object):
-    def __init__(self, user_id, employee_name, is_active):
+    def __init__(self, user_id, user_category_id, employee_name, is_active):
         self.user_id = user_id
+        self.user_category_id = user_category_id
         self.employee_name = employee_name
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "employee_name", "is_active"])
+        data = parse_dictionary(data, ["user_id", "user_category_id", "employee_name", "is_active"])
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        user_category_id = data.get("user_category_id")
         employee_name = data.get("employee_name")
-        employee_name = parse_structure_CustomTextType_250(employee_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
-        return User(user_id, employee_name, is_active)
+        return User(user_id, user_category_id, employee_name, is_active)
 
     def to_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "employee_name": to_structure_CustomTextType_250(self.employee_name),
-            "is_active": to_structure_Bool(self.is_active),
+            "user_id": self.user_id,
+            "user_category_id": self.user_category_id,
+            "employee_name": self.employee_name,
+            "is_active": self.is_active
         }
 
 #
@@ -2918,15 +2918,13 @@ class FormCategory(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["form_category_id", "form_category"])
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
         form_category = data.get("form_category")
-        form_category = parse_structure_CustomTextType_50(form_category)
         return FormCategory(form_category_id, form_category)
 
     def to_structure(self):
         return {
-            "form_category_id": to_structure_UnsignedIntegerType_32(self.form_category_id),
-            "form_category": to_structure_CustomTextType_50(self.form_category),
+            "form_category_id": self.form_category_id,
+            "form_category": self.form_category,
         }
 
 class UserCategory(object):
@@ -3186,18 +3184,18 @@ class ValidityDates(object):
 class ClientGroupMaster(object):
     def __init__(
         self, country_ids, group_id, group_name, is_active, is_approved
-    ):  
+    ):
         self.country_ids = country_ids
         self.group_id = group_id
         self.group_name = group_name
         self.is_active = is_active
         self.is_approved = is_approved
-        
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "country_ids", "group_id", "group_name", 
+                "country_ids", "group_id", "group_name",
                 "is_active", "is_approved", "remarks"
             ]
         )
@@ -3206,7 +3204,7 @@ class ClientGroupMaster(object):
         group_name = data.get("group_name")
         is_active = data.get("is_active")
         is_approved = data.get("is_approved")
-        
+
         return ClientGroupMaster(
             country_ids, group_id, group_name,
             is_active, is_approved
@@ -3678,9 +3676,10 @@ class UserMappingReportDomain(object):
         )
 
     def to_structure(self):
-        return {
+        data = {
             "unit_id": self.unit_id,
             "employee_name": self.employee_name,
             "user_category_name": self.user_category_name,
             "domain_id": self.domain_id
         }
+        return data

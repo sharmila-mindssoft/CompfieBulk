@@ -1,6 +1,15 @@
 var countriesList;
 var domainsList;
 var statutoryLevelsList;
+// auto complete - country
+var country_val = $('#country');
+var country_ac = $("#countryval");
+var AcCountry = $('#ac-country');
+
+// auto complete - domain
+var domain_val = $('#domain');
+var domain_ac = $("#domainval");
+var AcDomain = $('#ac-domain')
 $('.btn-statutorylevel-cancel').click(function () {
   $('.input-sm').val('');
   $('.hiddenvalue').val('');
@@ -28,40 +37,52 @@ function GetStatutoryLevels() {
   });
 }
 //Autocomplete Script Starts
-//retrive country autocomplete value
-function onCountrySuccess(val) {
-  $('#countryval').val(val[1]);
-  $('#country').val(val[0]);
-  $('#domainval').focus();
-  loadstatutoryLevelsList();
+//callback for autocomplete success
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+    value_element.focus();
+    var current_id = id_element[0].id;
+    if(current_id == 'country'){
+      $('#domainval').focus();
+      loadstatutoryLevelsList();
+    }
+    else if(current_id == 'domain'){
+      $('#level1').focus();
+      loadstatutoryLevelsList();
+    }
 }
-//load country list in autocomplete text box
-$('#countryval').keyup(function (e) {
-  var textval = $(this).val();
-  getCountryAutocomplete(e, textval, countriesList, function (val) {
-    onCountrySuccess(val);
+
+country_ac.keyup(function(e){
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
+    var text_val = $(this).val();
+    commonAutoComplete(
+      e, AcCountry, country_val, text_val,
+      countriesList, "country_name", "country_id", function (val) {
+          onAutoCompleteSuccess(country_ac, country_val, val);
+      }, condition_fields, condition_values);
+
   });
-});
-//retrive domain autocomplete value
-function onDomainSuccess(val) {
-  $('#domainval').val(val[1]);
-  $('#domain').val(val[0]);
-  $('#level1').focus();
-  loadstatutoryLevelsList();
-}
-//load domain list in autocomplete textbox
-$('#domainval').keyup(function (e) {
-  var textval = $(this).val();
-  getDomainAutocomplete(e, textval, domainsList, function (val) {
-    onDomainSuccess(val);
+
+  domain_ac.keyup(function(e){
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
+    var text_val = $(this).val();
+    commonAutoComplete(
+      e, AcDomain, domain_val, text_val,
+      domainList, "domain_name", "domain_id", function (val) {
+          onAutoCompleteSuccess(domain_ac, domain_val, val);
+      }, condition_fields, condition_values);
+
   });
-});
+
 //Autocomplete Script ends
 //load statutory level according to country & domain
 function loadstatutoryLevelsList() {
   $('.error-message').html('');
-  $('.input-sm').val('');
-  $('.hiddenvalue').val('');
+  //$('.input-sm').val('');
+  //$('.hiddenvalue').val('');
   var countryval = $('#country').val();
   var domainval = $('#domain').val();
   var levellist;

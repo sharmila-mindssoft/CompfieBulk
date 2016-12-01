@@ -9,3 +9,4 @@ from technotransactioncontroller import *
 from technoreportcontroller import *
 from clientcoordinationmastercontroller import *
 from consoleadmincontroller import *
+from mobilecontroller import *

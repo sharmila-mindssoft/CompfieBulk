@@ -197,7 +197,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/knowledge/reset-password/([a-zA-Z-0-9]+)",
+        "/knowledge/reset-password/<code>",
         "files/knowledge/resetpassword.html",
         None, {}
     ),
@@ -275,13 +275,13 @@ TEMPLATE_PATHS = [
     # knowledge user Transaction
     (
         "/knowledge/statutory-mapping",
-        "files/knowledge/statutory-mapping/statutorymapping.html",
+        "files/knowledge/statutory-mapping/statutory-mapping-list.html",
         None, {}
     ),
     # knowledge Reports
     (
         "/knowledge/statutory-mapping-report",
-        "files/knowledge/statutory-mapping-report/statutorymappingreport.html",
+        "files/knowledge/statutory-mapping-report/statutory-mapping-report.html",
         None, {}
     ),
     (
@@ -338,7 +338,7 @@ TEMPLATE_PATHS = [
     # Techno user master
     (
         "/knowledge/client-unit",
-        "files/knowledge/client-unit/clientunit.html",
+        "files/knowledge/client-unit/client_unit.html",
         None, {}
     ),
     (
@@ -375,7 +375,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/statutory-notifications-list",
-        "files/knowledge/statutory-notifications-list-report/statutorynotificationslistreport.html",
+        "files/knowledge/statutory-notifications-list-report/statutory-notifications-list.html",
         None, {}
     ),
     (
@@ -390,7 +390,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/user-mapping-report",
-        "files/knowledge/user-mapping-report/usermappingreport.html",
+        "files/knowledge/user-mapping-report/user-mapping-report.html",
         None, {}
     ),
     (
@@ -398,10 +398,11 @@ TEMPLATE_PATHS = [
         "files/knowledge/statutory-setting-report/statutory-setting-report.html",
         None, {}
     ),
+
     # audit trial
     (
-        "/knowledge/audit-trail",
-        "files/knowledge/audit-trail/audittrail.html",
+        "/knowledge/audit-trail-login-trace",
+        "files/knowledge/audit-trail-login-trace/audit-trail-login-trace.html",
         None, {}
     ),
     # Console Admin
@@ -446,7 +447,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/knowledge/userregistration/([a-zA-Z-0-9]+)",
+        "/knowledge/userregistration/<code>",
         "files/knowledge/login/create-login-details.html",
         None, {}
     )

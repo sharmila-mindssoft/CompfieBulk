@@ -394,7 +394,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print val, param, field_name
+        # print field_name, param
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
         _type = param.get('type')
@@ -407,6 +407,7 @@ def to_structure_dictionary_values(x):
         if _type == 'VECTOR_TYPE':
             assert _module_name is not None
             assert _class_name is not None
+            print val
             val = to_VectorType(
                 _module_name, _class_name, val
             )

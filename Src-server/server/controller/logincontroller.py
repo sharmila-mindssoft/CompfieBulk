@@ -11,6 +11,7 @@ from server.common import (
 )
 from server.database.tables import *
 from server.database.login import *
+from server.database.forms import *
 
 __all__ = [
     "process_login_request",
@@ -70,62 +71,75 @@ def process_login_request(request, db, session_user_ip):
 
 
 def process_login(db, request, session_user_ip):
+    print session_user_ip
     login_type = request.login_type
     username = request.username
     password = request.password
     encrypt_password = encrypt(password)
     response = verify_login(db, username, encrypt_password)
-    verified_username = response[0]
-    verified_login = response[1]
-    user_info = response[2]
-    forms = response[3]
-    user_id = verified_username.get('user_id')
+    is_success = response[0]
+    user_id = response[1]
+    username = response[2]
+
+    # verified_username = response[0]
+    verified_login = response[3]
+    user_info = response[4]
+    forms = response[5]
+    # user_id = verified_username.get('user_id')
 
     user_category_id = verified_login.get('user_category_id')
+    if is_success is False and username is None:
+        return login.InvalidCredentials(None)
 
-    if verified_username.get('username') is None:
-        return login.InvalidUserName()
-    elif user_id is None:
-        save_login_failure(db, user_id, session_user_ip)
-        rows = get_login_attempt_and_time(db, user_id)
-        no_of_attempts = 0
-        if rows:
-            no_of_attempts = rows[0]["login_attempt"]
-        if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
-            captcha_text = generate_random(CAPTCHA_LENGTH)
-        else:
-            captcha_text = None
-        return login.InvalidCredentials(captcha_text)
+    if login_type.lower() == "web" :
 
-    else:
-        if login_type.lower() == "web":
-            delete_login_failure_history(db, user_id)
-            if user_category_id <= 2:
-                return admin_login_response(
-                    db, session_user_ip, verified_login, forms)
+        if is_success is False :
+            rows = save_login_failure(db, user_id, session_user_ip)
+            # rows = get_login_attempt_and_time(db, user_id)
+            no_of_attempts = 0
+            print rows
+            if rows:
+                no_of_attempts = rows.get("login_attempt")
+            if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
+                captcha_text = generate_random(CAPTCHA_LENGTH)
             else:
-                return user_login_response(
-                    db, session_user_ip, user_info, forms)
+                captcha_text = None
+            return login.InvalidCredentials(captcha_text)
+
         else:
-            pass
+            if login_type.lower() == "web":
+                delete_login_failure_history(db, user_id)
+                if user_category_id <= 2:
+                    return admin_login_response(
+                        db, session_user_ip, verified_login, forms)
+                else:
+                    return user_login_response(
+                        db, session_user_ip, user_info, forms)
+    else :
+        if user_category_id == 3 :
+            return mobile_user_login_respone(db, login_type, session_user_ip, user_info, forms)
+        else :
+            return login.InvalidCredentials(None)
 
 
-def mobile_user_login_respone(db, data, request, ip):
-    login_type = request.login_type
-    if login_type.lower() == "web":
-        session_type = 1
-    elif login_type.lower() == "android":
+def mobile_user_login_respone(db, login_type, ip, data, forms):
+    data = data[0]
+    if login_type.lower() == "android":
         session_type = 2
     elif login_type.lower() == "ios":
         session_type = 3
     elif login_type.lower() == "blackberry":
         session_type = 4
+
     user_id = data["user_id"]
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
-    form_ids = [int(x) for x in data["form_ids"].split(",")]
-    if 11 not in form_ids:
+
+    form_ids = [int(x["form_id"]) for x in forms]
+    print form_ids
+    if frmApproveStatutoryMapping not in form_ids:
         return login.InvalidMobileCredentials()
+
     employee = "%s - %s" % (employee_code, employee_name)
     session_token = add_session(db, user_id, session_type, ip, employee)
     return mobile.UserLoginResponseSuccess(

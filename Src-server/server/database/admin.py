@@ -151,7 +151,7 @@ def update_domain(db, c_ids, domain_id, domain_name, updated_by):
             "sp_domains_save", (domain_id, domain_name, updated_by)
         )
         if sdomain_id:
-            db.call_update_proc("domaincountries_delete", (domain_id,))
+            db.call_update_proc("sp_domaincountries_delete", (domain_id,))
             save_domain_country(db, c_ids, domain_id)
             action = "Edit Domain - \"%s\"" % domain_name
             db.save_activity(updated_by, 2, action)
@@ -291,7 +291,6 @@ def get_countries_for_user_filter(db, user_id):
 def return_countries_filter(data):
     results = []
     for d in data[1]:
-        print d["country_id"]
         results.append(core.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
         ))
