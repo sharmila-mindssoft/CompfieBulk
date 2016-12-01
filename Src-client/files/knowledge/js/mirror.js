@@ -2076,17 +2076,19 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  /*function updateNotificationStatus(notification_id, has_read, callback) {
+  
+  /* Messages */
+  function getStatutoryNotifications(from_count, page_count, callback) {
     callerName = 'general';
     var request = [
-      'UpdateNotificationStatus',
+      'GetStatutoryNotifications',
       {
-        'notification_id': notification_id,
-        'has_read': has_read
+        'from_count': from_count,
+        'page_count': page_count
       }
     ];
     apiRequest(callerName, request, callback);
-  }*/
+  }
 
   return {
     log: log,
@@ -2267,7 +2269,8 @@ function initMirror() {
     getClientAgreementReport: getClientAgreementReport,
     getDomainwiseAgreementReport: getDomainwiseAgreementReport,
     getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
-    getMessages: getMessages
+    getMessages: getMessages,
+    getStatutoryNotifications: getStatutoryNotifications
 
   };
 }

@@ -181,6 +181,44 @@ function initializeNavBar() {
     else if (form.form_name == "Statutory Notification") {
       var liObject = $('#nav-bar-templates .notifications li').clone();
       $('.cssmenu .menu-ul').append(liObject);
+
+
+      var NOTIFICATIONS;
+      $('.notification-menu').on('click', function (event) {
+        if($(event.target).find('i').hasClass("load-statu") || $(event.target).hasClass("load-statu")){
+            mirror.getStatutoryNotifications(0, 2, function (error, response) {
+            if (error == null) {
+              window.sessionStorage.NOTIFICATIONS = JSON.stringify(response.statutory_notifications);
+              NOTIFICATIONS = JSON.parse(window.sessionStorage.NOTIFICATIONS);
+              $('.msg-items-ul').empty();
+
+              for(var i=0; i<NOTIFICATIONS.length; i++){
+                var msgHeading = NOTIFICATIONS[i]['notification_heading'];
+                var partHeading = msgHeading;
+                if (msgHeading != null && msgHeading.length > 25){
+                  partHeading = msgHeading.substring(0,24)+'...';
+                }
+
+                var msgText = NOTIFICATIONS[i]['notification_text'];
+                var partText = msgText;
+                if (msgText != null && msgText.length > 25){
+                  partText = msgText.substring(0,24)+'...';
+                }
+
+                var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                $('.statu-heading', msgObject).text(partHeading);
+                $('.statu-content', msgObject).text(partText);
+                $('.notification-items-ul').append(msgObject);
+              }
+              if(NOTIFICATIONS.length >= 2){
+                var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
+                $('.notification-items-ul').append(msgObject1);
+              }
+            }
+          });
+        }
+        
+      });
     }
   }
 }

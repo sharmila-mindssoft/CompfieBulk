@@ -454,5 +454,10 @@ TEMPLATE_PATHS = [
         "/knowledge/messages",
         "files/knowledge/messages/messages.html",
         None, {}
+    ),
+    (
+        "/knowledge/statutorynotifications",
+        "files/knowledge/statutorynotifications/statutorynotifications.html",
+        None, {}
     )
 ]

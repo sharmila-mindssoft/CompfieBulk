@@ -338,6 +338,21 @@ def get_messages(
         ))
     return messages
 
+def get_statutory_notifications(
+    db, from_count, page_count, session_user
+):
+    expected_result = 2
+    args = [from_count, page_count, session_user]
+    rows = db.call_proc_with_multiresult_set('sp_get_statutory_notifications', args, expected_result)
+
+    get_statutory_notifications = []
+    for row in rows[1]:
+        get_statutory_notifications.append(general.StatutoryNotification(
+            row["notification_id"], row["notification_heading"], row["notification_text"],
+            row["created_by"], datetime_to_string_time(row["created_on"])
+        ))
+    return get_statutory_notifications
+
 def return_compliance_duration(data):
     duration_list = []
     for d in data:

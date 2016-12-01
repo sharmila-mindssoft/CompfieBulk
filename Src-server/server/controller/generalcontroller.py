@@ -14,7 +14,8 @@ from server.database.general import (
     get_notifications, get_audit_trails,
     update_profile,
     verify_password,
-    get_messages
+    get_messages,
+    get_statutory_notifications
 )
 
 __all__ = [
@@ -120,6 +121,11 @@ def process_general_request(request, db):
         logger.logKnowledgeApi("GetMessages", "process begin")
         result = process_get_messages(db, request_frame, user_id)
         logger.logKnowledgeApi("GetMessages", "process end")
+
+    elif type(request_frame) is general.GetStatutoryNotifications:
+        logger.logKnowledgeApi("GetStatutoryNotifications", "process begin")
+        result = process_get_statutory_notifications(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryNotifications", "process end")
     return result
 
 
@@ -420,4 +426,16 @@ def process_get_messages(db, request, session_user):
     )
     return general.GetMessagesSuccess(
         messages=messages
+    )
+
+##################################################################################
+# To get the list of statutory notifications of the current user unread orderwise
+##################################################################################
+def process_get_statutory_notifications(db, request, session_user):
+    statutory_notifications = None
+    statutory_notifications = get_statutory_notifications(
+        db, request.from_count, request.page_count, session_user
+    )
+    return general.GetStatutoryNotificationsSuccess(
+        statutory_notifications=statutory_notifications
     )

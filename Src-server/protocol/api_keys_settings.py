@@ -498,6 +498,9 @@ api_params = {
     'message_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "created_by": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "created_on": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
+
+    "statutory_notifications": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "StatutoryNotification"},
+    'notification_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
