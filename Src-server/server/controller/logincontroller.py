@@ -70,27 +70,33 @@ def process_login_request(request, db, session_user_ip):
 
 
 def process_login(db, request, session_user_ip):
+    print session_user_ip
     login_type = request.login_type
     username = request.username
     password = request.password
     encrypt_password = encrypt(password)
     response = verify_login(db, username, encrypt_password)
-    verified_username = response[0]
-    verified_login = response[1]
-    user_info = response[2]
-    forms = response[3]
-    user_id = verified_username.get('user_id')
+    is_success = response[0]
+    user_id = response[1]
+    username = response[2]
+
+    # verified_username = response[0]
+    verified_login = response[3]
+    user_info = response[4]
+    forms = response[5]
+    # user_id = verified_username.get('user_id')
 
     user_category_id = verified_login.get('user_category_id')
 
-    if verified_username.get('username') is None:
-        return login.InvalidUserName()
-    elif user_id is None:
-        save_login_failure(db, user_id, session_user_ip)
-        rows = get_login_attempt_and_time(db, user_id)
+    if is_success is False and username is None:
+        return login.InvalidCredentials(None)
+    elif is_success is False :
+        rows = save_login_failure(db, user_id, session_user_ip)
+        # rows = get_login_attempt_and_time(db, user_id)
         no_of_attempts = 0
+        print rows
         if rows:
-            no_of_attempts = rows[0]["login_attempt"]
+            no_of_attempts = rows.get("login_attempt")
         if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
             captcha_text = generate_random(CAPTCHA_LENGTH)
         else:
@@ -136,6 +142,7 @@ def mobile_user_login_respone(db, data, request, ip):
 
 def user_login_response(db, ip, data, forms):
     data = data[0]
+    user_name = data["user_name"]
     user_id = data["user_id"]
     email_id = data["email_id"]
     session_type = 1  # web
@@ -147,6 +154,7 @@ def user_login_response(db, ip, data, forms):
     address = None if data["address"] == "" else data["address"]
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
+    mobile_no = data["mobile_no"]
     #form_ids = data["form_ids"]
     #menu = process_user_forms(db, form_ids)
     #print "menu before user login success: %s" % menu
@@ -158,7 +166,7 @@ def user_login_response(db, ip, data, forms):
     return login.UserLoginSuccess(
         int(user_id), session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        designation, None, bool(1)
+        designation, None, bool(1), user_name, mobile_no
     )
 
 def admin_login_response(db, ip, result, forms):

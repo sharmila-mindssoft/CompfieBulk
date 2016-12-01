@@ -86,7 +86,7 @@ api_params = {
     'compliance_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'url': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
 
-    "mapping_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "m_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'comp_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
@@ -130,15 +130,18 @@ api_params = {
     'r_count': {'type': 'INT', 'length': 1000000, 'validation_method': None, 'is_optional': False},
     "industry_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "industry_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "i_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statutory_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    "statutory_mappings": {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "s_maps": {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "compliances": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', 'class_name': 'Compliance'},
     "compliance_names": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', 'class_name': 'Compliance_Download'},
     "geography_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    "geography_mappings": {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "geo_maps": {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'comp_approval_status': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     'approval_status_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
+    'a_s_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
     'approval_status_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'a_s_t': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     'levels': {'type': 'VECTOR_TYPE', 'module_name': 'knowledgemaster', 'class_name': 'Level'},
     "geography_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "GeographyLevel"},
@@ -379,7 +382,7 @@ api_params = {
     'link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     "domainwise_agreement_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "DomainwiseAgreementList"},
     "organizationwise_unit_count_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "OrganizationwiseUnitCountList"},
-    "client_group_master": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientGroupMaster"},
+    "client_group_master" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientGroupMaster"},
     "level_1_statutories_list": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statutories_for_assigning": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "AssignStatutoryCompliance"},
     "category_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -442,7 +445,7 @@ api_params = {
     "geography_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "GeographyInfo"},
     "geography_level_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitGeographyLevel"},
 
-    "mapped_compliances": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'core', "class_name": "MappedCompliance"},
+    "mapped_comps": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'core', "class_name": "MappedCompliance"},
     "s_pids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "s_pnames": {'type': 'VECTOR_TYPE_SRTING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
 

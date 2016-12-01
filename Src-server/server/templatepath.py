@@ -197,7 +197,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/knowledge/reset-password/([a-zA-Z-0-9]+)",
+        "/knowledge/reset-password/<code>",
         "files/knowledge/resetpassword.html",
         None, {}
     ),
@@ -206,7 +206,7 @@ TEMPLATE_PATHS = [
     ("/knowledge/home", "files/knowledge/home/home.html", None, {}),
     (
         "/knowledge/profile",
-        "files/knowledge/profile.html",
+        "files/knowledge/profile/profile.html",
         None, {}
     ),
     (
@@ -275,7 +275,7 @@ TEMPLATE_PATHS = [
     # knowledge user Transaction
     (
         "/knowledge/statutory-mapping",
-        "files/knowledge/statutory-mapping/statutorymapping.html",
+        "files/knowledge/statutory-mapping/statutory-mapping-list.html",
         None, {}
     ),
     # knowledge Reports
@@ -442,8 +442,13 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/knowledge/userregistration/([a-zA-Z-0-9]+)",
+        "/knowledge/userregistration/<code>",
         "files/knowledge/login/create-login-details.html",
+        None, {}
+    ),
+    (
+        "/knowledge/group-admin-registration-email",
+        "files/knowledge/group-admin-registration-email/group-admin-registration-email.html",
         None, {}
     )
 ]

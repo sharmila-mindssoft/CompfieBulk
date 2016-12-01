@@ -507,11 +507,13 @@ def get_audit_trail_filters(db):
 #
 #   Update Profile
 #
-def update_profile(db, contact_no, address, session_user):
-    columns = ["contact_no", "address"]
-    condition = "user_id= %s"
-    values = [contact_no, address, session_user]
-    db.update(tblUsers, columns, values, condition)
+def update_profile(db, contact_no, address, mobile_no, email_id, session_user):
+    db.call_proc("sp_update_profile", (contact_no,address,mobile_no,email_id,session_user,))
+
+    # columns = ["contact_no", "address", "mobile_no", "email_id"]
+    # condition = "user_id= %s"
+    # values = [contact_no, address, mobile_no, email_id, session_user]
+    # db.update(tblUsers, columns, values, condition)
 
 #
 #   Verify Password

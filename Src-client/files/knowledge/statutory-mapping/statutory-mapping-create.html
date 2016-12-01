@@ -5,8 +5,7 @@
     <div class="row" id="animationSandbox">
         <div class="col-sm-12">
             <div class="portlet p-b-0 no-padding-top">
-                <!-- <button type="button" class="btn btn-success btn-sm waves-effect waves-light pull-right m-t-5" onclick="parent.location='/statutory-mapping/list'"><span><i class="fa fa-mail-reply"></i></span> Back </button>
-                <h4 class="page-title">Statutory Mapping</h4> -->
+
                 <div class="portlet-heading bg-info">
               <h3 class="portlet-title">Statutory Mapping</h3>
               <div class="portlet-widgets">
@@ -28,7 +27,7 @@
                         </ul>
                         <div class="tab-content b-0 m-b-0">
                             <div class="tab-pane m-t-10 fade active in box-height-350" id="tab1">
-                                
+
                                     <div class="col-sm-12 scroll_box  p-t-10">
                                         <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader" width="100%" cellspacing="0">
                                             <thead>
@@ -90,7 +89,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                               
+
                             </div>
                             <div class="tab-pane m-t-10 fade box-height-350" id="tab2">
                                 <div class="row">
@@ -611,7 +610,7 @@ $(document).ready(function() {
 
     $('.tasktype').change(function(){
     if($(this).val()=="Recurring" || $(this).val()=="Review")
-    { 
+    {
       $('.legentclass').text('Periodical');
       $('.remove-manditory').text('*');
       $('#Recurring').show();
@@ -619,7 +618,7 @@ $(document).ready(function() {
       $('#As_when').hide();
       $('#One_Time').hide();
     }
-   
+
     else if($(this).val() == "onoccur" )
     {
       $('#Recurring').hide();
@@ -627,7 +626,7 @@ $(document).ready(function() {
       $('#As_when').hide();
       $('#One_Time').hide();
     }
-    
+
     else if($(this).val() == "One_Time")
     {
       $('#Recurring').hide();

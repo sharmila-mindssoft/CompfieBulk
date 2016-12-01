@@ -243,16 +243,16 @@ function approveMappingValidate(dataValue) {
   }
 }
 function profileValidate() {
-  if ($('#address').val().trim().length > max250) {
+  if ($('.address').val().trim().length > max250) {
     displayMessage('Address' + message.should_not_exceed + max250 + ' characters');
     return false;
-  } else if ($('#countrycode').val().trim().length > max4) {
+  } else if ($('.countrycode').val().trim().length > max4) {
     displayMessage('Country Code' + message.should_not_exceed + max4 + ' characters');
     return false;
-  } else if ($('#areacode').val().trim().length > max4) {
+  } else if ($('.areacode').val().trim().length > max4) {
     displayMessage('Area Code' + message.should_not_exceed + max4 + ' characters');
     return false;
-  } else if ($('#mobile').val().trim().length > max10) {
+  } else if ($('.contactno').val().trim().length > max10) {
     displayMessage('Contact No' + message.should_not_exceed + max10 + ' characters');
     return false;
   } else {
@@ -360,6 +360,7 @@ var max_length = {
   'email_id': 100,
   'mcountrycode': 4,
   'mobileno': 10,
+  'contactno': 10,
   'address': 250,
   'designation': 50,
   'db_server_name': 50,
@@ -378,7 +379,7 @@ function validateLength(key_name, value) {
   v = max_length[key_name];
   console.log(value);
   if (value.length > v) {
-    msg = " should not exceed" + v + "characters";
+    msg = " should not exceed " + v + " characters";
     return msg;
   }
   return true

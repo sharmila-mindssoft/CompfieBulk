@@ -3,20 +3,21 @@
 <!DOCTYPE html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
-  <link href='/files/knowledge/common/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
-  <link href='/files/knowledge/common/css/core.css' rel='stylesheet' type='text/css'>
-  <link href="/files/knowledge/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link href='/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+  <link href='/css/core.css' rel='stylesheet' type='text/css'>
+  <link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
   <div class='container'>
 
     <div class='panel dialog-panel'>
-      <div class="site-logo text-center m-t-20 m-b-20"> 
-      <img src="/files/knowledge/common/images/logo.png"> 
+      <div class="site-logo text-center m-t-20 m-b-20">
+      <img src="/images/logo.png">
     </div>
 
-      
+
       <div style="clear:both;"></div>
       <div class='card-box col-lg-6  m-t-20 col-md-offset-3'>
     <div class="text-center">
@@ -44,7 +45,7 @@
                 <div class="col-md-10 pw-hint">
                   <input type="password" id="pword" placeholder="Enter Password" class="form-control">
                   <span id="password-hint" class="default-display-none">
-                    <img class="pw-callout" src="../images/callout.gif" />
+                    <img class="pw-callout" src="/images/callout.gif" />
                     <ul style="list-style-type: disc;line-height:20px;">
                       <li> Password must have atleast 6 characters</li>
                       <li> Password must have atleast one alphabet</li>
@@ -63,7 +64,7 @@
               <div class="form-group">
                 <div class="col-md-10">
                   <input type="password" id ="cpword" placeholder="Enter Confirm Password" class="form-control">
-                  
+
                 </div>
               </div>
             </div>
@@ -96,7 +97,7 @@
                   </td>
                   </tr>
                 </table>
-                  
+
                 </div>
               </div>
             </div>
@@ -112,7 +113,7 @@
       </div>
     </div>
 
-    
+
   </div>
   <br><br><br><br><br><br>
   <div style="background: #000000; padding:20px; position: absolute; bottom:0px; width:100%;">
@@ -125,7 +126,7 @@
 
 <style type="text/css">
     .load-icon {
-      background:  url(../images/loading.gif) no-repeat center;
+      background:  url(/knowledge/images/loading.gif) no-repeat center;
       display:block;
       border: none;
       outline: none;
@@ -135,7 +136,7 @@
       margin-left: 80%;
     }
     .tick-icon {
-      background:  url(../images/tick_icon.gif) no-repeat center;
+      background:  url(/knowledge/images/tick_icon.gif) no-repeat center;
       display:block;
       border: none;
       outline: none;
@@ -160,6 +161,10 @@
       color: #111;
       border: 1px solid #DCA;
       background: #fffAF0;
+      float: left;
+    }
+    .pw-hint input{
+      float: left;
     }
     .pw-callout {
       z-index: 20;
@@ -175,7 +180,7 @@
 
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/script/js/common-functions.js"></script>
-<script type="text/javascript" src="/login/registerlogin.js"></script>
+<script type="text/javascript" src="/script/login/registerlogin.js"></script>
 <script type="text/javascript" src="/js/toastr/toastr.min.js"></script>
 
 <!-- <script>

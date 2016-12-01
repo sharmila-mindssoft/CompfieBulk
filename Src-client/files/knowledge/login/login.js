@@ -1,3 +1,5 @@
+
+var csrf_token = $('meta[name=csrf-token]').attr('content')
 var btnLogin = $('#btn-login');
 var landingPage = null;
 var captchaStatus = false;
@@ -138,13 +140,11 @@ function processLogin(username, password, shortName, callback) {
   // url = BASE_URL + "login";
   $.ajax({
     url: BASE_URL + 'login',
-    headers: { 'X-Xsrftoken': getCookie('_xsrf') },
-    headers: { 'X-_xsrf': getCookie('_xsrf') },
+    headers: { 'X-CSRFToken': csrf_token },
     type: 'POST',
     contentType: 'application/json',
     data: JSON.stringify(requestFrame, null, ' '),
     success: function (data, textStatus, jqXHR) {
-      var data = JSON.parse(data);
       var status = data[0];
       var response = data[1];
       matchString = 'success';

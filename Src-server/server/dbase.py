@@ -1,10 +1,10 @@
-import MySQLdb as mysql
+from flaskext.mysql import MySQL
+from MySQLdb.cursors import DictCursor
 import logger
 from server.common import (convert_to_dict, get_date_time)
 from server.exceptionmessage import fetch_error, process_procedure_error
 
-
-class Database(object):
+class BaseDatabase(object):
     def __init__(
         self,
         mysqlHost, mysqlPort, mysqlUser,
@@ -16,8 +16,48 @@ class Database(object):
         self._mysqlPassword = mysqlPassword
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
+        self._mysql = MySQL()
+        print self._mysql
+
+    def dbConfig(self, app):
+        app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
+        app.config['MYSQL_DATABASE_PASSWORD'] = self._mysqlPassword
+        app.config['MYSQL_DATABASE_DB'] = self._mysqlDatabase
+        app.config['MYSQL_DATABASE_HOST'] = self._mysqlHost
+        self._mysql.init_app(app)
+
+    def connect(self):
+        assert self._connection is None
+        try:
+            # connection = mysql.connect(
+            #     host=self._mysqlHost, user=self._mysqlUser,
+            #     passwd=self._mysqlPassword, db=self._mysqlDatabase,
+            #     port=self._mysqlPort
+            # )
+            connection = self._mysql.get_db
+            connection.autocommit(True)
+            self._connection = connection
+            print self._connection
+            return self._connection
+        except Exception:
+            pass
+            # logger.logKnowledge("error", "database.py-connect", e)
+
+
+class Database(object):
+    def __init__(
+        self,
+        mysqlConnection
+    ):
+        # self._mysqlHost = mysqlHost
+        # self._mysqlPort = mysqlPort
+        # self._mysqlUser = mysqlUser
+        # self._mysqlPassword = mysqlPassword
+        # self._mysqlDatabase = mysqlDatabase
+        self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
+        print "\n\n"
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -67,6 +107,13 @@ class Database(object):
          12: 31,
     }
 
+    # def dbConfig(self, app):
+    #     app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
+    #     app.config['MYSQL_DATABASE_PASSWORD'] = self._mysqlPassword
+    #     app.config['MYSQL_DATABASE_DB'] = self._mysqlDatabase
+    #     app.config['MYSQL_DATABASE_HOST'] = self._mysqlHost
+    #     mysql.init_app(app)
+
     ########################################################
     # To Redirect Requests to Functions
     ########################################################
@@ -76,28 +123,30 @@ class Database(object):
     ########################################################
     # To Establish database connection
     ########################################################
-    def connect(self):
-        assert self._connection is None
-        try:
-            connection = mysql.connect(
-                host=self._mysqlHost, user=self._mysqlUser,
-                passwd=self._mysqlPassword, db=self._mysqlDatabase,
-                port=self._mysqlPort
-            )
-            connection.autocommit(False)
-            self._connection = connection
-        except Exception:
-            pass
-            # logger.logKnowledge("error", "database.py-connect", e)
+    # def connect(self):
+    #     assert self._connection is None
+    #     try:
+    #         connection = mysql.connect(
+    #             host=self._mysqlHost, user=self._mysqlUser,
+    #             passwd=self._mysqlPassword, db=self._mysqlDatabase,
+    #             port=self._mysqlPort
+    #         )
+    #         connection.autocommit(True)
+    #         self._connection = connection
+    #     except Exception:
+    #         pass
+    #         # logger.logKnowledge("error", "database.py-connect", e)
 
     def _db_connect(self, host, username, password, database):
-        return mysql.connect(host, username, password, database)
+        pass
+        # return mysql.connect(host, username, password, database)
 
     ########################################################
     # To Close database connection
     ########################################################
     def close(self):
         assert self._connection is not None
+        self._cursor.close()
         self._connection.close()
         self._connection = None
 
@@ -105,9 +154,13 @@ class Database(object):
     # To begin a database transaction
     ########################################################
     def begin(self):
+        print self._connection
+        print self._cursor
+        print "cursor " * 10
         assert self._connection is not None
-        # assert self._cursor is None
-        self._cursor = self._connection.cursor(mysql.cursors.DictCursor)
+        assert self._cursor is None
+        self._cursor = self._connection.cursor(dictionary=True)
+        print self._cursor
         return self._cursor
 
     ########################################################
@@ -153,8 +206,9 @@ class Database(object):
             else:
                 logger.logQuery(self._for_client, "execute", query)
                 cursor.execute(query)
+            cursor.nextset()
             return True
-        except mysql.Error, e:
+        except Exception, e:
             print e
             # print query
             # print param
@@ -186,8 +240,9 @@ class Database(object):
             else:
                 logger.logQuery(self._for_client, "execute_insert")
                 cursor.execute(query)
+            cursor.nextset()
             return int(cursor.lastrowid)
-        except mysql.Error, e:
+        except Exception, e:
             print e
             # print query
             # print param
@@ -227,9 +282,11 @@ class Database(object):
                 else:
                     logger.logQuery(self._for_client, "select_all", query)
                     cursor.execute(query)
+            cursor.nextset()
             res = cursor.fetchall()
+            cursor.nextset()
             return res
-        except mysql.Error, e:
+        except Exception, e:
             print e
             # print query
             # print param
@@ -266,9 +323,11 @@ class Database(object):
                         self._for_client, "select_one", query % param
                     )
                     cursor.execute(query)
+            cursor.nextset()
             res = cursor.fetchone()
+            cursor.nextset()
             return res
-        except mysql.Error, e:
+        except Exception, e:
             print "Exception"
             # print query
             # print param
@@ -435,7 +494,7 @@ class Database(object):
         try:
             n_id = int(self.execute_insert(query, values))
             return n_id
-        except mysql.Error, e:
+        except Exception, e:
             print e
             # print query, values
             logger.logKnowledgeApi("insert", query + " -- " + values)
@@ -459,8 +518,9 @@ class Database(object):
             cursor = self.cursor()
             assert cursor is not None
             cursor.executemany(query, valueList)
+            cursor.nextset()
             return True
-        except mysql.Error, e:
+        except Exception, e:
             print e
             logger.logKnowledgeApi("bulk_insert", query)
             logger.logKnowledgeApi("bulk_insert", e)
@@ -486,8 +546,9 @@ class Database(object):
                 assert cursor is not None
                 print query
                 cursor.execute(query)
+                cursor.nextset()
             return True
-        except mysql.Error, e:
+        except Exception, e:
             print e
             logger.logKnowledgeApi("bulk_update", query)
             logger.logKnowledgeApi("bulk_update", e)
@@ -509,7 +570,7 @@ class Database(object):
         try:
             status = self.execute(query, values)
             return status
-        except mysql.Error, e:
+        except Exception, e:
             print query, values
             print e
             logger.logKnowledgeApi("update", query + " , " + values)
@@ -549,7 +610,7 @@ class Database(object):
         query = "DELETE from "+table+" WHERE "+condition
         try:
             return self.execute(query, condition_val)
-        except mysql.Error, e:
+        except Exception, e:
             print e
             logger.logClientApi("delete", query)
             logger.logClientApi("delete", e)
@@ -573,7 +634,7 @@ class Database(object):
             res = self.update(
                 table, columns, values, condition)
             return res
-        except mysql.Error, e:
+        except Exception, e:
             print table, column, value
             print e
             return False
@@ -586,8 +647,10 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1, condition_val=None):
         rows = self.get_data(table, column, condition, condition_val)
-        currentValue = int(rows[0][column[0]]) if(
-            rows[0][column[0]] is not None) else 0
+        print rows
+        print column
+        currentValue = int(rows[column[0]][column[0]]) if(
+            rows[column[0]][column[0]] is not None) else 0
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
@@ -679,42 +742,61 @@ class Database(object):
         # columns no longer need here, so remove argument once removed from the reference place
         # args can be tuple/list e.g, (parm1, parm2)/[param1, param2]
         cursor = self.cursor()
+        rows = []
         assert cursor is not None
         try:
             if args is None:
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
+
+            cols = cursor.description
+            if cols:
+                cols = [x[0] for x in cols]
+            else:
+                cols = []
+
+            for c in cursor.stored_results():
+                cols = c.description
+                # print cols
+                if cols :
+                    cols = [x[0] for x in cols]
+                else :
+                    cols = []
+                r = convert_to_dict(c.fetchall(), cols)
+                rows.append(r)
+            # print rows
+
+            # rows = list(cursor.fetchall())
+            # rows = convert_to_dict(cursor.fetchall(), cols)
+            if len(rows) > 0 :
+                rows = rows[0]
+            cursor.nextset()
         except Exception, e:
             print e
             raise process_procedure_error(procedure_name, args, e)
-        cols = cursor.description
-        if cols:
-            cols = [x[0] for x in cols]
-        else:
-            cols = []
-        rows = []
-        rows = list(cursor.fetchall())
-        # rows = convert_to_dict(cursor.fetchall(), cols)
-        cursor.nextset()
+
         return rows
 
     def call_insert_proc(self, procedure_name, args):
         cursor = self.cursor()
         assert cursor is not None
+        new_id = None
         try:
             if args is None:
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
+
+            cursor.nextset()
+            cursor.execute("SELECT LAST_INSERT_ID() as newid")
+            r = cursor.fetchone()
+            cursor.nextset()
+            new_id = r["newid"]
         except Exception, e:
             print e
             raise process_procedure_error(procedure_name, args, e)
 
-        cursor.nextset()
-        cursor.execute("SELECT LAST_INSERT_ID() as newid")
-        r = cursor.fetchone()
-        new_id = r["newid"]
         return new_id
 
     def call_update_proc(self, procedure_name, args):
@@ -725,37 +807,56 @@ class Database(object):
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
+
+            cursor.nextset()
         except Exception, e:
             print e
             raise process_procedure_error(procedure_name, args, e)
-        cursor.nextset()
+
         return True
 
     def call_proc_with_multiresult_set(
         self, procedure_name, args, expected_result_count
     ):
         cursor = self.cursor()
+        print "----"
+        print cursor
+        rows = []
         assert cursor is not None
         try:
             if args is None:
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
+
+            rows = []
+            # print cursor.stored_results()
+            for c in cursor.stored_results():
+                cols = c.description
+                # print cols
+                if cols :
+                    cols = [x[0] for x in cols]
+                else :
+                    cols = []
+                r = convert_to_dict(c.fetchall(), cols)
+                rows.append(r)
+            # cursor.nextset()
+
+            # print type(expected_result_count)
+            # assert type(expected_result_count) is int
+            # for i in range(0, expected_result_count):
+            #     cols = cursor.description
+            #     print cols
+            #     if cols:
+            #         cols = [x[0] for x in cols]
+            #     else:
+            #         cols = []
+            #     # r = convert_to_dict(cursor.fetchall(), cols)
+            #     rows.append(list(cursor.fetchall()))
+            #     # rows.append(r)
+            #     cursor.nextset()
+
         except Exception, e:
             print e
-
-        rows = []
-        print type(expected_result_count)
-        assert type(expected_result_count) is int
-        for i in range(0, expected_result_count):
-            cols = cursor.description
-            if cols:
-                cols = [x[0] for x in cols]
-            else:
-                cols = []
-            # r = convert_to_dict(cursor.fetchall(), cols)
-            rows.append(list(cursor.fetchall()))
-            cursor.nextset()
-        print rows
 
         return rows

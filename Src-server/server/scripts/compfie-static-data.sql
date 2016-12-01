@@ -36,7 +36,7 @@ INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-manageme
 INSERT INTO tbl_forms VALUES(11, 2, 'User Mapping', '/knowledge/user-mapping', 11, null);
 INSERT INTO tbl_forms VALUES(12, 2, 'Reassign User Account ', '/knowledge/reassign-user-account', 12, null);
 INSERT INTO tbl_forms VALUES(13, 2, 'Approve Client Group', '/knowledge/client-master-approval', 13, null);
-INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/client-master-approval', 14, null);
+INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/group-admin-registration-email', 14, null);
 INSERT INTO tbl_forms VALUES(15, 2, 'Statutory Mapping', '/knowledge/statutory-mapping', 15, null);
 INSERT INTO tbl_forms VALUES(16, 2, 'Approve Statutory Mapping', '/knowledge/approve-statutory-mapping', 16, null);
 
@@ -45,7 +45,7 @@ INSERT INTO tbl_forms VALUES(17, 2, 'Client Group', '/knowledge/client-master', 
 INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '/knowledge/assign-legal-entity', 18, null);
 INSERT INTO tbl_forms VALUES(19, 2, 'Assign Client Unit', '/knowledge/assign-client-unit', 19, null);
 
-INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit', 20, null);
+INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit-approval', 20, null);
 INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '', 21, null);
 INSERT INTO tbl_forms VALUES(22, 2, 'Client Unit', '/knowledge/client-unit', 22, null);
 
@@ -59,7 +59,7 @@ INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion',
 INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/group-admin-registration-email', 14, NULL);
 
 -- Reports
-INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping', 30, null);
+INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
 INSERT INTO tbl_forms VALUES(31, 3, 'Country Report', '/knowledge/country-report', 31, 'Master');
 INSERT INTO tbl_forms VALUES(32, 3, 'Domain Report', '/knowledge/domain-report', 32, 'Master');
 INSERT INTO tbl_forms VALUES(33, 3, 'Geography Report', '/knowledge/geography-report', 33, 'Master');
@@ -77,11 +77,11 @@ INSERT INTO tbl_forms VALUES(49, 3, 'Group Admin Registration Email Report', '/k
 
 
 -- My Account
-INSERT INTO tbl_forms VALUES(44, 3, 'View Profile', '/knowledge/profile', 44, null);
-INSERT INTO tbl_forms VALUES(45, 3, 'Change Password', '/knowledge/change-password', 45, null);
-INSERT INTO tbl_forms VALUES(46, 3, 'Messages', '/knowledge/messages', 46, null);
-INSERT INTO tbl_forms VALUES(47, 3, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
-INSERT INTO tbl_forms VALUES(48, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 48, null);
+INSERT INTO tbl_forms VALUES(44, 4, 'View Profile', '/knowledge/profile', 44, null);
+INSERT INTO tbl_forms VALUES(45, 4, 'Change Password', '/knowledge/change-password', 45, null);
+INSERT INTO tbl_forms VALUES(46, 4, 'Messages', '/knowledge/messages', 46, null);
+INSERT INTO tbl_forms VALUES(47, 4, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
+
 
 -- form_id, category_id_1, category_id_2, category_id_3, category_id_4, category_id_5, category_id_6, category_id_7, category_id_8
 -- Masters
@@ -117,7 +117,7 @@ INSERT INTO tbl_form_category VALUES(27, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(28, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(29, 0, 1, 0, 0, 0, 0, 0, 0);
 -- Reports
-INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(31, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(32, 1, 0, 0, 0, 0, 0, 0, 1);
 INSERT INTO tbl_form_category VALUES(33, 1, 0, 0, 0, 0, 0, 0, 0);
@@ -137,7 +137,7 @@ INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
-INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 1, 0, 1, 0);
+
 
 
 
@@ -169,7 +169,7 @@ INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
 INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
 
---tbl_verification_type
+-- tbl_verification_type
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");

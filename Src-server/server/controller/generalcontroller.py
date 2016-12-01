@@ -1,4 +1,5 @@
 import os
+import time
 from protocol import core, login, general, possiblefailure
 from server import logger
 from server.constants import (
@@ -220,9 +221,9 @@ def process_get_domains(db, user_id):
 # To update the profile of the given user
 ########################################################
 def procees_update_user_profile(db, request, session_user):
-    update_profile(db, request.contact_no, request.address, session_user)
+    update_profile(db, request.contact_no, request.address, request.mobile_no, request.email_id, session_user)
     return general.UpdateUserProfileSuccess(
-        request.contact_no, request.address
+        request.contact_no, request.address, request.mobile_no, request.email_id
     )
 
 
@@ -412,8 +413,6 @@ def process_verify_password(db, request, user_id):
     password = request.password
     encrypt_password = encrypt(password)
     response = verify_password(db, user_id, encrypt_password)
-
-
     if response == 0:
         return general.InvalidPassword()
     else:

@@ -88,7 +88,7 @@ def process_save_client_group(db, request, session_user):
         legal_entity_id_name_map = get_legal_entity_ids_by_name(
             db, legal_entity_names
         )
-        save_client_user(db, group_id, request.email_id)
+        # save_client_user(db, group_id, request.email_id)
         save_organization(
             db, group_id, request, legal_entity_id_name_map, session_user
         )
