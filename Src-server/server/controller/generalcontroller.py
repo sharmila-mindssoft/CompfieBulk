@@ -13,7 +13,8 @@ from server.database.general import (
     get_user_form_ids,
     get_notifications, get_audit_trails,
     update_profile,
-    verify_password
+    verify_password,
+    get_messages
 )
 
 __all__ = [
@@ -114,6 +115,11 @@ def process_general_request(request, db):
         logger.logKnowledgeApi("VerifyPassword", "process begin")
         result = process_verify_password(db, request_frame, user_id)
         logger.logKnowledgeApi("VerifyPassword", "process end")
+
+    elif type(request_frame) is general.GetMessages:
+        logger.logKnowledgeApi("GetMessages", "process begin")
+        result = process_get_messages(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetMessages", "process end")
     return result
 
 
@@ -403,3 +409,15 @@ def process_verify_password(db, request, user_id):
         return general.InvalidPassword()
     else:
         return general.VerifyPasswordSuccess()
+
+########################################################################
+# To get the list of messages of the current user unread orderwise
+########################################################################
+def process_get_messages(db, request, session_user):
+    messages = None
+    messages = get_messages(
+        db, request.from_count, request.page_count, session_user
+    )
+    return general.GetMessagesSuccess(
+        messages=messages
+    )

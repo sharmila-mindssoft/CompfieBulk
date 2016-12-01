@@ -449,5 +449,10 @@ TEMPLATE_PATHS = [
         "/knowledge/group-admin-registration-email",
         "files/knowledge/group-admin-registration-email/group-admin-registration-email.html",
         None, {}
+    ),
+    (
+        "/knowledge/messages",
+        "files/knowledge/messages/messages.html",
+        None, {}
     )
 ]

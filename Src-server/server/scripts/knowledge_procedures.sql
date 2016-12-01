@@ -1492,9 +1492,9 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
     IN session_user INT(11)
 )
 BEGIN
-    SELECT client_id, group_name, email_id, count, client_countries
+    SELECT client_id, group_name, email_id, count, client_countries, short_name
     FROM (
-        SELECT client_id, group_name, email_id,
+        SELECT client_id, group_name, email_id, short_name,
         (
             SELECT count(legal_entity_id) FROM tbl_legal_entities tle
             WHERE tle.client_id = tcg.client_id and is_active=1
@@ -5044,5 +5044,28 @@ BEGIN
     UPDATE tbl_users set contact_no = contactno_, address = address_,
     mobile_no = mobileno_, email_id = emailid_  WHERE user_id= userid_;
     UPDATE tbl_user_login_details set email_id = emailid_  WHERE user_id= userid_;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- get knowledge users message list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_messages`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_messages`(
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+)
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
+    
+    SELECT m.message_id, m.message_heading, m.message_text, m.link,
+    (SELECT concat(employee_code, ' - ', employee_name) 
+    from tbl_users where user_id = m.created_by) as created_by,
+    m.created_on
+    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id 
+    AND mu.user_id = userid_
+    where m.user_category_id = @u_cat_id
+    order by created_on DESC limit pagecount_;
 END//
 DELIMITER;

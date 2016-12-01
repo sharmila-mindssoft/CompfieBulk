@@ -404,7 +404,6 @@ api_params = {
     'notification_id': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     'notification_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'action': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'has_read': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     "from_date": {'type': 'STRING', 'length': 20, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "to_date": {'type': 'STRING', 'length': 20, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -493,6 +492,12 @@ api_params = {
     'group_id_none': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "legalentity_closure": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technotransactions', "class_name": "LegalEntityClosure"},
     "closed_remarks": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    "messages": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "Message"},
+    'message_id': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
+    'message_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'message_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    "created_by": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
+    "created_on": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

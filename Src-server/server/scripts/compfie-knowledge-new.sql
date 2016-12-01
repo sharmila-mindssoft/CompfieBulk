@@ -937,6 +937,7 @@ DROP TABLE IF EXISTS `tbl_messages`;
 CREATE TABLE `tbl_messages` (
   `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
+  `message_heading` Text DEFAULT NULL,
   `message_text` Text DEFAULT NULL,
   `link` Text DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,

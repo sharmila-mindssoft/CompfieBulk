@@ -323,6 +323,21 @@ def get_notifications(
         ))
     return notifications
 
+def get_messages(
+    db, from_count, page_count, session_user
+):
+    expected_result = 2
+    args = [from_count, page_count, session_user]
+    rows = db.call_proc_with_multiresult_set('sp_get_messages', args, expected_result)
+
+    messages = []
+    for row in rows[1]:
+        messages.append(general.Message(
+            row["message_id"], row["message_heading"], row["message_text"], row["link"],
+            row["created_by"], datetime_to_string_time(row["created_on"])
+        ))
+    return messages
+
 def return_compliance_duration(data):
     duration_list = []
     for d in data:
