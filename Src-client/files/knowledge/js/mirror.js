@@ -1414,12 +1414,20 @@ function initMirror() {
         'from_date': fromDate,
         'to_date': toDate,
         'user_id': userId,
-        'form_id': formId,
+        'form_id_search': formId,
         'country_id': countryId,
         'category_id': categoryId,
         'record_count': recordCount,
         'page_count': pageCount
       }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAuditTrailFilter(callback) {
+    callerName = 'general';
+    var request = [
+      'GetAuditTrailsFilter',
+      {}
     ];
     apiRequest(callerName, request, callback);
   }
@@ -2185,6 +2193,7 @@ function initMirror() {
     getComplianceTaskReport: getComplianceTaskReport,
     get_ip: get_ip,
     getAuditTrail: getAuditTrail,
+    getAuditTrailFilter: getAuditTrailFilter,
     updateUserProfile: updateUserProfile,
     getNotifications: getNotifications,
     updateNotificationStatus: updateNotificationStatus,

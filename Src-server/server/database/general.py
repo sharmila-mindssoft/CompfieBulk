@@ -422,7 +422,7 @@ def return_users(users):
         employee_name = "%s - %s" % (u["employee_code"], u["employee_name"])
         result.append(
             core.User(
-                u["user_id"], employee_name, bool(u["is_active"])
+                u["user_id"], u["user_category_id"], employee_name, bool(u["is_active"])
             )
         )
     return result
@@ -431,7 +431,7 @@ def get_user_cetegories_db(db):
     userCategoryList = []
     rows = get_form_categories(db)
     for row in rows:
-        userCategoryList.append(core.FormCategory(
+        userCategoryList.append(core.UserCategory(
             row["user_category_id"], row["user_category_name"])
         )
     return userCategoryList
@@ -452,18 +452,14 @@ def get_audit_trails(
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
     args = [from_date, to_date, user_id, form_id, country_id, category_id, from_count, to_count]
-    expected_result = 4
+    expected_result = 2
     result = db.call_proc_with_multiresult_set('sp_get_audit_trails', args, expected_result)
     '''
         'sp_get_audit_trails' this procedure will return four result-set which are Forms, Users, Activity_log_data and Activity_log total
     '''
 
-    forms = return_forms(result[0])
-    users = return_users(result[1])
-    activity_log = result[2]
-    total = result[3]
-    user_categories = get_user_cetegories_db(db)
-    countries = db.call_proc("sp_countries_for_audit_trails", ())
+    activity_log = result[0]
+    total = result[1]
 
     assert len(total) > 0
     c_total = total[0]["total"]
@@ -477,7 +473,35 @@ def get_audit_trails(
         audit_trail_details.append(
             general.AuditTrail(user_id, form_id, action, date)
         )
-    return general.GetAuditTrailSuccess(audit_trail_details, users, forms, c_total, user_categories, countries)
+    return general.GetAuditTrailSuccess(audit_trail_details, c_total)
+
+def get_audit_trail_filters(db):
+    user_categories = get_user_cetegories_db(db)
+    expected_result = 4
+    result = db.call_proc_with_multiresult_set('sp_countries_for_audit_trails', (), expected_result)
+    countries = result[0]
+    audit_trail_countries = []
+    for row in countries:
+        user_id = row["user_id"]
+        user_category_id = row["user_category_id"]
+        country_id = row["country_id"]
+        country_name = row["country_name"]
+        audit_trail_countries.append(
+            general.AuditTrailCountries(user_id, user_category_id, country_id, country_name)
+        )
+    forms_list = return_forms(result[1])
+    users = return_users(result[2])
+    forms_log = result[3]
+    audit_trail_details = []
+    for row in forms_log:
+        user_id = row["user_id"]
+        form_id = row["form_id"]
+        action = row["action"]
+        date = datetime_to_string_time(row["created_on"])
+        audit_trail_details.append(
+            general.AuditTrail(user_id, form_id, action, date)
+        )
+    return general.GetAuditTrailFilterSuccess(user_categories, audit_trail_countries, forms_list, users, audit_trail_details)
 
 
 #

@@ -13,7 +13,7 @@ from server.database.general import (
     get_user_form_ids,
     get_notifications, get_audit_trails,
     update_profile,
-    verify_password
+    verify_password, get_audit_trail_filters
 )
 
 __all__ = [
@@ -99,6 +99,11 @@ def process_general_request(request, db):
         logger.logKnowledgeApi("GetAuditTrails", "process begin")
         result = process_get_audit_trails(db, request_frame, user_id)
         logger.logKnowledgeApi("GetAuditTrails", "process end")
+
+    elif type(request_frame) is general.GetAuditTrailsFilter:
+        logger.logKnowledgeApi("GetAuditTrailsFilter", "process begin")
+        result = process_get_audit_trails_filter(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetAuditTrailsFilter", "process end")
 
     elif type(request_frame) is general.UpdateNotificationStatus:
         logger.logKnowledgeApi("UpdateNotificationStatus", "process begin")
@@ -302,7 +307,7 @@ def process_get_audit_trails(db, request, session_user):
     from_date = request.from_date
     to_date = request.to_date
     user_id = request.user_id
-    form_id = request.form_id
+    form_id = request.form_id_search
     country_id = request.country_id
     category_id = request.category_id
     audit_trails = get_audit_trails(
@@ -313,6 +318,13 @@ def process_get_audit_trails(db, request, session_user):
     )
     return audit_trails
 
+
+########################################################
+# To retrieve all the audit trails filter data - user, categories
+########################################################
+def process_get_audit_trails_filter(db, request, session_user):
+    audit_trail_filters = get_audit_trail_filters(db)
+    return audit_trail_filters
 
 ########################################################
 # To get the last 30 notifications of the current user

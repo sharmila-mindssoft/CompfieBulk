@@ -333,7 +333,7 @@ TEMPLATE_PATHS = [
     # Techno user master
     (
         "/knowledge/client-unit",
-        "files/knowledge/client-unit/clientunit.html",
+        "files/knowledge/client-unit/client_unit.html",
         None, {}
     ),
     (
