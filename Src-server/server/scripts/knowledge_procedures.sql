@@ -2405,10 +2405,10 @@ CREATE PROCEDURE `sp_users_type_wise`()
 BEGIN
     SELECT user_id, is_active,
     concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=4;
+    FROM tbl_users WHERE user_category_id=3;
     SELECT user_id, is_active,
     concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=3;
+    FROM tbl_users WHERE user_category_id=4;
     SELECT user_id, is_active,
     concat(employee_code," - ", employee_name) as employee_name
     FROM tbl_users WHERE user_category_id=5;
