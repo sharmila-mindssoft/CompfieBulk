@@ -2090,6 +2090,19 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function updateStatutoryNotificationStatus(notification_id, user_id, has_read, callback) {
+    callerName = 'general';
+    var request = [
+      'UpdateStatutoryNotificationStatus',
+      {
+        'notification_id': notification_id,
+        'user_id': user_id,
+        'has_read': has_read
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2270,7 +2283,8 @@ function initMirror() {
     getDomainwiseAgreementReport: getDomainwiseAgreementReport,
     getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
     getMessages: getMessages,
-    getStatutoryNotifications: getStatutoryNotifications
+    getStatutoryNotifications: getStatutoryNotifications,
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus
 
   };
 }

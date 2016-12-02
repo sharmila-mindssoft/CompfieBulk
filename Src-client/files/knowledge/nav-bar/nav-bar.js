@@ -170,6 +170,12 @@ function initializeNavBar() {
                 var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
                 $('.msg-items-ul').append(msgObject1);
               }
+
+              if(MESSAGES.length == 0){
+                var msgObject = $('#nav-bar-templates .messages-list li').clone();
+                $('.msg-heading', msgObject).text('No Messages');
+                $('.msg-items-ul').append(msgObject);
+              }
             }
           });
         }
@@ -182,7 +188,6 @@ function initializeNavBar() {
       var liObject = $('#nav-bar-templates .notifications li').clone();
       $('.cssmenu .menu-ul').append(liObject);
 
-
       var NOTIFICATIONS;
       $('.notification-menu').on('click', function (event) {
         if($(event.target).find('i').hasClass("load-statu") || $(event.target).hasClass("load-statu")){
@@ -190,15 +195,14 @@ function initializeNavBar() {
             if (error == null) {
               window.sessionStorage.NOTIFICATIONS = JSON.stringify(response.statutory_notifications);
               NOTIFICATIONS = JSON.parse(window.sessionStorage.NOTIFICATIONS);
-              $('.msg-items-ul').empty();
+              $('.notification-items-ul').empty();
 
               for(var i=0; i<NOTIFICATIONS.length; i++){
-                var msgHeading = NOTIFICATIONS[i]['notification_heading'];
+               /* var msgHeading = NOTIFICATIONS[i]['notification_heading'];
                 var partHeading = msgHeading;
                 if (msgHeading != null && msgHeading.length > 25){
                   partHeading = msgHeading.substring(0,24)+'...';
-                }
-
+                }*/
                 var msgText = NOTIFICATIONS[i]['notification_text'];
                 var partText = msgText;
                 if (msgText != null && msgText.length > 25){
@@ -206,7 +210,7 @@ function initializeNavBar() {
                 }
 
                 var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                $('.statu-heading', msgObject).text(partHeading);
+                //$('.statu-heading', msgObject).text(partHeading);
                 $('.statu-content', msgObject).text(partText);
                 $('.notification-items-ul').append(msgObject);
               }

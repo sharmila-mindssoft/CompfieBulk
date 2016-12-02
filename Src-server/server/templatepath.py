@@ -456,7 +456,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/statutorynotifications",
+        "/knowledge/statutory-notifications",
         "files/knowledge/statutorynotifications/statutorynotifications.html",
         None, {}
     )

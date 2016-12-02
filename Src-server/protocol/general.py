@@ -288,6 +288,27 @@ class GetStatutoryNotifications(Request):
             "page_count": self.page_count,
         }
 
+class UpdateStatutoryNotificationStatus(Request):
+    def __init__(self, notification_id, user_id, has_read):
+        self.notification_id = notification_id
+        self.user_id = user_id
+        self.has_read = has_read
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["notification_id", "user_id", "has_read"])
+        notification_id = data.get("notification_id")
+        user_id = data.get("user_id")
+        has_read = data.get("has_read")
+        return UpdateNotificationStatus(notification_id, has_read)
+
+    def to_inner_structure(self):
+        return {
+            "notification_id": self.notification_id,
+            "user_id": self.user_id,
+            "has_read": self.has_read,
+        }
+
 class GetAuditTrails(Request):
     def __init__(self, from_date, to_date, user_id, form_id, record_count, page_count):
         self.from_date = from_date
@@ -343,7 +364,7 @@ def _init_Request_class_map():
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
         ChangeDomainStatus, GetCountriesForUser, GetCountries, SaveCountry, UpdateCountry,
         ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
-        GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications
+        GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus
     ]
     class_map = {}
     for c in classes:
@@ -655,6 +676,19 @@ class GetStatutoryNotificationsSuccess(Response):
             "statutory_notifications": self.statutory_notifications
         }
 
+class UpdateStatutoryNotificationStatusSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UpdateStatutoryNotificationStatusSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetAuditTrailSuccess(Response):
     def __init__(self, audit_trails, users, forms, total_records):
         self.audit_trails = audit_trails
@@ -770,7 +804,7 @@ def _init_Response_class_map():
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
         MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
         FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword, GetMessagesSuccess,
-        GetStatutoryNotificationsSuccess
+        GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess
     ]
     class_map = {}
     for c in classes:
@@ -896,30 +930,36 @@ class Message(object):
 #
 
 class StatutoryNotification(object):
-    def __init__(self, notification_id, notification_heading, notification_text, created_by, created_on):
+    def __init__(self, notification_id, user_id, compliance_id, notification_text, created_by, created_on, has_read):
         self.notification_id = notification_id
-        self.notification_heading = notification_heading
+        self.user_id = user_id
+        self.compliance_id = compliance_id
         self.notification_text = notification_text
         self.created_by = created_by
         self.created_on = created_on
+        self.has_read = has_read
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["notification_id", "notification_heading", "notification_text", "created_by", "created_on"])
+        data = parse_dictionary(data, ["notification_id", "user_id", "compliance_id", "notification_text", "created_by", "created_on", "has_read"])
         notification_id = data.get("notification_id")
-        notification_heading = data.get("notification_heading")
+        user_id = data.get("user_id")
+        compliance_id = data.get("compliance_id")
         notification_text = data.get("notification_text")
         created_by = data.get("created_by")
         created_on = data.get("created_on")
-        return notification(notification_id, notification_heading, notification_text, created_by, created_on)
+        has_read = data.get("has_read")
+        return notification(notification_id, user_id, compliance_id, notification_text, created_by, created_on, has_read)
 
     def to_structure(self):
         return {
             "notification_id": self.notification_id,
-            "notification_heading": self.notification_heading,
+            "user_id": self.user_id,
+            "compliance_id": self.compliance_id,
             "notification_text": self.notification_text,
             "created_by": self.created_by,
             "created_on": self.created_on,
+            "has_read": self.has_read
         }
 
 #

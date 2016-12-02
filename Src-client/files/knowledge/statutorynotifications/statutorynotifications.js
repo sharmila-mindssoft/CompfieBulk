@@ -7,7 +7,7 @@ function loadMessages() {
   $.each(NotificationList, function(k, v) {
     var tableRow = $('#templates .table-message .table-row');
     var rowClone = tableRow.clone();
-    $('.message-content', rowClone).text(v.notification_heading + ' - ' + v.notification_text);
+    $('.message-content', rowClone).text(v.notification_text);
     $('.message-time', rowClone).text(v.created_on);
     $('.message-user',rowClone).text('User: '+v.created_by);
     $('.tbody-message-list').append(rowClone);
