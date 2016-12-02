@@ -2,6 +2,7 @@ import os
 import json
 import traceback
 import jinja2
+import time
 import mysql.connector.pooling
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
@@ -418,6 +419,7 @@ def renderTemplate(pathname, code=None):
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
+            new_url += "?v=%s" % (time.time())
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
@@ -425,6 +427,7 @@ def renderTemplate(pathname, code=None):
                 new_url = set_path(url)
             else:
                 new_url = url
+            new_url += "?v=%s" % (time.time())
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
         return data
