@@ -353,11 +353,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
 
 
 def get_geography_levels(db):
-    columns = [
-        "level_id", "level_position", "level_name", "country_id"
-    ]
-    condition = " 1 ORDER BY level_position"
-    result = db.get_data("tbl_geography_levels", columns, condition)
+    result = db.call_proc("sp_get_geography_levels", ())
     geography_levels = {}
     for d in result :
         country_id = d["country_id"]
@@ -397,14 +393,11 @@ def get_geograhpy_levels_for_user(db, user_id):
 
 
 def delete_grography_level(db, level_id):
-    q = "select count(*) from tbl_geographies where level_id = %s"
-    row = db.select_one(q, [level_id])
-    if row[0] > 0:
+    q = db.call_proc("sp_check_level_in_geographies", (level_id,))
+    if q[0] > 0:
         return True
     else:
-        res = db.execute(
-            "delete from tbl_geography_levels where level_id = %s ", [level_id]
-        )
+        res = db.call_proc("sp_delete_geographylevel", (level_id,))
         if res is False :
             raise process_error("E009")
 
@@ -433,14 +426,10 @@ def save_geography_levels(db, country_id, levels, user_id):
             continue
 
         if level.level_id is not None:
-            columns = [
-                "level_position", "level_name", "updated_by",
-            ]
-            where_condition = "level_id=%s"
-            values = [position, name, user_id, level.level_id]
+            values = [level.level_id, name, position, user_id]
             if (
-                db.update(
-                    table_name, columns, values, where_condition
+                db.call_update_proc(
+                    "sp_update_geographylevel_master", values
                 )
             ):
                 action = "Geography levels updated"
@@ -449,15 +438,11 @@ def save_geography_levels(db, country_id, levels, user_id):
                 raise process_error("E011")
 
         else :
-            columns = [
-                "level_position", "level_name", "country_id",
-                "created_by", "created_on"
-            ]
             values = [
-                position, name, int(country_id),
+                name, position, int(country_id),
                 int(user_id), str(created_on)
             ]
-            new_id = db.insert(table_name, columns, values)
+            new_id = db.call_insert_proc("sp_save_geographylevel_master", values)
             if new_id is not False:
                 action = "New Geography levels added"
                 db.save_activity(user_id, 5, action)
