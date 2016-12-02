@@ -15,107 +15,170 @@
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                <!-- <h4 class="page-title">Statutory Notification List</h4>
-                <hr class="no-top-margin"> -->
-                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="country" value="">
+                                        <input type="text" class="form-control input-sm" id="countryval" value="" autofocus="autofocus"  tabindex="1">
+                                        <div id="ac-country" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="domain" value="">
+                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="2">
+                                        <div id="ac-domain" class="ac-textbox default-display-none" >
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Act:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="level1val" tabindex="3">
+                                        <input type="hidden" id="level1">
+                                        <div id="ac-statutory" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">From Date:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">To Date:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
-                                <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                    </div>
+                                </center>
                             </div>
+                            <div class="clear"></div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY">
-                                <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY">
-                                <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
-                            </div>
-                        </center>
-                    </div>
-                    <div class="clear"></div>
-                </form>
                 </div>
-                </div>
-                </div>
+            </div>
+            <div class="grid-table-rpt default-display-none">
                 <div class="card-box">
                 <div class="table-responsive">
                   <div class="col-sm-12">
                     <div class="col-sm-12 text-center"><h4>Statutory Notification List</h4></div>
-                    <div class="col-sm-6 text-center"><h6>Country: India</h6></div>
-                    <div class="col-sm-6 text-center"><h6>Domain: Labour Law</h6></div>
+                    <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="disp_country"></span></h6></div>
+                    <div class="col-sm-6 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
                   </div>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th width="01%">#</th>
-                                <th width="15%">Act</th>
-                                <th width="20%">Compliance Task</th>
-                                <th width="10%">Date</th>
-                                <th width="20%">Notification Content</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>POG Act</td>
-                                <td>Form A - Notice of Opening</td>
-                                <td>26-Aug-2016</td>
-                                <td>**Content - as given by CAS Team **</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>EPF Act</td>
-                                <td>Form 1 - Registration</td>
-                                <td>20-Aug-2016</td>
-                                <td>**Content - as given by CAS Team **</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>S & E Act</td>
-                                <td>Opening & Closing Hours</td>
-                                <td>18-Aug-2016</td>
-                                <td>**Content - as given by CAS Team **</td>
-                            </tr>
+
+            </div>
+            <div class="card-box">
+                <div class="table-responsive">
+                  <div class="col-sm-12">
+                    <div class="col-sm-12 text-center"><h4>Statutory Notification List</h4></div>
+                    <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="disp_country"></span></h6></div>
+                    <div class="col-sm-6 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
+                  </div>
+                  <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <tbody class="table-statutory-notifications-list">
                         </tbody>
                     </table>
-                    <p class="rpt-count">Total : 3 record(s)</p>
+                    <table class="pagination-view default-display-none">
+                      <tr>
+                        <td>
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        <td style="width:650px;"></td>
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
                 </div>
             </div>
         </div>
         <!-- end col -->
     </div>
 </div>
+<div id="templates">
+<table class="table-statutory-notification-list">
+  <tr align="left" style="height:30px;" class="heading-list">
+    <th class="header-bg" width="3%" align="center">#</th>
+    <th class="header-bg" width="20%" >Act</th>
+    <th class="header-bg" width="25%" >Compliance Task</th>
+    <th class="header-bg" width="15%" align="center">Date</th>
+    <th class="header-bg" width="47%">Notifications Content</th>
+  </tr>
+
+<tr class="tbody-statutory-notification-list">
+  <td class="sno"></td>
+  <td class="act"></td>
+  <td class="compliancetask"></td>
+  <td class="date" align="center"></td>
+  <td class="notification"></td>
+</tr>
+
+</table>
+</div>
+
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/script/statutory-notifications-list-report/statutorynotificationslistreport.js"></script>
+<script type="text/javascript">
+$(function() {
+  $("#fromdate" ).datepicker({
+    changeMonth: true,
+    changeYear: true,
+    numberOfMonths: 1,
+    dateFormat: "dd-M-yy",
+    monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    onClose: function( selectedDate ) {
+    $( "#todate" ).datepicker( "option", "minDate", selectedDate );
+  }
+});
+$( "#todate" ).datepicker({
+    changeMonth: true,
+    changeYear: true,
+    numberOfMonths: 1,
+    dateFormat: "dd-M-yy",
+    monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    onClose: function( selectedDate ) {
+    $( "#fromdate" ).datepicker( "option", "maxDate", selectedDate );
+}
+});
+});
+</script>
 {% endblock %}

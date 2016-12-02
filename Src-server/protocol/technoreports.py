@@ -856,7 +856,7 @@ class GetUserMappingReportFiltersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["countries", "usermapping_groupdetails", "usermapping_business_groups", "usermapping_legal_entities", "usermapping_unit"])
         countries = data.get("countries")
-        usermapping_groupdetails = data.get("usermapping_group_details")
+        usermapping_groupdetails = data.get("usermapping_groupdetails")
         usermapping_business_groups = data.get("usermapping_business_groups")
         usermapping_legal_entities = data.get("usermapping_legal_entities")
         usermapping_unit = data.get("usermapping_unit")
@@ -870,7 +870,7 @@ class GetUserMappingReportFiltersSuccess(Response):
             "usermapping_legal_entities": self.usermapping_legal_entities,
             "usermapping_unit": self.usermapping_unit,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 # user mapping report - filter success
 
@@ -894,7 +894,7 @@ class GetUserMappingReportDataSuccess(Response):
             "unit_domains": self.unit_domains,
             "usermapping_domain": self.usermapping_domain,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 class GetClientAgreementReportFiltersSuccess(Response):
     def __init__(self, countries, domains, groups, business_groups, unit_legal_entity):

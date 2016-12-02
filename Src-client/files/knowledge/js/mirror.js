@@ -1407,7 +1407,7 @@ function initMirror() {
     callerName = 'techno_report';
     apiRequest(callerName, request, callback);
   }
-  function getAuditTrail(fromDate, toDate, userId, formId, recordCount, pageCount, callback) {
+  function getAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, recordCount, pageCount, callback) {
     callerName = 'general';
     var request = [
       'GetAuditTrails',
@@ -1415,10 +1415,20 @@ function initMirror() {
         'from_date': fromDate,
         'to_date': toDate,
         'user_id': userId,
-        'form_id': formId,
+        'form_id_search': formId,
+        'country_id': countryId,
+        'category_id': categoryId,
         'record_count': recordCount,
         'page_count': pageCount
       }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAuditTrailFilter(callback) {
+    callerName = 'general';
+    var request = [
+      'GetAuditTrailsFilter',
+      {}
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1899,7 +1909,7 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, callback) {
+  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, callback) {
     callerName = 'techno_report';
     var request = [
       'GetUserMappingDetailsReportData',
@@ -1907,6 +1917,7 @@ function initMirror() {
         'country_id': countryId,
         'client_id': clientId,
         'legal_entity_id': legalEntityId,
+        'u_m_none': u_m_none,
       }
     ];
     apiRequest(callerName, request, callback);
@@ -2222,6 +2233,7 @@ function initMirror() {
     getComplianceTaskReport: getComplianceTaskReport,
     get_ip: get_ip,
     getAuditTrail: getAuditTrail,
+    getAuditTrailFilter: getAuditTrailFilter,
     updateUserProfile: updateUserProfile,
     getNotifications: getNotifications,
     updateNotificationStatus: updateNotificationStatus,

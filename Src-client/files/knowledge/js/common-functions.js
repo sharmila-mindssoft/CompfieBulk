@@ -1,5 +1,5 @@
 var visiblePageCount = 10;
-
+var m_names = new Array('Jan','Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', "Dec");
 //Load count values in pagination selectbox
 var pageList = [2, 50, 100, 250, 500];
 function loadItemsPerPage() {
@@ -27,16 +27,35 @@ function clearMessage() {
   $('.error-message').text('');
 }
 
+function date_format(date){
+  day = date.getDate();
+  if (day < 10) {
+    day = '0' + day;
+  }
+  month = m_names[date.getMonth()];
+  year = date.getFullYear();
+  return day + '-' + month + '-' + year;
+}
+
+function current_date(){
+  return date_format(new Date());
+}
+
+function past_days(days){
+  dat = new Date(new Date().getTime() - 24*60*60*1000*days);
+  return date_format(dat);
+}
+
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
-  var toastPan = import_toast(); 
+  var toastPan = import_toast();
   Command: toastPan["error"](message)
 
 }
 
 function displaySuccessMessage(message) {
-  var toastPan = import_toast(); 
+  var toastPan = import_toast();
   Command: toastPan["success"](message)
 
 }
@@ -931,7 +950,7 @@ month_id_name_map[12] = "December"
 function commonAutoComplete(
     e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
     condition_fields, condition_values
-){  
+){
     ac_div.show();
     id_element.val('');
     var suggestions = [];

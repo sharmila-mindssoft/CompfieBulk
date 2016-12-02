@@ -42,12 +42,14 @@ Temp_id = $('#temp_id');
 
 
 //buttons
-AddButton = $('.btn-add');
-NextButton = $('.btnnext-holder #btn-next');
-PreviousButton = $('.btnnext-holder #btn-previous');
+AddButton = $('#btn-add');
+
+NextButton = $('#btn-next');
+PreviousButton = $('#btn-previous');
 SubmitButton = $("#btn-submit");
-BackButton = $(".btn-back");
+BackButton = $("#btn-back");
 SaveButton = $("#btn-save");
+
 AddStatuButton = $('#temp_addstatutories');
 AddComplianceButton = $('#temp_addcompliance');
 
@@ -165,15 +167,21 @@ function RenderInput() {
 
             cObject.on('click', function(cObject) {
                 $('.countrylist').removeClass('active');
+                $('.countrylist').removeClass('fa-check');
                 _renderinput.country_id = val.c_id;
                 _renderinput.country_name = val.c_name;
                 _renderinput.loadDomain(val.c_id);
                 _renderinput.loadNature(val.c_id);
                 $('#c'+val.c_id).addClass('active');
+                $('#c'+val.c_id + ' i').addClass("fa-check");
             });
             $('.name-holder', cObject).text(val.c_name);
             if(_renderinput.country_id == val.c_id)
+            {
                 $('#c'+val.c_id).addClass('active');
+                console.log($('#c'+val.c_id + ' i'));
+                $('#c'+val.c_id + ' i').addClass("fa-check");
+            }
             Country.append(cObject);
         });
     };
@@ -886,6 +894,7 @@ function ListPage() {
 
     this.show = function() {
         ListScreen.show();
+        ViewScreen.hide();
         _fetchback.getMappedList(0, 0);
     };
     this.hide = function() {

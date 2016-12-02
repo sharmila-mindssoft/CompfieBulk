@@ -189,7 +189,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
         return GetStatutoryMappingReportFiltersSuccess(countries, domains, industries, statutory_natures, geographies, level_1_statutories)
 
     def to_inner_structure(self):
-        return {
+        data = {
             "countries": self.countries,
             "domains": self.domains,
             "industries": self.industries,
@@ -198,6 +198,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
             "level_1_statutories": self.level_1_statutories,
             "compliance_frequency": self.compliance_frequency,
         }
+        return to_structure_dictionary_values(data)
 
 class StatutoryMappingReport(object):
     def __init__(

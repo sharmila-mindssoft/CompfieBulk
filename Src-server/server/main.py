@@ -137,6 +137,7 @@ class API(object):
     def _send_response(
         self, response_data, status_code
     ):
+        print "-----"
         print type(response_data)
         if type(response_data) is not str :
             data = response_data.to_structure()
@@ -156,6 +157,7 @@ class API(object):
             request_data = request_data_type.parse_structure(
                 data
             )
+            print request_data
             return request_data
         except Exception, e:
             print "_parse_request"
@@ -168,7 +170,8 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             # response.set_status(400)
             # response.send(str(e))
-            return None
+            return str(e)
+            # return None
 
     def handle_api_request(
         self, unbound_method, request_data_type
@@ -176,31 +179,27 @@ class API(object):
         self._ip_addess = request.remote_addr
         # print request.environ['REMOTE_ADDR']
 
-        if request_data_type == "knowledgeformat":
-            # request_data = request
-            pass
-        else:
-            request_data = self._parse_request(
-                request_data_type
-            )
-
-        if request_data is None:
-            return
-
         def respond(response_data):
             return self._send_response(
                 response_data, 200
             )
 
         try:
-            # db = BaseDatabase(
-            #     KNOWLEDGE_DB_HOST,
-            #     KNOWLEDGE_DB_PORT,
-            #     KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-            #     KNOWLEDGE_DATABASE_NAME
-            # )
-            # db.dbConfig(app)
-            # self._db_con = db.connect()
+            if request_data_type == "knowledgeformat":
+                # request_data = request
+                pass
+            else:
+                request_data = self._parse_request(
+                    request_data_type
+                )
+
+            if request_data is None:
+                raise ValueError("Request data is Null")
+            elif type(request_data) is str :
+                raise ValueError(request_data)
+
+            print "not returned"
+
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
@@ -208,18 +207,16 @@ class API(object):
             if response_data is None or type(response_data) is bool:
                 # print response_data
                 _db.rollback()
+
             if type(response_data) != technomasters.ClientCreationFailed:
+                print "commit"
                 _db.commit()
             else:
                 _db.rollback()
-            # print response_data
             _db_con.close()
             return respond(response_data)
         except Exception, e:
-            # print "handle_api_request"
-            # print e
-            # print(traceback.format_exc())
-            # print ip_address
+            print "handle_api_request ", e
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
             # logger.logKnowledgeApi(ip_address, "")
@@ -294,9 +291,12 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        # print self._ip_addess
         return controller.process_login_request(request, db, self._ip_addess)
-        # return login.ResetPasswordSuccess()
+
+    @csrf.exempt
+    @api_request(login.Request)
+    def handle_mobile_request(self, request, db):
+        return controller.process_mobile_request(request, db, self._ip_addess)
 
     @api_request(admin.RequestFormat)
     def handle_admin(self, request, db):
@@ -469,7 +469,8 @@ def run_server(port):
             ("/knowledge/api/techno_transaction", api.handle_techno_transaction),
             ("/knowledge/api/techno_report", api.handle_techno_report),
             ("/knowledge/api/files", api.handle_format_file),
-            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master)
+            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
+            ("/knowledge/api/mobile", api.handle_mobile_request)
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):

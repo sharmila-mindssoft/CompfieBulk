@@ -56,6 +56,8 @@ INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/
 INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-storage', 27, null);
 INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
+INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/group-admin-registration-email', 14, NULL);
+
 -- Reports
 INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
 INSERT INTO tbl_forms VALUES(31, 3, 'Country Report', '/knowledge/country-report', 31, 'Master');
@@ -70,7 +72,9 @@ INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Report', '/knowledge/domain-agr
 INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-unit-details', 40, null);
 INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
-INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail', 43, null);
+INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail-login-trace', 43, null);
+INSERT INTO tbl_forms VALUES(49, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 49, NULL);
+
 
 -- My Account
 INSERT INTO tbl_forms VALUES(44, 4, 'View Profile', '/knowledge/profile', 44, null);

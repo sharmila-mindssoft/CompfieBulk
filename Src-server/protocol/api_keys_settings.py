@@ -244,6 +244,7 @@ api_params = {
 
     "notifications": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "Notification"},
     "audit_trail_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrail"},
+    "audit_trail_countries": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrailCountries"},
     "form_categories":  {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "FormCategory"},
     "user_group_details":  {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserGroup"},
     'no_of_users': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -405,16 +406,16 @@ api_params = {
     'notification_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'action': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'has_read': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
-    "from_date": {'type': 'STRING', 'length': 20, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    "to_date": {'type': 'STRING', 'length': 20, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "from_date": {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
+    "to_date": {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     "date_and_time": {'type': 'STRING', 'length': 20, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    "date": {'type': 'STRING', 'length': 20, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "date": {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'record_count': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     'page_count': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     'total_records': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     'job_id': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     "audit_trails": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrail"},
-    "users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "User"},
+    "users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "User"},
     "forms_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrailForm"},
     'user_id_search': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'form_id_search': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -498,9 +499,9 @@ api_params = {
     'message_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "created_by": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "created_on": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
-
     "statutory_notifications": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "StatutoryNotification"},
     'notification_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    "level_1_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
