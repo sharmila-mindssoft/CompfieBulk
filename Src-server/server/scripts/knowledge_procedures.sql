@@ -668,7 +668,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_client_group_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_client_group_save`(
-    IN groupname VARCHAR(50), 
+    IN groupname VARCHAR(50),
     emailid VARCHAR(100),
     shortname varchar(50),
     no_of_view_licence int(11),
@@ -679,7 +679,7 @@ BEGIN
     group_name, short_name, email_id, total_view_licence,
     is_active, status_changed_on, is_approved, created_by,
     created_on) VALUES (groupname, shortname, emailid,
-    no_of_view_licence, 1, current_ist_datetime(), 
+    no_of_view_licence, 1, current_ist_datetime(),
     0, session_user, current_ist_datetime());
 END//
 DELIMITER ;
@@ -5033,6 +5033,7 @@ END//
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
+<<<<<<< HEAD
 -- update knowledge user view profile
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_update_profile`;
@@ -5173,7 +5174,6 @@ BEGIN
 END//
 DELIMITER;
 
-
 DROP PROCEDURE IF EXISTS `sp_tbl_geography_levels_getlist`;
 DELIMITER //
 
@@ -5182,5 +5182,94 @@ BEGIN
     select level_id, level_position, level_name, country_id from
     tbl_geography_levels order by level_position;
 
+END//
+DELIMITER;
+
+-- update knowledge user view profile
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_profile`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_profile`(
+IN contactno_ VARCHAR(20), IN address_ VARCHAR(250),
+    IN mobileno_ VARCHAR(20), IN emailid_ VARCHAR(100), IN userid_ INT(11)
+)
+BEGIN
+    UPDATE tbl_users set contact_no = contactno_, address = address_,
+    mobile_no = mobileno_, email_id = emailid_  WHERE user_id= userid_;
+    UPDATE tbl_user_login_details set email_id = emailid_  WHERE user_id= userid_;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get geography levels from master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_geography_levels`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_geography_levels`()
+BEGIN
+    select level_id, level_name, level_position, country_id
+    from tbl_geography_levels
+    order by level_position;
+END//
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- Check levels in geography master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_check_level_in_geographies`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_level_in_geographies`(
+    in levelId int(11))
+BEGIN
+    select count(*) from tbl_geographies where
+    level_id = levelId;
+END//
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- delete level from geography level master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_delete_geographylevel`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_delete_geographylevel`(
+    in levelId int(11))
+BEGIN
+    delete from tbl_geography_levels where
+    level_id = levelId;
+END//
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- Save geography levels under country id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_save_geographylevel_master`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_save_geographylevel_master`(
+    in _level_name varchar(50), _level_position int(11),
+    _country_id int(11), _created_by int(11), _created_on datetime)
+BEGIN
+    insert into tbl_geography_levels
+    (level_name, level_position, country_id, created_by, created_on)
+    values
+    (_level_name, _level_position, _country_id, _created_by, _created_on);
+
+END //
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- To update geography level under level id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_geographylevel_master`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_geographylevel_master`(
+    in _level_id int(11), _level_name varchar(50), _level_position int(11),
+    _updated_by int(11))
+BEGIN
+    update tbl_geography_levels
+    set level_name  = _level_name, level_position = _level_position,
+    updated_by = _updated_by where
+    level_id = _level_id;
 END//
 DELIMITER;

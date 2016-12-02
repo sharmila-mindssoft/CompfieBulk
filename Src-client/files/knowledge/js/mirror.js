@@ -1424,6 +1424,7 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+
   function getAuditTrailFilter(callback) {
     callerName = 'general';
     var request = [
@@ -1432,6 +1433,7 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+
   function updateUserProfile(contact_no, address, mobile_no, email_id, callback) {
     callerName = 'general';
     var request = [
