@@ -1,6 +1,5 @@
 
 var counList;
-
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
 var FilterCountry = $('#search-country-name');
@@ -17,9 +16,7 @@ $('#btn-country-add').click(function () {
   $('#country-add').show();
   $('#country-name').val('');
   $('#country-id').val('');
-  //displayMessage('');  // $("#country-name").focus();
-                       // $('#country-name').select();
-                       // $('#country-name').trigger('focus');
+  $('#country-name').focus();
 });
 $('#btn-country-cancel').click(function () {
   $('#country-add').hide();
