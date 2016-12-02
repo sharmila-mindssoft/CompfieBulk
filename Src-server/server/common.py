@@ -233,7 +233,6 @@ def string_to_datetime(string):
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
     return localize(string_in_date)
 
-
 ########################################################
 # Coverts datetime passed in string format to datetime
 # format

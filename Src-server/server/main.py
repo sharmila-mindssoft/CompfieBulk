@@ -1,31 +1,23 @@
 import os
-# import time
 import json
 import traceback
-# import mimetypes
 import jinja2
+import time
 import mysql.connector.pooling
-from flask import Flask, request, send_from_directory, Response, render_template, g
+from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
 
-# import tornado.web
-# from tornado.web import StaticFileHandler
-# from user_agents import parse
-
 from lxml import etree
-# from datetime import timedelta
-# from basics.webserver import WebServer
-# from basics.ioloop import IOLoop
 from protocol import (
     admin, consoleadmin, clientadminsettings,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
-    clientcoordinationmaster
+    clientcoordinationmaster, mobile
 )
 # from server.database import KnowledgeDatabase
 import controller
-from server.dbase import BaseDatabase, Database
+from server.dbase import Database
 from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
@@ -295,6 +287,11 @@ class API(object):
 
     @csrf.exempt
     @api_request(login.Request)
+    def handle_mobile_login_request(self, request, db):
+        return controller.process_mobile_request(request, db, self._ip_addess)
+
+    @csrf.exempt
+    @api_request(mobile.RequestFormat)
     def handle_mobile_request(self, request, db):
         return controller.process_mobile_request(request, db, self._ip_addess)
 
@@ -422,6 +419,7 @@ def renderTemplate(pathname, code=None):
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
+            new_url += "?v=%s" % (time.time())
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
@@ -429,6 +427,7 @@ def renderTemplate(pathname, code=None):
                 new_url = set_path(url)
             else:
                 new_url = url
+            new_url += "?v=%s" % (time.time())
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
         return data
@@ -470,6 +469,7 @@ def run_server(port):
             ("/knowledge/api/techno_report", api.handle_techno_report),
             ("/knowledge/api/files", api.handle_format_file),
             ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
+            ("/knowledge/api/mobile/login", api.handle_mobile_login_request),
             ("/knowledge/api/mobile", api.handle_mobile_request)
         ]
 
@@ -494,4 +494,4 @@ def run_server(port):
     settings = {
         "threaded": True
     }
-    app.run(host="127.0.0.1", port=port, **settings)
+    app.run(host="0.0.0.0", port=port, **settings)
