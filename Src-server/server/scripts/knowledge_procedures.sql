@@ -5069,3 +5069,38 @@ BEGIN
     order by created_on DESC limit pagecount_;
 END//
 DELIMITER;
+
+
+-- --------------------------------------------------------------------------------
+-- get knowledge users statutory notification list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_statutory_notifications`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_statutory_notifications`(
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+)
+BEGIN
+    SELECT s.notification_id, s.compliance_id, s.notification_text,
+    (SELECT concat(employee_code, ' - ', employee_name) 
+    from tbl_users where user_id = s.created_by) as created_by,
+    s.created_on, su.user_id, su.read_status
+    from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id 
+    AND su.user_id = userid_
+    order by su.read_status DESC, s.created_on DESC limit pagecount_;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- update knowledge users statutory notification list read status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_notification_read_status`;
+DELIMITER //
+CREATE PROCEDURE `sp_statutory_notification_read_status`(
+    IN notificationid_ INT(11), userid_ INT(11), readstatus_ TINYINT(2)
+)
+BEGIN
+    UPDATE tbl_statutory_notifications_users set read_status = readstatus_
+    WHERE notification_id=notificationid_ AND user_id = userid_;
+END //
+DELIMITER ;
