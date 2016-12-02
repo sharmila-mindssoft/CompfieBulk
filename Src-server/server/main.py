@@ -4,7 +4,7 @@ import json
 import traceback
 # import mimetypes
 import jinja2
-import mysql.connector
+import mysql.connector.pooling
 from flask import Flask, request, send_from_directory, Response, render_template, g
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
