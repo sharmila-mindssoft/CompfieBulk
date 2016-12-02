@@ -10,6 +10,10 @@ from server.constants import (
 from server.common import (
     encrypt, new_uuid
 )
+from server.database.knowledgetransaction import (
+    approve_statutory_mapping_list
+)
+from generalcontroller import (validate_user_session, validate_user_forms)
 
 __all__ = [
     "process_mobile_request",
@@ -19,6 +23,7 @@ __all__ = [
 
 
 def process_mobile_request(request, db, session_user_ip):
+    print type(request)
     if type(request) is login.Login:
         logger.logKnowledgeApi("Login", "process begin")
         result = process_mobile_login(db, request, session_user_ip)
@@ -33,6 +38,27 @@ def process_mobile_request(request, db, session_user_ip):
         logger.logKnowledgeApi("Logout", "process begin")
         result = process_mobile_logout(db, request)
         logger.logKnowledgeApi("Logout", "process end")
+
+    else :
+        result = None
+
+    if type(request) is mobile.RequestFormat :
+        forms = None
+        session_token = request.session_token
+        request_frame = request.request
+        user_id = validate_user_session(db, session_token)
+        if user_id is not None:
+            is_valid = validate_user_forms(db, user_id, forms, request_frame)
+            if is_valid is not True:
+                return login.InvalidSessionToken()
+
+        if user_id is None:
+            return login.InvalidSessionToken()
+
+        if type(request_frame) is mobile.GetApproveStatutoryMappings:
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
+            result = process_get_approve_statutory_mappings(db, user_id)
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     return result
 
@@ -124,3 +150,10 @@ def process_mobile_logout(db, request):
     session = request.session_token
     remove_session(db, session)
     return login.LogoutSuccess()
+
+
+def process_get_approve_statutory_mappings(db, user_id):
+    statutory_mappings = approve_statutory_mapping_list(db, user_id)
+    return mobile.GetApproveStatutoryMappingSuccess(
+        statutory_mappings
+    )

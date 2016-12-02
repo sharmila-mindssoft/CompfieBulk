@@ -743,6 +743,17 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
+
+  function getComplianceInfo(comp_id, callback) {
+    var request = [
+      'GetComplianceInfo',
+      {
+        "comp_id" : comp_id
+      }
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
+
   function approveStatutoryList(sMId, sProvision, aStatus, reason, nText) {
     var dict = {};
     if (reason == '') {
@@ -2146,6 +2157,7 @@ function initMirror() {
     filterData: filterData,
     getStatutoryMappingsReportData: getStatutoryMappingsReportData,
     getApproveStatutoryMapings: getApproveStatutoryMapings,
+    getComplianceInfo: getComplianceInfo,
     getSaveAdminUserGroupDict: getSaveAdminUserGroupDict,
     saveAdminUserGroup: saveAdminUserGroup,
     getUpdateAdminUserGroupDict: getUpdateAdminUserGroupDict,

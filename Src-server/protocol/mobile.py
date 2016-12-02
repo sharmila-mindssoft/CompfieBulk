@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
 from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
@@ -62,7 +62,11 @@ from protocol.to_structure import (
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
+        print name
         inner = self.to_inner_structure()
+        print inner
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -417,6 +421,18 @@ class SaveRegistrationKey(Request):
             "reg_key": to_structure_Text(self.reg_key)
         }
 
+class GetApproveStatutoryMappings(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetApproveStatutoryMappings()
+
+    def to_inner_structure(self):
+        return {}
+
 
 def _init_Request_class_map():
     classes = [
@@ -427,7 +443,9 @@ def _init_Request_class_map():
         GetComplianceHistory,
         CheckDiskSpace,
         GetTrendChartData,
-        SaveRegistrationKey
+        SaveRegistrationKey,
+        GetApproveStatutoryMappings
+
     ]
     class_map = {}
     for c in classes:
@@ -444,6 +462,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -1122,6 +1142,22 @@ class InvalidRegistrationKey(Response):
         return {}
 
 
+class GetApproveStatutoryMappingSuccess(Response):
+    def __init__(self, approve_mappings):
+        self.approve_mappings = approve_mappings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["approv_mappings"])
+        approve_mappings = data.get("approv_mappings")
+        return GetApproveStatutoryMappingSuccess(approve_mappings)
+
+    def to_inner_structure(self):
+        return {
+            "approv_mappings": self.approve_mappings
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UserLoginResponseSuccess,
@@ -1132,7 +1168,8 @@ def _init_Response_class_map():
         GetComplianceHistorySuccess,
         GetTrendChartDataSuccess,
         SaveRegistrationKeySuccess,
-        InvalidRegistrationKey
+        InvalidRegistrationKey,
+        GetApproveStatutoryMappingSuccess
 
     ]
     class_map = {}

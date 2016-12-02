@@ -236,6 +236,22 @@ class GetApproveStatutoryMappings(Request):
         return {}
 
 
+class GetComplianceInfo(Request):
+    def __init__(self, compliance_id):
+        self.compliance_id = compliance_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["comp_id"])
+        comp_id = data.get("comp_id")
+        return GetComplianceInfo(comp_id)
+
+    def to_inner_structure(self):
+        return {
+            "comp_id": self.compliance_id
+        }
+
+
 class ApproveMapping(object):
     def __init__(self, statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text):
         self.statutory_mapping_id = statutory_mapping_id
@@ -297,7 +313,7 @@ def _init_Request_class_map():
         SaveStatutoryMapping, UpdateStatutoryMapping,
         ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
         ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
-        GetStatutoryMaster
+        GetStatutoryMaster, GetComplianceInfo
     ]
     class_map = {}
     for c in classes:
@@ -570,6 +586,81 @@ class ApproveStatutoryMappingSuccess(Response):
         return {
         }
 
+class GetApproveStatutoryMappingSuccess(Response):
+    def __init__(self, approve_mappings):
+        self.approve_mappings = approve_mappings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["approv_mappings"])
+        approve_mappings = data.get("approv_mappings")
+        return GetApproveStatutoryMappingSuccess(approve_mappings)
+
+    def to_inner_structure(self):
+        return {
+            "approv_mappings": self.approve_mappings
+        }
+
+class GetComplianceInfoSuccess(Response):
+    def __init__(
+        self, compliance_id, statutory_provision,
+        compliance_task, description,
+        penal_consequences, is_active,
+        frequency, summary, reference, locations
+    ):
+        self.compliance_id = compliance_id
+        self.statutory_provision = statutory_provision
+        self.compliance_task = compliance_task
+        self.description = description
+        self.penal_consequences = penal_consequences
+        self.is_active = is_active
+        self.frequency = frequency
+        self.summary = summary
+        self.reference = reference
+        self.locations = locations
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "comp_id", "s_pro",
+            "c_task", "descrip",
+            "p_cons", "is_active",
+            "freq", "summary",
+            "refer", "locat"
+        ])
+        compliance_id = data.get("comp_id")
+        statutory_provision = data.get("s_pro")
+        compliance_task = data.get("c_task")
+        description = data.get("descrip")
+        penal_consequences = data.get("p_cons")
+        is_active = data.get("is_active")
+        frequency = data.get("freq")
+        summary = data.get("summary")
+        reference = data.get("refer")
+        locations = data.get("locat")
+
+        return GetComplianceInfoSuccess(
+            compliance_id, statutory_provision,
+            compliance_task, description,
+            penal_consequences,
+            is_active,
+            frequency, summary, reference, locations
+        )
+
+    def to_structure(self):
+        return {
+            "comp_id": self.compliance_id,
+            "s_pro": self.statutory_provision,
+            "c_task": self.compliance_task,
+            "descrip": self.description,
+            "p_cons": self.penal_consequences,
+            "is_active": self.is_active,
+            "freq": self.frequency,
+            "summary": self.summary,
+            "refer": self.reference,
+            "locat": self.locations
+        }
+
 
 def _init_Response_class_map():
     classes = [
@@ -580,7 +671,9 @@ def _init_Response_class_map():
         UpdateStatutoryMappingSuccess, InvalidStatutoryMappingId,
         ChangeStatutoryMappingStatusSuccess,
         ApproveStatutoryMappingSuccess,
-        GetStatutoryMasterSuccess
+        GetStatutoryMasterSuccess,
+        GetApproveStatutoryMappingSuccess,
+        GetComplianceInfoSuccess
     ]
     class_map = {}
     for c in classes:
@@ -827,3 +920,66 @@ class GeographyInfo(object):
             "l_position": self.level_position
         }
         return data
+
+class MappingApproveInfo(object):
+    def __init__(
+        self, mapping_id, compliance_id, country_id, domain_id,
+        compliance_task, is_active, created_by, created_on, updated_by,
+        updated_on, nature_name, organisations, mapping_text
+    ):
+        self.mapping_id = mapping_id
+        self.compliance_id = compliance_id
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.compliance_task = compliance_task
+        self.is_active = is_active
+        self.created_by = created_by
+        self.created_on = created_on
+        self.updated_by = updated_by
+        self.updated_on = updated_on
+        self.nature_name = nature_name
+        self.organisations = organisations
+        self.mapping_text = mapping_text
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "m_id", "comp_id", "c_id", "d_id", "c_task", "is_active",
+            "c_by", "c_on", "u_by", "u_on", "s_n_name", "org_names",
+            "map_text"
+        ])
+        mapping_id = data.get("m_id")
+        compliance_id = data.get("comp_id")
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        compliance_task = data.get("c_task")
+        is_active = data.get("is_active")
+        created_by = data.get("c_by")
+        created_on = data.get("c_on")
+        updated_by = data.get("u_by")
+        updated_on = data.get("u_on")
+        nature_name = data.get("s_n_name")
+        organisations = data.get("org_namees")
+        mapping_text = data.get("map_text")
+        return MappingApproveInfo(
+            mapping_id, compliance_id, country_id, domain_id, compliance_task,
+            is_active, created_by, created_on, updated_by, updated_on,
+            nature_name, organisations, mapping_text
+        )
+
+    def to_structure(self):
+        return {
+            "m_id": self.mapping_id,
+            "comp_id": self.compliance_id,
+            "c_id": self.country_id,
+            "d_id": self.domain_id,
+            "c_task": self.compliance_task,
+            "is_active": self.is_active,
+            "c_by": self.created_by,
+            "c_on": self.created_on,
+            "u_by": self.updated_by,
+            "u_on": self.updated_on,
+            "s_n_name": self.nature_name,
+            "org_names": self.organisations,
+            "map_text": self.mapping_text
+        }

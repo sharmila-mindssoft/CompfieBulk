@@ -1,12 +1,13 @@
 import os
 import json
+import datetime
 from server.database.tables import *
 from protocol import (core, knowledgetransaction)
 from server.constants import (
     KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
 )
 from server.common import (
-    convert_to_dict, get_date_time
+    convert_to_dict, get_date_time, datetime_to_string_time
 )
 from server.database.general import(
     return_compliance_frequency, return_compliance_duration,
@@ -1275,5 +1276,138 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     return data, total_record
 
-def approve_statutory_mapping_list(db, user_id, rcount):
-    pass
+def approve_statutory_mapping_list(db, user_id):
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 2)
+    print result
+    mappings = result[0]
+    orgs = result[1]
+    data = []
+
+    def get_orgs(map_id):
+        orgname = []
+        for o in orgs :
+            if o["statutory_mapping_id"] == map_id :
+                orgname.append(o["organisation_name"])
+        return orgname
+
+    for m in mappings :
+        map_id = m["statutory_mapping_id"]
+        if m["document_name"] is None :
+            c_name = m["compliance_task"]
+        else :
+            c_name = m["document_name"] + " - " + m["compliance_task"]
+        orgname = get_orgs(map_id)
+        c_on = datetime_to_string_time(m["created_on"])
+
+        u_on = None
+        if m["updated_by"] is not None :
+            u_on = datetime_to_string_time(m["updated_on"])
+
+        data.append(knowledgetransaction.MappingApproveInfo(
+            map_id, m["compliance_id"],
+            m["country_id"], m["domain_id"],
+            c_name, bool(m["is_active"]), m["created_by"],
+            c_on, m["updated_by"], u_on,
+            m["statutory_nature_name"], orgname, m["statutory_mapping"]
+        ))
+
+    return data
+
+def make_summary(data, data_type, c):
+    if data_type == 1 :
+        if len(data) > 0:
+            dat = data[0].statutory_date
+            mon = data[0].statutory_month
+            day = data[0].trigger_before_days
+            summary = "%s  %s" % (
+                mon, dat
+            )
+            if day is not None :
+                summary += " Trigger: %s days" % (day)
+
+            return summary
+        else:
+            return None
+    elif data_type in (2, 3) :
+        dates = []
+        trigger = []
+        if len(data) > 0:
+            for d in data :
+                dat = d.statutory_date
+                mon = d.statutory_month
+                day = d.trigger_before_days
+                dates.append("%s  %s" % (
+                    mon, dat
+                ))
+                if day is not None :
+                    trigger.append(" %s days, " % (day))
+
+            summary = "Repeats every %s - %s. " % (
+                c["repeats_every"], c["repeat_type"]
+            )
+            summary += ", ".join(dates)
+            if len(trigger) > 0 :
+                summary += " Trigger : " + ", ".join(trigger)
+
+    elif data_type == 4:
+        dates = []
+        trigger = []
+        if len(data) > 0:
+            for d in data :
+                dat = d.statutory_date
+                mon = d.statutory_month
+                day = d.trigger_before_days
+                dates.append("%s  %s" % (
+                    mon, dat
+                ))
+                if day is not None :
+                    trigger.append(" %s days, " % (day))
+
+            summary = "Repeats every %s - %s. " % (
+                d["repeats_every"], d["repeat_type"]
+            )
+            summary += ", ".join(dates)
+            if len(trigger) > 0 :
+                summary += " Trigger : " + ", ".join(trigger)
+
+    elif data_type == 5 :
+        summary = "To complete within %s - %s" % (
+            d["duration"], d["duration_type"]
+        )
+
+    return summary
+
+
+def get_compliance_details(db, user_id, compliance_id):
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_compliance", [compliance_id], 2)
+    c_info = result[0][0]
+    geo_info = result[1]
+    geo_names = []
+    for g in geo_info:
+        geo_names.append(g["parent_names"] + ">>" + g["geography_name"])
+
+    if m["document_name"] is None :
+        c_name = m["compliance_task"]
+    else :
+        c_name = m["document_name"] + " - " + m["compliance_task"]
+
+    statutory_dates = m["statutory_dates"]
+    statutory_dates = json.loads(statutory_dates)
+    date_list = []
+    for date in statutory_dates:
+        s_date = core.StatutoryDate(
+            date["statutory_date"],
+            date["statutory_month"],
+            date["trigger_before_days"],
+            date.get("repeat_by")
+        )
+        date_list.append(s_date)
+    summary = make_summary(date_list, m["frequency_id"], c_info)
+
+    return knowledgetransaction.GetComplianceInfoSuccess(
+        c_info["compliance_id"], c["statutory_provision"],
+        c_name, c_info["compliance_description"],
+        c_info["penal_consequences"], bool(c_info["is_active"]),
+        c_info["freq_name"], summary, c_info["reference_link"],
+        ", ".join(geo_names)
+    )
