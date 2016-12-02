@@ -5179,3 +5179,33 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_approve`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_statutory_mapping_approve`(
+    IN compid INT(11), mapid INT(11), country VARCHAR(100), domain VARCHAR(100),
+    nature VARCHAR(100), mapping TEXT, cname TEXT, asts INT(11), rmarks TEXT,
+    isCommon tinyint(2), userid INT(11)
+)
+BEGIN
+
+    IF isCommon = 0 then
+        update tbl_compliances set is_approved = asts,
+            approved_by = userid, approved_on = current_ist_datetime(),
+            remarks = rmarks
+        where compliance_id = compid;
+    ELSE
+        update tbl_compliances set is_approved = asts,
+            approved_by = userid, approved_on = current_ist_datetime()
+        where compliance_id = compid;
+
+        update tbl_statutory_mappings set is_approved = asts,
+            approved_by = userid,remarks = rmarks
+        where compliance_id = compid;
+
+    END IF;
+
+END //
+
+DELIMITER ;

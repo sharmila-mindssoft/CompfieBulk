@@ -251,34 +251,6 @@ class GetComplianceInfo(Request):
             "comp_id": self.compliance_id
         }
 
-
-class ApproveMapping(object):
-    def __init__(self, statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text):
-        self.statutory_mapping_id = statutory_mapping_id
-        self.approval_status = approval_status
-        self.rejected_reason = rejected_reason
-        self.statutory_provision = statutory_provision
-        self.notification_text = notification_text
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["s_m_id", "a_status", "r_reason", "s_provision", "n_text"])
-        statutory_mapping_id = data.get("s_m_id")
-        approval_status = data.get("a_status")
-        rejected_reason = data.get("r_reason")
-        statutory_provision = data.get("s_provision")
-        notification_text = data.get("n_text")
-        return ApproveMapping(statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text)
-
-    def to_structure(self):
-        return {
-            "s_m_id": self.statutory_mapping_id,
-            "a_status": self.approval_status,
-            "r_reason": self.rejected_reason,
-            "s_provision": self.statutory_provision,
-            "n_text": self.notification_text,
-        }
-
 class ApproveStatutoryMapping(Request):
     def __init__(self, statutory_mappings):
         self.statutory_mappings = statutory_mappings
@@ -313,7 +285,7 @@ def _init_Request_class_map():
         SaveStatutoryMapping, UpdateStatutoryMapping,
         ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
         ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
-        GetStatutoryMaster, GetComplianceInfo
+        GetStatutoryMaster,
     ]
     class_map = {}
     for c in classes:
@@ -982,4 +954,59 @@ class MappingApproveInfo(object):
             "s_n_name": self.nature_name,
             "org_names": self.organisations,
             "map_text": self.mapping_text
+        }
+
+
+class ApproveMapping(object):
+    def __init__(
+        self, country_name, domain_name, nature_name,
+        mapping_text, compliance_task, approval_status_id,
+        remarks, mapping_id, compliance_id, is_common
+
+    ):
+        self.country_name = country_name
+        self.domain_name = domain_name
+        self.nature_name = nature_name
+        self.mapping_text = mapping_text
+        self.compliance_task = compliance_task
+        self.approval_status_id = approval_status_id
+        self.remarks = remarks
+        self.mapping_id = mapping_id
+        self.compliance_id = compliance_id
+        self.is_common = is_common
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_name", "d_name", "s_n_name", "map_text",
+            "c_task", "a_s_id", "remarks", "m_id",
+            "comp_id", "is_common"
+        ])
+        c_name = data.get("c_name")
+        d_name = data.get("d_name")
+        s_n_name = data.get("s_n_name")
+        map_text = data.get("map_text")
+        c_task = data.get("c_task")
+        a_s_id = data.get("a_s_id")
+        remarks = data.get("remarks")
+        m_id = data.get("m_id")
+        comp_id = data.get("comp_id")
+        is_common = data.get("is_common")
+        return ApproveMapping(
+            c_name, d_name, s_n_name, map_text, c_task, a_s_id,
+            remarks, m_id, comp_id, is_common
+        )
+
+    def to_structure(self):
+        return {
+            "c_name": self.country_name,
+            "d_name": self.domain_name,
+            "s_s_name": self.nature_name,
+            "map_text": self.mapping_text,
+            "c_task": self.compliance_task,
+            "a_s_id": self.approval_status_id,
+            "remarks": self.remarks,
+            "m_id": self.mapping_id,
+            "comp_id": self.compliance_id,
+            "is_common": self.is_common
         }

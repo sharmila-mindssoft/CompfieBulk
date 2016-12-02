@@ -1410,3 +1410,14 @@ def get_compliance_details(db, user_id, compliance_id):
         c_info["freq_name"], summary, c_info["reference_link"],
         ", ".join(geo_names)
     )
+
+def save_approve_mapping(db, user_id, data):
+    update_values = []
+    condition = []
+    for d in data :
+        update_values.append([
+            d.country_name, d.domain_name, d.nature_name, d.mapping_text,
+            d.compliance_task, d.approval_status_id, d.remarks,
+            d.mapping_id, d.compliance_id
+        ])
+        condition.append("compliance_id = %s" % d.compliance_id)
