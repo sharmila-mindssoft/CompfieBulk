@@ -737,6 +737,14 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
+  function getApproveStatutoryMapingsFilters(callback) {
+    var request = [
+      'GetApproveStatutoryMappingsFilters',
+      {}
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
+
   function getApproveStatutoryMapings(callback) {
     var request = [
       'GetApproveStatutoryMappings',
@@ -2194,6 +2202,7 @@ function initMirror() {
     getStatutoryMappingsMaster: getStatutoryMappingsMaster,
     getStatutoryMappings: getStatutoryMappings,
     changeStatutoryMappingStatus: changeStatutoryMappingStatus,
+    getApproveStatutoryMapingsFilters: getApproveStatutoryMapingsFilters,
     approveStatutoryList: approveStatutoryList,
     approveStatutoryMapping: approveStatutoryMapping,
     getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,

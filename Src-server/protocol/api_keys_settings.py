@@ -508,6 +508,8 @@ api_params = {
     "statutory_notifications": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "StatutoryNotification"},
     'notification_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "level_1_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},
+
+    "knowledgeusers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'module_name': 'core', 'class_name': 'ChildUsers'}
 }
 
 api_params['domain_id'] = api_params.get('d_id')

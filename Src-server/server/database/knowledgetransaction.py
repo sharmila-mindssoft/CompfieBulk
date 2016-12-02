@@ -1439,22 +1439,15 @@ def save_approve_mapping(db, user_id, data):
             text = text % (
                 d.country_name, d.domain_name, d.mapping_text, d.compliance_task
             )
-            print text
             # updated notification
-            print "--------------"
-            print d.updated_by
-            print user_id
             m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
                 "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
             msg_id = db.execute_insert(m1, [4, "Statutory Mapping", str(text), d.compliance_id, user_id, get_date_time()])
 
-            print m1 % (4, "Statutory Mapping", str(text), d.compliance_id, user_id, get_date_time())
-            print msg_id
             if msg_id is False or msg_id == 0 :
                 raise fetch_error()
             m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
             db.execute(m2 , [msg_id, d.updated_by])
-            print m2
             if d.approval_status_id == 3 :
                 save_approve_notify(db, text, user_id, d.compliance_id)
         return True
@@ -1464,12 +1457,10 @@ def save_approve_mapping(db, user_id, data):
 
 def save_approve_notify(db, text, user_id, comppliance_id):
     users = db.call_proc("sp_tbl_users_to_notify", [3])
-    print users
     q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
         "values (%s, %s, %s, %s)"
 
     new_id = db.execute_insert(q, [text, comppliance_id, user_id, get_date_time()])
-    print new_id
     q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
         "values (%s, %s)"
     for u in users:

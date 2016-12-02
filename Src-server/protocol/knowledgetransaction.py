@@ -223,6 +223,19 @@ class ChangeStatutoryMappingStatus(Request):
             "is_active": self.is_active
         }
 
+class GetApproveStatutoryMappingsFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetApproveStatutoryMappingsFilters()
+
+    def to_inner_structure(self):
+        return {}
+
+
 class GetApproveStatutoryMappings(Request):
     def __init__(self):
         pass
@@ -285,7 +298,7 @@ def _init_Request_class_map():
         SaveStatutoryMapping, UpdateStatutoryMapping,
         ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
         ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
-        GetStatutoryMaster,
+        GetStatutoryMaster, GetApproveStatutoryMappingsFilters
     ]
     class_map = {}
     for c in classes:
@@ -558,6 +571,41 @@ class ApproveStatutoryMappingSuccess(Response):
         return {
         }
 
+class GetApproveStatutoryMappingFilterSuccess(Response):
+    def __init__(self, countries, domains, statutory_natures, industries, knowledgeusers):
+        self.countries = countries
+        self.domains = domains
+        self.statutory_natures = statutory_natures
+        self.industries = industries
+        self.knowledgeusers = knowledgeusers
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "domains", "statutory_natures", "industries",
+            "knowledgeusers"
+        ])
+        countries = data.get("countries")
+        domains = data.get("domains")
+        statutory_natures = data.get("statutory_natures")
+        industries = data.get("industries")
+        knowledgeusers = data.get("knowledgeusers")
+        return GetApproveStatutoryMappingFilterSuccess(
+            countries, domains, statutory_natures, industries,
+            knowledgeusers
+        )
+
+    def to_inner_structure(self):
+        return {
+
+            "countries": self.countries,
+            "domains": self.domains,
+            "statutory_natures": self.statutory_natures,
+            "industries": self.industries,
+            "knowledgeusers": self.knowledgeusers
+        }
+
+
 class GetApproveStatutoryMappingSuccess(Response):
     def __init__(self, approve_mappings):
         self.approve_mappings = approve_mappings
@@ -645,7 +693,8 @@ def _init_Response_class_map():
         ApproveStatutoryMappingSuccess,
         GetStatutoryMasterSuccess,
         GetApproveStatutoryMappingSuccess,
-        GetComplianceInfoSuccess
+        GetComplianceInfoSuccess,
+        GetApproveStatutoryMappingFilterSuccess
     ]
     class_map = {}
     for c in classes:
