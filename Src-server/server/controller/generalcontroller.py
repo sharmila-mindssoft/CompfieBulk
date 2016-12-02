@@ -13,7 +13,10 @@ from server.database.general import (
     get_user_form_ids,
     get_notifications, get_audit_trails,
     update_profile,
-    verify_password, get_audit_trail_filters
+    verify_password,
+    get_messages,
+    get_statutory_notifications,
+    get_audit_trail_filters
 )
 
 __all__ = [
@@ -28,7 +31,8 @@ __all__ = [
     "process_get_notifications",
     "process_update_notification_status",
     "process_uploaded_file",
-    "process_verify_password"
+    "process_verify_password",
+    "process_update_statutory_notification_status"
 ]
 
 forms = [1, 2]
@@ -119,6 +123,20 @@ def process_general_request(request, db):
         logger.logKnowledgeApi("VerifyPassword", "process begin")
         result = process_verify_password(db, request_frame, user_id)
         logger.logKnowledgeApi("VerifyPassword", "process end")
+
+    elif type(request_frame) is general.GetMessages:
+        logger.logKnowledgeApi("GetMessages", "process begin")
+        result = process_get_messages(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetMessages", "process end")
+
+    elif type(request_frame) is general.GetStatutoryNotifications:
+        logger.logKnowledgeApi("GetStatutoryNotifications", "process begin")
+        result = process_get_statutory_notifications(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryNotifications", "process end")
+    elif type(request_frame) is general.UpdateStatutoryNotificationStatus:
+        logger.logKnowledgeApi("UpdateStatutoryNotificationStatus", "process begin")
+        result = process_update_statutory_notification_status(db, request_frame, user_id)
+        logger.logKnowledgeApi("UpdateStatutoryNotificationStatus", "process end")
     return result
 
 
@@ -417,3 +435,41 @@ def process_verify_password(db, request, user_id):
         return general.InvalidPassword()
     else:
         return general.VerifyPasswordSuccess()
+
+########################################################################
+# To get the list of messages of the current user unread orderwise
+########################################################################
+def process_get_messages(db, request, session_user):
+    messages = None
+    messages = get_messages(
+        db, request.from_count, request.page_count, session_user
+    )
+    return general.GetMessagesSuccess(
+        messages=messages
+    )
+
+##################################################################################
+# To get the list of statutory notifications of the current user unread orderwise
+##################################################################################
+def process_get_statutory_notifications(db, request, session_user):
+    statutory_notifications = None
+    statutory_notifications = get_statutory_notifications(
+        db, request.from_count, request.page_count, session_user
+    )
+    return general.GetStatutoryNotificationsSuccess(
+        statutory_notifications=statutory_notifications
+    )
+
+########################################################
+# To mark the statutory notification as 'Read' once the user read
+# a notification
+########################################################
+def process_update_statutory_notification_status(db, request, session_user):
+    result = update_statutory_notification_status(
+        db, request.notification_id, request.user_id, request.has_read,
+        session_user)
+
+    if result:
+        return general.UpdateStatutoryNotificationStatusSuccess()
+    else:
+        raise process_error("E029")

@@ -668,15 +668,20 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_client_group_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_client_group_save`(
-    IN groupname VARCHAR(50), email_id VARCHAR(100)
+    IN groupname VARCHAR(50),
+    emailid VARCHAR(100),
+    shortname varchar(50),
+    no_of_view_licence int(11),
+    session_user int(11)
 )
 BEGIN
     INSERT INTO tbl_client_groups (
     group_name, short_name, email_id, total_view_licence,
     is_active, status_changed_on, is_approved, created_by,
     created_on) VALUES (groupname, shortname, emailid,
-    no_of_view_licence, 1, current_ist_datetime(), 0, session_user, current_ist_datetime());
-END //
+    no_of_view_licence, 1, current_ist_datetime(),
+    0, session_user, current_ist_datetime());
+END//
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -799,7 +804,7 @@ CREATE PROCEDURE `sp_client_configurations_delete`(
     IN clientid INT(11)
 )
 BEGIN
-    DELETE FROM tbl_client_configurations WHERE client_id=clientid;
+    DELETE FROM tbl_client_configuration WHERE client_id=clientid;
 END //
 DELIMITER ;
 
@@ -893,7 +898,7 @@ CREATE PROCEDURE `sp_client_groups_details_by_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT short_name, email_id, total_view_licence
+    SELECT group_name, short_name, email_id, total_view_licence
     FROM tbl_client_groups WHERE client_id=clientid;
 END //
 DELIMITER ;
@@ -949,8 +954,8 @@ CREATE PROCEDURE `sp_client_configuration_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT country_id, domain_id, period_from, period_to
-    FROM tbl_client_configurations WHERE client_id = clientid;
+    SELECT country_id, domain_id, month_from, month_to
+    FROM tbl_client_configuration WHERE client_id = clientid;
 END //
 DELIMITER ;
 
@@ -963,7 +968,7 @@ CREATE PROCEDURE `sp_le_d_industry_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, domain_id, organization_id, count,
+    SELECT legal_entity_id, domain_id, organisation_id, count,
     activation_date
     FROM tbl_legal_entity_domains WHERE legal_entity_id in (
         select legal_entity_id from tbl_legal_entities
@@ -1489,9 +1494,9 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
     IN session_user INT(11)
 )
 BEGIN
-    SELECT client_id, group_name, email_id, count, client_countries
+    SELECT client_id, group_name, email_id, count, client_countries, short_name
     FROM (
-        SELECT client_id, group_name, email_id,
+        SELECT client_id, group_name, email_id, short_name,
         (
             SELECT count(legal_entity_id) FROM tbl_legal_entities tle
             WHERE tle.client_id = tcg.client_id and is_active=1
@@ -2940,7 +2945,7 @@ BEGIN
     ) as no_of_assigned_legal_entities
 
     FROM tbl_client_groups tcg;
-END ;
+END //
 DELIMITER ;
 
 
@@ -3436,7 +3441,7 @@ DROP PROCEDURE IF EXISTS `sp_compliances_by_unit_details`;
 DELIMITER //
 CREATE PROCEDURE `sp_compliances_by_unit_details`(
     IN domain_ids TEXT, country_ids TEXT, geography_ids TEXT,
-    organization_ids TEXT
+    organisation_ids TEXT
 )
 BEGIN
     CREATE TEMPORARY TABLE statutory_mappings
@@ -3446,7 +3451,7 @@ BEGIN
     WHERE find_in_set(country_id, country_ids)
     and find_in_set(domain_id, domain_ids)
     and find_in_set(geography_id, geography_ids)
-    and find_in_set(organisation_id, organization_ids);
+    and find_in_set(organisation_id, organisation_ids);
 
     SELECT compliance_id, statutory_provision, document_name, compliance_task,
     compliance_description, statutory_mapping_id
@@ -5032,6 +5037,7 @@ END//
 DELIMITER;
 
 -- --------------------------------------------------------------------------------
+<<<<<<< HEAD
 -- update knowledge user view profile
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_update_profile`;
@@ -5048,6 +5054,64 @@ BEGIN
 END//
 DELIMITER;
 
+-- --------------------------------------------------------------------------------
+-- get knowledge users message list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_messages`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_messages`(
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+)
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
+    
+    SELECT m.message_id, m.message_heading, m.message_text, m.link,
+    (SELECT concat(employee_code, ' - ', employee_name) 
+    from tbl_users where user_id = m.created_by) as created_by,
+    m.created_on
+    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id 
+    AND mu.user_id = userid_
+    where m.user_category_id = @u_cat_id
+    order by created_on DESC limit pagecount_;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- get knowledge users statutory notification list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_statutory_notifications`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_statutory_notifications`(
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+)
+BEGIN
+    SELECT s.notification_id, s.compliance_id, s.notification_text,
+    (SELECT concat(employee_code, ' - ', employee_name) 
+    from tbl_users where user_id = s.created_by) as created_by,
+    s.created_on, su.user_id, su.read_status
+    from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id 
+    AND su.user_id = userid_
+    order by su.read_status DESC, s.created_on DESC limit pagecount_;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- update knowledge users statutory notification list read status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_notification_read_status`;
+DELIMITER //
+CREATE PROCEDURE `sp_statutory_notification_read_status`(
+    IN notificationid_ INT(11), userid_ INT(11), readstatus_ TINYINT(2)
+)
+BEGIN
+    UPDATE tbl_statutory_notifications_users set read_status = readstatus_
+    WHERE notification_id=notificationid_ AND user_id = userid_;
+END //
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
 -- Get Statutory level details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutorymapping_report_levl1_list`;
@@ -5063,6 +5127,7 @@ BEGIN
 	WHERE t2.level_position=1;
 END//
 DELIMITER;
+
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
@@ -5113,7 +5178,6 @@ BEGIN
 END//
 DELIMITER;
 
-
 DROP PROCEDURE IF EXISTS `sp_tbl_geography_levels_getlist`;
 DELIMITER //
 
@@ -5122,6 +5186,96 @@ BEGIN
     select level_id, level_position, level_name, country_id from
     tbl_geography_levels order by level_position;
 
+END//
+DELIMITER;
+
+<<<<<<< HEAD
+-- update knowledge user view profile
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_profile`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_profile`(
+IN contactno_ VARCHAR(20), IN address_ VARCHAR(250),
+    IN mobileno_ VARCHAR(20), IN emailid_ VARCHAR(100), IN userid_ INT(11)
+)
+BEGIN
+    UPDATE tbl_users set contact_no = contactno_, address = address_,
+    mobile_no = mobileno_, email_id = emailid_  WHERE user_id= userid_;
+    UPDATE tbl_user_login_details set email_id = emailid_  WHERE user_id= userid_;
+END//
+DELIMITER;
+
+-- --------------------------------------------------------------------------------
+-- Get geography levels from master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_geography_levels`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_geography_levels`()
+BEGIN
+    select level_id, level_name, level_position, country_id
+    from tbl_geography_levels
+    order by level_position;
+END//
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- Check levels in geography master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_check_level_in_geographies`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_level_in_geographies`(
+    in levelId int(11))
+BEGIN
+    select count(*) from tbl_geographies where
+    level_id = levelId;
+END//
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- delete level from geography level master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_delete_geographylevel`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_delete_geographylevel`(
+    in levelId int(11))
+BEGIN
+    delete from tbl_geography_levels where
+    level_id = levelId;
+END//
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- Save geography levels under country id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_save_geographylevel_master`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_save_geographylevel_master`(
+    in _level_name varchar(50), _level_position int(11),
+    _country_id int(11), _created_by int(11), _created_on datetime)
+BEGIN
+    insert into tbl_geography_levels
+    (level_name, level_position, country_id, created_by, created_on)
+    values
+    (_level_name, _level_position, _country_id, _created_by, _created_on);
+
+END //
+DELIMITER;
+-- --------------------------------------------------------------------------------
+-- To update geography level under level id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_geographylevel_master`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_geographylevel_master`(
+    in _level_id int(11), _level_name varchar(50), _level_position int(11),
+    _updated_by int(11))
+BEGIN
+    update tbl_geography_levels
+    set level_name  = _level_name, level_position = _level_position,
+    updated_by = _updated_by where
+    level_id = _level_id;
 END//
 DELIMITER;
 

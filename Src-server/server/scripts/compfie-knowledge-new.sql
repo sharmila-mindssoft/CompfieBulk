@@ -512,7 +512,7 @@ CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `group_admin_username` varchar(20) NOT NULL,
+  `group_admin_username` varchar(20) NULL,
   `total_view_licence` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `remarks` varchar(500) DEFAULT NULL,
@@ -674,7 +674,9 @@ CREATE TABLE `tbl_client_configuration` (
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `month_from` int(11) NOT NULL,
-  `month_to` int(11) NOT NULL
+  `month_to` int(11) NOT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -934,6 +936,7 @@ DROP TABLE IF EXISTS `tbl_messages`;
 CREATE TABLE `tbl_messages` (
   `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
+  `message_heading` Text DEFAULT NULL,
   `message_text` Text DEFAULT NULL,
   `link` Text DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,

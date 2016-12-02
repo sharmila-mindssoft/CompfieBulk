@@ -42,6 +42,7 @@ function initMirror() {
   // }
   function clearSession() {
     delete window.sessionStorage.userInfo;
+    delete window.sessionStorage.MESSAGES
   }
   function getUserInfo() {
     var info = window.sessionStorage.userInfo;
@@ -1434,6 +1435,7 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+
   function getAuditTrailFilter(callback) {
     callerName = 'general';
     var request = [
@@ -1442,6 +1444,7 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+
   function updateUserProfile(contact_no, address, mobile_no, email_id, callback) {
     callerName = 'general';
     var request = [
@@ -2085,6 +2088,45 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  /* Messages */
+  function getMessages(from_count, page_count, callback) {
+    callerName = 'general';
+    var request = [
+      'GetMessages',
+      {
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  
+  /* Messages */
+  function getStatutoryNotifications(from_count, page_count, callback) {
+    callerName = 'general';
+    var request = [
+      'GetStatutoryNotifications',
+      {
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function updateStatutoryNotificationStatus(notification_id, user_id, has_read, callback) {
+    callerName = 'general';
+    var request = [
+      'UpdateStatutoryNotificationStatus',
+      {
+        'notification_id': notification_id,
+        'user_id': user_id,
+        'has_read': has_read
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2265,7 +2307,10 @@ function initMirror() {
     getClientAgreementReportFilters: getClientAgreementReportFilters,
     getClientAgreementReport: getClientAgreementReport,
     getDomainwiseAgreementReport: getDomainwiseAgreementReport,
-    getOrganizationWiseUnitCount: getOrganizationWiseUnitCount
+    getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
+    getMessages: getMessages,
+    getStatutoryNotifications: getStatutoryNotifications,
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus
 
   };
 }

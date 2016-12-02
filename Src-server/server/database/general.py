@@ -324,6 +324,48 @@ def get_notifications(
         ))
     return notifications
 
+def get_messages(
+    db, from_count, page_count, session_user
+):
+    expected_result = 2
+    args = [from_count, page_count, session_user]
+    rows = db.call_proc_with_multiresult_set('sp_get_messages', args, expected_result)
+
+    messages = []
+    for row in rows[1]:
+        messages.append(general.Message(
+            row["message_id"], row["message_heading"], row["message_text"], row["link"],
+            row["created_by"], datetime_to_string_time(row["created_on"])
+        ))
+    return messages
+
+def get_statutory_notifications(
+    db, from_count, page_count, session_user
+):
+    args = [from_count, page_count, session_user]
+    rows = db.call_proc('sp_get_statutory_notifications', args)
+
+    get_statutory_notifications = []
+    for row in rows:
+        get_statutory_notifications.append(general.StatutoryNotification(
+            row["notification_id"], row["user_id"], row["compliance_id"], row["notification_text"],
+            row["created_by"], datetime_to_string_time(row["created_on"]), bool(row["read_status"])
+        ))
+    return get_statutory_notifications
+
+def update_statutory_notification_status(
+    db, notification_id, user_id, has_read, session_user
+): 
+    result = db.call_update_proc(
+        "sp_statutory_notification_read_status",
+        (notification_id, user_id, has_read)
+    )
+    if result:
+        return True
+    else:
+        return False
+
+
 def return_compliance_duration(data):
     duration_list = []
     for d in data:

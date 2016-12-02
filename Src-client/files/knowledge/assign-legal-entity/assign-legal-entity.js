@@ -27,7 +27,6 @@ var AC_User = $('#ac-user');
 var AC_Textbox = $('.ac-textbox');
 
 function resetValues(){
-  displayMessage('');  
   ListFilterBox.val('');
   AddFilterBox.val('');
   Group_Label.text('');

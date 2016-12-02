@@ -252,6 +252,63 @@ class UpdateNotificationStatus(Request):
             "has_read": self.has_read,
         }
 
+class GetMessages(Request):
+    def __init__(self, from_count, page_count):
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["from_count", "page_count"])
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetMessages(from_count, page_count)
+
+    def to_inner_structure(self):
+        return {
+            "from_count": self.from_count,
+            "page_count": self.page_count,
+        }
+
+class GetStatutoryNotifications(Request):
+    def __init__(self, from_count, page_count):
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["from_count", "page_count"])
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetStatutoryNotifications(from_count, page_count)
+
+    def to_inner_structure(self):
+        return {
+            "from_count": self.from_count,
+            "page_count": self.page_count,
+        }
+
+class UpdateStatutoryNotificationStatus(Request):
+    def __init__(self, notification_id, user_id, has_read):
+        self.notification_id = notification_id
+        self.user_id = user_id
+        self.has_read = has_read
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["notification_id", "user_id", "has_read"])
+        notification_id = data.get("notification_id")
+        user_id = data.get("user_id")
+        has_read = data.get("has_read")
+        return UpdateNotificationStatus(notification_id, has_read)
+
+    def to_inner_structure(self):
+        return {
+            "notification_id": self.notification_id,
+            "user_id": self.user_id,
+            "has_read": self.has_read,
+        }
+
 class GetAuditTrails(Request):
     def __init__(self, from_date, to_date, user_id, form_id_search, country_id, category_id, record_count, page_count):
         self.from_date = from_date
@@ -327,7 +384,8 @@ def _init_Request_class_map():
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
         ChangeDomainStatus, GetCountriesForUser, GetCountries, SaveCountry, UpdateCountry,
         ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
-        GetAuditTrails, VerifyPassword, GetAuditTrailsFilter
+        GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
+        GetAuditTrailsFilter
     ]
     class_map = {}
     for c in classes:
@@ -609,6 +667,49 @@ class UpdateNotificationStatusSuccess(Response):
         }
 
 
+class GetMessagesSuccess(Response):
+    def __init__(self, messages):
+        self.messages = messages
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["messages"])
+        messages = data.get("messages")
+        return GetMessagesSuccess(messages)
+
+    def to_inner_structure(self):
+        return {
+            "messages": self.messages
+        }
+
+class GetStatutoryNotificationsSuccess(Response):
+    def __init__(self, statutory_notifications):
+        self.statutory_notifications = statutory_notifications
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory_notifications"])
+        statutory_notifications = data.get("statutory_notifications")
+        return GetStatutoryNotificationsSuccess(statutory_notifications)
+
+    def to_inner_structure(self):
+        return {
+            "statutory_notifications": self.statutory_notifications
+        }
+
+class UpdateStatutoryNotificationStatusSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UpdateStatutoryNotificationStatusSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetAuditTrailSuccess(Response):
     def __init__(self, audit_trails, total_records):
         self.audit_trails = audit_trails
@@ -750,7 +851,8 @@ def _init_Response_class_map():
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
         MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
-        FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword
+        FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword, GetMessagesSuccess,
+        GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess
     ]
     class_map = {}
     for c in classes:
@@ -858,6 +960,78 @@ class AuditTrailForm(object):
         return {
             "form_id": self.form_id,
             "form_name": self.form_name
+        }
+
+
+#      
+# Message
+#
+
+class Message(object):
+    def __init__(self, message_id, message_heading, message_text, link, created_by, created_on):
+        self.message_id = message_id
+        self.message_heading = message_heading
+        self.message_text = message_text
+        self.link = link
+        self.created_by = created_by
+        self.created_on = created_on
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["message_id", "message_heading", "message_text", "link", "created_by", "created_on"])
+        message_id = data.get("message_id")
+        message_heading = data.get("message_heading")
+        message_text = data.get("message_text")
+        link = data.get("link")
+        created_by = data.get("created_by")
+        created_on = data.get("created_on")
+        return Message(message_id, message_heading, message_text, link, created_by, created_on)
+
+    def to_structure(self):
+        return {
+            "message_id": self.message_id,
+            "message_heading": self.message_heading,
+            "message_text": self.message_text,
+            "link": self.link,
+            "created_by": self.created_by,
+            "created_on": self.created_on,
+        }
+
+#      
+# StatutoryNotiification
+#
+
+class StatutoryNotification(object):
+    def __init__(self, notification_id, user_id, compliance_id, notification_text, created_by, created_on, has_read):
+        self.notification_id = notification_id
+        self.user_id = user_id
+        self.compliance_id = compliance_id
+        self.notification_text = notification_text
+        self.created_by = created_by
+        self.created_on = created_on
+        self.has_read = has_read
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["notification_id", "user_id", "compliance_id", "notification_text", "created_by", "created_on", "has_read"])
+        notification_id = data.get("notification_id")
+        user_id = data.get("user_id")
+        compliance_id = data.get("compliance_id")
+        notification_text = data.get("notification_text")
+        created_by = data.get("created_by")
+        created_on = data.get("created_on")
+        has_read = data.get("has_read")
+        return notification(notification_id, user_id, compliance_id, notification_text, created_by, created_on, has_read)
+
+    def to_structure(self):
+        return {
+            "notification_id": self.notification_id,
+            "user_id": self.user_id,
+            "compliance_id": self.compliance_id,
+            "notification_text": self.notification_text,
+            "created_by": self.created_by,
+            "created_on": self.created_on,
+            "has_read": self.has_read
         }
 
 #

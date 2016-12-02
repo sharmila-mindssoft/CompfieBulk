@@ -239,13 +239,14 @@ $('#submit').click(function () {
 });
 //insert a new level in between levels
 $('#insert-record').click(function () {
-  var insertlevel = parseInt($('#insertlevel').val());
+  var insertlvl = parseInt($('#insertlevel').val());
+  console.log(insertlvl);
   var insertvalue = $('#insertvalue').val().trim();
   var inserlevelstatus = true;
   if (insertvalue.length > 0) {
-    for (var x = 10; x >= insertlevel; x--) {
+    for (var x = 10; x >= insertlvl; x--) {
       var s = x - 1;
-      if (x == insertlevel) {
+      if (x == insertlvl) {
         $('#level' + x).val(insertvalue);
         $('#levelid' + x).val('');
       } else {
@@ -277,6 +278,7 @@ $('#insert-record').click(function () {
 $(document).ready(function () {
   GetGeographyLevels();
   $('#countryval').focus();
+  loadLevels();
 });
 $('.input-sm').keyup(function (evt) {
   var element = $(evt.target);
@@ -294,6 +296,19 @@ $('.input-sm').keyup(function (evt) {
       return false;
     }
   }
+});
+function loadLevels(){
+  $('#levelslist').empty();
+  //$('#levelslist').append($('<option></option>').val('').html('Select'));
+  for(var i=2;i<=10;i++)
+  {
+    $('#levelslist').append($('<option></option>').val(i).html("Level "+i));
+  }
+}
+
+$('#levelslist').on('change', function(e) {
+  $('#levelslist  option:gt(0)').remove();
+  loadLevels();
 });
 $('.input-sm').on('input', function (e) {
   this.value = isAlphabetic($(this));
