@@ -1386,12 +1386,12 @@ def get_compliance_details(db, user_id, compliance_id):
     for g in geo_info:
         geo_names.append(g["parent_names"] + ">>" + g["geography_name"])
 
-    if m["document_name"] is None :
-        c_name = m["compliance_task"]
+    if c_info["document_name"] is None :
+        c_name = c_info["compliance_task"]
     else :
-        c_name = m["document_name"] + " - " + m["compliance_task"]
+        c_name = c_info["document_name"] + " - " + c_info["compliance_task"]
 
-    statutory_dates = m["statutory_dates"]
+    statutory_dates = c_info["statutory_dates"]
     statutory_dates = json.loads(statutory_dates)
     date_list = []
     for date in statutory_dates:
@@ -1402,10 +1402,9 @@ def get_compliance_details(db, user_id, compliance_id):
             date.get("repeat_by")
         )
         date_list.append(s_date)
-    summary = make_summary(date_list, m["frequency_id"], c_info)
-
-    return knowledgetransaction.GetComplianceInfoSuccess(
-        c_info["compliance_id"], c["statutory_provision"],
+    summary = make_summary(date_list, c_info["frequency_id"], c_info)
+    return (
+        c_info["compliance_id"], c_info["statutory_provision"],
         c_name, c_info["compliance_description"],
         c_info["penal_consequences"], bool(c_info["is_active"]),
         c_info["freq_name"], summary, c_info["reference_link"],

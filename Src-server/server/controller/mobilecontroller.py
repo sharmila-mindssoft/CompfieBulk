@@ -1,4 +1,4 @@
-from protocol import login, mobile
+from protocol import login, mobile, knowledgetransaction
 from server import logger
 from server.database.tables import *
 from server.database.login import *
@@ -11,7 +11,7 @@ from server.common import (
     encrypt, new_uuid
 )
 from server.database.knowledgetransaction import (
-    approve_statutory_mapping_list
+    approve_statutory_mapping_list, get_compliance_details
 )
 from generalcontroller import (validate_user_session, validate_user_forms)
 
@@ -58,6 +58,11 @@ def process_mobile_request(request, db, session_user_ip):
         if type(request_frame) is mobile.GetApproveStatutoryMappings:
             logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
             result = process_get_approve_statutory_mappings(db, user_id)
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
+
+        elif type(request_frame) is mobile.GetComplianceInfo:
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
+            result = process_get_compliance_info(db, request_frame, user_id)
             logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     return result
@@ -156,4 +161,13 @@ def process_get_approve_statutory_mappings(db, user_id):
     statutory_mappings = approve_statutory_mapping_list(db, user_id)
     return mobile.GetApproveStatutoryMappingSuccess(
         statutory_mappings
+    )
+
+def process_get_compliance_info(db, request, user_id):
+    comp_id = request.compliance_id
+    comp_info = get_compliance_details(db, user_id, comp_id)
+    return mobile.GetComplianceInfoSuccess(
+        comp_info[0], comp_info[1], comp_info[2], comp_info[3],
+        comp_info[4], comp_info[5], comp_info[6], comp_info[7],
+        comp_info[8], comp_info[9],
     )
