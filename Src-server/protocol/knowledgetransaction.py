@@ -961,7 +961,7 @@ class ApproveMapping(object):
     def __init__(
         self, country_name, domain_name, nature_name,
         mapping_text, compliance_task, approval_status_id,
-        remarks, mapping_id, compliance_id, is_common
+        remarks, mapping_id, compliance_id, is_common, updated_by
 
     ):
         self.country_name = country_name
@@ -974,13 +974,14 @@ class ApproveMapping(object):
         self.mapping_id = mapping_id
         self.compliance_id = compliance_id
         self.is_common = is_common
+        self.updated_by = updated_by
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "c_name", "d_name", "s_n_name", "map_text",
             "c_task", "a_s_id", "remarks", "m_id",
-            "comp_id", "is_common"
+            "comp_id", "is_common", "u_by"
         ])
         c_name = data.get("c_name")
         d_name = data.get("d_name")
@@ -992,21 +993,23 @@ class ApproveMapping(object):
         m_id = data.get("m_id")
         comp_id = data.get("comp_id")
         is_common = data.get("is_common")
+        updated_by = data.get("u_by")
         return ApproveMapping(
             c_name, d_name, s_n_name, map_text, c_task, a_s_id,
-            remarks, m_id, comp_id, is_common
+            remarks, m_id, comp_id, is_common, updated_by
         )
 
     def to_structure(self):
         return {
             "c_name": self.country_name,
             "d_name": self.domain_name,
-            "s_s_name": self.nature_name,
+            "s_n_name": self.nature_name,
             "map_text": self.mapping_text,
             "c_task": self.compliance_task,
             "a_s_id": self.approval_status_id,
             "remarks": self.remarks,
             "m_id": self.mapping_id,
             "comp_id": self.compliance_id,
-            "is_common": self.is_common
+            "is_common": self.is_common,
+            "u_by": self.updated_by
         }

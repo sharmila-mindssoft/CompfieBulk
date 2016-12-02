@@ -1412,12 +1412,65 @@ def get_compliance_details(db, user_id, compliance_id):
     )
 
 def save_approve_mapping(db, user_id, data):
-    update_values = []
-    condition = []
-    for d in data :
-        update_values.append([
-            d.country_name, d.domain_name, d.nature_name, d.mapping_text,
-            d.compliance_task, d.approval_status_id, d.remarks,
-            d.mapping_id, d.compliance_id
-        ])
-        condition.append("compliance_id = %s" % d.compliance_id)
+    user_id = 4
+    map_id = "None"
+    try :
+        for d in data :
+            remarks = d.remarks
+            if d.is_common :
+                if map_id != d.mapping_id :
+                    map_id = d.mapping_id
+                    q = "update tbl_statutory_mappings set is_approved = %s, " + \
+                        "remarks = %s where statutory_mapping_id = %s"
+                    db.execute(q, [d.approval_status_id, remarks, d.mapping_id])
+                    remarks = ""
+
+            q1 = "update tbl_compliances set is_approved = %s, " + \
+                "approved_by = %s, approved_on = %s, remarks = %s where compliance_id = %s "
+            db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
+
+            if d.approval_status_id == 2 :
+                text = "%s - %s - %s - %s has been approved"
+            elif d.approval_status_id == 3:
+                text = "%s - %s - %s - %s has been approv & Notified With remarks " + d.remarks
+            else :
+                text = "%s - %s - %s - %s has been rejected wih reason " + d.remarks
+
+            text = text % (
+                d.country_name, d.domain_name, d.mapping_text, d.compliance_task
+            )
+            print text
+            # updated notification
+            print "--------------"
+            print d.updated_by
+            print user_id
+            m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
+                "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
+            msg_id = db.execute_insert(m1, [4, "Statutory Mapping", str(text), d.compliance_id, user_id, get_date_time()])
+
+            print m1 % (4, "Statutory Mapping", str(text), d.compliance_id, user_id, get_date_time())
+            print msg_id
+            if msg_id is False or msg_id == 0 :
+                raise fetch_error()
+            m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
+            db.execute(m2 , [msg_id, d.updated_by])
+            print m2
+            if d.approval_status_id == 3 :
+                save_approve_notify(db, text, user_id, d.compliance_id)
+        return True
+    except Exception, e :
+        print e
+        raise fetch_error()
+
+def save_approve_notify(db, text, user_id, comppliance_id):
+    users = db.call_proc("sp_tbl_users_to_notify", [3])
+    print users
+    q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
+        "values (%s, %s, %s, %s)"
+
+    new_id = db.execute_insert(q, [text, comppliance_id, user_id, get_date_time()])
+    print new_id
+    q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
+        "values (%s, %s)"
+    for u in users:
+        db.execute(q1, [new_id, u["user_id"]])

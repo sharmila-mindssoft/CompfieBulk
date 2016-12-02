@@ -5061,16 +5061,16 @@ DROP PROCEDURE IF EXISTS `sp_get_messages`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_messages`(
-IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
-    
+
     SELECT m.message_id, m.message_heading, m.message_text, m.link,
-    (SELECT concat(employee_code, ' - ', employee_name) 
+    (SELECT concat(employee_code, ' - ', employee_name)
     from tbl_users where user_id = m.created_by) as created_by,
     m.created_on
-    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id 
+    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     AND mu.user_id = userid_
     where m.user_category_id = @u_cat_id
     order by created_on DESC limit pagecount_;
@@ -5084,14 +5084,14 @@ DROP PROCEDURE IF EXISTS `sp_get_statutory_notifications`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_statutory_notifications`(
-IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
     SELECT s.notification_id, s.compliance_id, s.notification_text,
-    (SELECT concat(employee_code, ' - ', employee_name) 
+    (SELECT concat(employee_code, ' - ', employee_name)
     from tbl_users where user_id = s.created_by) as created_by,
     s.created_on, su.user_id, su.read_status
-    from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id 
+    from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = userid_
     order by su.read_status DESC, s.created_on DESC limit pagecount_;
 END//
@@ -5297,7 +5297,7 @@ BEGIN
      inner join tbl_user_domains as t5 on t5.country_id = t2.country_id and t5.domain_id = t2.domain_id
      where t2.is_approved = 1 and t5.user_id = userid and IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
-     );
+     ) order by t1.statutory_mapping_id;
 
      select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
      inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
@@ -5305,7 +5305,7 @@ BEGIN
      inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
      where t2.is_approved = 1 and t3.user_id = userid and  IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
-     );
+     ) order by t1.statutory_mapping_id;
 
 END //
 
@@ -5340,7 +5340,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_statutory_mapping_approve`(
     IN compid INT(11), mapid INT(11), country VARCHAR(100), domain VARCHAR(100),
     nature VARCHAR(100), mapping TEXT, cname TEXT, asts INT(11), rmarks TEXT,
-    isCommon tinyint(2), userid INT(11)
+    isCommon tinyint(2), userid INT(11),
 )
 BEGIN
 
@@ -5358,8 +5358,29 @@ BEGIN
             approved_by = userid,remarks = rmarks
         where compliance_id = compid;
 
+        INSERT INTO tbl_messages(user_category_id, message_heading, message_text,
+            link, updated_by, updated_on)
+        values ()
+
     END IF;
 
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_to_notify`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_users_to_notify`(
+    IN usercategoryid INT(11)
+)
+BEGIN
+
+    select user_id from tbl_users where
+    is_active = 1 and is_disable = 0 and
+    user_category_id in (1, 3, 4, 5, 7, 8)
+
+END //
+
+DELIMITER ;
+

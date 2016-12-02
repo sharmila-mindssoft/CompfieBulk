@@ -13,7 +13,8 @@ from server.database.knowledgetransaction import (
     statutories_master,
     statutory_mapping_list,
     approve_statutory_mapping_list,
-    get_compliance_details
+    get_compliance_details,
+    save_approve_mapping
 )
 __all__ = [
     "process_knowledge_transaction_request"
@@ -170,18 +171,7 @@ def process_get_compliance_info(db, request, user_id):
     )
 
 def process_approve_statutory_mapping(db, request_frame, user_id):
-    is_approved = False
-    message = value = None
-    for data in request_frame.statutory_mappings:
-        result = change_approval_status(db, data, user_id)
-        if result is True:
-            is_approved = True
-        else:
-            message, value = result
-            is_approved = False
-            break
-
-    if is_approved:
+    data = request_frame.statutory_mappings
+    result = save_approve_mapping(db, user_id, data)
+    if result:
         return knowledgetransaction.ApproveStatutoryMappingSuccess()
-    else:
-        return knowledgetransaction.TransactionFailed(message, value)

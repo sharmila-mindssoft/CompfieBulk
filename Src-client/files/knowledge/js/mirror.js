@@ -755,20 +755,21 @@ function initMirror() {
     apiRequest('knowledge_transaction', request, callback);
   }
 
-  function approveStatutoryList(sMId, sProvision, aStatus, reason, nText) {
-    var dict = {};
-    if (reason == '') {
-      reason = null;
+  function approveStatutoryList(cname, dname, sname, mapText, ctask, asid, remarks, mid, compid, is_common, updatedby) {
+    return {
+        "c_name": cname,
+        "d_name": dname,
+        "s_n_name": sname,
+        "map_text": mapText,
+        "c_task": ctask,
+        "a_s_id": asid,
+        "remarks": remarks,
+        "m_id": mid,
+        "comp_id": compid,
+        "is_common": is_common,
+        "u_by": updatedby,
     }
-    if (nText == '') {
-      nText = null;
-    }
-    dict.s_m_id = sMId;
-    dict.s_provision = sProvision;
-    dict.a_status = aStatus;
-    dict.r_reason = reason;
-    dict.n_text = nText;
-    return dict;
+
   }
   function approveStatutoryMapping(approvalList, callback) {
     var request = [
@@ -2100,7 +2101,7 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  
+
   /* Messages */
   function getStatutoryNotifications(from_count, page_count, callback) {
     callerName = 'general';

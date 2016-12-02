@@ -928,7 +928,7 @@ CREATE TABLE `tbl_statutory_notifications_users` (
   `notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
-  UNIQUE KEY(`notification_id`, `user_id`)
+  UNIQUE KEY(`notification_id`, `user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
