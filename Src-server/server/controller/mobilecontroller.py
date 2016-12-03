@@ -11,7 +11,7 @@ from server.common import (
     encrypt, new_uuid
 )
 from server.database.knowledgetransaction import (
-    approve_statutory_mapping_list, get_compliance_details
+    get_compliance_details
 )
 from generalcontroller import (validate_user_session, validate_user_forms)
 
@@ -156,6 +156,41 @@ def process_mobile_logout(db, request):
     remove_session(db, session)
     return login.LogoutSuccess()
 
+def approve_statutory_mapping_list(db, user_id):
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 2)
+    mappings = result[0]
+    orgs = result[1]
+    data = []
+
+    def get_orgs(map_id):
+        orgname = []
+        for o in orgs :
+            if o["statutory_mapping_id"] == map_id :
+                orgname.append(o["organisation_name"])
+        return orgname
+
+    for m in mappings :
+        map_id = m["statutory_mapping_id"]
+        if m["document_name"] is None :
+            c_name = m["compliance_task"]
+        else :
+            c_name = m["document_name"] + " - " + m["compliance_task"]
+        orgname = get_orgs(map_id)
+        c_on = datetime_to_string_time(m["created_on"])
+
+        u_on = None
+        if m["updated_by"] is not None :
+            u_on = datetime_to_string_time(m["updated_on"])
+
+        data.append(knowledgetransaction.MappingApproveInfo(
+            map_id, m["compliance_id"],
+            m["country_id"], m["domain_id"],
+            c_name, bool(m["is_active"]), m["created_by"],
+            c_on, m["updated_by"], u_on,
+            m["statutory_nature_name"], orgname, m["statutory_mapping"]
+        ))
+
+    return data
 
 def process_get_approve_statutory_mappings(db, user_id):
     statutory_mappings = approve_statutory_mapping_list(db, user_id)

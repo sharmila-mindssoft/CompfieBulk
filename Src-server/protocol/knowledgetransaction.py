@@ -237,16 +237,31 @@ class GetApproveStatutoryMappingsFilters(Request):
 
 
 class GetApproveStatutoryMappings(Request):
-    def __init__(self):
-        pass
+    def __init__(self, i_id, s_n_id, c_id, d_id, u_id):
+        self.industry_id = i_id
+        self.nature_id = s_n_id
+        self.country_id = c_id
+        self.domain_id = d_id
+        self.user_id = u_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetApproveStatutoryMappings()
+        data = parse_dictionary(data, ["a_i_id", "a_s_n_id", "a_c_id", "a_d_id", "a_u_id"])
+        industry_id = data.get("a_i_id")
+        nature_id = data.get("a_s_n_id")
+        country_id = data.get("a_c_id")
+        domain_id = data.get("a_d_id")
+        user_id = data.get("a_u_id")
+        return GetApproveStatutoryMappings(industry_id, nature_id, country_id, domain_id, user_id)
 
     def to_inner_structure(self):
-        return {}
+        return {
+            "a_i_id": self.industry_id,
+            "a_s_n_id": self.nature_id,
+            "a_c_id": self.country_id,
+            "a_d_id": self.domain_id,
+            "a_u_id": self.user_id
+        }
 
 
 class GetComplianceInfo(Request):
@@ -597,7 +612,6 @@ class GetApproveStatutoryMappingFilterSuccess(Response):
 
     def to_inner_structure(self):
         return {
-
             "countries": self.countries,
             "domains": self.domains,
             "statutory_natures": self.statutory_natures,

@@ -87,7 +87,7 @@ def process_knowledge_transaction_request(request, db):
 
     elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappings:
         logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
-        result = process_get_approve_statutory_mappings(db, user_id)
+        result = process_get_approve_statutory_mappings(db, request_frame, user_id)
         logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappingsFilters:
@@ -174,10 +174,9 @@ def process_get_approve_mapping_filters(db, user_id):
         country, domains, natures, industry, users
     )
 
-def process_get_approve_statutory_mappings(db, user_id):
+def process_get_approve_statutory_mappings(db, request_frame, user_id):
     user_id = 4
-
-    statutory_mappings = approve_statutory_mapping_list(db, user_id)
+    statutory_mappings = approve_statutory_mapping_list(db, user_id, request_frame)
     return knowledgetransaction.GetApproveStatutoryMappingSuccess(
         statutory_mappings
     )

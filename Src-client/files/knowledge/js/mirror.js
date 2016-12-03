@@ -745,10 +745,16 @@ function initMirror() {
     apiRequest('knowledge_transaction', request, callback);
   }
 
-  function getApproveStatutoryMapings(callback) {
+  function getApproveStatutoryMapings(cid, did, iid, nid, uid, callback) {
     var request = [
       'GetApproveStatutoryMappings',
-      {}
+      {
+        "a_c_id": cid,
+        "a_d_id": did,
+        "a_i_id": iid,
+        "a_s_n_id": nid,
+        "a_u_id": uid
+      }
     ];
     apiRequest('knowledge_transaction', request, callback);
   }

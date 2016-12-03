@@ -1276,9 +1276,20 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     return data, total_record
 
-def approve_statutory_mapping_list(db, user_id):
-    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 2)
-    print result
+def approve_statutory_mapping_list(db, user_id, request):
+    i_id = request.industry_id
+    if i_id is None :
+        i_id = '%'
+    s_n_id = request.nature_id
+    if s_n_id is None :
+        s_n_id = '%'
+    c_id = request.country_id
+    d_id = request.domain_id
+    u_id = request.user_id
+    if u_id is None :
+        u_id = '%'
+    args = [user_id, i_id, s_n_id, c_id, d_id, u_id]
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list_filter", args, 2)
     mappings = result[0]
     orgs = result[1]
     data = []

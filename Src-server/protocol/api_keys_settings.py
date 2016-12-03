@@ -509,7 +509,13 @@ api_params = {
     'notification_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "level_1_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},
 
-    "knowledgeusers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'module_name': 'core', 'class_name': 'ChildUsers'}
+    "knowledgeusers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'module_name': 'core', 'class_name': 'ChildUsers'},
+    'a_i_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'a_s_n_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'a_c_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'a_d_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'a_u_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -5311,6 +5311,47 @@ END //
 
 DELIMITER ;
 
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_approve_list_filter`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mapping_approve_list_filter`(
+    IN userid INT(11), org_id VARCHAR(100), nature_id VARCHAR(100),
+    countryid INT(11), domainid INT(11), knowledge_user_id VARCHAR(100)
+)
+BEGIN
+    select distinct t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
+        t2.compliance_task, t2.is_active, t2.created_by, t2.created_on, t2.updated_by, t2.updated_on,
+        t4.statutory_nature_name
+     from tbl_statutory_mappings as t1
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
+     inner join tbl_user_domains as t5 on t5.country_id = t2.country_id and t5.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t5.user_id = userid
+     and t2.country_id = countryid
+     and t2.domain_id = domainid
+     and t1.statutory_nature_id like nature_id
+     and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = 4
+     ) order by t1.statutory_mapping_id;
+
+     select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+     inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t3.user_id = userid
+     and t2.country_id = countryid
+     and t2.domain_id = domainid
+     and t1.organisation_id like org_id
+     and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t1.statutory_mapping_id;
+
+END //
+
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_compliance`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_statutory_mapping_compliance`(
