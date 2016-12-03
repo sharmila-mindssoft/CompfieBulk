@@ -5,14 +5,11 @@
   <div id="animationSandbox">
     <div class="col-sm-12">
       <div class="portlet">
-          <!-- <h4 class="page-title">Approve Statutory Mapping</h4>
-          <hr class="no-top-margin"> -->
+          
           <div class="portlet-heading bg-info">
               <h3 class="portlet-title">Approve Statutory Mapping</h3>
               <div class="portlet-widgets">
-                  <!-- <a href="#" onclick="location.href='/service-provider/list'">
-                      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                  </a> -->
+                 
               </div>
               <div class="clearfix"></div>
           </div>
@@ -24,38 +21,59 @@
           <div class="form-group has-feedback">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
             <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Country" value="India">
-              <i class="fa-1-3x form-control-feedback fa fa-search"></i>
+              <input type="hidden" id="country" value="">
+              <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-country" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
             </div>
           </div>
           <div class="form-group has-feedback">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Organisation</label>
             <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Organisation" value="Factory">
-              <i class="fa-1-3x form-control-feedback fa fa-search"></i>
+              <input type="hidden" id="organization" value="">
+              <input type="text" class="form-control input-sm" value="" id="organizationval" placeholder="Enter Organization" tabindex="1"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-organization" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
             </div>
           </div>
           <div class="form-group has-feedback">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">User</label>
             <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter User" value="">
-              <i class="fa-1-3x form-control-feedback fa fa-search"></i>
+              <input type="hidden" id="user" value="">
+              <input type="text" class="form-control input-sm" value="" id="userval" placeholder="Enter User" tabindex="1"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-user" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
             </div>
           </div>
           </div>
           <div class="col-lg-6">
           <div class="form-group has-feedback">
-            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Domain Name</label>
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Domain Name<span class="mandatory">*</span></label>
             <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
-              <i class="fa-1-3x form-control-feedback fa fa-search"></i>
+              <input type="text" class="form-control input-sm" id="domainval" placeholder="Enter Domain Name"
+              tabindex="5">
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <input type="hidden" id="domain" value="">
+              <div id="ac-domain" class="ac-textbox default-display-none">
+                  <ul style="width:85%;" class="hidemenu"></ul>
+              </div>
             </div>
           </div>
           <div class="form-group has-feedback">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Statutory Nature</label>
             <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="Enter Statutory Nature" value="Central">
-              <i class="fa-1-3x form-control-feedback fa fa-search"></i>
+              <input type="hidden" id="statutorynature" value="">
+              <input type="text" class="form-control input-sm" value="" id="statutorynatureval" placeholder="Enter Statutory Nature" tabindex="1"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-statutorynature" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -75,7 +93,7 @@
       </div>
       </div>
       </div>
-      <div class="card-box sm-grid">
+      <div class="card-box sm-grid default-display-none">
       <div class="table-responsive no-padding">
         <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
               <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
@@ -113,274 +131,13 @@
                   </tr>
                 </thead>
                 <tbody class="tbody-sm-list">
-                  <!-- <tr class="success">
-                    <td>1</td>
-                    <td>Factory</td>
-                    <td>Central</td>
-                    <td colspan="2">Batteries Act >> Rule 4 >> FORM I</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0" selected="selected"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr> -->
+                 
                 </tbody>
-    <!--             <thead>
-                  <tr class="table-sub-head">
-                    <th>&nbsp;</th>
-                    <th>Compliance</th>
-                    <th>Status</th>
-                    <th>Created by</th>
-                    <th>Last updated by</th>
-                    <th>&nbsp;</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM I - Halfyearly returns Submission</a></td>
-                    <td>Active</td>
-                    <td>Ram Kumar</td>
-                    <td>Ravichandren</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1" selected="selected">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM IV - Quarterly returns Submission</a></td>
-                    <td>Inactive</td>
-                    <td>Hariharan</td>
-                    <td>Ravichandren</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0" selected="selected"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM V - Form Submission</a></td>
-                    <td>Active</td>
-                    <td>Ram Kumar</td>
-                    <td>Ravichandren</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3" selected="selected">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td><textarea class="form-control" rows="2" placeholder="Enter Reason"></textarea></td>
-                  </tr>
-                </tbody>
-                <tbody>
-                  <tr class="success">
-                    <td>2</td>
-                    <td>Factory</td>
-                    <td>Central</td>
-                    <td colspan="2">Batteries Act >> Rule 4 >> FORM II</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2" selected="selected">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td><textarea class="form-control" rows="1" placeholder="Enter Reason"></textarea></td>
-                  </tr>
-                </tbody>
-                <thead>
-                  <tr class="table-sub-head">
-                    <th>&nbsp;</th>
-                    <th>Compliance</th>
-                    <th>Status</th>
-                    <th>Created by</th>
-                    <th>Last updated by</th>
-                    <th>&nbsp;</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM II - Registration</a></td>
-                    <td>Active</td>
-                    <td>Ram Kumar</td>
-                    <td>Ravichandren</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2" selected="selected">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM VI - Registration</a></td>
-                    <td>Active</td>
-                    <td>Ram Kumar</td>
-                    <td>Nil</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2" selected="selected">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                </tbody>
-                <tbody>
-                  <tr class="success">
-                    <td>3</td>
-                    <td>Factory</td>
-                    <td>Central</td>
-                    <td colspan="2">Batteries Act >> Rule 4 >> FORM III</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1" selected="selected">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                </tbody>
-                <thead>
-                  <tr class="table-sub-head">
-                    <th>&nbsp;</th>
-                    <th>Compliance</th>
-                    <th>Status</th>
-                    <th>Created by</th>
-                    <th>Last updated by</th>
-                    <th>&nbsp;</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM III - Undertaking submission</a></td>
-                    <td>Active</td>
-                    <td>Ram Kumar</td>
-                    <td>Ravichandren</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1" selected="selected">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM VI - Registration</a></td>
-                    <td>Active</td>
-                    <td>Ram Kumar</td>
-                    <td>Nil</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1" selected="selected">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                </tbody>
-                <tbody>
-                  <tr class="success">
-                    <td>4</td>
-                    <td>Factory</td>
-                    <td>Central</td>
-                    <td colspan="2">Batteries Act >> Rule 4 >> FORM IV</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3" selected="selected">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td><textarea class="form-control" rows="1" placeholder="Enter Reason"></textarea></td>
-                  </tr>
-                </tbody>
-                <thead>
-                  <tr class="table-sub-head">
-                    <th>&nbsp;</th>
-                    <th>Compliance</th>
-                    <th>Status</th>
-                    <th>Created by</th>
-                    <th>Last updated by</th>
-                    <th>&nbsp;</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM IV - Undertaking submission</a></td>
-                    <td>Active</td>
-                    <td>Suresh</td>
-                    <td>Ram Krishnan</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3" selected="selected">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td><a href="#">FORM VI - Registration</a></td>
-                    <td>Active</td>
-                    <td>Ram Kumar</td>
-                    <td>Nil</td>
-                    <td>
-                        <select class="form-control chosen" data-placeholder="Choose a Action" tabindex="1">
-                          <option value="0"> Select</option>
-                          <option value="1">Approve</option>
-                          <option value="2">Reject</option>
-                          <option value="3" selected="selected">Approve & Notify</option>
-                        </select>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                </tbody> -->
               </table>
               </div>
       </div>
       <div class="form-group text-center">
-          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+          <button class="btn btn-primary waves-effect waves-light btn-submit" type="submit"> Submit </button>
       </div>
     
     <!-- end col -->
@@ -399,13 +156,13 @@
       <td>
           <select class="form-control chosen sm-approve-control" data-placeholder="Choose a Action" tabindex="1">
             <option value="0" selected="selected"> Select</option>
-            <option value="1">Approve</option>
-            <option value="2">Reject</option>
+            <option value="2">Approve</option>
             <option value="3">Approve & Notify</option>
+            <option value="4">Reject</option>
           </select>
       </td>
       <td class="sm-reason-box">
-          <textarea class="form-control input-sm sm-reason default-display-none" rows="2" placeholder="Enter Reason"></textarea>
+          <textarea class="form-control input-sm sm-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
       </td>
       </tr>
   </table>
@@ -435,14 +192,20 @@
         <td>
             <select class="form-control chosen compliance-approve-control" data-placeholder="Choose a Action" tabindex="1">
               <option value="0"> Select</option>
-              <option value="1">Approve</option>
-              <option value="2">Reject</option>
+              <option value="2">Approve</option>
               <option value="3">Approve & Notify</option>
+              <option value="4">Reject</option>
             </select>
         </td>
         <td class="compliance-reason-box">
-          <textarea class="form-control input-sm compliance-reason default-display-none" rows="2" placeholder="Enter Reason"></textarea>
+        <textarea class="form-control input-sm compliance-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
       </td>
+      </tr>
+  </table>
+
+  <table class="table-no-record">
+      <tr>
+      <td colspan="8" align="center"> No Records Found</td>
       </tr>
   </table>
 
