@@ -19,7 +19,7 @@
           <div id="bg-primary1" class="panel-collapse collapse in">
             <div class="portlet-body">
         
-        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
         <div class="col-lg-6">
           <div class="form-group has-feedback">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
@@ -65,19 +65,19 @@
             </div>
           </div>
         </div>
-        </div>
+        </form>
         <div class="clear"></div>
         <center>
           <div class="form-group" id="add">
-            <button class="btn btn-primary waves-effect waves-light btn-show" type="submit"> Show</button>
+            <button class="btn btn-primary waves-effect waves-light" type="submit" onclick="loadForm()" > Show</button>
           </div>
         </center>
       </div>
       </div>
       </div>
-      <div class="card-box sm-grid">
+      <div class="card-box">
       <div class="table-responsive no-padding">
-        <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
+        <form class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
               <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                 <thead>
                   <tr>
@@ -112,8 +112,8 @@
                     <td>&nbsp;</td>
                   </tr>
                 </thead>
-                <tbody class="tbody-sm-list">
-                  <!-- <tr class="success">
+                <tbody>
+                  <tr class="success">
                     <td>1</td>
                     <td>Factory</td>
                     <td>Central</td>
@@ -127,9 +127,9 @@
                         </select>
                     </td>
                     <td>&nbsp;</td>
-                  </tr> -->
+                  </tr>
                 </tbody>
-    <!--             <thead>
+                <thead>
                   <tr class="table-sub-head">
                     <th>&nbsp;</th>
                     <th>Compliance</th>
@@ -375,9 +375,9 @@
                     </td>
                     <td>&nbsp;</td>
                   </tr>
-                </tbody> -->
+                </tbody>
               </table>
-              </div>
+              </form>
       </div>
       <div class="form-group text-center">
           <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
@@ -388,64 +388,4 @@
 </div>
 
 </div>
-
-<div id="templates" class="default-display-none">
-  <table class="table-sm-list">
-      <tr>
-      <td class="sno"></td>
-      <td class="organization"></td>
-      <td class="statutorynature"></td>
-      <td colspan="2" class="provision"></td>
-      <td>
-          <select class="form-control chosen sm-approve-control" data-placeholder="Choose a Action" tabindex="1">
-            <option value="0" selected="selected"> Select</option>
-            <option value="1">Approve</option>
-            <option value="2">Reject</option>
-            <option value="3">Approve & Notify</option>
-          </select>
-      </td>
-      <td class="sm-reason-box">
-          <textarea class="form-control input-sm sm-reason default-display-none" rows="2" placeholder="Enter Reason"></textarea>
-      </td>
-      </tr>
-  </table>
-
-
-  <table class="table-compliance-head">
-    <thead>
-      <tr class="table-sub-head">
-        <th>&nbsp;</th>
-        <th>Compliance</th>
-        <th>Status</th>
-        <th>Created by</th>
-        <th>Last updated by</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-      </tr>
-    </thead>
-  </table>
-
-  <table class="table-compliance-list">
-      <tr>
-        <td>&nbsp;</td>
-        <td class="compliacne_name"><a href="#"></a></td>
-        <td class="status"></td>
-        <td class="created_by"></td>
-        <td class="updated_by"></td>
-        <td>
-            <select class="form-control chosen compliance-approve-control" data-placeholder="Choose a Action" tabindex="1">
-              <option value="0"> Select</option>
-              <option value="1">Approve</option>
-              <option value="2">Reject</option>
-              <option value="3">Approve & Notify</option>
-            </select>
-        </td>
-        <td class="compliance-reason-box">
-          <textarea class="form-control input-sm compliance-reason default-display-none" rows="2" placeholder="Enter Reason"></textarea>
-      </td>
-      </tr>
-  </table>
-
-</div>
-<script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
 {% endblock %}

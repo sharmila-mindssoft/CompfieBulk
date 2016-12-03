@@ -243,7 +243,7 @@ TEMPLATE_PATHS = [
     # knowledge manager transaction
     (
         "/knowledge/approve-statutory-mapping",
-        "files/knowledge/approve-statutory-mapping/approvestatutorymapping.html",
+        "files/knowledge/approve-statutory-mapping/approve-statutory-mapping.html",
         None, {}
     ),
     # knowledge user master
