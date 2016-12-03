@@ -5459,7 +5459,7 @@ CREATE PROCEDURE `sp_user_knowledge_executives`(
 BEGIN
     select child_user_id, concat(employee_code, '-', employee_name) as emp_name from  tbl_user_mapping
     inner join tbl_users on user_id = child_user_id and is_active = 1 and is_disable = 0
-    where parent_userid = userid ;
+    where parent_user_id = userid ;
 
 
 END //
