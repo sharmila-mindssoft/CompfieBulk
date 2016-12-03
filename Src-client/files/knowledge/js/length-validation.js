@@ -13,7 +13,6 @@ function countryValidate() {
     displayMessage('Country Name' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
     return true;
   }
 }
@@ -351,10 +350,10 @@ function clientUserValidate() {
   }
 }
 
-
 ///////////////////////////
 
 var max_length = {
+  'countryname': 50,
   'employeename': 50,
   'employeeid': 50,
   'email_id': 100,
@@ -370,10 +369,12 @@ var max_length = {
   'remark': 500,
 }
 
+
 function expectationError(expected, received){
   msg = "expected " + expected + ", but received : " + received
   return msg
 }
+
 
 function validateLength(key_name, value) {
   v = max_length[key_name];
@@ -383,4 +384,14 @@ function validateLength(key_name, value) {
     return msg;
   }
   return true
+}
+
+
+function validateMaxLength(key_name, value, show_name) {
+  e_n_msg = validateLength(key_name, value.trim())
+  if (e_n_msg != true) {
+    displayMessage(show_name + e_n_msg);
+    return false;
+  }
+  return true;
 }

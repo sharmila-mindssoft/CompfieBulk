@@ -995,3 +995,7 @@ list-style-type:none; line-height:25px;
 #templates{
   display: none;
 }
+
+.portlet-heading .zmdi-close {
+  cursor: pointer;
+}

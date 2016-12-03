@@ -79,7 +79,7 @@
               Domains
           </h3>
           <div class="portlet-widgets">
-            <a id="btn-domain-cancel" >
+            <a id="btn-domain-cancel">
                 <i class="zmdi zmdi-close zmdi-hc-2x"></i>
             </a>
           </div>
@@ -89,8 +89,13 @@
           <div class="portlet-body">
             <div class="form-horizontal group-border-dashed">
               <div class="form-group">
-                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
+                <label class="col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
                 <div class="col-sm-6 controls">
+                  <select  id="countries" class="form-control input-sm example-multiple" multiple="multiple">
+                    <option value="India" selected>India</option>
+                    <option value="Malaysia" >Malaysia</option>
+                    <option value="Singapore" selected>Singapore</option>
+                  </select>
                   <input type="text" class="input-box icon-autocomplete fieldvalue" id="countryselected" readonly="readonly" tabindex="1">
                   <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
                     <ul id="ulist-country" class="hideselect" style="width:85%;"></ul>
@@ -148,22 +153,15 @@
     </div>
 </div>
 <script type="text/javascript" src="/script/domain-master/domainmaster.js"></script>
-
-<!-- <script type="text/javascript">
-    $('#countries').multiselect();
-    $('#domains').multiselect();
-</script> -->
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('.example-multiple-optgroups').multiselect({
-            buttonWidth: '100%',
-            enableClickableOptGroups: true /*,
-            enableCollapsibleOptGroups: true*/
-        });
-        $('.example-multiple').multiselect({
-            buttonWidth: '100%'
-        });
+  $(document).ready(function() {
+    $('.example-multiple-optgroups').multiselect({
+        buttonWidth: '100%',
+        enableClickableOptGroups: true
     });
+    $('.example-multiple').multiselect({
+        buttonWidth: '100%'
+    });
+  });
 </script>
-
 {% endblock %}

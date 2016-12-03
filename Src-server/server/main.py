@@ -129,8 +129,6 @@ class API(object):
     def _send_response(
         self, response_data, status_code
     ):
-        print "-----"
-        print type(response_data)
         if type(response_data) is not str :
             data = response_data.to_structure()
             s = json.dumps(data, indent=2)
@@ -149,7 +147,6 @@ class API(object):
             request_data = request_data_type.parse_structure(
                 data
             )
-            print request_data
             return request_data
         except Exception, e:
             print "_parse_request"
@@ -190,7 +187,6 @@ class API(object):
             elif type(request_data) is str :
                 raise ValueError(request_data)
 
-            print "not returned"
 
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
@@ -342,7 +338,7 @@ class API(object):
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_getmapping(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
-
+    
     @api_request(knowledgereport.RequestFormat)
     def handle_knowledge_report(self, request, db):
         return controller.process_knowledge_report_request(request, db)
@@ -427,6 +423,7 @@ def renderTemplate(pathname, code=None):
                 new_url = set_path(url)
             else:
                 new_url = url
+
             new_url += "?v=%s" % (time.time())
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
