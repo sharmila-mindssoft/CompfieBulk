@@ -7,7 +7,7 @@ from server.constants import (
     KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
 )
 from server.common import (
-    convert_to_dict, get_date_time, datetime_to_string_time
+    convert_to_dict, get_date_time, datetime_to_string_time, make_summary
 )
 from server.database.general import(
     return_compliance_frequency, return_compliance_duration,
@@ -1276,9 +1276,20 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     return data, total_record
 
-def approve_statutory_mapping_list(db, user_id):
-    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 2)
-    print result
+def approve_statutory_mapping_list(db, user_id, request):
+    i_id = request.industry_id
+    if i_id is None :
+        i_id = '%'
+    s_n_id = request.nature_id
+    if s_n_id is None :
+        s_n_id = '%'
+    c_id = request.country_id
+    d_id = request.domain_id
+    u_id = request.user_id
+    if u_id is None :
+        u_id = '%'
+    args = [user_id, i_id, s_n_id, c_id, d_id, u_id]
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list_filter", args, 2)
     mappings = result[0]
     orgs = result[1]
     data = []
@@ -1313,70 +1324,6 @@ def approve_statutory_mapping_list(db, user_id):
 
     return data
 
-def make_summary(data, data_type, c):
-    if data_type == 1 :
-        if len(data) > 0:
-            dat = data[0].statutory_date
-            mon = data[0].statutory_month
-            day = data[0].trigger_before_days
-            summary = "%s  %s" % (
-                mon, dat
-            )
-            if day is not None :
-                summary += " Trigger: %s days" % (day)
-
-            return summary
-        else:
-            return None
-    elif data_type in (2, 3) :
-        dates = []
-        trigger = []
-        if len(data) > 0:
-            for d in data :
-                dat = d.statutory_date
-                mon = d.statutory_month
-                day = d.trigger_before_days
-                dates.append("%s  %s" % (
-                    mon, dat
-                ))
-                if day is not None :
-                    trigger.append(" %s days, " % (day))
-
-            summary = "Repeats every %s - %s. " % (
-                c["repeats_every"], c["repeat_type"]
-            )
-            summary += ", ".join(dates)
-            if len(trigger) > 0 :
-                summary += " Trigger : " + ", ".join(trigger)
-
-    elif data_type == 4:
-        dates = []
-        trigger = []
-        if len(data) > 0:
-            for d in data :
-                dat = d.statutory_date
-                mon = d.statutory_month
-                day = d.trigger_before_days
-                dates.append("%s  %s" % (
-                    mon, dat
-                ))
-                if day is not None :
-                    trigger.append(" %s days, " % (day))
-
-            summary = "Repeats every %s - %s. " % (
-                d["repeats_every"], d["repeat_type"]
-            )
-            summary += ", ".join(dates)
-            if len(trigger) > 0 :
-                summary += " Trigger : " + ", ".join(trigger)
-
-    elif data_type == 5 :
-        summary = "To complete within %s - %s" % (
-            d["duration"], d["duration_type"]
-        )
-
-    return summary
-
 
 def get_compliance_details(db, user_id, compliance_id):
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_compliance", [compliance_id], 2)
@@ -1410,3 +1357,58 @@ def get_compliance_details(db, user_id, compliance_id):
         c_info["freq_name"], summary, c_info["reference_link"],
         ", ".join(geo_names)
     )
+
+def save_approve_mapping(db, user_id, data):
+    user_id = 4
+    map_id = "None"
+    try :
+        for d in data :
+            remarks = d.remarks
+            if d.is_common :
+                if map_id != d.mapping_id :
+                    map_id = d.mapping_id
+                    q = "update tbl_statutory_mappings set is_approved = %s, " + \
+                        "remarks = %s where statutory_mapping_id = %s"
+                    db.execute(q, [d.approval_status_id, remarks, d.mapping_id])
+                    remarks = ""
+
+            q1 = "update tbl_compliances set is_approved = %s, " + \
+                "approved_by = %s, approved_on = %s, remarks = %s where compliance_id = %s "
+            db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
+
+            if d.approval_status_id == 2 :
+                text = "%s - %s - %s - %s has been approved"
+            elif d.approval_status_id == 3:
+                text = "%s - %s - %s - %s has been approv & Notified With remarks " + d.remarks
+            else :
+                text = "%s - %s - %s - %s has been rejected wih reason " + d.remarks
+
+            text = text % (
+                d.country_name, d.domain_name, d.mapping_text, d.compliance_task
+            )
+            # updated notification
+            m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
+                "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
+            msg_id = db.execute_insert(m1, [4, "Statutory Mapping", str(text), d.compliance_id, user_id, get_date_time()])
+
+            if msg_id is False or msg_id == 0 :
+                raise fetch_error()
+            m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
+            db.execute(m2 , [msg_id, d.updated_by])
+            if d.approval_status_id == 3 :
+                save_approve_notify(db, text, user_id, d.compliance_id)
+        return True
+    except Exception, e :
+        print e
+        raise fetch_error()
+
+def save_approve_notify(db, text, user_id, comppliance_id):
+    users = db.call_proc("sp_tbl_users_to_notify", [3])
+    q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
+        "values (%s, %s, %s, %s)"
+
+    new_id = db.execute_insert(q, [text, comppliance_id, user_id, get_date_time()])
+    q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
+        "values (%s, %s)"
+    for u in users:
+        db.execute(q1, [new_id, u["user_id"]])

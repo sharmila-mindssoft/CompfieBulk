@@ -928,8 +928,7 @@ CREATE TABLE `tbl_statutory_notifications_users` (
   `notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
-  UNIQUE KEY `notification_id_UNIQUE` (`notification_id`),
-  UNIQUE KEY `user_id_UNIQUE` (`user_id`)
+  UNIQUE KEY(`notification_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -953,8 +952,7 @@ CREATE TABLE `tbl_message_users` (
   `message_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
-  UNIQUE KEY `message_id_UNIQUE` (`message_id`),
-  UNIQUE KEY `user_id_UNIQUE` (`user_id`)
+  UNIQUE KEY(`message_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_user_mapping`;

@@ -424,7 +424,7 @@ def renderTemplate(pathname, code=None):
             else:
                 new_url = url
 
-            new_url += "?v=%s" % (time.time())
+                new_url += "?v=%s" % (time.time())
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
         return data

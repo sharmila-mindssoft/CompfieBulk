@@ -5060,16 +5060,16 @@ DROP PROCEDURE IF EXISTS `sp_get_messages`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_messages`(
-IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
-    
+
     SELECT m.message_id, m.message_heading, m.message_text, m.link,
-    (SELECT concat(employee_code, ' - ', employee_name) 
+    (SELECT concat(employee_code, ' - ', employee_name)
     from tbl_users where user_id = m.created_by) as created_by,
     m.created_on
-    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id 
+    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     AND mu.user_id = userid_
     where m.user_category_id = @u_cat_id
     order by created_on DESC limit pagecount_;
@@ -5083,14 +5083,14 @@ DROP PROCEDURE IF EXISTS `sp_get_statutory_notifications`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_statutory_notifications`(
-IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11) 
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
     SELECT s.notification_id, s.compliance_id, s.notification_text,
-    (SELECT concat(employee_code, ' - ', employee_name) 
+    (SELECT concat(employee_code, ' - ', employee_name)
     from tbl_users where user_id = s.created_by) as created_by,
     s.created_on, su.user_id, su.read_status
-    from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id 
+    from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = userid_
     order by su.read_status DESC, s.created_on DESC limit pagecount_;
 END//
@@ -5288,7 +5288,16 @@ BEGIN
 
     select t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
         t2.compliance_task, t2.is_active, t2.created_by, t2.created_on, t2.updated_by, t2.updated_on,
-        t4.statutory_nature_name
+        t4.statutory_nature_name,
+        t2.statutory_provision,
+        t2.compliance_description, t2.penal_consequences, t2.reference_link, t2.frequency_id,
+        t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,
+        t2.duration,
+        (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by
      from tbl_statutory_mappings as t1
      inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
      inner join tbl_mapped_industries as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
@@ -5296,7 +5305,7 @@ BEGIN
      inner join tbl_user_domains as t5 on t5.country_id = t2.country_id and t5.domain_id = t2.domain_id
      where t2.is_approved = 1 and t5.user_id = userid and IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
-     );
+     ) order by t1.statutory_mapping_id;
 
      select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
      inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
@@ -5304,11 +5313,65 @@ BEGIN
      inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
      where t2.is_approved = 1 and t3.user_id = userid and  IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
-     );
+     ) order by t1.statutory_mapping_id;
+
+     SELECT distinct t1.geography_name, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
+        inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
+        inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_user_domains as t5 on t5.country_id = t3.country_id and t5.domain_id = t3.domain_id
+    where t3.is_approved = 1 and t5.user_id = userid and IFNULL(t3.updated_by, t3.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t3.statutory_mapping_id;
+
 
 END //
 
 DELIMITER ;
+
+
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_approve_list_filter`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mapping_approve_list_filter`(
+    IN userid INT(11), org_id VARCHAR(100), nature_id VARCHAR(100),
+    countryid INT(11), domainid INT(11), knowledge_user_id VARCHAR(100)
+)
+BEGIN
+    select distinct t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
+        t2.compliance_task, t2.is_active, t2.created_on, t2.updated_on,
+        t4.statutory_nature_name,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by
+     from tbl_statutory_mappings as t1
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
+     inner join tbl_user_domains as t5 on t5.country_id = t2.country_id and t5.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t5.user_id = userid
+     and t2.country_id = countryid
+     and t2.domain_id = domainid
+     and t1.statutory_nature_id like nature_id
+     and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = 4
+     ) order by t1.statutory_mapping_id;
+
+     select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+     inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t3.user_id = userid
+     and t2.country_id = countryid
+     and t2.domain_id = domainid
+     and t1.organisation_id like org_id
+     and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t1.statutory_mapping_id;
+
+END //
+
+DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_compliance`;
 DELIMITER //
@@ -5320,7 +5383,10 @@ BEGIN
         t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name,
         t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id,
         t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id,
-        t1.duration, t1.is_active, (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name
+        t1.duration, t1.is_active,
+        (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t1.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration
     FROM tbl_compliances as t1 inner join tbl_statutory_mappings as t2
     on t1.statutory_mapping_id = t2.statutory_mapping_id
     where t1.compliance_id = compid;
@@ -5329,6 +5395,72 @@ BEGIN
     inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
     inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
     where t3.compliance_id = compid;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_approve`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_statutory_mapping_approve`(
+    IN compid INT(11), mapid INT(11), country VARCHAR(100), domain VARCHAR(100),
+    nature VARCHAR(100), mapping TEXT, cname TEXT, asts INT(11), rmarks TEXT,
+    isCommon tinyint(2), userid INT(11),
+)
+BEGIN
+
+    IF isCommon = 0 then
+        update tbl_compliances set is_approved = asts,
+            approved_by = userid, approved_on = current_ist_datetime(),
+            remarks = rmarks
+        where compliance_id = compid;
+    ELSE
+        update tbl_compliances set is_approved = asts,
+            approved_by = userid, approved_on = current_ist_datetime()
+        where compliance_id = compid;
+
+        update tbl_statutory_mappings set is_approved = asts,
+            approved_by = userid,remarks = rmarks
+        where compliance_id = compid;
+
+        INSERT INTO tbl_messages(user_category_id, message_heading, message_text,
+            link, updated_by, updated_on)
+        values ()
+
+    END IF;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_to_notify`;
+DELIMITER //
+CREATE PROCEDURE `sp_tbl_users_to_notify`(
+    IN usercategoryid INT(11)
+)
+BEGIN
+
+    select user_id from tbl_users where
+    is_active = 1 and is_disable = 0 and
+    user_category_id in (1, 3, 4, 5, 7, 8)
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_user_knowledge_executives`;
+DELIMITER //
+CREATE PROCEDURE `sp_user_knowledge_executives`(
+    IN userid INT(11)
+)
+BEGIN
+    select child_user_id, concat(employee_code, '-', employee_name) as emp_name from  tbl_user_mapping
+    inner join tbl_users on user_id = child_user_id and is_active = 1 and is_disable = 0
+    where parent_userid = userid ;
+
+
 END //
 
 DELIMITER ;

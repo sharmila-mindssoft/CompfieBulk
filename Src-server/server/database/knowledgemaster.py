@@ -868,7 +868,7 @@ def check_duplicate_statutory(
 
 
 def get_country_wise_level_1_statutoy(db, user_id):
-    result = db.call_proc("sp_statutorymapping_report_levl1_list",())
+    result = db.call_proc("sp_statutorymapping_report_levl1_list", ())
     if bool(STATUTORY_PARENTS) is False:
         get_statutory_master(db)
 
