@@ -5289,7 +5289,16 @@ BEGIN
 
     select t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
         t2.compliance_task, t2.is_active, t2.created_by, t2.created_on, t2.updated_by, t2.updated_on,
-        t4.statutory_nature_name
+        t4.statutory_nature_name,
+        t2.statutory_provision,
+        t2.compliance_description, t2.penal_consequences, t2.reference_link, t2.frequency_id,
+        t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,
+        t2.duration,
+        (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by
      from tbl_statutory_mappings as t1
      inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
      inner join tbl_mapped_industries as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
@@ -5307,9 +5316,19 @@ BEGIN
         select child_user_id from tbl_user_mapping where parent_user_id = userid
      ) order by t1.statutory_mapping_id;
 
+     SELECT distinct t1.geography_name, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
+        inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
+        inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_user_domains as t5 on t5.country_id = t3.country_id and t5.domain_id = t3.domain_id
+    where t3.is_approved = 1 and t5.user_id = userid and IFNULL(t3.updated_by, t3.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t3.statutory_mapping_id;
+
+
 END //
 
 DELIMITER ;
+
 
 
 
@@ -5322,8 +5341,10 @@ CREATE PROCEDURE `sp_tbl_statutory_mapping_approve_list_filter`(
 )
 BEGIN
     select distinct t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
-        t2.compliance_task, t2.is_active, t2.created_by, t2.created_on, t2.updated_by, t2.updated_on,
-        t4.statutory_nature_name
+        t2.compliance_task, t2.is_active, t2.created_on, t2.updated_on,
+        t4.statutory_nature_name,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by
      from tbl_statutory_mappings as t1
      inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
      inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
@@ -5352,6 +5373,7 @@ END //
 
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_compliance`;
 DELIMITER //
 CREATE PROCEDURE `sp_tbl_statutory_mapping_compliance`(
@@ -5362,7 +5384,10 @@ BEGIN
         t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name,
         t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id,
         t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id,
-        t1.duration, t1.is_active, (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name
+        t1.duration, t1.is_active,
+        (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t1.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration
     FROM tbl_compliances as t1 inner join tbl_statutory_mappings as t2
     on t1.statutory_mapping_id = t2.statutory_mapping_id
     where t1.compliance_id = compid;

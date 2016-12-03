@@ -294,3 +294,67 @@ def convert_base64_to_file(file_name, file_content, file_path=None):
     if file_content is not None:
         with io.FileIO(file_path, "wb") as fn:
             fn.write(file_content.decode('base64'))
+
+def make_summary(data, data_type, c):
+    if data_type == 1 :
+        if len(data) > 0:
+            dat = data[0].statutory_date
+            mon = data[0].statutory_month
+            day = data[0].trigger_before_days
+            summary = "%s  %s" % (
+                mon, dat
+            )
+            if day is not None :
+                summary += " Trigger: %s days" % (day)
+
+            return summary
+        else:
+            return None
+    elif data_type in (2, 3) :
+        dates = []
+        trigger = []
+        if len(data) > 0:
+            for d in data :
+                dat = d.statutory_date
+                mon = d.statutory_month
+                day = d.trigger_before_days
+                dates.append("%s  %s" % (
+                    mon, dat
+                ))
+                if day is not None :
+                    trigger.append(" %s days, " % (day))
+
+            summary = "Repeats every %s - %s. " % (
+                c["repeats_every"], c["repeat_type"]
+            )
+            summary += ", ".join(dates)
+            if len(trigger) > 0 :
+                summary += " Trigger : " + ", ".join(trigger)
+
+    elif data_type == 4:
+        dates = []
+        trigger = []
+        if len(data) > 0:
+            for d in data :
+                dat = d.statutory_date
+                mon = d.statutory_month
+                day = d.trigger_before_days
+                dates.append("%s  %s" % (
+                    mon, dat
+                ))
+                if day is not None :
+                    trigger.append(" %s days, " % (day))
+
+            summary = "Repeats every %s - %s. " % (
+                d["repeats_every"], d["repeat_type"]
+            )
+            summary += ", ".join(dates)
+            if len(trigger) > 0 :
+                summary += " Trigger : " + ", ".join(trigger)
+
+    elif data_type == 5 :
+        summary = "To complete within %s - %s" % (
+            d["duration"], d["duration_type"]
+        )
+
+    return summary
