@@ -393,7 +393,16 @@ TEMPLATE_PATHS = [
         "files/knowledge/statutory-setting-report/statutory-setting-report.html",
         None, {}
     ),
-
+    (
+        "/knowledge/group-admin-registration-email-report",
+        "files/knowledge/group-admin-registration-email-report/group-admin-registration-email-report.html",
+        None, {}
+    ),
+    (
+        "/knowledge/reassign-user-report",
+        "files/knowledge/reassign-user-report/reassign-user-report.html",
+        None, {}
+    ),
     # audit trial
     (
         "/knowledge/audit-trail-login-trace",
