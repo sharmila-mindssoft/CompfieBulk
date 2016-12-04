@@ -1080,7 +1080,7 @@ def get_GroupAdminReportData(db, user_id):
     return result
 
 def get_AssignedUserClientGroupsDetails(db, user_id):
-    result = db.call_proc_with_multiresult_set("sp_reassignuser_report_usercategories", (), 4)
+    result = db.call_proc_with_multiresult_set("sp_reassignuser_report_usercategories", (), 5)
     print len(result)
     client_categories = []
     for categories in result[1]:
@@ -1096,13 +1096,13 @@ def get_AssignedUserClientGroupsDetails(db, user_id):
         ])
     print "user clients"
     print client_categories
-    return (result[0], client_categories, result[3])
+    return (result[0], client_categories, result[3], result[4])
 
 def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
     if group_id is None:
         args = [user_id, user_category_id, 0]
     else:
-        args = [ user_id, user_category_id, group_id]
+        args = [user_id, user_category_id, group_id]
     print "inside args"
     print args
     result = db.call_proc_with_multiresult_set("sp_reassign_user_report_getdata", args, 2)
@@ -1133,3 +1133,28 @@ def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
         print "inside database"
         print reassign_group_list
         return reassign_group_list
+
+def get_ReassignUserDomainReportData(db, request_data):
+    user_category_id = request_data.user_category_id
+    user_id = request_data.user_id
+    group_id = request_data.group_id_none
+    bg_id = request_data.bg_id
+    le_id = request_data.le_id
+    d_id = request_data.d_id
+    if bg_id is None:
+        bg_id = '%'
+        args = [user_id, user_category_id, group_id, bg_id, le_id, d_id]
+    else:
+        args = [user_id, user_category_id, group_id, bg_id, le_id, d_id]
+    print "inside args"
+    print args
+    result = db.call_proc("sp_reassign_user_report_domain_user_getdata", args)
+    reassign_group_list = []
+    for d in result:
+        reassign_group_list.append(technoreports.ReassignedDomainUserList(
+            int(d["unit_id"]), d["unit_code"], d["unit_name"], d["address"], d["postal_code"],
+            d["geography_name"], d["unit_email_date"], d["emp_code_name"], d["remarks"]
+        ))
+    print "after append"
+    print reassign_group_list
+    return reassign_group_list
