@@ -924,7 +924,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_client_domains_by_group_id`;
 DELIMITER //
 CREATE PROCEDURE `sp_client_domains_by_group_id`(
-    IN clientid INT(11)
+    IN clientid INT(11), userId INT(11)
 )
 BEGIN
     select t1.client_id, t1.legal_entity_id, t2.domain_id
@@ -4201,7 +4201,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_units_getCountries`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_units_getCountries`(
-in clientId int(11))
+in clientId int(11), userId int(11))
 BEGIN
     select t1.country_id
     from
