@@ -52,7 +52,8 @@ from server.database.technoreport import (
     get_units_for_clientdetails_report,
     get_GroupAdminReportData,
     get_AssignedUserClientGroupsDetails,
-    get_ReassignUserReportData
+    get_ReassignUserReportData,
+    get_ReassignUserDomainReportData
 )
 
 __all__ = [
@@ -226,10 +227,16 @@ def process_techno_report_request(request, db):
     elif type(request_frame) is technoreports.GetReassignUserReportData:
         logger.logKnowledgeApi("GetReassignUserReportData", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        print "inside cotroller call"
         result = process_get_ReassignUserReportData(db, request_frame, user_id)
         logger.logKnowledgeApi("GetReassignUserReportData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+    elif type(request_frame) is technoreports.GetReassignUserDomainReportData:
+        logger.logKnowledgeApi("GetReassignUserDomainReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_ReassignUserDomainReportData(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetReassignUserDomainReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
 
     return result
 
@@ -526,6 +533,7 @@ def process_get_AssignedUserClientGroups(db, user_id):
     user_category = []
     user_clients = []
     client_list = []
+    domain_user_list = []
     for category in result[0]:
         user_category.append(core.UserCategory(
             int(category.get("user_category_id")), category.get("user_category_name")
@@ -545,10 +553,18 @@ def process_get_AssignedUserClientGroups(db, user_id):
             int(cl_list.get("client_id")), cl_list.get("short_name"), bool(cl_list.get("is_active"))
         ))
 
+    for d_list in result[3]:
+        domain_user_list.append(technoreports.ReassignUserDomainList(
+            int(d_list.get("user_id")), int(d_list.get("client_id")), int(d_list.get("legal_entity_id")),
+            d_list.get("legal_entity_name"), int(d_list.get("business_group_id")),
+            d_list.get("business_group_name"), int(d_list.get("domain_id")), d_list.get("domain_name")
+        ))
+
     return technoreports.GetAssignedUserClientGroupsSuccess(
         user_categories=user_category,
         reassign_user_clients=user_clients,
-        clients=client_list
+        clients=client_list,
+        reassign_domains=domain_user_list
     )
 
 def process_get_ReassignUserReportData(db, request_frame, user_id):
@@ -559,3 +575,9 @@ def process_get_ReassignUserReportData(db, request_frame, user_id):
 
     result = get_ReassignUserReportData(db, user_category_id, user_id, group_id)
     return technoreports.ReassignUserReportDataSuccess(result)
+
+def process_get_ReassignUserDomainReportData(db, request_frame, user_id):
+    result = get_ReassignUserDomainReportData(db, request_frame)
+    print "from controller"
+    print result
+    return technoreports.ReassignUserDomainReportDataSuccess(result)

@@ -238,11 +238,14 @@ function loadGeographyFirstLevels(saverecord) {
   var clsval1 = 'list' + setlevelstage;
   var geographyList = geographiesList[saverecord];
   for (var i in geographyList) {
+    console.log("firstlevelid:"+firstlevelid,geographyList[i].level_id)
     var setgeographyid = geographyList[i].geography_id;
     if (geographyList[i].level_id == firstlevelid && geographyList[i].is_active == true) {
       str += '<li id="' + setgeographyid + '" class="' + clsval1 + '" onclick="activate(this,' + setgeographyid + ',\'' + clsval + '\',' + saverecord + ',' + setlevelstage + ')" >' + geographyList[i].geography_name + '</li>';
     }
   }
+  console.log("str:"+str);
+
   $('#ulist' + setlevelstage).append(str);
   $('.addleft').on('input', function (e) {
     this.value = isCommon($(this));
@@ -283,7 +286,7 @@ function load(id, level, country) {
     for (var i in geographyList) {
       var setgeographyid = geographyList[i].geography_id;
       if (id == geographyList[i].parent_id && geographyList[i].level_id == levelid && geographyList[i].is_active == true) {
-        str += '<li id="' + setgeographyid + '" class="' + clsval1 + '" onclick="activate(this,' + setgeographyid + ',\'' + clsval + '\',' + country + ',' + setlevelstage + ')" >' + geographyList[i].geography_name + '</li>';
+        str += '<li id="' + setgeographyid + '" class="' + clsval1 + ' active" onclick="activate(this,' + setgeographyid + ',\'' + clsval + '\',' + country + ',' + setlevelstage + ')" >' + geographyList[i].geography_name + '</li>';
       }
     }
     $('#ulist' + setlevelstage).append(str);

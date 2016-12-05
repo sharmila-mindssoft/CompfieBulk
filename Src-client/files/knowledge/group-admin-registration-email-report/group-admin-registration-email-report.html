@@ -9,7 +9,7 @@
                 <!-- <h4 class="page-title">Group Admin Registration Email Report</h4>
                 <hr class="no-top-margin"> -->
                 <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Reassign User Report</h3>
+                    <h3 class="portlet-title">Group Admin Registration Email Report</h3>
                     <div class="portlet-widgets">
                         <!-- <a href="#" onclick="location.href='/service-provider/list'">
                             <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -19,98 +19,113 @@
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                          <label class="col-sm-4 control-label">Group:<span class="mandatory">*</span></label>
-                          <div class="col-md-6">
-                            <input type="text" class="form-control input-sm" value="RG Group">
-                            <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                          </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                          <label class="col-sm-4 control-label">Country:</label>
-                          <div class="col-md-6">
-                            <input type="text" class="form-control input-sm" placeholder="Enter Country Name">
-                            <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                          </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                  <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
+                                  <div class="col-md-6">
+                                    <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="1">
+                                    <i class="form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="group-id">
+                                    <div id="ac-group" class="ac-textbox default-display-none">
+                                      <ul style="width:85%;"></ul>
+                                    </div>
+                                  </div>
+                                </div>
                             </div>
-                        </center>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                  <label class="col-sm-4 control-label">Country: </label>
+                                  <div class="col-md-6">
+                                    <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="2" placeholder="Enter Country Name">
+                                    <i class="form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="country-id">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                      <ul style="width:85%;"></ul>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group m-b-0">
+                                        <button class="btn btn-primary waves-effect waves-light" type="button" id="btn-show"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
                     </div>
-                    <div class="clear"></div>
-                </form>
                 </div>
-                </div>
-                </div>
-                <div class="card-box">
-                <div class="table-responsive">
-                    <div class="col-sm-12 text-center"><h4>Client Admin Registration Email Report</h4></div>
-                    <div class="col-sm-6 text-center"><h6>Group: RG Group</h6></div>
-                    <div class="col-sm-6 text-center"><h6>Country: -</h6></div>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th width="01%" rowspan="2">#</th>
-                                <th width="10%" rowspan="2">Country</th>
-                                <th width="10%" rowspan="2">Legal Entity</th>
-                                <th width="10%" rowspan="2" class="text-center">No. of Units</th>
-                                <th colspan="2" class="text-center">Email Sent Date</th>
-                            </tr>
-                            <tr>
-                                <th width="10%">Unit Created</th>
-                                <th width="10%">Assign Statutory</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>India</td>
-                                <td>RG Legal Entity 01</td>
-                                <td class="text-center">03</td>
-                                <td>12-Oct-2016 10:15</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>India</td>
-                                <td>RG Legal Entity 02</td>
-                                <td class="text-center">02</td>
-                                <td>15-Sep-2016 13:10</td>
-                                <td>11-Oct-2016 10:20</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Singapore</td>
-                                <td>RG Legal Entity 03</td>
-                                <td class="text-center">04</td>
-                                <td>10-Sep-2016 14:30</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>India</td>
-                                <td>RG Legal Entity 04</td>
-                                <td class="text-center">06</td>
-                                <td>01-Aug-2016 15:30</td>
-                                <td>11-Sep-2016 11:15</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p class="rpt-count">Total : 4 record(s)</p>
+            </div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                    <div class="table-responsive grid-table-rpt default-display-none">
+                        <div class="col-sm-12 text-center"><h4 class="m-t-0">Group Admin Registration Email Report</h4></div>
+                        <div class="col-sm-6 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="groupsval"> </span></h6></div>
+                        <div class="col-sm-6 text-center"><h6>Country :<span style="margin-left:10px; font-weight:bold;" class="countrynameval"></span></h6></div>
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="01%" rowspan="2">#</th>
+                                    <th width="10%" rowspan="2">Country</th>
+                                    <th width="10%" rowspan="2">Legal Entity</th>
+                                    <th width="10%" rowspan="2" class="text-center">No. of Units</th>
+                                    <th colspan="2" class="text-center">Email Sent Date</th>
+                                </tr>
+                                <tr>
+                                    <th width="10%">Unit Created</th>
+                                    <th width="10%">Assigned Statutory</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-client-admin-regn-list">
+
+                            </tbody>
+                        </table>
+                        <table class="pagination-view default-display-none">
+                          <tr>
+                            <td>
+                              <span class="compliance_count"> </span>
+                              <span class="divider-view"> | </span>
+                              <span class="items-per-page">
+                              Show
+                              <select id="items_per_page">
+                              </select>
+                              entries
+                              </span>
+                            </td>
+                            <td style="width:500px;"></td>
+                            <td style="text-align:right;padding-right:10px;">
+                              <ul id="pagination-rpt"></ul>
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- end col -->
     </div>
 </div>
-
+<div id="templates">
+    <table width="100%">
+        <tr class="table-row" >
+            <td align="center" class="sno"></td>
+            <td class="country-name"></td>
+            <td class="le-name"></td>
+            <td class="no-of-units" align="center"></td>
+            <td class="unit-email"></td>
+            <td class="statu-email"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+    <tr align="left" class="table-row-no-content">
+      <td  align="left" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/script/group-admin-registration-email-report/group-admin-registration-email-report.js"></script>
 {% endblock %}

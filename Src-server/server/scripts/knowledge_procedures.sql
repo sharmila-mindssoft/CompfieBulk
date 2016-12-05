@@ -5162,9 +5162,11 @@ BEGIN
         select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
         unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
         country_name, (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
-        t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
-        (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
-        t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
+        client_informed_id = (select max(client_informed_id) from tbl_group_admin_email_notification
+        where t2.client_id and legal_entity_id = t2.legal_entity_id)) as unit_creation_informed,
+        (select assign_statutory_informed from tbl_group_admin_email_notification  where client_id =
+        client_informed_id = (select max(client_informed_id) from tbl_group_admin_email_notification
+        where t2.client_id and legal_entity_id = t2.legal_entity_id)) as statutory_assigned_informed,
         t5.email_id, t5.user_id, concat(t5.employee_name,'-',(case when t5.employee_code is null then
         '' else t5.employee_code end)) as emp_code_name,
         (select count(*) from tbl_client_statutories where client_id = t4.client_id and
@@ -5381,11 +5383,13 @@ BEGIN
         select t2.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
         unit_count, t2.country_id, (select country_name from tbl_countries where country_id =
         t2.country_id) as country_name, (select date_format(unit_sent_on, '%d/%m/%y %h:%i')
-        from tbl_group_admin_email_notification where client_id = t2.client_id and
-        legal_entity_id = t2.legal_entity_id) as unit_email_date,
+        from tbl_group_admin_email_notification where client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id = 1 and
+        legal_entity_id = 1)) as unit_email_date,
         (select date_format(statu_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
-        where client_id = t2.client_id and legal_entity_id = t2.legal_entity_id) as
-        statutory_email_date
+        where client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id = 1 and
+        legal_entity_id = 1)) as statutory_email_date
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_units as t4
         where
@@ -5428,6 +5432,19 @@ BEGIN
 
     select client_id, short_name, is_active
     from tbl_client_groups;
+
+    select t1.user_id, t1.client_id, t1.legal_entity_id, t1.domain_id,
+    t2.legal_entity_name, t2.business_group_id,
+    (select business_group_name from tbl_business_groups
+    where business_group_id = t2.business_group_id) as business_group_name,
+    (select domain_name from tbl_domains where
+    domain_id = t1.domain_id) as domain_name
+    from
+    tbl_legal_entities as t2,
+    tbl_user_units as t1
+    where
+    t2.client_id  = t1.client_id and
+    t1.user_id in (select user_id from tbl_users);
 
 END//
 
@@ -6074,3 +6091,40 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Get domain user report data for reassign user report
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_reassign_user_report_domain_user_getdata`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_reassign_user_report_domain_user_getdata`(
+in _u_id int(11), _u_cg_id int(11), _g_id int(11), _bg_id int(11), _le_id int(11), _d_id int(11))
+BEGIN
+    if _u_cg_id = 7 or _u_cg_id = 8 then
+        select t2.unit_id, t2.unit_code, t2.unit_name, t2.address, t2.postal_code,
+        (Select geography_name from tbl_geographies where geography_id = t2.geography_id)
+        as geography_name,
+        date_format(t4.assigned_on, '%d-%b-%y') as unit_email_date,
+        concat(t5.employee_code,'-',t5.employee_name) as emp_code_name,
+        t4.remarks
+        from
+        tbl_user_units as t1,
+        tbl_units as t2, tbl_units_organizations as t3,
+        tbl_user_account_reassign_history as t4,
+        tbl_users as t5
+        where
+        t5.user_id = t4.assigned_by and
+        t4.reassinged_data = t1.unit_id and
+        t3.domain_id like t1.domain_id and t3.unit_id = t2.unit_id and
+        t2.business_group_id like _bg_id and
+        t2.unit_id = t1.unit_id and
+        t1.domain_id = _d_id and
+        t1.legal_entity_id = _le_id and
+        t1.client_id = _g_id and
+        t1.user_id = _u_id and
+        t1.user_category_id = _u_cg_id;
+
+    end if;
+END//
+DELIMITER;

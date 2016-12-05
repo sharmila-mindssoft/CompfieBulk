@@ -2004,6 +2004,22 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserDomainReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id,
+        "bg_id": bg_id,
+        "le_id": le_id,
+        "d_id": d_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   function getLegalEntityClosureData(callback){
     callerName = 'techno_transaction';
     var request = [
@@ -2324,7 +2340,7 @@ function initMirror() {
     getMessages: getMessages,
     getStatutoryNotifications: getStatutoryNotifications,
     updateStatutoryNotificationStatus: updateStatutoryNotificationStatus
-
+    getReassignUserDomainReportData: getReassignUserDomainReportData
   };
 }
 var mirror = initMirror();
