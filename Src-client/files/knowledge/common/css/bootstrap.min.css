@@ -2615,7 +2615,8 @@ input[type=range] {
 }
 select[multiple],
 select[size] {
-    height: auto
+    /*height: auto*/
+    height: 30px;
 }
 input[type=file]:focus,
 input[type=checkbox]:focus,
