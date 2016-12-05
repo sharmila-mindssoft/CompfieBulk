@@ -23,7 +23,7 @@ INSERT INTO tbl_form_type VALUES(4, "My Accounts");
 -- masters
 INSERT INTO tbl_forms VALUES(1, 1, 'Country', '/knowledge/country-master', 1,  null);
 INSERT INTO tbl_forms VALUES(2, 1, 'Domain', '/knowledge/domain-master', 2, null);
-INSERT INTO tbl_forms VALUES(3, 1, 'User Group', '/knowledge/user-privileges', 3, null);
+INSERT INTO tbl_forms VALUES(3, 1, 'User Privileges', '/knowledge/user-privileges', 3, null);
 INSERT INTO tbl_forms VALUES(4, 1, 'Geography Level Master', '/knowledge/geography-level-master', 4, 'Geography');
 INSERT INTO tbl_forms VALUES(5, 1, 'Geography Master', '/knowledge/geography-master', 5, 'Geography');
 INSERT INTO tbl_forms VALUES(6, 1, 'Organization Master', '/knowledge/organization', 6, null);
