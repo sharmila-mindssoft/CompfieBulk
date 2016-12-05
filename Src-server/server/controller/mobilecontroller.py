@@ -1,5 +1,5 @@
 import json
-from protocol import login, mobile, knowledgetransaction, core
+from protocol import login, mobile, core
 from server import logger
 from server.database.tables import *
 from server.database.login import *
@@ -221,7 +221,7 @@ def approve_statutory_mapping_list(db, user_id):
         ))
 
         mapped[map_id] = mobile.MappingApproveInfo(
-            map_id, m["country_id"], m["domain_id"],
+            map_id, m["country_name"], m["domain_name"],
             m["statutory_nature_name"], orgname, m["statutory_mapping"],
             compliance
         )
