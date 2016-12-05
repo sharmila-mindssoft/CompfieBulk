@@ -703,6 +703,7 @@ def save_statutory(db, name, level_id, parent_ids, parent_names, user_id):
         name, int(level_id),
         parent_ids, parent_names, int(user_id), str(created_on)
     ]
+
     new_id = db.insert(table_name, columns, values)
     if new_id is False:
         raise process_error("E015")
@@ -713,7 +714,7 @@ def save_statutory(db, name, level_id, parent_ids, parent_names, user_id):
 
 
 def update_statutory(
-    db, statutory_id, name, parent_ids, parent_names, updated_by
+    db, statutory_id, name, updated_by
 ):
     oldData = get_statutory_by_id(db, statutory_id)
     if bool(oldData) is False:
@@ -721,11 +722,11 @@ def update_statutory(
 
     table_name = "tbl_statutories"
     columns = [
-        "statutory_name", "parent_ids", "parent_names",
+        "statutory_name",
         "updated_by"
     ]
     where_condition = " statutory_id = %s"
-    values = [name, parent_ids, parent_names, str(updated_by), statutory_id]
+    values = [name, str(updated_by), statutory_id]
     if (db.update(table_name, columns, values, where_condition)):
         action = "Statutory - %s updated" % name
         db.save_activity(updated_by, 10, action)
@@ -859,12 +860,7 @@ def check_duplicate_statutory(
         param.append(domain_id)
 
     rows = db.select_all(query + where_qry, param)
-
-    columns = ["statutory_id", "statutory_name", "level_id", "domain_id"]
-    result = []
-    if rows:
-        result = convert_to_dict(rows, columns)
-    return result
+    return rows
 
 
 def get_country_wise_level_1_statutoy(db, user_id):

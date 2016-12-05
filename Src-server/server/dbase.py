@@ -240,7 +240,11 @@ class Database(object):
                 logger.logQuery(self._for_client, "execute_insert")
                 cursor.execute(query)
             cursor.nextset()
-            return int(cursor.lastrowid)
+            no = int(cursor.lastrowid)
+            if no == 0 :
+                return False
+            else :
+                return no
         except Exception, e:
             print e
             # print query
@@ -493,6 +497,8 @@ class Database(object):
         try:
             n_id = int(self.execute_insert(query, values))
             return n_id
+            if n_id == 0 :
+                return False
         except Exception, e:
             print e
             # print query, values

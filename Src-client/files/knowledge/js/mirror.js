@@ -565,15 +565,12 @@ function initMirror() {
     ];
     apiRequest('knowledge_master', request, callback);
   }
-  function updateStatutory(sId, lId, name, pIds, pNames, callback) {
+  function updateStatutory(sId, name, callback) {
     var request = [
       'UpdateStatutory',
       {
         's_id': sId,
-        's_l_id': lId,
         's_name': name,
-        'p_ids': pIds,
-        'p_names': pNames
       }
     ];
     apiRequest('knowledge_master', request, callback);

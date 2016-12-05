@@ -4296,7 +4296,7 @@ BEGIN
     where t4.user_id = userid and t2.is_approved = approvestatus;
 
     select t1.statutory_mapping_id, t1.statutory_id,
-    (select parent_names from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
+    (select concat(parent_names, ' >> ', statutory_name) from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
     from tbl_mapped_statutories as t1
     inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id  and
@@ -5931,7 +5931,9 @@ BEGIN
         (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration,
         (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
-        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by,
+        (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
+        (select domain_name from tbl_domains where domain_id = t2.domain_id) as domain_name
      from tbl_statutory_mappings as t1
      inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
      inner join tbl_mapped_industries as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
