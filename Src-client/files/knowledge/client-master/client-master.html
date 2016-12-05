@@ -132,7 +132,7 @@
               <div class="portlet-heading bg-info">
               <h3 class="portlet-title">Add Client</h3>
               <div class="portlet-widgets">
-                  <a href="#" >
+                  <a onclick="Custombox.close();" class="c-pointer" >
                       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                   </a>
               </div>
@@ -167,13 +167,18 @@
                             <div class="col-sm-6">
                                 <input type="text" class="form-control input-sm"  id="username" placeholder="user@domain.com" tabindex="4">
                                 <abbr class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small></abbr>
+                               
+                            </div>
+                            <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
+                                  <i class="fa fa-pencil text-primary c-pointer" onclick="chenge_edit(1)"></i>
                             </div>
                         </div>
                     </div>
-                     <div class="col-sm-4">
+                     <div class="col-sm-12">
+                      <div class="col-sm-6">
                         <div class="form-group action-div">
-                            <label class="col-sm-3 control-label">Action:</label>
-                            <div class="col-sm-7 actions">
+                            <label class="col-sm-4 control-label">Action:</label>
+                            <div class="col-sm-6 actions">
                               <select class="form-control input-sm">
                                   <option value="1">Edit</option>
                                   <option value="2">Renewal</option>
@@ -181,10 +186,13 @@
                               </select>
                             </div>
                         </div>
+                      </div>
+                      <div class="col-sm-6">
                         <div class="form-group remarks_text remarks-div">
-                            <label class="col-sm-3 control-label">Remarks:</label>
-                            <label class="col-sm-4"><input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text"  type="text"></label>
+                            <label class="col-sm-4 control-label">Remarks:</label>
+                            <label class="col-sm-6"><input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text"  type="text"></label>
                         </div>
+                      </div>
                     </div>
 
                     <div class="clear"></div>   <div class="col-sm-12">
@@ -348,9 +356,13 @@
           <div class="col-sm-4">
               <div class="form-group">
                   <label class="col-sm-4 p-t-5">Legal Entity</label>
-                  <div class="col-sm-6 no-padding-right">
+                  <div class="col-sm-4 no-padding-right">
                       <input class="form-control input-sm legal-entity-text" placeholder="Enter Legal Entity"  id="legal_entity_text" tabindex="7"  type="text">
                   </div>
+                  <label class="col-sm-2 icon-3x no-padding-right edit-right-icon">
+                    <i class="fa fa-pencil text-primary c-pointer pull-right"></i>
+                  </label>
+
               </div>
               <div class="form-group">
                   <label class="col-sm-4 p-t-5">Total Licence(s)</label>
@@ -473,7 +485,7 @@
   <li></li>
 </div>
 <div class="text default-display-none">
-    <span></span>
+    <span class="p-t-7"></span>
 </div>
 <div class="logo-img default-display-none">
     <span>
