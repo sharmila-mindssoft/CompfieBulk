@@ -391,13 +391,15 @@ CSS_PATH = os.path.join(COMMON_PATH, "css")
 IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
+LOGO_PATH = os.path.join(ROOT_PATH, "Src-server", "server", "clientlogo")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
     ("/knowledge/js/<path:filename>", JS_PATH),
     ("/knowledge/images/<path:filename>", IMG_PATH),
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
-    ("/knowledge/script/<path:filename>", SCRIPT_PATH)
+    ("/knowledge/script/<path:filename>", SCRIPT_PATH),
+    ("/knowledge/clientlogo/", LOGO_PATH)
 ]
 
 def staticTemplate(pathname, filename):
