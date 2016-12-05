@@ -5946,7 +5946,7 @@ BEGIN
         t2.duration,
         (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
         (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
-        (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration_type,
         (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
         (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by,
         (select country_name from tbl_countries where country_id = t2.country_id) as country_name,

@@ -2339,7 +2339,7 @@ function initMirror() {
     getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
     getMessages: getMessages,
     getStatutoryNotifications: getStatutoryNotifications,
-    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
     getReassignUserDomainReportData: getReassignUserDomainReportData
   };
 }

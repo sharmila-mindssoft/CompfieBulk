@@ -265,8 +265,8 @@ def parse_values(field_name, param, val, type="To"):
         if _is_optional is False:
             if len(val) == 0 :
                 raise expectation_error(
-                    "a string with max length(%s)" % (
-                        _length,
+                    "a string with max length(%s) for %s" % (
+                        _length, field_name
                     ),
                     val
                 )

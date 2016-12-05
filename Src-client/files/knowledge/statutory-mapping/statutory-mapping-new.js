@@ -398,7 +398,7 @@ function RenderInput() {
                 _renderinput.renderStatuNames(v.s_id, v.l_position);
             });
             $('.edit-icon', liObject).on('click', function() {
-                console.log('edit');
+
                 $('.statutory_levelvalue #dv'+v.l_position).val(v.s_name);
                 $('.statutory_levelvalue #dvid'+v.l_position).val(v.s_name);
             });
@@ -845,7 +845,7 @@ function FetchBack() {
     };
 
     this.updateStatutory = function(s_name, s_id, l_position) {
-        fetch.updateStatutory(s-id, s_name, function(status, response){
+        fetch.updateStatutory(s_id, s_name, function(status, response){
 
         })
     };
@@ -877,7 +877,7 @@ function FetchBack() {
                 else {
                     // load statutory list
                     _fetchback.getStatuMaster(l_position, function() {
-                        pid = p_ids[0];
+                        pid = p_ids[p_ids.length - 1];
                         _renderinput.renderStatuNames(pid, l_position);
                     });
                 }

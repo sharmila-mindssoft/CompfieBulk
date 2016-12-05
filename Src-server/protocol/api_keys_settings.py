@@ -53,7 +53,7 @@ api_params = {
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},
-    'form_url': {'type': 'STRING', 'length': 250, 'validation_method': is_url, 'is_optional': False},
+    'form_url': {'type': 'TEXT', 'length': 250, 'validation_method': is_url, 'is_optional': False},
     'parent_menu': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
