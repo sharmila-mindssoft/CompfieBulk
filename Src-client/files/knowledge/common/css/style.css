@@ -1027,3 +1027,9 @@ list-style-type:none; line-height:25px;
 #templates{
   display: none;
 }
+
+
+
+.tbody-unit-list tr td{
+  vertical-align: top !important;
+}
