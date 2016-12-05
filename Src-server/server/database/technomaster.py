@@ -1551,7 +1551,7 @@ def get_unit_geograhpy_levels_for_user(db, user_id):
     condition_val = [user_id]
 
     result = db.call_proc(
-        "sp_tbl_unit_getgeographylevels", (condition_val,)
+        "sp_tbl_unit_getgeographylevels", condition_val
     )
     return return_unit_geography_levels(result)
 
@@ -1559,7 +1559,7 @@ def get_unit_geograhpy_levels_for_user(db, user_id):
 def get_geographies_for_unit(db, user_id):
 
     where_condition_val = [user_id]
-    result = db.call_proc("sp_get_geographies_for_users_mapping", (where_condition_val,))
+    result = db.call_proc("sp_get_geographies_for_users_mapping", where_condition_val)
 
     geographies = []
     if result:
@@ -1654,16 +1654,15 @@ def return_units_assign(units):
 
 
 def get_unit_details_for_user(db, user_id):
-    where_condition_val = [user_id, ]
+    print "--", user_id
+    where_condition_val = [user_id]
     result = db.call_proc_with_multiresult_set(
-        "sp_tbl_unit_getunitdetailsforuser", (where_condition_val,), 2)
+        "sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
     return return_unit_details(result)
 
 
 def return_unit_details(result):
     unitdetails = []
-    print "inside unit details"
-    print result
     for r in result[0]:
         print r
         unit_id = int(r.get("unit_id"))
@@ -1732,12 +1731,13 @@ def get_client_countries_for_unit(db, client_id, user_id):
 def get_next_auto_gen_number(db, group_name=None, client_id=None):
     if group_name is None:
         condition_val = [client_id]
-        rows = db.call_proc("sp_client_groups_details_by_id", (condition_val,))
+        rows = db.call_proc("sp_client_groups_details_by_id", condition_val)
         if rows:
             group_name = rows[0]["short_name"]
 
     condition_val = [client_id]
-    rows = db.call_proc("sp_tbl_unit_getunitcount", (condition_val,))
+    rows = db.call_proc("sp_tbl_unit_getunitcount", condition_val)
+
     for r in rows:
         no_of_units = r["units"]
     group_name = group_name.replace(" ", "")
