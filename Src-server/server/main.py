@@ -494,4 +494,4 @@ def run_server(port):
     settings = {
         "threaded": True
     }
-    app.run(host="127.0.0.1", port=port, **settings)
+    app.run(host="0.0.0.0", port=port, **settings)
