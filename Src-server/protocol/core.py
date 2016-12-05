@@ -3683,3 +3683,22 @@ class UserMappingReportDomain(object):
             "domain_id": self.domain_id
         }
         return data
+
+
+class ChildUsers(object):
+    def __init__(self, user_id, employee_name):
+        self.user_id = user_id
+        self.employee_name = employee_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "employee_name"])
+        user_id = data.get("user_id")
+        employee_name = data.get("employee_name")
+        return ChildUsers(user_id, employee_name)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "employee_name": self.employee_name,
+        }

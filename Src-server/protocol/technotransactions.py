@@ -3,64 +3,17 @@ from protocol.jsonvalidators import (
     to_VariantType, to_structure_dictionary_values
 )
 from protocol.parse_structure import (
-    parse_structure_VariantType_technotransactions_Request,
-    parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
-    parse_structure_VectorType_RecordType_core_AssignedStatutory,
-    parse_structure_VectorType_RecordType_technotransactions_UNIT,
-    parse_structure_VectorType_RecordType_core_LegalEntity,
-    parse_structure_OptionalType_CustomTextType_50,
     parse_structure_UnsignedIntegerType_32,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    parse_structure_VectorType_RecordType_core_Industry,
-    parse_structure_VectorType_RecordType_core_GroupCompany,
-    parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography,
-    parse_structure_VectorType_RecordType_core_Division,
-    parse_structure_VectorType_RecordType_core_BusinessGroup,
-    parse_structure_OptionalType_SignedIntegerType_8,
-    parse_structure_VectorType_RecordType_technotransactions_ASSIGNED_STATUTORIES,
-    parse_structure_CustomTextType_50,
-    parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_CustomTextType_100,
-    parse_structure_VectorType_UnsignedIntegerType_32,
-    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_MapType_UnsignedIntegerType_32_Bool,
-    parse_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance,
     parse_structure_Bool,
     parse_structure_OptionalType_CustomTextType_500,
-    parse_structure_SignedIntegerType_8,
-    parse_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability,
-    parse_structure_CustomTextType_20
 
 )
 from protocol.to_structure import (
-    to_structure_VariantType_technotransactions_Request,
-    to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
-    to_structure_VectorType_RecordType_core_AssignedStatutory,
-    to_structure_VectorType_RecordType_technotransactions_UNIT,
-    to_structure_VectorType_RecordType_core_LegalEntity,
-    to_structure_OptionalType_CustomTextType_50,
-    to_structure_SignedIntegerType_8,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    to_structure_VectorType_RecordType_core_Industry,
-    to_structure_VectorType_RecordType_core_GroupCompany,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
-    to_structure_VectorType_RecordType_core_Division,
-    to_structure_VectorType_RecordType_core_BusinessGroup,
-    to_structure_OptionalType_SignedIntegerType_8,
-    to_structure_VectorType_RecordType_technotransactions_ASSIGNED_STATUTORIES,
-    to_structure_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_Domain,
-    to_structure_CustomTextType_100,
-    to_structure_VectorType_UnsignedIntegerType_32,
-    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_UnsignedIntegerType_32,
     to_structure_MapType_UnsignedIntegerType_32_Bool,
-    to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance,
     to_structure_Bool,
     to_structure_OptionalType_CustomTextType_500,
-    to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability,
-    to_structure_UnsignedIntegerType_32,
-    to_structure_CustomTextType_20
-
 )
 
 

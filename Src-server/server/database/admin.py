@@ -34,7 +34,8 @@ __all__ = [
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
     "save_reassigned_user_account", "get_assigned_legal_entities",
     "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status",
-    "get_countries_for_user_filter"
+    "get_countries_for_user_filter",
+    "get_child_users"
 ]
 
 
@@ -1195,3 +1196,11 @@ def return_assigned_clients(data):
         )for datum in data
     ]
     return result
+
+def get_child_users(db, user_id):
+    result = db.call_proc("sp_user_knowledge_executives", [user_id])
+    data = []
+    for r in result:
+        data.append(core.ChildUsers(r["child_user_id"], r["emp_name"]))
+
+    return data
