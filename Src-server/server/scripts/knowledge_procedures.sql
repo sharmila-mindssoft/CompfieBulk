@@ -1,6 +1,8 @@
 -- IST time function
 DROP FUNCTION IF EXISTS `current_ist_datetime`;
+
 DELIMITER //
+
 CREATE FUNCTION `current_ist_datetime`() RETURNS datetime
 BEGIN
     DECLARE current_ist_date datetime;
@@ -14,7 +16,9 @@ DELIMITER ;
 -- verify login
 
 DROP PROCEDURE IF EXISTS `sp_verify_login`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_verify_login`(
     IN uname VARCHAR(100), IN pword VARCHAR(100)
 )
@@ -67,7 +71,9 @@ END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_save_login_failure`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_save_login_failure`(
     IN userid INT(11), userip varchar(50), logintime varchar(50)
 )
@@ -93,7 +99,9 @@ DELIMITER ;
 -- Returns Coutries that has been mapped with domain
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_country_mapped_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_country_mapped_list`()
 BEGIN
     SELECT country_id, country_name, is_active
@@ -103,13 +111,16 @@ BEGIN
         FROM tbl_statutory_levels
     );
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Returns Domains that has been mapped with country
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domain_mapped_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domain_mapped_list`()
 BEGIN
     SELECT domain_id, domain_name, is_active
@@ -124,18 +135,22 @@ BEGIN
     where
     t2.country_id = t1.country_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Returns Validity date for all country domain combinations
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_validitydays_settings_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_validitydays_settings_list`()
 BEGIN
     SELECT validity_date_id, country_id, domain_id, days
     FROM tbl_validity_date_settings;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -143,19 +158,24 @@ DELIMITER ;
 -- Statutory level creation
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutorylevels_mappings`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutorylevels_mappings`()
 BEGIN
     SELECT country_id, domain_id
     FROM tbl_statutory_levels;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save Validity date settings
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_validitydays_settings_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_validitydays_settings_save`(
     IN validitydaysid INT(11), countryid INT(11), domainid INT(11),
     validitydays INT(11), createdby INT(11),
@@ -174,13 +194,16 @@ BEGIN
         WHERE validity_days_id = validitydaysid;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check duplicate industry name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industry_master_checkduplicateindustry`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industry_master_checkduplicateindustry`(
 in industryid int(11), in industryname varchar(50))
 BEGIN
@@ -191,6 +214,7 @@ BEGIN
         and organisation_id != industryid;
     end if;
 END //
+
 DELIMITER ;
 
 
@@ -198,12 +222,15 @@ DELIMITER ;
 -- To get industry name by its id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industry_master_getindusdtrybyid`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industry_master_getindusdtrybyid`(industryid int(11))
 BEGIN
     SELECT organisation_name FROM tbl_organisation WHERE
     organisation_id = industryid;
 END //
+
 DELIMITER ;
 
 
@@ -211,7 +238,9 @@ DELIMITER ;
 -- To get industry details from its master
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industry_master_getindustries`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industry_master_getindustries`()
 BEGIN
     SELECT t1.country_id, t2.country_name, t1.domain_id, t3.domain_name,
@@ -220,13 +249,16 @@ BEGIN
         INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id INNER JOIN
         tbl_domains t3 on t1.domain_id = t3.domain_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save industry activity log in activity log table
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industry_master_saveactivitylog`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industry_master_saveactivitylog`(
 in activityLogId int(11), in userId int(11), in formId int(11),
 in action varchar(500), in createdOn timestamp)
@@ -236,13 +268,16 @@ BEGIN
     VALUES
     (activityLogId, userId, formId, action, createdOn);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save industry master details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industry_master_saveindustry`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industry_master_saveindustry`(
 in countryid int(11), in domainid int(11), in industryname varchar(50),
 in createdby int(11), in createdon timestamp)
@@ -252,13 +287,16 @@ BEGIN
     VALUES
     (industryname, countryid, domainid, createdby, createdon);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To update industry master details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industry_master_updateindustry`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industry_master_updateindustry`(
     in industryId int(11), in industryName varchar(50), in countryId int(11),
     in domainId int(11), in updatedBy int(11)
@@ -273,13 +311,16 @@ BEGIN
     WHERE
     organisation_id = industryId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To update industry master status
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industry_master_updatestatus`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industry_master_updatestatus`(
     in industryId int(11), in isActive tinyint(4), in updatedBy int(11))
 BEGIN
@@ -290,13 +331,16 @@ BEGIN
     WHERE
     organisation_id = industryId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check for dupliacte statutory nature name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_nature_checkduplicatenature`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutory_nature_checkduplicatenature`(
     in statutoryNatureName varchar(50),
     in statutoryNatureId int(11)
@@ -311,13 +355,16 @@ BEGIN
         AND statutory_nature_id != statutoryNatureId;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To -get statutory nature master details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_nature_getstatutorynatures`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutory_nature_getstatutorynatures`()
 BEGIN
     SELECT t1.statutory_nature_id, t1.statutory_nature_name,
@@ -329,13 +376,16 @@ BEGIN
     t2.country_id = t1.country_id
     ORDER BY t1.statutory_nature_name;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To update statutory nature master details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_nature_updatestatutorynature`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutory_nature_updatestatutorynature`(
 IN statutoryNatureId int(11), in statutoryNatureName varchAR(50),
 in countryId int(11), in updatedBy int(11))
@@ -347,13 +397,16 @@ BEGIN
     where
     statutory_nature_id = statutoryNatureId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To update statutory nature status
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_statutory_nature_updatestatutorynaturestatus;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutory_nature_updatestatutorynaturestatus`(
 in statutoryNatureId int(11), in updatedBy int(11), in isActive tinyint(4))
 BEGIN
@@ -363,13 +416,16 @@ BEGIN
     where
     statutory_nature_id = statutoryNatureId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get statutory nature details by its id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_statutory_natures_getnaturebyid;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutory_natures_getnaturebyid`(
     in statutoryNatureId int(11))
 BEGIN
@@ -377,13 +433,16 @@ BEGIN
     WHERE statutory_nature_id = statutoryNatureId;
 
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save statutory nature details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_statutorynature_savestatutorynature;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutorynature_savestatutorynature`(
 in statutoryNatureName varchar(50), in countryId int(11),
 in createdBy int(11), in createdOn timestamp)
@@ -393,13 +452,16 @@ BEGIN
     VALUES
     (statutoryNatureName, countryId, createdBy, createdOn);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- get domains data based on user domain settings
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_tbl_domains_for_user;
+
 DELIMITER //
+
 CREATE procedure `sp_tbl_domains_for_user`(
     IN u_id INT(11)
 )
@@ -420,13 +482,16 @@ BEGIN
         tbl_domain_countries d on c.country_id = d.country_id;
 
 END //
+
 DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To Get admin forms
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getadminforms;
 
+
 DELIMITER //
+
 CREATE procedure `sp_tbl_forms_getadminforms`(
     IN fc_id INT(11)
 )
@@ -437,6 +502,7 @@ BEGIN
     INNER JOIN tbl_form_type T03 ON T03.form_type_id = T01.form_type_id
     WHERE T01.form_category_id = fc_id ORDER BY T01.form_order;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -444,7 +510,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 
 DROP PROCEDURE IF EXISTS sp_get_audit_trails;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_get_audit_trails`(
 	IN _from_date varchar(10), IN _to_date varchar(10),
 	IN _user_id varchar(10), IN _form_id varchar(10),
@@ -471,6 +539,7 @@ BEGIN
         AND date(created_on) <= _to_date
         AND user_id LIKE _user_id AND form_id LIKE _form_id;
 END //
+
 DELIMITER ;
 
 
@@ -479,7 +548,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getuserformids;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_forms_getuserformids`(
     IN _user_id INT, admin_user_type INT
 )
@@ -496,10 +567,13 @@ BEGIN
         AND t2.user_id = _user_id;
     end if;
 END //
+
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_tbl_forms_getforms;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_forms_getforms`()
 BEGIN
     SELECT t1.form_id, t1.form_category_id, t2.form_category,
@@ -509,10 +583,13 @@ BEGIN
     INNER JOIN tbl_form_type t3 ON t3.form_type_id = t1.form_type_id WHERE
     t1.form_category_id != 1 ORDER BY t1.form_order;
 END //
+
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_tbl_user_group_getusergroupdetails;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_user_group_getusergroupdetails`()
 BEGIN
     SELECT t1.user_group_id, t1.user_group_name, t1.form_category_id,
@@ -520,21 +597,27 @@ BEGIN
     FROM tbl_user_groups t1 ORDER BY t1.user_group_name;
 
 END //
+
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_tbl_form_category_get;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_form_category_get`()
 BEGIN
     SELECT form_category_id, form_category FROM tbl_form_category WHERE form_category_id in (2, 3);
 END //
+
 DELIMITER ;
 -- ---------------------------------------------------------------------------------
 -- To get the list of groups with countries and number of legal entities
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_groups_list`()
 BEGIN
     select client_id, group_name,
@@ -552,13 +635,16 @@ BEGIN
     is_active, is_approved, remarks
     FROM tbl_client_groups tcg;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Fetch Active Countries List
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_user`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_countries_for_user`(
     IN session_user INT(11)
 )
@@ -575,12 +661,15 @@ BEGIN
         FROM tbl_countries ORDER BY country_name;
     END IF;
 END //
+
 DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To Fetch Active Domains List
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domains_for_user`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domains_for_user`(
     IN session_user INT(11)
 )
@@ -598,19 +687,23 @@ BEGIN
     t2.legal_entity_id = t1.legal_entity_id and
     t1.user_id = session_user;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Fetch active industry list
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_industries_active_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_industries_active_list`()
 BEGIN
     SELECT organisation_id, organisation_name, is_active
     FROM tbl_organisation
     WHERE is_active=1;
 END //
+
 DELIMITER ;
 
 
@@ -619,7 +712,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 
 DROP PROCEDURE IF EXISTS `sp_business_groups_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_business_groups_list`(
     IN client_id INT(11)
 )
@@ -629,6 +724,7 @@ BEGIN
     WHERE client_id=client_id;
 
 END //
+
 DELIMITER ;
 
 
@@ -636,7 +732,9 @@ DELIMITER ;
 -- To get countries of techno users
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_countries_techno`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_user_countries_techno`()
 BEGIN
     SELECT t1.country_id, t1.user_id
@@ -646,13 +744,16 @@ BEGIN
     t2.user_group_id = t3.user_group_id
     AND t3.form_category_id = 3;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domains of techno users
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_domains_techno`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_user_domains_techno`()
 BEGIN
     SELECT t1.domain_id, t1.user_id FROM tbl_user_domains t1
@@ -660,30 +761,40 @@ BEGIN
     INNER JOIN tbl_user_groups t3 ON
     t2.user_group_id = t3.user_group_id AND t3.form_category_id = 3;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save Client Details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_group_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_group_save`(
-    IN groupname VARCHAR(50), email_id VARCHAR(100)
+    IN groupname VARCHAR(50),
+    emailid VARCHAR(100),
+    shortname varchar(50),
+    no_of_view_licence int(11),
+    session_user int(11)
 )
 BEGIN
     INSERT INTO tbl_client_groups (
     group_name, short_name, email_id, total_view_licence,
     is_active, status_changed_on, is_approved, created_by,
     created_on) VALUES (groupname, shortname, emailid,
-    no_of_view_licence, 1, current_ist_datetime(), 0, session_user, current_ist_datetime());
-END //
+    no_of_view_licence, 1, current_ist_datetime(),
+    0, session_user, current_ist_datetime());
+END//
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save Business group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_business_group_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_business_group_save`(
     IN businessgroupname VARCHAR(50), groupid INT(11),
     countryid INT(11),  session_user INT(11), current_time_stamp DATETIME
@@ -699,52 +810,64 @@ BEGIN
         current_time_stamp, session_user, current_time_stamp
     );
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Delete Client Countries
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_countries_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_countries_delete`(
     IN clientid INT(11)
 )
 BEGIN
     DELETE FROM tbl_client_countries WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Delete Client Domains
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_domains_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_domains_delete`(
     IN clientid INT(11)
 )
 BEGIN
     DELETE FROM tbl_client_domains WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Delete Incharge persons
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_clients_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_user_clients_delete`(
     IN clientid INT(11)
 )
 BEGIN
     DELETE FROM tbl_user_clients WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To delete organizations under client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_le_domain_industry_delete`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_le_domain_industry_delete`(
     IN clientid INT(11)
@@ -756,13 +879,16 @@ BEGIN
         where client_id = clientid
     );
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get ids of legal entities which were inserted
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legal_entity_id_by_name`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_legal_entity_id_by_name`(
     IN legal_entity_names TEXT
@@ -772,13 +898,16 @@ BEGIN
     FROM tbl_legal_entities
     WHERE find_in_set(legal_entity_name, legal_entity_names);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get ids of legal entities which were inserted
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legal_entity_name_by_id`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_legal_entity_name_by_id`(
     IN entity_id INT(11)
@@ -788,26 +917,32 @@ BEGIN
     FROM tbl_legal_entities
     WHERE legal_entity_id=entity_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To delete client configurations of Client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_configurations_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_configurations_delete`(
     IN clientid INT(11)
 )
 BEGIN
-    DELETE FROM tbl_client_configurations WHERE client_id=clientid;
+    DELETE FROM tbl_client_configuration WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save Client admin user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_user_save_admin`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_user_save_admin`(
     IN clientid INT(11), username VARCHAR(100),
     current_time_stamp DATETIME
@@ -820,6 +955,7 @@ BEGIN
         clientid, 0, username, "Admin", current_time_stamp, 1, 1
     );
 END //
+
 DELIMITER ;
 
 
@@ -827,7 +963,9 @@ DELIMITER ;
 -- To Check for duplicate group name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_group_is_duplicate_groupname`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_group_is_duplicate_groupname`(
     IN groupname VARCHAR(50), clientid INT(11)
 )
@@ -840,6 +978,7 @@ BEGIN
         WHERE group_name=groupname and client_id != clientid;
     END IF;
 END //
+
 DELIMITER ;
 
 
@@ -847,7 +986,9 @@ DELIMITER ;
 -- To Check for dupliacte business group name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_businessgroup_is_duplicate_businessgroupname`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_businessgroup_is_duplicate_businessgroupname`(
     IN bg_name VARCHAR(50), bg_id INT(11), clientid INT(11)
 )
@@ -861,6 +1002,7 @@ BEGIN
         and busienss_group_id = bg_id;
     END IF;
 END //
+
 DELIMITER ;
 
 
@@ -868,7 +1010,9 @@ DELIMITER ;
 -- To Check for dupliacte Legal entity name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legalentity_is_duplicate_legalentityname`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_legalentity_is_duplicate_legalentityname`(
     IN le_name VARCHAR(50), le_id INT(11), clientid INT(11)
 )
@@ -882,27 +1026,33 @@ BEGIN
         and legal_entity_id != le_id;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get Group name and admin email id by id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_details_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_groups_details_by_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT short_name, email_id, total_view_licence
+    SELECT group_name, short_name, email_id, total_view_licence
     FROM tbl_client_groups WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get Legal entity details by group id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legal_entity_details_by_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_legal_entity_details_by_group_id`(
     IN clientid INT(11)
 )
@@ -916,13 +1066,16 @@ BEGIN
     file_space_limit, total_licence
     FROM tbl_legal_entities tle WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domains of client by legal entity
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_domains_by_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_domains_by_group_id`(
     IN clientid INT(11), userId INT(11)
 )
@@ -937,6 +1090,7 @@ BEGIN
     t1.user_id = userId
     group by t1.user_id;
 END //
+
 DELIMITER ;
 
 
@@ -944,39 +1098,47 @@ DELIMITER ;
 -- to get configurations of Client by group id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_configuration_by_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_configuration_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT country_id, domain_id, period_from, period_to
-    FROM tbl_client_configurations WHERE client_id = clientid;
+    SELECT country_id, domain_id, month_from, month_to
+    FROM tbl_client_configuration WHERE client_id = clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get Organizations of Client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_le_d_industry_by_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_le_d_industry_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT legal_entity_id, domain_id, organization_id, count,
+    SELECT legal_entity_id, domain_id, organisation_id, count,
     activation_date
     FROM tbl_legal_entity_domains WHERE legal_entity_id in (
         select legal_entity_id from tbl_legal_entities
         where client_id = clientid
     );
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check whether the given client id is valid or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_is_valid_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_groups_is_valid_group_id`(
     IN clientid INT(11)
 )
@@ -984,13 +1146,16 @@ BEGIN
     SELECT count(client_id) as count FROM tbl_client_groups
     WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get countries of a Client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_countries_by_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_countries_by_group_id`(
     IN group_id INT(11)
 )
@@ -998,13 +1163,16 @@ BEGIN
     SELECT country_id FROM tbl_legal_entities
     WHERE client_id = group_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get number of client users
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_users_count`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_users_count`(
     IN group_id INT(11), entity_id INT(11)
 )
@@ -1013,6 +1181,7 @@ BEGIN
     WHERE client_id = group_id and
     legal_entity_id = entity_id;
 END //
+
 DELIMITER ;
 
 
@@ -1020,7 +1189,9 @@ DELIMITER ;
 -- To get the used space of a legal entity
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legal_entities_space_used`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_legal_entities_space_used`(
     IN le_id INT(11)
 )
@@ -1028,6 +1199,7 @@ BEGIN
     SELECT used_space FROM tbl_legal_entities
     WHERE legal_entity_id=le_id;
 END //
+
 DELIMITER ;
 
 
@@ -1036,7 +1208,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 
 DROP PROCEDURE IF EXISTS `sp_client_group_update`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_group_update` (
     IN groupname VARCHAR(50), groupid INT(11)
 )
@@ -1045,6 +1219,7 @@ BEGIN
     WHERE client_id=groupid;
 
 END //
+
 DELIMITER ;
 
 
@@ -1052,7 +1227,9 @@ DELIMITER ;
 -- To Change the status of client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_change_status`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_groups_change_status`(
     IN clientid INT(11), isactive bool
 )
@@ -1062,6 +1239,7 @@ BEGIN
     SELECT group_name FROM tbl_client_groups
     WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 
@@ -1069,7 +1247,9 @@ DELIMITER ;
 -- To Notify the incharge person, that the legal entity is assigned to him
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_notifications_notify_incharge`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_notifications_notify_incharge`(
     IN notification TEXT, url TEXT
 )
@@ -1078,13 +1258,16 @@ BEGIN
     (notification_text, link, created_on) VALUES
     (notification, url, current_ist_datetime());
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get the group of companies under user - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getuserclients`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
@@ -1119,6 +1302,7 @@ BEGIN
         ) order by group_name ASC;
     END IF;
 END //
+
 DELIMITER ;
 
 
@@ -1126,19 +1310,24 @@ DELIMITER ;
 -- To get the group of units count - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcount`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getunitcount`(in clientId INT(11))
 BEGIN
     select count(*) as units from tbl_units
     where client_id = clientId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To generate unit codes - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitcode`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getunitcode`(in unit_code_start_letter varchar(50),
             clientId INT(11))
 BEGIN
@@ -1146,13 +1335,16 @@ BEGIN
     FROM tbl_units WHERE unit_code like binary 'unit_code_start_letter%' and
     CHAR_LENGTH(unit_code) = 7 and client_id=clientId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get business group details of all clients under userid - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientbusinessgroup`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
@@ -1185,6 +1377,7 @@ BEGIN
         ) order by business_group_name ASC;
     END IF;
 END //
+
 DELIMITER ;
 
 
@@ -1192,7 +1385,9 @@ DELIMITER ;
 -- To get legal entity details of all clients under userid - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientlegalentity`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
@@ -1226,13 +1421,16 @@ BEGIN
         ) order by legal_entity_name ASC;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get division details of all clients under userid - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdivision`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getclientdivision`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
@@ -1268,13 +1466,16 @@ BEGIN
         ) order by division_name ASC;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get UNIT details of all clients under userid - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser`(in userId INT(11))
 BEGIN
     select t2.unit_id, t2.client_id, t2.business_group_id,
@@ -1318,13 +1519,16 @@ BEGIN
     t2.client_id = t1.client_id and
     t1.user_id =userId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get geography level details of all clients under userid - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_geography_levels_getlevelsforusers`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_geography_levels_getlevelsforusers`(in userId INT(11))
 BEGIN
     select level_id, country_id, level_position, level_name
@@ -1334,13 +1538,16 @@ BEGIN
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and t1.user_id  = userId) order by level_position;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get geography user mapping of all clients under userid - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_get_geographies_for_users_mapping`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_get_geographies_for_users_mapping`(in userId INT(11))
 BEGIN
     select t1.geography_id, t1.geography_name, t1.parent_names,
@@ -1355,6 +1562,7 @@ BEGIN
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and t1.user_id  = userId);
 END //
+
 DELIMITER ;
 
 
@@ -1362,7 +1570,9 @@ DELIMITER ;
 -- To get client domains of all clients under userid - client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getclientdomains`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_unit_getclientdomains`(in userId INT(11),
     user_res int(11))
 BEGIN
@@ -1384,7 +1594,9 @@ DELIMITER ;
 -- To get the list of techno users
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_techno`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_techno`()
 BEGIN
     SELECT user_id, concat(employee_code,'-',employee_name) as e_name,
@@ -1394,13 +1606,16 @@ BEGIN
         where form_category_id = 3
     );
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of units for approval
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_approval_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_units_approval_list`()
 BEGIN
     SELECT legal_entity_id, legal_entity_name,
@@ -1422,12 +1637,15 @@ BEGIN
         and is_approved=0
     ) as unit_count FROM tbl_legal_entities tle;
 END //
+
 DELIMITER ;
 -- --------------------------------------------------------------------------------
 --  Get list of Units to be approved by legal entity id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_approval_list_by_entity_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_units_approval_list_by_entity_id`(
     IN le_id INT(11)
 )
@@ -1462,13 +1680,16 @@ BEGIN
         WHERE legal_entity_id=le_id
     );
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save activities
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_activity_log_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_activity_log_save`(
     IN userid INT(11), formid INT(11), action_performed TEXT,
     action_performed_on TIMESTAMP
@@ -1477,6 +1698,7 @@ BEGIN
     INSERT INTO tbl_activity_log (user_id, form_id, action, created_on)
     VALUES (userid, formid, action_performed, action_performed_on);
 END //
+
 DELIMITER ;
 
 
@@ -1484,14 +1706,16 @@ DELIMITER ;
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_approval_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_groups_approval_list`(
     IN session_user INT(11)
 )
 BEGIN
-    SELECT client_id, group_name, email_id, count, client_countries
+    SELECT client_id, group_name, email_id, count, client_countries, short_name
     FROM (
-        SELECT client_id, group_name, email_id,
+        SELECT client_id, group_name, email_id, short_name,
         (
             SELECT count(legal_entity_id) FROM tbl_legal_entities tle
             WHERE tle.client_id = tcg.client_id and is_active=1
@@ -1507,13 +1731,16 @@ BEGIN
         WHERE is_approved != 1
     ) a WHERE count > 0;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check whether the country name already exissts or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_is_dupliacte`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_countries_is_dupliacte`(
     IN countryname VARCHAR(50), countryid INT(11)
 )
@@ -1526,13 +1753,16 @@ BEGIN
         WHERE country_name=countryname and country_id != countryid;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save / Update Country
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_countries_save`(
     IN countryid INT(11), countryname VARCHAR(50),
     session_user INT(11), updated_time TIMESTAMP
@@ -1550,13 +1780,16 @@ BEGIN
         WHERE country_id=countryid;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get the country name by it's id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_countries_by_id`(
     IN countryid INT(11)
 )
@@ -1564,13 +1797,16 @@ BEGIN
     SELECT country_name FROM tbl_countries
     WHERE country_id = countryid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check whether transaction exists for a country before changing it's status
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_is_transaction_exists`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_countries_is_transaction_exists`(
     IN countryid INT(11)
 )
@@ -1583,13 +1819,16 @@ BEGIN
     FROM tbl_client_countries
     WHERE country_id = countryid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To change the status of country
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_change_status`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_countries_change_status`(
     IN countryid INT(11), isactive TINYINT(2),
     session_user INT(11), updated_time TIMESTAMP
@@ -1599,13 +1838,16 @@ BEGIN
     updated_by = session_user, updated_on = updated_time
     WHERE country_id=countryid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save/ update domain
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domains_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domains_save`(
     IN domainid INT(11), domainname  VARCHAR(50),
     session_user INT(11)
@@ -1623,23 +1865,29 @@ BEGIN
         WHERE domain_id = domainid;
     END IF;
 END //
+
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_domaincountries_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domaincountries_delete`(
     IN d_id INT(11)
 )
 BEGIN
     DELETE FROM tbl_domain_countries where domain_id = d_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check whether the domain name already exists or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domains_is_duplicate`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domains_is_duplicate`(
     IN domainname VARCHAR(50), domainid INT(11)
 )
@@ -1652,13 +1900,16 @@ BEGIN
         WHERE domain_name=domainname and domain_id != domainid;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domain name by it's id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domains_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domains_by_id`(
     IN domainid INT(11)
 )
@@ -1666,13 +1917,16 @@ BEGIN
     SELECT domain_name FROM tbl_domains
     WHERE domain_id = domainid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Check whether transaction exists for domain or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domains_is_transaction_exists`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domains_is_transaction_exists`(
     IN domainid INT(11)
 )
@@ -1685,13 +1939,16 @@ BEGIN
     FROM tbl_legal_entity_domains
     WHERE domain_id = domainid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To change the status of domain
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domains_change_status`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domains_change_status`(
     IN domainid INT(11), isactive TINYINT(2),
     session_user INT(11), updated_time TIMESTAMP
@@ -1701,13 +1958,16 @@ BEGIN
     updated_by = session_user, updated_on = updated_time
     WHERE domain_id=domainid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- to get list of forms for User Group creation
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_categorywise_forms_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_categorywise_forms_list`()
 BEGIN
 
@@ -1748,25 +2008,31 @@ BEGIN
     WHERE T2.category_id_8 = 1 and T1.form_type_id != 4 ;
 
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get Knowledge and Techno form categories
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usercategory_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usercategory_list` ()
 BEGIN
     SELECT user_category_id, user_category_name
     FROM tbl_user_category where user_category_id > 2;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get Detailed list of user group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usergroup_detailed_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usergroup_detailed_list` ()
 BEGIN
     SELECT ug.user_group_id, user_group_name, user_category_id,
@@ -1777,13 +2043,16 @@ BEGIN
     SELECT T1.user_group_id, T1.form_id from tbl_user_group_forms as T1 INNER JOIN tbl_user_groups as T2
     ON T2.user_group_id = T1.user_group_id ;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check whether the user group name already exists or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usergroup_is_duplicate`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usergroup_is_duplicate`(
     IN ug_id INT(11), ug_name VARCHAR(50)
 )
@@ -1796,13 +2065,16 @@ BEGIN
         WHERE user_group_name=ug_name and user_group_id != ug_id;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Check whethere user exists under user group or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usergroup_is_transaction_exists`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usergroup_is_transaction_exists`(
     IN ug_id INT(11)
 )
@@ -1810,13 +2082,16 @@ BEGIN
     SELECT count(0) as count FROM tbl_users
     WHERE user_group_id = ug_id and is_active = 1;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save / Update User Group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usergroup_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usergroup_save`(
     IN ug_id INT(11), u_cat_id INT(11), ug_name VARCHAR(50),
     session_user INT(11)
@@ -1833,13 +2108,16 @@ BEGIN
         WHERE user_group_id=ug_id;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Change the status of User group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usergroup_change_status`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usergroup_change_status`(
     IN ug_id INT(11), isactive TINYINT(2),
     session_user INT(11)
@@ -1849,13 +2127,16 @@ BEGIN
     updated_by = session_user, updated_on = current_ist_datetime()
     WHERE user_group_id=ug_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get user group name by id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usergroup_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usergroup_by_id`(
     IN ug_id INT(11)
 )
@@ -1863,13 +2144,16 @@ BEGIN
     SELECT user_group_name FROM tbl_user_groups
     WHERE user_group_id = ug_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get countries configured  for a user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usercountries_by_userid`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usercountries_by_userid`(
     IN userid INT(11)
 )
@@ -1877,13 +2161,16 @@ BEGIN
     SELECT country_id from tbl_user_countries
     WHERE user_id=userid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domains configured for a user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userdomains_by_userid`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userdomains_by_userid`(
     IN userid INT(11)
 )
@@ -1891,6 +2178,7 @@ BEGIN
     SELECT domain_id FROM tbl_user_domains
     WHERE user_id = userid;
 END //
+
 DELIMITER ;
 
 
@@ -1898,7 +2186,9 @@ DELIMITER ;
 -- To get only id, name and status of User group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usergroup_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usergroup_list`()
 BEGIN
     SELECT user_group_id, user_category_id, user_group_name, is_active
@@ -1906,13 +2196,16 @@ BEGIN
 
     SELECT user_category_id, user_category_name FROM tbl_user_category where user_category_id > 2;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get All User Details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_detailed_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_user_detailed_list`()
 BEGIN
     SELECT T1.user_id, T1.user_category_id,
@@ -1930,13 +2223,16 @@ BEGIN
     SELECT user_id, country_id from tbl_user_countries;
 
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To check whether the email id already exists or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_is_duplicate_email`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_user_is_duplicate_email`(
     IN emailid VARCHAR(100), userid INT(11)
 )
@@ -1957,7 +2253,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_is_duplicate_employeecode`;
 
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_user_is_duplicate_employeecode`(
     IN empcode VARCHAR(20), userid INT(11)
 )
@@ -1970,6 +2268,7 @@ BEGIN
         WHERE employee_code=empcode and user_id != userid;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -1977,7 +2276,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_save`;
 
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_users_save`(
     IN u_cat_id INT(11), userid INT(11), emailid VARCHAR(100), ug_id INT(11),
@@ -2008,6 +2309,7 @@ BEGIN
 
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2016,7 +2318,9 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_tbl_email_verification_save`;
 
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_email_verification_save`(
     IN u_id INT(11), r_token TEXT, t_type INT(11), e_date datetime
@@ -2025,6 +2329,7 @@ BEGIN
     INSERT INTO tbl_email_verification(user_id, verification_code, verification_type_id, expiry_date)
     VALUES (u_id, r_token, t_type, e_date);
 END //
+
 DELIMITER ;
 
 
@@ -2032,7 +2337,9 @@ DELIMITER ;
 -- To Check the status of user group of the user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_user_usergroup_status`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_user_usergroup_status`(
     IN userid INT(11)
 )
@@ -2041,13 +2348,16 @@ BEGIN
     inner join tbl_users u on  ug.user_group_id = u.user_group_id
     where u.user_id = userid and ug.is_active = 1;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To update the status of user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_change_status`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_change_status`(
     IN userid INT(11), isactive TINYINT(4), session_user INT(11),
     updated_time TIMESTAMP
@@ -2066,6 +2376,7 @@ BEGIN
     UPDATE tbl_user_login_details set is_active = @_val
         where user_id = userid;
 END //
+
 DELIMITER ;
 
 
@@ -2074,7 +2385,9 @@ DELIMITER ;
 -- To update the status of user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_disable_status`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_disable_status`(
     IN userid INT(11), isdisable TINYINT(4), session_user INT(11),
     updated_time TIMESTAMP
@@ -2092,13 +2405,16 @@ BEGIN
     UPDATE tbl_user_login_details set is_active = @_val
         where user_id = userid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get the name of employee by id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_empname_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_empname_by_id`(
     IN userid INT(11)
 )
@@ -2107,39 +2423,48 @@ BEGIN
     FROM tbl_users
     WHERE user_id = userid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Delete user countries
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usercountries_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usercountries_delete`(
     IN userid INT(11)
 )
 BEGIN
     DELETE FROM tbl_user_countries WHERE user_id=userid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Delete user domains
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userdomains_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userdomains_delete`(
     IN userid INT(11)
 )
 BEGIN
     DELETE FROM tbl_user_domains WHERE user_id=userid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get the form category of the admin user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_admin_getformcategory`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_admin_getformcategory`(
     IN uname VARCHAR(100)
 )
@@ -2154,26 +2479,32 @@ BEGIN
     END IF;
     SELECT fc_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get all database server details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_databaseserver_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_databaseserver_list`()
 BEGIN
     SELECT database_server_name, database_ip, database_port,
     database_username, database_password, legal_entity_ids
     FROM tbl_database_server;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Check whether the db server name already exists or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_databaseserver_is_duplicate`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_databaseserver_is_duplicate`(
     IN dbservername VARCHAR(50), ip_addr TEXT
 )
@@ -2181,13 +2512,16 @@ BEGIN
     SELECT count(database_ip) as count FROM tbl_database_server
     WHERE database_server_name = dbservername and database_ip != ip_addr;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save or update Database server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_databaseserver_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_databaseserver_save`(
     IN dbservername VARCHAR(50), ipaddr VARCHAR(50),
     port_no INT(11), username VARCHAR(50), pwd VARCHAR(50)
@@ -2199,25 +2533,31 @@ BEGIN
     ON DUPLICATE KEY UPDATE database_server_name = dbservername,
     database_username = username, database_password=pwd, database_port = port_no;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get all Machine  details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_machines_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_machines_list`()
 BEGIN
     SELECT machine_id, machine_name, ip, port, legal_entity_ids
     FROM tbl_application_server;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Check whether the machine name already exists or not
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_machines_is_duplicate`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_machines_is_duplicate`(
     IN machinename VARCHAR(50), machineid INT(11)
 )
@@ -2230,13 +2570,16 @@ BEGIN
         WHERE machine_name = machinename and machine_id != machineid;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save or update Machine
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_machines_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_machines_save`(
     IN machineid INT(11), machinename VARCHAR(50), ipaddr VARCHAR(50),
     port_no INT(11)
@@ -2252,13 +2595,16 @@ BEGIN
         ip=ipaddr, port = port_no WHERE machine_id = machineid;
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Allocate database environment
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_clientdatabase_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_clientdatabase_list`()
 BEGIN
     SELECT client_id, legal_entity_id, machine_id, database_ip
@@ -2273,13 +2619,16 @@ BEGIN
 
     SELECT db_server_name, ip  FROM tbl_database_server;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Save or Update Client database details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_clientdatabase_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_clientdatabase_save`(
     IN clientid INT(11), le_id INT(11),
     db_server_ip VARCHAR(20), machineid INT(11)
@@ -2312,13 +2661,16 @@ BEGIN
     database_name=dbservername, server_ip=machine_ip,
     server_port=machine_port;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Configuring File Storage
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_clientfilestorage_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_clientfilestorage_list`()
 BEGIN
     SELECT client_id, legal_entity_id, machine_id
@@ -2331,13 +2683,16 @@ BEGIN
 
     SELECT machine_id, machine_name FROM tbl_machines;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Update File storage server id for a legal entity
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_clientfilestorage_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_clientfilestorage_save`(
     IN clientid INT(11), le_id INT(11), machineid INT(11)
 )
@@ -2347,13 +2702,16 @@ BEGIN
     (clientid, le_id, machineid) ON DUPLICATE KEY UPDATE
     machine_id=machineid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Auto deletion form
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_unit_autodeletion_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_unit_autodeletion_list`()
 BEGIN
     SELECT client_id, group_name FROM tbl_client_groups;
@@ -2377,13 +2735,16 @@ BEGIN
         and tua.legal_entity_id = tu.legal_entity_id
     ) as deletion_year, address FROM tbl_units tu;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To delete Auto deletion details of all units under a legal entity
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_unitautodeletion_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_unitautodeletion_delete`(
     IN le_id INT(11)
 )
@@ -2391,13 +2752,16 @@ BEGIN
     DELETE FROM tbl_unit_autodeletion
     WHERE legal_entity_id=le_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get the users under following type CC Managers, CC Users, Techno managers
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_type_wise`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_type_wise`()
 BEGIN
     SELECT user_id, is_active,
@@ -2421,50 +2785,62 @@ BEGIN
     SELECT user_id, country_id FROM tbl_user_countries;
     SELECT user_id, domain_id FROM tbl_user_domains;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get User mappings
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usermappings_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usermappings_list`()
 BEGIN
     select user_mapping_id, user_category_id, country_id, domain_id,
     parent_user_id, child_user_id from tbl_user_mapping;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get user category by user id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_category_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_category_by_id`(
     IN userid INT(11)
 )
 BEGIN
     SELECT user_category_id FROM tbl_users WHERE user_id=userid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Delete Mappings under a parent user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usermapping_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_usermapping_delete`(
     IN parent_userid INT(11)
 )
 BEGIN
     DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
 END //
+
 DELIMITER ;
 
 -- To get list of countries under client master group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_unit`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_countries_for_unit`(IN session_user INT(11))
 BEGIN
     select t4.country_id, t4.country_name, t3.business_group_id, t1.client_id
@@ -2485,7 +2861,9 @@ DELIMITER ;
 -- To get list of industries for client id for client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_getindustries_for_legalentity`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_units_getindustries_for_legalentity`(IN session_user INT(11))
 BEGIN
     IF session_user > 0 THEN
@@ -2514,7 +2892,9 @@ DELIMITER ;
 -- To check dupliaction of unit code and unit name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_checkduplication`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_units_checkduplication`(in unitId int(11), unitCode varchar(50),
         unitName varchar(50), clientId int(11))
 BEGIN
@@ -2539,7 +2919,9 @@ DELIMITER ;
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitId`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_units_check_unitId`(in unitId int(11))
 BEGIN
     select count(*) as unit_id_cnt from
@@ -2552,7 +2934,9 @@ DELIMITER ;
 -- check dupliaction of id for save units
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitgroupid`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_units_check_unitgroupid`(
 in tableName varchar(50), param int(11))
 BEGIN
@@ -2579,19 +2963,24 @@ DELIMITER ;
 -- Get unit max id
 -- -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_max_unitid`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_units_max_unitid`()
 BEGIN
     select max(unit_id) as max_id from
     tbl_units;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get Unassigned units list
 -- -- -----------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userunits_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userunits_list`()
 BEGIN
     select count(tu.unit_id) as total_units, tu.client_id,
@@ -2614,7 +3003,9 @@ DELIMITER ;
 -- To get assigned units list
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userunits_assigned_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userunits_assigned_list`(
     IN clientid INT(11), domainid INT(11)
 )
@@ -2633,13 +3024,16 @@ BEGIN
     WHERE tuu.client_id=clientid and domain_id=domainid
     group by user_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get assigned unit details list
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userunits_assigned_details_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userunits_assigned_details_list`(
     IN u_id INT(11), le_id INT(11)
 )
@@ -2672,13 +3066,16 @@ BEGIN
         SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
     );
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domain managers
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_users_domain_managers`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_domain_managers`(
     IN session_user INT(11)
 )
@@ -2689,13 +3086,16 @@ BEGIN
     user_id in (SELECT child_user_id FROM tbl_user_mapping
     WHERE parent_user_id=session_user);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of units under a client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_units_list`(
     IN clientid INT(11)
 )
@@ -2734,13 +3134,16 @@ BEGIN
         SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
     ) and tui.domain_id=domainid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of business groups under a client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_business_groups_by_client`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_business_groups_by_client`(
     IN clientid INT(11)
 )
@@ -2748,13 +3151,16 @@ BEGIN
     SELECT business_group_id, business_group_name, client_id
     FROM tbl_business_groups WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get legal entities under a client
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legal_entities_by_client`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_legal_entities_by_client`(
     IN clientid INT(11)
 )
@@ -2762,26 +3168,32 @@ BEGIN
     SELECT legal_entity_id, legal_entity_name, business_group_id,
     client_id FROM tbl_legal_entities WHERE client_id=clientid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To delete user units
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userunits_delete`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userunits_delete`(
     IN userid INT(11)
 )
 BEGIN
     DELETE FROM tbl_user_units WHERE user_id=userid;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- find dupliacte catofory name / division name for unit master
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitgroupname`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_units_check_unitgroupname`(
 in tableName varchar(50), param varchar(50))
 BEGIN
@@ -2794,13 +3206,16 @@ BEGIN
         tbl_divisions where division_name = param;
     end if;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- save new division from unit master form
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_save_division`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_units_save_division`(
     in clientId int(11), bg_id int(11), le_id int(11),
@@ -2814,13 +3229,16 @@ BEGIN
     values
     (clientId, bg_id, le_id, divisionName, createdBy, createdOn);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- save new category added from unit master form
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_save_category`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_units_save_category`(
     in clientId int(11), bg_id int(11), le_id int(11),
@@ -2834,13 +3252,16 @@ BEGIN
     values
     (clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of units
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_name_and_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_units_name_and_id`(
 )
 BEGIN
@@ -2848,35 +3269,44 @@ BEGIN
     legal_entity_id, business_group_id, client_id, is_closed as is_active
     FROM tbl_units;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of assigned legal entities
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userlegalentities_assigned_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userlegalentities_assigned_list`()
 BEGIN
     SELECT user_id, legal_entity_id FROM tbl_user_legalentity;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of assigned units
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userunits_reassign_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userunits_reassign_list`()
 BEGIN
     SELECT user_id, unit_id, domain_id FROM tbl_user_units;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get name of group/ legal entity/ Unit by ids
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_names_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_names_by_id`(
     IN assigned_ids TEXT, user_type INT(11)
 )
@@ -2892,13 +3322,16 @@ BEGIN
         FROM tbl_units WHERE find_in_set(assigned_ids, unit_id);
     END IF;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save reassign user account history
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_reassignaccounthistory_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_reassignaccounthistory_save`(
     IN old_user_id INT(11), new_user_id INT(11),
     reassigned_data_text TEXT, remark_text TEXT, session_user INT(11),
@@ -2915,11 +3348,15 @@ BEGIN
     );
 END //
 
+DELIMITER ;
+
 -- -------------------------------------------------------------------------------------------
 -- To get the list of groups with countries and number of legal entities assigned / unassigned
 -- -------------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_assign_legal_entities_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_assign_legal_entities_list`()
 BEGIN
     select client_id, group_name,
@@ -2940,7 +3377,9 @@ BEGIN
     ) as no_of_assigned_legal_entities
 
     FROM tbl_client_groups tcg;
-END ;
+
+END //
+
 DELIMITER ;
 
 
@@ -2948,7 +3387,9 @@ DELIMITER ;
 -- To get the unassigned legal entity details by client
 -- ----------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_unassigned_legal_entity_details_by_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_unassigned_legal_entity_details_by_group_id`(
     IN clientid INT(11)
 )
@@ -2959,14 +3400,17 @@ BEGIN
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
     WHERE t1.client_id=clientid and t4.legal_entity_id is null;
-END ;
+END //
+
 DELIMITER ;
 
 -- ------------------------
 -- To get techno users list
 -- ------------------------
 DROP PROCEDURE IF EXISTS `sp_users_technouser_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
 BEGIN
     SELECT t1.child_user_id as user_id, t2.is_active,
@@ -2977,13 +3421,16 @@ BEGIN
     SELECT user_id, country_id FROM tbl_user_countries;
     SELECT user_id, domain_id FROM tbl_user_domains;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------
 -- To get the assigned legal entity details by client
 -- --------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_assigned_legal_entity_details_by_group_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_assigned_legal_entity_details_by_group_id`(
     IN clientid INT(11)
 )
@@ -2995,17 +3442,21 @@ BEGIN
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
     WHERE t1.client_id=clientid and t4.legal_entity_id is not null;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of assigned units for reassigning
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_userclients_reassign_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_userclients_reassign_list`()
 BEGIN
     SELECT user_id, client_id FROM tbl_user_clients;
 END //
+
 DELIMITER ;
 
 
@@ -3013,7 +3464,9 @@ DELIMITER ;
 -- To get list of client agreement details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_agreement_details`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_agreement_details`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
@@ -3068,13 +3521,16 @@ BEGIN
     group by t3.legal_entity_id, t3.domain_id
     order by t1.legal_entity_name limit fromcount_, pagecount_;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of client agreement details record count
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_agreement_details_count`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_client_agreement_details_count`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
@@ -3116,13 +3572,16 @@ BEGIN
     ,1
     )))));
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of domainwise agreement details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domainwise_agreement_details`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domainwise_agreement_details`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
@@ -3170,13 +3629,16 @@ BEGIN
     group by t1.legal_entity_id
     order by t1.legal_entity_name limit fromcount_, pagecount_;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of domainwise agreement details record count
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_domainwise_agreement_details_count`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_domainwise_agreement_details_count`(
  IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
  IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
@@ -3213,13 +3675,16 @@ BEGIN
     ,1
     ))));
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of statutory notification report details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_notification_details`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutory_notification_details`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
@@ -3245,13 +3710,16 @@ WHERE
     IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
 limit fromcount_, pagecount_;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of statutory notification details record count
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_notification_details_count`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_statutory_notification_details_count`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50))
@@ -3271,13 +3739,16 @@ WHERE
     IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
     IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of level one statutory names
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_levelone_statutories`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_levelone_statutories`()
 BEGIN
     SELECT
@@ -3292,13 +3763,16 @@ BEGIN
     WHERE
         t2.level_position = 1;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get organizationwise unit count details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_organizationwise_unit_count`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_organizationwise_unit_count`(IN legalentityid_ INT(11), IN domainid_ INT(11))
 BEGIN
     select
@@ -3312,13 +3786,16 @@ BEGIN
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name
     from tbl_legal_entity_domains t1 where t1.legal_entity_id = legalentityid_ and t1.domain_id = domainid_;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get categories assigned to an user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_categories_by_user`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_categories_by_user`(
     IN userid INT(11)
 )
@@ -3354,6 +3831,7 @@ BEGIN
         ) Order by category_name ASC;
     END IF;
 END //
+
 DELIMITER ;
 
 
@@ -3361,7 +3839,9 @@ DELIMITER ;
 -- To get units assigned to a user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_by_user`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_units_by_user`(IN userid INT(11))
 BEGIN
     DECLARE user_category INT(11);
@@ -3403,13 +3883,16 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_validate_token`;
 
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_validate_token`( IN token text)
 BEGIN
     SELECT user_id, verification_code
     FROM tbl_email_verification
     WHERE expiry_date > current_ist_datetime() AND verification_code = token;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -3417,7 +3900,9 @@ DELIMITER ;
 -- and geography
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_unit_unit_organiation_details`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_unit_unit_organiation_details`(
     IN unit_ids TEXT
 )
@@ -3427,16 +3912,19 @@ BEGIN
     select unit_id, domain_id, organisation_id FROM tbl_units_organizations
     WHERE find_in_set(unit_id, unit_ids);
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_compliances_by_unit_details`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_compliances_by_unit_details`(
     IN domain_ids TEXT, country_ids TEXT, geography_ids TEXT,
-    organization_ids TEXT
+    organisation_ids TEXT
 )
 BEGIN
     CREATE TEMPORARY TABLE statutory_mappings
@@ -3446,7 +3934,7 @@ BEGIN
     WHERE find_in_set(country_id, country_ids)
     and find_in_set(domain_id, domain_ids)
     and find_in_set(geography_id, geography_ids)
-    and find_in_set(organisation_id, organization_ids);
+    and find_in_set(organisation_id, organisation_ids);
 
     SELECT compliance_id, statutory_provision, document_name, compliance_task,
     compliance_description, statutory_mapping_id
@@ -3476,13 +3964,16 @@ BEGIN
     );
     DROP TEMPORARY TABLE statutory_mappings;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get Client statutory ids by client id and unit id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_by_client_unit`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_clientstatutories_by_client_unit`(
     IN clientid INT(11), unit_ids TEXT, compliance_ids TEXT
 )
@@ -3494,13 +3985,16 @@ BEGIN
     AND find_in_set(unit_id, unit_ids)
     order by client_statutory_id DESC;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get list of client statutories
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_clientstatutories_list`()
 BEGIN
     SELECT tcs.client_statutory_id, tcs.client_id, tcs.unit_id, tcs.status
@@ -3525,6 +4019,7 @@ BEGIN
     ON tcg.client_id = tu.client_id INNER JOIN tbl_geographies tg
     ON tg.geography_id = tu.geography_id;
 END //
+
 DELIMITER ;
 
 
@@ -3532,7 +4027,9 @@ DELIMITER ;
 -- To get the assigned compliancees by client statutory id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_by_id`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_clientstatutories_by_id`(
     IN cs_id INT(11)
 )
@@ -3560,13 +4057,16 @@ BEGIN
     INNER JOIN tbl_mapped_locations tml ON tml.statutory_mapping_id = tc.statutory_mapping_id
     WHERE client_statutory_id=cs_id;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To crate user login details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_user_login_details_save`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_user_login_details_save`(
     IN token text, uname varchar(50), pword text
 )
@@ -3580,6 +4080,7 @@ BEGIN
 
     DELETE FROM tbl_email_verification where verification_code = token;
 END //
+
 DELIMITER ;
 
 --
@@ -3587,7 +4088,9 @@ DELIMITER ;
 --
 
 DROP PROCEDURE IF EXISTS `sp_tbl_user_login_details_update`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_user_login_details_update`(
     IN uid INT(11), pword TEXT
 )
@@ -3595,26 +4098,32 @@ BEGIN
     UPDATE tbl_user_login_details set password = pword WHERE user_id = uid;
     SELECT username FROM tbl_user_login_details WHERE user_id = uid;
 END //
+
 DELIMITER ;
 
 --
 -- Check username availability
 --
 DROP PROCEDURE IF EXISTS `sp_tbl_user_login_checkusername`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_user_login_checkusername`(
     IN uname varchar(50)
 )
 BEGIN
     SELECT count(0) as uname from tbl_user_login_details where username = uname;
 END //
+
 DELIMITER ;
 
 --
 -- Statutory maping list
 --
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_getlist`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_statutory_mapping_getlist`(
     IN approve_sts TINYINT(5)
 )
@@ -3648,14 +4157,16 @@ BEGIN
     INNER JOIN tbl_statutories as T2 ON T1.statutory_id = T2.statutory_id;
 
 END //
+
 DELIMITER ;
 
 --
 -- statutory mapping master data
 --
-
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_masterdata`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_statutory_mapping_masterdata`(
     IN userid INT(11)
 )
@@ -3665,19 +4176,24 @@ BEGIN
     inner join tbl_user_countries as t2 on t1.country_id = t2.country_id
     and t2.user_id = userid order by country_name;
     -- 1
+
     select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
     tbl_domain_countries as t1
-    inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
-    and t2.user_id = userid
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
+    inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
+    and t2.country_id = t1.country_id
+    and t2.user_id = userid
     order by domain_name;
+
     -- 2
+
     select t1.organisation_id, t1.country_id, t1.domain_id, t1.organisation_name,
     t1.is_active from tbl_organisation as t1
-    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = userid and t3.user_id = userid
+    and t3.country_id = t1.country_id
+    where t3.user_id = userid
     order by organisation_name;
+
     -- 3
     select t1.statutory_nature_id, t1.statutory_nature_name, t1.country_id,
     t1.is_active from tbl_statutory_natures as t1
@@ -3702,9 +4218,9 @@ BEGIN
     -- 6
     select t1.level_id, t1.level_position, t1.level_name,
     t1.country_id, t1.domain_id from tbl_statutory_levels as t1
-    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = userid and t3.user_id = userid
+    and t3.country_id = t1.country_id
+    where  t3.user_id = userid
     order by t1.level_position;
     -- 7
     select frequency_id, frequency from tbl_compliance_frequency;
@@ -3713,30 +4229,36 @@ BEGIN
     -- 9
     select duration_type_id, duration_type from tbl_compliance_duration_type;
 END //
+
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_masterdata`;
+
 DELIMITER //
+
 
 CREATE  PROCEDURE `sp_tbl_statutory_masterdata`(
 in userid int(11))
 BEGIN
-    select t1.statutory_id, t1.level_id, t1.statutory_name,
+    select distinct t1.statutory_id, t1.level_id, t1.statutory_name,
     t1.parent_ids, t1.parent_names, t2.country_id, t2.domain_id,
     t2.level_position
     from tbl_statutories as t1
     inner join tbl_statutory_levels as t2 on t2.level_id = t1.level_id
-    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
-    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
-    where t3.user_id = userid and t4.user_id = userid
-    order by statutory_name;
+    inner join tbl_user_domains as t4 on t2.domain_id = t4.domain_id and
+    t2.country_id = t4.country_id and t4.user_id = userid
+    order by t1.statutory_name;
+
 
 END //
+
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_list`;
+
 DELIMITER //
+
 CREATE PROCEDURE `sp_tbl_statutory_mapping_list`(
     IN userid INT(11), approvestatus varchar(1),
     fromcount INT(11), tocount INT(11)
@@ -3751,59 +4273,62 @@ BEGIN
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
     (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id) as nature
     from tbl_statutory_mappings as t1
-    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
-    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = userid and t3.user_id = userid and t1.is_approved like approvestatus
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
+    t3.country_id = t1.country_id
+    where t3.user_id = userid and t1.is_approved like approvestatus
     order by country_name, domain_name
     limit fromcount, tocount;
 
     select t1.statutory_mapping_id, t1.compliance_id, t1.compliance_task, t1.document_name,
     t1.is_active, t1.is_approved, t1.remarks
     from tbl_compliances as t1
-    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
-    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = userid and t3.user_id = userid
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
+    t3.country_id = t1.country_id
+    where t3.user_id = userid
     order by document_name, compliance_task and t1.is_approved like approvestatus;
 
     select t1.statutory_mapping_id, t1.organisation_id,
     (select organisation_name from tbl_organisation where organisation_id = t1.organisation_id) as organisation_name
     from tbl_mapped_industries as t1
     inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
-    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
-    where t3.user_id = userid and t4.user_id = userid and t2.is_approved = approvestatus;
+    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
+    t4.country_id = t2.country_id
+    where t4.user_id = userid and t2.is_approved = approvestatus;
 
     select t1.statutory_mapping_id, t1.statutory_id,
-    (select parent_names from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
+    (select concat(parent_names, ' >> ', statutory_name) from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
     from tbl_mapped_statutories as t1
     inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
-    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
-    where t3.user_id = userid and t4.user_id = userid and t2.is_approved = approvestatus;
+    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id  and
+    t4.country_id = t2.country_id
+    where t4.user_id = userid and t2.is_approved = approvestatus;
 
     select t1.statutory_mapping_id, t1.geography_id,
     (select parent_names from tbl_geographies where geography_id = t1.geography_id) as geography_name
     from tbl_mapped_locations as t1
     inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-    inner join tbl_user_countries as t3 on t3.country_id = t2.country_id
-    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id
-    where t3.user_id = userid and t4.user_id = userid and t2.is_approved = approvestatus;
+    inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
+    t4.country_id = t2.country_id
+    where t4.user_id = userid and t2.is_approved = approvestatus;
 
     select count(t1.statutory_mapping_id) as total
     from tbl_statutory_mappings as t1
-    inner join tbl_user_countries as t2 on t2.country_id = t1.country_id
-    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id
-    where t2.user_id = userid and t3.user_id = userid and t1.is_approved like approvestatus
+    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
+    t3.country_id = t1.country_id
+    where t3.user_id = userid and t1.is_approved like approvestatus
     limit fromcount, tocount;
 
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get user category details for user mappping report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_get_user_category_details`;
+
 DELIMITER //
+
 
 CREATE  PROCEDURE `sp_get_user_category_details`(
 in userId int(11))
@@ -3814,13 +4339,16 @@ BEGIN
     tuc.user_category_id = tu.user_category_id and
     tu.user_id = userId;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get countries for user mapping report - for user
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_usermapping_report`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_countries_for_usermapping_report`(
 in userCatgId int(11), userId int(11))
@@ -3838,6 +4366,7 @@ BEGIN
             where user_id = userId) and is_active = 1;
     end if;
 END //
+
 DELIMITER ;
 
 
@@ -3845,33 +4374,41 @@ DELIMITER ;
 -- Get business group details for user mapping report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usermapping_report_business_groups`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_usermapping_report_business_groups`()
 BEGIN
     select business_group_id, business_group_name
     from tbl_business_groups;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get legal entity details - user mapping report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usermapping_report_legal_entity`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_usermapping_report_legal_entity`()
 BEGIN
     select legal_entity_id, legal_entity_name, business_group_id
     from tbl_legal_entities;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get unit's details, divison, category - user mapping report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usermapping_report_unit_details`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_usermapping_report_unit_details`(
 in userCatgId int(11), userId int(11))
@@ -3906,13 +4443,16 @@ BEGIN
         where user_id = userId and user_category_id = userCatgId);
     end if;
 END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get group detais -division, category, unit for user mapping report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usermapping_report_group_details`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_usermapping_report_group_details`(
 in userCatgId int(11), userId int(11))
@@ -3961,7 +4501,9 @@ DELIMITER ;
 -- user mapping report - report details/data
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_usermapping_report_details`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_usermapping_report_details`(
     in userId int(11), clientId int(11), legalId int(11), counrtyId int(11))
@@ -4124,13 +4666,16 @@ BEGIN
         order by t3.domain_name;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get country based on user - report filter
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_user_filter`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_countries_for_user_filter`( IN u_id INT(11) )
 BEGIN
@@ -4146,13 +4691,16 @@ BEGIN
         ORDER BY country_name;
     END IF;
 END //
-DELIMITER;
 
-- --------------------------------------------------------------------------------
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
 -- Get client groups based on user - report filter
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_for_user`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_client_groups_for_user`( IN u_id INT(11) )
 BEGIN
@@ -4194,11 +4742,15 @@ BEGIN
     select DISTINCT l.country_id, l.client_id from tbl_legal_entities l;
 END //
 
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Load Countries for client unit form
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_getCountries`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_units_getCountries`(
 in clientId int(11), userId int(11))
@@ -4216,13 +4768,16 @@ BEGIN
     tul.user_id = userId
     group by t2.business_group_id;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Get geography levels for client unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getgeographylevels`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_unit_getgeographylevels`(in userId int(11))
 BEGIN
@@ -4233,11 +4788,16 @@ BEGIN
     t2.legal_entity_id = t1.legal_entity_id and
     t1.user_id = userId) order by level_position;
 END//
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- Get geographies for client unit
 -- --------------------------------------------------------------------------------
+
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_get_geographies`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_unit_get_geographies`(in userId int(11))
 BEGIN
@@ -4252,13 +4812,16 @@ BEGIN
         t2.legal_entity_id = t1.legal_entity_id and
         t1.user_id = userId);
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- to delete the domains, organization under unit id
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_units_delete_unitorganizations`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_units_delete_unitorganizations`(in
 unitId int(11))
@@ -4267,14 +4830,17 @@ BEGIN
     where
     unit_id in (unitId);
 END//
-DELIMITER;
+
+DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
 -- To get client details for statutory settings report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_clientdetails`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_statutory_setting_report_clientdetails`(
 in _user_id int(11))
@@ -4306,13 +4872,16 @@ BEGIN
         and t1.user_id = _user_id order by t3.short_name asc;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get business group, legal entity details for statutory settings report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_businessgroupdetails`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_statutory_setting_report_businessgroupdetails`(in _user_id int(11))
 BEGIN
@@ -4352,14 +4921,17 @@ BEGIN
         and t1.user_id = _user_id order by t3.business_group_name asc;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_unitdetails`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_statutory_setting_report_unitdetails`(in _user_id int(11))
 BEGIN
@@ -4399,13 +4971,16 @@ BEGIN
         and t1.user_id = _user_id order by t4.unit_name asc;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get compliance name, statutory name under unit
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_domains_compliances`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_statutory_setting_report_domains_compliances`(in
 _user_id int(11))
@@ -4451,14 +5026,17 @@ BEGIN
         and t1.user_id = _user_id;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutory_setting_report_recordset`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id int(11), _bg_id int(11), _le_id int(11), _u_id int(11),
@@ -4510,13 +5088,16 @@ BEGIN
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
     group by t2.compliance_id;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Group list with legal entity count for group admin registration email
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_groupslist`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_groupadmin_registration_email_groupslist`(
 in _user_id int(11))
@@ -4561,14 +5142,17 @@ BEGIN
         end if;
     end case;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_unitslist`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
 in _user_id int(11))
@@ -4618,13 +5202,16 @@ BEGIN
         end if;
     end case;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Insert while sending email for group admin registration email
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_groupadmin_email_notification_insert`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_groupadmin_email_notification_insert`(
 in _ins_mode varchar(10), _cl_id int(11), _le_id int(11), _admin_mail_id varchar(50),
@@ -4645,13 +5232,16 @@ BEGIN
         (_cl_id, _le_id, _admin_mail_id, _mode_creation, _mode_sent_by, _mode_sent_on);
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To save resend mail response from group admin registration email form
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_client_email_verification_save`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_client_email_verification_save`(
     IN cl_id INT(11), e_id varchar(50), r_token TEXT, t_type INT(11), e_date datetime
@@ -4660,13 +5250,16 @@ BEGIN
     INSERT INTO tbl_client_email_verification(client_id, email_id, verification_code, verification_type_id, expiry_date)
     VALUES (cl_id, e_id, r_token, t_type, e_date);
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get filter data and report data of client details report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_details_report_unitlist`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_client_details_report_unitlist`(
 in _u_id int(11))
@@ -4755,13 +5348,16 @@ BEGIN
     where
     t3.unit_id = t2.unit_id;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get data for group admin registration report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_group_admin_registration_email_report_data`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_group_admin_registration_email_report_data`(
 in _u_id int(11))
@@ -4798,13 +5394,16 @@ BEGIN
         t2.client_id = t1.client_id order by t2.legal_entity_name;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- get rreassign user report filters
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_reassignuser_report_usercategories`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_reassignuser_report_usercategories`()
 BEGIN
@@ -4831,13 +5430,16 @@ BEGIN
     from tbl_client_groups;
 
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get reassign user report data
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_reassign_user_report_getdata`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_reassign_user_report_getdata`(
 in _u_id int(11), _u_cg_id int(11), _g_id int(11))
@@ -4916,13 +5518,16 @@ BEGIN
         t1.user_id = _u_id and t1.user_category_id = _u_cg_id;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get closed details legal entity table
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legalenity_closure_list`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_legalenity_closure_list`(
 in _u_id int(11))
@@ -4941,13 +5546,16 @@ BEGIN
     where
     t2.client_id  = t1.client_id and t1.user_id = _u_id;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To update closed details in legal entity table
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legalentity_closure_save`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_legalentity_closure_save`(
 in _u_id int(11), _le_id int(11), _is_cl tinyint(1), _cl_on timestamp, _rem varchar(500))
@@ -4957,13 +5565,16 @@ BEGIN
     closed_remarks = _rem where
     legal_entity_id = _le_id;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To veryfy user password
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_verify_password`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_verify_password`(
 IN userid_ INT(11), password_ VARCHAR(50)
@@ -4977,14 +5588,17 @@ BEGIN
         u.user_id = userid_ AND u.password = password_ AND u.is_active = 1;
 
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_geographymaster_report_data`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_geographymaster_report_data`()
 BEGIN
@@ -4996,14 +5610,17 @@ BEGIN
          FROM tbl_geographies t1
          ORDER BY position, parent_names, geography_name;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_geographymaster_geographies_list`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_geographymaster_geographies_list`(
 in countryId int(11))
@@ -5025,13 +5642,16 @@ BEGIN
             ORDER BY country_name, level_position, geography_name;
     end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- update knowledge user view profile
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_update_profile`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_update_profile`(
 IN contactno_ VARCHAR(20), IN address_ VARCHAR(250),
@@ -5042,12 +5662,82 @@ BEGIN
     mobile_no = mobileno_, email_id = emailid_  WHERE user_id= userid_;
     UPDATE tbl_user_login_details set email_id = emailid_  WHERE user_id= userid_;
 END//
-DELIMITER;
 
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- get knowledge users message list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_messages`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_get_messages`(
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
+)
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
+
+    SELECT m.message_id, m.message_heading, m.message_text, m.link,
+    (SELECT concat(employee_code, ' - ', employee_name)
+    from tbl_users where user_id = m.created_by) as created_by,
+    m.created_on
+    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+    AND mu.user_id = userid_
+    where m.user_category_id = @u_cat_id
+    order by created_on DESC limit pagecount_;
+END//
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- get knowledge users statutory notification list
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_statutory_notifications`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_get_statutory_notifications`(
+IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
+)
+BEGIN
+    SELECT s.notification_id, s.compliance_id, s.notification_text,
+    (SELECT concat(employee_code, ' - ', employee_name)
+    from tbl_users where user_id = s.created_by) as created_by,
+    s.created_on, su.user_id, su.read_status
+    from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
+    AND su.user_id = userid_
+    order by su.read_status DESC, s.created_on DESC limit pagecount_;
+END//
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- update knowledge users statutory notification list read status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_statutory_notification_read_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_notification_read_status`(
+    IN notificationid_ INT(11), userid_ INT(11), readstatus_ TINYINT(2)
+)
+BEGIN
+    UPDATE tbl_statutory_notifications_users set read_status = readstatus_
+    WHERE notification_id=notificationid_ AND user_id = userid_;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
 -- Get Statutory level details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutorymapping_report_levl1_list`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_statutorymapping_report_levl1_list`()
 BEGIN
@@ -5058,13 +5748,17 @@ BEGIN
 	INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
 	WHERE t2.level_position=1;
 END//
-DELIMITER;
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_statutorymapping_report_statutorymaster`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_statutorymapping_report_statutorymaster`(
 in statutoryId int(11))
@@ -5084,13 +5778,16 @@ BEGIN
 		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id;
 	end if;
 END//
-DELIMITER;
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- countries list for audir trail
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_audit_trails`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_countries_for_audit_trails`()
 BEGIN
@@ -5107,11 +5804,13 @@ BEGIN
 
 	SELECT user_id, form_id, action, created_on FROM tbl_activity_log;
 END//
-DELIMITER;
 
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_tbl_geography_levels_getlist`;
+
 DELIMITER //
+
 
 CREATE PROCEDURE `sp_tbl_geography_levels_getlist`()
 BEGIN
@@ -5119,4 +5818,259 @@ BEGIN
     tbl_geography_levels order by level_position;
 
 END//
-DELIMITER;
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Get geography levels from master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_geography_levels`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_get_geography_levels`()
+BEGIN
+    select level_id, level_name, level_position, country_id
+    from tbl_geography_levels
+    order by level_position;
+END//
+
+DELIMITER ;
+-- --------------------------------------------------------------------------------
+-- Check levels in geography master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_check_level_in_geographies`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_check_level_in_geographies`(
+    in levelId int(11))
+BEGIN
+    select count(*) from tbl_geographies where
+    level_id = levelId;
+END//
+
+DELIMITER ;
+-- --------------------------------------------------------------------------------
+-- delete level from geography level master
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_delete_geographylevel`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_delete_geographylevel`(
+    in levelId int(11))
+BEGIN
+    delete from tbl_geography_levels where
+    level_id = levelId;
+END//
+
+DELIMITER ;
+-- --------------------------------------------------------------------------------
+-- Save geography levels under country id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_save_geographylevel_master`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_save_geographylevel_master`(
+    in _level_name varchar(50), _level_position int(11),
+    _country_id int(11), _created_by int(11), _created_on datetime)
+BEGIN
+    insert into tbl_geography_levels
+    (level_name, level_position, country_id, created_by, created_on)
+    values
+    (_level_name, _level_position, _country_id, _created_by, _created_on);
+
+END //
+
+DELIMITER ;
+-- --------------------------------------------------------------------------------
+-- To update geography level under level id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_geographylevel_master`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_update_geographylevel_master`(
+    in _level_id int(11), _level_name varchar(50), _level_position int(11),
+    _updated_by int(11))
+BEGIN
+    update tbl_geography_levels
+    set level_name  = _level_name, level_position = _level_position,
+    updated_by = _updated_by where
+    level_id = _level_id;
+END//
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_approve_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mapping_approve_list`(
+    IN userid INT(11)
+)
+BEGIN
+
+    select t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
+        t2.compliance_task, t2.is_active, t2.created_by, t2.created_on, t2.updated_by, t2.updated_on,
+        t4.statutory_nature_name,
+        t2.statutory_provision,
+        t2.compliance_description, t2.penal_consequences, t2.reference_link, t2.frequency_id,
+        t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,
+        t2.duration,
+        (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by,
+        (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
+        (select domain_name from tbl_domains where domain_id = t2.domain_id) as domain_name
+     from tbl_statutory_mappings as t1
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_mapped_industries as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+     inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
+     inner join tbl_user_domains as t5 on t5.country_id = t2.country_id and t5.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t5.user_id = userid and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t1.statutory_mapping_id;
+
+     select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+     inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t3.user_id = userid and  IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t1.statutory_mapping_id;
+
+     SELECT distinct t1.geography_name, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
+        inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
+        inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_user_domains as t5 on t5.country_id = t3.country_id and t5.domain_id = t3.domain_id
+    where t3.is_approved = 1 and t5.user_id = userid and IFNULL(t3.updated_by, t3.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t3.statutory_mapping_id;
+
+
+END //
+
+DELIMITER ;
+
+
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_approve_list_filter`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_tbl_statutory_mapping_approve_list_filter`(
+    IN userid INT(11), org_id VARCHAR(100), nature_id VARCHAR(100),
+    countryid INT(11), domainid INT(11), knowledge_user_id VARCHAR(100)
+)
+BEGIN
+    select distinct t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
+        t2.compliance_task, t2.is_active, t2.created_on, t2.updated_on,
+        t4.statutory_nature_name,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
+        (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by
+     from tbl_statutory_mappings as t1
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
+     inner join tbl_user_domains as t5 on t5.country_id = t2.country_id and t5.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t5.user_id = userid
+     and t2.country_id = countryid
+     and t2.domain_id = domainid
+     and t1.statutory_nature_id like nature_id
+     and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = 4
+     ) order by t1.statutory_mapping_id;
+
+     select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+     inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+     inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
+     where t2.is_approved = 1 and t3.user_id = userid
+     and t2.country_id = countryid
+     and t2.domain_id = domainid
+     and t1.organisation_id like org_id
+     and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+     ) order by t1.statutory_mapping_id;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_compliance`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mapping_compliance`(
+    IN compid INT(11)
+)
+BEGIN
+    SELECT t1.compliance_id, t1.statutory_mapping_id, t1.country_id,
+        t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name,
+        t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id,
+        t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id,
+        t1.duration, t1.is_active,
+        (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t1.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration
+    FROM tbl_compliances as t1 inner join tbl_statutory_mappings as t2
+    on t1.statutory_mapping_id = t2.statutory_mapping_id
+    where t1.compliance_id = compid;
+
+    SELECT t1.geography_name, t1.parent_names from tbl_geographies as t1
+    inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
+    inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
+    where t3.compliance_id = compid;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_to_notify`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_to_notify`(
+    IN usercategoryid INT(11)
+)
+BEGIN
+
+    select user_id from tbl_users where
+    is_active = 1 and is_disable = 0 and
+    user_category_id in (1, 3, 4, 5, 7, 8);
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_user_knowledge_executives`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_user_knowledge_executives`(
+    IN userid INT(11)
+)
+BEGIN
+    select child_user_id, concat(employee_code, '-', employee_name) as emp_name from  tbl_user_mapping
+    inner join tbl_users on user_id = child_user_id and is_active = 1 and is_disable = 0
+    where parent_user_id = userid ;
+
+
+END //
+
+DELIMITER ;

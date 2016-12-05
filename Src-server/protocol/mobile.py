@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
 from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
@@ -62,7 +62,11 @@ from protocol.to_structure import (
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
+        print name
         inner = self.to_inner_structure()
+        print inner
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -417,6 +421,32 @@ class SaveRegistrationKey(Request):
             "reg_key": to_structure_Text(self.reg_key)
         }
 
+class GetApproveStatutoryMappings(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetApproveStatutoryMappings()
+
+    def to_inner_structure(self):
+        return {}
+
+class GetComplianceInfo(Request):
+    def __init__(self, compliance_id):
+        self.compliance_id = compliance_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["comp_id"])
+        comp_id = data.get("comp_id")
+        return GetComplianceInfo(comp_id)
+
+    def to_inner_structure(self):
+        return {
+            "comp_id": self.compliance_id
+        }
 
 def _init_Request_class_map():
     classes = [
@@ -427,7 +457,10 @@ def _init_Request_class_map():
         GetComplianceHistory,
         CheckDiskSpace,
         GetTrendChartData,
-        SaveRegistrationKey
+        SaveRegistrationKey,
+        GetApproveStatutoryMappings,
+        GetComplianceInfo
+
     ]
     class_map = {}
     for c in classes:
@@ -444,6 +477,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -473,10 +508,10 @@ class UserLoginResponseSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "name", "session_token"])
+        data = parse_dictionary(data, ["user_id", "employee_name", "session_token"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        name = data.get("name")
+        name = data.get("employee_name")
         name = parse_structure_CustomTextType_50(name)
         session_token = data.get("session_token")
         session_token = parse_structure_CustomTextType_50(session_token)
@@ -485,7 +520,7 @@ class UserLoginResponseSuccess(Response):
     def to_inner_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "name": to_structure_CustomTextType_100(self.name),
+            "employee_name": to_structure_CustomTextType_100(self.name),
             "session_token": to_structure_CustomTextType_50(self.session_token)
         }
 
@@ -1122,6 +1157,83 @@ class InvalidRegistrationKey(Response):
         return {}
 
 
+class GetApproveStatutoryMappingSuccess(Response):
+    def __init__(self, approve_mappings):
+        self.approve_mappings = approve_mappings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["map_list"])
+        approve_mappings = data.get("map_list")
+        return GetApproveStatutoryMappingSuccess(approve_mappings)
+
+    def to_inner_structure(self):
+        return {
+            "map_list": self.approve_mappings
+        }
+
+
+class GetComplianceInfoSuccess(Response):
+    def __init__(
+        self, compliance_id, statutory_provision,
+        compliance_task, description,
+        penal_consequences, is_active,
+        frequency, summary, reference, locations
+    ):
+        self.compliance_id = compliance_id
+        self.statutory_provision = statutory_provision
+        self.compliance_task = compliance_task
+        self.description = description
+        self.penal_consequences = penal_consequences
+        self.is_active = is_active
+        self.frequency = frequency
+        self.summary = summary
+        self.reference = reference
+        self.locations = locations
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "comp_id", "s_pro",
+            "c_task", "descrip",
+            "p_cons", "is_active",
+            "freq", "summary",
+            "refer", "locat"
+        ])
+        compliance_id = data.get("comp_id")
+        statutory_provision = data.get("s_pro")
+        compliance_task = data.get("c_task")
+        description = data.get("descrip")
+        penal_consequences = data.get("p_cons")
+        is_active = data.get("is_active")
+        frequency = data.get("freq")
+        summary = data.get("summary")
+        reference = data.get("refer")
+        locations = data.get("locat")
+
+        return GetComplianceInfoSuccess(
+            compliance_id, statutory_provision,
+            compliance_task, description,
+            penal_consequences,
+            is_active,
+            frequency, summary, reference, locations
+        )
+
+    def to_structure(self):
+        return {
+            "comp_id": self.compliance_id,
+            "s_pro": self.statutory_provision,
+            "c_task": self.compliance_task,
+            "descrip": self.description,
+            "p_cons": self.penal_consequences,
+            "is_active": self.is_active,
+            "freq": self.frequency,
+            "summary": self.summary,
+            "refer": self.reference,
+            "locat": self.locations
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UserLoginResponseSuccess,
@@ -1132,7 +1244,9 @@ def _init_Response_class_map():
         GetComplianceHistorySuccess,
         GetTrendChartDataSuccess,
         SaveRegistrationKeySuccess,
-        InvalidRegistrationKey
+        InvalidRegistrationKey,
+        GetApproveStatutoryMappingSuccess,
+        GetComplianceInfoSuccess
 
     ]
     class_map = {}
@@ -1164,4 +1278,128 @@ class RequestFormat(object):
         return {
             "session_token": to_structure_CustomTextType_50(self.session_token),
             "request": to_structure_VariantType_mobile_Request(self.request),
+        }
+
+
+class MappingApproveInfo(object):
+    def __init__(
+        self, mapping_id, country_name, domain_name,
+        nature_name, organisations, mapping_text,
+        compliance_list
+    ):
+        self.mapping_id = mapping_id
+        self.country_name = country_name
+        self.domain_name = domain_name
+        self.nature_name = nature_name
+        self.organisations = organisations
+        self.mapping_text = mapping_text
+        self.compliance_list = compliance_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "m_id", "c_name", "d_name",
+            "s_n_name", "org_names",
+            "map_text", "comp_list"
+        ])
+        mapping_id = data.get("m_id")
+        country_name = data.get("c_name")
+        domain_name = data.get("d_name")
+        nature_name = data.get("s_n_name")
+        organisations = data.get("org_namees")
+        mapping_text = data.get("map_text")
+        compliance_list = data.get("comp_lists")
+        return MappingApproveInfo(
+            mapping_id, country_name, domain_name,
+            nature_name, organisations, mapping_text,
+            compliance_list
+        )
+
+    def to_structure(self):
+        return {
+            "m_id": self.mapping_id,
+            "c_name": self.country_name,
+            "d_name": self.domain_name,
+            "s_n_name": self.nature_name,
+            "org_names": self.organisations,
+            "map_text": self.mapping_text,
+            "comp_lists": self.compliance_list
+        }
+
+
+class MappingComplianceInfo(object):
+    def __init__(
+        self, compliance_id,
+        compliance_task, is_active, created_by, created_on, updated_by,
+        updated_on, statutory_provision,
+        description,
+        penal_consequences,
+        frequency, summary, reference, locations
+    ):
+        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
+        self.statutory_provision = statutory_provision
+        self.description = description
+        self.penal_consequences = penal_consequences
+        self.frequency = frequency
+        self.summary = summary
+        self.reference = reference
+        self.locations = locations
+
+        self.is_active = is_active
+        self.created_by = created_by
+        self.created_on = created_on
+        self.updated_by = updated_by
+        self.updated_on = updated_on
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "comp_id", "c_task", "is_active",
+            "c_by", "c_on", "u_by", "u_on",
+            "s_pro", "descrip",
+            "p_cons",
+            "freq", "summary",
+            "refer", "locat"
+        ])
+        compliance_id = data.get("comp_id")
+        compliance_task = data.get("c_task")
+        is_active = data.get("is_active")
+        created_by = data.get("c_by")
+        created_on = data.get("c_on")
+        updated_by = data.get("u_by")
+        updated_on = data.get("u_on")
+        statutory_provision = data.get("s_pro")
+        description = data.get("descrip")
+        penal_consequences = data.get("p_cons")
+        frequency = data.get("freq")
+        summary = data.get("summary")
+        reference = data.get("refer")
+        locations = data.get("locat")
+
+        return MappingComplianceInfo(
+            compliance_id,
+            compliance_task, is_active, created_by, created_on, updated_by,
+            updated_on, statutory_provision,
+            description,
+            penal_consequences,
+            frequency, summary, reference, locations
+        )
+
+    def to_structure(self):
+        return {
+            "comp_id": self.compliance_id,
+            "c_task": self.compliance_task,
+            "is_active": self.is_active,
+            "c_by": self.created_by,
+            "c_on": self.created_on,
+            "u_by": self.updated_by,
+            "u_on": self.updated_on,
+            "s_pro": self.statutory_provision,
+            "descrip": self.description,
+            "p_cons": self.penal_consequences,
+            "freq" : self.frequency,
+            "summary": self.summary,
+            "refer": self.reference,
+            "locat": self.locations
         }

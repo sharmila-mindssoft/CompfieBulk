@@ -1,4 +1,5 @@
-from protocol import login, mobile
+import json
+from protocol import login, mobile, core
 from server import logger
 from server.database.tables import *
 from server.database.login import *
@@ -8,8 +9,12 @@ from server.constants import (
     KNOWLEDGE_URL
 )
 from server.common import (
-    encrypt, new_uuid
+    encrypt, new_uuid, datetime_to_string_time, make_summary
 )
+from server.database.knowledgetransaction import (
+    get_compliance_details
+)
+from generalcontroller import (validate_user_session, validate_user_forms)
 
 __all__ = [
     "process_mobile_request",
@@ -19,6 +24,7 @@ __all__ = [
 
 
 def process_mobile_request(request, db, session_user_ip):
+    print type(request)
     if type(request) is login.Login:
         logger.logKnowledgeApi("Login", "process begin")
         result = process_mobile_login(db, request, session_user_ip)
@@ -33,6 +39,32 @@ def process_mobile_request(request, db, session_user_ip):
         logger.logKnowledgeApi("Logout", "process begin")
         result = process_mobile_logout(db, request)
         logger.logKnowledgeApi("Logout", "process end")
+
+    else :
+        result = None
+
+    if type(request) is mobile.RequestFormat :
+        forms = None
+        session_token = request.session_token
+        request_frame = request.request
+        user_id = validate_user_session(db, session_token)
+        if user_id is not None:
+            is_valid = validate_user_forms(db, user_id, forms, request_frame)
+            if is_valid is not True:
+                return login.InvalidSessionToken()
+
+        if user_id is None:
+            return login.InvalidSessionToken()
+
+        if type(request_frame) is mobile.GetApproveStatutoryMappings:
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
+            result = process_get_approve_statutory_mappings(db, user_id)
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
+
+        elif type(request_frame) is mobile.GetComplianceInfo:
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
+            result = process_get_compliance_info(db, request_frame, user_id)
+            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     return result
 
@@ -124,3 +156,89 @@ def process_mobile_logout(db, request):
     session = request.session_token
     remove_session(db, session)
     return login.LogoutSuccess()
+
+def approve_statutory_mapping_list(db, user_id):
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 3)
+    result
+    mappings = result[0]
+    orgs = result[1]
+    geo_info = result[2]
+
+    def get_orgs(map_id):
+        orgname = []
+        for o in orgs :
+            if o["statutory_mapping_id"] == map_id :
+                orgname.append(o["organisation_name"])
+        return orgname
+
+    def get_geos(map_id):
+        geo_names = []
+        for g in geo_info :
+            if g["statutory_mapping_id"] == map_id :
+                geo_names.append(g["parent_names"] + ">>" + g["geography_name"])
+        return geo_names
+
+    compliance = []
+    mapped = {}
+    for m in mappings :
+
+        map_id = m["statutory_mapping_id"]
+        if mapped.get(map_id) is None :
+            compliance = []
+
+        if m["document_name"] is None :
+            c_name = m["compliance_task"]
+        else :
+            c_name = m["document_name"] + " - " + m["compliance_task"]
+        orgname = get_orgs(map_id)
+        geo_names = get_geos(map_id)
+        c_on = datetime_to_string_time(m["created_on"])
+
+        u_on = None
+        if m["updated_by"] is not None :
+            u_on = datetime_to_string_time(m["updated_on"])
+
+        statutory_dates = m["statutory_dates"]
+        statutory_dates = json.loads(statutory_dates)
+        date_list = []
+        for date in statutory_dates:
+            s_date = core.StatutoryDate(
+                date["statutory_date"],
+                date["statutory_month"],
+                date["trigger_before_days"],
+                date.get("repeat_by")
+            )
+            date_list.append(s_date)
+        summary = make_summary(date_list, m["frequency_id"], m)
+
+        compliance.append(mobile.MappingComplianceInfo(
+            m["compliance_id"], c_name, bool(m["is_active"]),
+            m["created_by"], c_on, m["updated_by"],
+            u_on, m["statutory_provision"],
+            m["compliance_description"], m["penal_consequences"],
+            m["freq_name"], summary, m["reference_link"],
+            ", ".join(geo_names)
+        ))
+
+        mapped[map_id] = mobile.MappingApproveInfo(
+            map_id, m["country_name"], m["domain_name"],
+            m["statutory_nature_name"], orgname, m["statutory_mapping"],
+            compliance
+        )
+
+    return mapped.values()
+
+def process_get_approve_statutory_mappings(db, user_id):
+    statutory_mappings = approve_statutory_mapping_list(db, user_id)
+    return mobile.GetApproveStatutoryMappingSuccess(
+        statutory_mappings
+    )
+
+def process_get_compliance_info(db, request, user_id):
+    comp_id = request.compliance_id
+    comp_info = get_compliance_details(db, user_id, comp_id)
+    return mobile.GetComplianceInfoSuccess(
+        comp_info[0], comp_info[1], comp_info[2], comp_info[3],
+        comp_info[4], comp_info[5], comp_info[6], comp_info[7],
+        comp_info[8], comp_info[9],
+    )

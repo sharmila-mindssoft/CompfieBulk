@@ -450,5 +450,20 @@ TEMPLATE_PATHS = [
         "/knowledge/userregistration/<code>",
         "files/knowledge/login/create-login-details.html",
         None, {}
+    ),
+    (
+        "/knowledge/group-admin-registration-email",
+        "files/knowledge/group-admin-registration-email/group-admin-registration-email.html",
+        None, {}
+    ),
+    (
+        "/knowledge/messages",
+        "files/knowledge/messages/messages.html",
+        None, {}
+    ),
+    (
+        "/knowledge/statutory-notifications",
+        "files/knowledge/statutorynotifications/statutorynotifications.html",
+        None, {}
     )
 ]

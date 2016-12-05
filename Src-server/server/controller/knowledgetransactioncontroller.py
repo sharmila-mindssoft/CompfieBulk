@@ -3,16 +3,25 @@ from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
 
 from server.database.knowledgetransaction import (
-    get_statutory_mappings,
     check_duplicate_compliance_name,
     check_duplicate_statutory_mapping,
     save_statutory_mapping,
     update_statutory_mapping,
     change_statutory_mapping_status,
-    change_approval_status,
     statutory_mapping_master,
     statutories_master,
-    statutory_mapping_list
+    statutory_mapping_list,
+    approve_statutory_mapping_list,
+    get_compliance_details,
+    save_approve_mapping
+)
+
+from server.database.knowledgemaster import (
+    get_industries, get_statutory_nature
+)
+from server.database.admin import (
+    get_countries_for_user,
+    get_domains_for_user, get_child_users
 )
 __all__ = [
     "process_knowledge_transaction_request"
@@ -76,11 +85,21 @@ def process_knowledge_transaction_request(request, db):
         )
         logger.logKnowledgeApi("ChangeStatutoryMappingStatus", "process end")
 
+    elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappings:
+        logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
+        result = process_get_approve_statutory_mappings(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
+
+    elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappingsFilters:
+        logger.logKnowledgeApi("GetApproveStatutoryMappingFilterSuccess", "process begin")
+        result = process_get_approve_mapping_filters(db, user_id)
+        logger.logKnowledgeApi("GetApproveStatutoryMappingFilterSuccess", "process end")
+
     elif type(
         request_frame
-    ) is knowledgetransaction.GetApproveStatutoryMappings:
+    ) is knowledgetransaction.GetComplianceInfo:
         logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
-        result = process_get_approve_statutory_mappings(db, user_id)
+        result = process_get_compliance_info(db, request_frame, user_id)
         logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     elif type(request_frame) is knowledgetransaction.ApproveStatutoryMapping:
@@ -144,27 +163,36 @@ def process_change_statutory_mapping_status(db, request_frame, user_id):
     else:
         return knowledgetransaction.InvalidStatutoryMappingId()
 
+def process_get_approve_mapping_filters(db, user_id):
+    user_id = 4
+    industry = get_industries(db)
+    natures = get_statutory_nature(db)
+    country = get_countries_for_user(db, user_id)
+    domains = get_domains_for_user(db, user_id)
+    users = get_child_users(db, user_id)
+    return knowledgetransaction.GetApproveStatutoryMappingFilterSuccess(
+        country, domains, natures, industry, users
+    )
 
-def process_get_approve_statutory_mappings(db, user_id):
-    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=True)
-    return knowledgetransaction.GetStatutoryMappingsSuccess(
+def process_get_approve_statutory_mappings(db, request_frame, user_id):
+    user_id = 4
+    statutory_mappings = approve_statutory_mapping_list(db, user_id, request_frame)
+    return knowledgetransaction.GetApproveStatutoryMappingSuccess(
         statutory_mappings
     )
 
 
-def process_approve_statutory_mapping(db, request_frame, user_id):
-    is_approved = False
-    message = value = None
-    for data in request_frame.statutory_mappings:
-        result = change_approval_status(db, data, user_id)
-        if result is True:
-            is_approved = True
-        else:
-            message, value = result
-            is_approved = False
-            break
+def process_get_compliance_info(db, request, user_id):
+    comp_id = request.compliance_id
+    comp_info = get_compliance_details(db, user_id, comp_id)
+    return knowledgetransaction.GetComplianceInfoSuccess(
+        comp_info[0], comp_info[1], comp_info[2], comp_info[3],
+        comp_info[4], comp_info[5], comp_info[6], comp_info[7],
+        comp_info[8], comp_info[9],
+    )
 
-    if is_approved:
+def process_approve_statutory_mapping(db, request_frame, user_id):
+    data = request_frame.statutory_mappings
+    result = save_approve_mapping(db, user_id, data)
+    if result:
         return knowledgetransaction.ApproveStatutoryMappingSuccess()
-    else:
-        return knowledgetransaction.TransactionFailed(message, value)
