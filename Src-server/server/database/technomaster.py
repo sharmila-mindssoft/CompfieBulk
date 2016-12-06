@@ -270,7 +270,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 entity.legal_entity_name,
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
-                file_name, entity.file_space, entity.no_of_licence, 1,
+                file_name, entity.file_space, entity.no_of_licence,
                 session_user, current_time_stamp
             )
             values.append(value_tuple)
@@ -933,7 +933,7 @@ def validate_total_disk_space(
     rows = db.call_proc(
         "sp_legal_entities_space_used", (legal_entity_id,),
     )
-    used_space = int(rows[0]["used_space"])
+    used_space = int(rows[0]["used_file_space"])
     if file_space < used_space:
         return True
     else:
