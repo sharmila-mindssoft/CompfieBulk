@@ -802,11 +802,11 @@ CREATE PROCEDURE `sp_business_group_save`(
 BEGIN
     INSERT INTO tbl_business_groups
     (
-        client_id, country_id, business_group_name, created_by, created_on,
+        client_id, business_group_name, created_by, created_on,
         updated_by, updated_on
     ) VALUES
     (
-        groupid, countryid, businessgroupname, session_user,
+        groupid, businessgroupname, session_user,
         current_time_stamp, session_user, current_time_stamp
     );
 END //
@@ -1179,7 +1179,7 @@ CREATE PROCEDURE `sp_client_users_count`(
 BEGIN
     SELECT count(user_id)+1 as count FROM tbl_client_users
     WHERE client_id = group_id and
-    legal_entity_id = entity_id;
+    legal_entity_ids = entity_id;
 END //
 
 DELIMITER ;
@@ -1196,7 +1196,7 @@ CREATE PROCEDURE `sp_legal_entities_space_used`(
     IN le_id INT(11)
 )
 BEGIN
-    SELECT used_space FROM tbl_legal_entities
+    SELECT used_file_space FROM tbl_legal_entities
     WHERE legal_entity_id=le_id;
 END //
 
