@@ -341,7 +341,8 @@ function saveClient(){
             var business_group_id = null;
             var business_group_name = null;
             business_group_id = le_table.find(".business-group").val();
-            business_group_name = le_table.find(".business-group-text").val();
+            console.log("brgnam--"+trim(le_table.find(".business-group-text").val()))
+            business_group_name = trim(le_table.find(".business-group-text").val());
             var le_name = le_table.find("#legal_entity_text").val();
             var logo = logoFile[i-1]
             if(logo){
@@ -680,7 +681,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     }
     else{
         console.log("welcome to else part");
-         showNonEditable(le_table.find(".business-group"), null, '-');
+         showNonEditable(le_table.find(".business-group"), null, '');
     }
 
     showNonEditable(le_table.find("#legal_entity_text"), null, value.legal_entity_name);
@@ -723,7 +724,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
         );
         var add_org_class = le_count+"-"+i;
         console.log("add_org_class"+add_org_class);
-        //le_table.find(".activationdate-"+add_org_class).text(value.domain_details[i-1].activation_date);
+        le_table.find(".activationdate-"+add_org_class).text(value.domain_details[i-1].activation_date);
         le_table.find(".activationdate-"+add_org_class).val(value.domain_details[i-1].activation_date);
     }
     le_table.find('.org-header').text("Activation Date");
