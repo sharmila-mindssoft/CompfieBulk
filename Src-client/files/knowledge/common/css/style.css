@@ -961,7 +961,7 @@ list-style-type:none; line-height:25px;
   cursor: pointer;
 }
 .custom-modal-text div{
-  width:360px;
+/*  width:360px;*/
 }
 
 .pw-hint span {
