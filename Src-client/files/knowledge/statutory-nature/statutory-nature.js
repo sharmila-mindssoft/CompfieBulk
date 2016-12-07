@@ -265,7 +265,7 @@ function submitStatutoryNature()
 			statutoryNatureDetailDict = mirror.getSaveStatutoryNatureDict(statutoryNatureDetail);
 			mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
-					alert(msg.statutoty_nature_save_success);
+					displaySuccessMessage(msg.statutoty_nature_save_success);
 					onSuccess(response);
 				} else {
 					onFailure(error);
@@ -295,7 +295,7 @@ function submitStatutoryNature()
 			statutoryNatureDetailDict = mirror.getUpdateStatutoryNatureDict(statutoryNatureDetail);
     	mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
-					alert(msg.statutoty_nature_update_success)
+					displaySuccessMessage(msg.statutoty_nature_update_success)
 					onSuccess(response);
 				} else {
 					onFailure(error);
@@ -339,11 +339,11 @@ function statNature_active(statNatureId, isActive) {
 	mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, function (error, response) {
     if (error == null) {
       if (isActive) {
-        alert(message.organization_status_active_success);
+        displaySuccessMessage(message.organization_status_active_success);
       }
       else
       {
-        alert(message.organization_status_deactive_success);
+        displaySuccessMessage(message.organization_status_deactive_success);
       }
       getStatutorynatures();
       onSuccess(response);

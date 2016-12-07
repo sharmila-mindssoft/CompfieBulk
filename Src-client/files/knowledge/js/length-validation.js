@@ -21,7 +21,7 @@ function domainValidate() {
     displayMessage('Domain Name' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -30,7 +30,7 @@ function industryValidate() {
     displayMessage('Industry Name' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -39,7 +39,7 @@ function userGroupValidate() {
     displayMessage('Group Name' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -69,7 +69,7 @@ function userValidate() {
     displayMessage('Designation' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -84,7 +84,7 @@ function changePasswordValidate() {
     displayMessage('Confirm Password' + message.should_not_exceed + max20 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -96,7 +96,7 @@ function resetPasswordValidate() {
     displayMessage('Confirm Password' + message.should_not_exceed + max20 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -135,7 +135,7 @@ function geographyLevelValidate() {
     displayMessage('Level 10' + message.should_not_exceed + max30 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -144,7 +144,7 @@ function geographyValidate(dataValue) {
     displayMessage('Level Value' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -153,7 +153,7 @@ function statutoryNatureValidate() {
     displayMessage('Statutory Nature Name' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -189,7 +189,7 @@ function statutoryLevelValidate() {
     displayMessage('Level 10' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -198,7 +198,7 @@ function statutoryValidate(dataValue) {
     displayMessage('Level Value' + message.should_not_exceed + max50 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -237,7 +237,7 @@ function approveMappingValidate(dataValue) {
     displayMessage('Reason Value' + message.should_not_exceed + max500 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -255,7 +255,7 @@ function profileValidate() {
     displayMessage('Contact No' + message.should_not_exceed + max10 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -276,7 +276,7 @@ function clientMasterValidate() {
     displayMessage('Short Name' + message.should_not_exceed + max20 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -297,7 +297,7 @@ function clientMasterValidate() {
     displayMessage('Short Name' + message.should_not_exceed + max20 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -321,7 +321,7 @@ function serviceProviderValidate() {
     displayMessage('Address' + message.should_not_exceed + max250 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -345,7 +345,7 @@ function clientUserValidate() {
     displayMessage('Email ID' + message.should_not_exceed + max100 + ' characters');
     return false;
   } else {
-    displayMessage();
+    //displayMessage();
     return true;
   }
 }
@@ -355,6 +355,7 @@ function clientUserValidate() {
 var max_length = {
   'countryname': 50,
   'domainname': 50,
+  'usergroupname': 50,
   'employeename': 50,
   'employeeid': 50,
   'email_id': 100,

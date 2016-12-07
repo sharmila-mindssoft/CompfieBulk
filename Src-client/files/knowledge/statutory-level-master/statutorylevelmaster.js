@@ -1,5 +1,5 @@
 var countriesList;
-var domainsList;
+var domainList;
 var statutoryLevelsList;
 // auto complete - country
 var country_val = $('#country');
@@ -23,7 +23,7 @@ function GetStatutoryLevels() {
   function onSuccess(data) {
     statutoryLevelsList = data.statutory_levels;
     countriesList = data.countries;
-    domainsList = data.domains;
+    domainList = data.domains;
   }
   function onFailure(error) {
     displayMessage(error);
@@ -108,14 +108,14 @@ function validate() {
     } else if ($('#level1').val().trim().length == 0) {
       displayMessage(message.levelone_title_required);
     } else {
-      displayMessage('');
+      //displayMessage('');
       return true;
     }
   }
 }
 //save/update statutory level master
 $('#submit').click(function () {
-  displayMessage('');
+  //displayMessage('');
   var country = $('#country').val();
   var domain = $('#domain').val();
   if (validate()) {
@@ -155,24 +155,13 @@ $('#submit').click(function () {
               'is_remove': false
             });
           }
-        }  /*            if($("#levelid"+k).val().trim().length > 0 && $("#level"+k).val().trim().length == 0){
-              var msg = "Level "+ k;
-              displayMessage(msg + message.shouldnot_empty)
-              return false;
-            }else if($("#level"+k).val().trim().length > 0){
-              if($("#levelid"+k).val().trim().length > 0){
-                passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : parseInt($("#levelid"+k).val())});
-                isAdd = false;
-              }else{
-                passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : null});
-              }
-            }*/
+        }
       }
       function onSuccess(response) {
         if (isAdd) {
-          displayMessage(message.record_added);
+          displaySuccessMessage(message.record_added);
         } else {
-          displayMessage(message.record_updated);
+          displaySuccessMessage(message.record_updated);
         }
         GetStatutoryLevels();
         jQuery('.btn-statutorylevel-cancel').focus().click();
