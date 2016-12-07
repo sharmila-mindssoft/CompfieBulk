@@ -145,6 +145,11 @@ class API(object):
         try:
             data = request.get_json(force=True)
             # data = request.data
+            print data
+            print "\n"
+            print "\n"
+            print request_data_type
+
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -186,6 +191,7 @@ class API(object):
             if request_data is None:
                 raise ValueError("Request data is Null")
             elif type(request_data) is str :
+                print "request_data is str"
                 raise ValueError(request_data)
 
             _db_con = self._con_pool.get_connection()
@@ -324,21 +330,22 @@ class API(object):
     def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
+    @csrf.exempt
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getstatumaster(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getstatumaster(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getmappingmaster(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getmappingmaster(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getmapping(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getmapping(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
     @api_request(knowledgereport.RequestFormat)
     def handle_knowledge_report(self, request, db):

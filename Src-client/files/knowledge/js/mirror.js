@@ -183,7 +183,8 @@ function initMirror() {
       },
       error: function (jqXHR, textStatus, errorThrown) {
 
-        alert(jqXHR["responseText"]);
+        console.log(textStatus, errorThrown);
+        console.log(jqXHR.responseText)
         callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);
@@ -721,6 +722,16 @@ function initMirror() {
       {
         "approval_status_id": parseInt(approval_status),
         "rcount": parseInt(rcount)
+      }
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
+  function getStatutoryMappingsEdit(m_id, comp_id, callback) {
+    var request = [
+      'GetComplianceEdit',
+      {
+        "m_id": parseInt(m_id),
+        "comp_id": comp_id
       }
     ];
     apiRequest('knowledge_transaction', request, callback);
@@ -2341,7 +2352,8 @@ function initMirror() {
     getMessages: getMessages,
     getStatutoryNotifications: getStatutoryNotifications,
     updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
-    getReassignUserDomainReportData: getReassignUserDomainReportData
+    getReassignUserDomainReportData: getReassignUserDomainReportData,
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit
   };
 }
 var mirror = initMirror();
