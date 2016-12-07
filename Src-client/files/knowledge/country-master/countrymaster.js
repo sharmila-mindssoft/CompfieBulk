@@ -31,11 +31,12 @@ $('#btn-country-cancel').click(function () {
 function initialize() {
   function onSuccess(data) {
     $('#search-country-name').val('');
-    counList = data;
-    loadCountriesList(data);
+    //counList = data;
+    console.log(data)
+    onLoadList(data);
   }
   function onFailure(error) {
-    custom_alert(error);
+    displayMessage(error);
   }
   mirror.getCountryList(function (error, response) {
     if (error == null) {
@@ -45,52 +46,60 @@ function initialize() {
     }
   });
 }
+function onLoadList(data){
+  counList = [];
+  $.each(data, function (i, value) {
+    var country = data[i];
+    $.each(country, function (j, value) {
+      counList.push(country[j]);
+    });
+  });
+  console.log(counList);
+  loadCountriesList(counList);
+}
 //display cpuntry details in view page
 function loadCountriesList(countriesList) {
   $('.tbody-countries-list').find('tr').remove();
   var sno = 0;
-  $.each(countriesList, function (i, value) {
-    var countries = countriesList[i];
-    $.each(countries, function (j, value) {
-      var countryId = countries[j].country_id;
-      var countryName = countries[j].country_name;
-      var isActive = countries[j].is_active;
-      var passStatus = null;
-      var classValue = null;
+  $.each(countriesList, function (j, value) {
+    var countryId = countriesList[j].country_id;
+    var countryName = countriesList[j].country_name;
+    var isActive = countriesList[j].is_active;
+    var passStatus = null;
+    var classValue = null;
 
-      var tableRow = $('#templates .table-countries-list .table-row');
-      var clone = tableRow.clone();
-      sno = sno + 1;
-      $('.sno', clone).text(sno);
-      $('.country-name', clone).text(countryName);
+    var tableRow = $('#templates .table-countries-list .table-row');
+    var clone = tableRow.clone();
+    sno = sno + 1;
+    $('.sno', clone).text(sno);
+    $('.country-name', clone).text(countryName);
 
-      //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        country_edit(countryId, countryName);
-      });
-
-      if (isActive == false){
-        //$('.status').attr('title', 'Click Here to Deactivate');
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
-      }
-      else{
-        //$('.status').attr('title', 'Click Here to Activate');
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-      }
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, countryId, isActive);
-      });
-
-      $('.status').hover(function(){
-        showTitle(this);
-      });
-
-      $('.tbody-countries-list').append(clone);
+    //edit icon
+    $('.edit').attr('title', 'Click Here to Edit');
+    $('.edit', clone).addClass('fa-pencil text-primary');
+    $('.edit', clone).on('click', function () {
+      country_edit(countryId, countryName);
     });
+
+    if (isActive == false){
+      //$('.status').attr('title', 'Click Here to Deactivate');
+      $('.status', clone).removeClass('fa-check text-success');
+      $('.status', clone).addClass('fa-times text-danger');
+    }
+    else{
+      //$('.status').attr('title', 'Click Here to Activate');
+      $('.status', clone).removeClass('fa-times text-danger');
+      $('.status', clone).addClass('fa-check text-success');
+    }
+    $('.status', clone).on('click', function (e) {
+      showModalDialog(e, countryId, isActive);
+    });
+
+    $('.status').hover(function(){
+      showTitle(this);
+    });
+
+    $('.tbody-countries-list').append(clone);
   });
 }
 
@@ -192,7 +201,7 @@ $('#btn-submit').click(function () {
           $('#country-add').hide();
           $('#ctry-view').show();
           $('#search-country-name').val('');
-          displayMessage(message.save_success);
+          displaySuccessMessage(message.save_success);
           initialize();
         }
         function onFailure(error) {
@@ -213,7 +222,7 @@ $('#btn-submit').click(function () {
         function onSuccess(response) {
           $('#country-add').hide();
           $('#ctry-view').show();
-          displayMessage(message.update_success);
+          displaySuccessMessage(message.update_success);
           initialize();
         }
         function onFailure(error) {
@@ -261,9 +270,9 @@ function country_active(countryId, isActive) {
         }
         function onFailure(error) {
           if (error == 'TransactionExists') {
-            custom_alert(message.trasaction_exists);
+            displayMessage(message.trasaction_exists);
           } else {
-            custom_alert(error);
+            displayMessage(error);
           }
         }
         mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
@@ -297,18 +306,39 @@ $('#search-country-name').keyup(function () {
 
 function processSearch(){
   usr_status = $('.search-status-li.active').attr('value');
-
   searchList = []
 
-  for(var i in counList){
-    data = counList[i];
-    data_is_active = data.is_active;
-    if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-        searchList.push(data);
+  $.each(counList, function (j, value) {
+    data = counList[j];
+    console.log("2:"+data)
+    data_is_active = counList[j].is_active;
+    if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == data_is_active)){
+      searchList.push(data);
     }
-  }
+  });
+  console.log(searchList)
+
   loadCountriesList(searchList);
 }
+
+//status of the list
+  Search_status_ul.click(function (event) {
+    Search_status_li.each(function (index, el) {
+      $(el).removeClass('active');
+    });
+    $(event.target).parent().addClass('active');
+
+    var currentClass = $(event.target).find('i').attr('class');
+    Search_status.removeClass();
+    if(currentClass != undefined){
+      Search_status.addClass(currentClass);
+      Search_status.text('');
+    }else{
+      Search_status.addClass('fa');
+      Search_status.text('All');
+    }
+    processSearch();
+  });
 
 //initialization
 $(function () {
