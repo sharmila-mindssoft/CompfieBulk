@@ -182,7 +182,8 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        // alert(jqXHR["responseText"]);
+
+        alert(jqXHR["responseText"]);
         callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);

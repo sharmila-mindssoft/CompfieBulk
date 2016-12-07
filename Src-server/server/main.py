@@ -37,6 +37,7 @@ from server.constants import (
 from server.templatepath import (
     TEMPLATE_PATHS
 )
+from server.exceptionmessage import fetch_error
 
 import logger
 
@@ -187,7 +188,6 @@ class API(object):
             elif type(request_data) is str :
                 raise ValueError(request_data)
 
-
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
@@ -195,8 +195,9 @@ class API(object):
             if response_data is None or type(response_data) is bool:
                 # print response_data
                 _db.rollback()
+                raise fetch_error()
 
-            if type(response_data) != technomasters.ClientCreationFailed:
+            elif type(response_data) != technomasters.ClientCreationFailed:
                 print "commit"
                 _db.commit()
             else:
@@ -338,7 +339,7 @@ class API(object):
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_getmapping(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
-    
+
     @api_request(knowledgereport.RequestFormat)
     def handle_knowledge_report(self, request, db):
         return controller.process_knowledge_report_request(request, db)
@@ -387,13 +388,15 @@ CSS_PATH = os.path.join(COMMON_PATH, "css")
 IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
+LOGO_PATH = os.path.join(ROOT_PATH, "Src-server", "server", "clientlogo")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
     ("/knowledge/js/<path:filename>", JS_PATH),
     ("/knowledge/images/<path:filename>", IMG_PATH),
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
-    ("/knowledge/script/<path:filename>", SCRIPT_PATH)
+    ("/knowledge/script/<path:filename>", SCRIPT_PATH),
+    ("/knowledge/clientlogo/<path:filename>", LOGO_PATH)
 ]
 
 def staticTemplate(pathname, filename):
@@ -492,3 +495,5 @@ def run_server(port):
         "threaded": True
     }
     app.run(host="0.0.0.0", port=port, **settings)
+
+

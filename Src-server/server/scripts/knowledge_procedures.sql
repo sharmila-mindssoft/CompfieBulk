@@ -4276,7 +4276,7 @@ BEGIN
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
     where t3.user_id = userid and t1.is_approved like approvestatus
-    order by country_name, domain_name
+    order by country_name, domain_name, t1.statutory_mapping
     limit fromcount, tocount;
 
     select t1.statutory_mapping_id, t1.compliance_id, t1.compliance_task, t1.document_name,
@@ -4284,8 +4284,8 @@ BEGIN
     from tbl_compliances as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
-    where t3.user_id = userid
-    order by document_name, compliance_task and t1.is_approved like approvestatus;
+    where t3.user_id = userid and t1.is_approved like approvestatus
+    order by document_name, compliance_task;
 
     select t1.statutory_mapping_id, t1.organisation_id,
     (select organisation_name from tbl_organisation where organisation_id = t1.organisation_id) as organisation_name
@@ -6093,10 +6093,13 @@ DELIMITER ;
 -- Get domain user report data for reassign user report
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_reassign_user_report_domain_user_getdata`;
+
 DELIMITER //
 
 CREATE PROCEDURE `sp_reassign_user_report_domain_user_getdata`(
-in _u_id int(11), _u_cg_id int(11), _g_id int(11), _bg_id int(11), _le_id int(11), _d_id int(11))
+    IN _u_id int(11), _u_cg_id int(11), _g_id int(11), _bg_id int(11), _le_id int(11), _d_id int(11)
+)
+
 BEGIN
     if _u_cg_id = 7 or _u_cg_id = 8 then
         select t2.unit_id, t2.unit_code, t2.unit_name, t2.address, t2.postal_code,
@@ -6123,5 +6126,50 @@ BEGIN
         t1.user_category_id = _u_cg_id;
 
     end if;
+
 END//
+
 DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mapping_by_id`(
+    IN map_id INT(11), comp_id VARCHAR(50)
+)
+BEGIN
+    select t1.statutory_mapping_id, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
+        t2.compliance_task, t2.is_active,
+        t4.statutory_nature_name,
+        t2.statutory_provision,
+        t2.compliance_description, t2.penal_consequences, t2.reference_link, t2.frequency_id,
+        t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,
+        t2.duration,t2.format_file, t2.format_file_size,
+        (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration_type
+     from tbl_statutory_mappings as t1
+         inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+         inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
+     where t1.statutory_mapping_id = map_id and t2.compliance_id like comp_id;
+
+     select t1.organisation_id, t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+         inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+     where t1.statutory_mapping_id = map_id;
+
+     SELECT t2.geography_id, t1.geography_name, t1.level_id, t1.parent_names, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
+        inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
+     where t2.statutory_mapping_id = map_id;
+
+    SELECT t1.parent_names, t1.statutory_name, t2.statutory_id
+        from tbl_statutories as t1
+        inner join tbl_mapped_statutories as t2 on t2.statutory_id = t1.statutory_id
+    where t2.statutory_mapping_id = map_id;
+
+END //
+
+DELIMITER ;
+
+

@@ -1422,3 +1422,31 @@ def save_approve_notify(db, text, user_id, comppliance_id):
         "values (%s, %s)"
     for u in users:
         db.execute(q1, [new_id, u["user_id"]])
+
+def get_statutory_mapping_edit(db, map_id, comp_id):
+    if comp_id is None :
+        comp_id = '%'
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 4)
+
+    if len(result) == 0 :
+        raise process_error("E087")
+    comp_info = result[0][0]
+    org_info = result[1]
+    geo_info = result[2]
+    statu_info = result[3]
+    org_list = []
+    for org in org_info :
+        org_list.append(knowledgetransaction.OrganisationList(
+            org["organisation_id"], org["organisation_name"]
+        ))
+    statu_list = []
+    for statu in statu_info :
+        statu_list.append(knowledgetransaction.StatutoryList(
+            statu["statutory_id"], "%s >> %s" % (statu["parent_names"], statu["statutory_name"])
+        ))
+    geo_list = []
+    for geo in geo_info :
+        geo_list.append(knowledgetransaction.)
+    data = knowledgetransaction.GetComplianceEditSuccess(comp_info)
+
+
