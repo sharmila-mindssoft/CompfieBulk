@@ -1,4 +1,4 @@
-
+var msg = message;
 var ListContainer = $('.tbody-domain-list1');
 var AddScreen = $("#domain-add");
 var ViewScreen = $("#domain-view");
@@ -12,16 +12,13 @@ var Remark = $('#remark');
 var RemarkView = $('.remark-view');
 var isAuthenticate;
 
-var Country = $("#countryselected");
-var Select_Box_Country = $('#selectboxview-country');
-var Country_li_list = $('#ulist-country');
-var Country_li_active = "active_selectbox_country";
+// multi select textbox
+var Countries = $("#countries");
 
 var Domain_name = $("#domainname");
 var Domain_id = $("#domainid");
 var SearchDomain = $("#search-domain-name");
 
-var Country_name = $("#countryname");
 var SearchCountry = $("#search-country-name");
 
 var Msg_pan = $(".error-message");
@@ -32,6 +29,7 @@ var item_selected = ''
 var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
 var Search_status_li = $('.search-status-li');
+var Country_ids = [];
 
 function DomainPage() {
     this._CountryList = [];
@@ -91,6 +89,7 @@ DomainPage.prototype.showList = function() {
     SearchDomain.val('');
     SearchCountry.val('');
     this.fetchDomain();
+    this.loadCountries();
 };
 DomainPage.prototype.showAddScreen = function() {
     ViewScreen.hide();
@@ -99,7 +98,6 @@ DomainPage.prototype.showAddScreen = function() {
     Domain_name.val('');
     this.displayMessage('');
     this._country_ids = [];
-    Country.val("0 Selected");
     Domain_name.focus();
 };
 DomainPage.prototype.renderList = function(d_data) {
@@ -228,6 +226,7 @@ DomainPage.prototype.fetchDomain = function() {
             t_this._DomainList = response.domains;
             t_this._CountryList = response.countries
             t_this.renderList(t_this._DomainList);
+            t_this.loadCountries(t_this._CountryList);
         }
         else {
             t_this.possibleFailures(error);
@@ -257,6 +256,15 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
 DomainPage.prototype.validate = function() {
     var checkLength = domainValidate();
     if (checkLength) {
+        if (Countries.val() == null) {
+            displayMessage(msg.country_required);
+            Countries.focus();
+            return false;
+        }else{
+            console.log("a:"+Countries.val())
+            Country_ids = Countries.val().map(Number);
+        }
+
         if (Domain_name.val().trim().length ==0) {
             this.displayMessage(msg.domainname_required);
         }
@@ -270,20 +278,25 @@ DomainPage.prototype.validate = function() {
 DomainPage.prototype.submitProcess = function() {
     d_id = parseInt(Domain_id.val());
     name = Domain_name.val().trim();
-    c_ids = this._country_ids;
+    c_ids = Country_ids;
     t_this = this;
     if (Domain_id.val() == '') {
+        console.log("country ids:"+c_ids);
         mirror.saveDomain(name, c_ids, function(error, response) {
-            if (error == null)
+            if (error == null){
+                t_this.displaySuccessMessage(message.save_success);
                 t_this.showList();
+            }
             else
                 t_this.displayMessage(error);
         });
     }
     else {
         mirror.updateDomain(d_id, name, c_ids, function(error, response) {
-            if (error == null)
+            if (error == null){
+                displaySuccessMessage(message.update_success);
                 t_this.showList();
+            }
             else
                 t_this.displayMessage(error);
         });
@@ -351,6 +364,18 @@ function key_search(mainList) {
 
     }
     return fList
+}
+
+DomainPage.prototype.loadCountries = function() {
+  Countries.empty();
+  $.each(d_page._CountryList, function (key, value) {
+    var optText = '<option></option>';
+/*    if($.inArray(d_page._CountryList[key].country_id, Country_ids) >= 0){
+      optText = '<option selected="selected"></option>';
+    }*/
+    Countries.append($(optText).val(d_page._CountryList[key].country_id).html(d_page._CountryList[key].country_name));
+  });
+  Countries.multiselect('rebuild');
 }
 
 function PageControls() {
@@ -456,29 +481,6 @@ function PageControls() {
         }
     });
 
-    Country.focus(function() {
-        Select_Box_Country.show();
-        Country_li_list.empty();
-        var str = '';
-        for (var i in d_page._CountryList) {
-            d = d_page._CountryList[i];
-            if (d.is_active == true) {
-                active = false;
-                if ($.inArray(d.country_id, d_page._country_ids) >= 0) {
-                    active = true;
-                }
-                else {
-                    active = false;
-                }
-                str += chkbox_select('ulist-country', d.country_id, d.country_name, active);
-            }
-        }
-        Country_li_list.append(str);
-    });
-
-    Country.keyup(function(e) {
-        onKeyUpDownSelect(e, 'ulist-country');
-    });
 
     $('.hideselect').mouseleave(function() {
         item_selected = '';
@@ -490,7 +492,9 @@ function PageControls() {
     });
 
     SubmitButton.click(function() {
-        d_page.submitProcess();
+        if (d_page.validate()) {
+            d_page.submitProcess();
+        }
     });
 
     AddButton.click(function() {
