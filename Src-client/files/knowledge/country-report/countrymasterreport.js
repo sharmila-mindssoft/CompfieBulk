@@ -1,4 +1,6 @@
 var countriesList;
+var searchList = []
+
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -34,25 +36,26 @@ function processSearch()
 {
   c_name = FilterCountry.val().toLowerCase();
 
-  usr_status = $('.search-status-li.active').attr('value');
+  if(c_name.length > 0){
+    usr_status = $('.search-status-li.active').attr('value');
 
-  searchList = []
 
   for(var i in countriesList){
-    data = countriesList[i];
+      data = countriesList[i];
 
-    data_c_name = data.country_name.toLowerCase();
-    data_is_active = data.is_active;
+      data_c_name = data.country_name.toLowerCase();
+      data_is_active = data.is_active;
 
-    if (
-      (~data_c_name.indexOf(c_name)))
-    {
-      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-        searchList.push(data);
+      if (
+        (~data_c_name.indexOf(c_name)))
+      {
+        if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+          searchList.push(data);
+        }
       }
     }
   }
-  loadCountriesList(searchList);
+  processPaging();
 }
 
 function loadCountriesList(countriesList) {
@@ -69,29 +72,13 @@ function loadCountriesList(countriesList) {
     $('.sno', clone).text(sno);
     $('.country-name', clone).text(countries.country_name);
     if (isActive == true){
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
+      $('.status', clone).text("Active")
     }
     else{
-      $('.status', clone).removeClass('fa-check text-success');
-      $('.status', clone).addClass('fa-times text-danger');
+      $('.status', clone).text("Inactive")
     }
 
-    $('.status').hover(function(){
-      showTitle(this);
-    });
     $('.tbody-country-list').append(clone);
-  }
-}
-
-//Status Title
-function showTitle(e){
-  if(e.className == "fa c-pointer status fa-times text-danger"){
-    e.title = 'Active';
-  }
-  else if(e.className == "fa c-pointer status fa-check text-success")
-  {
-    e.title = 'Inactive';
   }
 }
 
@@ -127,6 +114,7 @@ function renderControls(){
   });
 
   FilterBox.keyup(function() {
+      searchList = [];
       processSearch();
   });
 
@@ -180,7 +168,7 @@ function processPaging(){
   if (totalRecord == 0) {
     $('.table-country-list').empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
-    var clone4 = tableRow4.clone();
+    var clone4 = tableRow4.clone();processSearch
     $('.no_records', clone4).text('No Records Found');
     $('.table-country-list').append(clone4);
     PaginationView.hide();
@@ -197,14 +185,23 @@ function processPaging(){
 
 function pageData(on_current_page){
   data = [];
+  recordData = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  for(i=sno;i<countriesList.length;i++)
+  if(searchList.length > 0)
+  {
+    recordData = searchList;
+  }
+  else
+  {
+    recordData = countriesList;
+  }
+  for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    data.push(countriesList[i]);
+    data.push(recordData[i]);
     if(i == (recordLength-1))
     {
       break;
