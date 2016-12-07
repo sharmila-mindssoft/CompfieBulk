@@ -1,4 +1,5 @@
 var domainList;
+var searchList = [];
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -36,36 +37,35 @@ function processSearch()
 {
   c_name = FilterCountry.val().toLowerCase();
   d_name = FilterDomain.val().toLowerCase();
-
   usr_status = $('.search-status-li.active').attr('value');
 
-  searchList = []
-
-  for (var entity in domainList) {
-    dName = domainList[entity].domain_name;
-    cnames = domainList[entity].c_names;
-    dStatus = domainList[entity].is_active;
-
-    var flg = false;
-
-    if (c_name.length == 0)  {
-        flg = true;
-    }
-    else {
+  if(d_name.length > 0 || c_name.length > 0){
+    for (var entity in domainList) {
+      dName = domainList[entity].domain_name;
+      cnames = domainList[entity].c_names;
+      dStatus = domainList[entity].is_active;
+      var flg = false;
+      if (c_name.length == 0)  {
+          flg = true;
+      }
+      else {
         for (var c in cnames) {
-            if (~cnames[c].toLowerCase().indexOf(c_name)){
-                flg = true;
-                continue;
-            }
+          if (~cnames[c].toLowerCase().indexOf(c_name)){
+              flg = true;
+              continue;
+          }
         }
-    }
-    if ((~dName.toLowerCase().indexOf(d_name)) && flg == true) {
+      }
+      if ((~dName.toLowerCase().indexOf(d_name)) && flg == true) {
         if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == dStatus)){
             searchList.push(domainList[entity]);
         }
+      }
     }
   }
-  loadDomainList(searchList);
+  console.log("len:"+searchList.length)
+  console.log(searchList)
+  processPaging();
 }
 
 function loadDomainList(domainList) {
@@ -83,12 +83,10 @@ function loadDomainList(domainList) {
       $('.domain-name', cloneRow).text(v.domain_name);
 
       if (v.is_active == true){
-          $('.status', cloneRow).removeClass('fa-times text-danger');
-          $('.status', cloneRow).addClass('fa-check text-success');
+          $('.status', cloneRow).text("Active")
       }
       else{
-          $('.status', cloneRow).removeClass('fa-check text-success');
-          $('.status', cloneRow).addClass('fa-times text-danger');
+          $('.status', cloneRow).text("Inactive")
       }
 
       $('.status').hover(function(){
@@ -145,6 +143,7 @@ function renderControls(){
   });
 
   FilterBox.keyup(function() {
+      searchList = [];
       processSearch();
   });
 
@@ -215,14 +214,24 @@ function processPaging(){
 
 function pageData(on_current_page){
   data = [];
+  recordData = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  for(i=sno;i<domainList.length;i++)
+
+  if(searchList.length > 0)
+  {
+    recordData = searchList;
+  }
+  else
+  {
+    recordData = domainList;
+  }
+  for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    data.push(domainList[i]);
+    data.push(recordData[i]);
     if(i == (recordLength-1))
     {
       break;
