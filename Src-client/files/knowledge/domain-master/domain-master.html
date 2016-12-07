@@ -1,5 +1,7 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
+<!-- Multiselect -->
+<link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 
 <div class="container" id="domain-view">
   <div class="row">
@@ -16,8 +18,8 @@
     <div class="col-sm-3"> </div>
     <div class="col-sm-6">
       <div class="card-box table-responsive">
-        <div class="col-sm-12">
-          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+        <div class="col-sm-12 no-padding">
+          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
             <thead>
               <tr>
                 <th>#</th>
@@ -29,14 +31,14 @@
               <tr>
                 <td></td>
                 <td>
-                  <div class="form-group col-sm-12 no-padding m-b-0">
+                  <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
                     <input type="text" class="form-control input-sm filter-text-box"
                     placeholder="Domain" id="search-domain-name" />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
-                  <div class="form-group col-sm-12 no-padding m-b-0">
+                  <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
                     <input type="text" class="form-control input-sm filter-text-box"
                     placeholder="Country Name" id="search-country-name" />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -44,7 +46,7 @@
                 </td>
                 <td></td>
                 <td align="center">
-                  <div class="btn-group">
+                  <div class="btn-group m-t-10 m-b-10">
                       <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                           <i id="search-status" class="fa">All</i>
                           <span class="caret"></span>
@@ -69,6 +71,7 @@
 </div>
 <div class="container" id="domain-add">
   <div class="row">
+    <div  id="animationSandbox">
     <div class="col-sm-3"></div>
     <div class="col-sm-6">
       <div class="portlet">
@@ -91,28 +94,28 @@
               <div class="form-group">
                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
                 <div class="col-sm-6 controls">
-                  <input type="text" class="input-box icon-autocomplete fieldvalue" id="countryselected" readonly="readonly" tabindex="1">
-                  <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
-                    <ul id="ulist-country" class="hideselect" style="width:85%;"></ul>
-                  </div>
+                  <select  id="countries" class="form-control input-sm example-multiple" multiple="multiple">
+                  </select>
                 </div>
               </div>
               <div class="form-group has-feedback">
                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain Name
                 <span class="mandatory">*</span></label>
-                <div class="col-sm-6 controls">
+                <div class="col-sm-6">
                   <input type="text" id="domainname" autofocus="autofocus" class="form-control input-sm" value="" maxlength="50" tabindex="2">
                   <input type="hidden" id="domainid" value="">
                 </div>
               </div>
-              <div class="form-group text-center">
-                <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit" tabindex="3"> Submit </button>
+              <div class="form-group m-b-0">
+                <center>
+                <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit" tabindex="3"> Submit </button></center>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </div>
 <div id="templates">
@@ -149,6 +152,8 @@
 </div>
 <script type="text/javascript" src="/script/domain-master/domainmaster.js"></script>
 
+<!-- Multiselect -->
+<script src="/js/multiselect/bootstrap-multiselect.js"></script>
 <!-- <script type="text/javascript">
     $('#countries').multiselect();
     $('#domains').multiselect();
@@ -165,5 +170,7 @@
         });
     });
 </script>
+
+<script src="/js/custombox/custombox.min.js"></script>
 
 {% endblock %}
