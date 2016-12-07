@@ -68,6 +68,7 @@ api_params = {
     'geography_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'parent_ids': {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'mapping': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
+    'statutory_map': {'type': 'TEXT', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
     'geography': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'industry_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},

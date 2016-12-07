@@ -159,8 +159,9 @@ function RenderInput() {
     };
 
     this.loadCounty = function() {
-        this.resetField();
+        // this.resetField();
         Country.empty();
+        t_this = this;
 
         $.each(COUNTY_INFO, function(ke, val) {
             if (val.is_active == false)
@@ -181,12 +182,13 @@ function RenderInput() {
                 $('#c'+val.c_id + ' i').addClass("fa-check");
             });
             $('.name-holder', cObject).text(val.c_name);
+            Country.append(cObject);
             if(_renderinput.country_id == val.c_id)
             {
                 $('#c'+val.c_id).addClass('active');
                 $('#c'+val.c_id + ' i').addClass("fa-check");
             }
-            Country.append(cObject);
+
         });
     };
 
@@ -373,6 +375,7 @@ function RenderInput() {
             $('.sname-holder', liObject).on('click', function() {
                 $('.statutory_levelvalue #dv'+v.l_position).val('');
                 $('.statutory_levelvalue #dvid'+v.l_position).val('');
+                $('.statutory_levelvalue #dvpid'+v.l_position).val('');
                 var _s_names = [];
                 var _s_pids = [];
                 _renderinput.s_id = v.s_id;
@@ -398,9 +401,13 @@ function RenderInput() {
                 _renderinput.renderStatuNames(v.s_id, v.l_position);
             });
             $('.edit-icon', liObject).on('click', function() {
+                var pid = v.p_ids[v.p_ids.length - 1];
+                if (v.l_position == 1) {
 
+                }
                 $('.statutory_levelvalue #dv'+v.l_position).val(v.s_name);
-                $('.statutory_levelvalue #dvid'+v.l_position).val(v.s_name);
+                $('.statutory_levelvalue #dvid'+v.l_position).val(v.s_id);
+                $('.statutory_levelvalue #dvpid'+v.l_position).val(pid);
             });
             $('#sname', liObject).text(v.s_name);
             $('#tbody-statutory-level .statutory_levelvalue #snl'+v.l_position).append(liObject)
@@ -484,6 +491,9 @@ function RenderInput() {
             $('.bottomfield .snameid', slObject).attr(
                 'id', 'dvid' + v.l_position
             );
+            $('.bottomfield .snamepid', slObject).attr(
+                'id', 'dvpid' + v.l_position
+            );
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
@@ -506,10 +516,11 @@ function RenderInput() {
             $('.bottomfield .statut-add', slObject).on(
                 'click', function(){
                 new_value = $('#dv'+ v.l_position).val();
+                s_id = $('#dvid'+v.l_position).val();
+                alert(s_id);
                 _fetchback.saveStautory(
                     v.l_id, new_value, v.l_position
                 );
-                $('#dv'+ v.l_position).val('');
             });
 
             $('#tbody-statutory-level').append(slObject);
@@ -833,10 +844,14 @@ function FetchBack() {
         );
     };
 
+    this.getMapDatabyId = function(id, fetch_type) {
+
+    }
+
     this.changeStatus = function(m_id, sts) {
         fetch.changeStatutoryMappingStatus(m_id, sts, function(status, response) {
-            if (staus != null) {
-                displayMsg(status);
+            if (status != null) {
+                possibleFailure(status);
             }
             else {
                 this.getMappedList(0, 0);
@@ -846,7 +861,14 @@ function FetchBack() {
 
     this.updateStatutory = function(s_name, s_id, l_position) {
         fetch.updateStatutory(s_id, s_name, function(status, response){
-
+            if (status != null) {
+                possibleFailure(status);
+            }
+            else {
+                $('#dv'+ v.l_position).val('');
+                $('#dvid'+ v.l_position).val('');
+                $('#dvpid'+ v.l_position).val('');
+            }
         })
     };
 
@@ -876,6 +898,9 @@ function FetchBack() {
                 }
                 else {
                     // load statutory list
+                    $('#dv'+ v.l_position).val('');
+                    $('#dvid'+ v.l_position).val('');
+                    $('#dvpid'+ v.l_position).val('');
                     _fetchback.getStatuMaster(l_position, function() {
                         pid = p_ids[p_ids.length - 1];
                         _renderinput.renderStatuNames(pid, l_position);
@@ -931,7 +956,7 @@ function ListPage() {
                 $('.comp_edit', row).attr('title', 'Edit');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
                 $('.comp_edit', row).on('click', function() {
-                    _listPage.displayEdit(v.comp_id);
+                    _listPage.displayComplianceEdit(v.comp_id);
                 });
                 rowObjec.append(row);
             });
@@ -951,7 +976,7 @@ function ListPage() {
             $('.map_edit', crow).attr('title', 'Client Here to Edit');
             $('.map_edit', crow).addClass('fa-pencil text-primary');
             $('.map_edit', crow).on('click', function() {
-                _listPage.displayEdit(v.m_id);
+                _listPage.displayMappingEdit(v.m_id);
             });
             if (v.is_active == true){
                 $('.map_status', crow).addClass("fa-check text-success");
@@ -978,9 +1003,12 @@ function ListPage() {
         });
     };
 
-    this.displayEdit = function(map_id, comp_id) {
-        // differentiate compliance edit and whole edit
+    this.displayMappingEdit = function(map_id) {
+        alert(map_id);
     };
+    this.displayComplianceEdit = function(comp_id) {
+        // Individual compliance edit
+    }
 
     this.show = function() {
         CURRENT_TAB = 1;
@@ -998,6 +1026,11 @@ function ListPage() {
 //
 function ViewPage() {
     this.showFirstTab = function(){
+
+        console.log(_renderinput.country_id);
+        console.log(_renderinput.domain_id);
+        console.log(_renderinput.org_ids);
+        console.log(_renderinput.nature_id);
         _renderinput.loadCounty();
     };
     this.validateFirstTab = function() {
