@@ -354,7 +354,7 @@ TEMPLATE_PATHS = [
     # Techno User Transaction
     (
         "/knowledge/assign-statutory",
-        "files/knowledge/assign-statutory/assignstatutory.html",
+        "files/knowledge/assign-statutory/assign-statutory.html",
         None, {}
     ),
     # Techno reports
