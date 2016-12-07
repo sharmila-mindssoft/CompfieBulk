@@ -833,7 +833,7 @@ list-style-type:none; line-height:25px;
   padding-left: 0px;
   position: absolute;
   width: 94%;
-  z-index: 1;
+  z-index: 999;
 }
 .ac-textbox ul li {
   font-size: 0.8em;

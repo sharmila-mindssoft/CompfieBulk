@@ -152,8 +152,7 @@ function validateAuthentication(){
     displayMessage(msg.password_required);
     CurrentPassword.focus();
     return false;
-  }
-  else {
+  } else {
     validateMaxLength('password', password, "Password");
   }
   mirror.verifyPassword(password, function(error, response) {
@@ -256,14 +255,17 @@ function activate(element, id, type, country, level) {
   var chkstatus = $(element).attr('class');
   if (chkstatus == 'list' + level + ' active') {
     $(element).removeClass('active');
+    $(element).find('i').remove();
     for (var i = level + 1; i <= 10; i++) {
       $('#ulist' + i).empty();
     }
   } else {
     $(type).each(function (index, el) {
       $(el).removeClass('active');
+      $(el).find('i').remove();
     });
     $(element).addClass('active');
+    $(element).append('<i class="fa fa-check pull-right"></i>');
     load(id, level, country);
   }
 }
@@ -345,7 +347,7 @@ function saverecord1(j, e) {
   if (data == 13 || data == undefined) {
     var checkLength = geographyValidate($('#datavalue' + j).val().trim());
     if (checkLength) {
-      displayMessage('');
+      //displayMessage('');
       var levelstage = $('#level' + j).val();
       var glm_id = $('#glmid' + j).val();
       var datavalue = $('#datavalue' + j).val().trim();
@@ -369,7 +371,7 @@ function saverecord1(j, e) {
         displayMessage(msg + message.shouldnot_empty);
       } else {
         function onSuccess(response) {
-          displayMessage(message.record_added);
+          displaySuccessMessage(message.record_added);
           $('#datavalue' + j).val('');
           reload(last_geography_id, last_level, $('#country').val());
         }
@@ -538,7 +540,7 @@ function updaterecord(j, e) {
         displayMessage(msg + message.shouldnot_empty);
       } else {
         function onSuccess(response) {
-          displayMessage(message.record_updated);
+          displaySuccessMessage(message.record_updated);
           GetGeographies();
           $('#geography-view').show();
           $('#geography-add').hide();
