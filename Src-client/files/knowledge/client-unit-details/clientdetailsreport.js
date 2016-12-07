@@ -647,7 +647,7 @@ $('#businessgroupsval').keyup(function (e) {
     }
     console.log(bg_grp.length)
     commonAutoComplete(
-      e, BusinessGroup, BusinessGroupVal, text_val,
+      e, ACBusinessGroup, BusinessGroup, text_val,
       bg_grp, "business_group_name", "business_group_id", function (val) {
         onAutoCompleteSuccess(BusinessGroupVal, BusinessGroup, val);
     }, condition_fields, condition_values);

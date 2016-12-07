@@ -1283,13 +1283,13 @@ class RequestFormat(object):
 
 class MappingApproveInfo(object):
     def __init__(
-        self, mapping_id, country_id, domain_id,
+        self, mapping_id, country_name, domain_name,
         nature_name, organisations, mapping_text,
         compliance_list
     ):
         self.mapping_id = mapping_id
-        self.country_id = country_id
-        self.domain_id = domain_id
+        self.country_name = country_name
+        self.domain_name = domain_name
         self.nature_name = nature_name
         self.organisations = organisations
         self.mapping_text = mapping_text
@@ -1298,19 +1298,19 @@ class MappingApproveInfo(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "m_id", "c_id", "d_id",
+            "m_id", "c_name", "d_name",
             "s_n_name", "org_names",
             "map_text", "comp_list"
         ])
         mapping_id = data.get("m_id")
-        country_id = data.get("c_id")
-        domain_id = data.get("d_id")
+        country_name = data.get("c_name")
+        domain_name = data.get("d_name")
         nature_name = data.get("s_n_name")
         organisations = data.get("org_namees")
         mapping_text = data.get("map_text")
         compliance_list = data.get("comp_lists")
         return MappingApproveInfo(
-            mapping_id, country_id, domain_id,
+            mapping_id, country_name, domain_name,
             nature_name, organisations, mapping_text,
             compliance_list
         )
@@ -1318,8 +1318,8 @@ class MappingApproveInfo(object):
     def to_structure(self):
         return {
             "m_id": self.mapping_id,
-            "c_id": self.country_id,
-            "d_id": self.domain_id,
+            "c_name": self.country_name,
+            "d_name": self.domain_name,
             "s_n_name": self.nature_name,
             "org_names": self.organisations,
             "map_text": self.mapping_text,

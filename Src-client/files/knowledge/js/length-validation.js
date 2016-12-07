@@ -354,6 +354,7 @@ function clientUserValidate() {
 
 var max_length = {
   'countryname': 50,
+  'domainname': 50,
   'employeename': 50,
   'employeeid': 50,
   'email_id': 100,

@@ -320,7 +320,7 @@ def check_duplicate_compliance_name(db, request_frame):
             compliance_name = c.compliance_task
             compliance_id = c.compliance_id
             statutory_provision = c.statutory_provision
-            q = "SELECT count(t1.compliance_task) " + \
+            q = "SELECT count(t1.compliance_task) compliance_cnt" + \
                 " FROM tbl_compliances t1 INNER JOIN " + \
                 " tbl_statutory_mappings t2 on " + \
                 " t1.statutory_mapping_id = t2.statutory_mapping_id " + \
@@ -339,7 +339,7 @@ def check_duplicate_compliance_name(db, request_frame):
                 row = db.select_one(q, val)
             else:
                 row = db.select_one(q, val)
-            if row[0] > 0:
+            if row["compliance_cnt"] > 0:
                 compliance_names.append(compliance_name)
     if len(compliance_names) > 0:
         return list(set(compliance_names))
@@ -354,27 +354,23 @@ def save_statutory_mapping(db, data, created_by):
     domain_id = data.domain_id
     nature_id = data.statutory_nature_id
     compliances = data.compliances
-    statutory_mapping = ', '.join(data.mappings)
+    statutory_mapping = json.dumps(data.mappings)
     created_on = get_date_time()
     is_active = 1
     if data.tr_type == 1 :
         is_approve = 0
     else:
         is_approve = 1
-
-    mapping_column = [
-        "country_id", "domain_id",
-        "statutory_nature_id",
-        "is_active", "is_approved",
-        "created_by", "created_on"
-    ]
     mapping_value = [
         int(country_id), int(domain_id),
         int(nature_id), int(is_active), is_approve,
-        int(created_by), str(created_on)
+        int(created_by), str(created_on), statutory_mapping
     ]
-    statutory_mapping_id = db.insert(
-        tblStatutoryMappings, mapping_column, mapping_value
+    q = "INSERT INTO tbl_statutory_mappings (country_id, domain_id, " + \
+        " statutory_nature_id, is_active, is_approved, created_by, created_on, statutory_mapping) values " + \
+        " (%s, %s, %s, %s, %s, %s, %s, %s)"
+    statutory_mapping_id = db.execute_insert(
+        q, mapping_value
     )
     if statutory_mapping_id is False:
         raise process_error("E018")
@@ -395,16 +391,14 @@ def save_statutory_mapping(db, data, created_by):
         save_statutory_statutories_id(
             db, statutory_mapping_id, data.statutory_ids, created_by, True
         )
-        notification_log_text = "New statutory mapping has been created %s " + \
-            "with following compliances %s" % (
-                statutory_mapping, ",".join(names)
+        names = ", ".join(names)
+        text = "New statutory mapping has been created %s for the following compliances %s" % (
+                str(statutory_mapping), names
             )
+
         link = "/knowledge/approve-statutory-mapping"
-        save_notifications(
-            db, notification_log_text, link,
-            domain_id, country_id, created_by,
-            user_id=None, user_cat_id=3
-        )
+        save_messages(db, 3, "Statutory Mapping", text, link, created_by)
+
         action = "New statutory mappings added"
         db.save_activity(created_by, 10, action)
         return True
@@ -468,7 +462,7 @@ def save_compliance(
             # values.extend([0, 0, 0, 0])
             pass
 
-        elif compliance_frequency == 4:
+        elif compliance_frequency == 5:
             if duration is not None and duration_type is not None:
                 columns.extend(["duration", "duration_type_id"])
                 values.extend([duration, duration_type])
@@ -476,6 +470,8 @@ def save_compliance(
             if repeats_every is not None and repeats_type is not None :
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
+
+        print values
         compliance_id = db.insert(table_name, columns, values)
         if compliance_id is False:
             raise process_error("E019")
@@ -539,14 +535,14 @@ def save_statutory_statutories_id(
 
 
 def save_notifications(
-    db, notification_text, link,
+    db, message_heading, notification_text, link,
     domain_id, country_id, current_user, user_id, user_cat_id
 ):
     # internal notification
 
     notification_id = db.insert(
-        tblNotifications, ["message_text", "link"],
-        [notification_text, link]
+        "tbl_messages", ["user_category_id", "message_heading", "message_text", "link"],
+        [user_cat_id, message_heading, notification_text, link]
     )
     if notification_id is False:
         return
@@ -1387,20 +1383,28 @@ def save_approve_mapping(db, user_id, data):
                 d.country_name, d.domain_name, d.mapping_text, d.compliance_task
             )
             # updated notification
-            m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
-                "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
-            msg_id = db.execute_insert(m1, [4, "Statutory Mapping", str(text), d.compliance_id, user_id, get_date_time()])
 
-            if msg_id is False or msg_id == 0 :
-                raise fetch_error()
-            m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
-            db.execute(m2 , [msg_id, d.updated_by])
+            save_messages(db, 4, "Statutory Mapping", text, d.compliance_id, user_id)
+
             if d.approval_status_id == 3 :
                 save_approve_notify(db, text, user_id, d.compliance_id)
         return True
     except Exception, e :
         print e
         raise fetch_error()
+
+def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
+    m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
+        "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
+    msg_id = db.execute_insert(m1, [
+        user_cat_id, message_head, message_text, link, created_by, get_date_time()]
+    )
+
+    if msg_id is False or msg_id == 0 :
+        raise fetch_error()
+    m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
+    db.execute(m2 , [msg_id, created_by])
+
 
 def save_approve_notify(db, text, user_id, comppliance_id):
     users = db.call_proc("sp_tbl_users_to_notify", [3])

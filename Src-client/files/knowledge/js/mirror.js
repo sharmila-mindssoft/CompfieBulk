@@ -565,15 +565,12 @@ function initMirror() {
     ];
     apiRequest('knowledge_master', request, callback);
   }
-  function updateStatutory(sId, lId, name, pIds, pNames, callback) {
+  function updateStatutory(sId, name, callback) {
     var request = [
       'UpdateStatutory',
       {
         's_id': sId,
-        's_l_id': lId,
         's_name': name,
-        'p_ids': pIds,
-        'p_names': pNames
       }
     ];
     apiRequest('knowledge_master', request, callback);
@@ -2007,6 +2004,22 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserDomainReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id,
+        "bg_id": bg_id,
+        "le_id": le_id,
+        "d_id": d_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   function getLegalEntityClosureData(callback){
     callerName = 'techno_transaction';
     var request = [
@@ -2326,8 +2339,8 @@ function initMirror() {
     getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
     getMessages: getMessages,
     getStatutoryNotifications: getStatutoryNotifications,
-    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus
-
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+    getReassignUserDomainReportData: getReassignUserDomainReportData
   };
 }
 var mirror = initMirror();

@@ -251,7 +251,7 @@ def parse_optional_int_list(x, length=0, int_length=0):
     return parse_int_list(x, length, int_length)
 
 
-def parse_values(field_name, param, val):
+def parse_values(field_name, param, val, type="To"):
     _type = param.get('type')
     _length = param.get('length')
     _is_optional = param.get('is_optional')
@@ -263,6 +263,13 @@ def parse_values(field_name, param, val):
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
+            if len(val) == 0 :
+                raise expectation_error(
+                    "a string with max length(%s) for %s" % (
+                        _length, field_name
+                    ),
+                    val
+                )
             val = parse_custom_string(val, _length)
         else:
             val = parse_optional_custom_string(val, _length)
@@ -368,7 +375,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
             val = parse_EnumType(_module_name, _class_name, val)
 
         else:
-            val = parse_values(field_name, param, val)
+            val = parse_values(field_name, param, val, "parse")
         if(
             val is not None and
             _validation_method is not None and
@@ -394,7 +401,6 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        # print field_name, param
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
         _type = param.get('type')

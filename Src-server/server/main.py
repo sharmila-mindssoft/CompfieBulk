@@ -421,10 +421,10 @@ def renderTemplate(pathname, code=None):
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = set_path(url)
+                new_url += "?v=%s" % (time.time())
             else:
                 new_url = url
 
-                new_url += "?v=%s" % (time.time())
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
         return data

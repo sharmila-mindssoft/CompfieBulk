@@ -185,7 +185,7 @@ $('#btn-submit').click(function () {
           $('#country-add').hide();
           $('#ctry-view').show();
           $('#search-country-name').val('');
-          displayMessage(message.save_success);
+          displaySuccessMessage(message.save_success);
           initialize();
         }
         function onFailure(error) {
@@ -206,7 +206,7 @@ $('#btn-submit').click(function () {
         function onSuccess(response) {
           $('#country-add').hide();
           $('#ctry-view').show();
-          displayMessage(message.update_success);
+          displaySuccessMessage(message.update_success);
           initialize();
         }
         function onFailure(error) {
