@@ -1430,23 +1430,64 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
 
     if len(result) == 0 :
         raise process_error("E087")
-    comp_info = result[0][0]
+
+    comp_info = result[0]
     org_info = result[1]
     geo_info = result[2]
     statu_info = result[3]
     org_list = []
     for org in org_info :
-        org_list.append(knowledgetransaction.OrganisationList(
-            org["organisation_id"], org["organisation_name"]
-        ))
+        org_list.append(org["organisation_id"])
     statu_list = []
     for statu in statu_info :
-        statu_list.append(knowledgetransaction.StatutoryList(
-            statu["statutory_id"], "%s >> %s" % (statu["parent_names"], statu["statutory_name"])
-        ))
+        statu_list.append(statu["statutory_id"])
     geo_list = []
     for geo in geo_info :
-        geo_list.append(knowledgetransaction.)
-    data = knowledgetransaction.GetComplianceEditSuccess(comp_info)
+        geo_list.append(geo["geography_id"])
+
+    compliance_list = []
+    country_id = None
+    domain_id = None
+    nature_id = None
+    mapping_id = None
+    for c in comp_info :
+        mapping_id = c["statutory_mapping_id"]
+        country_id = c["country_id"]
+        domain_id = c["domain_id"]
+        nature_id = c["statutory_nature_id"]
+        date_list = []
+        statutory_dates = c["statutory_dates"]
+        if statutory_dates is not None :
+            statutory_dates = json.loads(statutory_dates)
+            date_list = []
+            for date in statutory_dates:
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+        else :
+            date_list = None
+        summary = make_summary(date_list, c["frequency_id"], c)
+        compliance_list.append(knowledgetransaction.ComplianceList(
+            c["compliance_id"], c["statutory_provision"],
+            c["compliance_task"], c["document_name"],
+            c["compliance_description"], c["penal_consequences"],
+            bool(c["is_active"]),
+            c["frequency_id"], date_list, c["repeats_type_id"],
+            c["repeats_every"], c["duration_type_id"],
+            c["duration"], c["format_file"],
+            summary, c["reference_link"]
+        ))
+
+    data = knowledgetransaction.GetComplianceEditSuccess(
+        mapping_id, country_id, domain_id, nature_id,
+        org_list, statu_list, compliance_list,
+        geo_list
+    )
+
+    return data
 
 

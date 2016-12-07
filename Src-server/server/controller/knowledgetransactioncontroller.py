@@ -13,7 +13,8 @@ from server.database.knowledgetransaction import (
     statutory_mapping_list,
     approve_statutory_mapping_list,
     get_compliance_details,
-    save_approve_mapping
+    save_approve_mapping,
+    get_statutory_mapping_edit
 )
 
 from server.database.knowledgemaster import (
@@ -107,6 +108,11 @@ def process_knowledge_transaction_request(request, db):
         result = process_approve_statutory_mapping(db, request_frame, user_id)
         logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
 
+    elif type(request_frame) is knowledgetransaction.GetComplianceEdit:
+        logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
+        result = process_get_compliance_Edit(db, request_frame, user_id)
+        logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
+
     return result
 
 
@@ -175,7 +181,6 @@ def process_get_approve_mapping_filters(db, user_id):
     )
 
 def process_get_approve_statutory_mappings(db, request_frame, user_id):
-    user_id = 4
     statutory_mappings = approve_statutory_mapping_list(db, user_id, request_frame)
     return knowledgetransaction.GetApproveStatutoryMappingSuccess(
         statutory_mappings
@@ -196,3 +201,9 @@ def process_approve_statutory_mapping(db, request_frame, user_id):
     result = save_approve_mapping(db, user_id, data)
     if result:
         return knowledgetransaction.ApproveStatutoryMappingSuccess()
+
+def process_get_compliance_Edit(db, request, user_id):
+    comp_id = request.compliance_id
+    m_id = request.mapping_id
+    comp_info = get_statutory_mapping_edit(db, m_id, comp_id)
+    return comp_info

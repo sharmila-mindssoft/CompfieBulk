@@ -6142,7 +6142,7 @@ CREATE PROCEDURE `sp_tbl_statutory_mapping_by_id`(
 BEGIN
     select t1.statutory_mapping_id, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
         t2.compliance_task, t2.is_active,
-        t4.statutory_nature_name,
+        t1.statutory_nature_id,
         t2.statutory_provision,
         t2.compliance_description, t2.penal_consequences, t2.reference_link, t2.frequency_id,
         t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,

@@ -362,16 +362,15 @@ class ApproveComplianceList(object):
             ]
         )
         compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_mobile_ApproveCompliance(
-            compliances)
+        # compliances = parse_structure_VectorType_RecordType_mobile_ApproveCompliance(
+        #     compliances)
         return ApproveCompliance(
             compliances
         )
 
     def to_inner_structure(self):
         return {
-            "compliances": to_structure_VectorType_RecordType_mobile_ApproveCompliance(
-                self.compliances)
+            "compliances": self.compliances
         }
 
 
@@ -448,6 +447,21 @@ class GetComplianceInfo(Request):
             "comp_id": self.compliance_id
         }
 
+class ApproveStatutoryMapping(Request):
+    def __init__(self, statutory_mappings):
+        self.statutory_mappings = statutory_mappings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["s_mappings"])
+        statutory_mappings = data.get("s_mappings")
+        return ApproveStatutoryMapping(statutory_mappings)
+
+    def to_inner_structure(self):
+        return {
+            "s_mappings": self.statutory_mappings,
+        }
+
 def _init_Request_class_map():
     classes = [
         GetVersions,
@@ -459,7 +473,8 @@ def _init_Request_class_map():
         GetTrendChartData,
         SaveRegistrationKey,
         GetApproveStatutoryMappings,
-        GetComplianceInfo
+        GetComplianceInfo,
+        ApproveStatutoryMapping
 
     ]
     class_map = {}
@@ -1172,6 +1187,18 @@ class GetApproveStatutoryMappingSuccess(Response):
             "map_list": self.approve_mappings
         }
 
+class ApproveStatutoryMappingSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ApproveStatutoryMappingSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class GetComplianceInfoSuccess(Response):
     def __init__(
@@ -1246,7 +1273,8 @@ def _init_Response_class_map():
         SaveRegistrationKeySuccess,
         InvalidRegistrationKey,
         GetApproveStatutoryMappingSuccess,
-        GetComplianceInfoSuccess
+        GetComplianceInfoSuccess,
+        ApproveStatutoryMappingSuccess
 
     ]
     class_map = {}

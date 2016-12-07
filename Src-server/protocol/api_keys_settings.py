@@ -526,7 +526,7 @@ api_params = {
     'map_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingApproveInfo'},
     'comp_lists': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingComplianceInfo'},
     'approv_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'MappingApproveInfo'},
-
+    'comp_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'ComplianceList'},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
