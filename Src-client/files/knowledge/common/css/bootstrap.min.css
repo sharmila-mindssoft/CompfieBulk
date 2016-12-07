@@ -2735,7 +2735,7 @@ input[type=search] {
 .radio input[type=radio],
 .radio-inline input[type=radio] {
     position: absolute;
-    margin-top: 4px\9;
+    margin-top: 2px\9;
     margin-left: -20px
 }
 .checkbox+.checkbox,

@@ -372,16 +372,14 @@ function validateAuthentication(){
     displayMessage(msg.password_required);
     CurrentPassword.focus();
     return false;
-  }
-  else {
+  } else {
     validateMaxLength('password', password, "Password");
   }
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
       isAuthenticate = true;
       Custombox.close();
-    }
-    else {
+    } else {
       possibleFailures(error);
     }
   });
@@ -411,8 +409,7 @@ function submitUserData(){
       displayMessage(msg.employeename_required);
       Emp_name.focus();
       return false;
-    }
-    else {
+    } else {
       validateMaxLength('employeename', Emp_name.val(), "Employee name");
     }
 
@@ -420,8 +417,7 @@ function submitUserData(){
       displayMessage(msg.employeeid_required);
       Emp_code.focus();
       return false;
-    }
-    else {
+    } else {
       validateMaxLength('employeeid', Emp_code.val(), "Employee id");
     }
 
@@ -429,8 +425,7 @@ function submitUserData(){
       displayMessage(msg.emailid_required);
       Email_id.focus();
       return false;
-    }
-    else {
+    } else {
       validateMaxLength('email_id', Email_id.val(), "Email id");
       var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
       if (reg.test(Email_id.val().trim()) == false) {
@@ -515,8 +510,7 @@ function submitUserData(){
           if (error == null) {
             displaySuccessMessage(msg.update_success);
             showList();
-          }
-          else {
+          } else {
             possibleFailures(error);
           }
         });

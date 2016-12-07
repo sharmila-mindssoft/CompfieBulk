@@ -53,7 +53,7 @@ api_params = {
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},
-    'form_url': {'type': 'STRING', 'length': 250, 'validation_method': is_url, 'is_optional': False},
+    'form_url': {'type': 'TEXT', 'length': 250, 'validation_method': is_url, 'is_optional': False},
     'parent_menu': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
@@ -68,6 +68,7 @@ api_params = {
     'geography_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'parent_ids': {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'mapping': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
+    'statutory_map': {'type': 'TEXT', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
     'geography': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'industry_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -92,11 +93,15 @@ api_params = {
 
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'reference': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'refer': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'c_task': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'description': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'descrip': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'doc_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'f_f_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', 'class_name': 'FileList'},
     'p_consequences': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'p_cons': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'f_id': {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
     'frequency_id': {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': True},
     'statu_dates': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', 'class_name': 'StatutoryDate'},
@@ -112,21 +117,28 @@ api_params = {
     'duration_type': {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
     'repeat_type_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
     'repeat_type': {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
-    'frequency': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+    'frequency': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'freq': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'summary': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     's_m_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'a_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
     'r_reason': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    's_provision': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    's_pro': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'n_text': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     's_mappings': {'type': 'VECTOR_TYPE', 'module_name': 'knowledgetransaction', 'class_name': 'ApproveMapping'},
     'tr_type': {'type': 'INT', 'length': 2, 'validation_method': None, 'is_optional': False},
+    'c_by': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'c_on': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'u_by': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'u_on': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'map_text': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
 
     'compliance_frequency': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceFrequency'},
     'compliance_repeat_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceRepeatType'},
     'compliance_approval_status': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'StatutoryApprovalStatus'},
     'compliance_duration_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceDurationType'},
     'statu_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'core', 'class_name': 'StatutoryMapping'},
+    'approv_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'MappingApproveInfo'},
     'r_count': {'type': 'INT', 'length': 1000000, 'validation_method': None, 'is_optional': False},
     "industry_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "industry_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -405,7 +417,6 @@ api_params = {
     'notification_id': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     'notification_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'action': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'has_read': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     "from_date": {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     "to_date": {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
@@ -496,7 +507,26 @@ api_params = {
     'group_id_none': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "legalentity_closure": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technotransactions', "class_name": "LegalEntityClosure"},
     "closed_remarks": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    "messages": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "Message"},
+    'message_id': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
+    'message_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'message_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    "created_by": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
+    "created_on": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
+    "statutory_notifications": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "StatutoryNotification"},
+    'notification_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "level_1_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},
+
+    "knowledgeusers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'module_name': 'core', 'class_name': 'ChildUsers'},
+    'a_i_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'a_s_n_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'a_c_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'a_d_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'a_u_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'map_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingApproveInfo'},
+    'comp_lists': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingComplianceInfo'},
+    'approv_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'MappingApproveInfo'},
+    'comp_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'ComplianceList'},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
@@ -511,6 +541,7 @@ api_params['active'] = api_params.get('is_active')
 api_params['is_disable'] = api_params.get('is_active')
 api_params['is_remove'] = api_params.get('is_active')
 api_params['is_exists'] = api_params.get('is_active')
+api_params['is_common'] = api_params.get('is_active')
 api_params['is_admin'] = api_params.get('is_active')
 api_params['applicable'] = api_params.get('is_active')
 api_params['not_applicable'] = api_params.get('is_active')

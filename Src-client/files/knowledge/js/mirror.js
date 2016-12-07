@@ -42,6 +42,7 @@ function initMirror() {
   // }
   function clearSession() {
     delete window.sessionStorage.userInfo;
+    delete window.sessionStorage.MESSAGES
   }
   function getUserInfo() {
     var info = window.sessionStorage.userInfo;
@@ -181,7 +182,9 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        // alert(jqXHR["responseText"]);
+
+        console.log(textStatus, errorThrown);
+        console.log(jqXHR.responseText)
         callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);
@@ -564,15 +567,12 @@ function initMirror() {
     ];
     apiRequest('knowledge_master', request, callback);
   }
-  function updateStatutory(sId, lId, name, pIds, pNames, callback) {
+  function updateStatutory(sId, name, callback) {
     var request = [
       'UpdateStatutory',
       {
         's_id': sId,
-        's_l_id': lId,
         's_name': name,
-        'p_ids': pIds,
-        'p_names': pNames
       }
     ];
     apiRequest('knowledge_master', request, callback);
@@ -726,6 +726,16 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
+  function getStatutoryMappingsEdit(m_id, comp_id, callback) {
+    var request = [
+      'GetComplianceEdit',
+      {
+        "m_id": parseInt(m_id),
+        "comp_id": comp_id
+      }
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
   function changeStatutoryMappingStatus(mId, isActive, callback) {
     var request = [
       'ChangeStatutoryMappingStatus',
@@ -736,27 +746,53 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
-  function getApproveStatutoryMapings(callback) {
+  function getApproveStatutoryMapingsFilters(callback) {
     var request = [
-      'GetApproveStatutoryMappings',
+      'GetApproveStatutoryMappingsFilters',
       {}
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
-  function approveStatutoryList(sMId, sProvision, aStatus, reason, nText) {
-    var dict = {};
-    if (reason == '') {
-      reason = null;
+
+  function getApproveStatutoryMapings(cid, did, iid, nid, uid, callback) {
+    var request = [
+      'GetApproveStatutoryMappings',
+      {
+        "a_c_id": cid,
+        "a_d_id": did,
+        "a_i_id": iid,
+        "a_s_n_id": nid,
+        "a_u_id": uid
+      }
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
+
+  function getComplianceInfo(comp_id, callback) {
+    var request = [
+      'GetComplianceInfo',
+      {
+        "comp_id" : comp_id
+      }
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
+
+  function approveStatutoryList(cname, dname, sname, mapText, ctask, asid, remarks, mid, compid, is_common, updatedby) {
+    return {
+        "c_name": cname,
+        "d_name": dname,
+        "s_n_name": sname,
+        "map_text": mapText,
+        "c_task": ctask,
+        "a_s_id": asid,
+        "remarks": remarks,
+        "m_id": mid,
+        "comp_id": compid,
+        "is_common": is_common,
+        "u_by": updatedby,
     }
-    if (nText == '') {
-      nText = null;
-    }
-    dict.s_m_id = sMId;
-    dict.s_provision = sProvision;
-    dict.a_status = aStatus;
-    dict.r_reason = reason;
-    dict.n_text = nText;
-    return dict;
+
   }
   function approveStatutoryMapping(approvalList, callback) {
     var request = [
@@ -2092,6 +2128,45 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  /* Messages */
+  function getMessages(from_count, page_count, callback) {
+    callerName = 'general';
+    var request = [
+      'GetMessages',
+      {
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  /* Messages */
+  function getStatutoryNotifications(from_count, page_count, callback) {
+    callerName = 'general';
+    var request = [
+      'GetStatutoryNotifications',
+      {
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function updateStatutoryNotificationStatus(notification_id, user_id, has_read, callback) {
+    callerName = 'general';
+    var request = [
+      'UpdateStatutoryNotificationStatus',
+      {
+        'notification_id': notification_id,
+        'user_id': user_id,
+        'has_read': has_read
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2158,12 +2233,14 @@ function initMirror() {
     getStatutoryMappingsMaster: getStatutoryMappingsMaster,
     getStatutoryMappings: getStatutoryMappings,
     changeStatutoryMappingStatus: changeStatutoryMappingStatus,
+    getApproveStatutoryMapingsFilters: getApproveStatutoryMapingsFilters,
     approveStatutoryList: approveStatutoryList,
     approveStatutoryMapping: approveStatutoryMapping,
     getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
     filterData: filterData,
     getStatutoryMappingsReportData: getStatutoryMappingsReportData,
     getApproveStatutoryMapings: getApproveStatutoryMapings,
+    getComplianceInfo: getComplianceInfo,
     getSaveAdminUserGroupDict: getSaveAdminUserGroupDict,
     saveAdminUserGroup: saveAdminUserGroup,
     getUpdateAdminUserGroupDict: getUpdateAdminUserGroupDict,
@@ -2272,7 +2349,11 @@ function initMirror() {
     getClientAgreementReport: getClientAgreementReport,
     getDomainwiseAgreementReport: getDomainwiseAgreementReport,
     getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
-    getReassignUserDomainReportData: getReassignUserDomainReportData
+    getMessages: getMessages,
+    getStatutoryNotifications: getStatutoryNotifications,
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+    getReassignUserDomainReportData: getReassignUserDomainReportData,
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit
   };
 }
 var mirror = initMirror();

@@ -85,6 +85,7 @@ messages = {
     "E084": "There are no common geographical location among the selected units",
     "E085": "There are no common domains among the selected units",
     "E086": "There are no common organisations among the selected units",
+    "E087": "Invalid statutory mapping",
 }
 
 client_message = {

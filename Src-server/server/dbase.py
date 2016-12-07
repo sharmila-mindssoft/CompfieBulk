@@ -1,5 +1,4 @@
 from flaskext.mysql import MySQL
-from MySQLdb.cursors import DictCursor
 import logger
 from server.common import (convert_to_dict, get_date_time)
 from server.exceptionmessage import fetch_error, process_procedure_error
@@ -241,7 +240,11 @@ class Database(object):
                 logger.logQuery(self._for_client, "execute_insert")
                 cursor.execute(query)
             cursor.nextset()
-            return int(cursor.lastrowid)
+            no = int(cursor.lastrowid)
+            if no == 0 :
+                return False
+            else :
+                return no
         except Exception, e:
             print e
             # print query
@@ -494,6 +497,8 @@ class Database(object):
         try:
             n_id = int(self.execute_insert(query, values))
             return n_id
+            if n_id == 0 :
+                return False
         except Exception, e:
             print e
             # print query, values
@@ -738,7 +743,7 @@ class Database(object):
         self.close()
         self.connect()
 
-    def call_proc(self, procedure_name, args, columns=None):
+    def call_proc(self, procedure_name, args=None, columns=None):
         # columns no longer need here, so remove argument once removed from the reference place
         # args can be tuple/list e.g, (parm1, parm2)/[param1, param2]
         cursor = self.cursor()

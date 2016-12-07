@@ -243,7 +243,7 @@ TEMPLATE_PATHS = [
     # knowledge manager transaction
     (
         "/knowledge/approve-statutory-mapping",
-        "files/knowledge/approve-statutory-mapping/approvestatutorymapping.html",
+        "files/knowledge/approve-statutory-mapping/approve-statutory-mapping.html",
         None, {}
     ),
     # knowledge user master
@@ -354,7 +354,7 @@ TEMPLATE_PATHS = [
     # Techno User Transaction
     (
         "/knowledge/assign-statutory",
-        "files/knowledge/assign-statutory/assignstatutory.html",
+        "files/knowledge/assign-statutory/assign-statutory.html",
         None, {}
     ),
     # Techno reports
@@ -458,6 +458,16 @@ TEMPLATE_PATHS = [
     (
         "/knowledge/group-admin-registration-email",
         "files/knowledge/group-admin-registration-email/group-admin-registration-email.html",
+        None, {}
+    ),
+    (
+        "/knowledge/messages",
+        "files/knowledge/messages/messages.html",
+        None, {}
+    ),
+    (
+        "/knowledge/statutory-notifications",
+        "files/knowledge/statutorynotifications/statutorynotifications.html",
         None, {}
     )
 ]

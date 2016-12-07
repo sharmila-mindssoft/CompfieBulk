@@ -1,31 +1,23 @@
 import os
-# import time
 import json
 import traceback
-# import mimetypes
 import jinja2
+import time
 import mysql.connector.pooling
-from flask import Flask, request, send_from_directory, Response, render_template, g
+from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
 
-# import tornado.web
-# from tornado.web import StaticFileHandler
-# from user_agents import parse
-
 from lxml import etree
-# from datetime import timedelta
-# from basics.webserver import WebServer
-# from basics.ioloop import IOLoop
 from protocol import (
     admin, consoleadmin, clientadminsettings,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
-    clientcoordinationmaster
+    clientcoordinationmaster, mobile
 )
 # from server.database import KnowledgeDatabase
 import controller
-from server.dbase import BaseDatabase, Database
+from server.dbase import Database
 from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
@@ -45,6 +37,7 @@ from server.constants import (
 from server.templatepath import (
     TEMPLATE_PATHS
 )
+from server.exceptionmessage import fetch_error
 
 import logger
 
@@ -137,7 +130,6 @@ class API(object):
     def _send_response(
         self, response_data, status_code
     ):
-        print type(response_data)
         if type(response_data) is not str :
             data = response_data.to_structure()
             s = json.dumps(data, indent=2)
@@ -153,6 +145,11 @@ class API(object):
         try:
             data = request.get_json(force=True)
             # data = request.data
+            print data
+            print "\n"
+            print "\n"
+            print request_data_type
+
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -168,7 +165,8 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             # response.set_status(400)
             # response.send(str(e))
-            return None
+            return str(e)
+            # return None
 
     def handle_api_request(
         self, unbound_method, request_data_type
@@ -176,31 +174,26 @@ class API(object):
         self._ip_addess = request.remote_addr
         # print request.environ['REMOTE_ADDR']
 
-        if request_data_type == "knowledgeformat":
-            # request_data = request
-            pass
-        else:
-            request_data = self._parse_request(
-                request_data_type
-            )
-
-        if request_data is None:
-            return
-
         def respond(response_data):
             return self._send_response(
                 response_data, 200
             )
 
         try:
-            # db = BaseDatabase(
-            #     KNOWLEDGE_DB_HOST,
-            #     KNOWLEDGE_DB_PORT,
-            #     KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-            #     KNOWLEDGE_DATABASE_NAME
-            # )
-            # db.dbConfig(app)
-            # self._db_con = db.connect()
+            if request_data_type == "knowledgeformat":
+                # request_data = request
+                pass
+            else:
+                request_data = self._parse_request(
+                    request_data_type
+                )
+
+            if request_data is None:
+                raise ValueError("Request data is Null")
+            elif type(request_data) is str :
+                print "request_data is str"
+                raise ValueError(request_data)
+
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
@@ -208,18 +201,17 @@ class API(object):
             if response_data is None or type(response_data) is bool:
                 # print response_data
                 _db.rollback()
-            if type(response_data) != technomasters.ClientCreationFailed:
+                raise fetch_error()
+
+            elif type(response_data) != technomasters.ClientCreationFailed:
+                print "commit"
                 _db.commit()
             else:
                 _db.rollback()
-            # print response_data
             _db_con.close()
             return respond(response_data)
         except Exception, e:
-            # print "handle_api_request"
-            # print e
-            # print(traceback.format_exc())
-            # print ip_address
+            print "handle_api_request ", e
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
             # logger.logKnowledgeApi(ip_address, "")
@@ -294,9 +286,17 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        # print self._ip_addess
         return controller.process_login_request(request, db, self._ip_addess)
-        # return login.ResetPasswordSuccess()
+
+    @csrf.exempt
+    @api_request(login.Request)
+    def handle_mobile_login_request(self, request, db):
+        return controller.process_mobile_request(request, db, self._ip_addess)
+
+    @csrf.exempt
+    @api_request(mobile.RequestFormat)
+    def handle_mobile_request(self, request, db):
+        return controller.process_mobile_request(request, db, self._ip_addess)
 
     @api_request(admin.RequestFormat)
     def handle_admin(self, request, db):
@@ -330,21 +330,22 @@ class API(object):
     def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
+    @csrf.exempt
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getstatumaster(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getstatumaster(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getmappingmaster(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getmappingmaster(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getmapping(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getmapping(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
     @api_request(knowledgereport.RequestFormat)
     def handle_knowledge_report(self, request, db):
@@ -394,13 +395,15 @@ CSS_PATH = os.path.join(COMMON_PATH, "css")
 IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
+LOGO_PATH = os.path.join(ROOT_PATH, "Src-server", "server", "clientlogo")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
     ("/knowledge/js/<path:filename>", JS_PATH),
     ("/knowledge/images/<path:filename>", IMG_PATH),
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
-    ("/knowledge/script/<path:filename>", SCRIPT_PATH)
+    ("/knowledge/script/<path:filename>", SCRIPT_PATH),
+    ("/knowledge/clientlogo/<path:filename>", LOGO_PATH)
 ]
 
 def staticTemplate(pathname, filename):
@@ -422,13 +425,16 @@ def renderTemplate(pathname, code=None):
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
+            new_url += "?v=%s" % (time.time())
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = set_path(url)
+                new_url += "?v=%s" % (time.time())
             else:
                 new_url = url
+
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
         return data
@@ -469,7 +475,9 @@ def run_server(port):
             ("/knowledge/api/techno_transaction", api.handle_techno_transaction),
             ("/knowledge/api/techno_report", api.handle_techno_report),
             ("/knowledge/api/files", api.handle_format_file),
-            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master)
+            ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
+            ("/knowledge/api/mobile/login", api.handle_mobile_login_request),
+            ("/knowledge/api/mobile", api.handle_mobile_request)
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):
@@ -493,4 +501,6 @@ def run_server(port):
     settings = {
         "threaded": True
     }
-    app.run(host="127.0.0.1", port=port, **settings)
+    app.run(host="0.0.0.0", port=port, **settings)
+
+

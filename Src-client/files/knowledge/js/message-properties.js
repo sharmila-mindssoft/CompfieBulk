@@ -303,7 +303,9 @@ var message = {
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',
   'mobile_required': 'Mobile Number Required',
-  'invalid_password': 'Invalid Password'
+  'invalid_password': 'Invalid Password',
+  "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
+  "atleast_one_compliance_select": "Atleast one compliance should be select",
 };
 
 function clearMessage() {
