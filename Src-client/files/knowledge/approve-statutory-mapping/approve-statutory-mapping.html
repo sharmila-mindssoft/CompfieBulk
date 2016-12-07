@@ -160,7 +160,7 @@
             <option value="3">Approve & Notify</option>
             <option value="4">Reject</option>
           </select>
-      </td>
+      </td>r
       <td class="sm-reason-box">
           <textarea class="form-control input-sm sm-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
       </td>
@@ -185,7 +185,9 @@
   <table class="table-compliance-list">
       <tr>
         <td>&nbsp;</td>
-        <td class="compliacne_name"><a href="#"></a></td>
+        <td class="compliacne_name">
+          <a class="c-pointer"></a>
+        </td>
         <td class="status"></td>
         <td class="created_by"></td>
         <td class="updated_by"></td>
@@ -210,5 +212,55 @@
   </table>
 
 </div>
-<script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
+
+
+<div id="custom-modal" class="modal-demo box-width-600">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Compliance Details</h4>
+    <div class="custom-modal-text">
+    <div role="form">
+        <div class="table-responsive">
+            <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                <tbody>
+                  <tr class="text-left">
+                    <td width="40%">Statutory</td>
+                    <td width="60%" class="popup-statutory"></td>
+                  </tr>
+                  <tr class="text-left">
+                    <td>Statutory Nature</td>
+                    <td class="popup-statutorynature"></td>
+                  </tr>
+                  <tr class="text-left">
+                    <td>Compliance Task</td>
+                    <td class="popup-compliancetask"></td>
+                  </tr>
+                  <tr class="text-left">
+                    <td>Compliance Description</td>
+                    <td class="popup-description"></td>
+                  </tr>
+                  <tr class="text-left">
+                    <td>Penal Consequences</td>
+                    <td class="popup-penalconse"></td>
+                  </tr>
+                  <tr class="text-left">
+                    <td>Compliance Frequency</td>
+                    <td class="popup-frequency">Periodical</td>
+                  </tr>
+                  <tr class="text-left">
+                    <td>Compliance Occurrence</td>
+                    <td class="popup-occurance"></td>
+                  </tr>
+                  <tr class="text-left">
+                    <td>Applicable Location</td>
+                    <td class="popup-applicablelocation"></td>
+                  </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+ <script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
 {% endblock %}

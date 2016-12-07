@@ -134,7 +134,24 @@ function loadApprovalList() {
 
         var compliance_row = $("#templates .table-compliance-list tr");
         var clone2 = compliance_row.clone();
-        $(".compliacne_name", clone2).text(value.c_task);
+        $(".compliacne_name a", clone2).text(value.c_task);
+
+        $('.compliacne_name', clone2).on('click', function (e) {
+
+            mirror.getComplianceInfo(value.comp_id function(error, response) {
+                if (error == null) {
+                    Custombox.open({
+                        target: '#custom-modal',
+                        effect: 'contentscale',
+                    });
+                    e.preventDefault();
+                }
+                else {
+                  displayMessage(error);
+                }
+            });
+        });
+
         var status = "Active";
         if(value.is_active == false){
             status = "Inactive";
