@@ -138,8 +138,16 @@ function loadApprovalList() {
 
         $('.compliacne_name', clone2).on('click', function (e) {
 
-            mirror.getComplianceInfo(value.comp_id function(error, response) {
+            mirror.getComplianceInfo(value.comp_id, function(error, response) {
                 if (error == null) {
+                    $('.popup-statutory').text(response.s_pro);
+                    $('.popup-compliancetask').text(response.c_task);
+                    $('.popup-description').text(response.descrip);
+                    $('.popup-penalconse').text(response.p_cons);
+                    $('.popup-frequency').text(response.freq);
+                    $('.popup-occurance').text(response.summary);
+                    $('.popup-applicablelocation').text(response.locat);
+                    $('.popup-referencelink').text(response.refer);
                     Custombox.open({
                         target: '#custom-modal',
                         effect: 'contentscale',

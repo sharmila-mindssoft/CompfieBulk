@@ -313,7 +313,7 @@ def _init_Request_class_map():
         SaveStatutoryMapping, UpdateStatutoryMapping,
         ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
         ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
-        GetStatutoryMaster, GetApproveStatutoryMappingsFilters
+        GetStatutoryMaster, GetApproveStatutoryMappingsFilters, GetComplianceInfo
     ]
     class_map = {}
     for c in classes:
@@ -654,7 +654,7 @@ class GetComplianceInfoSuccess(Response):
         self.locations = locations
 
     @staticmethod
-    def parse_structure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "comp_id", "s_pro",
             "c_task", "descrip",
@@ -681,7 +681,7 @@ class GetComplianceInfoSuccess(Response):
             frequency, summary, reference, locations
         )
 
-    def to_structure(self):
+    def to_inner_structure(self):
         return {
             "comp_id": self.compliance_id,
             "s_pro": self.statutory_provision,

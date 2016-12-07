@@ -679,7 +679,12 @@ li.sortable-placeholder {
 }
 
 
-
+.box-width-500 {
+  width: 500px !important;
+}
+.box-width-560 {
+  width: 560px !important;
+}
 .box-width-600 {
   width: 600px !important;
 }

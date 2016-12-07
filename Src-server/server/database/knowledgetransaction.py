@@ -1334,18 +1334,24 @@ def get_compliance_details(db, user_id, compliance_id):
     else :
         c_name = c_info["document_name"] + " - " + c_info["compliance_task"]
 
-    statutory_dates = c_info["statutory_dates"]
-    statutory_dates = json.loads(statutory_dates)
     date_list = []
-    for date in statutory_dates:
-        s_date = core.StatutoryDate(
-            date["statutory_date"],
-            date["statutory_month"],
-            date["trigger_before_days"],
-            date.get("repeat_by")
-        )
-        date_list.append(s_date)
+
+    statutory_dates = c_info["statutory_dates"]
+
+    if statutory_dates is not None:
+        statutory_dates = json.loads(statutory_dates)
+        
+        for date in statutory_dates:
+            s_date = core.StatutoryDate(
+                date["statutory_date"],
+                date["statutory_month"],
+                date["trigger_before_days"],
+                date.get("repeat_by")
+            )
+            date_list.append(s_date)
     summary = make_summary(date_list, c_info["frequency_id"], c_info)
+
+
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
         c_name, c_info["compliance_description"],
