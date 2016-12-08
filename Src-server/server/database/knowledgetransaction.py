@@ -792,7 +792,7 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
         if compliance_frequency == 1:
             values.extend([0, 0, 0, 0])
 
-        elif compliance_frequency == 4:
+        elif compliance_frequency == 5:
             values.extend([duration, duration_type, 0, 0])
 
         else:
@@ -1430,6 +1430,7 @@ def save_approve_notify(db, text, user_id, comppliance_id):
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
+    print comp_id
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 4)
     print result
     if len(result) == 0 :
