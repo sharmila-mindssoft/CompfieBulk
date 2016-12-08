@@ -305,18 +305,23 @@ class ChangeClientGroupStatus(Request):
             "is_active": to_structure_Bool(self.is_active),
         }
 
+
 class GetClients(Request):
-    def __init__(self):
-        pass
+    def __init__(self, typelistedit):
+        self.typelistedit = typelistedit
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetClients()
+        data = parse_dictionary(data, ["typelistedit"])
+        typelistedit = data.get("typelistedit")
+        return GetClients(typelistedit)
 
     def to_inner_structure(self):
-        return {
+        data = {
+            "typelistedit": self.typelistedit
         }
+        return data
+
 
 class BUSINESS_GROUP(Request):
     def __init__(self, business_group_id, business_group_name):
@@ -339,6 +344,7 @@ class BUSINESS_GROUP(Request):
             "business_group_name": self.business_group_name,
         }
         return data
+
 
 class LEGAL_ENTITY(Request):
     def __init__(self, legal_entity_id, legal_entity_name):
@@ -410,6 +416,7 @@ class UnitDivision(object):
         }
         return data
 
+
 class UNIT(object):
     def __init__(
         self, unit_id, geography_id, unit_code, unit_name, unit_address,
@@ -429,7 +436,7 @@ class UNIT(object):
         data = parse_dictionary(data, [
                 "unit_id", "geography_id", "unit_code", "unit_name",
                 "address", "postal_code",  "d_ids",
-                "i_ids"
+                "i_ids_list"
             ]
         )
         print "inside class uint after append"
@@ -440,7 +447,7 @@ class UNIT(object):
         unit_address = data.get("address")
         postal_code = data.get("postal_code")
         domain_ids = data.get("d_ids")
-        industry_ids = data.get("i_ids")
+        industry_ids = data.get("i_ids_list")
         return UNIT(
             unit_id, geography_id, unit_code, unit_name, unit_address,
             postal_code, domain_ids, industry_ids

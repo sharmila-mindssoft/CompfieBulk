@@ -195,8 +195,7 @@ DomainPage.prototype.validateAuthentication = function() {
         this.displayMessage(msg.password_required);
         CurrentPassword.focus();
         return false;
-    }
-    else {
+    } else {
         validateMaxLength('password', password, "Password");
     }
     mirror.verifyPassword(password, function(error, response) {
@@ -263,8 +262,7 @@ DomainPage.prototype.validate = function() {
     if (checkLength) {
         if (Domain_name.val().trim().length ==0) {
             this.displayMessage(msg.domainname_required);
-        }
-        else {
+        } else {
             this.displayMessage('');
             return true;
         }
@@ -479,48 +477,6 @@ function PageControls() {
             }
         }
     });
-
-    /*Country.focus(function() {
-        Select_Box_Country.show();
-        Country_li_list.empty();
-        var str = '';
-        for (var i in d_page._CountryList) {
-            d = d_page._CountryList[i];
-            if (d.is_active == true) {
-                active = false;
-                if ($.inArray(d.country_id, d_page._country_ids) >= 0) {
-                    active = true;
-                }
-                else {
-                    active = false;
-                }
-                str += chkbox_select('ulist-country', d.country_id, d.country_name, active);
-            }
-        }
-        Country_li_list.append(str);
-    });*/
-
-    /*$('.btn-group').click(function (event) {
-        alert('k');
-    });
-
-    MultiSelect_Country.focus(function() {
-        MultiSelect_Country.empty();
-        var str = '';
-        for (var i in d_page._CountryList) {
-            d = d_page._CountryList[i];
-            if (d.is_active == true) {
-                active = false;
-                if ($.inArray(d.country_id, d_page._country_ids) >= 0) {
-                    active = true;
-                } else {
-                    active = false;
-                }
-                str += '<option value="'+ d.country_id +'" >'+ d.country_name +'</option>';
-            }
-        }
-        MultiSelect_Country.html(str).multiselect('refresh');
-    });*/
 
     Country.keyup(function(e) {
         onKeyUpDownSelect(e, 'ulist-country');

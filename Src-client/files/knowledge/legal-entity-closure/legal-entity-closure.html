@@ -1,7 +1,5 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-<!-- Custom Modal -->
-<link href="/files/client/common/css/custombox/custombox.min.css" rel="stylesheet" type="text/css" />
 
 <div class="container">
   <div class="row">
@@ -16,30 +14,50 @@
         <!-- /.panel-heading -->
         <div class="panel-body">
           <div class="dataTable_wrapper">
-            <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+            <table  class="table table-striped dt-responsive nowrap highlight m-b-0 js-filterable" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th align="center" width="2%">#</th>
+                  <th width="15%">Country</th>
                   <th width="15%">Group</th>
                   <th width="15%">Business Group</th>
-                  <th width="15%">Country</th>
                   <th width="15%">Legal Entity</th>
                   <th width="10%" class="text-center">Status</th>
                   <th width="10%" class="text-center">Closure</th>
                 </tr>
                 <tr class="odd gradeX">
                   <td align="center"></td>
-                  <td><input type="text" class="form-control input-sm"></td>
-                  <td><input type="text" class="form-control input-sm"></td>
-                  <td><input type="text" class="form-control input-sm"></td>
-                  <td><input type="text" class="form-control input-sm"></td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Country"  />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Group" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Business Group" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Legal Entity" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
                   <td align="center">
                       <div class="btn-group">
                           <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                               All
                               <span class="caret"></span>
                           </button>
-                          <ul class="dropdown-menu">
+                          <ul class="dropdown-menu msdropdown" id="status_select">
                               <li><a href="#">All</a></li>
                               <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
                               <li><a href="#"><i class="fa fa-times text-danger"></i> Inactive</a></li>
@@ -52,7 +70,7 @@
                               All
                               <span class="caret"></span>
                           </button>
-                          <ul class="dropdown-menu">
+                          <ul class="dropdown-menu" id="status_select">
                               <li><a href="#">All</a></li>
                               <li><a href="#">Close</a></li>
                               <li><a href="#">Closed</a></li>
@@ -62,45 +80,7 @@
                   </td>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td align="center">1</td>
-                  <td>RG Group</td>
-                  <td>RG Business Group</td>
-                  <td>India</td>
-                  <td>RG Legal Entity 01</td>
-                  <td class="icon-3x text-center">
-                      <i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i>
-                  </td>
-                  <td class="text-center">
-                    <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a"> Close</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">2</td>
-                  <td>RG Group</td>
-                  <td>RG Business Group</td>
-                  <td>Singapore</td>
-                  <td>RG Legal Entity 02</td>
-                  <td class="icon-3x text-center">
-                      <i class="fa fa-times text-danger c-pointer" data-toggle="tooltip" title="Click here to deactive"></i>
-                  </td>
-                  <td class="text-center">Closed
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">3</td>
-                  <td>VRM Group</td>
-                  <td>VRM Business Group</td>
-                  <td>India</td>
-                  <td>VRM Legal Entity 01</td>
-                  <td class="icon-3x text-center">
-                      <i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i>
-                  </td>
-                  <td class="text-center">
-                    <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a"> Reactivate</a>
-                  </td>
-                </tr>
+            <tbody class="tbody-le-closure-list">
               </tbody>
             </table>
           </div>
@@ -110,32 +90,8 @@
   </div>
 </div>
 </div>
-<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="mySmallModalLabel">Closure</h4>
-            </div>
-            <div class="modal-body">
-              <form role="form">
-                  <div class="form-group">
-                      <label for="exampleInputPassword">Password</label>
-                      <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
-                  </div>
-                  <div class="form-group">
-                      <label for="exampleInputReason">Reason</label>
-                      <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
-                  </div>
-                  <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
-              </form>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
-<!-- Modal -->
-<div id="custom-modal" class="modal-demo">
+<div id="custom-modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
@@ -144,17 +100,39 @@
         <form role="form">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
+                <input type="password" class="form-control"  id="techno_pwd" placeholder="Password">
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason</label>
-                <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
+                <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason" id="remarks"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light"  id="update_status">Submit</button>
+
         </form>
     </div>
 </div>
 
-<!-- Custom Modal -->
-<script src="/files/client/common/js/custombox/custombox.min.js"></script>
+<div id="templates">
+  <table>
+    <tr>
+      
+     <td class="sno" align="center"></td>
+      <td class="Country"></td>
+      <td class="Group"></td>
+      <td class="Business-group"></td>
+      <td class="legal-entity" id="le_id" align="center">
+        <span class="le_id" style="display: none;"></span>
+      </td>
+      <td class="icon-3x text-center">
+          <i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i>
+      </td>
+      <td class="text-center closure-sel">
+        <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="close"> Close</a>
+          <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="reactive"> Reactivate</a>
+          <span class="closed" style="display: none;"></span>
+      </td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/files/knowledge/legal-entity-closure/legal-entity-closure.js"></script>
 {% endblock %}

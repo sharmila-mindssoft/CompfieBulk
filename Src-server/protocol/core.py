@@ -3702,3 +3702,22 @@ class ChildUsers(object):
             "user_id": self.user_id,
             "employee_name": self.employee_name,
         }
+
+
+class DomainIndustryList(object):
+    def __init__(self, domain_id, industry_id):
+        self.domain_id = domain_id
+        self.industry_id = industry_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["domain_id", "industry_id"])
+        domain_id = data.get("domain_id")
+        industry_id = data.get("industry_id")
+        return DomainIndustryList(domain_id, industry_id)
+
+    def to_structure(self):
+        return {
+            "domain_id": self.domain_id,
+            "industry_id": self.industry_id,
+        }

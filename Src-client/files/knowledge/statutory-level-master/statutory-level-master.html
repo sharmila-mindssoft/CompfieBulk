@@ -36,11 +36,19 @@
                 <div class="col-lg-6">
                   <div class="form-group has-feedback">
                     <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Domain Name <span class="mandatory">*</span></label>
-                    <div class="col-sm-6 controls">
+                    <!--div class="col-sm-6 controls">
                       <input type="text" class="form-control input-sm" placeholder="Enter Domain Name" id="domainval" tabindex="2">
                       <input type="hidden" id="domain">
                       <div id="ac-domain" class="ac-textbox default-display-none">
                         <ul style="width: 85%"></ul>
+                      </div>
+                    </div-->
+                    <div class="col-sm-6 controls">
+                      <input type="text" id="domainval" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
+                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                      <input id="domain" type="hidden" >
+                      <div id="ac-domain" class="ac-textbox default-display-none">
+                        <ul style="width:94%;"></ul>
                       </div>
                     </div>
                   </div>
@@ -126,7 +134,7 @@
             </div>
           </div>
           <div class="form-group text-center">
-            <button class="btn btn-primary waves-effect waves-light" type="submit"id="submit" tabindex="12"> Submit </button>
+            <button class="btn btn-primary waves-effect waves-light m-t-5 m-b-5" type="submit"id="submit" tabindex="12"> Submit </button>
             <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/geography-level-master/list'"> Cancel </button> -->
           </div>
         </div>

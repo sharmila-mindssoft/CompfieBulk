@@ -679,7 +679,12 @@ li.sortable-placeholder {
 }
 
 
-
+.box-width-500 {
+  width: 500px !important;
+}
+.box-width-560 {
+  width: 560px !important;
+}
 .box-width-600 {
   width: 600px !important;
 }
@@ -828,7 +833,7 @@ list-style-type:none; line-height:25px;
   padding-left: 0px;
   position: absolute;
   width: 94%;
-  z-index: 1;
+  z-index: 999;
 }
 .ac-textbox ul li {
   font-size: 0.8em;
@@ -961,7 +966,7 @@ list-style-type:none; line-height:25px;
   cursor: pointer;
 }
 .custom-modal-text div{
-  width:360px;
+/*  width:360px;*/
 }
 
 .pw-hint span {
@@ -998,4 +1003,12 @@ list-style-type:none; line-height:25px;
 
 .portlet-heading .zmdi-close {
   cursor: pointer;
+}
+
+.tbody-unit-list tr td{
+  vertical-align: top !important;
+}
+
+.l-h-30{
+  line-height: 30px;
 }

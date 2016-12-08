@@ -803,11 +803,11 @@ CREATE PROCEDURE `sp_business_group_save`(
 BEGIN
     INSERT INTO tbl_business_groups
     (
-        client_id, country_id, business_group_name, created_by, created_on,
+        client_id, business_group_name, created_by, created_on,
         updated_by, updated_on
     ) VALUES
     (
-        groupid, countryid, businessgroupname, session_user,
+        groupid, businessgroupname, session_user,
         current_time_stamp, session_user, current_time_stamp
     );
 END //
@@ -1078,7 +1078,7 @@ DROP PROCEDURE IF EXISTS `sp_client_domains_by_group_id`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_domains_by_group_id`(
-    IN clientid INT(11)
+    IN clientid INT(11), userId INT(11)
 )
 BEGIN
     select t1.client_id, t1.legal_entity_id, t2.domain_id
@@ -1180,7 +1180,7 @@ CREATE PROCEDURE `sp_client_users_count`(
 BEGIN
     SELECT count(user_id)+1 as count FROM tbl_client_users
     WHERE client_id = group_id and
-    legal_entity_id = entity_id;
+    legal_entity_ids = entity_id;
 END //
 
 DELIMITER ;
@@ -1197,7 +1197,7 @@ CREATE PROCEDURE `sp_legal_entities_space_used`(
     IN le_id INT(11)
 )
 BEGIN
-    SELECT used_space FROM tbl_legal_entities
+    SELECT used_file_space FROM tbl_legal_entities
     WHERE legal_entity_id=le_id;
 END //
 
@@ -1271,37 +1271,11 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
-    DECLARE user_category INT(11);
-    SELECT user_category_id INTO user_category
-    FROM tbl_user_login_details WHERE user_id = userid;
-    IF user_category in (1,2) then
-        select client_id, group_name, is_active from tbl_client_groups
-        order by group_name ASC;
-    ELSEIF user_category = 5 then
-        select client_id, group_name, is_active from tbl_client_groups
-        where client_id in(
-            SELECT client_id FROM tbl_user_clients WHERE
-            user_id = userid
-        ) order by group_name ASC;
-    ELSEIF user_category = 6 then
-        select client_id, group_name, is_active from tbl_client_groups
-        where client_id in(
-            SELECT client_id FROM tbl_legal_entities
-            WHERE legal_entity_id in (
-                SELECT legal_entity_id FROM tbl_user_legalentity WHERE
-                user_id = userid
-            )
-        ) order by group_name ASC;
-    ELSE
-        select client_id, group_name, is_active from tbl_client_groups
-        where client_id in (
-            SELECT client_id FROM tbl_units
-            WHERE unit_id in (
-                SELECT unit_id FROM tbl_user_units WHERE
-                user_id = userid
-            )
-        ) order by group_name ASC;
-    END IF;
+    select client_id, short_name from tbl_client_groups
+    where client_id in
+    (select t1.client_id from tbl_client_groups t1
+    inner join tbl_user_legalentity t2 on t1.client_id = t2.client_id
+    and t2.user_id = userId);
 END //
 
 DELIMITER ;
@@ -2846,14 +2820,11 @@ CREATE PROCEDURE `sp_countries_for_unit`(IN session_user INT(11))
 BEGIN
     select t4.country_id, t4.country_name, t3.business_group_id, t1.client_id
     from
-    tbl_user_legalentity as t1,
-    tbl_legal_entities as t2,
-    tbl_business_groups as t3,
-    tbl_countries as t4
+    tbl_user_legalentity as t1
+    inner join tbl_legal_entities as t2 on t2.client_id = t1.client_id
+    left join tbl_business_groups as t3 on t3.business_group_id = t2.business_group_id
+    inner join tbl_countries as t4 on t4.country_id = t2.country_id
     where
-    t4.country_id = t2.country_id and
-    t3.business_group_id = t2.business_group_id and
-    t2.client_id = t1.client_id and
     t1.user_id = session_user;
 END//
 DELIMITER ;
@@ -3418,7 +3389,7 @@ BEGIN
     concat(t2.employee_code," - ", t2.employee_name) as employee_name
     from tbl_user_mapping t1
     INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id
-    WHERE t1.user_category_id=8 and t1.parent_user_id = session_user;
+    WHERE t1.parent_user_id = session_user;
     SELECT user_id, country_id FROM tbl_user_countries;
     SELECT user_id, domain_id FROM tbl_user_domains;
 END //
@@ -4754,7 +4725,7 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_tbl_units_getCountries`(
-in clientId int(11))
+in clientId int(11), userId int(11))
 BEGIN
     select t1.country_id
     from
@@ -5838,8 +5809,6 @@ BEGIN
 END//
 
 DELIMITER ;
-
-
 -- --------------------------------------------------------------------------------
 -- Get geography levels from master
 -- --------------------------------------------------------------------------------
@@ -6177,3 +6146,52 @@ END //
 DELIMITER ;
 
 
+
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
+
+DELIMITER //
+
+CREATE  PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(in userId INT(11))
+BEGIN
+    select t2.unit_id, t2.client_id, t2.business_group_id,
+    t2.legal_entity_id, t2.division_id,
+    t2.geography_id, t2.unit_code,t2.country_id,
+    t2.unit_name, t2.address, t2.postal_code,
+    t2.is_approved, t2.is_closed as is_active,
+    t4.legal_entity_name as l_entity,
+    (select business_group_name from tbl_business_groups
+        where business_group_id = t2.business_group_id) as b_group,
+    (select division_name from tbl_divisions
+        where division_id = t2.division_id) as division,
+    (select category_name from tbl_categories
+        where category_id = t2.category_id) as category_name,
+    t9.short_name as group_name,
+    t8.country_name, t2.category_id, t2.remarks
+    from
+    tbl_user_legalentity as t1,
+    tbl_units as t2,
+    tbl_legal_entities as t4,
+    tbl_countries as t8,
+    tbl_client_groups as t9
+    where
+    t9.client_id = t2.client_id and
+    t8.country_id = t2.country_id and
+    t4.legal_entity_id = t2.legal_entity_id and
+    t2.legal_entity_id = t1.legal_entity_id and
+    t2.client_id = t1.client_id and
+    t1.user_id = userId
+    order by group_name, b_group, l_entity, country_name;
+
+    select t3.unit_id, t3.domain_id, t3.organisation_id
+    from
+    tbl_user_legalentity as t1,
+    tbl_units as t2,
+    tbl_units_organizations as t3
+    where
+    t3.unit_id = t2.unit_id and
+    t2.legal_entity_id = t1.legal_entity_id and
+    t2.client_id = t1.client_id and
+    t1.user_id =userId;
+END //
+
+DELIMITER ;

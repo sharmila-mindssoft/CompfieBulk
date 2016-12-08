@@ -336,7 +336,7 @@ def _init_Request_class_map():
         ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
         ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
         GetStatutoryMaster, GetApproveStatutoryMappingsFilters,
-        GetComplianceEdit
+        GetComplianceEdit, GetComplianceInfo
     ]
     class_map = {}
     for c in classes:

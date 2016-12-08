@@ -73,7 +73,8 @@ INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-un
 INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail-login-trace', 43, null);
-INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 49, NULL);
+INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
+
 
 
 -- My Account
