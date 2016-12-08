@@ -1667,10 +1667,9 @@ def get_unit_details_for_user(db, user_id, request):
 def return_unit_details(result):
     unitdetails = []
     for r in result[0]:
-        print r
         unit_id = int(r.get("unit_id"))
         client_id = int(r.get("client_id"))
-        business_group_id = int(r.get("business_group_id"))
+        business_group_id = r.get("business_group_id")
         legal_entity_id = int(r.get("legal_entity_id"))
         country_id = int(r.get("country_id"))
         division_id = int(r.get("division_id"))
