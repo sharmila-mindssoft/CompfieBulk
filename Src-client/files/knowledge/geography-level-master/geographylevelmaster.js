@@ -314,9 +314,6 @@ function loadLevels() {
   loadLevels();
 });*/
 
-$('.input-sm').on('input', function (e) {
-  this.value = isAlphabetic($(this));
-});
 $('#insertvalue').on('input', function (e) {
   this.value = isAlphabetic($(this));
 });
