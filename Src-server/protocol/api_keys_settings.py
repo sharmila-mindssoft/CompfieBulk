@@ -214,7 +214,7 @@ api_params = {
     'unit_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'division_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'unit_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'unit_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'unit_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
@@ -280,6 +280,7 @@ api_params = {
     "unit_industries_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitIndustries"},
     "d_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "i_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    'i_ids_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', 'class_name': 'DomainIndustryList'},
     "cg": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     "cl_id": {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "d": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DIVISION"},
@@ -523,6 +524,7 @@ api_params = {
     'map_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingApproveInfo'},
     'comp_lists': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingComplianceInfo'},
     'approv_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'MappingApproveInfo'},
+    "typelistedit": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
 
 }
 

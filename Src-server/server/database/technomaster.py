@@ -1027,7 +1027,6 @@ def is_unit_exists_under_country(db, country, client_id):
         return False
 
 
-
 def update_client_logo(db, logo, client_id):
     column = "logo_url"
     condition = "client_id = %s "
@@ -1228,14 +1227,12 @@ def save_category(
     return catg_id
 
 
-def save_unit (
+def save_unit(
     db, client_id, units, business_group_id, legal_entity_id,
     country_id, session_user
 ):
     print "inside save db"
-    print units
-    print type(units)
-    print units[0]
+
     current_time_stamp = str(get_date_time())
     columns = [
         "client_id", "geography_id", "unit_code", "unit_name",
@@ -1251,8 +1248,8 @@ def save_unit (
     unit_names = []
     int_i = 0
     while int_i < len(units):
-        #domain_ids = ",".join(str(x) for x in units[int_i].domain_ids)
-        #industry_ids = ",".join(str(x) for x in unit[int_i].industry_ids)
+        # domain_ids = ",".join(str(x) for x in units[int_i].domain_ids)
+        # industry_ids = ",".join(str(x) for x in unit[int_i].industry_ids)
         print int_i
         vals = [
             client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
@@ -1283,7 +1280,7 @@ def save_unit (
             vals.append(legal_entity_id)
 
         values_list.append(vals)
-        print vals
+        print "Valuesof append----", vals
 
     result = db.bulk_insert(tblUnits, columns, values_list)
     if result is False:
@@ -1293,42 +1290,42 @@ def save_unit (
     db.save_activity(session_user, 19, action)
 
     max_unit_id = None
-    unit_length = 0
+    # unit_length = 0
     rows = db.call_proc("sp_tbl_units_max_unitid", ())
     for id in rows:
         if(int(id["max_id"]) > 0):
             max_unit_id = int(id["max_id"])
     columns = ["unit_id", "domain_id", "organisation_id"]
+
     if len(units) > 3:
         unit_id_start = int(len(units))/3
-        unit_length = int(len(units))/3
     else:
         unit_id_start = 1
-        unit_length = 1
-    print "unit length"
-    print unit_id_start
-    print max_unit_id
+
     values_list = []
     unit_id = None
     i = 1
     j = 0
     while j < len(units):
-        domain_ids = ",".join(str(x) for x in units[j].domain_ids)
-        industry_ids = ",".join(str(x) for x in units[j].industry_ids)
+        d_i_id = units[j].industry_ids
+
         j = j + 3
         if unit_id_start == 1:
             unit_id = max_unit_id
-        else :
+        else:
             unit_id = (max_unit_id - unit_id_start) + i
             i = i + 1
-        print"unit_id"
-        print unit_id
-        vals = [unit_id, domain_ids, industry_ids]
-        values_list.append(vals)
+
+        for c in d_i_id:
+            vals = [unit_id, c.domain_id, c.industry_id]
+            values_list.append(vals)
 
     result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
     if result is True and result_1 is True:
         return True
+    else:
+        print "unit is not created"
+
 
 def update_unit(db, client_id, units, session_user):
     print "inside update db"
@@ -1363,7 +1360,7 @@ def update_unit(db, client_id, units, session_user):
 
         int_i = int_i + 1
         if units[int_i].get("div_id") is not None:
-            #print units[int_i].get("div_id")
+            # print units[int_i].get("div_id")
             vals.append(units[int_i].get("div_id"))
         else:
             vals.append(None)
@@ -1379,18 +1376,16 @@ def update_unit(db, client_id, units, session_user):
         print vals
 
     result = db.bulk_update(tblUnits, columns, values_list, conditions)
-    print "result"
-    print result
     if result is False:
         raise process_error("E057")
 
     action = "Updated following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, 19, action)
 
-    print "unit ids"
-    print unit_ids
     if result is True:
-        delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (unit_ids,))
+        for i in unit_ids:
+            delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", i)
+            print delete_res
         columns = ["unit_id", "domain_id", "organisation_id"]
         values_list = []
         unit_id = None
@@ -1479,6 +1474,7 @@ def get_countries_for_unit(db, user_id):
     ]
     return results
 
+
 def get_domains_for_unit(db, user_id):
     rows = db.call_proc("sp_domains_for_user", (user_id,))
 
@@ -1490,6 +1486,7 @@ def get_domains_for_unit(db, user_id):
         ) for d in rows
     ]
     return results
+
 
 def get_business_groups_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientbusinessgroup", (user_id,))
@@ -1530,18 +1527,19 @@ def return_divisions(divisions):
         results.append(division_obj)
     return results
 
+
 def return_unit_geography_levels(data):
     geography_levels = []
     for d in data:
-        #country_id = d["country_id"]
+        # country_id = d["country_id"]
         level = core.UnitGeographyLevel(
             d["level_id"], d["level_position"], d["level_name"], d["country_id"]
         )
         #_list = geography_levels.get(country_id)
-        #if _list is None:
-        #    _list = []
+        # if _list is None:
+        #     _list = []
         #_list.append(level)
-        #geography_levels[country_id] = _list
+        # geography_levels[country_id] = _list
         geography_levels.append(level)
     return geography_levels
 
@@ -1574,14 +1572,15 @@ def get_geographies_for_unit(db, user_id):
                 d["country_id"],
                 bool(d["is_active"])
             )
-            #country_id = d["country_id"]
+            # country_id = d["country_id"]
             #_list = geographies.get(country_id)
-            #if _list is None:
+            # if _list is None:
             #    _list = []
             #_list.append(geography)
-            #geographies[country_id] = _list
+            # geographies[country_id] = _list
             geographies.append(geography)
     return geographies
+
 
 def get_client_industries(db, user_id,):
     columns = [
@@ -1635,6 +1634,7 @@ def return_units(units):
         ))
     return results
 
+
 def get_units_for_user_assign(db, user_id):
     result = db.call_proc(
         "sp_units_by_user_assign", (user_id,))
@@ -1653,11 +1653,14 @@ def return_units_assign(units):
     return results
 
 
-def get_unit_details_for_user(db, user_id):
+def get_unit_details_for_user(db, user_id, request):
     print "--", user_id
+    typelistedit = request.typelistedit
     where_condition_val = [user_id]
-    result = db.call_proc_with_multiresult_set(
-        "sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
+    if typelistedit == "edit":
+        result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
+    else:
+        result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
     return return_unit_details(result)
 
 
@@ -1701,6 +1704,7 @@ def return_unit_details(result):
     print unitdetails
     return unitdetails
 
+
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
     result = db.call_proc("sp_tbl_unit_getuserclients", (user_id,))
     return return_group_companies_with_max_unit_count(db, result, user_id)
@@ -1721,12 +1725,14 @@ def return_group_companies_with_max_unit_count(db, group_companies, user_id):
         ))
     return results
 
+
 def get_client_countries_for_unit(db, client_id, user_id):
     rows = db.call_proc(
         "sp_tbl_units_getCountries", (client_id, user_id)
     )
     country_ids = [int(r["country_id"]) for r in rows]
     return country_ids
+
 
 def get_next_auto_gen_number(db, group_name=None, client_id=None):
     if group_name is None:
@@ -1744,6 +1750,7 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
     unit_code_start_letters = group_name[:2].upper()
 
     unit_code_start_letters = "%s%s" % (unit_code_start_letters, "%")
+    print "unit_code_start_letters--", unit_code_start_letters
     condition_val = [unit_code_start_letters, client_id]
     rows = db.call_proc("sp_tbl_unit_getunitcode", condition_val)
     auto_generated_unit_codes = []

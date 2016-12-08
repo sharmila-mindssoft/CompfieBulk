@@ -1,8 +1,5 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-<!-- Multiselect -->
-<link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-
 <div class="container" id="clientunit-view">
     <div class="row">
         <div class="col-lg-12">
@@ -110,7 +107,7 @@
                         Client Unit
                     </h3>
                     <div class="portlet-widgets">
-                        <a id="btn-clientunit-cancel" >
+                        <a id="btn-clientunit-cancel" class="c-pointer" >
                             <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                         </a>
                     </div>
@@ -123,22 +120,22 @@
                                 <div class="form-group">
                                     <label class=" col-sm-4 control-label">Group <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="hidden" id="client-unit-id" value=""><span class="labelgroup"></span>
+                                        <input type="hidden" id="client-unit-id" value=""><span class="l-h-30 labelgroup"></span>
                                         <Select id="group-select" class="form-control input-sm" onchange="loadBusinessGroups();" tabindex="1" autofocus="autofocus" >
-                                          <option values="">Select</option>
+                                          <option value="">Select</option>
                                         </Select>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-4 control-label">Country <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text"  class="form-control input-sm" name="country-name" autofocus="autofocus" tabindex="3" maxlength="50" id="country-name" autofocus="autofocus">
+                                        <input type="text"  class="form-control input-sm" name="country-name" autofocus="autofocus" tabindex="3" maxlength="50" id="country-name" autofocus="autofocus" onchange="loadLegalEntity();">
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" name="country-id" id="country-id" value="">
                                         <div id="ac-country" class="ac-textbox default-display-none">
                                             <ul style="width:94%;"></ul>
                                         </div>
-                                        <span class="labelcountry"></span>
+                                        <span class="l-h-30 labelcountry"></span>
                                     </div>
                                 </div>
                             </div>
@@ -148,7 +145,9 @@
                                     <div class="col-sm-6">
                                         <Select id="businessgroup-select" class="form-control input-sm" tabindex="2" autofocus="autofocus">
 
-                                        </Select>
+                                        </Select> 
+                                        <span class="l-h-30 labelbusinessgroup"></span>
+                                        
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -156,6 +155,7 @@
                                     <div class="col-sm-6">
                                         <Select id="entity-select" class="form-control input-sm" onfocus="loadLegalEntity();" tabindex="4" autofocus="autofocus">
                                         </Select>
+                                         <span class="l-h-30 labelentity"></span>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +195,7 @@
                             <Select id="division-select" class="form-control input-sm division-id" tabindex="5" width="150px" onfocus="loadDivision(this.className);">
                               <option value="">Select</option>
                             </Select>
-                            <label class="p-t-7" style="display: none;"> Division: <span class="labeldivision"></span></label>
+                            <label class="p-t-7 labeldivision" data-id="" style="display: none;"> Division: <span></span></label>
                             <input type="hidden" class="divisionid">
                         </div>
                         <div class="col-sm-2 p-t-7">
@@ -217,7 +217,7 @@
                     <label class="col-sm-2 p-t-7">Category</label>
                     <div class="col-sm-6 no-padding-right">
                         <input class="form-control input-sm category-name" placeholder="Enter Category" value="" type="text" id="category-text" maxlength="100"  tabindex="9">
-                        <label class="p-t-7" style="display: none;"> Category: <span class="labelcategory"></span></label>
+                        <label class="p-t-7 labelcategory" data-id="" style="display: none;"> Category: <span></span></label>
                         <input type="hidden" class="categoryid">
                     </div>
                   </div>
@@ -271,13 +271,13 @@
                                 <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);" tabindex="11">
                                 <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                 <input type="hidden" class="unitlocation-ids">
-                                <div class="auto-complete-unit-location ac-textbox default-display-none" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
+                                <div class=" ac-textbox default-display-none auto-complete-unit-location" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
                                     <ul class="unitlocationlist-text" style="width:170px;">
 
                                     </ul>
                                 </div>
                             </div>
-                            <span class="full-location-list help-desk"></span>
+                            <span class="help-desk full-location-list"></span>
                             <span class="labelunitlocation"></span>
                         </td>
                         <td>
@@ -307,18 +307,18 @@
                         </td>
                         <td>
                           <div class="form-group m-b-0 p-r-10">
-                            <select class="form-control input-sm example-multiple domainselected" multiple="multiple" tabindex="16">
+                            <select class="form-control input-sm domainselected" multiple="multiple" tabindex="16">
                             </select>
-                            <input type="hidden" class="domain">
+                            <!-- <input type="hidden" class="domain"> -->
                             <span class="labeldomain"></span>
                           </div>
                         </td>
                         <td>
                           <div class="form-group  m-b-0 p-r-10">
-                            <select class="form-control input-sm example-multiple orgtypeselected" multiple="multiple" tabindex="17">
+                            <select class="form-control input-sm  orgtypeselected" multiple="multiple" tabindex="17">
 
                             </select>
-                            <input type="hidden" class="orgtype">
+                            <!-- <input type="hidden" class="orgtype"> -->
                             <span class="labelorganization"></span>
                           </div>
                         </td>
@@ -366,13 +366,13 @@
                     <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);" tabindex="11">
                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                     <input type="hidden" class="unitlocation-ids">
-                    <div class="auto-complete-unit-location ac-textbox default-display-none" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
+                    <div class=" ac-textbox default-display-none auto-complete-unit-location" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
                         <ul class="unitlocationlist-text" style="width:170px;">
 
                         </ul>
                     </div>
                 </div>
-                <span class="full-location-list help-desk"></span>
+                <span class="help-desk full-location-list"></span>
                 <span class="labelunitlocation"></span>
             </td>
             <td>
@@ -402,19 +402,19 @@
             </td>
             <td>
               <div class="form-group m-b-0 p-r-10">
-                <select class="form-control input-sm example-multiple domainselected" multiple="multiple" id="domains" tabindex="16">
+                <select class="form-control input-sm  domainselected" multiple="multiple" id="domains" tabindex="16">
 
                 </select>
-                <input type="hidden" class="domain">
+                <!-- <input type="hidden" class="domain"> -->
                 <span class="labeldomain"></span>
               </div>
             </td>
             <td>
               <div class="form-group  m-b-0 p-r-10">
-                <select class="example-multiple-optgroups orgtypeselected" multiple="multiple" tabindex="17">
+                <select class="form-control input-sm orgtypeselected" multiple="multiple" tabindex="17">
 
                 </select>
-                <input type="hidden" class="orgtype">
+                <!-- <input type="hidden" class="orgtype"> -->
                 <span class="labelorganization"></span>
               </div>
             </td>
@@ -440,7 +440,7 @@
     <option value="0">Select</option>
 </div>
 <div class="le-drop-down">
-    <option value="" style="width:85%;"></option>
+    <option value=""></option>
 </div>
 <div class="divi-drop-down">
     <option value=""></option>
@@ -461,24 +461,5 @@
   <li></li>
 </div>
 <script type="text/javascript" src="/script/client-unit/clientunit-new.js"></script>
-<!-- Multiselect -->
-<script src="/js/multiselect/bootstrap-multiselect.js"></script>
-<!-- <script type="text/javascript">
-    $('#countries').multiselect();
-    $('#domains').multiselect();
-</script> -->
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('.example-multiple-optgroups').multiselect({
-            buttonWidth: '100%',
-            enableClickableOptGroups: true /*,
-            enableCollapsibleOptGroups: true*/
-        });
-        $('.example-multiple').multiselect({
-            buttonWidth: '100%'
-        });
-    });
-</script>
-
 <script src="/js/custombox/custombox.min.js"></script>
 {% endblock %}
