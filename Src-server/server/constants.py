@@ -47,6 +47,6 @@ KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_updated"
 
-URL = "http://localhost:8081/"
+URL = "http://localhost:8082/"
 CLIENT_URL = URL
 KNOWLEDGE_URL = URL + "knowledge"
