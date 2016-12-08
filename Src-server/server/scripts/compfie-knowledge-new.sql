@@ -709,15 +709,11 @@ CREATE TABLE `tbl_units` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`unit_id`),
-  KEY `fk_business_group_id` (`business_group_id`),
-  KEY `fk_divisions_id` (`division_id`),
   KEY `fk_legal_entities_id` (`legal_entity_id`),
   KEY `fk_units_geographies` (`geography_id`),
   KEY `fk_tbl_units_1` (`client_id`),
-  KEY `fk_units_countries_idx` (`category_id`),
   CONSTRAINT `fk_legal_entities_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_units_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
-  CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_categories` (`category_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
