@@ -361,7 +361,7 @@ def save_statutory_mapping(db, data, created_by):
     statutory_mapping = json.dumps(data.mappings)
     created_on = get_date_time()
     is_active = 1
-    if data.tr_type == 1 :
+    if data.tr_type == 0 :
         is_approve = 0
     else:
         is_approve = 1
@@ -402,7 +402,7 @@ def save_statutory_mapping(db, data, created_by):
         print text
 
         link = "/knowledge/approve-statutory-mapping"
-        save_messages(db, frmStatutoryMapping, "Statutory Mapping", text, link, created_by)
+        save_messages(db, 3, "Statutory Mapping", text, link, created_by)
 
         action = "New statutory mappings added"
         db.save_activity(created_by, frmStatutoryMapping, action)
@@ -648,7 +648,7 @@ def update_statutory_mapping(db, data, updated_by):
     compliances = data.compliances
     # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = json.dumps(data.mappings)
-    if data.tr_type == 1 :
+    if data.tr_type == 0:
         is_approve = 0
     else:
         is_approve = 1
@@ -658,11 +658,11 @@ def update_statutory_mapping(db, data, updated_by):
     columns = (
         "country_id", "domain_id", "statutory_nature_id",
         "updated_by", "updated_on",
-        "statutory_mapping",
+        "statutory_mapping", "is_approved"
     )
     values = (
         country_id, domain_id, nature_id,
-        int(updated_by), get_date_time(), statutory_mapping, statutory_mapping_id
+        int(updated_by), get_date_time(), statutory_mapping, is_approve, statutory_mapping_id
     )
     where_condition = " statutory_mapping_id= %s "
 
@@ -779,7 +779,7 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             "format_file", "format_file_size", "penal_consequences",
             "reference_link", "frequency_id", "statutory_dates",
             "statutory_mapping_id", "is_active",
-            "updated_by", "domain_id", "country_id",
+            "updated_by", "domain_id", "country_id", "is_approved",
             "duration", "duration_type_id", "repeats_every", "repeats_type_id"
         ]
         values = [
@@ -787,7 +787,7 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             document_name, file_name, file_size,
             penal_consequences, reference, compliance_frequency,
             statutory_dates, mapping_id, is_active,
-            updated_by, domain_id, country_id,
+            updated_by, domain_id, country_id, is_approve
         ]
         if compliance_frequency == 1:
             values.extend([0, 0, 0, 0])
@@ -1436,7 +1436,7 @@ def save_approve_notify(db, text, user_id, comppliance_id):
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
-    print comp_id
+    print comp_id, map_id
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 4)
     print result
     if len(result) == 0 :
