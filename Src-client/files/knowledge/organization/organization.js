@@ -301,10 +301,6 @@ function submitOrganization()
       industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
       mirror.saveIndustry(industryDetailDict, function (error, response) {
         if (error == null) {
-<<<<<<< HEAD
-          //alert(msg.organization_save_success);
-=======
->>>>>>> siva/phase2
           displaySuccessMessage(msg.organization_save_success);
           onSuccess(response);
         } else {
@@ -404,13 +400,7 @@ function changeStatus(industryId, isActive) {
     if (error == null) {
       if (isActive) {
         displaySuccessMessage(message.organization_status_active_success);
-<<<<<<< HEAD
-      }
-      else
-      {
-=======
       } else {
->>>>>>> siva/phase2
         displaySuccessMessage(message.organization_status_deactive_success);
       }
       getIndustries();
