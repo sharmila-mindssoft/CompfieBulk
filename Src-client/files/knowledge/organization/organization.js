@@ -234,7 +234,7 @@ function validateMaxLength(key_name, value, show_name) {
 
 // validation
 function formValidation() {
-  console.log("inside form")
+  console.log("inside form");
   if (country_val.val().trim().length == 0) {
     displayMessage(msg.country_required);
     country_ac.focus();
@@ -301,7 +301,10 @@ function submitOrganization()
       industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
       mirror.saveIndustry(industryDetailDict, function (error, response) {
         if (error == null) {
+<<<<<<< HEAD
           //alert(msg.organization_save_success);
+=======
+>>>>>>> siva/phase2
           displaySuccessMessage(msg.organization_save_success);
           onSuccess(response);
         } else {
@@ -329,9 +332,7 @@ function submitOrganization()
         parseInt(industryId),
         industryName
       ];
-      //alert(industryDetail);
       var industryDetailDict = mirror.getUpdateIndustryDict(industryDetail);
-
       mirror.updateIndustry(industryDetailDict, function (error, response) {
         if (error == null) {
           displaySuccessMessage(msg.organization_update_success)
@@ -394,19 +395,22 @@ function displayEdit(countryId, domainId, industryId, industryName) {
 
 // activate / deactivate industry master
 function changeStatus(industryId, isActive) {
-  if(isActive == true){
+  if(isActive == true) {
     isActive = false;
-  }else{
+  } else {
     isActive = true;
   }
-
   mirror.changeIndustryStatus(industryId, isActive, function (error, response) {
     if (error == null) {
       if (isActive) {
         displaySuccessMessage(message.organization_status_active_success);
+<<<<<<< HEAD
       }
       else
       {
+=======
+      } else {
+>>>>>>> siva/phase2
         displaySuccessMessage(message.organization_status_deactive_success);
       }
       getIndustries();

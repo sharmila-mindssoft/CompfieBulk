@@ -156,7 +156,7 @@ function validate() {
     } else if ($('#level1').val().trim().length == 0) {
       displayMessage(message.levelone_title_required);
     } else {
-      displayMessage('');
+      //displayMessage('');
       return true;
     }
   }
@@ -205,9 +205,9 @@ $('#submit').click(function () {
       }
       function onSuccess(response) {
         if (isAdd) {
-          displayMessage(message.record_added);
+          displaySuccessMessage(message.record_added);
         } else {
-          displayMessage(message.record_updated);
+          displaySuccessMessage(message.record_updated);
         }
         jQuery('.btn-geographylevel-cancel').focus().click();
         GetGeographyLevels();
@@ -258,7 +258,7 @@ $('#insert-record').click(function () {
     $('#insertvalue').val('');
     $('#view-insert-level').hide();
     $('#add').show();
-    displayMessage('');
+    //displayMessage('');
   } else {
     displayMessage(message.title_required);
     $('#add').hide();
@@ -306,10 +306,11 @@ function loadLevels(){
   }
 }
 
-$('#levelslist').on('change', function(e) {
+/*$('#levelslist').on('change', function(e) {
   $('#levelslist  option:gt(0)').remove();
   loadLevels();
-});
+});*/
+
 $('.input-sm').on('input', function (e) {
   this.value = isAlphabetic($(this));
 });

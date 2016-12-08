@@ -12,6 +12,7 @@
       </div>
       <h4 class="page-title">Domains</h4>
     </div>
+<<<<<<< HEAD
     <div class="col-sm-3"></div>
   </div>
   <div class="row" id="animationSandbox">
@@ -64,6 +65,60 @@
 
             </tbody>
           </table>
+=======
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-3"> </div>
+        <div class="col-sm-6">
+            <div class="card-box table-responsive"> <!-- table-responsive -->
+                <div class="col-sm-12 no-padding">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Domain Name</th>
+                                <th>Country Name</th>
+                                <th class="text-center">Edit</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box"
+                                            placeholder="Domain" id="search-domain-name" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box"
+                                            placeholder="Country Name" id="search-country-name" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td align="center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                        <i id="search-status" class="fa">All</i>
+                                        <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu search-status-list">
+                                            <li value="all" class="search-status-li active"><a>All</a></li>
+                                            <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                                            <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-domain-list1"></tbody>
+                    </table>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+>>>>>>> siva/phase2
         </div>
       </div>
     </div>
@@ -140,10 +195,13 @@
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
-    <div class="custom-modal-text">
+    <div class="custom-modal-text p-t-0">
         <div role="form">
             <div class="form-group">
                 <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
                 <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>

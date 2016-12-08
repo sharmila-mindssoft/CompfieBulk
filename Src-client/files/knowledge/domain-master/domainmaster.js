@@ -193,8 +193,7 @@ DomainPage.prototype.validateAuthentication = function() {
         this.displayMessage(msg.password_required);
         CurrentPassword.focus();
         return false;
-    }
-    else {
+    } else {
         validateMaxLength('password', password, "Password");
     }
     mirror.verifyPassword(password, function(error, response) {
@@ -267,8 +266,7 @@ DomainPage.prototype.validate = function() {
 
         if (Domain_name.val().trim().length ==0) {
             this.displayMessage(msg.domainname_required);
-        }
-        else {
+        } else {
             this.displayMessage('');
             return true;
         }
@@ -481,6 +479,12 @@ function PageControls() {
         }
     });
 
+<<<<<<< HEAD
+=======
+    Country.keyup(function(e) {
+        onKeyUpDownSelect(e, 'ulist-country');
+    });
+>>>>>>> siva/phase2
 
     $('.hideselect').mouseleave(function() {
         item_selected = '';

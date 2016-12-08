@@ -325,90 +325,82 @@ $('#btnUserGroupSubmit').click(function () {
   var groupIdVal = $('#groupId').val();
   var groupNameVal = $('#groupName').val().trim();
   var categoryNameVal = $('#categoryName').val().trim();
-  // var tempcategoryidVal = $("#tempcatgid").val().trim();
   var chkArray = [];
   var chkArrayInt = [];
-  var checkLength = userGroupValidate();
-  if (checkLength) {
-    if (groupNameVal == '') {
-      displayMessage(message.group_required);
-    } else if (categoryNameVal == '') {
-      displayMessage(message.catgname_required);
-    } else if (categoryNameVal.length > 50) {
-      displayMessage(message.category_max50);
-    }  // else if(tempcategoryidVal != categoryNameVal){
-       // 	displayMessage(message.category_invalid);
-       // }
-    else if (groupIdVal == '') {
-      $('.checkedFormId:checked').each(function () {
-        chkArray.push($(this).val());
-      });
-      if (chkArray.length == 0) {
-        displayMessage(message.add_one_form);
-      } else {
-        clearMessage();
-        chkArrayInt = chkArray.map(function (item) {
-          return parseInt(item, 10);
-        });
-        function onSuccess(response) {
-          $('#userGroupAdd').hide();
-          $('#userGroupView').show();
-          displayMessage(message.save_success)
-          initialize();
-        }
-        function onFailure(error) {
-          if (error == 'GroupNameAlreadyExists') {
-            displayMessage(message.groupname_exists);
-          } else {
-            displayMessage(error);
-          }
-        }
-        var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
-        mirror.saveAdminUserGroup(userGroupInsertDetails, function (error, response) {
-          if (error == null) {
-            onSuccess(response);
-          } else {
-            onFailure(error);
-          }
-        });
-      }
-    } else if (groupIdVal != '') {
+
+  if (groupNameVal.length == 0) {
+    displayMessage(msg.usergroup_required);
+    $('#groupName').focus();
+    return false;
+  } else {
+    validateMaxLength('usergroupname', groupNameVal, "User Group Name");
+  }
+
+  if (groupIdVal == '') {
+    $('.checkedFormId:checked').each(function () {
+      chkArray.push($(this).val());
+    });
+    if (chkArray.length == 0) {
+      displayMessage(message.add_one_form);
+    } else {
       clearMessage();
-      $('.checkedFormId:checked').each(function () {
-        chkArray.push($(this).val());
+      chkArrayInt = chkArray.map(function (item) {
+        return parseInt(item, 10);
       });
-      if (chkArray.length == 0) {
-        displayMessage(message.add_one_form);
-      } else {
-        // $(".checkedFormId:checked").each(function() {
-        // 	chkArray.push($(this).val());
-        // });
-        // /* join array separated by comma*/
-        chkArrayInt = chkArray.map(function (item) {
-          return parseInt(item, 10);
-        });
-        function onSuccess(status) {
-          $('#userGroupAdd').hide();
-          $('#userGroupView').show();
-          displayMessage(message.update_success)
-          initialize();
-        }
-        function onFailure(error) {
-          if (error == 'GroupNameAlreadyExists') {
-            displayMessage(message.groupname_exists);
-          } else {
-            displayMessage(error);
-          }
-        }
-        var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, parseInt(categoryNameVal), chkArrayInt);
-        mirror.updateAdminUserGroup(userGroupInsertDetails, function (error, response) {
-          if (error == null) {
-            onSuccess(response);
-          } else {
-            onFailure(error);
-          }
-        });
+      function onSuccess(response) {
+        $('#userGroupAdd').hide();
+        $('#userGroupView').show();
+        displaySuccessMessage(message.save_success);
+        initialize();
       }
+      function onFailure(error) {
+        if (error == 'GroupNameAlreadyExists') {
+          displayMessage(message.groupname_exists);
+        } else {
+          displayMessage(error);
+        }
+      }
+      var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+      mirror.saveAdminUserGroup(userGroupInsertDetails, function (error, response) {
+        if (error == null) {
+          onSuccess(response);
+        } else {
+          onFailure(error);
+        }
+      });
+    }
+  } else if (groupIdVal != '') {
+    clearMessage();
+    $('.checkedFormId:checked').each(function () {
+      chkArray.push($(this).val());
+    });
+    if (chkArray.length == 0) {
+      displayMessage(message.add_one_form);
+    } else {
+      chkArrayInt = chkArray.map(function (item) {
+        return parseInt(item, 10);
+      });
+      function onSuccess(status) {
+        $('#userGroupAdd').hide();
+        $('#userGroupView').show();
+        displaySuccessMessage(message.update_success);
+        initialize();
+      }
+      function onFailure(error) {
+        if (error == 'GroupNameAlreadyExists') {
+          displayMessage(message.groupname_exists);
+        } else {
+          displayMessage(error);
+        }
+      }
+      var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+      mirror.updateAdminUserGroup(userGroupInsertDetails, function (error, response) {
+        if (error == null) {
+          onSuccess(response);
+        } else {
+          onFailure(error);
+        }
+      });
     }
   }
 });

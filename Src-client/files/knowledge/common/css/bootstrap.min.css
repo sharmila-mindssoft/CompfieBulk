@@ -2525,7 +2525,7 @@ table th[class*=col-] {
 }
 .table-responsive {
     min-height: .01%;
-    overflow-x: auto
+    /*overflow-x: auto*/
 }
 @media screen and (max-width: 767px) {
     .table-responsive {
@@ -2533,7 +2533,8 @@ table th[class*=col-] {
         margin-bottom: 15px;
         overflow-y: hidden;
         -ms-overflow-style: -ms-autohiding-scrollbar;
-        border: 1px solid #ddd
+        border: 1px solid #ddd;
+        overflow-x: auto;
     }
     .table-responsive>.table {
         margin-bottom: 0
@@ -2615,7 +2616,8 @@ input[type=range] {
 }
 select[multiple],
 select[size] {
-    height: auto
+    /*height: auto*/
+    height: 30px;
 }
 input[type=file]:focus,
 input[type=checkbox]:focus,
@@ -2801,7 +2803,8 @@ select.input-sm {
 }
 select[multiple].input-sm,
 textarea.input-sm {
-    height: auto
+    /*height: auto*/
+    height: 30px;
 }
 .form-group-sm .form-control {
     height: 30px;
