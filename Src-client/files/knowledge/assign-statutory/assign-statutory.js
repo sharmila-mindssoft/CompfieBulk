@@ -458,6 +458,20 @@ function loadUnits() {
     });
 }
 
+SelectAll.click(function() {
+    ACTIVE_UNITS=[];
+    $('.unit-list li').each(function (index, el) {
+        if(SelectAll.prop('checked')){
+          $(el).addClass('active');
+          var chkid = parseInt($(el).attr('id'));
+          ACTIVE_UNITS.push(chkid);
+        }else{
+          $(el).removeClass('active');
+        }
+    });
+    SelectedUnitCount.text(ACTIVE_UNITS.length);
+});
+
 function activateUnit(element, unit_id) {
     var chkstatus = $(element).attr('class');
     var chkid = parseInt($(element).attr('id'));
