@@ -1218,11 +1218,11 @@ function initMirror() {
     LoginApiRequest(callerName, request, callback);
   }
   // Client Unit APIs
-  function getClients(callback) {
+  function getClients(type, callback) {
     callerName = 'techno';
     var request = [
       'GetClients',
-      {}
+      { 'typelistedit' : type }
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1276,14 +1276,14 @@ function initMirror() {
   }old*/
   function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds) {
     return {
-      'u_id': uId,
-      'u_name': uName,
-      'u_code': uCode,
-      'u_add': uAdd,
-      'p_code': pCode,
-      'geo_id': geoId,
+      'unit_id': uId,
+      'unit_name': uName,
+      'unit_code': uCode,
+      'address': uAdd,
+      'postal_code': pCode,
+      'geography_id': geoId,
       'd_ids': dIds,
-      'i_ids': iIds
+      'i_ids_list': iIds
     };
   }
   function mapUnitsToCountry(cId, units) {
@@ -1292,7 +1292,7 @@ function initMirror() {
       'units': units
     };
   }
-  function saveClient(cId, bg_id, le_id, c_id, div_dict, cw_units, callback) {
+  function saveClient(cId, bg_id, le_id, c_id, division_units, cw_units, callback) {
     callerName = 'techno';
     var request = [
       'SaveClient',
@@ -1301,7 +1301,7 @@ function initMirror() {
         'bg_id': bg_id,
         'le_id': le_id,
         'c_id': c_id,
-        'div_dict': div_dict,
+        'division_units': division_units,
         'units': cw_units
       }
     ];
