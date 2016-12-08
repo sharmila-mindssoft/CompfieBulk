@@ -1816,7 +1816,7 @@ BEGIN
     WHERE country_id = countryid;
 
     SELECT count(*) as count
-    FROM tbl_client_countries
+    FROM tbl_legal_entities
     WHERE country_id = countryid;
 END //
 
@@ -6223,3 +6223,114 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_save_geography_master`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_save_geography_master`(
+in _g_name varchar(50), _l_id int(11), _p_ids text, _p_names text,
+_created_by int(11), _created_on timestamp)
+BEGIN
+    insert into tbl_geographies
+    (geography_name, level_id, parent_ids, parent_names, created_by, created_on)
+    values
+    (_g_name, _l_id, _p_ids, _p_names, _created_by, _created_on);
+END //
+
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_update_geography_master`;
+
+DELIMITER //
+
+CREATE  PROCEDURE `sp_update_geography_master`(
+in _g_id int(11), _g_name varchar(50), _p_ids text, _p_names text, _updated_by int(11))
+BEGIN
+    update tbl_geographies
+    set geography_name = _g_name,
+    parent_ids = _p_ids,
+    parent_names = _p_names,
+    updated_by = _updated_by
+    where
+    geography_id = _g_id;
+END //
+
+DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_get_geography_master`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_geography_master`(
+in _g_id int(11), _p_ids text)
+BEGIN
+    SELECT geography_id, geography_name, parent_ids, level_id
+    from tbl_geographies WHERE find_in_set(_p_ids, parent_ids) or
+    geography_id in (_g_id);
+END //
+
+DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_update_geographies_master_level`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_geographies_master_level`(
+in _g_id int(11), _l_id int(11), map_name text)
+BEGIN
+    UPDATE tbl_geographies as A inner join
+    (select c.country_name, g.level_id from
+    tbl_countries c inner join tbl_geography_levels g on
+    c.country_id = g.country_id) as C ON A.level_id  = C.level_id
+    set A.parent_names = concat(C.country_name, '>>', map_name)
+    where A.geography_id = _g_id AND C.level_id = _l_id;
+END //
+
+DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_check_geography_exists`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_geography_exists`(
+in _g_id int(11))
+BEGIN
+    select count(1) as stat_cnt from tbl_statutory_geographies where geography_id = _g_id;
+
+    select count(0) as geo_cnt from tbl_geographies where FIND_IN_SET(_g_id, parent_ids);
+END //
+
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_geography_update_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_geography_update_status`(
+in _g_id int(11), _status tinyint(4), _updated_by int(11))
+BEGIN
+    update tbl_geographies
+    set is_active = _status,
+    updated_by = _updated_by
+    where geography_id = _g_id;
+END //
+
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_get_geography_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_geography_by_id`(
+in _g_id int(11))
+BEGIN
+    SELECT geography_id, geography_name, level_id,
+    parent_ids, parent_names, is_active
+    FROM tbl_geographies WHERE geography_id = _g_id;
+END //
+
+DELIMITER;
