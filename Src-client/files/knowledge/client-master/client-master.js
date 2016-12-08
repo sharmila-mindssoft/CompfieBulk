@@ -341,7 +341,8 @@ function saveClient(){
             var business_group_id = null;
             var business_group_name = null;
             business_group_id = le_table.find(".business-group").val();
-            business_group_name = le_table.find(".business-group-text").val();
+            console.log("brgnam--"+trim(le_table.find(".business-group-text").val()))
+            business_group_name = trim(le_table.find(".business-group-text").val());
             var le_name = le_table.find("#legal_entity_text").val();
             var logo = logoFile[i-1]
             if(logo){
@@ -634,6 +635,9 @@ function editClient(){
     showNonEditable($("#view-licence-text"), null, VIEW_LICENCE);
     loadActions();
     $(".input-notes").hide();
+    $('.email-edit-icon').show();
+    console.log("welcom to help-block")
+    $(".help-block").hide();
     $("br").hide();
     le_count = 0
     logoFile = [];
@@ -666,12 +670,18 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
 
     addOrSelectBusinessGroup("cancel");
     le_table.find(".addbg").hide();
+    console.log("value.business_group=="+value.business_group);
     if(value.business_group){
+        console.log("welcome to values");
         showNonEditable(
             le_table.find(".business-group"), parseInt(value.business_group.business_group_id),
             business_group_name_map[value.business_group.business_group_id]
         );
         le_table.find(".business-group").val(value.business_group.business_group_id);
+    }
+    else{
+        console.log("welcome to else part");
+         showNonEditable(le_table.find(".business-group"), null, '');
     }
 
     showNonEditable(le_table.find("#legal_entity_text"), null, value.legal_entity_name);
@@ -713,8 +723,9 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
             $("."+domain_list_class).find(".remove-domain"), null, organization_text
         );
         var add_org_class = le_count+"-"+i;
-        le_table.find("."+add_org_class).text(value.domain_details[i-1].activation_date);
-        le_table.find("."+add_org_class).val(value.domain_details[i-1].activation_date);
+        console.log("add_org_class"+add_org_class);
+        le_table.find(".activationdate-"+add_org_class).text(value.domain_details[i-1].activation_date);
+        le_table.find(".activationdate-"+add_org_class).val(value.domain_details[i-1].activation_date);
     }
     le_table.find('.org-header').text("Activation Date");
     le_table.find('.org-header').attr("width", "20%");

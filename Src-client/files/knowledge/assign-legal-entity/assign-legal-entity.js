@@ -91,7 +91,8 @@ function viewLE(cId, cName, gName){
         ViewScreen.show();
         Group_Label.text(gName);
         Country_Label.text(cName);
-        assignLegalEntitiesList = data.assigned_legal_entities;
+        console.log(data);
+        assignLegalEntitiesList = data.view_assigned_legal_entities;
         loadUserList(assignLegalEntitiesList);
     }else {
         custom_alert(error);
@@ -132,6 +133,19 @@ function loadGroupList(assignLegalEntitiesList) {
   });
 }
 
+$(".select_all").change(function(){  
+    $(".form_checkbox").prop('checked', $(this).prop("checked")); 
+});
+
+$('.form_checkbox').change(function(){
+    if(false == $(this).prop("checked")){ 
+        $("#select_all").prop('checked', false); 
+    }    
+    if ($('.form_checkbox:checked').length == $('.form_checkbox').length ){
+        $("#select_all").prop('checked', true);
+    }
+});
+
 function loadLegalEntityList(assignLegalEntitiesList) {
   var j = 1;
   $('.tbody-add-list').find('tr').remove();
@@ -166,6 +180,7 @@ function loadLegalEntityList(assignLegalEntitiesList) {
 }
 
 function loadUserList(assignLegalEntitiesList) {
+  console.log(assignLegalEntitiesList);
   var j = 1;
   $('.tbody-view-list').find('tr').remove();
   $.each(assignLegalEntitiesList, function (key, value) {
@@ -298,7 +313,9 @@ function pageControls() {
     if (textval.length > 0) {
         for (var i in users) {
             if (~users[i].employee_name.toLowerCase().indexOf(textval.toLowerCase()) && users[i].is_active == true){
+              console.log(users[i]);
               if (checkusercountries(users[i].user_id, users[i].country_ids) == 1) {
+                console.log(users[i].user_id);
               suggestions.push([
                 users[i].user_id,
                 users[i].employee_name
@@ -320,3 +337,10 @@ $(document).ready(function () {
     initialize();
     pageControls();
 });
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
+});
+$(document).find('.js-filtertable-add').each(function(){
+    $(this).filtertable().addFilter('.js-filter-add');
+});
+

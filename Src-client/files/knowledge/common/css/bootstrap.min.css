@@ -2616,7 +2616,8 @@ input[type=range] {
 }
 select[multiple],
 select[size] {
-    height: auto
+    /*height: auto*/
+    height: 30px;
 }
 input[type=file]:focus,
 input[type=checkbox]:focus,
@@ -2802,7 +2803,8 @@ select.input-sm {
 }
 select[multiple].input-sm,
 textarea.input-sm {
-    height: auto
+    /*height: auto*/
+    height: 30px;
 }
 .form-group-sm .form-control {
     height: 30px;
