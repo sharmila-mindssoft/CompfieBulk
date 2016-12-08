@@ -34,7 +34,9 @@ OccasionalPan = $('#Occasional');
 Frequency = $('#compliance_frequency');
 DurationType = $('#duration_type');
 Duration = $('#duration');
-Repeats = $('#repeats_type');
+
+RepeatsType = $('#repeats_type');
+RepeatsEvery = $('#repeats_every')
 ComplianceTask = $('#compliance_task');
 Provision = $('#statutory_provision');
 Description = $('#compliance_description');
@@ -164,7 +166,7 @@ function RenderInput() {
         Domain.empty();
         Organisation.empty();
         Nature.empty();
-        Repeats.empty();
+        RepeatsType.empty();
         Frequency.empty();
         $('.tbody-statutory-list').empty();
         $('.tbody-compliance-list').empty();
@@ -367,12 +369,12 @@ function RenderInput() {
     };
 
     this.loadRepeats = function() {
-        Repeats.empty();
-        Repeats.append(
+        RepeatsType.empty();
+        RepeatsType.append(
             _renderinput.make_option("Select", "")
         );
         $.each(REPEATSTYPE_INFO, function(ke, val) {
-            Repeats.append(
+            RepeatsType.append(
                 _renderinput.make_option(val.repeat_type, val.repeat_type)
             );
         });

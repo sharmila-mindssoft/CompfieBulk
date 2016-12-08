@@ -153,7 +153,7 @@ CREATE TABLE `tbl_users` (
   KEY `fk_tbl_users_user_group_id` (`user_group_id`),
   CONSTRAINT `fk_tbl_users_user_category_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_category` (`user_category_id`),
   CONSTRAINT `fk_tbl_users_user_group_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 -- user_login_details
 DROP TABLE IF EXISTS `tbl_user_login_details`;
