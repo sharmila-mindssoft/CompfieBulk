@@ -287,12 +287,14 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countr
   divisionId = 0;
   categoryName = '';
   $.each(unitList, function (unitkey, unitval) {    
+    console.log("////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////");
     unitval = unitList[unitkey];    
     // console.log("unit val div id:"+unitval.division_id)
-    // console.log("unit val div id:"+unitval.category_name)
+    console.log("unit val catg id:"+unitval.category_name)
     category_name = unitval.category_name;
     if(unitval.client_id == clientunitId && unitval.country_id == countryId && unitval.legal_entity_id == legalEntityId)
     {
+
       console.log("welcome to unit edit--"+JSON.stringify(unitval));
       var tab_len = $('.add-country-unit-list').find('table').length;
       console.log("tab_len--"+tab_len);
@@ -306,50 +308,53 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countr
         for(var i=0;i<tab_len;i++){
           var division_name;
           if(unitval.division_id != ''){
-            division_data_id = $('.labeldivision-'+parseInt(i+1)+'-1').data("id");
+            division_name = getDivisionName(unitval.division_id);
           }
+          console.log("icount = "+parseInt(i+1));
           $('.labelcategory-'+parseInt(i+1)+'-1').show();
-          //console.log("division_name:"+division_name);
-          //console.log("category_name:"+category_name);
+          console.log("division_name:"+division_name);
+          console.log("category_name:"+category_name);
 
-          if(division_name != ""){
-            if(category_name != ""){
-              //console.log($('.labeldivision-'+parseInt(i+1)+'-1').text() +"=="+division_name+"&&"+$('.labelcategory-'+parseInt(i+1)+'-1').text()+"=="+category_name);
+          if(division_name != "" && category_name != ""){
+              console.log("1--"+$('.labeldivision-'+parseInt(i+1)+'-1').text() +"=="+division_name+"&&"+$('.labelcategory-'+parseInt(i+1)+'-1').text() +"=="+ category_name);
               if($('.labeldivision-'+parseInt(i+1)+'-1').text() == division_name && $('.labelcategory-'+parseInt(i+1)+'-1').text() == category_name){
                 console.log("welcome to first list");
                 addNewUnitRow('btable table-'+parseInt(i+1));
                  loadUnitValues(unitval);
               }
-            }
-            else if(category_name == ""){ 
+          }
+          else if(division_name != "" && category_name == ""){ 
+              console.log("2--"+$('.labeldivision-'+parseInt(i+1)+'-1').text() +"=="+division_name+"&&"+$('.labelcategory-'+parseInt(i+1)+'-1').text() +"=="+ '--');
               if($('.labeldivision-'+parseInt(i+1)+'-1').text() == division_name &&  $('.labelcategory-'+parseInt(i+1)+'-1').text() == "--"){
                 addNewUnitRow('btable table-'+parseInt(i+1));
                 loadUnitValues(unitval);
               }
-            }
-          } 
-          else if(division_name == ""){
-            if(category_name != ""){
+          }
+          
+          else if(division_name == "" && category_name != ""){
+              console.log("3--"+$('.labeldivision-'+parseInt(i+1)+'-1').text() +"=="+"--"+"&&"+$('.labelcategory-'+parseInt(i+1)+'-1').text() +"=="+ category_name);
               if($('.labeldivision-'+parseInt(i+1)+'-1').text() == "--" && $('.labelcategory-'+parseInt(i+1)+'-1').text() == category_name)
               {
                 addNewUnitRow('btable table-'+parseInt(i+1));
                 loadUnitValues(unitval);
               }
-            }
-            else{
+          }
+          else if(division_name == "" && category_name == ""){
+              console.log("4--"+$('.labeldivision-'+parseInt(i+1)+'-1').text() +"=="+"-"+"&&"+$('.labelcategory-'+parseInt(i+1)+'-1').text() +"=="+ "--");
               if($('.labeldivision-'+parseInt(i+1)+'-1').text() == "--" &&  $('.labelcategory-'+parseInt(i+1)+'-1').text() == "--"){
                 addNewUnitRow('btable table-'+parseInt(i+1));
                 loadUnitValues(unitval);
               }
-            }
           }
           else
           {
+            console.log("5--");
             rowcnt = 1;
           }
         }
         if(rowcnt == 1)
         {
+          console.log("6--");
           rowcnt = 0;
           addcountryrownew();
           loadUnitValues(unitval);
@@ -427,9 +432,9 @@ function getDivisionName(divisionId)
 function loadUnitValues(unitval)
 {
   //alert("inside loading")
-  console.log("inside loadUnitValues--"+JSON.stringify(unitval));
   var unit_second_cnt = $('.unitcnt-'+ division_cnt + '-' + 1).val();
   var firstlist = unitval
+  console.log("inside load unit values---"+JSON.stringify(firstlist));
   var cid = firstlist.country_id;
   //alert("country-id:"+cid);
   //load division
@@ -440,8 +445,8 @@ function loadUnitValues(unitval)
     console.log("welcome to divisionid");
     $('.divisionid-'+division_cnt + '-' + unit_second_cnt).val(firstlist.division_id);
     loadDivision('division-id-' + division_cnt + '-' + unit_second_cnt);
-    $('.division-id-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + firstlist.division_id + ']').attr('selected', 'selected');
-    $('.labeldivision-'+division_cnt+'-'+unit_second_cnt).attr("data-id", firstlist.division_id);
+    $('.division-id-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + firstlist.division_id + ']').
+      attr('selected', 'selected');
     division_name = getDivisionName(firstlist.division_id);
     $('.labeldivision-'+division_cnt+'-'+unit_second_cnt).text(division_name);
   }
@@ -453,10 +458,10 @@ function loadUnitValues(unitval)
   if(firstlist.category_name != '')
   {
     $('.categoryid-'+division_cnt+'-'+unit_second_cnt).val(firstlist.category_id);
+    console.log("load catg:"+$('.categoryid-'+division_cnt+'-'+unit_second_cnt).val())
     $('.category-name-'+division_cnt+'-'+unit_second_cnt).val(firstlist.category_name);
     $('.category-name-'+division_cnt+'-'+unit_second_cnt).hide();
     $('.labelcategory-'+division_cnt+'-'+unit_second_cnt).text(firstlist.category_name);
-    $('.labelcategory-'+division_cnt+'-'+unit_second_cnt).attr("data-id", firstlist.division_id);
   }
 
   else
@@ -468,19 +473,23 @@ function loadUnitValues(unitval)
 
   var gid = firstlist.geography_id;
   var unitlts = loadupdateunitlocation(gid);
-  // loadglevels('glevel-' + division_cnt + '-' + unit_second_cnt);
-  // console.log("level id:"+unitlts.level_id)
-  // console.log($('.glevel-' + division_cnt + '-' + unit_second_cnt));
+  loadglevels('glevel-' + division_cnt + '-' + unit_second_cnt);
+  console.log("level id:"+unitlts.level_id)
+  console.log($('.glevel-' + division_cnt + '-' + unit_second_cnt));
   //loadIndustry('industry-'+countryByCount+'-'+1);
-  $('.glevel-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + unitlts.level_id + ']').attr('selected', 'selected');
+  $('.glevel-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + unitlts.level_id + ']').
+  attr('selected', 'selected');
+
   $('.glevel-' + division_cnt + '-' + unit_second_cnt).hide();
   for(var i=0;i<geographyLevelList.length;i++)
   {
-    if(geographyLevelList[i].l_id == unitlts.level_id){
+    if(geographyLevelList[i].l_id == unitlts.level_id)
+    {
       $('.labelgeolevels-' + division_cnt + '-' + unit_second_cnt).show();
       $('.labelgeolevels-' + division_cnt + '-' + unit_second_cnt).text(geographyLevelList[i].l_name);
     }
   }
+   $('.tbody-unit-'+division_cnt+' i').hide();
 
   $('.unitlocation-' + division_cnt + '-' + unit_second_cnt).val(unitlts.gname);
   $('.unitlocation-' + division_cnt + '-' + unit_second_cnt).hide();
@@ -514,7 +523,7 @@ function loadUnitValues(unitval)
   $('.labelpostcode-' + division_cnt + '-' + unit_second_cnt).text(firstlist.postal_code);
 
   var domainsListArray = firstlist.domain_ids;
-  //console.log("domain array:"+domainsListArray)
+  console.log("domain array:"+domainsListArray)
   //$('.domain-' + division_cnt + '-' + unit_second_cnt).val(domainsListArray);
   $('.domainselected-' + division_cnt + '-' + unit_second_cnt).val(domainsListArray.length + ' Selected');
   //loadDomains('domain-' + division_cnt + '-' + unit_second_cnt);
@@ -529,7 +538,7 @@ function loadUnitValues(unitval)
   //$('.orgtype-' + division_cnt + '-' + unit_second_cnt).val(orgtypeArray);
   //alert("org:"+$('.orgtype-' + division_cnt + '-' + unit_second_cnt).val());
   $('.orgtypeselected-' + division_cnt + '-' + unit_second_cnt).val(orgtypeArray.length + ' Selected');
-  //industrytype('industry-' + division_cnt + '-' + unit_second_cnt);
+//  industrytype('industry-' + division_cnt + '-' + unit_second_cnt);
   $('.orgtypeselected-' + division_cnt + '-' + unit_second_cnt).hide();
   //$('.orgtype-' + division_cnt + '-' + unit_second_cnt).hide();
   $('.ul-orgtype-list-' + division_cnt + '-' + unit_second_cnt).hide();
@@ -965,8 +974,7 @@ function addcountryrownew() {
   $('.domain-list', clone).addClass('domain-list-' + division_cnt + '-' + 1);
   $('.domainselected', clone).addClass('domainselected-' + division_cnt + '-' + 1);
   //$('.domain', clone).addClass('domain-' + division_cnt + '-' + 1);
-    //loadDomains('domain-' + division_cnt + '-' + 1);
-
+  //loadDomains('domain-' + division_cnt + '-' + 1);
   //$('#domains', clone).addClass('domains-' + division_cnt + '-' + 1);
   $('.domain-selectbox-view', clone).addClass('domain-selectbox-view-' + division_cnt + '-' + 1);
   $('.ul-domain-list', clone).addClass('ul-domain-list-' + division_cnt + '-' + 1);
@@ -1026,8 +1034,10 @@ function addcountryrownew() {
   $('.approveclass-' + division_cnt + '-' + 1).text('Pending');
   $('.divisioncnt-'+ division_cnt + '-' + 1).val(division_cnt);
   $('.unitcnt-'+ division_cnt + '-' + 1).val(1);
-  loadDomains();
-  industrytype('industry-' + division_cnt + '-' + 1);
+  if($("#client-unit-id").val() == ""){
+    loadDomains();
+    industrytype('industry-' + division_cnt + '-' + 1);
+  }    
   //console.log('.unitcnt-'+ division_cnt + '-' + 1);
   //console.log($('.unitcnt-'+ division_cnt + '-' + 1).val())
 
