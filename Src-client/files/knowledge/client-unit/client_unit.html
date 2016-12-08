@@ -185,11 +185,12 @@
 </div>
 <div id="templates">
     <div class="grid-table">
-        <table class="btable">
+        <table class="btable" style="width: 100%;">
+          <tr><td> 
             <!--<div class="card-box p-10">-->
                 <div class="col-sm-4">
                     <div class="form-group m-b-10">
-                      <label class="col-sm-2 p-t-7">Division</label>
+                      <label class="col-sm-2 p-t-7">Division:</label>
                       <div class="select_business_group">
                         <div class="col-sm-6 no-padding-right">
                             <Select id="division-select" class="form-control input-sm division-id" tabindex="5" width="150px" onfocus="loadDivision(this.className);">
@@ -214,7 +215,7 @@
                 </div>
                 <div class="col-sm-4">
                   <div class="form-group m-b-10">
-                    <label class="col-sm-2 p-t-7">Category</label>
+                    <label class="col-sm-2 p-t-7">Category:</label>
                     <div class="col-sm-6 no-padding-right">
                         <input class="form-control input-sm category-name" placeholder="Enter Category" value="" type="text" id="category-text" maxlength="100"  tabindex="9">
                         <label class="p-t-7 labelcategory" style="display: none;"> Category: <span></span></label>
@@ -242,14 +243,14 @@
                                 <label for="singleCheckbox2"><strong>Unit Code</strong></label>
                             </div>
                         </th>
-                        <th class="text-center" width="10%">Unit Name</th>
-                        <th class="text-center" width="10%">Unit Address</th>
-                        <th class="text-center" width="8%">Postal Code</th>
-                        <th class="text-center" width="8%">Domain</th>
-                        <th class="text-center" width="10%">Organization</th>
-                        <th class="text-center" width="5%">Status</th>
-                        <th class="text-center" width="8%">Approve</th>
-                        <th class="text-center edit-icon" width="4%">Edit</th>
+                        <th width="10%">Unit Name</th>
+                        <th width="10%">Unit Address</th>
+                        <th width="8%">Postal Code</th>
+                        <th width="8%">Domain</th>
+                        <th width="10%">Organization</th>
+                        <th width="5%">Status</th>
+                        <th width="8%">Approve</th>
+                        <th class="edit-icon" width="4%">Edit</th>
                     </tr>
                 </thead>
                 <tbody class="tbody-unit-list">
@@ -339,10 +340,11 @@
             <div class="col-sm-12">
               <div class="form-group pull-right m-b-0">
                 <a class="waves-effect waves-light c-pointer" type="button" onclick="check_previous_orgn(this.className)"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Unit</span> </a>
-            </div>
+              </div>
             </div>
             <div class="clear"></div>
             <!--</div>-->
+            </td></tr>
         </table>
     </div>
 </div>
@@ -422,7 +424,7 @@
                 <span class="activedclass"></span>
             </td>
             <td align="center">
-                <span class="rejected-icon" style="width: 16px; height: 16px; display:block;"></span>
+                <!-- <span class="rejected-icon" style="width: 16px; height: 16px; display:block;"></span> -->
                 <span class="approveclass"></span>
             </td>
             <td class="icon-3x text-center edit-icon">
