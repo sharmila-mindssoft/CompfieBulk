@@ -434,6 +434,14 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
 
   mirror.changeAdminUserGroupStatus(userGroupId, userGroupName, isActive, function (error, response) {
   if (error == null) {
+    if (isActive) {
+      displaySuccessMessage(message.status_success);
+    }
+    else
+    {
+      displaySuccessMessage(message.status_success);
+    }
+    initialize();
     onSuccess(response);
   } else {
     onFailure(error);
