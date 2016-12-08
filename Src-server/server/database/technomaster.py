@@ -21,10 +21,10 @@ from server.database.validateclientuserrecord import ClientAdmin
 #  Return Type : List of object of Country
 ##########################################################################
 def get_user_countries(db, session_user):
-    countries = db.call_proc(
-        "sp_countries_for_user", (session_user,)
-    )
-    return return_countries(countries)
+    result = db.call_proc_with_multiresult_set("sp_countries_for_user", (session_user,), 2)
+    if len(result) > 1 :
+        result = result[1]
+    return return_countries(result)
 
 
 ##########################################################################

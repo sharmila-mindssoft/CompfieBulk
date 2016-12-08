@@ -717,7 +717,6 @@ CREATE TABLE `tbl_units` (
   KEY `fk_units_countries_idx` (`category_id`),
   CONSTRAINT `fk_legal_entities_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_units_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
-  CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_categories` (`category_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
