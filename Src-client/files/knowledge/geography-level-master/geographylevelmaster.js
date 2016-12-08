@@ -108,6 +108,10 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
   id_element.val(val[0]);
   console.log("val:"+id_element.val())
   value_element.focus();
+  for(var i=1;i<=10;i++){
+    $('#level'+i).val('');
+    $('#levelid'+i).val('');
+  }
   $('#view-insert-level').hide();
   $('#add').show();
   loadGeographyLevelsList(val[0]);
@@ -297,9 +301,8 @@ $('.input-sm').keyup(function (evt) {
     }
   }
 });
-function loadLevels(){
+function loadLevels() {
   $('#levelslist').empty();
-  //$('#levelslist').append($('<option></option>').val('').html('Select'));
   for(var i=2;i<=10;i++)
   {
     $('#levelslist').append($('<option></option>').val(i).html("Level "+i));
