@@ -297,9 +297,8 @@ $('.input-sm').keyup(function (evt) {
     }
   }
 });
-function loadLevels(){
+function loadLevels() {
   $('#levelslist').empty();
-  //$('#levelslist').append($('<option></option>').val('').html('Select'));
   for(var i=2;i<=10;i++)
   {
     $('#levelslist').append($('<option></option>').val(i).html("Level "+i));
