@@ -84,7 +84,7 @@ api_params = {
     'statutory_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "document_name": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'compliance_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    'compliance_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'compliance_name': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'url': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
 
     "m_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
