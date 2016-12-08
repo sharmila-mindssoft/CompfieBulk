@@ -1,10 +1,8 @@
 
 var counList;
-
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
 var FilterCountry = $('#search-country-name');
-
 //search status controls
 var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
@@ -17,9 +15,7 @@ $('#btn-country-add').click(function () {
   $('#country-add').show();
   $('#country-name').val('');
   $('#country-id').val('');
-  //displayMessage('');  // $("#country-name").focus();
-                       // $('#country-name').select();
-                       // $('#country-name').trigger('focus');
+  $('#country-name').focus();
 });
 $('#btn-country-cancel').click(function () {
   $('#country-add').hide();
@@ -31,12 +27,11 @@ $('#btn-country-cancel').click(function () {
 function initialize() {
   function onSuccess(data) {
     $('#search-country-name').val('');
-    //counList = data;
-    console.log(data)
+    counList = data;
     onLoadList(data);
   }
   function onFailure(error) {
-    displayMessage(error);
+    custom_alert(error);
   }
   mirror.getCountryList(function (error, response) {
     if (error == null) {
@@ -153,16 +148,14 @@ function validateAuthentication(){
     displayMessage(msg.password_required);
     CurrentPassword.focus();
     return false;
-  }
-  else {
+  } else {
     validateMaxLength('password', password, "Password");
   }
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
       isAuthenticate = true;
       Custombox.close();
-    }
-    else {
+    } else {
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -191,7 +184,7 @@ $('#country-name').keypress(function (e) {
 $('#btn-submit').click(function () {
   var countryIdValue = $('#country-id').val();
   var countryNameValue = $('#country-name').val().trim();
-  var checkLength = countryValidate();
+  var checkLength = validateMaxLength('countryname', countryIdValue, "countryname");
   if (checkLength) {
     if (countryNameValue.length == 0) {
       displayMessage(message.country_required);
@@ -255,40 +248,12 @@ function country_edit(countryId, countryName) {
 }
 //activate/deactivate country
 function country_active(countryId, isActive) {
-  var msgstatus = message.deactive_message;
-  if (isActive) {
-    msgstatus = message.active_message;
-  }
-  $('.warning-confirm').dialog({
-    title: message.title_status_change,
-    buttons: {
-      Ok: function () {
-        $(this).dialog('close');
-        $('#country-id').val(countryId);
-        function onSuccess(response) {
-          initialize();
-        }
-        function onFailure(error) {
-          if (error == 'TransactionExists') {
-            displayMessage(message.trasaction_exists);
-          } else {
-            displayMessage(error);
-          }
-        }
-        mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
-          if (error == null) {
-            onSuccess(response);
-          } else {
-            onFailure(error);
-          }
-        });
-      },
-      Cancel: function () {
-        $(this).dialog('close');
-      }
-    },
-    open: function () {
-      $('.warning-message').html(msgstatus);
+  mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
+    if (error == null) {
+      displaySuccessMessage(message.status_success);
+      initialize();
+    } else {
+      displayMessage(error);
     }
   });
 }
@@ -340,7 +305,6 @@ function processSearch(){
     processSearch();
   });
 
-//initialization
 $(function () {
   initialize();
 });
