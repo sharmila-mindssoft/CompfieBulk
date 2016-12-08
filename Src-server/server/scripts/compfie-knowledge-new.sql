@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `compfie_knowledge_news`;
-USE `compfie_knowledge_news`;
+CREATE DATABASE  IF NOT EXISTS `compfie_knowledge_new`;
+USE `compfie_knowledge_new`;
 
 
 DROP TABLE IF EXISTS `tbl_audit_log`;
