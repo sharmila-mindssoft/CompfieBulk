@@ -419,19 +419,20 @@ def renderTemplate(pathname, code=None):
         return new_url
 
     def update_static_urls(content):
+        v = 1
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
-            new_url += "?v=%s" % (time.time())
+            new_url += "?v=%s" % (v)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = set_path(url)
-                new_url += "?v=%s" % (time.time())
+                new_url += "?v=%s" % (v)
             else:
                 new_url = url
             node.set('href', new_url)

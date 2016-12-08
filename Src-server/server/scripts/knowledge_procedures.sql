@@ -649,7 +649,8 @@ CREATE PROCEDURE `sp_countries_for_user`(
     IN session_user INT(11)
 )
 BEGIN
-    IF session_user > 2 THEN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = session_user;
+    IF @u_cat_id > 2 THEN
         SELECT country_id, country_name, is_active
         FROM tbl_countries
         WHERE country_id in (
@@ -5945,7 +5946,7 @@ BEGIN
         t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,
         t2.duration,
         (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
-        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
+        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration_type,
         (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
         (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by,
