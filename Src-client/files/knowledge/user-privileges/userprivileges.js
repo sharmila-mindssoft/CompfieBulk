@@ -2,7 +2,7 @@ var categoryList;
 var uglist;
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
-//var msg = message;
+var msg = message;
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -433,7 +433,6 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
   $('#userGroupId').val(userGroupId);
 
   mirror.changeAdminUserGroupStatus(userGroupId, userGroupName, isActive, function (error, response) {
-  console.log("response:"+response)
   if (error == null) {
     if (isActive) {
       displaySuccessMessage(message.status_success);
