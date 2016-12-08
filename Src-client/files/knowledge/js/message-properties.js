@@ -304,6 +304,7 @@ var message = {
   "resend": 'Resend Email Successfully',
   'mobile_required': 'Mobile Number Required',
   'invalid_password': 'Invalid Password',
+  "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
   "atleast_one_compliance_select": "Atleast one compliance should be select",
 };

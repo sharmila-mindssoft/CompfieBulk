@@ -101,18 +101,11 @@ function loadIndustryList(data) {
     $('.organization-name', clone).text(industryName);
 
     if (isActive == true){
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
+      $('.status', clone).text("Active")
     }
     else{
-      statusmsg = message.active_message;
-      $('.status', clone).removeClass('fa-check text-success');
-      $('.status', clone).addClass('fa-times text-danger');
+      $('.status', clone).text('In active');
     }
-
-    $('.status').hover(function(){
-      showTitle(this);
-    });
 
     viewTable.append(clone);
     j = j + 1;

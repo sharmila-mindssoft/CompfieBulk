@@ -991,7 +991,7 @@ def get_user_category_details(db, session_user):
 
 
 def get_countries_for_usermapping_report_filter(db, user_category_id, user_id):
-    print user_id
+    
     result = db.call_proc("sp_countries_for_usermapping_report", (user_category_id, user_id))
     print "countries"
     print result

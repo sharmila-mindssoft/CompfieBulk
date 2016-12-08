@@ -158,7 +158,7 @@ def process_mobile_logout(db, request):
 
 def approve_statutory_mapping_list(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 3)
-    result
+    print result
     mappings = result[0]
     orgs = result[1]
     geo_info = result[2]
