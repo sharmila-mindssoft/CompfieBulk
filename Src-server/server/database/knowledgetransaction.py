@@ -2,6 +2,7 @@ import os
 import json
 import datetime
 from server.database.tables import *
+from server.database.forms import *
 from protocol import (core, knowledgetransaction)
 from server.constants import (
     KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
@@ -339,10 +340,13 @@ def check_duplicate_compliance_name(db, request_frame):
                 row = db.select_one(q, val)
             else:
                 row = db.select_one(q, val)
+            print q
+            print val
+            print row
             if row["compliance_cnt"] > 0:
                 compliance_names.append(compliance_name)
     if len(compliance_names) > 0:
-        return list(set(compliance_names))
+        return ", ".join(list(set(compliance_names)))
     else:
         return False
 
@@ -395,12 +399,14 @@ def save_statutory_mapping(db, data, created_by):
         text = "New statutory mapping has been created %s for the following compliances %s" % (
                 str(statutory_mapping), names
             )
+        print text
 
         link = "/knowledge/approve-statutory-mapping"
-        save_messages(db, 3, "Statutory Mapping", text, link, created_by)
+        save_messages(db, frmStatutoryMapping, "Statutory Mapping", text, link, created_by)
 
         action = "New statutory mappings added"
-        db.save_activity(created_by, 10, action)
+        db.save_activity(created_by, frmStatutoryMapping, action)
+        print action
         return True
 
 
@@ -420,6 +426,8 @@ def save_compliance(
         file_list = data.format_file_list
         file_name = ""
         file_size = 0
+        if file_list == []:
+            file_list = None
 
         if file_list is not None:
             file_list = file_list[0]
@@ -601,10 +609,9 @@ def save_notifications_status(
 #
 def get_statutory_mapping_by_id(db, mapping_id):
     q = "SELECT t1.country_id, t2.country_name, " + \
-        " t1.domain_id, t3.domain_name, t1.industry_ids, " + \
+        " t1.domain_id, t3.domain_name,  " + \
         " t1.statutory_nature_id, t4.statutory_nature_name, " + \
-        " t1.statutory_ids, t1.compliance_ids, " + \
-        " t1.geography_ids, t1.approval_status, t1.statutory_mapping " + \
+        " t1.is_approved, t1.statutory_mapping " + \
         " FROM tbl_statutory_mappings t1 " + \
         " INNER JOIN tbl_countries t2 " + \
         " on t1.country_id = t2.country_id " + \
@@ -614,44 +621,48 @@ def get_statutory_mapping_by_id(db, mapping_id):
         " on t1.statutory_nature_id = t4.statutory_nature_id " + \
         " WHERE t1.statutory_mapping_id=%s"
     rows = db.select_one(q, [mapping_id])
-    columns = [
-        "country_id", "country_name", "domain_id",
-        "domain_name", "industry_ids", "statutory_nature_id",
-        "statutory_nature_name", "statutory_ids",
-        "compliance_ids", "geography_ids",
-        "approval_status", "statutory_mapping"
-    ]
-    result = {}
-    if rows:
-        result = convert_to_dict(rows, columns)
-    return result
+    # columns = [
+    #     "country_id", "country_name", "domain_id",
+    #     "domain_name", "industry_ids", "statutory_nature_id",
+    #     "statutory_nature_name", "statutory_ids",
+    #     "compliance_ids", "geography_ids",
+    #     "approval_status", "statutory_mapping"
+    # ]
+    # result = {}
+    # if rows:
+    #     result = convert_to_dict(rows, columns)
+    return rows
 
 
 def update_statutory_mapping(db, data, updated_by):
-    statutory_mapping_id = data.statutory_mapping_id
+    statutory_mapping_id = data.mapping_id
     is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
     if bool(is_exists) is False:
         raise process_error("E020")
     domain_id = data.domain_id
     country_id = int(is_exists["country_id"])
-    industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
-    nature_id = data.statutory_nature_id
-    statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
-    compliances = data.compliances
-    geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
-    statutory_mapping = ', '.join(data.mappings)
 
-    save_statutory_backup(db, statutory_mapping_id, updated_by)
+    # industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
+    nature_id = data.statutory_nature_id
+    # statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
+    compliances = data.compliances
+    # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+    statutory_mapping = json.dumps(data.mappings)
+    if data.tr_type == 1 :
+        is_approve = 0
+    else:
+        is_approve = 1
+
+    # save_statutory_backup(db, statutory_mapping_id, updated_by)
     table_name = "tbl_statutory_mappings"
     columns = (
-        "industry_ids", "statutory_nature_id", "statutory_ids",
-        "geography_ids", "approval_status", "rejected_reason",
+        "country_id", "domain_id", "statutory_nature_id",
+        "updated_by", "updated_on",
         "statutory_mapping",
-        "updated_by"
     )
     values = (
-        industry_ids, nature_id, statutory_ids, geography_ids,
-        0, '', statutory_mapping, int(updated_by), statutory_mapping_id
+        country_id, domain_id, nature_id,
+        int(updated_by), get_date_time(), statutory_mapping, statutory_mapping_id
     )
     where_condition = " statutory_mapping_id= %s "
 
@@ -660,33 +671,30 @@ def update_statutory_mapping(db, data, updated_by):
     #     data.statutory_ids, statutory_mapping_id, updated_by
     # )
     ids, names = update_compliance(
-        db, statutory_mapping_id, domain_id, compliances, updated_by
-        )
-    compliance_ids = ','.join(str(x) for x in ids) + ","
-    db.update(
-        table_name, ["compliance_ids"],
-        [compliance_ids, statutory_mapping_id], where_condition
+        db, statutory_mapping_id, country_id, domain_id, compliances, updated_by,
+        is_approve
     )
+
     save_statutory_industry(
-        db, statutory_mapping_id, data.industry_ids, False
+        db, statutory_mapping_id, data.industry_ids, updated_by, False
     )
     save_statutory_geography_id(
-        db, statutory_mapping_id, data.geography_ids, False
+        db, statutory_mapping_id, data.geography_ids, updated_by, False
     )
     save_statutory_statutories_id(
-        db, statutory_mapping_id, data.statutory_ids, False
+        db, statutory_mapping_id, data.statutory_ids, updated_by, False
     )
-    action = "Edit Statutory Mappings"
-    db.save_activity(updated_by, 10, action)
-    notification_log_text = "Stautory mapping has been updated %s" % (
-        statutory_mapping
-    )
+
+    text = "%s statutory mappings has been edited for following compliances %s" % (str(statutory_mapping), names)
+    db.save_activity(updated_by, frmStatutoryMapping, text)
+
     link = "/knowledge/approve-statutory-mapping"
-    save_notifications(
-        db, notification_log_text, link,
-        domain_id, country_id, updated_by,
-        user_id=None
-    )
+    save_messages(db, 3, "Statutory Mapping", text, link, updated_by)
+    # save_notifications(
+    #     db, notification_log_text, link,
+    #     domain_id, country_id, updated_by,
+    #     user_id=None
+    # )
     return True
 
 
@@ -706,48 +714,50 @@ def remove_uploaded_file(file_path):
         os.remove(file_path)
 
 
-def update_compliance(db, mapping_id, domain_id, datas, updated_by):
-    is_format = False
+def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, is_approve):
     compliance_ids = []
     compliance_names = []
-    file_path = KNOWLEDGE_FORMAT_PATH
+    # file_path = KNOWLEDGE_FORMAT_PATH
     for data in datas:
         compliance_id = data.compliance_id
 
         if (compliance_id is None):
             ids, names = save_compliance(
-                db, mapping_id, domain_id, [data], updated_by
+                db, mapping_id, domain_id, country_id, is_approve, [data], updated_by
             )
             compliance_ids.extend(ids)
             continue
         else:
-            saved_file = get_saved_format_file(db, compliance_id)
+            pass
+            # saved_file = get_saved_format_file(db, compliance_id)
         provision = data.statutory_provision
         compliance_task = data.compliance_task
         description = data.description
         document_name = data.document_name
-        file_list = data.format_file_list
-        file_name = ""
+        file_name = ''
         file_size = 0
-        # file_content = ""
-        saved_file_name = saved_file[0]
-        if len(saved_file_name) == 0:
-            saved_file_name = None
-        if file_list is None:
-            if saved_file_name is not None:
-                remove_uploaded_file(file_path + "/" + saved_file_name)
-        else:
-            file_list = file_list[0]
-            file_name = file_list.file_name
-            file_size = file_list.file_size
-            # file_content = file_list.file_content
+        # file_list = data.format_file_list
+        # file_name = ""
+        # file_size = 0
+        # # file_content = ""
+        # saved_file_name = saved_file[0]
+        # if len(saved_file_name) == 0:
+        #     saved_file_name = None
+        # if file_list is None:
+        #     if saved_file_name is not None:
+        #         remove_uploaded_file(file_path + "/" + saved_file_name)
+        # else:
+        #     file_list = file_list[0]
+        #     file_name = file_list.file_name
+        #     file_size = file_list.file_size
+        #     # file_content = file_list.file_content
 
-            if saved_file_name is not None:
-                if len(file_name) == 0:
-                    file_name = None
-                    remove_uploaded_file(file_path + "/" + saved_file_name)
-                elif file_name != saved_file_name:
-                    remove_uploaded_file(file_path + "/" + saved_file_name)
+        #     if saved_file_name is not None:
+        #         if len(file_name) == 0:
+        #             file_name = None
+        #             remove_uploaded_file(file_path + "/" + saved_file_name)
+        #         elif file_name != saved_file_name:
+        #             remove_uploaded_file(file_path + "/" + saved_file_name)
 
         penal_consequences = data.penal_consequences
         compliance_frequency = data.frequency_id
@@ -761,23 +771,23 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
         duration = data.duration
         duration_type = data.duration_type_id
         is_active = int(data.is_active)
-
+        reference = data.reference
         table_name = "tbl_compliances"
         columns = [
             "statutory_provision", "compliance_task",
             "compliance_description", "document_name",
             "format_file", "format_file_size", "penal_consequences",
-            "frequency_id", "statutory_dates",
+            "reference_link", "frequency_id", "statutory_dates",
             "statutory_mapping_id", "is_active",
-            "updated_by", "domain_id",
+            "updated_by", "domain_id", "country_id",
             "duration", "duration_type_id", "repeats_every", "repeats_type_id"
         ]
         values = [
             provision, compliance_task, description,
             document_name, file_name, file_size,
-            penal_consequences, compliance_frequency,
+            penal_consequences, reference, compliance_frequency,
             statutory_dates, mapping_id, is_active,
-            updated_by, domain_id
+            updated_by, domain_id, country_id,
         ]
         if compliance_frequency == 1:
             values.extend([0, 0, 0, 0])
@@ -1421,7 +1431,7 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 4)
-
+    print result
     if len(result) == 0 :
         raise process_error("E087")
 
@@ -1472,8 +1482,8 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
             bool(c["is_active"]),
             c["frequency_id"], date_list, c["repeats_type_id"],
             c["repeats_every"], c["duration_type_id"],
-            c["duration"], c["format_file"],
-            summary, c["reference_link"]
+            c["duration"], c["format_file"], [],
+            summary, c["reference_link"], c["freq_name"]
         ))
 
     data = knowledgetransaction.GetComplianceEditSuccess(
@@ -1483,5 +1493,3 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
     )
 
     return data
-
-

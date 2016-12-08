@@ -6151,7 +6151,7 @@ BEGIN
         t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,
         t2.duration,t2.format_file, t2.format_file_size,
         (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
-        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
+        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration_type
      from tbl_statutory_mappings as t1
          inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
