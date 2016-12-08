@@ -38,6 +38,7 @@ from server.templatepath import (
     TEMPLATE_PATHS
 )
 
+from server.exceptionmessage import fetch_error
 import logger
 
 
@@ -131,10 +132,10 @@ class API(object):
     ):
         print "-----"
         print type(response_data)
-        if type(response_data) is not str :
+        if type(response_data) is not str:
             data = response_data.to_structure()
             s = json.dumps(data, indent=2)
-        else :
+        else:
             s = response_data
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
@@ -187,20 +188,21 @@ class API(object):
 
             if request_data is None:
                 raise ValueError("Request data is Null")
-            elif type(request_data) is str :
+            elif type(request_data) is str:
                 raise ValueError(request_data)
-
             print "not returned"
 
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
+            print "unbboundddd----", unbound_method
             response_data = unbound_method(self, request_data, _db)
-            if response_data is None or type(response_data) is bool:
-                # print response_data
-                _db.rollback()
 
-            if type(response_data) != technomasters.ClientCreationFailed:
+            if response_data is None or type(response_data) is bool:
+                print response_data
+                _db.rollback()
+                raise fetch_error()
+            elif type(response_data) != technomasters.ClientCreationFailed:
                 print "commit"
                 _db.commit()
             else:
@@ -211,6 +213,7 @@ class API(object):
             print "handle_api_request ", e
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
+            print(traceback.format_exc())
             # logger.logKnowledgeApi(ip_address, "")
 
             logger.logKnowledge("error", "main.py-handle-api-", e)
