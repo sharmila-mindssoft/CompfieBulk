@@ -181,6 +181,14 @@ function validateMaxLength(key_name, value, show_name) {
 
 // activate/deactivate geographies
 function changeStatus(geographyId, isActive) {
+  console.log(isActive)
+  function onSuccess(response) {
+    displaySuccessMessage(message.status_success);
+    GetGeographies();
+  }
+  function onFailure(error) {
+    displayMessage(error);
+  }
   mirror.changeGeographyStatus(geographyId, isActive, function (error, response) {
     if (error == null) {
       onSuccess(response);
@@ -307,6 +315,7 @@ function processSearch(){
     var flist = [];
     var countryGeographyList = geographiesList[entity];
     for (var geography in countryGeographyList) {
+      console.log(countryGeographyList[geography])
       var cName = '';
       for (country in countriesList) {
         var cId = countriesList[country].country_id;
@@ -328,7 +337,7 @@ function processSearch(){
       var filter2val = lName;
       var filter3val = countryGeographyList[geography].geography_name;
       if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3)) {
-        if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+        if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == countryGeographyList[geography].is_active)){
           flist.push(countryGeographyList[geography]);
         }
       }
