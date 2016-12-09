@@ -52,7 +52,7 @@ function resetValues(){
 }
 
 function initialize(){
-	resetValues();
+	//resetValues();
   mirror.getClientAgreementReportFilters(function (error, data) {
       if (error == null) {
         console.log(data)
@@ -163,7 +163,7 @@ function displayPopup(LE_ID, D_ID){
 
 function loadCompliances(data){
     $('.table-client-agreement-list').empty();
-    $('..table-agreement-list').show();
+    $('.table-agreement-list').show();
     var tableRow_tr = $('#templates .table-agreement-list .heading-list');
     var clonetr = tableRow_tr.clone();
     $('.table-client-agreement-list').append(clonetr);
@@ -178,20 +178,17 @@ function loadCompliances(data){
         var tableRowHeading = $('#templates .table-agreement-list .group-list');
         var cloneHeading = tableRowHeading.clone();
         $('.group-name', cloneHeading).text(value.group_name);
+        if (lastBusinessGroup != value.business_group_name) {
+          $('.business-group-name', cloneHeading).text(value.business_group_name);
+          lastBusinessGroup = value.business_group_name;
+        }
         $('.group-admin-email', cloneHeading).text(value.group_admin_email);
-
+        $('.le-contactno', cloneHeading).text(value.legal_entity_admin_contactno);
         $('.table-client-agreement-list').append(cloneHeading);
         lastGroup = value.group_name;
       }
 
-      if (lastBusinessGroup != value.business_group_name) {
-        var tableRowHeading = $('#templates .table-agreement-list .business-group-list');
-        var cloneHeading = tableRowHeading.clone();
-        $('.business-group-name', cloneHeading).text(value.business_group_name);
 
-        $('.table-client-agreement-list').append(cloneHeading);
-        lastBusinessGroup = value.business_group_name;
-      }
 
       if (lastLE != value.legal_entity_name) {
         var tableRow = $('#templates .table-agreement-list .tbody-agreement-list');
@@ -278,6 +275,12 @@ function processSubmit (csv){
                 displayMessage(error);
             }
             else {
+              $('.details').show();
+              $('#compliance_animation')
+                .removeClass().addClass('bounceInLeft animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass();
+              });
               if (csv) {
                 var download_url = response.link;
                 window.open(download_url, '_blank');
