@@ -130,7 +130,8 @@ function LegalEntityClosureData(data)
 	// }
 }
 function bindLegalEntityClosureData(data, j)
-{
+{	
+	console.log(data);
 	val = data;
 	var tableRow = $('#templates .table-row');
 	var clone = tableRow.clone();

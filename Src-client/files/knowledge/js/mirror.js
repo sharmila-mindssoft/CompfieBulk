@@ -182,7 +182,9 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        // alert(jqXHR["responseText"]);
+
+        console.log(textStatus, errorThrown);
+        console.log(jqXHR.responseText)
         callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);
@@ -720,6 +722,16 @@ function initMirror() {
       {
         "approval_status_id": parseInt(approval_status),
         "rcount": parseInt(rcount)
+      }
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
+  function getStatutoryMappingsEdit(m_id, comp_id, callback) {
+    var request = [
+      'GetComplianceEdit',
+      {
+        "m_id": parseInt(m_id),
+        "comp_id": comp_id
       }
     ];
     apiRequest('knowledge_transaction', request, callback);
@@ -2004,6 +2016,22 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserDomainReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id,
+        "bg_id": bg_id,
+        "le_id": le_id,
+        "d_id": d_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   function getLegalEntityClosureData(callback){
     callerName = 'techno_transaction';
     var request = [
@@ -2323,8 +2351,9 @@ function initMirror() {
     getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
     getMessages: getMessages,
     getStatutoryNotifications: getStatutoryNotifications,
-    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus
-
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+    getReassignUserDomainReportData: getReassignUserDomainReportData,
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit
   };
 }
 var mirror = initMirror();

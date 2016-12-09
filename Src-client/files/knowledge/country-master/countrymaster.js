@@ -1,10 +1,8 @@
 
 var counList;
-
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
 var FilterCountry = $('#search-country-name');
-
 //search status controls
 var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
@@ -17,9 +15,7 @@ $('#btn-country-add').click(function () {
   $('#country-add').show();
   $('#country-name').val('');
   $('#country-id').val('');
-  //displayMessage('');  // $("#country-name").focus();
-                       // $('#country-name').select();
-                       // $('#country-name').trigger('focus');
+  $('#country-name').focus();
 });
 $('#btn-country-cancel').click(function () {
   $('#country-add').hide();
@@ -32,7 +28,7 @@ function initialize() {
   function onSuccess(data) {
     $('#search-country-name').val('');
     counList = data;
-    loadCountriesList(data);
+    onLoadList(data);
   }
   function onFailure(error) {
     custom_alert(error);
@@ -45,52 +41,60 @@ function initialize() {
     }
   });
 }
+function onLoadList(data){
+  counList = [];
+  $.each(data, function (i, value) {
+    var country = data[i];
+    $.each(country, function (j, value) {
+      counList.push(country[j]);
+    });
+  });
+  console.log(counList);
+  loadCountriesList(counList);
+}
 //display cpuntry details in view page
 function loadCountriesList(countriesList) {
   $('.tbody-countries-list').find('tr').remove();
   var sno = 0;
-  $.each(countriesList, function (i, value) {
-    var countries = countriesList[i];
-    $.each(countries, function (j, value) {
-      var countryId = countries[j].country_id;
-      var countryName = countries[j].country_name;
-      var isActive = countries[j].is_active;
-      var passStatus = null;
-      var classValue = null;
+  $.each(countriesList, function (j, value) {
+    var countryId = countriesList[j].country_id;
+    var countryName = countriesList[j].country_name;
+    var isActive = countriesList[j].is_active;
+    var passStatus = null;
+    var classValue = null;
 
-      var tableRow = $('#templates .table-countries-list .table-row');
-      var clone = tableRow.clone();
-      sno = sno + 1;
-      $('.sno', clone).text(sno);
-      $('.country-name', clone).text(countryName);
+    var tableRow = $('#templates .table-countries-list .table-row');
+    var clone = tableRow.clone();
+    sno = sno + 1;
+    $('.sno', clone).text(sno);
+    $('.country-name', clone).text(countryName);
 
-      //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        country_edit(countryId, countryName);
-      });
-
-      if (isActive == false){
-        //$('.status').attr('title', 'Click Here to Deactivate');
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
-      }
-      else{
-        //$('.status').attr('title', 'Click Here to Activate');
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-      }
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, countryId, isActive);
-      });
-
-      $('.status').hover(function(){
-        showTitle(this);
-      });
-
-      $('.tbody-countries-list').append(clone);
+    //edit icon
+    $('.edit').attr('title', 'Click Here to Edit');
+    $('.edit', clone).addClass('fa-pencil text-primary');
+    $('.edit', clone).on('click', function () {
+      country_edit(countryId, countryName);
     });
+
+    if (isActive == false){
+      //$('.status').attr('title', 'Click Here to Deactivate');
+      $('.status', clone).removeClass('fa-check text-success');
+      $('.status', clone).addClass('fa-times text-danger');
+    }
+    else{
+      //$('.status').attr('title', 'Click Here to Activate');
+      $('.status', clone).removeClass('fa-times text-danger');
+      $('.status', clone).addClass('fa-check text-success');
+    }
+    $('.status', clone).on('click', function (e) {
+      showModalDialog(e, countryId, isActive);
+    });
+
+    $('.status').hover(function(){
+      showTitle(this);
+    });
+
+    $('.tbody-countries-list').append(clone);
   });
 }
 
@@ -144,16 +148,14 @@ function validateAuthentication(){
     displayMessage(msg.password_required);
     CurrentPassword.focus();
     return false;
-  }
-  else {
+  } else {
     validateMaxLength('password', password, "Password");
   }
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
       isAuthenticate = true;
       Custombox.close();
-    }
-    else {
+    } else {
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -182,7 +184,7 @@ $('#country-name').keypress(function (e) {
 $('#btn-submit').click(function () {
   var countryIdValue = $('#country-id').val();
   var countryNameValue = $('#country-name').val().trim();
-  var checkLength = countryValidate();
+  var checkLength = validateMaxLength('countryname', countryIdValue, "countryname");
   if (checkLength) {
     if (countryNameValue.length == 0) {
       displayMessage(message.country_required);
@@ -192,7 +194,7 @@ $('#btn-submit').click(function () {
           $('#country-add').hide();
           $('#ctry-view').show();
           $('#search-country-name').val('');
-          displayMessage(message.save_success);
+          displaySuccessMessage(message.save_success);
           initialize();
         }
         function onFailure(error) {
@@ -213,7 +215,7 @@ $('#btn-submit').click(function () {
         function onSuccess(response) {
           $('#country-add').hide();
           $('#ctry-view').show();
-          displayMessage(message.update_success);
+          displaySuccessMessage(message.update_success);
           initialize();
         }
         function onFailure(error) {
@@ -246,40 +248,12 @@ function country_edit(countryId, countryName) {
 }
 //activate/deactivate country
 function country_active(countryId, isActive) {
-  var msgstatus = message.deactive_message;
-  if (isActive) {
-    msgstatus = message.active_message;
-  }
-  $('.warning-confirm').dialog({
-    title: message.title_status_change,
-    buttons: {
-      Ok: function () {
-        $(this).dialog('close');
-        $('#country-id').val(countryId);
-        function onSuccess(response) {
-          initialize();
-        }
-        function onFailure(error) {
-          if (error == 'TransactionExists') {
-            custom_alert(message.trasaction_exists);
-          } else {
-            custom_alert(error);
-          }
-        }
-        mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
-          if (error == null) {
-            onSuccess(response);
-          } else {
-            onFailure(error);
-          }
-        });
-      },
-      Cancel: function () {
-        $(this).dialog('close');
-      }
-    },
-    open: function () {
-      $('.warning-message').html(msgstatus);
+  mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
+    if (error == null) {
+      displaySuccessMessage(message.status_success);
+      initialize();
+    } else {
+      displayMessage(error);
     }
   });
 }
@@ -297,20 +271,40 @@ $('#search-country-name').keyup(function () {
 
 function processSearch(){
   usr_status = $('.search-status-li.active').attr('value');
-
   searchList = []
 
-  for(var i in counList){
-    data = counList[i];
-    data_is_active = data.is_active;
-    if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-        searchList.push(data);
+  $.each(counList, function (j, value) {
+    data = counList[j];
+    console.log("2:"+data)
+    data_is_active = counList[j].is_active;
+    if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == data_is_active)){
+      searchList.push(data);
     }
-  }
+  });
+  console.log(searchList)
+
   loadCountriesList(searchList);
 }
 
-//initialization
+//status of the list
+  Search_status_ul.click(function (event) {
+    Search_status_li.each(function (index, el) {
+      $(el).removeClass('active');
+    });
+    $(event.target).parent().addClass('active');
+
+    var currentClass = $(event.target).find('i').attr('class');
+    Search_status.removeClass();
+    if(currentClass != undefined){
+      Search_status.addClass(currentClass);
+      Search_status.text('');
+    }else{
+      Search_status.addClass('fa');
+      Search_status.text('All');
+    }
+    processSearch();
+  });
+
 $(function () {
   initialize();
 });

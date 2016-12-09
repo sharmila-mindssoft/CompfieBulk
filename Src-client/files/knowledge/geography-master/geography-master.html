@@ -15,8 +15,8 @@
     <div class="col-sm-2"></div>
     <div class="col-sm-8">
       <div class="card-box table-responsive">
-        <div class="col-sm-12">
-          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+        <div class="col-sm-12 no-padding">
+          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
             <thead>
               <tr>
                 <th>#</th>
@@ -69,6 +69,7 @@
             </tbody>
           </table>
         </div>
+        <div class="clearfix"></div>
       </div>
     </div>
   </div>
@@ -93,9 +94,9 @@
           <div class="portlet-body">
             <div class="form-horizontal group-border-dashed">
               <div class="form-group">
-              <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name:<span class="mandatory">*</span></label>
-              <div class="col-sm-4 controls">
-                <input type="text" class="input-box icon-autocomplete" id="countryval" value="" style="width:50%;" autofocus="autofocus">
+              <label class="col-sm-offset-2 col-sm-3 control-label" for="example-input-small">Country Name:<span class="mandatory">*</span></label>
+              <div class="col-sm-6 controls">
+                <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Country Name" value="" style="width:50%;" autofocus="autofocus">
                 <input type="hidden" id="country">
                 <input type="hidden" id="geographyid">
                 <div id="ac-country" class="ac-textbox default-display-none">
@@ -106,10 +107,10 @@
         </div>
       </div>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive p-l-20 p-r-20">
       <div class="form-horizontal group-border-dashed">
         <div id="grid-panchayat" class="form-container-grid-table" >
-          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-list" cellspacing="0" width="100%">
+          <table id="datatable-responsive" class="table dt-responsive nowrap table-list no-border" cellspacing="0" width="100%">
             <!--<thead>
               <tr>
                 <th class="col-sm-3">Region</th>
@@ -147,40 +148,61 @@
   </table>
 </div>
 <div style="float:left;width:33.3%" id="geography-level-templates" class="default-display-none">
-  <table style="width:100%;">
-    <tr align="left">
-      <th style="overflow: hidden;" class="title"></th>
-    </tr>
+  <table style="width:100%;" class="table table-striped dt-responsive nowrap table-list no-bgheader">
     <tr>
       <td style="overflow: hidden;" class="levelvalue">
+      <h6 class="m-t-0 m-b-0 tab-sub-heaer title">Region</h6>
+        <ul class="geography-list list-unstyled h10"></ul>
 
-        <ul class="geography-list"></ul>
-        <div align="center" class="bottomfield">
-          <input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:90%;"/>
-          <span>
-            <a class="popup-link">
-              <img src="/images/icon-plus.png" formtarget="_self" class="add-geo"/>
-            </a>
-          </span>
+        <div class="input-group bottomfield">
+            <input type="text" class="form-control input-sm addleft" name="example-input-small" id="example-input-small">
+            <span class="input-group-btn popup-link">
+              <button type="button" class="btn btn-info btn-sm add-geo">
+                <i class="fa fa-plus"></i>
+              </button>
+            </span>
         </div>
         <input type="hidden" class="glmid-class" />
         <input type="hidden" class="level-class" />
         <input type="hidden" class="visible-class" />
-
       </td>
     </tr>
   </table>
 </div>
 <!-- Modal -->
-<div id="custom-modal" class="modal-demo box-width-400">
+<!--div id="custom-modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
-    <div class="custom-modal-text">
+    <div class="custom-modal-text p-t-0">
         <div role="form">
             <div class="form-group">
                 <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div-->
+<!-- Modal -->
+</div>
+</div>
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text p-t-0">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
                 <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>

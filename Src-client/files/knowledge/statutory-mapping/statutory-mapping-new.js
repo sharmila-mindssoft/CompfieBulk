@@ -16,6 +16,7 @@ var STATU_MAPPINGS;
 var STATU_TOTALS;
 
 var CURRENT_TAB = 1;
+IS_EDIT = false;
 // controls
 Spin_pan = $('.loading-indicator-spin');
 
@@ -33,7 +34,9 @@ OccasionalPan = $('#Occasional');
 Frequency = $('#compliance_frequency');
 DurationType = $('#duration_type');
 Duration = $('#duration');
-Repeats = $('#repeats_type');
+
+RepeatsType = $('#repeats_type');
+RepeatsEvery = $('#repeats_every')
 ComplianceTask = $('#compliance_task');
 Provision = $('#statutory_provision');
 Description = $('#compliance_description');
@@ -76,16 +79,16 @@ displayMsg = function(msg) {
 
 possibleFailure = function(err, extra_details) {
     if (err == "StatutoryNameAlreadyExists") {
-        displayMsg(msg.statutoryname_exists);
+        displayMessage(msg.statutoryname_exists);
     }
     else if ( err == "ComplianceNameAlreadyExists") {
-        displayMsg(msg.compliancename_exists + extra_details);
+        displayMessage(msg.compliancename_exists + extra_details);
     }
     else if (err = "TransactionExists") {
-        displayMsg(msg.transaction_exists);
+        displayMessage(msg.transaction_exists);
     }
     else {
-        displayMsg(err);
+        displayMessage(err);
     }
 };
 //
@@ -114,6 +117,9 @@ function RenderInput() {
     this.selected_geos = [];
     this.selected_geos_parent=[];
     this.child_geos= [];
+    this.selected_sids = [];
+    this.selected_iids = [];
+    this.mapping_id = null;
 
     this.remveItemFromList = function(item, mainlist) {
         if (!mainlist)
@@ -140,10 +146,34 @@ function RenderInput() {
         this.org_names = [];
         this.nature_id = null;
         this.nature_name = null;
+        this.last_selected = null;
+        this.s_names = [];
+        this.s_pids = [];
+        this.s_id = null;
+        this.mapped_statu = [];
+        this.l_one_id = null;
+        this.level_one_name = null;
+        this.mapped_compliances = [];
+        this.summary = null;
+        this.statu_dates = [];
+        this.selected_geos = [];
+        this.selected_geos_parent=[];
+        this.child_geos= [];
+        this.selected_sids = [];
+        this.selected_iids = [];
+        this.mapping_id = null;
+        Country.empty();
+        Domain.empty();
+        Organisation.empty();
+        Nature.empty();
+        RepeatsType.empty();
+        Frequency.empty();
+        $('.tbody-statutory-list').empty();
+        $('.tbody-compliance-list').empty();
     };
     this.getMonthAndDataSets = function() {
         return [
-            {'m_id': 1, 'm_name':'Jan', 'range':31},
+            {'m_id': 1, 'm_name': 'Jan', 'range':31},
             {'m_id': 2, 'm_name': 'Feb', 'range': 28},
             {'m_id': 3, 'm_name': 'Mar', 'range': 31},
             {'m_id': 4, 'm_name': 'Apr', 'range': 30},
@@ -159,8 +189,9 @@ function RenderInput() {
     };
 
     this.loadCounty = function() {
-        this.resetField();
+        // this.resetField();
         Country.empty();
+        t_this = this;
 
         $.each(COUNTY_INFO, function(ke, val) {
             if (val.is_active == false)
@@ -181,20 +212,19 @@ function RenderInput() {
                 $('#c'+val.c_id + ' i').addClass("fa-check");
             });
             $('.name-holder', cObject).text(val.c_name);
+            Country.append(cObject);
             if(_renderinput.country_id == val.c_id)
             {
                 $('#c'+val.c_id).addClass('active');
                 $('#c'+val.c_id + ' i').addClass("fa-check");
+                _renderinput.loadDomain(_renderinput.country_id);
+                _renderinput.loadNature(_renderinput.country_id);
             }
-            Country.append(cObject);
+
         });
     };
 
     this.loadDomain = function(c_id) {
-        this.domain_id = null;
-        this.domain_name = null;
-        this.org_ids = [];
-        this.org_names = [];
         Domain.empty();
 
         $.each(DOMAIN_INFO, function(ke, val) {
@@ -216,18 +246,20 @@ function RenderInput() {
                 _renderinput.loadOrganisation(val.c_id, val.d_id);
             });
             $('.name-holder', dObject).text(val.d_name);
+            Domain.append(dObject);
             if (_renderinput.domain_id == val.d_id){
                 $("#d"+val.d_id).addClass('active');
-                $("#d"+val.d_id + ' i').addClass('fa-check')
+                $("#d"+val.d_id + ' i').addClass('fa-check');
+                _renderinput.loadOrganisation(c_id, _renderinput.domain_id);
             }
-            Domain.append(dObject);
+
         });
-        Organisation.empty();
     };
 
     this.loadOrganisation = function(c_id, d_id) {
-        this.org_ids = [];
-        this.org_names = [];
+        // this.org_ids = [];
+        // this.org_names = [];
+        console.log(c_id, d_id);
         Organisation.empty();
 
         // append select
@@ -236,6 +268,7 @@ function RenderInput() {
         orgObject.attr('id', 'o-1');
         $('.name-holder', orgObject).text('Select');
         Organisation.append(orgObject)
+
         orgObject.on('click', function() {
             _renderinput.org_ids = [];
             _renderinput.org_names = [];
@@ -263,9 +296,11 @@ function RenderInput() {
                 (parseInt(val.c_id) == parseInt(c_id)) &&
                 (parseInt(val.d_id) == parseInt(d_id))
             ){
+                console.log("if")
                 orgObject = list_template.clone();
                 orgObject.addClass("organisationlist");
                 orgObject.attr('id', 'o'+val.org_id);
+
                 orgObject.on('click', function() {
                     $('#o-1').removeClass('active');
                     sts = $('#o'+val.org_id).hasClass('active');
@@ -286,15 +321,22 @@ function RenderInput() {
                         _renderinput.org_names.push(val.org_name);
                     }
                 });
+
                 $('.name-holder', orgObject).text(val.org_name);
                 Organisation.append(orgObject);
+
+                if (_renderinput.selected_iids.indexOf(val.org_id) > -1){
+                    $('#o'+val.org_id).addClass('active');
+                    $('#o'+val.org_id+ ' i').addClass('fa-check');
+                    _renderinput.org_ids.push(val.org_id);
+                    _renderinput.org_names.push(val.org_name);
+                }
+
             }
         });
     };
 
     this.loadNature = function(c_id) {
-        this.nature_id = null;
-        this.nature_name = null;
         Nature.empty();
 
         $.each(NATURE_INFO, function(ke, val) {
@@ -314,22 +356,25 @@ function RenderInput() {
                 _renderinput.nature_name = val.s_n__name;
             });
             $('.name-holder', nObject).text(val.s_n_name);
+            Nature.append(nObject);
+
             if (_renderinput.nature_id == val.s_n_id){
                 $('#n'+val.s_n_id).addClass('active');
                 $('#n'+val.s_n_id+' i').addClass('fa-check');
+                _renderinput.nature_id = val.s_n_id;
+                _renderinput.nature_name = val.s_n__name;
             }
 
-            Nature.append(nObject);
         });
     };
 
     this.loadRepeats = function() {
-        Repeats.empty();
-        Repeats.append(
+        RepeatsType.empty();
+        RepeatsType.append(
             _renderinput.make_option("Select", "")
         );
         $.each(REPEATSTYPE_INFO, function(ke, val) {
-            Repeats.append(
+            RepeatsType.append(
                 _renderinput.make_option(val.repeat_type, val.repeat_type)
             );
         });
@@ -354,9 +399,6 @@ function RenderInput() {
         });
     };
     this.clearSubLevel = function(l_position) {
-        console.log(l_position);
-        // if (l_position == 1)
-        //     l_position += 1;
         for (var i=l_position+1; i<11; i++) {
             // console.log($('.statutory_levelvalue #snl'+i));
             $('.statutory_levelvalue #snl'+i).empty();
@@ -370,9 +412,11 @@ function RenderInput() {
 
             liObject.attr('id', 'sid'+v.s_id);
             liObject.addClass('slp'+v.l_position);
+
             $('.sname-holder', liObject).on('click', function() {
                 $('.statutory_levelvalue #dv'+v.l_position).val('');
                 $('.statutory_levelvalue #dvid'+v.l_position).val('');
+                $('.statutory_levelvalue #dvpid'+v.l_position).val('');
                 var _s_names = [];
                 var _s_pids = [];
                 _renderinput.s_id = v.s_id;
@@ -398,9 +442,16 @@ function RenderInput() {
                 _renderinput.renderStatuNames(v.s_id, v.l_position);
             });
             $('.edit-icon', liObject).on('click', function() {
-                console.log('edit');
+                if (v.p_ids == null) {
+                    pid = 0;
+                }
+                else {
+                    pid = v.p_ids[v.p_ids.length - 1];
+                }
+
                 $('.statutory_levelvalue #dv'+v.l_position).val(v.s_name);
-                $('.statutory_levelvalue #dvid'+v.l_position).val(v.s_name);
+                $('.statutory_levelvalue #dvid'+v.l_position).val(v.s_id);
+                $('.statutory_levelvalue #dvpid'+v.l_position).val(pid);
             });
             $('#sname', liObject).text(v.s_name);
             $('#tbody-statutory-level .statutory_levelvalue #snl'+v.l_position).append(liObject)
@@ -484,19 +535,30 @@ function RenderInput() {
             $('.bottomfield .snameid', slObject).attr(
                 'id', 'dvid' + v.l_position
             );
+            $('.bottomfield .snamepid', slObject).attr(
+                'id', 'dvpid' + v.l_position
+            );
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
                     new_value = $('#dv'+ v.l_position).val();
                     _sid = $('#dvid'+v.l_position).val();
-                    if(_sid != '') {
+                    console.log(_sid);
+                    if(_sid == '') {
                         _fetchback.saveStautory(
                             v.l_id, new_value, v.l_position
                         );
                     }
                     else {
-
+                        _fetchback.updateStatutory(
+                            new_value, parseInt(_sid), v.l_position
+                        );
                     }
+                    // if (v.l_position == 1){
+                    //     _renderinput.renderStatuNames(
+                    //         0, v.l_position
+                    //     );
+                    // }
 
                     $('#dv'+ v.l_position).val('');
                     $('#dvid'+ v.l_position).val('');
@@ -506,10 +568,23 @@ function RenderInput() {
             $('.bottomfield .statut-add', slObject).on(
                 'click', function(){
                 new_value = $('#dv'+ v.l_position).val();
-                _fetchback.saveStautory(
-                    v.l_id, new_value, v.l_position
-                );
-                $('#dv'+ v.l_position).val('');
+                _sid = $('#dvid'+v.l_position).val();
+                if (_sid == '') {
+                    _fetchback.saveStautory(
+                        v.l_id, new_value, v.l_position
+                    );
+                }
+                else {
+                    _fetchback.updateStatutory(
+                        new_value, _sid, v.l_position
+                    );
+                }
+
+                // if (v.l_position == 1){
+                //     _renderinput.renderStatuNames(
+                //         0, v.l_position
+                //     );
+                // }
             });
 
             $('#tbody-statutory-level').append(slObject);
@@ -526,7 +601,7 @@ function RenderInput() {
         $.each(this.mapped_statu, function(k, v) {
             trObj = $('#templates #statutory-grid-templates .table-row').clone();
             $('.sno', trObj).text(j);
-            $('.statutory', trObj).text(v.s_names.join('>>'));
+            $('.statutory', trObj).text(v.s_names.join(' >> '));
             $('.remove', trObj).on('click', function() {
                 console.log(k);
                 console.log(v);
@@ -570,34 +645,57 @@ function RenderInput() {
         }
     }
     this.loadCompliance = function(data){
-        Provision.text(data.s_provision);
-        ComplianceTask.text(data.c_task);
-        Description.text(data.description);
-        Document.text(data.doc_name);
-        Penal.text(data.p_consequences);
-        ReferenceLink.text(data.reference);
+
+        Provision.val(data.s_provision);
+        ComplianceTask.val(data.c_task);
+        Description.val(data.description);
+        Document.val(data.doc_name);
+        Penal.val(data.p_consequences);
+        ReferenceLink.val(data.reference);
+        Frequency.val(data.f_id);
+        this.hideFrequencyAll();
+        this.showFrequencyVal();
         if (data.f_id == 1) {
-            this.loadMonths();
+        // this.loadMonths();
 
             if (data.statu_dates.length > 0) {
                 $('#otstatutory_month').val(data.statu_dates[0]['statutory_month']);
+
+                $('#otstatutory_date').empty();
+                $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
+                    if (v.m_id == parseInt($('#otstatutory_month').val())) {
+                        for (var i=1; i<=v.range; i++) {
+                            dopt =_renderinput.make_option(i, i);
+                            $('#otstatutory_date').append(dopt);
+                        }
+                    }
+                });
                 $('#otstatutory_date').val(data.statu_dates[0]['statutory_date']);
                 $('ottriggerbefore').val(data.statu_dates[0]['trigger_before_days']);
             }
         }
         else if (data.f_id == 5) {
-            Duration.text(d.duration);
-            DurationType.val(d.d_type_id);
+            Duration.text(data.duration);
+            alert(data.d_type_id);
+            DurationType.val(data.d_type_id);
         }
         else {
-            RepeatsType.val(d.r_type_id);
-            RepeatsEvery.val(d.r_every);
+            RepeatsType.val(data.r_type_id);
+            RepeatsEvery.val(data.r_every);
 
         }
-        Comp_id.text(data.comp_id);
+        console.log(data.comp_id);
+        console.log(data.temp_id);
+        Comp_id.val(data.comp_id);
         if (data.comp_id == null) {
-            Temp_id = data.Temp_id;
+            Temp_id.val(data.temp_id);
         }
+        else {
+            Temp_id.val(data.comp_id);
+        }
+        console.log(Comp_id.val());
+        console.log(Temp_id.val());
+
     };
     this.clearCompliance = function(){
         Provision.val('');
@@ -620,6 +718,7 @@ function RenderInput() {
         $('#counter1').html('')
         $('#counter2').html('');
         $('#counter3').html('');
+        this.hideFrequencyAll();
     };
     this.renderComplianceGrid = function() {
         $('.tbody-compliance-list').empty();
@@ -639,17 +738,20 @@ function RenderInput() {
             });
             if (v.comp_id == null) {
                 $('#status', cObj).addClass('remove');
+                $('#status', cObj).addClass('fa-trash text-primary');
                 $('#status', cObj).attr('title', "Click here to remove compliance");
             }
             else {
                 if (v.is_active == true){
                     classValue = "active-icon";
                     $('#status', cObj).addClass(classValue);
+                    $('#status', cObj).addClass("fa-check text-success");
                     $('#status', cObj).attr('title', msg.active_tooltip);
                 }
                 else{
                     classValue = "inactive-icon";
                     $('#status', cObj).addClass(classValue);
+                    $('#status', cObj).addClass("fa-times text-danger");
                     $('#status', cObj).attr('title', msg.deactive_tooltip);
                 }
             }
@@ -657,7 +759,6 @@ function RenderInput() {
             $('#status', cObj).on('click', function () {
 
                 if ($('#status', cObj).hasClass('remove')) {
-                    console.log(ke);
                     _renderinput.mapped_compliances.splice(ke, 1);
                 }
                 else {
@@ -724,6 +825,14 @@ function RenderInput() {
                 );
             }
             $('.tbody-geography-level #gnl'+v.l_position).append(liObject)
+            console.log(_renderinput.selected_geos_parent);
+            if (_renderinput.selected_geos_parent.indexOf(v.g_id) > -1) {
+                console.log("****");
+                $('#gid'+v.g_id).addClass('active');
+                $('#gid'+v.g_id+' i').addClass('fa-check');
+                _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+            }
+
         });
     };
     this.renderGeosNames = function(p_id, l_position, parent_name) {
@@ -773,6 +882,68 @@ function RenderInput() {
         });
     };
 
+
+    this.hideFrequencyAll = function() {
+        Onetimepan.hide();
+        RecurringPan.hide();
+        OccasionalPan.hide();
+    };
+
+    this.showFrequencyVal = function(){
+        var freq_val = Frequency.val();
+        if (freq_val == '') {
+            this.hideFrequencyAll();
+        }
+        else {
+            // $('.frequency-set').empty();
+            if (freq_val == 1){
+                Onetimepan.show();
+                _renderinput.loadMonths(freq_val);
+            }
+            else if (freq_val == 5) {
+                OccasionalPan.show();
+                DurationType.append(
+                    _renderinput.make_option("Select", "")
+                );
+                $.each(DURATION_INFO, function(ke, val) {
+                    DurationType.append(
+                        _renderinput.make_option(
+                            val.duration_type, val.duration_type_id
+                        )
+                    );
+                });
+                DurationType.keyup(function(e){
+                    e.preventDefault();
+                    d_select = $('#duration_type option:selected');
+                    if ((DurationType.val() != '') && (Duration.val() != '')) {
+                        _renderinput.summary =  "To complete with in " + this.value + " "+ d_select.text();
+                        $('.occasional_summary').text(_renderinput.summary);
+                    }
+
+                });
+                $('#duration_type').change(function(){
+                    d_select = $('#duration_type option:selected');
+                    if ((DurationType.val() != '') && (Duration.val() != '')) {
+                        _renderinput.summary = "To complete with in " + Duration.val() +" "+ d_select.text();
+                        $('.occasional_summary').text(_renderinput.summary);
+                    }
+                    else {
+                        _renderinput.summary = '';
+                        $('.occasional_summary').text(_renderinput.summary);
+
+                    }
+                });
+
+            }
+            else {
+                RecurringPan.show();
+                _renderinput.loadMonths(freq_val);
+            }
+
+        }
+    };
+
+
 }
 
 //
@@ -782,7 +953,7 @@ function FetchBack() {
     this.getMasterData = function() {
         fetch.getStatutoryMappingsMaster(function(status, response) {
             if (status != null) {
-                displayMsg(status);
+                displayMessage(status);
             }
             else {
                 COUNTY_INFO = response.country_info;
@@ -803,7 +974,7 @@ function FetchBack() {
     this.getStatuMaster = function(l_position, callback) {
         fetch.getStatutoryMaster(function(status, response) {
             if(status != null) {
-                displayMsg(status);
+                displayMessage(status);
             }
             else {
                 STATUTORY_INFO = response.statutory_info;
@@ -822,7 +993,7 @@ function FetchBack() {
         fetch.getStatutoryMappings(approv_status, rcount,
             function(status, response){
                 if (status != null) {
-                    displayMsg(status);
+                    displayMessage(status);
                 }
                 else {
                     STATU_MAPPINGS = response.statu_mappings;
@@ -833,10 +1004,68 @@ function FetchBack() {
         );
     };
 
+    this.getMapDatabyId = function(mapping_id, compliance_id) {
+        fetch.getStatutoryMappingsEdit(mapping_id, compliance_id,
+            function(status, response){
+                if (status != null) {
+                    displayMessage(status);
+                }
+                else {
+                    _renderinput.resetField();
+
+                    _renderinput.country_id = response.c_id;
+                    _renderinput.domain_id = response.d_id;
+                    _renderinput.nature_id = response.s_n_id;
+                    _renderinput.selected_iids = response.i_ids;
+                    _renderinput.selected_geos = response.g_ids;
+                    _renderinput.selected_geos_parent = [];
+                    _renderinput.mapped_compliances = response.comp_list;
+                    _renderinput.mapping_id = response.m_id;
+
+                    $.each(GEOGRAPHY_INFO, function(k, v) {
+                        if(response.g_ids.indexOf(v.g_id) > -1) {
+                            $.each(v.p_ids, function(idx, pid) {
+                                if (_renderinput.selected_geos_parent.indexOf(pid) == -1) {
+                                    _renderinput.selected_geos_parent.push(pid);
+                                }
+                            });
+                        }
+                    });
+                    $.merge(_renderinput.selected_geos_parent, _renderinput.selected_geos);
+                    $.each(STATUTORY_INFO, function(k, v) {
+                        if (response.s_ids.indexOf(v.s_id) > -1) {
+                            info = {}
+                            info["s_id"] = v.s_id;
+                            if (v.p_names != null)
+                                info["s_names"] = v.p_maps
+                            else
+                                info["s_names"] = [];
+                            info["s_names"].push(v.s_name)
+                            if (v.p_ids == null) {
+                                info["l_one_id"] = 0;
+                            }
+                            else {
+                                info["l_one_id"] = v.p_ids[0];
+                            }
+                            _renderinput.mapped_statu.push(info);
+                        }
+                    });
+
+                    _renderinput.renderStatuGrid();
+                    _renderinput.renderComplianceGrid();
+
+                    showTab();
+                    _listPage.hide();
+                    _viewPage.show();
+                }
+            }
+        );
+    }
+
     this.changeStatus = function(m_id, sts) {
         fetch.changeStatutoryMappingStatus(m_id, sts, function(status, response) {
-            if (staus != null) {
-                displayMsg(status);
+            if (status != null) {
+                possibleFailure(status);
             }
             else {
                 this.getMappedList(0, 0);
@@ -845,8 +1074,15 @@ function FetchBack() {
     };
 
     this.updateStatutory = function(s_name, s_id, l_position) {
-        fetch.updateStatutory(s-id, s_name, function(status, response){
-
+        fetch.updateStatutory(s_id, s_name, function(status, response){
+            if (status != null) {
+                possibleFailure(status);
+            }
+            else {
+                $('#dv'+ l_position).val('');
+                $('#dvid'+ l_position).val('');
+                $('#dvpid'+ l_position).val('');
+            }
         })
     };
 
@@ -864,7 +1100,7 @@ function FetchBack() {
         }
         else {
             if (p_ids.length == 0) {
-                displayMsg(msg.levelselection_required);
+                displayMessage(msg.levelselection_required);
             }
         }
 
@@ -876,8 +1112,19 @@ function FetchBack() {
                 }
                 else {
                     // load statutory list
+                    $('#dv'+ l_position).val('');
+                    $('#dvid'+ l_position).val('');
+                    $('#dvpid'+ l_position).val('');
                     _fetchback.getStatuMaster(l_position, function() {
-                        pid = p_ids[0];
+
+                        if (p_ids != null) {
+                            pid = p_ids[p_ids.length - 1];
+                        }
+                        else{
+                            pid = 0;
+                            l_position = 1;
+                        }
+                        $('.statutory_levelvalue #snl'+l_position).empty();
                         _renderinput.renderStatuNames(pid, l_position);
                     });
                 }
@@ -891,21 +1138,27 @@ function FetchBack() {
                 // show list
                 _viewPage.hide();
                 _listPage.show();
+                _renderinput.resetField();
             }
             else {
-                possibleFailure(status);
+                console.log(status, response.compliance_name);
+                possibleFailure(status, response.compliance_name);
                 return false;
             }
         });
     };
 
     this.updateMapping = function(data) {
-        fetch.saveStatutoryMapping(data, function(status, response) {
+        fetch.updateStatutoryMapping(data, function(status, response) {
             if (status == null) {
-                // show list
+                _viewPage.hide();
+                _listPage.show();
+                _renderinput.resetField();
+                IS_EDIT = false;
             }
             else {
                 possibleFailure(status);
+                return false;
             }
         });
     };
@@ -922,7 +1175,7 @@ function ListPage() {
         $('.tbl-statutorymapping-list .mapping-row').remove();
         $('.tbl-statutorymapping-list .compliance-row').remove();
 
-        function comp_row(rowObjec, cdata) {
+        function comp_row(rowObjec, cdata, mapping_id) {
             var x = 1;
             $.each(cdata, function(k, c) {
                 row = $('#templates .compliance-row').clone();
@@ -931,7 +1184,7 @@ function ListPage() {
                 $('.comp_edit', row).attr('title', 'Edit');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
                 $('.comp_edit', row).on('click', function() {
-                    _listPage.displayEdit(v.comp_id);
+                    _listPage.displayMappingEdit(mapping_id, c.comp_id);
                 });
                 rowObjec.append(row);
             });
@@ -951,7 +1204,7 @@ function ListPage() {
             $('.map_edit', crow).attr('title', 'Client Here to Edit');
             $('.map_edit', crow).addClass('fa-pencil text-primary');
             $('.map_edit', crow).on('click', function() {
-                _listPage.displayEdit(v.m_id);
+                _listPage.displayMappingEdit(v.m_id, null);
             });
             if (v.is_active == true){
                 $('.map_status', crow).addClass("fa-check text-success");
@@ -971,15 +1224,16 @@ function ListPage() {
                 _fetchback.changeStatus(v.m_id, passStatus);
             });
 
-            $('.approval_status', crow).text(v.a_s_t);
+            $('.approval_status', crow).text("");
             j = j + 1;
             $('.tbl-statutorymapping-list').append(crow);
-            comp_row($('.tbl-statutorymapping-list'), v.mapped_comps);
+            comp_row($('.tbl-statutorymapping-list'), v.mapped_comps, v.m_id);
         });
     };
 
-    this.displayEdit = function(map_id, comp_id) {
-        // differentiate compliance edit and whole edit
+    this.displayMappingEdit = function(map_id, comp_id) {
+        IS_EDIT = true;
+        _fetchback.getMapDatabyId(map_id, comp_id);
     };
 
     this.show = function() {
@@ -998,6 +1252,11 @@ function ListPage() {
 //
 function ViewPage() {
     this.showFirstTab = function(){
+
+        console.log(_renderinput.country_id);
+        console.log(_renderinput.domain_id);
+        console.log(_renderinput.org_ids);
+        console.log(_renderinput.nature_id);
         _renderinput.loadCounty();
     };
     this.validateFirstTab = function() {
@@ -1006,19 +1265,19 @@ function ViewPage() {
         console.log(_renderinput.org_ids);
         console.log(_renderinput.nature_id);
         if (_renderinput.country_id == null) {
-            displayMsg(msg.country_required);
+            displayMessage(msg.country_required);
             return false;
         }
         else if (_renderinput.domain_id == null) {
-            displayMsg(msg.domain_required);
+            displayMessage(msg.domain_required);
             return false;
         }
         else if (_renderinput.org_ids.length == 0) {
-            displayMsg(msg.industry_required);
+            displayMessage(msg.industry_required);
             return false;
         }
         else if (_renderinput.nature_id == null) {
-            displayMsg(msg.statutorynature_required);
+            displayMessage(msg.statutorynature_required);
             return false;
         }
         return true;
@@ -1030,7 +1289,7 @@ function ViewPage() {
     this.validateSecondTab = function() {
         console.log(_renderinput.mapped_statu);
         if (_renderinput.mapped_statu.length == 0) {
-            displayMsg(msg.nostatutory_selected);
+            displayMessage(msg.nostatutory_selected);
             return false;
         }
         return true;
@@ -1045,19 +1304,19 @@ function ViewPage() {
     };
     this.validateComplianceTab = function() {
         if (Provision.val().length == 0) {
-            displayMsg(msg.statutoryprovision_required);
+            displayMessage(msg.statutoryprovision_required);
             return false;
         }
         else if (ComplianceTask.val().length == 0) {
-            displayMsg(msg.compliancetask_required)
+            displayMessage(msg.compliancetask_required)
             return false;
         }
         else if(Description.val().length == 0) {
-            displayMsg(msg.compliancedescription_required);
+            displayMessage(msg.compliancedescription_required);
             return false;
         }
         else if (Frequency.val() == '') {
-            displayMsg(msg.compliancefrequency_required);
+            displayMessage(msg.compliancefrequency_required);
             return false;
         }
         else {
@@ -1066,25 +1325,25 @@ function ViewPage() {
                 (Frequency.val() == 3)
             ){
                 if(RepeatsType.val().trim() == '') {
-                    displayMsg(msg.repeatstype_required);
+                    displayMessage(msg.repeatstype_required);
                     return false;
                 }
                 else if(RepeatsEvery.val().trim() == '') {
-                    displayMsg(msg.repeatsevery_required);
+                    displayMessage(msg.repeatsevery_required);
                     return false;
                 }
             }
             else if(Frequency.val() == 5) {
                 if($('#duration').val().trim() == '') {
-                    displayMsg(msg.duration_required);
+                    displayMessage(msg.duration_required);
                     return false;
                 }
                 else if ($('#duration').val().trim() == 0) {
-                    displayMsg(msg.invalid_duration);
+                    displayMessage(msg.invalid_duration);
                     return false;
                 }
                 else if($('#duration_type').val().trim() == '') {
-                    displayMsg(msg.durationtype_required);
+                    displayMessage(msg.durationtype_required);
                     return false;
                 }
 
@@ -1136,6 +1395,9 @@ function ViewPage() {
     this.make_data_format = function(trType){
         _viewPage.getFourthTabValues();
         map_data = {};
+        if (_renderinput.mapping_id != null) {
+            map_data["m_id"] = _renderinput.mapping_id;
+        }
         map_data["c_id"] = _renderinput.country_id;
         map_data["d_id"] = _renderinput.domain_id;
         map_data["i_ids"] = _renderinput.org_ids;
@@ -1208,10 +1470,10 @@ function showTab(){
         _viewPage.showFirstTab();
     }
     else if (CURRENT_TAB == 2) {
-        // if(!_viewPage.validateFirstTab()) {
-        //     CURRENT_TAB -= 1;
-        //     return false;
-        // }
+        if(!_viewPage.validateFirstTab()) {
+            CURRENT_TAB -= 1;
+            return false;
+        }
         hideall();
         enabletabevent(2);
         $('.tab-step-2').addClass('active')
@@ -1222,10 +1484,10 @@ function showTab(){
         _viewPage.showSecondTab();
     }
     else if (CURRENT_TAB == 3) {
-        // if (!_viewPage.validateSecondTab()) {
-        //     CURRENT_TAB -= 1;
-        //     return false;
-        // }
+        if (!_viewPage.validateSecondTab()) {
+            CURRENT_TAB -= 1;
+            return false;
+        }
         hideall();
         enabletabevent(3);
         $('.tab-step-3').addClass('active')
@@ -1236,10 +1498,11 @@ function showTab(){
         _viewPage.showThirdTab();
     }
     else if (CURRENT_TAB == 4) {
-        // if(!_viewPage.validateComplianceTab()){
-        //     CURRENT_TAB -=1;
-        //     return false;
-        // }
+        console.log(_renderinput.mapped_compliances.length);
+        if (_renderinput.mapped_compliances.length == 0) {
+            CURRENT_TAB -=1;
+            return false;
+        }
         hideall();
         enabletabevent(4);
         $('.tab-step-4').addClass('active')
@@ -1289,7 +1552,7 @@ function pageControls() {
             }
         });
         if (differnt_level) {
-            displayMsg(msg.invalid_levelone + _renderinput.level_one_name);
+            displayMessage(msg.invalid_levelone + _renderinput.level_one_name);
         }
         else {
             if (add_new) {
@@ -1299,67 +1562,10 @@ function pageControls() {
         }
     });
 
+
     Frequency.change(function() {
-        hideall = function() {
-            Onetimepan.hide();
-            RecurringPan.hide();
-            OccasionalPan.hide();
-        }
-        hideall();
-        var freq_val = Frequency.val();
-        alert(freq_val);
-        if (freq_val == '') {
-            // displayMsg();
-            hideall();
-        }
-        else {
-            // $('.frequency-set').empty();
-            if (freq_val == 1){
-                Onetimepan.show();
-                _renderinput.loadMonths(freq_val);
-            }
-            else if (freq_val == 5) {
-                console.log("occur");
-                OccasionalPan.show();
-                DurationType.append(
-                    _renderinput.make_option("Select", "")
-                );
-                $.each(DURATION_INFO, function(ke, val) {
-                    DurationType.append(
-                        _renderinput.make_option(
-                            val.duration_type, val.duration_type_id
-                        )
-                    );
-                });
-                DurationType.keyup(function(e){
-                    e.preventDefault();
-                    d_select = $('#duration_type option:selected');
-                    if ((DurationType.val() != '') && (Duration.val() != '')) {
-                        _renderinput.summary =  "To complete with in " + this.value + " "+ d_select.text();
-                        $('.occasional_summary').text(_renderinput.summary);
-                    }
-
-                });
-                $('#duration_type').change(function(){
-                    d_select = $('#duration_type option:selected');
-                    if ((DurationType.val() != '') && (Duration.val() != '')) {
-                        _renderinput.summary = "To complete with in " + Duration.val() +" "+ d_select.text();
-                        $('.occasional_summary').text(_renderinput.summary);
-                    }
-                    else {
-                        _renderinput.summary = '';
-                        $('.occasional_summary').text(_renderinput.summary);
-
-                    }
-                });
-
-            }
-            else {
-                RecurringPan.show();
-                _renderinput.loadMonths(freq_val);
-            }
-
-        }
+        _renderinput.hideFrequencyAll();
+        _renderinput.showFrequencyVal();
     });
 
     Description.keyup(function(e) {
@@ -1422,10 +1628,12 @@ function pageControls() {
 
         _renderinput.statu_dates = [];
         info = {};
+
         if (Comp_id.val() == '')
             info['comp_id'] = null;
         else
-            info['comp_id'] = Comp_id.val();
+            info['comp_id'] = parseInt(Comp_id.val());
+
         if (Temp_id.val() == '')
             info['temp_id'] = null;
         else
@@ -1481,13 +1689,20 @@ function pageControls() {
         info['summary'] = _renderinput.summary;
 
         is_duplidate = false;
-        $.each(_renderinput.mapped_compliances, function(k,v) {
+
+        $.each(_renderinput.mapped_compliances, function(k, v) {
+            if ((Temp_id.val() == Comp_id.val()) && (Comp_id.val() == v.comp_id)) {
+                _renderinput.mapped_compliances.splice(k, 1);
+                return false;
+            }
+        });
+        $.each(_renderinput.mapped_compliances, function(k, v) {
             if (
                 (v.s_provision == Provision.val().trim()) &&
                 (v.c_task == ComplianceTask.val().trim()) &&
-                ((Comp_id.val() == '') || (Temp_id.val() != Comp_id.val()))
+                ((Comp_id.val().trim() == '') || (Temp_id.val().trim() != Comp_id.val().trim()))
             ){
-                displayMsg(msg.compliancetask_duplicate);
+                displayMessage(msg.compliancetask_duplicate);
                 is_duplidate = true;
                 return false;
             }
@@ -1497,7 +1712,6 @@ function pageControls() {
             _renderinput.renderComplianceGrid();
             _renderinput.clearCompliance();
         }
-        console.log(_renderinput.mapped_compliances);
     });
 
     SaveButton.click(function() {
@@ -1510,9 +1724,29 @@ function pageControls() {
         console.log(_renderinput.mapped_compliances);
         console.log(_renderinput.selected_geos);
 
-        map_data = _viewPage.make_data_format(1);
-        _fetchback.saveMapping(map_data);
+        map_data = _viewPage.make_data_format(0);
+        if (IS_EDIT)
+            _fetchback.updateMapping(map_data);
+        else {
+            _fetchback.saveMapping(map_data);
+        }
 
+    });
+
+    SubmitButton.click(function() {
+
+        map_data = _viewPage.make_data_format(1);
+        if (IS_EDIT)
+            _fetchback.updateMapping(map_data);
+        else {
+            _fetchback.saveMapping(map_data);
+        }
+    });
+
+    BackButton.click(function() {
+        _renderinput.resetField();
+        _viewPage.hide();
+        _listPage.show();
     });
 
 }

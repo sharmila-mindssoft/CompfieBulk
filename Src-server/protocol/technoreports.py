@@ -571,6 +571,40 @@ class GetReassignUserReportData(Request):
         print "inside protocol"
         return data
 
+class GetReassignUserDomainReportData(Request):
+    def __init__(self, user_category_id, user_id, group_id_none, bg_id, le_id, d_id):
+        self.user_category_id = user_category_id
+        self.user_id = user_id
+        self. group_id_none = group_id_none
+        self.bg_id = bg_id
+        self.le_id = le_id
+        self.d_id = d_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "user_category_id", "user_id", "group_id_none", "bg_id", "le_id", "d_id"
+        ])
+        user_category_id = data.get("user_category_id")
+        user_id = data.get("user_id")
+        group_id_none = data.get("group_id_none")
+        bg_id = data.get("bg_id")
+        le_id = data.get("le_id")
+        d_id = data.get("d_id")
+        return GetReassignUserDomainReportData(
+            user_category_id, user_id, group_id_none, bg_id, le_id, d_id
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "user_category_id": self.user_category_id,
+            "user_id": self.user_id,
+            "group_id_none": self.group_id_none,
+            "bg_id": self.bg_id,
+            "le_id": self.le_id,
+            "d_id": self.d_id,
+        }
+        return data
 
 def _init_Request_class_map():
     classes = [
@@ -590,7 +624,8 @@ def _init_Request_class_map():
         GetUserMappingDetailsReportData,
         GetGroupAdminReportData,
         GetAssignedUserClientGroups,
-        GetReassignUserReportData
+        GetReassignUserReportData,
+        GetReassignUserDomainReportData
     ]
 
     class_map = {}
@@ -1013,24 +1048,27 @@ class GetGroupAdminReportDataSuccess(Response):
         return data
 
 class GetAssignedUserClientGroupsSuccess(Response):
-    def __init__(self, user_categories, reassign_user_clients, clients):
+    def __init__(self, user_categories, reassign_user_clients, clients, reassign_domains):
         self.user_categories = user_categories
         self.reassign_user_clients = reassign_user_clients
         self.clients = clients
+        self.reassign_domains = reassign_domains
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_categories", "reassign_user_clients", "clients"])
+        data = parse_dictionary(data, ["user_categories", "reassign_user_clients", "clients", "reassign_domains"])
         user_categories = data.get("user_categories")
         reassign_user_clients = data.get("reassign_user_clients")
         clients = data.get("clients")
-        return GetGroupAdminReportDataSuccess(user_categories, reassign_user_clients, clients)
+        reassign_domains = data.get("reassign_domains")
+        return GetAssignedUserClientGroupsSuccess(user_categories, reassign_user_clients, clients, reassign_domains)
 
     def to_inner_structure(self):
         data = {
             "user_categories": self.user_categories,
             "reassign_user_clients": self.reassign_user_clients,
             "clients": self.clients,
+            "reassign_domains": self.reassign_domains,
         }
         return data
 
@@ -1041,8 +1079,8 @@ class ReassignUserReportDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["reassign_user_list"])
-        reassign_user_clients = data.get("reassign_user_list")
-        return GetGroupAdminReportDataSuccess(reassign_user_list)
+        reassign_user_list = data.get("reassign_user_list")
+        return ReassignUserReportDataSuccess(reassign_user_list)
 
     def to_inner_structure(self):
         data = {
@@ -1050,6 +1088,23 @@ class ReassignUserReportDataSuccess(Response):
         }
         return data
 
+class ReassignUserDomainReportDataSuccess(Response):
+    def __init__(self, reassign_domains_list):
+        self.reassign_domains_list = reassign_domains_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["reassign_domains_list"])
+        reassign_domains_list = data.get("reassign_domains_list")
+        return ReassignUserDomainReportDataSuccess(reassign_domains_list)
+
+    def to_inner_structure(self):
+        data = {
+            "reassign_domains_list": self.reassign_domains_list,
+        }
+        print "inside success"
+        print data
+        return data
 
 def _init_Response_class_map():
     classes = [
@@ -1057,7 +1112,8 @@ def _init_Response_class_map():
                 GetStatutoryNotificationsReportDataSuccess, GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess,
                 GetClientAgreementReportFiltersSuccess, GetClientAgreementReportDataSuccess, GetDomainwiseAgreementReportDataSuccess,
                 GetOrganizationWiseUnitCountSuccess, ExportToCSVSuccess, GetUserMappingReportFiltersSuccess, GetUserMappingReportDataSuccess,
-                GetGroupAdminReportDataSuccess, GetAssignedUserClientGroupsSuccess, ReassignUserReportDataSuccess
+                GetGroupAdminReportDataSuccess, GetAssignedUserClientGroupsSuccess, ReassignUserReportDataSuccess,
+                ReassignUserDomainReportDataSuccess
             ]
 
     class_map = {}
@@ -1926,6 +1982,53 @@ class ReassignUserClients(object):
         }
         return data
 
+class ReassignUserDomainList(object):
+    def __init__(
+        self, user_id, client_id, legal_entity_id, legal_entity_name,
+        business_group_id, business_group_name, domain_id, domain_name
+    ):
+        self.user_id = user_id
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "client_id", "legal_entity_id", "legal_entity_name",
+            "business_group_id", "business_group_name", "domain_id", "domain_name"
+        ])
+        user_id = data.get("user_id")
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_id = data.get("business_group_id")
+        business_group_name = data.get("business_group_name")
+        domain_id = data.get("domain_id")
+        domain_name = data.get("domain_name")
+
+        return GroupAdminClientGroupData(
+            user_id, client_id, legal_entity_id, legal_entity_name,
+            business_group_id, business_group_name, domain_id, domain_name
+        )
+
+    def to_structure(self):
+        data = {
+            "user_id": self.user_id,
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id,
+            "business_group_name": self.business_group_name,
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name
+        }
+        return data
+
 class ReassignedUserList(object):
     def __init__(
         self, client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks
@@ -1961,6 +2064,55 @@ class ReassignedUserList(object):
             "group_name": self.group_name,
             "le_count": self.le_count,
             "c_names": self.c_names,
+            "unit_email_date": self.unit_email_date,
+            "emp_code_name": self.emp_code_name,
+            "remarks": self.remarks,
+        }
+        return data
+
+class ReassignedDomainUserList(object):
+    def __init__(
+        self, unit_id, unit_code, unit_name, address, postal_code, geography_name,
+        unit_email_date, emp_code_name, remarks
+    ):
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+        self.geography_name = geography_name
+        self.unit_email_date = unit_email_date
+        self.emp_code_name = emp_code_name
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "unit_id", "unit_code", "unit_name", "address", "postal_code",
+            "geography_name", "unit_email_date", "emp_code_name", "remarks"
+        ])
+        unit_id = data.get("unit_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        geography_name = data.get("geography_name")
+        unit_email_date = data.get("unit_email_date")
+        emp_code_name = data.get("emp_code_name")
+        remarks = data.get("remarks")
+        return ReassignedUserList(
+            unit_id, unit_code, unit_name, address, postal_code,
+            geography_name, unit_email_date, emp_code_name, remarks
+        )
+
+    def to_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "address": self.address,
+            "postal_code": self.postal_code,
+            "geography_name": self.geography_name,
             "unit_email_date": self.unit_email_date,
             "emp_code_name": self.emp_code_name,
             "remarks": self.remarks,

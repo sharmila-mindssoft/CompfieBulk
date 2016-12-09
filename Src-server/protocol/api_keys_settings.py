@@ -53,7 +53,7 @@ api_params = {
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},
-    'form_url': {'type': 'STRING', 'length': 250, 'validation_method': is_url, 'is_optional': False},
+    'form_url': {'type': 'TEXT', 'length': 250, 'validation_method': is_url, 'is_optional': False},
     'parent_menu': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
 
@@ -68,6 +68,7 @@ api_params = {
     'geography_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'parent_ids': {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'mapping': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
+    'statutory_map': {'type': 'TEXT', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
     'geography': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'industry_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -83,7 +84,7 @@ api_params = {
     'statutory_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "document_name": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'compliance_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    'compliance_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'compliance_name': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'url': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
 
     "m_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
@@ -216,7 +217,7 @@ api_params = {
     'category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'unit_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'unit_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'unit_name': {'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
     'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'postal_code': {'type': 'INT', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
     'domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -502,6 +503,8 @@ api_params = {
     "client_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "reassign_user_clients": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technoreports', "class_name": "ReassignUserClients"},
     "reassign_user_list": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technoreports', "class_name": "ReassignedUserList"},
+    "reassign_domains": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technoreports', "class_name": "ReassignUserDomainList"},
+    "reassign_domains_list": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technoreports', "class_name": "ReassignedDomainUserList"},
     'group_id_none': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "legalentity_closure": {'type': 'VECTOR_TYPE', 'is_optional': True, 'module_name': 'technotransactions', "class_name": "LegalEntityClosure"},
     "closed_remarks": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
@@ -524,8 +527,8 @@ api_params = {
     'map_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingApproveInfo'},
     'comp_lists': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'mobile', 'class_name': 'MappingComplianceInfo'},
     'approv_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'MappingApproveInfo'},
+    'comp_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'ComplianceList'},
     "typelistedit": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
-
 }
 
 api_params['domain_id'] = api_params.get('d_id')

@@ -53,7 +53,7 @@ function loadValidityDatesList(){
       $('.dconfig-country-name', clone).text(
         country_names[parseInt(country_id)]
       );
-      $('.dconfig-country-name', clone).addClass('heading');
+      //$('.dconfig-country-name', clone).addClass('heading');
       $('.tbody-validity-config-list').append(clone);
       for (var dcount = 0; dcount < domain_list.length; dcount++) {
         domain_id = parseInt(domain_list[dcount])
@@ -86,11 +86,11 @@ $("#btn-submit").click(function(){
   save_validity_date_settings();
 });
 
-function save_validity_date_settings(){
+function save_validity_date_settings() {
   var result = collect_and_validate_values()
   if(result != false && values_to_save.length > 0){
     function onSuccess(data) {
-      displayMessage(message.settings_save_success);
+      displaySuccessMessage(message.settings_save_success);
     }
     function onFailure(error) {
       custom_alert(error);

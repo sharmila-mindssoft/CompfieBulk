@@ -23,7 +23,7 @@ INSERT INTO tbl_form_type VALUES(4, "My Accounts");
 -- masters
 INSERT INTO tbl_forms VALUES(1, 1, 'Country', '/knowledge/country-master', 1,  null);
 INSERT INTO tbl_forms VALUES(2, 1, 'Domain', '/knowledge/domain-master', 2, null);
-INSERT INTO tbl_forms VALUES(3, 1, 'User Group', '/knowledge/user-privileges', 3, null);
+INSERT INTO tbl_forms VALUES(3, 1, 'User Privileges', '/knowledge/user-privileges', 3, null);
 INSERT INTO tbl_forms VALUES(4, 1, 'Geography Level Master', '/knowledge/geography-level-master', 4, 'Geography');
 INSERT INTO tbl_forms VALUES(5, 1, 'Geography Master', '/knowledge/geography-master', 5, 'Geography');
 INSERT INTO tbl_forms VALUES(6, 1, 'Organization Master', '/knowledge/organization', 6, null);
@@ -56,7 +56,7 @@ INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/
 INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-storage', 27, null);
 INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
-INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/group-admin-registration-email', 14, NULL);
+
 
 -- Reports
 INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
@@ -73,7 +73,8 @@ INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-un
 INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail-login-trace', 43, null);
-INSERT INTO tbl_forms VALUES(49, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 49, NULL);
+INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
+
 
 
 -- My Account
@@ -132,6 +133,7 @@ INSERT INTO tbl_form_category VALUES(40, 1, 0, 0, 0, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(41, 1, 0, 0, 0, 1, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(42, 1, 0, 0, 0, 1, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(43, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 0, 0, 0, 0);
 -- My Accounts
 INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);

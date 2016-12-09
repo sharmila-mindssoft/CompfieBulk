@@ -536,11 +536,10 @@ def check_duplicate_geography(db, country_id, parent_ids, geography_id):
         param = (parent_ids, country_id)
 
     rows = db.select_all(query, param)
-    columns = ["geography_id", "geography_name", "level_id", "is_active"]
-    result = []
-    if rows:
-        result = convert_to_dict(rows, columns)
-    return result
+    # columns = ["geography_id", "geography_name", "level_id", "is_active"]
+    # result = []
+
+    return rows
 
 
 def save_geography(

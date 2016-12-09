@@ -296,6 +296,7 @@ def convert_base64_to_file(file_name, file_content, file_path=None):
             fn.write(file_content.decode('base64'))
 
 def make_summary(data, data_type, c):
+    print c
     if data_type == 1 :
         if len(data) > 0:
             dat = data[0].statutory_date
@@ -346,7 +347,7 @@ def make_summary(data, data_type, c):
                     trigger.append(" %s days, " % (day))
 
             summary = "Repeats every %s - %s. " % (
-                d["repeats_every"], d["repeat_type"]
+                c["repeats_every"], c["repeat_type"]
             )
             summary += ", ".join(dates)
             if len(trigger) > 0 :
@@ -354,7 +355,7 @@ def make_summary(data, data_type, c):
 
     elif data_type == 5 :
         summary = "To complete within %s - %s" % (
-            d["duration"], d["duration_type"]
+            c["duration"], c["duration_type"]
         )
 
     return summary

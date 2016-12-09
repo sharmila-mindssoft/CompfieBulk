@@ -13,6 +13,7 @@ var RemarkView = $('.remark-view');
 var isAuthenticate;
 
 var Country = $("#countryselected");
+var MultiSelect_Country = $('#countries');
 var Select_Box_Country = $('#selectboxview-country');
 var Country_li_list = $('#ulist-country');
 var Country_li_active = "active_selectbox_country";
@@ -27,7 +28,7 @@ var SearchCountry = $("#search-country-name");
 var Msg_pan = $(".error-message");
 var msg = message;
 var d_page = null;
-var item_selected = ''
+var item_selected = '';
 
 var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
@@ -99,7 +100,7 @@ DomainPage.prototype.showAddScreen = function() {
     Domain_name.val('');
     this.displayMessage('');
     this._country_ids = [];
-    Country.val("0 Selected");
+    this.fetchCountryMultiselect();
     Domain_name.focus();
 };
 DomainPage.prototype.renderList = function(d_data) {
@@ -121,11 +122,10 @@ DomainPage.prototype.renderList = function(d_data) {
           t_this.showEdit(v.domain_id, v.domain_name, v.country_ids);
         });
 
-        if (v.is_active == true){
+        if (v.is_active == true) {
             $('.status', cloneRow).removeClass('fa-times text-danger');
             $('.status', cloneRow).addClass('fa-check text-success');
-        }
-        else{
+        } else {
             $('.status', cloneRow).removeClass('fa-check text-success');
             $('.status', cloneRow).addClass('fa-times text-danger');
         }
@@ -195,8 +195,7 @@ DomainPage.prototype.validateAuthentication = function() {
         this.displayMessage(msg.password_required);
         CurrentPassword.focus();
         return false;
-    }
-    else {
+    } else {
         validateMaxLength('password', password, "Password");
     }
     mirror.verifyPassword(password, function(error, response) {
@@ -210,17 +209,6 @@ DomainPage.prototype.validateAuthentication = function() {
   });
 }
 
-
-//validate max length
-function validateMaxLength(key_name, value, show_name) {
-  e_n_msg = validateLength(key_name, value.trim())
-  if (e_n_msg != true) {
-    displayMessage(show_name + e_n_msg);
-    return false;
-  }
-  return true;
-}
-
 DomainPage.prototype.fetchDomain = function() {
     t_this = this;
     mirror.getDomainList(function (error, response) {
@@ -228,11 +216,26 @@ DomainPage.prototype.fetchDomain = function() {
             t_this._DomainList = response.domains;
             t_this._CountryList = response.countries
             t_this.renderList(t_this._DomainList);
-        }
-        else {
+        } else {
             t_this.possibleFailures(error);
         }
     });
+};
+
+DomainPage.prototype.fetchCountryMultiselect = function() {
+    var str = '';
+    for (var i in d_page._CountryList) {
+        d = d_page._CountryList[i];
+        if (d.is_active == true) {
+            var selected = '';
+            if ($.inArray(d.country_id, d_page._country_ids) >= 0)
+                selected = ' selected ';
+            else
+                selected = '';
+            str += '<option value="'+ d.country_id +'" '+ selected +'>'+ d.country_name +'</option>';
+        }
+    }
+    MultiSelect_Country.html(str).multiselect('rebuild');
 };
 
 DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
@@ -240,7 +243,7 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
     Domain_name.val(d_name);
     Domain_id.val(d_id);
     this._country_ids = d_country;
-    Country.val(this._country_ids.length + " Selected");
+    this.fetchCountryMultiselect();
 };
 
 DomainPage.prototype.changeStatus = function(d_id, status) {
@@ -259,33 +262,53 @@ DomainPage.prototype.validate = function() {
     if (checkLength) {
         if (Domain_name.val().trim().length ==0) {
             this.displayMessage(msg.domainname_required);
-        }
-        else {
+        } else {
             this.displayMessage('');
             return true;
         }
     }
 };
 
+function DomainValidate() {
+    if (MultiSelect_Country.val() == null) {
+      displayMessage(msg.country_required);
+      MultiSelect_Country.focus();
+      return false;
+    }
+    if (Domain_name.val().trim().length == 0) {
+      displayMessage(msg.domainname_required);
+      Domain_name.focus();
+      return false;
+    } else {
+      validateMaxLength('domainname', Domain_name.val(), "Domain name");
+    }
+    return true;
+}
+
 DomainPage.prototype.submitProcess = function() {
     d_id = parseInt(Domain_id.val());
     name = Domain_name.val().trim();
-    c_ids = this._country_ids;
+    c_ids = MultiSelect_Country.val().map(Number);
+    DomainValidate();
     t_this = this;
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
-            if (error == null)
-                t_this.showList();
-            else
+            if (error == null) {
                 t_this.displayMessage(error);
+                displaySuccessMessage(message.save_success);
+                t_this.showList();
+            } else {
+                t_this.displayMessage(error);
+            }
         });
-    }
-    else {
+    } else {
         mirror.updateDomain(d_id, name, c_ids, function(error, response) {
-            if (error == null)
+            if (error == null) {
+                displaySuccessMessage(message.update_success);
                 t_this.showList();
-            else
+            } else {
                 t_this.displayMessage(error);
+            }
         });
     }
 };
@@ -296,9 +319,8 @@ function chkbox_select(item, id, name, active) {
     li_string= ''
     if (active == true) {
         li_string  = '<li id="'+ id +'" class="'+ a_klass + '" onclick=list_click(this) >'+ name +'</li>';
-    }
-    else {
-    li_string  = '<li id="'+ id +'" onclick=list_click(this) >'+ name +'</li>';
+    } else {
+        li_string  = '<li id="'+ id +'" onclick=list_click(this) >'+ name +'</li>';
     }
     return li_string;
 }
@@ -310,7 +332,7 @@ function list_click(element) {
     if (klass == country_class) {
         $(element).removeClass(country_class);
         d_page._country_ids.splice(d_page._country_ids.indexOf(parseInt(element.id)));
-    }
+    } 
     else {
         $(element).addClass(country_class);
         d_page._country_ids.push(parseInt(element.id));
@@ -456,26 +478,6 @@ function PageControls() {
         }
     });
 
-    Country.focus(function() {
-        Select_Box_Country.show();
-        Country_li_list.empty();
-        var str = '';
-        for (var i in d_page._CountryList) {
-            d = d_page._CountryList[i];
-            if (d.is_active == true) {
-                active = false;
-                if ($.inArray(d.country_id, d_page._country_ids) >= 0) {
-                    active = true;
-                }
-                else {
-                    active = false;
-                }
-                str += chkbox_select('ulist-country', d.country_id, d.country_name, active);
-            }
-        }
-        Country_li_list.append(str);
-    });
-
     Country.keyup(function(e) {
         onKeyUpDownSelect(e, 'ulist-country');
     });
@@ -517,8 +519,12 @@ function PageControls() {
 }
 
 d_page = new DomainPage();
+//alert(d_page.toSource());
 
 $(document).ready(function() {
+    MultiSelect_Country.multiselect({
+        buttonWidth: '100%'
+    });
     PageControls();
     d_page.showList();
 });

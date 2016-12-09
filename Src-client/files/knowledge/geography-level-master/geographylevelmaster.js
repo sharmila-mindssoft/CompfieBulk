@@ -108,6 +108,10 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
   id_element.val(val[0]);
   console.log("val:"+id_element.val())
   value_element.focus();
+  for(var i=1;i<=10;i++){
+    $('#level'+i).val('');
+    $('#levelid'+i).val('');
+  }
   $('#view-insert-level').hide();
   $('#add').show();
   loadGeographyLevelsList(val[0]);
@@ -156,7 +160,7 @@ function validate() {
     } else if ($('#level1').val().trim().length == 0) {
       displayMessage(message.levelone_title_required);
     } else {
-      displayMessage('');
+      //displayMessage('');
       return true;
     }
   }
@@ -205,9 +209,9 @@ $('#submit').click(function () {
       }
       function onSuccess(response) {
         if (isAdd) {
-          displayMessage(message.record_added);
+          displaySuccessMessage(message.record_added);
         } else {
-          displayMessage(message.record_updated);
+          displaySuccessMessage(message.record_updated);
         }
         jQuery('.btn-geographylevel-cancel').focus().click();
         GetGeographyLevels();
@@ -258,7 +262,7 @@ $('#insert-record').click(function () {
     $('#insertvalue').val('');
     $('#view-insert-level').hide();
     $('#add').show();
-    displayMessage('');
+    //displayMessage('');
   } else {
     displayMessage(message.title_required);
     $('#add').hide();
@@ -297,19 +301,19 @@ $('.input-sm').keyup(function (evt) {
     }
   }
 });
-function loadLevels(){
+function loadLevels() {
   $('#levelslist').empty();
-  //$('#levelslist').append($('<option></option>').val('').html('Select'));
   for(var i=2;i<=10;i++)
   {
     $('#levelslist').append($('<option></option>').val(i).html("Level "+i));
   }
 }
 
-$('#levelslist').on('change', function(e) {
+/*$('#levelslist').on('change', function(e) {
   $('#levelslist  option:gt(0)').remove();
   loadLevels();
-});
+});*/
+
 $('.input-sm').on('input', function (e) {
   this.value = isAlphabetic($(this));
 });

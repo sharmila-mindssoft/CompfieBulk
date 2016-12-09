@@ -12,7 +12,7 @@ from server.common import (
     encrypt, new_uuid, datetime_to_string_time, make_summary
 )
 from server.database.knowledgetransaction import (
-    get_compliance_details
+    save_approve_mapping
 )
 from generalcontroller import (validate_user_session, validate_user_forms)
 
@@ -61,15 +61,14 @@ def process_mobile_request(request, db, session_user_ip):
             result = process_get_approve_statutory_mappings(db, user_id)
             logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
-        elif type(request_frame) is mobile.GetComplianceInfo:
+        elif type(request_frame) is mobile.ApproveStatutoryMapping:
             logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
-            result = process_get_compliance_info(db, request_frame, user_id)
+            result = process_approve_statutory_mapping(db, request_frame, user_id)
             logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     return result
 
 def process_mobile_login(db, request, session_user_ip):
-    print session_user_ip
     login_type = request.login_type
     username = request.username
     password = request.password
@@ -159,7 +158,7 @@ def process_mobile_logout(db, request):
 
 def approve_statutory_mapping_list(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 3)
-    result
+    print result
     mappings = result[0]
     orgs = result[1]
     geo_info = result[2]
@@ -234,11 +233,9 @@ def process_get_approve_statutory_mappings(db, user_id):
         statutory_mappings
     )
 
-def process_get_compliance_info(db, request, user_id):
-    comp_id = request.compliance_id
-    comp_info = get_compliance_details(db, user_id, comp_id)
-    return mobile.GetComplianceInfoSuccess(
-        comp_info[0], comp_info[1], comp_info[2], comp_info[3],
-        comp_info[4], comp_info[5], comp_info[6], comp_info[7],
-        comp_info[8], comp_info[9],
-    )
+
+def process_approve_statutory_mapping(db, request_frame, user_id):
+    data = request_frame.statutory_mappings
+    result = save_approve_mapping(db, user_id, data)
+    if result:
+        return mobile.ApproveStatutoryMappingSuccess()

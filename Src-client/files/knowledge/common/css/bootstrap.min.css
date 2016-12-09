@@ -2525,7 +2525,7 @@ table th[class*=col-] {
 }
 .table-responsive {
     min-height: .01%;
-    overflow-x: auto
+    /*overflow-x: auto*/
 }
 @media screen and (max-width: 767px) {
     .table-responsive {
@@ -2533,7 +2533,8 @@ table th[class*=col-] {
         margin-bottom: 15px;
         overflow-y: hidden;
         -ms-overflow-style: -ms-autohiding-scrollbar;
-        border: 1px solid #ddd
+        border: 1px solid #ddd;
+        overflow-x: auto;
     }
     .table-responsive>.table {
         margin-bottom: 0
@@ -2736,7 +2737,7 @@ input[type=search] {
 .radio input[type=radio],
 .radio-inline input[type=radio] {
     position: absolute;
-    margin-top: 4px\9;
+    margin-top: 2px\9;
     margin-left: -20px
 }
 .checkbox+.checkbox,
