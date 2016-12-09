@@ -1654,13 +1654,15 @@ def return_units_assign(units):
 
 
 def get_unit_details_for_user(db, user_id, request):
-    print "--", user_id
-    typelistedit = request.typelistedit
     where_condition_val = [user_id]
-    if typelistedit == "edit":
-        result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
-    else:
-        result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
+    result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
+    return return_unit_details(result)
+
+
+def get_unit_details_for_user_edit(db, user_id, request):
+    print request.to_structure()
+    where_condition_val = [request.client_id, request.business_group_id, request.legal_entity_id, request.country_id, user_id]
+    result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 
 
