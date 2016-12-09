@@ -6312,7 +6312,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
 
 DELIMITER //
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(
+CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(
 in clientid int(11),
 in businessgroupid int(11),
 in legalentityid int(11),
