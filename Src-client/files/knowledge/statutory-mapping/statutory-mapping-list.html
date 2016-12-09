@@ -222,6 +222,7 @@
                                             <div class="col-sm-7">
                                                 <input id="compliance_task" class="form-control input-sm" type="text" >
                                                 <input id="comp_id" class="form-control input-sm" type="hidden" >
+                                                <input id="temp_id" class="form-control input-sm" type="hidden" >
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -289,19 +290,14 @@
                                                 <div class="form-group clearfix m-b-5">
                                                     <label class="col-sm-3 control-label">Repeats Every <span class="mandatory remove-manditory">*</span></label>
                                                     <div class="col-sm-2">
-                                                        <select class="form-control input-sm">
-                                                        <option>1</option><option>2</option><option>3</option>
-                                                        <option>4</option><option>5</option>
-                                                        <option selected="">6</option><option>7</option>
-                                                        <option>8</option><option>9</option><option>10</option>
-                                                        <option>11</option><option>12</option></select>
+                                                        <input type="text" value="2" id="repeats_every" class="form-control input-sm">
                                                     </div>
                                                     <div class="col-sm-2 no-padding-right">
                                                         <select id="repeats_type" class="form-control input-sm">
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-5">
-                                                        <div class="checkbox checkbox-primary">
+                                                    <div class="col-sm-5" style="display: none;">
+                                                        <div class="checkbox checkbox-primary" >
                                                             <input id="multiselect" type="checkbox">
                                                             <label for="multiselect" class="multiselect">
                                                             Multiple Input Selection
@@ -583,7 +579,8 @@
         </ul>
         <div class="input-group bottomfield">
             <input class="form-control input-sm txtsname" placeholder="" >
-            <input type="hidden snameid" id="sid">
+            <input type="hidden" class="form-control input-sm snameid" placeholder="" >
+            <input type="hidden" class="form-control input-sm snamepid" placeholder="" >
             <span class="input-group-btn">
             <button class="btn btn-primary btn-sm statut-add" type="button">
             <i class="fa fa-plus"></i></button></span>
@@ -592,7 +589,7 @@
 
   <div id="statutory-li-template">
     <li width="100%">
-      <i style="float:left" class="fa fa-pencil text-primary c-pointer edit-icon"></i>
+      <i style="float:left; padding-left:5px; padding-right:5px;" class="fa fa-pencil text-primary c-pointer edit-icon"></i>
       <div class="sname-holder" width="100%"">
           <span id="sname">statutoryname</span>
           <i id="select-act" class="fa pull-right select-act"></i>
@@ -620,7 +617,7 @@
         <td class="frequency">One Time</td>
         <td>-</td>
         <td class="icon-3x text-center"><i id="edit-icon" class="fa fa-pencil text-primary c-pointer"></i></td>
-        <td class="icon-3x text-center"><i id="status" class="fa fa-check text-success c-pointer"></i></td>
+        <td class="icon-3x text-center"><i id="status" class="fa c-pointer"></i></td>
       </tr>
     </table>
   </div>

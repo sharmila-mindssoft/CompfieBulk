@@ -62,7 +62,8 @@ function findLegalEntityClosureData()
 	}
 }
 function bindLegalEntityClosureData(data, j)
-{
+{	
+	console.log(data);
 	val = data;
 	var tableRow = $('#templates .table-row');
 	var clone = tableRow.clone();
@@ -81,8 +82,15 @@ function bindLegalEntityClosureData(data, j)
 		$('#close', clone).show();
 		$('#close', clone).addClass('-'+val.legal_entity_id)
 		$('#close', clone).on('click', function() {
+      Custombox.open({
+          target: '#custom-modal',
+          effect: 'contentscale',
+          open:   function() {
             popup_toggle(this.className, val.legal_entity_id, 'close');
-          });
+          } 
+        });
+            
+    });
 		//$('.modal')
 		$('#reactive', clone).hide();
 		$('.closed', clone).hide();
@@ -107,8 +115,15 @@ function bindLegalEntityClosureData(data, j)
 			$('#reactive', clone).show();
 			$('#reactive', clone).addClass('-'+val.legal_entity_id)
 			$('#reactive', clone).on('click', function() {
-	            popup_toggle(this.className, val.legal_entity_id, 'reactive');
-	          });
+				Custombox.open({
+	        target: '#custom-modal',
+	        effect: 'contentscale',
+	        open:   function() {
+	          popup_toggle(this.className, val.legal_entity_id, 'reactive');
+	        } 
+  			});
+          
+      });
 			$('#reactive', clone).attr('title', val.validity_days+' days left')
 			$('.closed', clone).hide();
 			$('.closed', clone).text('');
@@ -122,7 +137,7 @@ function bindLegalEntityClosureData(data, j)
 function popup_toggle(e, le_id, mode)
 {
 	var split_e_le_id = e.split("-")[2].trim();
-	$('.modal').show();
+	//$('.modal').show();
 	$('#techno_pwd').val('');
 	$('#remarks').val('');
 	toggle_le_id = split_e_le_id+","+mode;
@@ -180,73 +195,73 @@ $('#update_status').click(function() {
 	}
 });
 
-function processFilterSearch()
-{
-	ctryname_search = $('#search-country-name').val().toLowerCase();
-	grpname_search = $('#search-Group-name').val().toLowerCase();
-	bgrpname_search = $('#search-business-group').val().toLowerCase();
-	lename_search = $('#search-legal-entity').val().toLowerCase();
-	var status_select = $('#status_select').val();
+// function processFilterSearch()
+// {
+// 	ctryname_search = $('#search-country-name').val().toLowerCase();
+// 	grpname_search = $('#search-Group-name').val().toLowerCase();
+// 	bgrpname_search = $('#search-business-group').val().toLowerCase();
+// 	lename_search = $('#search-legal-entity').val().toLowerCase();
+// 	var status_select = $('#status_select').val();
 
-	searchList = [];
-	for(var v in legalEntityClosureList)
-	{
-		data = legalEntityClosureList[v];
-		c_name = data.country_name.toLowerCase();
-		g_name = data.group_name.toLowerCase();
-		bg_name = data.business_group_name.toLowerCase();
-		le_name = data.legal_entity_name.toLowerCase();
+// 	searchList = [];
+// 	for(var v in legalEntityClosureList)
+// 	{
+// 		data = legalEntityClosureList[v];
+// 		c_name = data.country_name.toLowerCase();
+// 		g_name = data.group_name.toLowerCase();
+// 		bg_name = data.business_group_name.toLowerCase();
+// 		le_name = data.legal_entity_name.toLowerCase();
 
 
-		if (
-	      (~c_name.indexOf(ctryname_search)) && (~g_name.indexOf(grpname_search)) &&
-	      (~bg_name.indexOf(bgrpname_search)) && (~le_name.indexOf(lename_search))
-	    )
-		{
-			if(status_select == "-1")
-			{
-				searchList.push(data);
-			}
-			else if(status_select == "0")
-			{
-				if(data.validity_days != '' && data.validity_days > 90)
-				{
-					searchList.push(data);
-				}
-			}
-			else if(status_select == "1")
-			{
-				if(data.is_active == true)
-				{
-					searchList.push(data);
-				}
-			}
-			else if(status_select == "2")
-			{
-				if(data.validity_days != '' && data.validity_days < 90)
-				{
-					searchList.push(data);
-				}
-			}
-		}
-	}
-	bindSearchList(searchList);
-}
+// 		if (
+// 	      (~c_name.indexOf(ctryname_search)) && (~g_name.indexOf(grpname_search)) &&
+// 	      (~bg_name.indexOf(bgrpname_search)) && (~le_name.indexOf(lename_search))
+// 	    )
+// 		{
+// 			if(status_select == "-1")
+// 			{
+// 				searchList.push(data);
+// 			}
+// 			else if(status_select == "0")
+// 			{
+// 				if(data.validity_days != '' && data.validity_days > 90)
+// 				{
+// 					searchList.push(data);
+// 				}
+// 			}
+// 			else if(status_select == "1")
+// 			{
+// 				if(data.is_active == true)
+// 				{
+// 					searchList.push(data);
+// 				}
+// 			}
+// 			else if(status_select == "2")
+// 			{
+// 				if(data.validity_days != '' && data.validity_days < 90)
+// 				{
+// 					searchList.push(data);
+// 				}
+// 			}
+// 		}
+// 	}
+// 	bindSearchList(searchList);
+// }
 
-function bindSearchList(searchList)
-{
-	if(searchList.length > 0)
-	{
-		$('.tbody-le-closure-list').find('tr').remove();
-		j = 1;
+// function bindSearchList(searchList)
+// {
+// 	if(searchList.length > 0)
+// 	{
+// 		$('.tbody-le-closure-list').find('tr').remove();
+// 		j = 1;
 
-		for(var i=0;i<searchList.length;i++)
-		{
-			bindLegalEntityClosureData(searchList[i], j);
-			j = j + 1;
-		}
-	}
-}
+// 		for(var i=0;i<searchList.length;i++)
+// 		{
+// 			bindLegalEntityClosureData(searchList[i], j);
+// 			j = j + 1;
+// 		}
+// 	}
+// }
 
 // page load
 function initialize() {
@@ -261,6 +276,10 @@ $(document).ready(function () {
 $('#status_select').on('change', function(){
   findLegalEntityClosureData();
 });
-$('.filter-text-box').keyup(function() {
-    processFilterSearch();
+// $('.filter-text-box').keyup(function() {
+//     processFilterSearch();
+// });
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });
+

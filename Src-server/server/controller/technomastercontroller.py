@@ -279,8 +279,6 @@ def save_client(db, request, session_user):
     business_group_id = request.business_group_id
     legal_entity_id = request.legal_entity_id
     country_id = request.country_id
-    print
-    print country_id
     divisions = request.division_units
     div_ids = []
     category_ids = []
@@ -339,6 +337,7 @@ def save_client(db, request, session_user):
                 units = is_valid_unit[1]
                 print "after append"
                 print units
+                print "is valid unit--------------------", is_valid_unit[1]
                 if(len(is_valid_unit[1]) > 0):
                     res = save_unit(
                         db, client_id, units, business_group_id, legal_entity_id, country_id, session_user
@@ -422,7 +421,7 @@ def get_clients(db, request, session_user):
         db, session_user
     )
     if len(group_company_list) > 0:
-        unit_list = get_unit_details_for_user(db, session_user)
+        unit_list = get_unit_details_for_user(db, session_user, request)
         business_group_list = get_business_groups_for_user(db, session_user)
         countries_units = get_countries_for_unit(db, session_user)
         legal_entity_list = get_legal_entities_for_user(db, session_user)
@@ -430,8 +429,8 @@ def get_clients(db, request, session_user):
         division_list = get_divisions_for_user(db, session_user)
         unit_geography_level_list = get_unit_geograhpy_levels_for_user(db, session_user)
         unit_geographies_list = get_geographies_for_unit(db, session_user)
-        #unit_industries_list = get_client_industries(db, session_user)
-        #client_domains = get_user_client_domains(db, session_user)
+        # unit_industries_list = get_client_industries(db, session_user)
+        # client_domains = get_user_client_domains(db, session_user)
         return technomasters.GetClientsSuccess(
             unit_list=unit_list,
             group_company_list=group_company_list,

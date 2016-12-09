@@ -37,7 +37,9 @@ from server.constants import (
 from server.templatepath import (
     TEMPLATE_PATHS
 )
+from server.exceptionmessage import fetch_error
 
+from server.exceptionmessage import fetch_error
 import logger
 
 
@@ -132,7 +134,7 @@ class API(object):
         if type(response_data) is not str :
             data = response_data.to_structure()
             s = json.dumps(data, indent=2)
-        else :
+        else:
             s = response_data
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
@@ -144,6 +146,11 @@ class API(object):
         try:
             data = request.get_json(force=True)
             # data = request.data
+            print data
+            print "\n"
+            print "\n"
+            print request_data_type
+
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -184,19 +191,22 @@ class API(object):
 
             if request_data is None:
                 raise ValueError("Request data is Null")
-            elif type(request_data) is str :
-                raise ValueError(request_data)
 
+            elif type(request_data) is str:
+                raise ValueError(request_data)
+            print "not returned"
 
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
+            print "unbboundddd----", unbound_method
             response_data = unbound_method(self, request_data, _db)
-            if response_data is None or type(response_data) is bool:
-                # print response_data
-                _db.rollback()
 
-            if type(response_data) != technomasters.ClientCreationFailed:
+            if response_data is None or type(response_data) is bool:
+                print response_data
+                _db.rollback()
+                raise fetch_error()
+            elif type(response_data) != technomasters.ClientCreationFailed:
                 print "commit"
                 _db.commit()
             else:
@@ -207,6 +217,7 @@ class API(object):
             print "handle_api_request ", e
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
+            print(traceback.format_exc())
             # logger.logKnowledgeApi(ip_address, "")
 
             logger.logKnowledge("error", "main.py-handle-api-", e)
@@ -323,22 +334,23 @@ class API(object):
     def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
+    @csrf.exempt
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getstatumaster(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getstatumaster(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getmappingmaster(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getmappingmaster(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_getmapping(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
-    
+    # @api_request(knowledgetransaction.RequestFormat)
+    # def handle_knowledge_getmapping(self, request, db):
+    #     return controller.process_knowledge_transaction_request(request, db)
+
     @api_request(knowledgereport.RequestFormat)
     def handle_knowledge_report(self, request, db):
         return controller.process_knowledge_report_request(request, db)
@@ -387,13 +399,16 @@ CSS_PATH = os.path.join(COMMON_PATH, "css")
 IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
+LOGO_PATH = os.path.join(ROOT_PATH, "Src-server", "server", "clientlogo")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
     ("/knowledge/js/<path:filename>", JS_PATH),
     ("/knowledge/images/<path:filename>", IMG_PATH),
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
-    ("/knowledge/script/<path:filename>", SCRIPT_PATH)
+    ("/knowledge/script/<path:filename>", SCRIPT_PATH),
+    ("/knowledge/clientlogo/<path:filename>", LOGO_PATH)
+
 ]
 
 def staticTemplate(pathname, filename):
@@ -409,22 +424,23 @@ def renderTemplate(pathname, code=None):
         return new_url
 
     def update_static_urls(content):
+        v = 1
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
-            new_url += "?v=%s" % (time.time())
+            new_url += "?v=%s" % (v)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
-            print url
             if not url.startswith("#"):
                 new_url = set_path(url)
-                new_url += "?v=%s" % (time.time())
+                new_url += "?v=%s" % (v)
             else:
                 new_url = url
+
             node.set('href', new_url)
         data += etree.tostring(tree, method="html")
         return data
@@ -492,3 +508,5 @@ def run_server(port):
         "threaded": True
     }
     app.run(host="0.0.0.0", port=port, **settings)
+
+

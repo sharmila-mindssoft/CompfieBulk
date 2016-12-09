@@ -156,11 +156,12 @@ class SaveStatutoryMapping(Request):
 
 class UpdateStatutoryMapping(Request):
     def __init__(
-        self, statutory_mapping_id, country_id, domain_id,
-        industry_ids, statutory_nature_id, statutory_ids,
-        compliances, geography_ids, mappings
+        self, mapping_id, country_id, domain_id, industry_ids,
+        statutory_nature_id, statutory_ids,
+        compliances, geography_ids, mappings,
+        tr_type
     ):
-        self.statutory_mapping_id = statutory_mapping_id
+        self.mapping_id = mapping_id
         self.country_id = country_id
         self.domain_id = domain_id
         self.industry_ids = industry_ids
@@ -169,15 +170,16 @@ class UpdateStatutoryMapping(Request):
         self.compliances = compliances
         self.geography_ids = geography_ids
         self.mappings = mappings
+        self.tr_type = tr_type
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "s_m_id", "c_id", "d_id", "i_ids",
-            "s_n_id", "s_ids", "compliances",
-            "g_ids", "mappings"
+            "m_id", "c_id", "d_id", "i_ids",
+            "s_n_id", "s_ids",
+            "compliances", "g_ids", "mappings", "tr_type"
         ])
-        statutory_mapping_id = data.get("s_m_id")
+        mapping_id = data.get("m_id")
         country_id = data.get("c_id")
         domain_id = data.get("d_id")
         industry_ids = data.get("i_ids")
@@ -186,15 +188,16 @@ class UpdateStatutoryMapping(Request):
         compliances = data.get("compliances")
         geography_ids = data.get("g_ids")
         mappings = data.get("mappings")
+        tr_type = data.get("tr_type")
         return UpdateStatutoryMapping(
-            statutory_mapping_id, country_id, domain_id, industry_ids,
-            statutory_nature_id, statutory_ids, compliances,
-            geography_ids, mappings
+            mapping_id, country_id, domain_id, industry_ids,
+            statutory_nature_id, statutory_ids,
+            compliances, geography_ids, mappings, tr_type
         )
 
     def to_inner_structure(self):
         return {
-            "s_m_id": self.statutory_mapping_id,
+            "m_id": self.mapping_id,
             "c_id": self.country_id,
             "d_id": self.domain_id,
             "i_ids": self.industry_ids,
@@ -202,7 +205,8 @@ class UpdateStatutoryMapping(Request):
             "s_ids": self.statutory_ids,
             "compliances": self.compliances,
             "g_ids": self.geography_ids,
-            "mappings": self.mappings
+            "mappings": self.mappings,
+            "tr_type": self.tr_type
         }
 
 class ChangeStatutoryMappingStatus(Request):
@@ -306,6 +310,24 @@ class GetStatutoryMaster(Request):
     def to_inner_structure(self):
         return {}
 
+class GetComplianceEdit(Request):
+    def __init__(self, compliance_id, mapping_id):
+        self.compliance_id = compliance_id
+        self.mapping_id = mapping_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["comp_id", "m_id"])
+        comp_id = data.get("comp_id")
+        mapping_id = data.get("m_id")
+        return GetComplianceEdit(comp_id, mapping_id)
+
+    def to_inner_structure(self):
+        return {
+            "comp_id": self.compliance_id,
+            "m_id": self.mapping_id
+        }
+
 
 def _init_Request_class_map():
     classes = [
@@ -313,7 +335,8 @@ def _init_Request_class_map():
         SaveStatutoryMapping, UpdateStatutoryMapping,
         ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
         ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
-        GetStatutoryMaster, GetApproveStatutoryMappingsFilters
+        GetStatutoryMaster, GetApproveStatutoryMappingsFilters,
+        GetComplianceEdit, GetComplianceInfo
     ]
     class_map = {}
     for c in classes:
@@ -654,7 +677,7 @@ class GetComplianceInfoSuccess(Response):
         self.locations = locations
 
     @staticmethod
-    def parse_structure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "comp_id", "s_pro",
             "c_task", "descrip",
@@ -681,7 +704,7 @@ class GetComplianceInfoSuccess(Response):
             frequency, summary, reference, locations
         )
 
-    def to_structure(self):
+    def to_inner_structure(self):
         return {
             "comp_id": self.compliance_id,
             "s_pro": self.statutory_provision,
@@ -695,6 +718,50 @@ class GetComplianceInfoSuccess(Response):
             "locat": self.locations
         }
 
+class GetComplianceEditSuccess(Response):
+    def __init__(
+        self, mapping_id, country_id, domain_id, nature_id, org_list,
+        statu_list, compliance_list, geo_list
+    ):
+        self.mapping_id = mapping_id
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.nature_id = nature_id
+        self.org_list = org_list
+        self.statu_list = statu_list
+        self.compliance_list = compliance_list
+        self.geo_list = geo_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "m_id", "c_id", "d_id", "s_n_id", "i_ids",
+            "s_ids", "comp_list", "g_ids"
+        ])
+        mapping_id = data.get("m_id")
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        nature_id = data.get("s_n_id")
+        org_list = data.get("i_ids")
+        statu_list = data.get("s_ids")
+        comp_list = data.get("comp_list")
+        geo_list = data.get("g_ids")
+        return GetComplianceEditSuccess(
+            mapping_id, country_id, domain_id, nature_id, org_list,
+            statu_list, comp_list, geo_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "m_id": self.mapping_id,
+            "c_id": self.country_id,
+            "d_id": self.domain_id,
+            "s_n_id": self.nature_id,
+            "i_ids": self.org_list,
+            "s_ids": self.statu_list,
+            "comp_list": self.compliance_list,
+            "g_ids": self.geo_list
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -708,7 +775,8 @@ def _init_Response_class_map():
         GetStatutoryMasterSuccess,
         GetApproveStatutoryMappingSuccess,
         GetComplianceInfoSuccess,
-        GetApproveStatutoryMappingFilterSuccess
+        GetApproveStatutoryMappingFilterSuccess,
+        GetComplianceEditSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1019,7 +1087,6 @@ class MappingApproveInfo(object):
             "map_text": self.mapping_text
         }
 
-
 class ApproveMapping(object):
     def __init__(
         self, country_name, domain_name, nature_name,
@@ -1075,4 +1142,94 @@ class ApproveMapping(object):
             "comp_id": self.compliance_id,
             "is_common": self.is_common,
             "u_by": self.updated_by
+        }
+
+class ComplianceList(object):
+    def __init__(
+        self, compliance_id, statutory_provision,
+        compliance_task, document_name, description,
+        penal_consequences, is_active,
+        frequency_id, statutory_dates, repeats_type_id,
+        repeats_every, duration_type_id, duration,
+        format_file, file_list,
+        summary, reference, frequency
+    ):
+        self.compliance_id = compliance_id
+        self.statutory_provision = statutory_provision
+        self.compliance_task = compliance_task
+        self.document_name = document_name
+        self.description = description
+        self.penal_consequences = penal_consequences
+        self.is_active = is_active
+        self.frequency_id = frequency_id
+        self.statutory_dates = statutory_dates
+        self.repeats_type_id = repeats_type_id
+        self.repeats_every = repeats_every
+        self.duration_type_id = duration_type_id
+        self.duration = duration
+        self.format_file = format_file
+        self.file_list = file_list
+        self.summary = summary
+        self.reference = reference
+        self.frequency = frequency
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "comp_id", "s_provision",
+            "c_task", "doc_name", "description",
+            "p_consequences", "is_active",
+            "f_id", "statu_dates", "r_type_id", "r_every",
+            "d_type_id", "duration", "file_name",
+            "summary", "reference", "f_f_list", "frequency"
+        ])
+        compliance_id = data.get("comp_id")
+        statutory_provision = data.get("s_provision")
+        compliance_task = data.get("c_task")
+        document_name = data.get("doc_name")
+        description = data.get("description")
+        penal_consequences = data.get("p_consequences")
+        is_active = data.get("is_active")
+        frequency = data.get("f_id")
+        statu_dates = data.get("statu_dates")
+        repeats_type_id = data.get("r_type_id")
+        repeats_every = data.get("r_every")
+        duration_type_id = data.get("d_type_id")
+        duration = data.get("duration")
+        file_name = data.get("file_name")
+        summary = data.get("summary")
+        reference = data.get("reference")
+        file_list = data.get("f_f_lift")
+        frequency = data.get("frequency")
+
+        return GetComplianceInfoSuccess(
+            compliance_id, statutory_provision,
+            compliance_task, document_name, description,
+            penal_consequences, is_active,
+            frequency, statu_dates, repeats_type_id,
+            repeats_every, duration_type_id, duration,
+            file_name, file_list,
+            summary, reference, frequency
+        )
+
+    def to_structure(self):
+        return {
+            "comp_id": self.compliance_id,
+            "s_provision": self.statutory_provision,
+            "c_task": self.compliance_task,
+            "doc_name": self.document_name,
+            "description": self.description,
+            "p_consequences": self.penal_consequences,
+            "is_active": self.is_active,
+            "f_id": self.frequency_id,
+            "statu_dates": self.statutory_dates,
+            "r_type_id": self.repeats_type_id,
+            "r_every": self.repeats_every,
+            "d_type_id": self.duration_type_id,
+            "duration": self.duration,
+            "file_name": self.format_file,
+            "summary": self.summary,
+            "reference": self.reference,
+            "f_f_list": self.file_list,
+            "frequency": self.frequency
         }

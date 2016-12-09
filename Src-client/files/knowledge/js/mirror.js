@@ -182,7 +182,9 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        // alert(jqXHR["responseText"]);
+
+        console.log(textStatus, errorThrown);
+        console.log(jqXHR.responseText)
         callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);
@@ -724,6 +726,16 @@ function initMirror() {
     ];
     apiRequest('knowledge_transaction', request, callback);
   }
+  function getStatutoryMappingsEdit(m_id, comp_id, callback) {
+    var request = [
+      'GetComplianceEdit',
+      {
+        "m_id": parseInt(m_id),
+        "comp_id": comp_id
+      }
+    ];
+    apiRequest('knowledge_transaction', request, callback);
+  }
   function changeStatutoryMappingStatus(mId, isActive, callback) {
     var request = [
       'ChangeStatutoryMappingStatus',
@@ -1218,11 +1230,11 @@ function initMirror() {
     LoginApiRequest(callerName, request, callback);
   }
   // Client Unit APIs
-  function getClients(callback) {
+  function getClients(type, callback) {
     callerName = 'techno';
     var request = [
       'GetClients',
-      {}
+      { 'typelistedit' : type }
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1276,14 +1288,14 @@ function initMirror() {
   }old*/
   function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds) {
     return {
-      'u_id': uId,
-      'u_name': uName,
-      'u_code': uCode,
-      'u_add': uAdd,
-      'p_code': pCode,
-      'geo_id': geoId,
+      'unit_id': uId,
+      'unit_name': uName,
+      'unit_code': uCode,
+      'address': uAdd,
+      'postal_code': pCode,
+      'geography_id': geoId,
       'd_ids': dIds,
-      'i_ids': iIds
+      'i_ids_list': iIds
     };
   }
   function mapUnitsToCountry(cId, units) {
@@ -1292,7 +1304,7 @@ function initMirror() {
       'units': units
     };
   }
-  function saveClient(cId, bg_id, le_id, c_id, div_dict, cw_units, callback) {
+  function saveClient(cId, bg_id, le_id, c_id, division_units, cw_units, callback) {
     callerName = 'techno';
     var request = [
       'SaveClient',
@@ -1301,7 +1313,7 @@ function initMirror() {
         'bg_id': bg_id,
         'le_id': le_id,
         'c_id': c_id,
-        'div_dict': div_dict,
+        'division_units': division_units,
         'units': cw_units
       }
     ];
@@ -2004,6 +2016,22 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserDomainReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id,
+        "bg_id": bg_id,
+        "le_id": le_id,
+        "d_id": d_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   function getLegalEntityClosureData(callback){
     callerName = 'techno_transaction';
     var request = [
@@ -2323,8 +2351,9 @@ function initMirror() {
     getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
     getMessages: getMessages,
     getStatutoryNotifications: getStatutoryNotifications,
-    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus
-
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+    getReassignUserDomainReportData: getReassignUserDomainReportData,
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit
   };
 }
 var mirror = initMirror();

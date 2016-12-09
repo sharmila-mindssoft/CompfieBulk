@@ -3433,12 +3433,12 @@ class AssignLegalEntity(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "client_id", "country_name", "group_name"
+                "client_id", "country_names", "group_name"
                 "no_of_legal_entities", "no_of_assigned_legal_entities"
             ]
         )
         client_id = data.get("client_id")
-        country_name = data.get("country_name")
+        country_name = data.get("country_names")
         group_name = data.get("group_name")
         no_of_legal_entities = data.get("no_of_legal_entities")
         no_of_assigned_legal_entities = data.get("no_of_assigned_legal_entities")
@@ -3451,7 +3451,7 @@ class AssignLegalEntity(object):
     def to_structure(self):
         return {
             "client_id": self.client_id,
-            "country_name": self.country_name,
+            "country_names": self.country_name,
             "group_name": self.group_name,
             "no_of_legal_entities": self.no_of_legal_entities,
             "no_of_assigned_legal_entities": self.no_of_assigned_legal_entities
@@ -3701,4 +3701,23 @@ class ChildUsers(object):
         return {
             "user_id": self.user_id,
             "employee_name": self.employee_name,
+        }
+
+
+class DomainIndustryList(object):
+    def __init__(self, domain_id, industry_id):
+        self.domain_id = domain_id
+        self.industry_id = industry_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["domain_id", "industry_id"])
+        domain_id = data.get("domain_id")
+        industry_id = data.get("industry_id")
+        return DomainIndustryList(domain_id, industry_id)
+
+    def to_structure(self):
+        return {
+            "domain_id": self.domain_id,
+            "industry_id": self.industry_id,
         }

@@ -262,7 +262,6 @@ function validateForm(){
     }else{
         return true;
     }
-    
 }
 function submitApprovalForm(){
     validation_result = validateForm();

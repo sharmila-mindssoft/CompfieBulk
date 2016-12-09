@@ -243,7 +243,7 @@ TEMPLATE_PATHS = [
     # knowledge manager transaction
     (
         "/knowledge/approve-statutory-mapping",
-        "files/knowledge/approve-statutory-mapping/approvestatutorymapping.html",
+        "files/knowledge/approve-statutory-mapping/approve-statutory-mapping.html",
         None, {}
     ),
     # knowledge user master
@@ -330,6 +330,11 @@ TEMPLATE_PATHS = [
         "files/knowledge/assign-legal-entity/assign-legal-entity.html",
         None, {}
     ),
+    (
+        "/knowledge/legal-entity-closure",
+        "files/knowledge/legal-entity-closure/legal-entity-closure.html",
+        None, {}
+    ),
     # Techno user master
     (
         "/knowledge/client-unit",
@@ -354,7 +359,7 @@ TEMPLATE_PATHS = [
     # Techno User Transaction
     (
         "/knowledge/assign-statutory",
-        "files/knowledge/assign-statutory/assignstatutory.html",
+        "files/knowledge/assign-statutory/assign-statutory.html",
         None, {}
     ),
     # Techno reports
@@ -393,7 +398,16 @@ TEMPLATE_PATHS = [
         "files/knowledge/statutory-setting-report/statutory-setting-report.html",
         None, {}
     ),
-
+    (
+        "/knowledge/group-admin-registration-email-report",
+        "files/knowledge/group-admin-registration-email-report/group-admin-registration-email-report.html",
+        None, {}
+    ),
+    (
+        "/knowledge/reassign-user-report",
+        "files/knowledge/reassign-user-report/reassign-user-report.html",
+        None, {}
+    ),
     # audit trial
     (
         "/knowledge/audit-trail-login-trace",
