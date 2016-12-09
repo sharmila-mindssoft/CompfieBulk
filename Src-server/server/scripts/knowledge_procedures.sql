@@ -6197,3 +6197,173 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_save_geography_master`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_save_geography_master`(
+in _g_name varchar(50), _l_id int(11), _p_ids text, _p_names text,
+_created_by int(11), _created_on timestamp)
+BEGIN
+    insert into tbl_geographies
+    (geography_name, level_id, parent_ids, parent_names, created_by, created_on)
+    values
+    (_g_name, _l_id, _p_ids, _p_names, _created_by, _created_on);
+END //
+
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_update_geography_master`;
+
+DELIMITER //
+
+CREATE  PROCEDURE `sp_update_geography_master`(
+in _g_id int(11), _g_name varchar(50), _p_ids text, _p_names text, _updated_by int(11))
+BEGIN
+    update tbl_geographies
+    set geography_name = _g_name,
+    parent_ids = _p_ids,
+    parent_names = _p_names,
+    updated_by = _updated_by
+    where
+    geography_id = _g_id;
+END //
+
+DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_get_geography_master`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_geography_master`(
+in _g_id int(11), _p_ids text)
+BEGIN
+    SELECT geography_id, geography_name, parent_ids, level_id
+    from tbl_geographies WHERE find_in_set(_p_ids, parent_ids) or
+    geography_id in (_g_id);
+END //
+
+DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_update_geographies_master_level`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_geographies_master_level`(
+in _g_id int(11), _l_id int(11), map_name text)
+BEGIN
+    UPDATE tbl_geographies as A inner join
+    (select c.country_name, g.level_id from
+    tbl_countries c inner join tbl_geography_levels g on
+    c.country_id = g.country_id) as C ON A.level_id  = C.level_id
+    set A.parent_names = concat(C.country_name, '>>', map_name)
+    where A.geography_id = _g_id AND C.level_id = _l_id;
+END //
+
+DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_check_geography_exists`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_geography_exists`(
+in _g_id int(11))
+BEGIN
+    select count(1) as stat_cnt from tbl_statutory_geographies where geography_id = _g_id;
+
+    select count(0) as geo_cnt from tbl_geographies where FIND_IN_SET(_g_id, parent_ids);
+END //
+
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_geography_update_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_geography_update_status`(
+in _g_id int(11), _status tinyint(4), _updated_by int(11))
+BEGIN
+    update tbl_geographies
+    set is_active = _status,
+    updated_by = _updated_by
+    where geography_id = _g_id;
+END //
+
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_get_geography_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_geography_by_id`(
+in _g_id int(11))
+BEGIN
+    SELECT geography_id, geography_name, level_id,
+    parent_ids, parent_names, is_active
+    FROM tbl_geographies WHERE geography_id = _g_id;
+END //
+
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
+
+DELIMITER //
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(
+in clientid int(11),
+in businessgroupid int(11),
+in legalentityid int(11),
+in countryid int(11),
+in userId INT(11))
+BEGIN
+    select t2.unit_id, t2.client_id, t2.business_group_id,
+    t2.legal_entity_id, t2.division_id,
+    t2.geography_id, t2.unit_code,t2.country_id,
+    t2.unit_name, t2.address, t2.postal_code,
+    t2.is_approved, t2.is_closed as is_active,
+    t4.legal_entity_name as l_entity,
+    (select business_group_name from tbl_business_groups
+        where business_group_id = t2.business_group_id) as b_group,
+    (select division_name from tbl_divisions
+        where division_id = t2.division_id) as division,
+    (select category_name from tbl_categories
+        where category_id = t2.category_id) as category_name,
+    t9.short_name as group_name,
+    t8.country_name, t2.category_id, t2.remarks
+    from
+    tbl_user_legalentity as t1,
+    tbl_units as t2,
+    tbl_legal_entities as t4,
+    tbl_countries as t8,
+    tbl_client_groups as t9
+    where
+    t9.client_id = t2.client_id and
+    t8.country_id = t2.country_id and
+    t4.legal_entity_id = t2.legal_entity_id and
+    t2.legal_entity_id = t1.legal_entity_id and
+    t2.client_id = t1.client_id and
+    t1.user_id = userId and
+    t2.country_id = countryid and
+    t2.legal_entity_id = legalentityid and
+    t2.client_id = clientid and
+    t2.business_group_id = businessgroupid
+    order by group_name, b_group, l_entity, country_name;
+
+    select t3.unit_id, t3.domain_id, t3.organisation_id
+    from
+    tbl_user_legalentity as t1,
+    tbl_units as t2,
+    tbl_units_organizations as t3
+    where
+    t3.unit_id = t2.unit_id and
+    t2.legal_entity_id = t1.legal_entity_id and
+    t2.client_id = t1.client_id and
+    t1.user_id =userId and
+    t2.country_id = countryid and
+    t1.legal_entity_id = legalentityid;
+END //
+
+DELIMITER;
