@@ -67,7 +67,7 @@ function initialize(){
           console.log("data:"+BusinessGroupList)
           LegalEntityList = data.unit_legal_entity;
         }else {
-          custom_alert(error);
+          displayMessage(error);
         }
     });
 }
@@ -283,6 +283,12 @@ function processSubmit (csv){
                 displayMessage(error);
             }
             else {
+              $('.details').show();
+              $('#compliance_animation')
+                .removeClass().addClass('bounceInLeft animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass();
+              });
               if (csv) {
                 var download_url = response.link;
                 window.open(download_url, '_blank');
