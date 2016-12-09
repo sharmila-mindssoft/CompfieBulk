@@ -543,8 +543,8 @@ def get_assign_legal_entity_list(db, request, session_user):
 ############################################################
 # To Get Unassigned units list
 ############################################################
-def get_unassigned_units(db):
-    units_list = get_unassigned_units_list(db)
+def get_unassigned_units(db, session_user):
+    units_list = get_unassigned_units_list(db, session_user)
     return technomasters.GetUnassignedUnitsSuccess(
         unassigned_units_list=units_list
     )

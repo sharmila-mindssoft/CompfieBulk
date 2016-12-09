@@ -1791,7 +1791,7 @@ BEGIN
     WHERE country_id = countryid;
 
     SELECT count(*) as count
-    FROM tbl_legal_entities
+    FROM tbl_client_countries
     WHERE country_id = countryid;
 END //
 
@@ -2953,7 +2953,7 @@ DROP PROCEDURE IF EXISTS `sp_userunits_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_userunits_list`()
+CREATE PROCEDURE `sp_userunits_list`( IN userid_ INT(11))
 BEGIN
     select count(tu.unit_id) as total_units, tu.client_id,
     tu.legal_entity_id, domain_id, (
@@ -2966,8 +2966,10 @@ BEGIN
         SELECT count(unit_id) FROM tbl_user_units tuu
         WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
     ) as assigned_units
-    from tbl_units tu inner join tbl_unit_industries tud
-    ON tu.unit_id = tud.unit_id group by client_id, domain_id;
+    from tbl_units tu inner join tbl_units_organizations tud
+    ON tu.unit_id = tud.unit_id 
+    inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= tu.client_id
+    group by client_id, domain_id;
 END//
 DELIMITER ;
 
@@ -3017,7 +3019,7 @@ BEGIN
         SELECT division_name FROM tbl_divisions td
         WHERE td.division_id=tu.division_id
     ) as division_name,(
-        SELECT category_name FROM tbl_category_master tcm
+        SELECT category_name FROM tbl_categories tcm
         WHERE tcm.category_id=tu.category_id
     ) as category_name, unit_code, unit_name, address, (
         SELECT geography_name FROM tbl_geographies tgm
@@ -3031,9 +3033,9 @@ BEGIN
         SELECT domain_name FROM tbl_domains td
         WHERE td.domain_id = tui.domain_id
     ) as domain_name, (
-        SELECT industry_name FROM tbl_industries ti
-        WHERE ti.industry_id = tui.industry_id
-    ) as industry_name FROM tbl_unit_industries tui
+        SELECT organisation_name FROM tbl_organisation ti
+        WHERE ti.organisation_id = tui.organisation_id
+    ) as organisation_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
         SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
     );
@@ -3054,7 +3056,7 @@ CREATE PROCEDURE `sp_users_domain_managers`(
 BEGIN
     SELECT user_id,
     concat(employee_code, "-", employee_name) as employee_name,
-    is_active FROM tbl_users WHERE user_category_id=7 and
+    is_active, user_category_id FROM tbl_users WHERE user_category_id=7 and
     user_id in (SELECT child_user_id FROM tbl_user_mapping
     WHERE parent_user_id=session_user);
 END //
@@ -3069,7 +3071,7 @@ DROP PROCEDURE IF EXISTS `sp_units_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_units_list`(
-    IN clientid INT(11)
+    IN clientid INT(11), IN domainid INT(11)
 )
 BEGIN
     SELECT tu.unit_id, unit_code, unit_name,
@@ -3077,18 +3079,18 @@ BEGIN
         SELECT division_name FROM tbl_divisions td
         WHERE td.division_id=tu.division_id
     ) as division_name, (
-        SELECT category_name FROM tbl_category_master tcm
+        SELECT category_name FROM tbl_categories tcm
         WHERE tcm.category_id=tu.category_id
     ) as category_name,legal_entity_id,(
         SELECT legal_entity_name FROM tbl_legal_entities tle
         WHERE tle.legal_entity_id=tu.legal_entity_id
     ) as legal_entity_name,
-    business_group_id, is_active, (
+    business_group_id, is_closed, (
         SELECT geography_name FROM tbl_geographies tg
         WHERE tg.geography_id = tu.geography_id
     ) as geography_name
     FROM tbl_units tu
-    INNER JOIN tbl_unit_industries tui on tui.unit_id=tu.unit_id
+    INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
     WHERE client_id=clientid and tui.domain_id=domainid and
     tu.unit_id not in (
         SELECT unit_id FROM tbl_user_units
@@ -3099,9 +3101,9 @@ BEGIN
         SELECT domain_name FROM tbl_domains td
         WHERE td.domain_id = tui.domain_id
     ) as domain_name, (
-        SELECT industry_name FROM tbl_industries ti
-        WHERE ti.industry_id = tui.industry_id
-    ) as industry_name FROM tbl_unit_industries tui
+        SELECT organisation_name FROM tbl_organisation ti
+        WHERE ti.organisation_id = tui.organisation_id
+    ) as organisation_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
         SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
     ) and tui.domain_id=domainid;
@@ -3461,7 +3463,7 @@ BEGIN
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
-    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
     t1.country_id = countryid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
@@ -3574,7 +3576,7 @@ BEGIN
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
-    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
@@ -5666,7 +5668,7 @@ CREATE PROCEDURE `sp_get_messages`(
 IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
-    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
 
     SELECT m.message_id, m.message_heading, m.message_text, m.link,
     (SELECT concat(employee_code, ' - ', employee_name)
@@ -5978,7 +5980,7 @@ BEGIN
      and t2.domain_id = domainid
      and t1.statutory_nature_id like nature_id
      and IFNULL(t2.updated_by, t2.created_by) in (
-        select child_user_id from tbl_user_mapping where parent_user_id = 4
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
      ) order by t1.statutory_mapping_id;
 
      select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
@@ -6195,6 +6197,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS `sp_save_geography_master`;
 
