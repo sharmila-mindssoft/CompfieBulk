@@ -119,28 +119,28 @@
 
                             </tbody>
                         </table>
-                        <p class="rpt-count">Total : 2 record(s)</p>
+                        <table class="pagination-view default-display-none">
+                          <tr>
+                              <td>
+                                  <span class="compliance_count"> </span>
+                                  <span class="divider-view"> | </span>
+                                  <span class="items-per-page">
+                                  Show
+                                  <select id="items_per_page">
+                                  </select>
+                                  entries
+                                  </span>
+                              </td>
+                              <td style="width:670px;"></td>
+                              <td style="text-align:right;padding-right:10px;">
+                                  <ul id="pagination-rpt"></ul>
+                              </td>
+                          </tr>
+                      </table>
                     </div>
                 </div>
             </div>
-            <table class="pagination-view default-display-none">
-                <tr>
-                    <td>
-                        <span class="compliance_count"> </span>
-                        <span class="divider-view"> | </span>
-                        <span class="items-per-page">
-                        Show
-                        <select id="items_per_page">
-                        </select>
-                        entries
-                        </span>
-                    </td>
 
-                    <td style="text-align:right;padding-right:10px;">
-                        <ul id="pagination-rpt"></ul>
-                    </td>
-                </tr>
-            </table>
         </div>
         <!-- end col -->
     </div>
@@ -161,8 +161,12 @@
 
  <tr class="group-list">
   <td colspan="2">
-  <div style="background:#eee;padding:4px 8px; width: 80px;border:1px dotted #CCCCCC; border-radius: 0.3em;" class="group-name">
+  <div class="col-sm-4 no-padding">
+    <mark class="p-l-10 p-r-10 group-name"></mark>
   </div>
+   <div class="col-sm-7 no-padding">
+    <mark class="p-l-10 p-r-10 business-group-name"></mark>
+   </div>
   </td>
   <td class="group-admin-email"></td>
   <td ></td>
@@ -172,7 +176,7 @@
   <td ></td>
 </tr>
 
- <tr class="business-group-list">
+ <!--<tr class="business-group-list">
   <td colspan="2">
   <div style="background:#eee;padding:4px 8px; width: 80px;border:1px dotted #CCCCCC; border-radius: 0.3em;" class="business-group-name">
   </div>
@@ -183,7 +187,7 @@
   <td ></td>
   <td ></td>
   <td ></td>
-</tr>
+</tr>-->
 
 <tr class="tbody-agreement-list">
   <td class="sno"></td>
