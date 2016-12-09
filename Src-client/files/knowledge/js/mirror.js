@@ -1234,7 +1234,20 @@ function initMirror() {
     callerName = 'techno';
     var request = [
       'GetClients',
-      { 'typelistedit' : type }
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getClientsEdit(client_id, business_group_id, legal_entity_id, country_id, callback) {
+    callerName = 'techno';
+    var request = [
+      'GetClientsEdit',
+      {
+        'client_id' : client_id,
+        'bg_id' : business_group_id,
+        'le_id' : legal_entity_id,
+        'c_id' : country_id,
+      }
     ];
     apiRequest(callerName, request, callback);
   }
@@ -2268,6 +2281,7 @@ function initMirror() {
     validateResetToken: validateResetToken,
     resetPassword: resetPassword,
     getClients: getClients,
+    getClientsEdit: getClientsEdit,
     getBusinessGroupDict: getBusinessGroupDict,
     getLegalEntityDict: getLegalEntityDict,
     getDivisionDict: getDivisionDict,

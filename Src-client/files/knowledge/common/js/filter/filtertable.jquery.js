@@ -61,7 +61,7 @@
                  
                     $(filtertable).find(selector).each(function() {
                         var $this =  $(this);
-                        filtertable.filter(filtertableCore.getIndex($this.parent('td, th')), $this.val());  
+                        filtertable.filter(filtertableCore.getIndex($this.closest('td, th')), $this.val());  
                     });
                  
                  });
