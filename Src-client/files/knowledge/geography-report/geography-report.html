@@ -12,22 +12,27 @@
                 <i class="zmdi zmdi-close zmdi-hc-2x"></i>
             </a> -->
           </div>
+          <div class="clearfix"></div>
         </div>
         <div id="bg-primary1" class="panel-collapse collapse in">
           <div class="portlet-body">
             <div class="form-horizontal group-border-dashed">
+              <div class="col-sm-12 no-padding  m-b-0">
               <div class="form-group has-feedback">
-                <label class=" col-sm-3 control-label" for="example-input-small">Country Name:<span class="mandatory">*</span></label>
-                <div class="col-sm-6 controls">
-                  <input type="text" class="input-box icon-autocomplete" id="countryval" value="" style="width:50%;" tabindex="1" autofocus="autofocus">
+                <label class="col-sm-4 control-label" for="example-input-small">Country Name:<span class="mandatory">*</span></label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="1" autofocus="autofocus">
                   <input type="hidden" id="country">
                   <div id="ac-country" class="ac-textbox default-display-none">
                     <ul style="width:50%;"></ul>
                   </div>
+                  <i class="form-control-feedback fa fa-search"></i>
                 </div>
               </div>
+              </div>
             </div>
-            <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+            <div class="table-responsive">
+              <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th width="2%">#</th>
@@ -60,6 +65,8 @@
               <tbody class="tbody-geography-report-list">
               </tbody>
             </table>
+            </div>
+
             <table class="pagination-view default-display-none">
               <tr>
                 <td>
