@@ -338,23 +338,23 @@ class GetStatutoryMappingReportDataSuccess(Response):
         }
 
 class GetGeographyReportSuccess(Response):
-    def __init__(self, countries, geographies):
+    def __init__(self, countries, geography_report):
         self.countries = countries
-        self.geographies = geographies
+        self.geography_report = geography_report
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["countries", "geography_report"])
         countries = data.get("countries")
-        geographies = data.get("geography_report")
-        return GetGeographyReportSuccess(countries, geographies)
+        geography_report = data.get("geography_report")
+        return GetGeographyReportSuccess(countries, geography_report)
 
     def to_inner_structure(self):
         data = {
             "countries": self.countries,
-            "geography_report": self.geographies,
+            "geography_report": self.geography_report,
         }
-        return data
+        return to_structure_dictionary_values(data)
 
 
 def _init_Response_class_map():
@@ -394,20 +394,23 @@ class RequestFormat(object):
 #
 
 class GeographyMapping(object):
-    def __init__(self, geography, is_active):
-        self.geography = geography
+    def __init__(self, country_id, geography_mapping, is_active):
+        self.country_id = country_id
+        self.geography_mapping = geography_mapping
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["geography", "is_active"])
-        geography = data.get("geography")
+        data = parse_dictionary(data, ["country_id", "geography_mapping", "is_active"])
+        country_id = data.get("country_id")
+        geography_mapping = data.get("geography_mapping")
         is_active = data.get("is_active")
-        return GeographyMapping(geography, is_active)
+        return GeographyMapping(country_id, geography_mapping, is_active)
 
     def to_structure(self):
         data = {
-            "geography": self.geography,
+            "country_id": self.country_id,
+            "geography_mapping": self.geography_mapping,
             "is_active": self.is_active,
         }
-        return to_structure_dictionary_values(data)
+        return data

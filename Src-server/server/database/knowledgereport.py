@@ -10,32 +10,33 @@ from server.database.knowledgemaster import (
 
 
 def get_geography_report(db):
-    result = db.call_proc("sp_geographymaster_report_data",())
+    result = db.call_proc("sp_geographymaster_report_data", ())
+    print "geography report"
+    print result
 
-    def return_report_data(result):
-        mapping_dict = {}
+    def return_report_data(result) :
+        # mapping_dict = {}
+        _list = []
         for item in result:
-            mappings = item["parent_names"]
+            geography_mapping = item["parent_names"]
+            print "geo mapping"
+            print geography_mapping
             is_active = bool(item["is_active"])
             country_id = item["country_id"]
-            _list = mapping_dict.get(country_id)
-            if _list is None:
-                _list = []
+            # _list = mapping_dict.get(country_id)
 
             _list.append(
                 knowledgereport.GeographyMapping(
-                    mappings, is_active
+                    country_id, geography_mapping, is_active
                 )
             )
-            mapping_dict[country_id] = _list
-        print "mapping_dict"
-        print mapping_dict
-        return mapping_dict
+            print _list
+        return _list
 
-    print bool(GEOGRAPHY_PARENTS)
+    # print bool(GEOGRAPHY_PARENTS)
 
-    if bool(GEOGRAPHY_PARENTS) is False:
-        get_geographies(db)
+    # if bool(GEOGRAPHY_PARENTS) is False:
+     # get_geographies(db)
 
     return return_report_data(result)
 
