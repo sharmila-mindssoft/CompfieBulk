@@ -73,16 +73,16 @@ function LegalEntityClosureData(data)
 				$('#close', clone).hide();
 				$('#reactive', clone).show();
 				$('#reactive', clone).addClass('-'+val.legal_entity_id)
+				var closeclassname = $('#reactive', clone).hasclass();
 				$('#reactive', clone).on('click', function() {
 					Custombox.open({
-		        target: '#custom-modal',
-		        effect: 'contentscale',
-		        open:   function() {
-		          popup_toggle(this.className, val.legal_entity_id, 'reactive');
-		        } 
-	  			});
-	          
-	      });
+				        target: '#custom-modal',
+				        effect: 'contentscale',
+				        open:   function() {
+				          popup_toggle(closeclassname, val.legal_entity_id, 'reactive');
+				        } 
+	  				});
+	      		});
 				$('#reactive', clone).attr('title', val.validity_days+' days left')
 				$('.closed', clone).hide();
 				$('.closed', clone).text('');
