@@ -90,7 +90,7 @@ def process_save_client_group(db, request, session_user):
             db, legal_entity_names
         )
         # save_client_user(db, group_id, request.email_id)
-        save_incharge_persons(db, group_id, request, legal_entity_id_name_map)
+        save_incharge_persons(db, group_id, request, session_user)
         save_organization(
             db, group_id, request, legal_entity_id_name_map, session_user
         )

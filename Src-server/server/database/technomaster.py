@@ -418,20 +418,11 @@ def save_client_domains(db, client_id, request, legal_entity_name_id_map):
 #  Return Type : Boolean - Raises Process exception if insertion fails /
 #   returns True
 ##########################################################################
-def save_incharge_persons(db, client_id, request, legal_entity_id_name_map):
-    db.call_update_proc(
-        "sp_user_clients_delete", (client_id, )
-    )
-    values_list = []
-    columns = ["client_id", "legal_entity_id", "user_id"]
-    for entity in request.legal_entities:
-        for incharge_person in entity.incharge_persons:
-            values_tuple = (
-                client_id, legal_entity_id_name_map[entity.legal_entity_name],
-                incharge_person
-            )
-            values_list.append(values_tuple)
-    r = db.bulk_insert(tblUserClients, columns, values_list)
+def save_incharge_persons(db, client_id, request, user_id):
+    # db.call_update_proc(
+    #     "sp_user_clients_delete", (client_id, )
+    # )
+    r = db.call_insert_proc("sp_user_clients_save", (user_id, client_id))
     if r is False:
         raise process_error("E043")
     return r

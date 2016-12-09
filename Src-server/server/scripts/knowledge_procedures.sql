@@ -6366,4 +6366,22 @@ BEGIN
     t1.legal_entity_id = legalentityid;
 END //
 
-DELIMITER;
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS `sp_user_clients_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_user_clients_save`(
+in userid int(11),
+in clientid int(11)
+)
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid;
+    insert into tbl_user_clients
+    (user_id, user_category_id, client_id) 
+    values
+    (userid, @u_cat_id, clientid);
+END //
+
