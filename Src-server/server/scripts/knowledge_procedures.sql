@@ -5666,7 +5666,7 @@ CREATE PROCEDURE `sp_get_messages`(
 IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
-    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
 
     SELECT m.message_id, m.message_heading, m.message_text, m.link,
     (SELECT concat(employee_code, ' - ', employee_name)
@@ -5978,7 +5978,7 @@ BEGIN
      and t2.domain_id = domainid
      and t1.statutory_nature_id like nature_id
      and IFNULL(t2.updated_by, t2.created_by) in (
-        select child_user_id from tbl_user_mapping where parent_user_id = 4
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
      ) order by t1.statutory_mapping_id;
 
      select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t

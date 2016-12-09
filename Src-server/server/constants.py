@@ -41,12 +41,12 @@ FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
 SESSION_CUTOFF = 15   # minutes
 REGISTRATION_EXPIRY = 48  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
-KNOWLEDGE_DB_HOST = "localhost"
+KNOWLEDGE_DB_HOST = "localhost" #"45.118.182.49"
 KNOWLEDGE_DB_PORT = 3306
-KNOWLEDGE_DB_USERNAME = "root"
-KNOWLEDGE_DB_PASSWORD = "123456"
+KNOWLEDGE_DB_USERNAME = "root" #"compfieusr"
+KNOWLEDGE_DB_PASSWORD = "123456" #"mnd50ftadm1n"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_updated"
 
-URL = "http://localhost:8082/"
+URL = "http://localhost:8081/"
 CLIENT_URL = URL
 KNOWLEDGE_URL = URL + "knowledge"
