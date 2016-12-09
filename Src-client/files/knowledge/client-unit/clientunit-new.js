@@ -286,10 +286,13 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countr
   div_start_cnt = 2;
   divisionId = 0;
   categoryName = '';
-  $.each(unitList, function (unitkey, unitval) {    
-    unitval = unitList[unitkey];    
+  console.log(unitList)
+
+  $.each(unitList, function (unitkey, unitval) {
+    console.log("////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+    unitval = unitList[unitkey];
     // console.log("unit val div id:"+unitval.division_id)
-    // console.log("unit val div id:"+unitval.category_name)
+    console.log("unit val catg id:"+unitval.category_name)
     category_name = unitval.category_name;
     if(unitval.client_id == clientunitId && unitval.country_id == countryId && unitval.legal_entity_id == legalEntityId)
     {
@@ -302,54 +305,83 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countr
         loadUnitValues(unitval);
       }
       else{
+        console.log("next:"+tab_len)
         var rowcnt=0;
-        for(var i=0;i<tab_len;i++){
+        for(var i=1;i<=(tab_len-1);i++){
           var division_name;
           if(unitval.division_id != ''){
-            division_data_id = $('.labeldivision-'+parseInt(i+1)+'-1').data("id");
+            division_name = getDivisionName(unitval.division_id);
           }
+          console.log("icount = "+parseInt(i+1));
           $('.labelcategory-'+parseInt(i+1)+'-1').show();
-          //console.log("division_name:"+division_name);
-          //console.log("category_name:"+category_name);
+          console.log("division_name:"+division_name);
+          console.log("category_name:"+category_name);
 
-          if(division_name != ""){
-            if(category_name != ""){
-              //console.log($('.labeldivision-'+parseInt(i+1)+'-1').text() +"=="+division_name+"&&"+$('.labelcategory-'+parseInt(i+1)+'-1').text()+"=="+category_name);
-              if($('.labeldivision-'+parseInt(i+1)+'-1').text() == division_name && $('.labelcategory-'+parseInt(i+1)+'-1').text() == category_name){
-                console.log("welcome to first list");
-                addNewUnitRow('btable table-'+parseInt(i+1));
-                 loadUnitValues(unitval);
+          if(division_name != "" && category_name != ""){
+              console.log("1--"+$('.labeldivision-'+parseInt(i)+'-1').text());
+              console.log("1--"+$('.labeldivision-'+parseInt(i)+'-1').text() +"=="+division_name+"&&"+$('.labelcategory-'+parseInt(i)+'-1').text() +"=="+ category_name);
+              if($('.labeldivision-'+parseInt(i)+'-1').text() == division_name && $('.labelcategory-'+parseInt(i)+'-1').text() == category_name){
+                console.log("welcome to first list"+i);
+                rowcnt = 0;
+                addNewUnitRow_edit('tbody-unit-'+parseInt(i));
+                loadUnitValues_exists(unitval, i);
+                break;
               }
-            }
-            else if(category_name == ""){ 
-              if($('.labeldivision-'+parseInt(i+1)+'-1').text() == division_name &&  $('.labelcategory-'+parseInt(i+1)+'-1').text() == "--"){
-                addNewUnitRow('btable table-'+parseInt(i+1));
-                loadUnitValues(unitval);
-              }
-            }
-          } 
-          else if(division_name == ""){
-            if(category_name != ""){
-              if($('.labeldivision-'+parseInt(i+1)+'-1').text() == "--" && $('.labelcategory-'+parseInt(i+1)+'-1').text() == category_name)
+              else
               {
-                addNewUnitRow('btable table-'+parseInt(i+1));
-                loadUnitValues(unitval);
+                rowcnt = 1;
               }
-            }
-            else{
-              if($('.labeldivision-'+parseInt(i+1)+'-1').text() == "--" &&  $('.labelcategory-'+parseInt(i+1)+'-1').text() == "--"){
-                addNewUnitRow('btable table-'+parseInt(i+1));
-                loadUnitValues(unitval);
+          }
+          else if(division_name != "" && category_name == ""){
+              console.log("2--"+$('.labeldivision-'+parseInt(i)+'-1').text() +"=="+division_name+"&&"+$('.labelcategory-'+parseInt(i)+'-1').text() +"=="+ '--');
+              if($('.labeldivision-'+parseInt(i)+'-1').text() == division_name &&  $('.labelcategory-'+parseInt(i)+'-1').text() == "--"){
+                rowcnt = 0;
+                addNewUnitRow_edit('tbody-unit-'+parseInt(i));
+                loadUnitValues_exists(unitval, i);
+                break;
               }
-            }
+              else
+              {
+                rowcnt = 1;
+              }
+          }
+
+          else if(division_name == "" && category_name != ""){
+              console.log("3--"+$('.labeldivision-'+parseInt(i)+'-1').text() +"=="+"--"+"&&"+$('.labelcategory-'+parseInt(i)+'-1').text() +"=="+ category_name);
+              if($('.labeldivision-'+parseInt(i)+'-1').text() == "--" && $('.labelcategory-'+parseInt(i)+'-1').text() == category_name)
+              {
+                rowcnt = 0;
+                addNewUnitRow_edit('tbody-unit-'+parseInt(i));
+                loadUnitValues_exists(unitval, i);
+                break;
+              }
+              else
+              {
+                rowcnt = 1;
+              }
+          }
+          else if(division_name == "" && category_name == ""){
+              console.log("4--"+$('.labeldivision-'+parseInt(i)+'-1').text() +"=="+"-"+"&&"+$('.labelcategory-'+parseInt(i)+'-1').text() +"=="+ "--");
+              if($('.labeldivision-'+parseInt(i)+'-1').text() == "--" &&  $('.labelcategory-'+parseInt(i)+'-1').text() == "--"){
+                rowcnt = 0;
+                addNewUnitRow_edit('tbody-unit-'+parseInt(i));
+                loadUnitValues_exists(unitval, i);
+                break;
+              }
+              else
+              {
+                rowcnt = 1;
+              }
           }
           else
           {
+            console.log("5--");
             rowcnt = 1;
           }
         }
         if(rowcnt == 1)
         {
+          console.log("6--");
           rowcnt = 0;
           addcountryrownew();
           loadUnitValues(unitval);
@@ -427,9 +459,9 @@ function getDivisionName(divisionId)
 function loadUnitValues(unitval)
 {
   //alert("inside loading")
-  console.log("inside loadUnitValues--"+JSON.stringify(unitval));
   var unit_second_cnt = $('.unitcnt-'+ division_cnt + '-' + 1).val();
   var firstlist = unitval
+  console.log("inside load unit values---"+JSON.stringify(firstlist));
   var cid = firstlist.country_id;
   //alert("country-id:"+cid);
   //load division
@@ -440,8 +472,8 @@ function loadUnitValues(unitval)
     console.log("welcome to divisionid");
     $('.divisionid-'+division_cnt + '-' + unit_second_cnt).val(firstlist.division_id);
     loadDivision('division-id-' + division_cnt + '-' + unit_second_cnt);
-    $('.division-id-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + firstlist.division_id + ']').attr('selected', 'selected');
-    $('.labeldivision-'+division_cnt+'-'+unit_second_cnt).attr("data-id", firstlist.division_id);
+    $('.division-id-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + firstlist.division_id + ']').
+      attr('selected', 'selected');
     division_name = getDivisionName(firstlist.division_id);
     $('.labeldivision-'+division_cnt+'-'+unit_second_cnt).text(division_name);
   }
@@ -453,10 +485,10 @@ function loadUnitValues(unitval)
   if(firstlist.category_name != '')
   {
     $('.categoryid-'+division_cnt+'-'+unit_second_cnt).val(firstlist.category_id);
+    console.log("load catg:"+$('.categoryid-'+division_cnt+'-'+unit_second_cnt).val())
     $('.category-name-'+division_cnt+'-'+unit_second_cnt).val(firstlist.category_name);
     $('.category-name-'+division_cnt+'-'+unit_second_cnt).hide();
     $('.labelcategory-'+division_cnt+'-'+unit_second_cnt).text(firstlist.category_name);
-    $('.labelcategory-'+division_cnt+'-'+unit_second_cnt).attr("data-id", firstlist.division_id);
   }
 
   else
@@ -468,19 +500,23 @@ function loadUnitValues(unitval)
 
   var gid = firstlist.geography_id;
   var unitlts = loadupdateunitlocation(gid);
-  // loadglevels('glevel-' + division_cnt + '-' + unit_second_cnt);
-  // console.log("level id:"+unitlts.level_id)
-  // console.log($('.glevel-' + division_cnt + '-' + unit_second_cnt));
+  loadglevels('glevel-' + division_cnt + '-' + unit_second_cnt);
+  console.log("level id:"+unitlts.level_id)
+  console.log($('.glevel-' + division_cnt + '-' + unit_second_cnt));
   //loadIndustry('industry-'+countryByCount+'-'+1);
-  $('.glevel-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + unitlts.level_id + ']').attr('selected', 'selected');
+  $('.glevel-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + unitlts.level_id + ']').
+  attr('selected', 'selected');
+
   $('.glevel-' + division_cnt + '-' + unit_second_cnt).hide();
   for(var i=0;i<geographyLevelList.length;i++)
   {
-    if(geographyLevelList[i].l_id == unitlts.level_id){
+    if(geographyLevelList[i].l_id == unitlts.level_id)
+    {
       $('.labelgeolevels-' + division_cnt + '-' + unit_second_cnt).show();
       $('.labelgeolevels-' + division_cnt + '-' + unit_second_cnt).text(geographyLevelList[i].l_name);
     }
   }
+   $('.tbody-unit-'+division_cnt+' i').hide();
 
   $('.unitlocation-' + division_cnt + '-' + unit_second_cnt).val(unitlts.gname);
   $('.unitlocation-' + division_cnt + '-' + unit_second_cnt).hide();
@@ -514,7 +550,7 @@ function loadUnitValues(unitval)
   $('.labelpostcode-' + division_cnt + '-' + unit_second_cnt).text(firstlist.postal_code);
 
   var domainsListArray = firstlist.domain_ids;
-  //console.log("domain array:"+domainsListArray)
+  console.log("domain array:"+domainsListArray)
   //$('.domain-' + division_cnt + '-' + unit_second_cnt).val(domainsListArray);
   $('.domainselected-' + division_cnt + '-' + unit_second_cnt).val(domainsListArray.length + ' Selected');
   //loadDomains('domain-' + division_cnt + '-' + unit_second_cnt);
@@ -529,7 +565,7 @@ function loadUnitValues(unitval)
   //$('.orgtype-' + division_cnt + '-' + unit_second_cnt).val(orgtypeArray);
   //alert("org:"+$('.orgtype-' + division_cnt + '-' + unit_second_cnt).val());
   $('.orgtypeselected-' + division_cnt + '-' + unit_second_cnt).val(orgtypeArray.length + ' Selected');
-  //industrytype('industry-' + division_cnt + '-' + unit_second_cnt);
+//  industrytype('industry-' + division_cnt + '-' + unit_second_cnt);
   $('.orgtypeselected-' + division_cnt + '-' + unit_second_cnt).hide();
   //$('.orgtype-' + division_cnt + '-' + unit_second_cnt).hide();
   $('.ul-orgtype-list-' + division_cnt + '-' + unit_second_cnt).hide();
@@ -572,6 +608,161 @@ function loadUnitValues(unitval)
   $('.edit-icon-' + division_cnt + '-' + unit_second_cnt).show();
   $('.delete-icon-' + division_cnt + '-' + unit_second_cnt).hide();
   $('.active_cnt-'+division_cnt+ '-' + unit_second_cnt).show();
+  $('.edit-icon').hide();
+}
+
+function loadUnitValues_exists(unitval, start_cnt)
+{
+  //alert("inside loading")
+  var unit_second_cnt = $('.unitcnt-'+ start_cnt + '-' + 1).val();
+  var firstlist = unitval
+  console.log("inside load unit values---"+JSON.stringify(firstlist));
+  var cid = firstlist.country_id;
+  //alert("country-id:"+cid);
+  //load division
+  $('.division-id-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.labeldivision-'+start_cnt+'-'+unit_second_cnt).show();
+  if(firstlist.division_id != null)
+  {
+    console.log("welcome to divisionid");
+    $('.divisionid-'+start_cnt + '-' + unit_second_cnt).val(firstlist.division_id);
+    loadDivision('division-id-' + start_cnt + '-' + unit_second_cnt);
+    $('.division-id-' + start_cnt + '-' + unit_second_cnt + ' option[value=' + firstlist.division_id + ']').
+      attr('selected', 'selected');
+    division_name = getDivisionName(firstlist.division_id);
+    $('.labeldivision-'+start_cnt+'-'+unit_second_cnt).text(division_name);
+  }
+  else
+  {
+    $('.labeldivision-'+start_cnt+'-'+unit_second_cnt).text("--");
+  }
+
+  if(firstlist.category_name != '')
+  {
+    $('.categoryid-'+start_cnt+'-'+unit_second_cnt).val(firstlist.category_id);
+    console.log("load catg:"+$('.categoryid-'+start_cnt+'-'+unit_second_cnt).val())
+    $('.category-name-'+start_cnt+'-'+unit_second_cnt).val(firstlist.category_name);
+    $('.category-name-'+start_cnt+'-'+unit_second_cnt).hide();
+    $('.labelcategory-'+start_cnt+'-'+unit_second_cnt).text(firstlist.category_name);
+  }
+
+  else
+  {
+    $('.category-name-'+start_cnt+'-'+unit_second_cnt).val();
+    $('.category-name-'+start_cnt+'-'+unit_second_cnt).hide();
+    $('.labelcategory-'+start_cnt+'-'+unit_second_cnt).text("--");
+  }
+
+  var gid = firstlist.geography_id;
+  var unitlts = loadupdateunitlocation(gid);
+  loadglevels('glevel-' + start_cnt + '-' + unit_second_cnt);
+  console.log("level id:"+unitlts.level_id)
+  console.log($('.glevel-' + start_cnt + '-' + unit_second_cnt));
+  //loadIndustry('industry-'+countryByCount+'-'+1);
+  $('.glevel-' + start_cnt + '-' + unit_second_cnt + ' option[value=' + unitlts.level_id + ']').
+  attr('selected', 'selected');
+
+  $('.glevel-' + start_cnt + '-' + unit_second_cnt).hide();
+  for(var i=0;i<geographyLevelList.length;i++)
+  {
+    if(geographyLevelList[i].l_id == unitlts.level_id)
+    {
+      $('.labelgeolevels-' + start_cnt + '-' + unit_second_cnt).show();
+      $('.labelgeolevels-' + start_cnt + '-' + unit_second_cnt).text(geographyLevelList[i].l_name);
+    }
+  }
+   $('.tbody-unit-'+start_cnt+' i').hide();
+
+  $('.unitlocation-' + start_cnt + '-' + unit_second_cnt).val(unitlts.gname);
+  $('.unitlocation-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.unitlocation-ids-' + start_cnt + '-' + unit_second_cnt).val(gid);
+  $('.unitlocation-ids-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.full-location-list-' + start_cnt + '-' + unit_second_cnt).text(unitlts.mapping);
+  $('.full-location-list-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.labelunitlocation-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.labelunitlocation-' + start_cnt + '-' + unit_second_cnt).text(unitlts.gname);
+
+  $('.unit-id-' + start_cnt + '-'+unit_second_cnt).val(firstlist.unit_id);
+
+  $('.unit-code-' + start_cnt + '-' + unit_second_cnt).val(firstlist.unit_code);
+  $('.unit-code-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.labelunitcode-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.labelunitcode-' + start_cnt + '-' + unit_second_cnt).text(firstlist.unit_code);
+
+  $('.unit-name-' + start_cnt + '-'+unit_second_cnt).val(firstlist.unit_name);
+  $('.unit-name-' + start_cnt + '-'+unit_second_cnt).hide();
+  $('.labelunitname-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.labelunitname-' + start_cnt + '-' + unit_second_cnt).text(firstlist.unit_name);
+
+  $('.unit-address-' + start_cnt + '-' + unit_second_cnt).val(firstlist.address);
+  $('.unit-address-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.labelunitaddress-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.labelunitaddress-' + start_cnt + '-' + unit_second_cnt).text(firstlist.address);
+
+  $('.postal-code-' + start_cnt + '-' + unit_second_cnt).val(firstlist.postal_code);
+  $('.postal-code-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.labelpostcode-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.labelpostcode-' + start_cnt + '-' + unit_second_cnt).text(firstlist.postal_code);
+
+  var domainsListArray = firstlist.domain_ids;
+  console.log("domain array:"+domainsListArray)
+  //$('.domain-' + division_cnt + '-' + unit_second_cnt).val(domainsListArray);
+  $('.domainselected-' + start_cnt + '-' + unit_second_cnt).val(domainsListArray.length + ' Selected');
+  //loadDomains('domain-' + division_cnt + '-' + unit_second_cnt);
+  $('.domainselected-' + start_cnt + '-' + unit_second_cnt).hide();
+  //$('.domain-' + division_cnt + '-' + unit_second_cnt).hide();
+  $('.ul-domain-list-' + start_cnt + '-' + unit_second_cnt).hide();
+  domain_names = getDomainsName(domainsListArray);
+  $('.labeldomain-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.labeldomain-' + start_cnt + '-' + unit_second_cnt).text(domain_names);
+
+  var orgtypeArray = firstlist.i_ids;
+  //$('.orgtype-' + division_cnt + '-' + unit_second_cnt).val(orgtypeArray);
+  //alert("org:"+$('.orgtype-' + division_cnt + '-' + unit_second_cnt).val());
+  $('.orgtypeselected-' + start_cnt + '-' + unit_second_cnt).val(orgtypeArray.length + ' Selected');
+//  industrytype('industry-' + division_cnt + '-' + unit_second_cnt);
+  $('.orgtypeselected-' + start_cnt + '-' + unit_second_cnt).hide();
+  //$('.orgtype-' + division_cnt + '-' + unit_second_cnt).hide();
+  $('.ul-orgtype-list-' + start_cnt + '-' + unit_second_cnt).hide();
+  orgn_names = getOrganizationName(orgtypeArray);
+  $('.labelorganization-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.labelorganization-' + start_cnt + '-' + unit_second_cnt).text(orgn_names);
+
+  if (firstlist.is_active == true) {
+    $('.activedclass-' + start_cnt + '-' + unit_second_cnt).text('Active');
+    if($('.active_cnt-'+start_cnt+ '-' + unit_second_cnt).text() == "")
+    {
+      act_cnt = 1;
+      $('.active_cnt-'+start_cnt+ '-' + unit_second_cnt).text("Active Unit(s):"+act_cnt);
+    }
+    else
+    {
+      act_cnt = $('.active_cnt-'+start_cnt+ '-' + unit_second_cnt).text().split(":")[1];
+      $('.active_cnt-'+start_cnt+ '-' + unit_second_cnt).text("Active Unit(s):"+parseInt(act_cnt)+1);
+    }
+  } else {
+    var classname = 'imgactivedclass-' + start_cnt + '-' + unit_second_cnt;
+    $('.activedclass-' + start_cnt + '-' + unit_second_cnt).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \'' + firstlist.unit_id + '\', \'' + clientunitId + '\');">');
+  }
+  //alert("approve:"+firstlist.is_approved)
+
+  if (firstlist.is_approved == "1") {
+    $('.approveclass-' + start_cnt + '-' + unit_second_cnt).text('Pending');
+  }
+  else if (firstlist.is_approved == "2") {
+    $('.approveclass-' + start_cnt + '-' + unit_second_cnt).text('Approved');
+  }
+  else if (firstlist.is_approved == "0") {
+    $('.rejected-icon-' + start_cnt + '-' + unit_second_cnt).show();
+    $('.rejected-icon-' + start_cnt + '-' + unit_second_cnt).attr('title',firstlist.remarks);
+    $('.approveclass-' + start_cnt + '-' + unit_second_cnt).text('Rejected');
+    rowIndx = unit_second_cnt - 1;
+    //alert("row:"+$('.tbody-unit-'+division_cnt+' tr').eq(rowIndx).text());
+    $('.tbody-unit-'+start_cnt+' tr').eq(rowIndx).css("color", "rgb(255,0,0)");
+  }
+  $('.edit-icon-' + start_cnt + '-' + unit_second_cnt).show();
+  $('.delete-icon-' + start_cnt + '-' + unit_second_cnt).hide();
+  $('.active_cnt-'+start_cnt+ '-' + unit_second_cnt).show();
   $('.edit-icon').hide();
 }
 //Add Button-------------------------------------------------------------------------------------------------
@@ -965,8 +1156,7 @@ function addcountryrownew() {
   $('.domain-list', clone).addClass('domain-list-' + division_cnt + '-' + 1);
   $('.domainselected', clone).addClass('domainselected-' + division_cnt + '-' + 1);
   //$('.domain', clone).addClass('domain-' + division_cnt + '-' + 1);
-    //loadDomains('domain-' + division_cnt + '-' + 1);
-
+  //loadDomains('domain-' + division_cnt + '-' + 1);
   //$('#domains', clone).addClass('domains-' + division_cnt + '-' + 1);
   $('.domain-selectbox-view', clone).addClass('domain-selectbox-view-' + division_cnt + '-' + 1);
   $('.ul-domain-list', clone).addClass('ul-domain-list-' + division_cnt + '-' + 1);
@@ -1026,8 +1216,10 @@ function addcountryrownew() {
   $('.approveclass-' + division_cnt + '-' + 1).text('Pending');
   $('.divisioncnt-'+ division_cnt + '-' + 1).val(division_cnt);
   $('.unitcnt-'+ division_cnt + '-' + 1).val(1);
-  loadDomains();
-  industrytype('industry-' + division_cnt + '-' + 1);
+  if($("#client-unit-id").val() == ""){
+    loadDomains();
+    industrytype('industry-' + division_cnt + '-' + 1);
+  }
   //console.log('.unitcnt-'+ division_cnt + '-' + 1);
   //console.log($('.unitcnt-'+ division_cnt + '-' + 1).val())
 
@@ -1061,7 +1253,7 @@ function addcountryrownew() {
   $('.postal-code', clone).on('input', function (e) {
     this.value = isNumbers($(this));
   });
-  
+
 }
 //Add Unit for individual Rows---------------------------------------------------------------------------------
 function log_units_count(classval)
@@ -1322,119 +1514,66 @@ function addNewUnitRow(str)
   industrytype('industry-' + division_cnt + '-' + unitval);
   $(".edit-icon").hide();
 }
-function addNewUnitRow_1(str) {
-  // alert("addNewUnitRow_1");
-  // //alert("inside unit row");
-  // //btable table-1
-  // var tableclassname = $(str).parents('table').attr('class');
-  // console.log(tableclassname);
-  // var tableclass = tableclassname.split(' ');
-  // var countval = tableclass[1].split('-').pop();
-  // //alert("countval:"+countval);
-  // var tbodyclassname = $('.' + tableclass[1]).find('tbody:eq(1)').attr('class');
-  // console.log("tbodyclassname:"+tbodyclassname);
-  // var tbodyclasses = tbodyclassname.split(' ');
-  // var lastclassname = $('.' + tbodyclasses[1]).find('tr:last .geography-levels').attr('class');
-  // console.log("lastclassname:"+tbodyclasses[1]);
-  // var lastClass = lastclassname.split(' ').pop();
-  // var lastClassval = parseInt(lastClass.split('-').pop());
-  // console.log("lastClassval:"+lastClassval);
-  // console.log("div val:"+$('.divisioncnt-'+countval+'-'+ 1).val());
-  // var unitval = parseInt($('.unitcnt-'+countval+'-'+ 1).val()) + 1;
-  // $('.unitcnt-'+countval+'-'+ 1).val(unitval);
-  // console.log('.unitcnt-'+ countval + '-' + 1);
-  // console.log($('.unitcnt-'+ countval + '-' + 1).val())
-  // console.log("unit val:"+$('.unitcnt-'+countval+'-'+ 1).val());
+function addNewUnitRow_edit(str) {
+  console.log("welcome to add new aunit row")
+  console.log(str)
+  var countval = str.split("-")[2].trim();
+  console.log($('.tbody-unit-'+countval).find('tr').length)
+  var unitval = parseInt($('.tbody-unit-'+countval).find('tr').length) + 1;
+  $('.unitcnt-'+countval+'-'+ 1).val(unitval);
+  console.log('.unitcnt-'+ countval + '-' + 1);
+  console.log($('.unitcnt-'+ countval + '-' + 1).val())
+  console.log("unit val:"+$('.unitcnt-'+countval+'-'+ 1).val());
+  var divUnitAddRow = $('#templatesUnitRow').find('tr:eq(0)');
+  var clone1 = divUnitAddRow.clone();
 
-  // var divUnitAddRow = $('#templatesUnitRow .table-UnitRow-list .table-row');
-  // //var divUnitAddRow = $('.'+tbodyclasses[1]).find('tr');
-  // var clone1 = divUnitAddRow.clone();
-  // $('.' + tbodyclasses[1]).find('tr:eq(0)').insertBefore(clone1);
-  // //var tr_len = parseInt($('.'+tbodyclasses[1]).find('tr').length)-1;
-  // //alert(tr_len);
-  // //var tableRow = $('.'+tbodyclasses[1]).find('tr:eq('+tr_len+')')
-  // //tableRow.insertBefore(tableRow.prev());
-  // $('.sno', clone1).addClass('sno-' + countval + '-' + (lastClassval + 1));
-  // $('.geography-levels', clone1).addClass('glevel-' + countval + '-' + (lastClassval + 1));
-  // $('.labelgeolevels', clone1).addClass('labelgeolevels-' + countval + '-' + (lastClassval + 1));
-  // $('.unit-location', clone1).addClass('unitlocation-' + countval + '-' + (lastClassval + 1));
-  // //$('.unit-location-ids', clone1).addClass('unitlocation-ids-' + countval + '-' + (lastClassval + 1));
-  // $('.auto-complete-unit-location', clone1).addClass('auto-complete-unit-location-' + countval + '-' + (lastClassval + 1));
-  // $('.unitlocationlist-text', clone1).addClass('unitlocationlist-text-' + countval + '-' + (lastClassval + 1));
-  // $('.full-location-list', clone1).addClass('full-location-list-' + countval + '-' + (lastClassval + 1));
-  // $('.labelunitlocation', clone1).addClass('labelunitlocation-' + countval + '-' + (lastClassval + 1));
+  $('.tbody-unit-'+countval).find('tr:eq(0)').before(clone1);
+  var table_tr = $('.tbody-unit-'+countval).find('tr:eq(0)');
+  /*$(this).attr({
+      'class': function(_, lastClass) { return $(this).attr('class').substring(0,
+        ($(this).attr('class').length - 4)) + '-'+division_cnt+'-'+unitval },
+      }); */
+  table_tr.find('td').find('input,select,span,div,ul, i').each(function() {
+    $(this).attr({
+      'class': function(_, lastClass) { return $(this).attr('class').split(' ').pop()+' '+$(this).attr('class') + '-'+countval+'-'+unitval },
+    });
+  });
+  $('.edit-icon-' + countval + '-' + unitval).attr('title', 'Edit');
+  $('.edit-icon-' + countval + '-' + unitval).on('click', function () {
+    unitrow_edit(countval, 1);
+  });
+  $('.delete-icon-' + countval + '-' + unitval).attr('title', 'Close');
+  $('.delete-icon-' + countval + '-' + unitval).on('click', function () {
+    unitrow_close(countval, 1);
+  });
 
-  // $('.unit-id', clone1).addClass('unit-id-' + countval + '-' + (lastClassval + 1));
-  // $('.unit-code', clone1).addClass('unit-code-' + countval + '-' + (lastClassval + 1));
-  // $('.labelunitcode', clone1).addClass('labelunitcode-' + countval + '-' + (lastClassval + 1));
-  // $('.unit-name', clone1).addClass('unit-name-' + countval + '-' + (lastClassval + 1));
-  // $('.labelunitname', clone1).addClass('labelunitname-' + countval + '-' + (lastClassval + 1));
-  // $('.unit-address', clone1).addClass('unit-address-' + countval + '-' + (lastClassval + 1));
-  // $('.labelunitaddress', clone1).addClass('labelunitaddress-' + countval + '-' + (lastClassval + 1));
-  // $('.postal-code', clone1).addClass('postal-code-' + countval + '-' + (lastClassval + 1));
-  // $('.labelpostcode', clone1).addClass('labelpostcode-' + countval + '-' + (lastClassval + 1));
+  $('.edit-icon-' + countval + '-' + unitval).hide();
+  $('.delete-icon-' + countval + '-' + unitval).hide();
+  $('.rejected-icon-' + countval + '-' + unitval).hide();
 
-  // $('#domains', clone).addClass('domains-' + countval + '-' + (lastClassval + 1));
-  // $('.domain-list', clone1).addClass('domain-list-' + countval + '-' + (lastClassval + 1));
-  // $('.domainselected', clone1).addClass('domainselected-' + countval + '-' + (lastClassval + 1));
-  // $('.domain', clone1).addClass('domain-' + countval + '-' + (lastClassval + 1));
-  // $('.domain-selectbox-view', clone1).addClass('domain-selectbox-view-' + countval + '-' + (lastClassval + 1));
-  // $('.ul-domain-list', clone1).addClass('ul-domain-list-' + countval + '-' + (lastClassval + 1));
-  // $('.labeldomain', clone1).addClass('labeldomain-' + countval + '-' + (lastClassval + 1));
-
-  // $('.orgtype-list', clone1).addClass('orgtype-list-' + countval + '-' + (lastClassval + 1));
-  // $('.orgtypeselected', clone1).addClass('orgtypeselected-' + countval + '-' + (lastClassval + 1));
-  // $('.orgtype', clone1).addClass('orgtype-' + countval + '-' + (lastClassval + 1));
-  // $('.orgtype-selectbox-view', clone1).addClass('orgtype-selectbox-view-' + countval + '-' + (lastClassval + 1));
-  // $('.ul-orgtype-list', clone1).addClass('ul-orgtype-list-' + countval + '-' + (lastClassval + 1));
-  // $('.labelorganization', clone1).addClass('labelorganization-' + countval + '-' + (lastClassval + 1));
-
-  // $('.no-of-units-' + countval).val(parseInt($('.no-of-units-' + countval).val()) + 1);
-
-  // $('.activedclass', clone1).addClass('activedclass-' + countval + '-' + (lastClassval + 1));
-  // $('.approveclass', clone1).addClass('approveclass-' + countval + '-' + (lastClassval + 1));
-  // $('.edit-icon', clone1).addClass('edit-icon-' + division_cnt + '-' + (lastClassval + 1)).attr('title', 'Edit');
-  // $('.edit-icon', clone1).addClass('edit-icon-' + division_cnt + '-' + (lastClassval + 1)).on('click', function () {
-  //   unitrow_edit(division_cnt, 1);
-  // });
-  // $('.delete-icon', clone1).addClass('delete-icon-' + division_cnt + '-' + (lastClassval + 1)).attr('title', 'Close');
-  // $('.delete-icon', clone1).addClass('delete-icon-' + division_cnt + '-' + (lastClassval + 1)).on('click', function () {
-  //   unitrow_close(division_cnt, 1);
-  // });
-
-  // $('.edit-icon', clone1).addClass('edit-icon-' + division_cnt + '-' + (lastClassval + 1)).hide();
-  // $('.delete-icon', clone1).addClass('delete-icon-' + division_cnt + '-' + (lastClassval + 1)).hide();
-  // $('.rejected-icon', clone1).addClass('rejected-icon-' + division_cnt + '-' + (lastClassval + 1));
-  // $('.rejected-icon', clone1).addClass('rejected-icon-' + division_cnt + '-' + (lastClassval + 1)).hide();
-  // /*if(tr_len > 0)
-  // {
-  //   $('.' + tbodyclasses[1]).find('tr:eq(-1)').before(clone1);
-  // }
-  // else
-  // {
-  //   $('.' + tbodyclasses[1]).append(clone1);
-  // }*/
-  // if ($('.unitcode-checkbox').is(':checked')) {
-  //   $('.unit-code-' + countval + '-' + (lastClassval + 1)).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
-  //   unitcodeautogenerateids++;
-  // }
-  // $('.sno-' + countval + '-' + (lastClassval + 1)).text(unitval);
-  // $('.activedclass-' + countval + '-' + (lastClassval + 1)).text('Active');
-  // $('.approveclass-' + countval + '-' + (lastClassval + 1)).text('Pending');
-  // //industrytype('industry-' + countval + '-' + (lastClassval + 1));
-  // $('.unit-code', clone1).on('input', function (e) {
-  //   this.value = isCommon_Unitcode($(this));
-  // });
-  // $('.unit-name', clone1).on('input', function (e) {
-  //   this.value = isCommon($(this));
-  // });
-  // $('.unit-address', clone1).on('input', function (e) {
-  //   this.value = isCommon_Address($(this));
-  // });
-  // $('.postal-code', clone1).on('input', function (e) {
-  //   this.value = isNumbers($(this));
-  // });
-  // $(".edit-icon").hide();
+  if ($('.unitcode-checkbox-'+countval).is(':checked')) {
+    $('.unit-code-' + division_cnt + '-' + unitval).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+    unitcodeautogenerateids++;
+  }
+  //$('.sno-'+division_cnt+'-'+unitval).text(unitval);
+  $('.activedclass-' + countval + '-' + unitval).text('Active');
+  $('.approveclass-' + countval + '-' + unitval).text('Pending');
+  //industrytype('industry-' + countval + '-' + (lastClassval + 1));
+  $('.unit-code-' + countval + '-' + unitval).on('input', function (e) {
+    this.value = isCommon_Unitcode($(this));
+  });
+  $('.unit-name-' + countval + '-' + unitval).on('input', function (e) {
+    this.value = isCommon($(this));
+  });
+  $('.unit-address-' + countval + '-' + unitval).on('input', function (e) {
+    this.value = isCommon_Address($(this));
+  });
+  $('.postal-code-' + countval + '-' + unitval).on('input', function (e) {
+    this.value = isNumbers($(this));
+  });
+  loadDomains();
+  industrytype('industry-' + countval + '-' + unitval);
+  $(".edit-icon").hide();
 
 }
 function intTo5digitsString(nb) {
@@ -1759,7 +1898,7 @@ function loadDomains()
       }
     });
     console.log("welcome to loaddomain rebuild");
-    
+
   }
   d_ctrl.multiselect('refresh');
 }
@@ -1984,14 +2123,14 @@ $('#btn-clientunit-submit').click(function ()
         return false;
       }
     }
-  
+
     if (countryVal.length == '') {
       displayMessage(message.country_required);
       return false;
     }
     if(legalEntityValue == "" ||  legalEntityValue == 0){
       displayMessage(message.legalentity_required);
-      return false; 
+      return false;
     }
     if (unitCountValue.length == 0) {
       displayMessage(message.add_one_unit);
@@ -2092,12 +2231,12 @@ $('#btn-clientunit-submit').click(function ()
           console.log("industry:"+$('.orgtypeselected-' + i + '-' + j).val()+'___'+i+'___'+j);
 
           unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
-        
+
           //unitIndustryName = $('.industry-' + i + '-' + j + ' option:selected').text();
           console.log("domainselected:"+$('.domainselected-' + i + '-' + j).val()+'___'+i+'___'+j);
           unitdomain = $('.domainselected-' + i + '-' + j).val();
           console.log(unitdomain);
-          
+
           console.log("domains:"+unitdomains);
           if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0)
           {
@@ -2119,7 +2258,7 @@ $('#btn-clientunit-submit').click(function ()
           } else if (unitName == '') {
             displayMessage(message.unitname_required);
             return;
-          } 
+          }
           else if (unitIndustryId == '' || unitIndustryId == null) {
             displayMessage(message.industryname_required);
             return;
@@ -2130,11 +2269,11 @@ $('#btn-clientunit-submit').click(function ()
           } else if (unitPostalCode == '') {
             displayMessage(message.unitpostal_required);
             return;
-          } 
+          }
           else if (unitdomain == '' || unitdomain == null) {
             displayMessage(message.domain_required);
             return;
-          } 
+          }
 
           else {
             unitarr.push(unitCode);
@@ -2160,7 +2299,7 @@ $('#btn-clientunit-submit').click(function ()
                     unitIndustryIds.push(list);
                   }
                 });
-                
+
               }
               for(var ij=0; ij<unitdomain.length; ij++){
                 unitdomains.push(parseInt(unitdomain[ij]));
@@ -2439,7 +2578,7 @@ $('#btn-clientunit-submit').click(function ()
           } else if (unitName == '') {
             displayMessage(message.unitname_required);
             return;
-          } 
+          }
           else if (unitIndustryId.length == 0) {
             displayMessage(message.industryname_required);
             return;

@@ -507,17 +507,7 @@ def get_geographies_for_user_with_mapping(db, user_id):
 
 
 def get_geography_by_id(db, geography_id):
-    query = "SELECT geography_id, geography_name, " +\
-        " level_id, parent_ids, parent_names, is_active " + \
-        " FROM tbl_geographies WHERE geography_id = %s"
-    rows = db.select_one(query, [geography_id])
-    result = []
-    if rows:
-        columns = [
-            "geography_id", "geography_name",
-            "level_id", "parent_ids", "parent_names", "is_active"
-        ]
-        result = convert_to_dict(rows, columns)
+    result = db.call_proc("sp_get_geography_by_id", [geography_id])
     return result
 
 
@@ -545,18 +535,13 @@ def check_duplicate_geography(db, country_id, parent_ids, geography_id):
 def save_geography(
     db, geography_level_id, geography_name, parent_ids, parent_names, user_id
 ):
-    table_name = "tbl_geographies"
     created_on = get_date_time()
-    columns = [
-        "geography_name", "level_id", "parent_ids", "parent_names",
-        "created_by", "created_on"
-    ]
     values = [
         geography_name, int(geography_level_id),
         parent_ids, parent_names, int(user_id), str(created_on)
     ]
 
-    new_id = db.insert(table_name, columns, values)
+    new_id = db.call_insert_proc("sp_save_geography_master", values)
     if new_id is False:
         raise process_error("E012")
     else:
@@ -569,33 +554,34 @@ def update_geography(
     db, geography_id, name, parent_ids, parent_names, updated_by
 ):
     oldData = get_geography_by_id(db, geography_id)
+    print "oldData"
+    print oldData
     if bool(oldData) is False:
         return False
-    table_name = "tbl_geographies"
-    columns = [
-        "geography_name", "parent_ids", "parent_names",
-        "updated_by"
-    ]
-    where_condition = " geography_id = %s "
-    values = [name, parent_ids, parent_names, updated_by, geography_id]
-    if (db.update(table_name, columns, values, where_condition)):
+    values = [geography_id, name, parent_ids, parent_names, updated_by]
+    if (db.call_update_proc("sp_update_geography_master", values)):
         action = "Geography - %s updated" % name
         db.save_activity(updated_by, 6, action)
+        print len(parent_ids[:-1])
         if len(parent_ids[:-1]) == 1 :
-            p_ids = tuple([parent_ids[:-1], geography_id])
+            # p_ids = tuple([parent_ids[:-1], str(geography_id)])
+            p_ids = parent_ids[:-1] + "," + str(geography_id)
         else :
             p_ids = parent_ids[:-1].split(',')
+            print "1"
+            print p_ids
             p_ids.append(geography_id)
+            print "2"
+            print p_ids
             p_ids = tuple(p_ids)
-        qry = "SELECT geography_id, geography_name, parent_ids, level_id " + \
-            " from tbl_geographies " + \
-            " WHERE find_in_set( %s, parent_ids) or geography_id in %s"
-        rows = db.select_all(qry, [geography_id, p_ids])
-        columns = ["geography_id", "geography_name", "parent_ids", "level_id"]
-        result = convert_to_key_dict(rows, columns)
+            print "p_ids"
+            print p_ids
+        result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
+        print "result"
+        print result
 
-        for key, row in result.items():
-            if int(key) == geography_id :
+        for row in result:
+            if row["geography_id"] == geography_id :
                 continue
             if row["parent_ids"] == "0,":
                 row["parent_ids"] = tuple([geography_id, 0])
@@ -612,18 +598,9 @@ def update_geography(
 
             map_name += row["geography_name"]
 
-            q = "UPDATE tbl_geographies as A inner join ( " + \
-                " select c.country_name, g.level_id from  " + \
-                " tbl_countries c inner join tbl_geography_levels g on " + \
-                " c.country_id = g.country_id ) as C  " + \
-                " ON A.level_id  = C.level_id " + \
-                " set A.parent_names = concat( " + \
-                " C.country_name, '>>', %s) " + \
-                " where A.geography_id = %s AND C.level_id = %s "
-
-            db.execute(q, (
-                map_name, row["geography_id"],
-                row["level_id"]
+            db.call_update_proc("sp_update_geographies_master_level", (
+                row["geography_id"],
+                row["level_id"], map_name
             ))
         return True
     else:
@@ -635,16 +612,13 @@ def check_geography_exists(db, geography_id):
     # and geography has child means return true else false
     #
     is_exists = False
-    q = "select count(1) from tbl_statutory_geographies where geography_id = %s"
-    row = db.select_one(q, [geography_id])
+    row = db.call_proc_with_multiresult_set("sp_check_geography_exists", [geography_id], 2)
     if row[0] > 0 :
         is_exists = True
         raise process_error("E063")
 
     if is_exists is False :
-        q1 = "select count(0) from tbl_geographies where FIND_IN_SET(%s, parent_ids)"
-        r = db.select_one(q1, [geography_id])
-        if r[0] > 0 :
+        if r[1] > 0 :
             is_exists = True
             raise process_error("E064")
 
@@ -653,22 +627,22 @@ def check_geography_exists(db, geography_id):
 
 def change_geography_status(db, geography_id, is_active, updated_by):
     oldData = get_geography_by_id(db, geography_id)
+    print "oldData"
+    print oldData
     if bool(oldData) is False:
         return False
-    table_name = "tbl_geographies"
-    columns = ["is_active", "updated_by"]
-    where_condition = " geography_id = %s"
     # if is_active == 0 :
     #     check_geography_exists(db, geography_id)
 
-    values = [is_active, updated_by, geography_id]
-    if (db.update(table_name, columns, values, where_condition)):
+    values = [geography_id, is_active, updated_by]
+    print values
+    if (db.call_update_proc("sp_geography_update_status", values)):
         if is_active == 0:
             status = "deactivated"
         else:
             status = "activated"
         action = "Geography %s status - %s" % (
-            oldData["geography_name"], status
+            oldData[0]["geography_name"], status
         )
         db.save_activity(updated_by, 6, action)
         return True

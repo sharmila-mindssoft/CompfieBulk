@@ -339,11 +339,11 @@ function statNature_active(statNatureId, isActive) {
 	mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, function (error, response) {
     if (error == null) {
       if (isActive) {
-        displaySuccessMessage(message.organization_status_active_success);
+        displaySuccessMessage(message.statutoty_nature_status_active_success);
       }
       else
       {
-        displaySuccessMessage(message.organization_status_deactive_success);
+        displaySuccessMessage(message.statutoty_nature_status_deactive_success);
       }
       getStatutorynatures();
       onSuccess(response);
