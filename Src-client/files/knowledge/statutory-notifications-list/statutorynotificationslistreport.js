@@ -46,14 +46,15 @@ function resetValues(){
 }
 
 function initialize(){
-    resetValues();
+    //resetValues();
     mirror.getStatutoryNotificationsFilters(function (error, data) {
         if (error == null) {
+          console.log(data)
           CountryList = data.countries;
           DomainList = data.domains;
           Level1List = data.level_one_statutories;
         }else {
-          custom_alert(error);
+          displayMessage(error);
         }
     });
 }
@@ -156,6 +157,11 @@ function loadCompliances(data){
       $('.sno', clone).text(sno);
       $('.act', clone).html(value.statutory_name);
       $('.compliancetask', clone).html(value.compliance_task);
+      $('.c-pointer', clone);
+      $('.c-pointer').hover(function(){
+        showTitle(this, value.notification_text);
+      });
+      //$('.c-pointer').attr('title',value.notification_text);
       $('.date', clone).html(value.notification_date);
       $('.notification', clone).html(value.notification_text);
       $('.table-statutory-notifications-list').append(clone);
@@ -167,11 +173,15 @@ function loadCompliances(data){
       showPagePan(showFrom, sno, totalRecord);
     }
 }
-
+//Status Title
+function showTitle(e, notf_text){
+  console.log(notf_text)
+  var titleText = notf_text;
+    e.title = titleText;
+}
 function processSubmit (){
   if(validateMandatory()){
     displayLoader();
-    displayMessage('');
     _country = getValue("country");
     _domain = getValue("domain");
     _level1 = getValue("level1");
@@ -193,6 +203,12 @@ function processSubmit (){
               displayMessage(error);
             }
             else {
+              $('.details').show();
+              $('#compliance_animation')
+                .removeClass().addClass('bounceInLeft animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass();
+              });
               sno  = sno;
               ReportData = response.statutory_notifictions_list;
               totalRecord = response.total_count;
@@ -224,6 +240,7 @@ function processSubmit (){
 
 //retrive  autocomplete value
 function onAutoCompleteSuccess(value_element, id_element, val) {
+  console.log("val:"+val)
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
