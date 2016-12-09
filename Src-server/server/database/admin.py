@@ -256,7 +256,9 @@ def get_level_1_statutories(db):
 # Return Type : List of Object of Countries
 #############################################################################
 def get_countries_for_user(db, user_id):
-    result = db.call_proc("sp_countries_for_user", (user_id,))
+    result = db.call_proc_with_multiresult_set("sp_countries_for_user", (user_id,), 2)
+    if len(result) > 1 :
+        result = result[1]
     return return_countries(result)
 
 

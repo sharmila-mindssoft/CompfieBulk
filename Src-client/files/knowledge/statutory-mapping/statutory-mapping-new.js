@@ -34,7 +34,9 @@ OccasionalPan = $('#Occasional');
 Frequency = $('#compliance_frequency');
 DurationType = $('#duration_type');
 Duration = $('#duration');
-Repeats = $('#repeats_type');
+
+RepeatsType = $('#repeats_type');
+RepeatsEvery = $('#repeats_every')
 ComplianceTask = $('#compliance_task');
 Provision = $('#statutory_provision');
 Description = $('#compliance_description');
@@ -164,7 +166,7 @@ function RenderInput() {
         Domain.empty();
         Organisation.empty();
         Nature.empty();
-        Repeats.empty();
+        RepeatsType.empty();
         Frequency.empty();
         $('.tbody-statutory-list').empty();
         $('.tbody-compliance-list').empty();
@@ -367,12 +369,12 @@ function RenderInput() {
     };
 
     this.loadRepeats = function() {
-        Repeats.empty();
-        Repeats.append(
+        RepeatsType.empty();
+        RepeatsType.append(
             _renderinput.make_option("Select", "")
         );
         $.each(REPEATSTYPE_INFO, function(ke, val) {
-            Repeats.append(
+            RepeatsType.append(
                 _renderinput.make_option(val.repeat_type, val.repeat_type)
             );
         });
@@ -397,9 +399,6 @@ function RenderInput() {
         });
     };
     this.clearSubLevel = function(l_position) {
-        console.log(l_position);
-        // if (l_position == 1)
-        //     l_position += 1;
         for (var i=l_position+1; i<11; i++) {
             // console.log($('.statutory_levelvalue #snl'+i));
             $('.statutory_levelvalue #snl'+i).empty();
@@ -413,6 +412,7 @@ function RenderInput() {
 
             liObject.attr('id', 'sid'+v.s_id);
             liObject.addClass('slp'+v.l_position);
+
             $('.sname-holder', liObject).on('click', function() {
                 $('.statutory_levelvalue #dv'+v.l_position).val('');
                 $('.statutory_levelvalue #dvid'+v.l_position).val('');
@@ -442,10 +442,13 @@ function RenderInput() {
                 _renderinput.renderStatuNames(v.s_id, v.l_position);
             });
             $('.edit-icon', liObject).on('click', function() {
-                var pid = v.p_ids[v.p_ids.length - 1];
-                if (v.l_position == 1) {
-
+                if (v.p_ids == null) {
+                    pid = 0;
                 }
+                else {
+                    pid = v.p_ids[v.p_ids.length - 1];
+                }
+
                 $('.statutory_levelvalue #dv'+v.l_position).val(v.s_name);
                 $('.statutory_levelvalue #dvid'+v.l_position).val(v.s_id);
                 $('.statutory_levelvalue #dvpid'+v.l_position).val(pid);
@@ -540,14 +543,22 @@ function RenderInput() {
                 if (event.keyCode == 13) {
                     new_value = $('#dv'+ v.l_position).val();
                     _sid = $('#dvid'+v.l_position).val();
-                    if(_sid != '') {
+                    console.log(_sid);
+                    if(_sid == '') {
                         _fetchback.saveStautory(
                             v.l_id, new_value, v.l_position
                         );
                     }
                     else {
-
+                        _fetchback.updateStatutory(
+                            new_value, parseInt(_sid), v.l_position
+                        );
                     }
+                    // if (v.l_position == 1){
+                    //     _renderinput.renderStatuNames(
+                    //         0, v.l_position
+                    //     );
+                    // }
 
                     $('#dv'+ v.l_position).val('');
                     $('#dvid'+ v.l_position).val('');
@@ -557,11 +568,23 @@ function RenderInput() {
             $('.bottomfield .statut-add', slObject).on(
                 'click', function(){
                 new_value = $('#dv'+ v.l_position).val();
-                s_id = $('#dvid'+v.l_position).val();
-                alert(s_id);
-                _fetchback.saveStautory(
-                    v.l_id, new_value, v.l_position
-                );
+                _sid = $('#dvid'+v.l_position).val();
+                if (_sid == '') {
+                    _fetchback.saveStautory(
+                        v.l_id, new_value, v.l_position
+                    );
+                }
+                else {
+                    _fetchback.updateStatutory(
+                        new_value, _sid, v.l_position
+                    );
+                }
+
+                // if (v.l_position == 1){
+                //     _renderinput.renderStatuNames(
+                //         0, v.l_position
+                //     );
+                // }
             });
 
             $('#tbody-statutory-level').append(slObject);
@@ -736,7 +759,6 @@ function RenderInput() {
             $('#status', cObj).on('click', function () {
 
                 if ($('#status', cObj).hasClass('remove')) {
-                    console.log(ke);
                     _renderinput.mapped_compliances.splice(ke, 1);
                 }
                 else {
@@ -1014,7 +1036,10 @@ function FetchBack() {
                         if (response.s_ids.indexOf(v.s_id) > -1) {
                             info = {}
                             info["s_id"] = v.s_id;
-                            info["s_names"] = v.p_maps
+                            if (v.p_names != null)
+                                info["s_names"] = v.p_maps
+                            else
+                                info["s_names"] = [];
                             info["s_names"].push(v.s_name)
                             if (v.p_ids == null) {
                                 info["l_one_id"] = 0;
@@ -1054,9 +1079,9 @@ function FetchBack() {
                 possibleFailure(status);
             }
             else {
-                $('#dv'+ v.l_position).val('');
-                $('#dvid'+ v.l_position).val('');
-                $('#dvpid'+ v.l_position).val('');
+                $('#dv'+ l_position).val('');
+                $('#dvid'+ l_position).val('');
+                $('#dvpid'+ l_position).val('');
             }
         })
     };
@@ -1087,11 +1112,19 @@ function FetchBack() {
                 }
                 else {
                     // load statutory list
-                    $('#dv'+ v.l_position).val('');
-                    $('#dvid'+ v.l_position).val('');
-                    $('#dvpid'+ v.l_position).val('');
+                    $('#dv'+ l_position).val('');
+                    $('#dvid'+ l_position).val('');
+                    $('#dvpid'+ l_position).val('');
                     _fetchback.getStatuMaster(l_position, function() {
-                        pid = p_ids[p_ids.length - 1];
+
+                        if (p_ids != null) {
+                            pid = p_ids[p_ids.length - 1];
+                        }
+                        else{
+                            pid = 0;
+                            l_position = 1;
+                        }
+                        $('.statutory_levelvalue #snl'+l_position).empty();
                         _renderinput.renderStatuNames(pid, l_position);
                     });
                 }
@@ -1437,10 +1470,10 @@ function showTab(){
         _viewPage.showFirstTab();
     }
     else if (CURRENT_TAB == 2) {
-        // if(!_viewPage.validateFirstTab()) {
-        //     CURRENT_TAB -= 1;
-        //     return false;
-        // }
+        if(!_viewPage.validateFirstTab()) {
+            CURRENT_TAB -= 1;
+            return false;
+        }
         hideall();
         enabletabevent(2);
         $('.tab-step-2').addClass('active')
@@ -1451,10 +1484,10 @@ function showTab(){
         _viewPage.showSecondTab();
     }
     else if (CURRENT_TAB == 3) {
-        // if (!_viewPage.validateSecondTab()) {
-        //     CURRENT_TAB -= 1;
-        //     return false;
-        // }
+        if (!_viewPage.validateSecondTab()) {
+            CURRENT_TAB -= 1;
+            return false;
+        }
         hideall();
         enabletabevent(3);
         $('.tab-step-3').addClass('active')
@@ -1465,10 +1498,11 @@ function showTab(){
         _viewPage.showThirdTab();
     }
     else if (CURRENT_TAB == 4) {
-        // if(!_viewPage.validateComplianceTab()){
-        //     CURRENT_TAB -=1;
-        //     return false;
-        // }
+        console.log(_renderinput.mapped_compliances.length);
+        if (_renderinput.mapped_compliances.length == 0) {
+            CURRENT_TAB -=1;
+            return false;
+        }
         hideall();
         enabletabevent(4);
         $('.tab-step-4').addClass('active')
@@ -1690,15 +1724,25 @@ function pageControls() {
         console.log(_renderinput.mapped_compliances);
         console.log(_renderinput.selected_geos);
 
-        map_data = _viewPage.make_data_format(1);
+        map_data = _viewPage.make_data_format(0);
         if (IS_EDIT)
             _fetchback.updateMapping(map_data);
         else {
             _fetchback.saveMapping(map_data);
         }
 
-
     });
+
+    SubmitButton.click(function() {
+
+        map_data = _viewPage.make_data_format(1);
+        if (IS_EDIT)
+            _fetchback.updateMapping(map_data);
+        else {
+            _fetchback.saveMapping(map_data);
+        }
+    });
+
     BackButton.click(function() {
         _renderinput.resetField();
         _viewPage.hide();

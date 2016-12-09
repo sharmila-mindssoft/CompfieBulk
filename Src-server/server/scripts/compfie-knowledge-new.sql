@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `compfie_knowledge_news`;
-USE `compfie_knowledge_news`;
+CREATE DATABASE  IF NOT EXISTS `compfie_knowledge_new`;
+USE `compfie_knowledge_new`;
 
 
 DROP TABLE IF EXISTS `tbl_audit_log`;
@@ -153,7 +153,7 @@ CREATE TABLE `tbl_users` (
   KEY `fk_tbl_users_user_group_id` (`user_group_id`),
   CONSTRAINT `fk_tbl_users_user_category_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_category` (`user_category_id`),
   CONSTRAINT `fk_tbl_users_user_group_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 -- user_login_details
 DROP TABLE IF EXISTS `tbl_user_login_details`;
@@ -709,15 +709,11 @@ CREATE TABLE `tbl_units` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`unit_id`),
-  KEY `fk_business_group_id` (`business_group_id`),
-  KEY `fk_divisions_id` (`division_id`),
   KEY `fk_legal_entities_id` (`legal_entity_id`),
   KEY `fk_units_geographies` (`geography_id`),
   KEY `fk_tbl_units_1` (`client_id`),
-  KEY `fk_units_countries_idx` (`category_id`),
   CONSTRAINT `fk_legal_entities_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_units_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
-  CONSTRAINT `fk_units_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_categories` (`category_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

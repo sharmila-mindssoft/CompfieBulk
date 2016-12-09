@@ -649,7 +649,8 @@ CREATE PROCEDURE `sp_countries_for_user`(
     IN session_user INT(11)
 )
 BEGIN
-    IF session_user > 2 THEN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = session_user;
+    IF @u_cat_id > 2 THEN
         SELECT country_id, country_name, is_active
         FROM tbl_countries
         WHERE country_id in (
@@ -1270,37 +1271,11 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
-    DECLARE user_category INT(11);
-    SELECT user_category_id INTO user_category
-    FROM tbl_user_login_details WHERE user_id = userid;
-    IF user_category in (1,2) then
-        select client_id, group_name, is_active from tbl_client_groups
-        order by group_name ASC;
-    ELSEIF user_category = 5 then
-        select client_id, group_name, is_active from tbl_client_groups
-        where client_id in(
-            SELECT client_id FROM tbl_user_clients WHERE
-            user_id = userid
-        ) order by group_name ASC;
-    ELSEIF user_category = 6 then
-        select client_id, group_name, is_active from tbl_client_groups
-        where client_id in(
-            SELECT client_id FROM tbl_legal_entities
-            WHERE legal_entity_id in (
-                SELECT legal_entity_id FROM tbl_user_legalentity WHERE
-                user_id = userid
-            )
-        ) order by group_name ASC;
-    ELSE
-        select client_id, group_name, is_active from tbl_client_groups
-        where client_id in (
-            SELECT client_id FROM tbl_units
-            WHERE unit_id in (
-                SELECT unit_id FROM tbl_user_units WHERE
-                user_id = userid
-            )
-        ) order by group_name ASC;
-    END IF;
+    select client_id, short_name from tbl_client_groups
+    where client_id in
+    (select t1.client_id from tbl_client_groups t1
+    inner join tbl_user_legalentity t2 on t1.client_id = t2.client_id
+    and t2.user_id = userId);
 END //
 
 DELIMITER ;
@@ -2845,14 +2820,11 @@ CREATE PROCEDURE `sp_countries_for_unit`(IN session_user INT(11))
 BEGIN
     select t4.country_id, t4.country_name, t3.business_group_id, t1.client_id
     from
-    tbl_user_legalentity as t1,
-    tbl_legal_entities as t2,
-    tbl_business_groups as t3,
-    tbl_countries as t4
+    tbl_user_legalentity as t1
+    inner join tbl_legal_entities as t2 on t2.client_id = t1.client_id
+    left join tbl_business_groups as t3 on t3.business_group_id = t2.business_group_id
+    inner join tbl_countries as t4 on t4.country_id = t2.country_id
     where
-    t4.country_id = t2.country_id and
-    t3.business_group_id = t2.business_group_id and
-    t2.client_id = t1.client_id and
     t1.user_id = session_user;
 END//
 DELIMITER ;
@@ -2994,7 +2966,7 @@ BEGIN
         SELECT count(unit_id) FROM tbl_user_units tuu
         WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
     ) as assigned_units
-    from tbl_units tu inner join tbl_unit_industries tud
+    from tbl_units tu inner join tbl_units_organizations tud
     ON tu.unit_id = tud.unit_id group by client_id, domain_id;
 END//
 DELIMITER ;
@@ -3045,7 +3017,7 @@ BEGIN
         SELECT division_name FROM tbl_divisions td
         WHERE td.division_id=tu.division_id
     ) as division_name,(
-        SELECT category_name FROM tbl_category_master tcm
+        SELECT category_name FROM tbl_categories tcm
         WHERE tcm.category_id=tu.category_id
     ) as category_name, unit_code, unit_name, address, (
         SELECT geography_name FROM tbl_geographies tgm
@@ -3059,9 +3031,9 @@ BEGIN
         SELECT domain_name FROM tbl_domains td
         WHERE td.domain_id = tui.domain_id
     ) as domain_name, (
-        SELECT industry_name FROM tbl_industries ti
+        SELECT organisation_name FROM tbl_organisation ti
         WHERE ti.industry_id = tui.industry_id
-    ) as industry_name FROM tbl_unit_industries tui
+    ) as industry_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
         SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
     );
@@ -3097,7 +3069,7 @@ DROP PROCEDURE IF EXISTS `sp_units_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_units_list`(
-    IN clientid INT(11)
+    IN clientid INT(11), IN domainid INT(11)
 )
 BEGIN
     SELECT tu.unit_id, unit_code, unit_name,
@@ -3105,18 +3077,18 @@ BEGIN
         SELECT division_name FROM tbl_divisions td
         WHERE td.division_id=tu.division_id
     ) as division_name, (
-        SELECT category_name FROM tbl_category_master tcm
+        SELECT category_name FROM tbl_categories tcm
         WHERE tcm.category_id=tu.category_id
     ) as category_name,legal_entity_id,(
         SELECT legal_entity_name FROM tbl_legal_entities tle
         WHERE tle.legal_entity_id=tu.legal_entity_id
     ) as legal_entity_name,
-    business_group_id, is_active, (
+    business_group_id, is_closed, (
         SELECT geography_name FROM tbl_geographies tg
         WHERE tg.geography_id = tu.geography_id
     ) as geography_name
     FROM tbl_units tu
-    INNER JOIN tbl_unit_industries tui on tui.unit_id=tu.unit_id
+    INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
     WHERE client_id=clientid and tui.domain_id=domainid and
     tu.unit_id not in (
         SELECT unit_id FROM tbl_user_units
@@ -3127,9 +3099,9 @@ BEGIN
         SELECT domain_name FROM tbl_domains td
         WHERE td.domain_id = tui.domain_id
     ) as domain_name, (
-        SELECT industry_name FROM tbl_industries ti
+        SELECT organisation_name FROM tbl_organisation ti
         WHERE ti.industry_id = tui.industry_id
-    ) as industry_name FROM tbl_unit_industries tui
+    ) as industry_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
         SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
     ) and tui.domain_id=domainid;
@@ -3417,7 +3389,7 @@ BEGIN
     concat(t2.employee_code," - ", t2.employee_name) as employee_name
     from tbl_user_mapping t1
     INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id
-    WHERE t1.user_category_id=8 and t1.parent_user_id = session_user;
+    WHERE t1.parent_user_id = session_user;
     SELECT user_id, country_id FROM tbl_user_countries;
     SELECT user_id, domain_id FROM tbl_user_domains;
 END //
@@ -5694,7 +5666,7 @@ CREATE PROCEDURE `sp_get_messages`(
 IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
-    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = 1;
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
 
     SELECT m.message_id, m.message_heading, m.message_text, m.link,
     (SELECT concat(employee_code, ' - ', employee_name)
@@ -5943,7 +5915,7 @@ BEGIN
         t2.statutory_dates, t2.repeats_type_id, t2.repeats_every, t2.duration_type_id,
         t2.duration,
         (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
-        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t2.repeats_type_id) as repeat_type,
+        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration_type,
         (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.created_by) as created_by,
         (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) as updated_by,
@@ -6006,7 +5978,7 @@ BEGIN
      and t2.domain_id = domainid
      and t1.statutory_nature_id like nature_id
      and IFNULL(t2.updated_by, t2.created_by) in (
-        select child_user_id from tbl_user_mapping where parent_user_id = 4
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
      ) order by t1.statutory_mapping_id;
 
      select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t

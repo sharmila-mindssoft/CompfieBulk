@@ -341,8 +341,7 @@ function saveClient(){
             var business_group_id = null;
             var business_group_name = null;
             business_group_id = le_table.find(".business-group").val();
-            console.log("brgnam--"+trim(le_table.find(".business-group-text").val()))
-            business_group_name = trim(le_table.find(".business-group-text").val());
+            business_group_name = le_table.find(".business-group-text").val().trim();
             var le_name = le_table.find("#legal_entity_text").val();
             var logo = logoFile[i-1]
             if(logo){

@@ -21,10 +21,10 @@ from server.database.validateclientuserrecord import ClientAdmin
 #  Return Type : List of object of Country
 ##########################################################################
 def get_user_countries(db, session_user):
-    countries = db.call_proc(
-        "sp_countries_for_user", (session_user,)
-    )
-    return return_countries(countries)
+    result = db.call_proc_with_multiresult_set("sp_countries_for_user", (session_user,), 2)
+    if len(result) > 1 :
+        result = result[1]
+    return return_countries(result)
 
 
 ##########################################################################
@@ -1667,10 +1667,9 @@ def get_unit_details_for_user(db, user_id, request):
 def return_unit_details(result):
     unitdetails = []
     for r in result[0]:
-        print r
         unit_id = int(r.get("unit_id"))
         client_id = int(r.get("client_id"))
-        business_group_id = int(r.get("business_group_id"))
+        business_group_id = r.get("business_group_id")
         legal_entity_id = int(r.get("legal_entity_id"))
         country_id = int(r.get("country_id"))
         division_id = int(r.get("division_id"))
@@ -2231,6 +2230,7 @@ def get_units_of_client(db, client_id, domain_id):
     #
     result = db.call_proc_with_multiresult_set(
         "sp_units_list", (client_id, domain_id), 2)
+
     units = result[0]
     industry_details = result[1]
     domain_industry_map = generate_unit_domain_industry_map(industry_details)
@@ -2242,7 +2242,7 @@ def generate_unit_domain_industry_map(industry_details):
     for detail in industry_details:
         unit_id = detail["unit_id"]
         domain_name = detail["domain_name"]
-        industry_name = detail["industry_name"]
+        industry_name = detail["organisation_name"]
         if unit_id not in detail_map:
             detail_map[unit_id] = {}
         if domain_name not in detail_map[unit_id]:

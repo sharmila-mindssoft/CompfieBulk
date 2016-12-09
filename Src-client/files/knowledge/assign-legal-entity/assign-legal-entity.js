@@ -107,7 +107,7 @@ function loadGroupList(assignLegalEntitiesList) {
   	var assignedLE = 0;
   	var client_id = value.client_id;
     var groupName = value.group_name;
-    var countryName = value.country_name;
+    var countryName = value.country_names;
     var legalEntityCount = value.no_of_legal_entities;
     if(value.no_of_assigned_legal_entities != null) assignedLE =  value.no_of_assigned_legal_entities;
     var unAssignedLE =  (legalEntityCount - assignedLE);
