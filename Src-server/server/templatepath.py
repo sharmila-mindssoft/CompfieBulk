@@ -285,7 +285,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/client-agreement-master-report",
+        "/knowledge/client-agreement-report",
         "files/knowledge/client-agreement-master-report/client-agreement-master-report.html",
         None, {}
     ),
@@ -375,7 +375,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/statutory-notifications-list",
-        "files/knowledge/statutory-notifications-list-report/statutory-notifications-list.html",
+        "files/knowledge/statutory-notifications-list/statutory-notifications-list.html",
         None, {}
     ),
     (
