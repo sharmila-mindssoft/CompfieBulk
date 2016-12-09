@@ -32,7 +32,7 @@ function getIndustries() {
     processPaging();
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
 	mirror.getIndustryList(function (error, response) {
 		if (error == null) {
