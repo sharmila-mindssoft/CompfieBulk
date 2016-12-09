@@ -329,14 +329,14 @@ class GetStatutoryNotificationsFilters(Request):
 
 class GetStatutoryNotificationsReportData(Request):
     def __init__(
-        self, country_id, domain_id, level_1_statutory_id,
-        from_date, to_date, from_count, page_count
+        self, country_id, domain_id, statutory_id_optional,
+        from_date_optional, to_date_optional, from_count, page_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
-        self.level_1_statutory_id = level_1_statutory_id
-        self.from_date = from_date
-        self.to_date = to_date
+        self.statutory_id_optional = statutory_id_optional
+        self.from_date_optional = from_date_optional
+        self.to_date_optional = to_date_optional
         self.from_count = from_count
         self.page_count = page_count
 
@@ -348,24 +348,24 @@ class GetStatutoryNotificationsReportData(Request):
         ])
         country_id = data.get("country_id")
         domain_id = data.get("domain_id")
-        level_1_statutory_id = data.get("statutory_id_optional")
-        from_date = data.get("from_date_optional")
-        to_date = data.get("to_date_optional")
+        statutory_id_optional = data.get("statutory_id_optional")
+        from_date_optional = data.get("from_date_optional")
+        to_date_optional = data.get("to_date_optional")
         from_count = data.get("from_count")
         page_count = data.get("page_count")
 
         return GetStatutoryNotificationsReportData(
-            country_id, domain_id, level_1_statutory_id,
-            from_date, to_date, from_count, page_count
+            country_id, domain_id, statutory_id_optional,
+            from_date_optional, to_date_optional, from_count, page_count
         )
 
     def to_inner_structure(self):
         return {
             "country_id" : self.country_id,
             "domain_id" : self.domain_id,
-            "level_1_statutory_id" : self.level_1_statutory_id,
-            "from_date": self.from_date,
-            "to_date": self.from_date,
+            "statutory_id_optional" : self.statutory_id_optional,
+            "from_date_optional": self.from_date_optional,
+            "to_date_optional": self.to_date_optional,
             "from_count": self.from_count,
             "page_count": self.page_count
         }
