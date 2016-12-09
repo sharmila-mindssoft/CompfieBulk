@@ -2036,13 +2036,13 @@ def return_assign_legalentities(assign_legalentities_list):
 #  Parameters : Object of database
 #  Return Type : Returns List of object of UnassignedUnit
 ##########################################################################
-def get_unassigned_units_list(db):
+def get_unassigned_units_list(db, session_user):
     #
     # To get list of unassigned units
     #  Parameters - None
     #
     units = db.call_proc(
-        "sp_userunits_list", None
+        "sp_userunits_list", [session_user]
     )
     return return_unassigned_units(units)
 

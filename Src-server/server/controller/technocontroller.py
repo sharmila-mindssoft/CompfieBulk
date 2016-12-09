@@ -139,7 +139,7 @@ def process_techno_request(request, db):
     elif type(request_frame) is technomasters.GetUnassignedUnits:
         logger.logKnowledgeApi("GetUnassignedUnits", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = get_unassigned_units(db)
+        result = get_unassigned_units(db, session_user)
         logger.logKnowledgeApi("GetUnassignedUnits", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 

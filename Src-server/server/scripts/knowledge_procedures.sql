@@ -2953,7 +2953,7 @@ DROP PROCEDURE IF EXISTS `sp_userunits_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_userunits_list`()
+CREATE PROCEDURE `sp_userunits_list`( IN userid_ INT(11))
 BEGIN
     select count(tu.unit_id) as total_units, tu.client_id,
     tu.legal_entity_id, domain_id, (
@@ -2967,7 +2967,9 @@ BEGIN
         WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
     ) as assigned_units
     from tbl_units tu inner join tbl_units_organizations tud
-    ON tu.unit_id = tud.unit_id group by client_id, domain_id;
+    ON tu.unit_id = tud.unit_id 
+    inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= tu.client_id
+    group by client_id, domain_id;
 END//
 DELIMITER ;
 
@@ -3461,7 +3463,7 @@ BEGIN
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
-    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
     t1.country_id = countryid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
@@ -3574,7 +3576,7 @@ BEGIN
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
-    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and

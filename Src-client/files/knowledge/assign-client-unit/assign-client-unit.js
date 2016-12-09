@@ -418,7 +418,7 @@ function loadEditAssignedUnitsDetailsList(){
                         var row_clone = content_row.clone();
                         ASSIGN_UNIT_SAVE_DETAILS[value.unit_id][d_value] = false;
                         LEGAL_ENTITY_UNIT_MAP[legal_entity_name].push("unit-"+d_value+"-"+value.unit_id); 
-                        $(".select-unit", row_clone).addClass("unit-"+d_value+"-"+value.unit_id);
+                        $(".select-unit", row_clone).addClass("unit-"+value.unit_id);
                         $(".unit-code", row_clone).text(value.unit_code);
                         $(".unit-name", row_clone).text(value.unit_name);
                         /*$(".unit-name .address-title", row_clone).attr("title", value.address);
@@ -463,7 +463,7 @@ function activateDeactivateAllUnits(le_id, legal_entity_name){
 }
 
 function activateDeactivateUnit(unit_id, d_value){
-    unit_status = $(".unit-"+d_value+"-"+unit_id).prop("checked");
+    unit_status = $(".unit-"+unit_id).prop("checked");
     ASSIGN_UNIT_SAVE_DETAILS[unit_id][d_value] = unit_status;
     updatedSelectedNoOfUnits();
 }
