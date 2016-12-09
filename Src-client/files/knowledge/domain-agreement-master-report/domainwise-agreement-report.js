@@ -57,13 +57,14 @@ function resetValues(){
 }
 
 function initialize(){
-		resetValues();
+		//resetValues();
     mirror.getClientAgreementReportFilters(function (error, data) {
         if (error == null) {
           CountryList = data.countries;
           DomainList = data.domains;
           GroupList = data.client_group_master;
           BusinessGroupList = data.business_groups;
+          console.log("data:"+BusinessGroupList)
           LegalEntityList = data.unit_legal_entity;
         }else {
           custom_alert(error);
@@ -215,18 +216,20 @@ function loadCompliances(data){
         var tableRowHeading = $('#templates .table-agreement-list .group-list');
         var cloneHeading = tableRowHeading.clone();
         $('.group-name', cloneHeading).text(value.group_name);
+        if (lastBusinessGroup != value.business_group_name) {
+        $('.business-group-name', cloneHeading).text(value.business_group_name);}
         $('.group-admin-email', cloneHeading).text(value.group_admin_email);
         $('.table-client-agreement-list').append(cloneHeading);
         lastGroup = value.group_name;
       }
 
-      if (lastBusinessGroup != value.business_group_name) {
+      /*if (lastBusinessGroup != value.business_group_name) {
         var tableRowHeading = $('#templates .table-agreement-list .business-group-list');
         var cloneHeading = tableRowHeading.clone();
         $('.business-group-name', cloneHeading).text(value.business_group_name);
         $('.table-client-agreement-list').append(cloneHeading);
         lastBusinessGroup = value.business_group_name;
-      }
+      }*/
 
       var tableRow = $('#templates .table-agreement-list .tbody-agreement-list');
       var clone = tableRow.clone();
@@ -255,7 +258,7 @@ function loadCompliances(data){
 function processSubmit (csv){
   if(validateMandatory()){
     displayLoader();
-    displayMessage('');
+    //displayMessage('');
     _country = getValue("country");
     _domain = getValue("domain");
     _group = getValue("group");
@@ -271,7 +274,8 @@ function processSubmit (csv){
     else {
       sno = (on_current_page - 1) *  _page_limit;
     }
-
+    console.log("param:"+_country, _group, _businessgroup,
+    _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit)
     mirror.getDomainwiseAgreementReport(_country, _group, _businessgroup,
     _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
         function(error, response) {
@@ -421,6 +425,7 @@ function pageControls() {
         condition_values.push(Group.val());
       }
       var text_val = $(this).val();
+      console.log(BusinessGroupList)
       commonAutoComplete(
         e, ACBusinessGroup, BusinessGroup, text_val,
         BusinessGroupList, "business_group_name", "business_group_id", function (val) {
