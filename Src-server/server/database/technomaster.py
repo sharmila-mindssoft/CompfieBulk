@@ -2216,8 +2216,8 @@ def return_domain_managers(data):
     fn = core.User
     result = [
         fn(
-            user_id=datum["user_id"], employee_name=datum["employee_name"],
-            is_active=bool(datum["is_active"])
+            user_id=datum["user_id"], user_category_id=datum["user_category_id"], 
+            employee_name=datum["employee_name"], is_active=bool(datum["is_active"])
         ) for datum in data
     ]
     return result

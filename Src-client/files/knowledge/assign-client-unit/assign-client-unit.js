@@ -239,6 +239,7 @@ function loadAssignedUnitsDetailsList(){
     $(".le-name").text(LEGAL_ENTITY_NAME);
     ORGANIZED_DETAILS_LIST = {}
     $.each(ASSIGNED_UNIT_DETAILS_LIST, function(key, value){
+        console.log(ASSIGNED_UNIT_DETAILS_LIST);
         var legal_entity_name = value["legal_entity_name"];
         var division_name = value["division_name"];
         var category_name = value["category_name"]
@@ -344,6 +345,7 @@ $('#assinee').keyup(function (e) {
 function loadAssignUnitForm(){
     $(".edit-group-name").text(GROUP_NAME);
     $(".edit-domain-name").text(DOMAIN_NAME);
+    loadEditAssignedUnitsDetailsList();
 }
 
 $(".show-units").click(function(){
@@ -354,19 +356,23 @@ $(".show-units").click(function(){
 });
 
 function loadEditAssignedUnitsDetailsList(){
+    console.log(loadEditAssignedUnitsDetailsList);
     ORGANIZED_DETAILS_LIST = {}
     $.each(ASSIGNED_UNIT_DETAILS_LIST, function(key, value){
+        console.log(ASSIGNED_UNIT_DETAILS_LIST);
         var legal_entity_name = value["legal_entity_name"];
         var division_name = value["division_name"];
         var category_name = value["category_name"]
-        var validation_status = false;
+        var validation_status = true;
         if (LEGAL_ENTITY_NAME != '' || LEGAL_ENTITY_NAME == legal_entity_name){
             validation_status = true;
         }
         if (value["business_group_id"]  == BUSINESS_GROUP_ID){
             validation_status = true;
         }
+        console.log(validation_status)
         if(validation_status){
+            console.log(validation_status)
             if(! (legal_entity_name in ORGANIZED_DETAILS_LIST)){
                 ORGANIZED_DETAILS_LIST[legal_entity_name] = {}
             }
@@ -414,9 +420,9 @@ function loadEditAssignedUnitsDetailsList(){
                         LEGAL_ENTITY_UNIT_MAP[legal_entity_name].push("unit-"+d_value+"-"+value.unit_id); 
                         $(".select-unit", row_clone).addClass("unit-"+d_value+"-"+value.unit_id);
                         $(".unit-code", row_clone).text(value.unit_code);
-                        $(".unit-name .address", row_clone).text(value.unit_name);
-                        $(".unit-name .address-title", row_clone).attr("title", value.address);
-                        $(".unit-name .address-title", row_clone).attr("title", value.address);
+                        $(".unit-name", row_clone).text(value.unit_name);
+                        /*$(".unit-name .address-title", row_clone).attr("title", value.address);
+                        $(".unit-name .address-title", row_clone).attr("title", value.address);*/
                         $(".organization-type", row_clone).empty();
                         var clone = bold_text.clone();
                         clone.text(d_value);
