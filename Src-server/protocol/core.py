@@ -2927,6 +2927,7 @@ class FormCategory(object):
             "form_category": self.form_category,
         }
 
+
 class UserCategory(object):
     def __init__(self, user_category_id, user_category_name):
         self.user_category_id = user_category_id

@@ -1366,8 +1366,8 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
-    SELECT user_category_id INTO user_category
-    FROM tbl_users WHERE user_id = userid;
+    SELECT user_category_id INTO user_category 
+    FROM tbl_user_login_details WHERE user_id = userId; 
     IF user_category in (1,2) then
         select legal_entity_id, legal_entity_name, business_group_id,
         client_id, country_id from tbl_legal_entities
@@ -6372,6 +6372,8 @@ BEGIN
     FROM tbl_geographies WHERE geography_id = _g_id;
 END //
 
+DELIMITER;
+
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
 
 DELIMITER //
@@ -6430,6 +6432,7 @@ BEGIN
     t1.legal_entity_id = legalentityid;
 END //
 
+DELIMITER;
 
 DELIMITER //
 
@@ -6449,6 +6452,7 @@ BEGIN
     (userid, @u_cat_id, clientid);
 END //
 
+DELIMITER;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_report_frequency`;
 
@@ -6459,5 +6463,29 @@ BEGIN
     select frequency_id, frequency from
     tbl_compliance_frequency;
 END//
+
+DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_get_user_categories_for_user`;
+
+DELIMITER //
+
+CREATE  PROCEDURE `sp_get_user_categories_for_user`(
+in userid int(11)
+)
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid;
+    IF @u_cat_id = 1 then
+        SELECT user_category_id, user_category_name FROM tbl_user_category
+        WHERE user_category_id in (5,6,7,8);
+    ELSEIF @u_cat_id = 5 then
+        SELECT user_category_id, user_category_name FROM tbl_user_category
+        WHERE user_category_id in (6,7);
+    ELSEIF @u_cat_id = 7 then
+        SELECT user_category_id, user_category_name FROM tbl_user_category
+        WHERE user_category_id in (8);
+    END IF;
+END
 
 DELIMITER;
