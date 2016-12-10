@@ -5547,7 +5547,7 @@ BEGIN
     select t1.client_id, t2.legal_entity_id, t2.is_closed as is_active, t2.closed_on,
     (case when t2.closed_on is not null then
     DATEDIFF(NOW(), t2.closed_on) else 0 end) as validity_days,
-    (select short_name from tbl_client_groups where client_id = t1.client_id) as
+    (select group_name from tbl_client_groups where client_id = t1.client_id) as
     group_name,
     (select business_group_name from tbl_business_groups where business_group_id =
     t2.business_group_id) as business_group_name,
