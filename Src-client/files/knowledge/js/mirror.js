@@ -1416,16 +1416,18 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, callback) {
+  function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, from_count, page_count, callback) {
     callerName = 'techno_report';
     var request = [
       'GetStatutoryNotificationsReportData',
       {
         'country_id': countryId,
         'domain_id': domainId,
-        'level_1_statutory_id': level1Id,
-        'from_date': fromDate,
-        'to_date': toDate
+        'statutory_id_optional': level1Id,
+        'from_date_optional': fromDate,
+        'to_date_optional': toDate,
+        'from_count': from_count,
+        'page_count': page_count
       }
     ];
     apiRequest(callerName, request, callback);

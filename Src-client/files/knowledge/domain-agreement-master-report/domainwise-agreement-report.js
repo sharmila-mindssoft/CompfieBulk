@@ -61,14 +61,14 @@ function initialize() {
     //resetValues();
     mirror.getClientAgreementReportFilters(function(error, data) {
         if (error == null) {
-            CountryList = data.countries;
-            DomainList = data.domains;
-            GroupList = data.client_group_master;
-            BusinessGroupList = data.business_groups;
-            console.log("data:" + BusinessGroupList)
-            LegalEntityList = data.unit_legal_entity;
-        } else {
-            custom_alert(error);
+          CountryList = data.countries;
+          DomainList = data.domains;
+          GroupList = data.client_group_master;
+          BusinessGroupList = data.business_groups;
+          console.log("data:"+BusinessGroupList)
+          LegalEntityList = data.unit_legal_entity;
+        }else {
+          displayMessage(error);
         }
     });
 }
@@ -253,66 +253,71 @@ function loadCompliances(data) {
     }
 }
 
-function processSubmit(csv) {
-    if (validateMandatory()) {
-        displayLoader();
-        //displayMessage('');
-        _country = getValue("country");
-        _domain = getValue("domain");
-        _group = getValue("group");
-        _businessgroup = getValue("businessgroup");
-        _legalentity = getValue("legalentity");
-        _from_date = getValue("from_date");
-        _to_date = getValue("to_date");
-        _page_limit = parseInt($('#items_per_page').val());
+function processSubmit (csv){
+  if(validateMandatory()){
+    displayLoader();
+    //displayMessage('');
+    _country = getValue("country");
+    _domain = getValue("domain");
+    _group = getValue("group");
+    _businessgroup = getValue("businessgroup");
+    _legalentity = getValue("legalentity");
+    _from_date = getValue("from_date");
+    _to_date = getValue("to_date");
+    _page_limit = parseInt($('#items_per_page').val());
 
-        if (on_current_page == 1) {
-            sno = 0
-        } else {
-            sno = (on_current_page - 1) * _page_limit;
-        }
-        console.log("param:" + _country, _group, _businessgroup,
-            _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit)
-        mirror.getDomainwiseAgreementReport(_country, _group, _businessgroup,
-            _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
-            function(error, response) {
-                if (error != null) {
-                    displayMessage(error);
+    if (on_current_page == 1) {
+      sno = 0
+    }
+    else {
+      sno = (on_current_page - 1) *  _page_limit;
+    }
+    mirror.getDomainwiseAgreementReport(_country, _group, _businessgroup,
+    _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
+        function(error, response) {
+            if (error != null) {
+                displayMessage(error);
+            }
+            else {
+              $('.details').show();
+              $('#compliance_animation')
+                .removeClass().addClass('bounceInLeft animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass();
+              });
+              if (csv) {
+                var download_url = response.link;
+                window.open(download_url, '_blank');
+              }else{
+                sno  = sno;
+                ReportData = response.domainwise_agreement_list;
+                totalRecord = response.total_count;
+                lastGroup = '';
+                lastBusinessGroup = '';
+
+                $('.disp_country').text(CountryVal.val());
+                $('.disp_domain').text(DomainVal.val());
+
+                if (totalRecord == 0) {
+                  $('.table-client-agreement-list').empty();
+                  var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+                  var clone4 = tableRow4.clone();
+                  $('.no_records', clone4).text('No Records Found');
+                  $('.table-client-agreement-list').append(clone4);
+                  PaginationView.hide();
+                  hideLoader();
                 } else {
-                    if (csv) {
-                        var download_url = response.link;
-                        window.open(download_url, '_blank');
-                    } else {
-                        sno = sno;
-                        ReportData = response.domainwise_agreement_list;
-                        totalRecord = response.total_count;
-                        lastGroup = '';
-                        lastBusinessGroup = '';
+                    if (sno == 0) {
+                        createPageView(totalRecord);
+                    }
+                    PaginationView.show();
+                    ReportView.show();
+                    loadCompliances(ReportData);
 
-                        $('.disp_country').text(CountryVal.val());
-                        $('.disp_domain').text(DomainVal.val());
-
-                        if (totalRecord == 0) {
-                            $('.table-client-agreement-list').empty();
-                            var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
-                            var clone4 = tableRow4.clone();
-                            $('.no_records', clone4).text('No Records Found');
-                            $('.table-client-agreement-list').append(clone4);
-                            PaginationView.hide();
-                            hideLoader();
-                        } else {
-                            if (sno == 0) {
-                                createPageView(totalRecord);
-                            }
-                            PaginationView.show();
-                            ReportView.show();
-                            loadCompliances(ReportData);
-
-                        }
                     }
                 }
             }
-        );
+        });
     }
 }
 
