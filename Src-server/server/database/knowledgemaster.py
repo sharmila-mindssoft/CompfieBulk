@@ -739,15 +739,17 @@ def update_statutory(
 
 def get_statutory_master(db, statutory_id=None):
     result = db.call_proc("sp_statutorymapping_report_statutorymaster", (statutory_id,))
-
+    print "stat master"
+    print result
     frame_parent_mappings(db, result, statutory_id)
     return return_statutory_master(result)
 
 
 def frame_parent_mappings(db, data, statutory_id=None):
-    data = db.call_proc("sp_statutorymapping_report_statutorymaster", (statutory_id,))
+    # data = db.call_proc("sp_statutorymapping_report_statutorymaster", (statutory_id,))
 
     statu_names = {}
+    print len(data)
     for d in data:
         statu_names[d["statutory_id"]] = d["statutory_name"]
 
@@ -756,11 +758,18 @@ def frame_parent_mappings(db, data, statutory_id=None):
         p_ids = [
             int(x) for x in d["parent_ids"][:-1].split(',')
         ]
+        print "p_ids"
+        print p_ids
         names = []
         for pid in p_ids:
             if pid > 0:
-                names.append(statu_names.get(pid))
+                if(statu_names.get(pid) == None):  # mangesh
+                    names.append("---")
+                else:
+                    names.append(statu_names.get(pid))
         names.append(d["statutory_name"])
+        print "names"
+        print names
         STATUTORY_PARENTS[d["statutory_id"]] = [
             d["statutory_name"], ">> ".join(names), p_ids
         ]
@@ -838,6 +847,8 @@ def check_duplicate_statutory(
 
 def get_country_wise_level_1_statutoy(db, user_id):
     result = db.call_proc("sp_statutorymapping_report_levl1_list", ())
+    print "stat mapping"
+    print result
     if bool(STATUTORY_PARENTS) is False:
         get_statutory_master(db)
 

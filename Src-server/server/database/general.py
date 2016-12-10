@@ -355,7 +355,7 @@ def get_statutory_notifications(
 
 def update_statutory_notification_status(
     db, notification_id, user_id, has_read, session_user
-): 
+):
     result = db.call_update_proc(
         "sp_statutory_notification_read_status",
         (notification_id, user_id, has_read)
@@ -413,10 +413,11 @@ def return_compliance_frequency(data):
         )
         frequency_list.append(c_frequency)
     return frequency_list
+
+
 def get_compliance_frequency(db):
-    result = db.get_data(
-        "tbl_compliance_frequency",
-        ["frequency_id", "frequency"], None
+    result = db.call_proc(
+        "sp_statutory_mapping_report_frequency", ()
     )
     return return_compliance_frequency(result)
 

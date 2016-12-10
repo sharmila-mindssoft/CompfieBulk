@@ -182,7 +182,7 @@ function loadCompliances(data) {
         }
 
         if (lastLE != value.legal_entity_name) {
-            var tableRow = $('#templates .table-agreement-list .tbody-agreement-list');
+            var tableRow = $('#templates .table-agreement-list .agreement-row-list');
             var clone = tableRow.clone();
             sno = sno + 1;
 
@@ -202,7 +202,7 @@ function loadCompliances(data) {
             $('.status', clone).html(status);
             $('.table-client-agreement-list').append(clone);
 
-            $('.table-client-agreement-list').append('<tbody class="accordion-content accordion-content' + acc_count + '"></tbody>');
+            $('.table-client-agreement-list').append('<table class="accordion-content accordion-content' + acc_count + '"></table>');
             $('.accordion-content' + acc_count).addClass('default');
 
             lastLE = value.legal_entity_name;
@@ -231,11 +231,10 @@ function loadCompliances(data) {
         }
     });
 
-    $('#accordion').find('.accordion-toggle').click(function() {
+    $('#accordion').find('.tree-data').click(function() {
         $(this).next().slideToggle('fast');
         $('.accordion-content').not($(this).next()).slideUp('fast');
     });
-
 }
 
 function processSubmit(csv) {
@@ -438,4 +437,10 @@ function pageControls() {
 $(document).ready(function() {
     initialize();
     pageControls();
+    $('.tree-open-close').click(function() {
+        alert("hi")
+        //$('.tree-data').show( "slow" );
+        //$('.tree-data').slideToggle();
+        $('.tree-data').toggle("slow");
+    });
 });
