@@ -4543,9 +4543,9 @@ DROP PROCEDURE IF EXISTS `sp_usermapping_report_details`;
 
 DELIMITER //
 
-
 CREATE PROCEDURE `sp_usermapping_report_details`(
-    in userId int(11), clientId int(11), legalId int(11), counrtyId int(11))
+    in userId int(11), clientId int(11), legalId int(11), counrtyId int(11),
+    bgrp_id int(11), _divi_id int(11), _cg_id int(11), _unit_id int(11))
 BEGIN
     SELECT @_user_category_id := user_category_id as user_category_id
     FROM tbl_users WHERE user_id = userId;
