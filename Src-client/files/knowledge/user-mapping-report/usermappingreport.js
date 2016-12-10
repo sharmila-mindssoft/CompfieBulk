@@ -450,6 +450,12 @@ $('#show-button').click(function () {
   lastBG = '';
   lastLE = '';
   lastDv = '';
+  $('.details').show();
+  $('#compliance_animation')
+    .removeClass().addClass('bounceInLeft animated')
+    .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+    $(this).removeClass();
+  });
   $('.tbody-usermappingdetails-list').empty();
   loadusermappingdetails();
 });
@@ -1130,11 +1136,13 @@ $('#unitval').keyup(function (e) {
       //        (bgrp_id > 0 && divisionList[i].business_group_id == bgrp_id))
       {
         unit_list.push({
-          "unit_id": unitList[i].unit_id,
-          "unit_name": unitList[i].unit_code+"-"+unitList[i].unit_name
+          "unit_id": assignedUnitList[i].unit_id,
+          "unit_name": assignedUnitList[i].unit_code_name
         });
       }
     }
+    console.log(unit_list)
+    console.log(unit_list.length)
     commonAutoComplete(
       e, ACUnit, Unit, textval,
       unit_list, "unit_name", "unit_id", function (val) {
