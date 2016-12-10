@@ -2969,7 +2969,7 @@ BEGIN
             WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
         ) as assigned_units
         from tbl_units tu inner join tbl_units_organizations tud
-        ON tu.unit_id = tud.unit_id 
+        ON tu.unit_id = tud.unit_id
         inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= tu.client_id
         group by tu.client_id, tud.domain_id;
     ELSE
@@ -2985,12 +2985,12 @@ BEGIN
             WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
         ) as assigned_units
         from tbl_units tu inner join tbl_units_organizations tud
-        ON tu.unit_id = tud.unit_id 
-        inner join tbl_user_units uu ON uu.user_id = userid_ and uu.client_id= tu.client_id 
+        ON tu.unit_id = tud.unit_id
+        inner join tbl_user_units uu ON uu.user_id = userid_ and uu.client_id= tu.client_id
         and uu.unit_id = tu.unit_id
         group by tu.client_id, tud.domain_id;
     END IF;
-    
+
 END//
 
 DELIMITER ;
@@ -6444,8 +6444,20 @@ in clientid int(11)
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid;
     insert into tbl_user_clients
-    (user_id, user_category_id, client_id) 
+    (user_id, user_category_id, client_id)
     values
     (userid, @u_cat_id, clientid);
 END //
 
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_report_frequency`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_report_frequency`()
+BEGIN
+    select frequency_id, frequency from
+    tbl_compliance_frequency;
+END//
+
+DELIMITER;
