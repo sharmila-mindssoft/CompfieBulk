@@ -1791,7 +1791,7 @@ BEGIN
     WHERE country_id = countryid;
 
     SELECT count(*) as count
-    FROM tbl_legal_entities
+    FROM tbl_client_countries
     WHERE country_id = countryid;
 END //
 
@@ -2953,7 +2953,7 @@ DROP PROCEDURE IF EXISTS `sp_userunits_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_userunits_list`()
+CREATE PROCEDURE `sp_userunits_list`( IN userid_ INT(11))
 BEGIN
     select count(tu.unit_id) as total_units, tu.client_id,
     tu.legal_entity_id, domain_id, (
@@ -2967,7 +2967,9 @@ BEGIN
         WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
     ) as assigned_units
     from tbl_units tu inner join tbl_units_organizations tud
-    ON tu.unit_id = tud.unit_id group by client_id, domain_id;
+    ON tu.unit_id = tud.unit_id 
+    inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= tu.client_id
+    group by client_id, domain_id;
 END//
 DELIMITER ;
 
@@ -3032,8 +3034,8 @@ BEGIN
         WHERE td.domain_id = tui.domain_id
     ) as domain_name, (
         SELECT organisation_name FROM tbl_organisation ti
-        WHERE ti.industry_id = tui.industry_id
-    ) as industry_name FROM tbl_units_organizations tui
+        WHERE ti.organisation_id = tui.organisation_id
+    ) as organisation_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
         SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
     );
@@ -3054,7 +3056,7 @@ CREATE PROCEDURE `sp_users_domain_managers`(
 BEGIN
     SELECT user_id,
     concat(employee_code, "-", employee_name) as employee_name,
-    is_active FROM tbl_users WHERE user_category_id=7 and
+    is_active, user_category_id FROM tbl_users WHERE user_category_id=7 and
     user_id in (SELECT child_user_id FROM tbl_user_mapping
     WHERE parent_user_id=session_user);
 END //
@@ -3100,8 +3102,8 @@ BEGIN
         WHERE td.domain_id = tui.domain_id
     ) as domain_name, (
         SELECT organisation_name FROM tbl_organisation ti
-        WHERE ti.industry_id = tui.industry_id
-    ) as industry_name FROM tbl_units_organizations tui
+        WHERE ti.organisation_id = tui.organisation_id
+    ) as organisation_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
         SELECT unit_id FROM tbl_units tu WHERE tu.client_id=clientid
     ) and tui.domain_id=domainid;
@@ -3461,7 +3463,7 @@ BEGIN
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
-    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
     t1.country_id = countryid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
@@ -3574,7 +3576,7 @@ BEGIN
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
-    inner join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
     where
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
@@ -6196,6 +6198,7 @@ END //
 
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS `sp_save_geography_master`;
 
 DELIMITER //
@@ -6303,6 +6306,64 @@ BEGIN
     SELECT geography_id, geography_name, level_id,
     parent_ids, parent_names, is_active
     FROM tbl_geographies WHERE geography_id = _g_id;
+END //
+
+DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(
+in clientid int(11),
+in businessgroupid int(11),
+in legalentityid int(11),
+in countryid int(11),
+in userId INT(11))
+BEGIN
+    select t2.unit_id, t2.client_id, t2.business_group_id,
+    t2.legal_entity_id, t2.division_id,
+    t2.geography_id, t2.unit_code,t2.country_id,
+    t2.unit_name, t2.address, t2.postal_code,
+    t2.is_approved, t2.is_closed as is_active,
+    t4.legal_entity_name as l_entity,
+    (select business_group_name from tbl_business_groups
+        where business_group_id = t2.business_group_id) as b_group,
+    (select division_name from tbl_divisions
+        where division_id = t2.division_id) as division,
+    (select category_name from tbl_categories
+        where category_id = t2.category_id) as category_name,
+    t9.short_name as group_name,
+    t8.country_name, t2.category_id, t2.remarks
+    from
+    tbl_user_legalentity as t1,
+    tbl_units as t2,
+    tbl_legal_entities as t4,
+    tbl_countries as t8,
+    tbl_client_groups as t9
+    where
+    t9.client_id = t2.client_id and
+    t8.country_id = t2.country_id and
+    t4.legal_entity_id = t2.legal_entity_id and
+    t2.legal_entity_id = t1.legal_entity_id and
+    t2.client_id = t1.client_id and
+    t1.user_id = userId and
+    t2.country_id = countryid and
+    t2.legal_entity_id = legalentityid and
+    t2.client_id = clientid and
+    t2.business_group_id = businessgroupid
+    order by group_name, b_group, l_entity, country_name;
+
+    select t3.unit_id, t3.domain_id, t3.organisation_id
+    from
+    tbl_user_legalentity as t1,
+    tbl_units as t2,
+    tbl_units_organizations as t3
+    where
+    t3.unit_id = t2.unit_id and
+    t2.legal_entity_id = t1.legal_entity_id and
+    t2.client_id = t1.client_id and
+    t1.user_id =userId and
+    t2.country_id = countryid and
+    t1.legal_entity_id = legalentityid;
 END //
 
 DELIMITER;
