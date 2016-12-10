@@ -2156,7 +2156,7 @@ def return_assigned_unit_details(units, unit_industry_name_map):
 def get_data_for_assign_unit(db, request, session_user):
     business_groups = get_business_groups_for_client(db, request.client_id)
     legal_entities = get_legal_entities_for_client(db, request.client_id)
-    units = get_units_of_client(db, request.client_id, request.domain_id)
+    units = get_units_of_client(db, request.client_id, request.domain_id, session_user)
     domain_managers = get_domain_managers_for_user(db, session_user)
     return business_groups, legal_entities, units, domain_managers
 
@@ -2203,10 +2203,10 @@ def get_domain_managers_for_user(db, session_user):
     # To get list of domain managers assigned under a session user
     # Parameters - session user
     #
-    users = db.call_proc(
-        "sp_users_domain_managers", (session_user,)
-    )
-    return return_domain_managers(users)
+    users = db.call_proc_with_multiresult_set(
+        "sp_users_domain_managers", (session_user), 2) 
+
+    return return_domain_managers(users[1])
 
 
 def return_domain_managers(data):
@@ -2220,16 +2220,16 @@ def return_domain_managers(data):
     return result
 
 
-def get_units_of_client(db, client_id, domain_id):
+def get_units_of_client(db, client_id, domain_id, session_user):
     #
     # To get list of units under a client and domain
     # Parameters - client id, domain id
     #
     result = db.call_proc_with_multiresult_set(
-        "sp_units_list", (client_id, domain_id), 2)
+        "sp_units_list", (client_id, domain_id, session_user), 3)
 
-    units = result[0]
-    industry_details = result[1]
+    units = result[1]
+    industry_details = result[2]
     domain_industry_map = generate_unit_domain_industry_map(industry_details)
     return return_assigned_unit_details(units, domain_industry_map)
 
