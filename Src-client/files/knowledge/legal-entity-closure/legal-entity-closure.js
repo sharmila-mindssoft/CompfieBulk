@@ -5,7 +5,6 @@ function loadLegalEntityClosureList()
 {
 	console.log("inside getGroupAdmin_Group")
 	function onSuccess(data) {
-		console.log("data:"+data)
 		legalEntityClosureList = data.legalentity_closure;
 		LegalEntityClosureData(legalEntityClosureList);
 	}
@@ -58,7 +57,7 @@ function LegalEntityClosureData(data)
 		}
 		else
 		{
-			if(parseInt(val.validity_days) > 90)
+			if(parseInt(val.validity_days) > 1)
 			{
 				$('#close', clone).hide();
 				$('#reactive', clone).hide();
@@ -68,7 +67,6 @@ function LegalEntityClosureData(data)
 			}
 			else
 			{
-				console.log('validity')
 				$('#close', clone).hide();
 				$('#reactive', clone).show();
 				$('#reactive', clone).addClass('-'+val.legal_entity_id)
