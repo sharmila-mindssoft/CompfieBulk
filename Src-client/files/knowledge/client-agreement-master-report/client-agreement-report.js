@@ -123,31 +123,30 @@ function validateMandatory() {
     return is_valid;
 };
 
-$('.close').click(function() {
-    $('.overlay').css('visibility', 'hidden');
-    $('.overlay').css('opacity', '0');
-});
-
 function displayPopup(LE_ID, D_ID) {
     mirror.getOrganizationWiseUnitCount(LE_ID, D_ID,
         function(error, response) {
             if (error != null) {
                 displayMessage(error);
             } else {
-                $('.overlay').css('visibility', 'visible');
-                $('.overlay').css('opacity', '1');
                 $('.popup-list').find('tr').remove();
                 var unit_count_list = response.organizationwise_unit_count_list;
-
                 $.each(unit_count_list, function(key, value) {
                     $('.table-popup-list').show();
                     var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;
                     $('.popup-heading').text(value.domain_name);
-                    var tableRow = $('#templates .table-popup-list .table-row');
-                    var clone = tableRow.clone();
+                    var clone = $('#templates .table-popup-list .table-row').clone();
                     $('.popup_organization_name', clone).text(value.organization_name);
                     $('.popup_unit_count', clone).text(domain_units);
                     $('.popup-list').append(clone);
+                });
+
+                Custombox.open({
+                    target: '#custom-modal',
+                    effect: 'contentscale',
+                    complete: function() {
+                        isAuthenticate = false;
+                    }
                 });
             }
         }
@@ -165,11 +164,13 @@ function loadCompliances(data) {
 
         var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;
         var license_details = value.used_licence + ' / ' + value.total_licence;
+
         var file_space_details = value.used_file_space + ' / ' + value.file_space;
 
         if (lastGroup != value.group_name) {
-            var tableRowHeading = $('#templates .table-agreement-list .group-list');
+            var tableRowHeading = $('#templates .group-list');
             var cloneHeading = tableRowHeading.clone();
+            $('.group-name', cloneHeading).text(value.group_name);
             $('.group-name', cloneHeading).text(value.group_name);
             if (lastBusinessGroup != value.business_group_name) {
                 $('.business-group-name', cloneHeading).text(value.business_group_name);
@@ -182,10 +183,10 @@ function loadCompliances(data) {
         }
 
         if (lastLE != value.legal_entity_name) {
-            var tableRow = $('#templates .table-agreement-list .agreement-row-list');
+
+            var tableRow = $('#templates .agreement-row-list');
             var clone = tableRow.clone();
             sno = sno + 1;
-
             var status = 'Active';
             if (value.is_active == false) {
                 status = 'Closed';
@@ -196,38 +197,34 @@ function loadCompliances(data) {
             $('.file-space', clone).html(file_space_details);
             $('.le-email', clone).html(value.legal_entity_admin_email);
             $('.le-contactno', clone).html(value.legal_entity_admin_contactno);
-            $('.domain-count', clone).html(value.domain_count);
+            $('.domain-count', clone).html(value.domain_count).on('click', function() { tree_open_close(key); });
             $('.contract-from', clone).html(value.contract_from);
             $('.contract-to', clone).html(value.contract_to);
             $('.status', clone).html(status);
             $('.table-client-agreement-list').append(clone);
 
-            $('.table-client-agreement-list').append('<table class="accordion-content accordion-content' + acc_count + '"></table>');
-            $('.accordion-content' + acc_count).addClass('default');
-
             lastLE = value.legal_entity_name;
             acc_count++;
 
             var tableRowvalues_ul = $('#templates .agreement-inner-list');
-            var cloneval_ul = tableRowvalues_ul.clone();
+            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree' + key);;
             $('.inner-domain-name', cloneval_ul).html(value.d_name);
             $('.inner-domain-units', cloneval_ul).text(domain_units);
             $('.inner-domain-units', cloneval_ul).on('click', function() {
                 displayPopup(value.legal_entity_id, value.domain_id);
             });
             $('.inner-activation-date', cloneval_ul).html(value.activation_date);
-            $('.accordion-content' + (acc_count - 1)).append(cloneval_ul);
-
+            $('.table-client-agreement-list').append(cloneval_ul);
         } else {
             var tableRowvalues_ul = $('#templates .agreement-inner-list');
-            var cloneval_ul = tableRowvalues_ul.clone();
+            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree' + key);;
             $('.inner-domain-name', cloneval_ul).html(value.d_name);
             $('.inner-domain-units', cloneval_ul).text(domain_units);
             $('.inner-domain-units', cloneval_ul).on('click', function() {
                 displayPopup(value.legal_entity_id, value.domain_id);
             });
             $('.inner-activation-date', cloneval_ul).html(value.activation_date);
-            $('.accordion-content' + (acc_count - 1)).append(cloneval_ul);
+            $('.table-client-agreement-list').append(cloneval_ul);
         }
     });
 
@@ -235,6 +232,10 @@ function loadCompliances(data) {
         $(this).next().slideToggle('fast');
         $('.accordion-content').not($(this).next()).slideUp('fast');
     });
+}
+
+function tree_open_close(id) {
+    $('.tree' + id).toggle("slow");
 }
 
 function processSubmit(csv) {
@@ -411,7 +412,7 @@ function pageControls() {
         }
     });
 
-    //load legalentity list in autocomplete text box
+    //load legalentity list in autocomplete text box 
     LegalEntityVal.keyup(function(e) {
         if (Country.val() != '') {
             var condition_fields = [];
@@ -437,10 +438,4 @@ function pageControls() {
 $(document).ready(function() {
     initialize();
     pageControls();
-    $('.tree-open-close').click(function() {
-        alert("hi")
-        //$('.tree-data').show( "slow" );
-        //$('.tree-data').slideToggle();
-        $('.tree-data').toggle("slow");
-    });
 });

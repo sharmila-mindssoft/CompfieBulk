@@ -1,108 +1,107 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <!-- Client Master View Start -->
 <div class="container" id="clientgroup-view">
-  <div class="row">
-    <div class="col-sm-1"> </div>
-    <div class="col-sm-10">
-      <div class="btn-group pull-right m-t-5 m-b-20">
-      <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light btn-clientgroup-add"> <i class="fa fa-plus-circle"></i> Add</button>
-      </div>
-      <h4 class="page-title">Clients</h4>
-    </div>
-    <div class="col-sm-1"></div>
-  </div>
-  <div class="row" id="animationSandbox">
-    <div class="col-lg-1"> </div>
-      <div class="col-lg-10">
-        <div class="panel panel-default panel-info">
-          <div class="panel-body" >
-            <div class="dataTable_wrapper">
-              <table  class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
-                <thead>
-                  <tr>
-                    <th align="center" width="2%">#</th>
-                    <th width="20%">Country</th>
-                    <th width="20%">Group</th>
-                    <th width="10%">No.of Legal Entity</th>
-                    <th align="center" width="5%">Edit</th>
-                    <th width="5%" align="center" >Status</th>
-                    <th width="10%" >Approval Status</th>
-                  </tr>
-                  <tr >
-                    <td align="center"></td>
-                    <td>
-                      <div class="form-group has-feedback col-sm-12 no-padding">
-                          <input class="form-control input-sm" placeholder="Country" type="text">
-                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="form-group has-feedback col-sm-12 no-padding">
-                          <input class="form-control input-sm" placeholder="Group" type="text">
-                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="form-group has-feedback col-sm-12 no-padding">
-                          <input class="form-control input-sm" placeholder="No.of Legal Entity" type="text">
-                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                    <td align="center"></td>
-                    <td align="center">
-                      <div class="btn-group">
-                          <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                              All
-                              <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu">
-                              <li><a href="#">All</a></li>
-                              <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
-                              <li><a href="#"><i class="fa fa-times text-danger"></i> Deactive</a></li>
-                          </ul>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="btn-group">
-                          <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                              All
-                              <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu">
-                              <li><a href="#">All</a></li>
-                              <li><a href="#">Pending</a></li>
-                              <li><a href="#">Approved</a></li>
-                              <li><a href="#">Rejected</a></li>
-                          </ul>
-                      </div>
-                    </td>
-                  </tr>
-                </thead>
-                <tbody class="tbody-clientgroup-list">
-                </tbody>
-              </table>
+    <div class="row">
+        <div class="col-sm-1"> </div>
+        <div class="col-sm-10">
+            <div class="btn-group pull-right m-t-5 m-b-20">
+                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light btn-clientgroup-add"> <i class="fa fa-plus-circle"></i> Add</button>
             </div>
-          </div>
+            <h4 class="page-title">Clients</h4>
         </div>
-      </div>
+        <div class="col-sm-1"></div>
+    </div>
+    <div class="row" id="animationSandbox">
+        <div class="col-lg-1"> </div>
+        <div class="col-lg-10">
+            <div class="panel panel-default panel-info">
+                <div class="panel-body">
+                    <div class="dataTable_wrapper">
+                        <table class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th align="center" width="2%">#</th>
+                                    <th width="20%">Country</th>
+                                    <th width="20%">Group</th>
+                                    <th width="10%">No.of Legal Entity</th>
+                                    <th align="center" width="5%">Edit</th>
+                                    <th width="5%" align="center">Status</th>
+                                    <th width="10%">Approval Status</th>
+                                </tr>
+                                <tr class="filter-tr">
+                                    <td align="center"></td>
+                                    <td>
+                                        <div class="form-group has-feedback col-sm-12 no-padding">
+                                            <input class="form-control input-sm js-filter" placeholder="Country" type="text">
+                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group has-feedback col-sm-12 no-padding">
+                                            <input class="form-control input-sm js-filter" placeholder="Group" type="text">
+                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group has-feedback col-sm-12 no-padding">
+                                            <input class="form-control input-sm js-filter" placeholder="No.of Legal Entity" type="text">
+                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                        </div>
+                                    </td>
+                                    <td align="center"></td>
+                                    <td align="center">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                                All
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">All</a></li>
+                                                <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <li><a href="#"><i class="fa fa-times text-danger"></i> Deactive</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                                All
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">All</a></li>
+                                                <li><a href="#">Pending</a></li>
+                                                <li><a href="#">Approved</a></li>
+                                                <li><a href="#">Rejected</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-clientgroup-list">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div id="templates">
-  <table class="table-clientgroup-list">
-    <tr class="odd gradeX table-row">
-      <td align="center" class="sno"></td>
-      <td class="country_names"></td>
-      <td class="group_name"></td>
-      <td class="no_of_entities"></td>
-      <td class="icon-3x text-center edit-icon"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click Here to Edit"></i> </td>
-      <td class="icon-3x text-center status">
-          <span data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i></span>
-      </td>
-      <td class="approval-status"></td>
-    </tr>
-  </table>
-</div>            
+    <table class="table-clientgroup-list">
+        <tr class="odd gradeX table-row">
+            <td align="center" class="sno"></td>
+            <td class="country_names"></td>
+            <td class="group_name"></td>
+            <td class="no_of_entities"></td>
+            <td class="icon-3x text-center edit-icon"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click Here to Edit"></i> </td>
+            <td class="icon-3x text-center status">
+                <span data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i></span>
+            </td>
+            <td class="approval-status"></td>
+        </tr>
+    </table>
+</div>
 <!-- Modal Start-->
 <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-sm">
@@ -112,12 +111,12 @@
                 <h4 class="modal-title" id="mySmallModalLabel"> Enter Password</h4>
             </div>
             <div class="modal-body p-b-0">
-              <div class="form-group">
-                <input class="form-control input-sm" placeholder="Password" type="text">
-              </div>
-              <div class="form-group">
-                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
-              </div>
+                <div class="form-group">
+                    <input class="form-control input-sm" placeholder="Password" type="text">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+                </div>
             </div>
         </div>
     </div>
@@ -129,124 +128,120 @@
     <div class="row" id="animationSandbox">
         <div class="col-sm-12">
             <div class="portlet">
-              <div class="portlet-heading bg-info">
-              <h3 class="portlet-title">Add Client</h3>
-              <div class="portlet-widgets">
-                  <a class="c-pointer cancel" >
-                      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                  </a>
-              </div>
-              <div class="clearfix"></div>
-          </div>
-            <div id="bg-primary1" class="panel-collapse collapse in">
-            <div class="portlet-body">
-                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class=" col-sm-4 control-label">Group <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" id="group-text" class="form-control input-sm" placeholder="Group Name" tabindex="1">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-4 control-label">View Only Licence(s) <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" id="view-licence-text" class="form-control input-sm numeric" placeholder="Total Licence Number" tabindex="3">
-                            </div>
-                        </div>
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Add Client</h3>
+                    <div class="portlet-widgets">
+                        <a class="c-pointer cancel">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" id="shortname"  placeholder="Short Name" tabindex="2">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm"  id="username" placeholder="user@domain.com" tabindex="4">
-                                <abbr class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small></abbr>
-                               
-                            </div>
-                            <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
-                                  <i class="fa fa-pencil text-primary c-pointer" onclick="chenge_edit(1)"></i>
-                            </div>
-                        </div>
-                    </div>
-                     <div class="col-sm-12">
-                      <div class="col-sm-6">
-                        <div class="form-group action-div">
-                            <label class="col-sm-4 control-label">Action:</label>
-                            <div class="col-sm-6 actions">
-                              <select class="form-control input-sm">
-                                  <option value="1">Edit</option>
-                                  <option value="2">Renewal</option>
-                                  <option value="3">Amendment</option>
-                              </select>
-                            </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group remarks_text remarks-div">
-                            <label class="col-sm-4 control-label">Remarks:</label>
-                            <label class="col-sm-6"><input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text"  type="text"></label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="clear"></div>   <div class="col-sm-12">
-                    <div class="form-group pull-right p-t-7">
-                        <a class="waves-effect waves-light c-pointer add-le img-link" type="button"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Legal Entity</span> </a>
-                    </div>
-                     <h4 class="page-title">Legal Entity Configuration</h4>
-                    </div>
-                    <div class="clear"></div>
-                    <div class="le-body">
-                    </div>                
-
-                    <h4 class="page-title">Date Configuration</h4>
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th width="35%">Domain</th>
-                                <th width="65%" colspan="2" class="text-center">Timeline</th>
-                            </tr>
-                        </thead>
-                        <tbody class="tbody-dateconfiguration-list">
-                        </tbody>
-                      </table>
-
-                      <div class="form-group text-center m-b-0 p-t-7">
-                          <button class="btn btn-primary waves-effect waves-light save" type="button" > Submit </button>
-                          <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/client-group/list'"> Cancel </button> -->
-                      </div>
-                    <div class="clear"></div>
-                </form>
-                  
+                    <div class="clearfix"></div>
                 </div>
-
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class=" col-sm-4 control-label">Group <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="group-text" class="form-control input-sm" placeholder="Group Name" tabindex="1">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class=" col-sm-4 control-label">View Only Licence(s) <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" placeholder="Total Licence Number" tabindex="3">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="shortname" placeholder="Short Name" tabindex="2">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="username" placeholder="user@domain.com" tabindex="4">
+                                        <abbr class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small>
+                                        </abbr>
+                                    </div>
+                                    <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
+                                        <i class="fa fa-pencil text-primary c-pointer" onclick="chenge_edit(1)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                    <div class="form-group action-div">
+                                        <label class="col-sm-4 control-label">Action:</label>
+                                        <div class="col-sm-6 actions">
+                                            <select class="form-control input-sm">
+                                                <option value="1">Edit</option>
+                                                <option value="2">Renewal</option>
+                                                <option value="3">Amendment</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group remarks_text remarks-div">
+                                        <label class="col-sm-4 control-label">Remarks:</label>
+                                        <label class="col-sm-6">
+                                            <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" type="text">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="col-sm-12">
+                                <div class="form-group pull-right p-t-7">
+                                    <a class="waves-effect waves-light c-pointer add-le img-link" type="button"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Legal Entity</span> </a>
+                                </div>
+                                <h4 class="page-title">Legal Entity Configuration</h4>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="le-body">
+                            </div>
+                            <h4 class="page-title">Date Configuration</h4>
+                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th width="35%">Domain</th>
+                                        <th width="65%" colspan="2" class="text-center">Timeline</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody-dateconfiguration-list">
+                                </tbody>
+                            </table>
+                            <div class="form-group text-center m-b-0 p-t-7">
+                                <button class="btn btn-primary waves-effect waves-light save" type="button"> Submit </button>
+                                <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/client-group/list'"> Cancel </button> -->
+                            </div>
+                            <div class="clear"></div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- end col -->
     </div>
 </div>
-
-
 <!-- Modal -->
 <div id="custom-modal" class="modal-demo box-width-600">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-    </span>    
-        <input type="hidden" id="le-cnt"/>
-        <input type="hidden" id="d-cnt"/>
-        <input type="hidden" id="o-cnt"/>
+    </span>
+    <input type="hidden" id="le-cnt" />
+    <input type="hidden" id="d-cnt" />
+    <input type="hidden" id="o-cnt" />
     <h4 class="custom-modal-title p-t-10 p-b-10">Add Organization</h4>
     <div class="custom-modal-text p-t-0 p-b-10">
         <form role="form">
             <h4 class="dialog-sub-heading-bg"></h4>
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-10" width="100%" cellspacing="0">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-10" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th width="60%">Organization</th>
@@ -256,233 +251,226 @@
                 </thead>
                 <tbody class="organization-list">
                 </tbody>
-              </table>
-               <div class="form-group pull-right m-b-0"  tabindex="13">
-            <a class="waves-effect waves-light c-pointer add-organization" title="Click to add new Organization" type="button"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add New</span> </a>
-        </div>
-              <button type="button" class="btn btn-primary waves-effect waves-light org-submit">Save</button>
+            </table>
+            <div class="form-group pull-right m-b-0" tabindex="13">
+                <a class="waves-effect waves-light c-pointer add-organization" title="Click to add new Organization" type="button"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add New</span> </a>
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light org-submit">Save</button>
         </form>
     </div>
 </div>
 <div class="organization-template default-display-none">
     <table>
         <tr class="org-row">
-         <td>
-            <div class="form-group has-feedback col-sm-12 no-padding m-b-0">
-                <input class="form-control input-sm" id="orgselected"  type="text">
-                <input type="hidden" id="industry">
-                <div id="ac-industry" class="ac-textbox default-display-none" width="10%">
-                  <ul></ul>
+            <td>
+                <div class="form-group has-feedback col-sm-12 no-padding m-b-0">
+                    <input class="form-control input-sm" id="orgselected" type="text">
+                    <input type="hidden" id="industry">
+                    <div id="ac-industry" class="ac-textbox default-display-none" width="10%">
+                        <ul></ul>
+                    </div>
+                    <i class="form-control-feedback fa fa-search"></i>
                 </div>
-                <i class="form-control-feedback fa fa-search"></i>
-            </div>
-          </td>
-          <td>
-            <div class="form-group col-sm-6 m-b-0">
-              <input class="form-control input-sm  no-of-units" type="text" >
-            </div>
-          </td>
-          <td class="icon-3x text-center">
-              <i class="fa fa-trash text-primary c-pointer"></i>
-          </td>
+            </td>
+            <td>
+                <div class="form-group col-sm-6 m-b-0">
+                    <input class="form-control input-sm  no-of-units" type="text">
+                </div>
+            </td>
+            <td class="icon-3x text-center">
+                <i class="fa fa-trash text-primary c-pointer"></i>
+            </td>
         </tr>
     </table>
 </div>
 <div class="legal-entity-config-template default-display-none">
-  <div class="grid-table">
-      <input type="hidden" class="le-no">
-      <input type="hidden" class="le-id">
+    <div class="grid-table">
+        <input type="hidden" class="le-no">
+        <input type="hidden" class="le-id">
         <div class="card-box p-10 letable">
-          <div class="col-sm-4">
-              <div class="form-group">
-                  <label class=" col-sm-4 p-t-5">Country</label>
-                  <div class="col-sm-6 no-padding-right">
-                      <select placeholder="Select Country" class="form-control country input-sm" tabindex="5">
-                      </select>
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label class=" col-sm-4 p-t-5">Contract From</label>
-                  <div class="col-sm-6 no-padding-right">
-                      <input class="form-control input-sm contract-from" readonly="readonly"  placeholder="Select Contract From" tabindex="8" type="text">
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label class=" col-sm-4 p-t-5">Upload Logo</label>
-                  <div class="col-sm-6 no-padding-right">
-                      <input class="form-control input-sm" tabindex="11"  id="upload-logo" type="file">
-                       <span>
-                        <img  id="upload-logo-img"  width="25" height="30">
-                    </span>
-                  </div>
-              </div>
-          </div>
-          <div class="col-sm-4">
-              <div class="form-group">
-                  <label class="col-sm-4 p-t-5">Business Group</label>
-                  <div class="select_business_group">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Country</label>
                     <div class="col-sm-6 no-padding-right">
-                        <select class="form-control input-sm business-group" tabindex="6">
+                        <select placeholder="Select Country" class="form-control country input-sm" tabindex="5">
                         </select>
                     </div>
-                    <div class="col-sm-2 p-t-7">   
-                      <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add')"> <i class="fa fa-plus-circle text-primary addbg"></i> </a>
-                    </div>
-                  </div>
-                  <div class="input_business_group default-display-none">
+                </div>
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Contract From</label>
                     <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm business-group-text" placeholder="Enter Business Group" type="text">
+                        <input class="form-control input-sm contract-from" readonly="readonly" placeholder="Select Contract From" tabindex="8" type="text">
                     </div>
-                    <div class="col-sm-2 p-t-7">
-                      <a class="waves-effect waves-light c-pointer icon-3x cancel-add-business-group" type="button" onclick="addOrSelectBusinessGroup('cancel')"> <i class="fa fa-times text-primary"></i> </a>
+                </div>
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Upload Logo</label>
+                    <div class="col-sm-6 no-padding-right">
+                        <input class="form-control input-sm" tabindex="11" id="upload-logo" type="file">
+                        <span>
+                        <img  id="upload-logo-img"  width="25" height="30">
+                    </span>
                     </div>
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label class=" col-sm-4 p-t-5">Contract To</label>
-                  <div class="col-sm-6 no-padding-right">
-                      <input class="form-control input-sm contract-to"  type="text" placeholder="Select Contract To" tabindex="9">
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label class=" col-sm-4 p-t-5">File Space</label>
-                  <div class="col-sm-2 no-padding-right">
-                      <input class="form-control input-sm"  id="file-space"  type="text" placeholder="Enter File Space" tabindex="12">
-                      
-                  </div>
-                  <div class="col-sm-4">GB</div>
-              </div>
-          </div>
-          <div class="col-sm-4">
-              <div class="form-group">
-                  <label class="col-sm-4 p-t-5">Legal Entity</label>
-                  <div class="col-sm-4 no-padding-right">
-                      <input class="form-control input-sm legal-entity-text" placeholder="Enter Legal Entity"  id="legal_entity_text" tabindex="7"  type="text">
-                  </div>
-                  <label class="col-sm-2 icon-3x no-padding-right edit-right-icon">
-                    <i class="fa fa-pencil text-primary c-pointer pull-right"></i>
-                  </label>
-
-              </div>
-              <div class="form-group">
-                  <label class="col-sm-4 p-t-5">Total Licence(s)</label>
-                  <div class="col-sm-6 no-padding-right">
-                      <input class="form-control input-sm" value="" id="no-of-user-licence" type="text" tabindex="10"  placeholder="Enter No. of Licence">
-                  </div>
-              </div>
-          </div>
-
-          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
-            <thead>
-                <tr>
-                    <th width="30%">Domain <span class="mandatory">*</span></th>
-                    <th width="30%">Activation Date <span class="mandatory">*</span></th>
-                    <th width="30%">Organization <span class="mandatory">*</span></th>
-                    <th width="10%" class="text-center">Remove</th>
-                </tr>
-            </thead>
-             <input type="hidden" class="domain-count" value='0'/>
-              <tbody class="domain-list">
-            </tbody>
-          
-          </table>
-          <!-- <button type="button" class="btn btn-info btn-sm waves-effect waves-light pull-right m-t-5">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 p-t-5">Business Group</label>
+                    <div class="select_business_group">
+                        <div class="col-sm-6 no-padding-right">
+                            <select class="form-control input-sm business-group" tabindex="6">
+                            </select>
+                        </div>
+                        <div class="col-sm-2 p-t-7">
+                            <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add')"> <i class="fa fa-plus-circle text-primary addbg"></i> </a>
+                        </div>
+                    </div>
+                    <div class="input_business_group default-display-none">
+                        <div class="col-sm-6 no-padding-right">
+                            <input class="form-control input-sm business-group-text" placeholder="Enter Business Group" type="text">
+                        </div>
+                        <div class="col-sm-2 p-t-7">
+                            <a class="waves-effect waves-light c-pointer icon-3x cancel-add-business-group" type="button" onclick="addOrSelectBusinessGroup('cancel')"> <i class="fa fa-times text-primary"></i> </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Contract To</label>
+                    <div class="col-sm-6 no-padding-right">
+                        <input class="form-control input-sm contract-to" type="text" placeholder="Select Contract To" tabindex="9">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">File Space</label>
+                    <div class="col-sm-2 no-padding-right">
+                        <input class="form-control input-sm" id="file-space" type="text" placeholder="Enter File Space" tabindex="12">
+                    </div>
+                    <div class="col-sm-4">GB</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 p-t-5">Legal Entity</label>
+                    <div class="col-sm-4 no-padding-right">
+                        <input class="form-control input-sm legal-entity-text" placeholder="Enter Legal Entity" id="legal_entity_text" tabindex="7" type="text">
+                    </div>
+                    <label class="col-sm-2 icon-3x no-padding-right edit-right-icon">
+                        <i class="fa fa-pencil text-primary c-pointer pull-right"></i>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 p-t-5">Total Licence(s)</label>
+                    <div class="col-sm-6 no-padding-right">
+                        <input class="form-control input-sm" value="" id="no-of-user-licence" type="text" tabindex="10" placeholder="Enter No. of Licence">
+                    </div>
+                </div>
+            </div>
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="30%">Domain <span class="mandatory">*</span></th>
+                        <th width="30%">Activation Date <span class="mandatory">*</span></th>
+                        <th width="30%">Organization <span class="mandatory">*</span></th>
+                        <th width="10%" class="text-center">Remove</th>
+                    </tr>
+                </thead>
+                <input type="hidden" class="domain-count" value='0' />
+                <tbody class="domain-list">
+                </tbody>
+            </table>
+            <!-- <button type="button" class="btn btn-info btn-sm waves-effect waves-light pull-right m-t-5">
             <span><i class="fa fa-plus"></i></span> 
           </button> -->
-          <div class="col-sm-12">
-          <div class="form-group pull-right m-b-0"  tabindex="13">
-            <a class="waves-effect waves-light c-pointer add-domain" type="button"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Domain</span> </a>
+            <div class="col-sm-12">
+                <div class="form-group pull-right m-b-0" tabindex="13">
+                    <a class="waves-effect waves-light c-pointer add-domain" type="button"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Domain</span> </a>
+                </div>
+            </div>
+            <div class="clear"></div>
         </div>
-        </div>
-          <div class="clear"></div>
-        </div>
-
-
-                    
-  </div>
+    </div>
 </div>
 <div class="domain_row_template default-display-none">
-  <table>
-    <tr class="domain_row">
-      <td>
-        <div class="form-group col-sm-6 m-b-0">
-          <select class="form-control input-sm domain">
-          </select>
-        </div>
-      </td>
-      <td>
-        <div class="form-group col-sm-6 m-b-0">
-          <input class="form-control input-sm activationdate" type="text" value="" >
-        </div>
-      </td>
-      <td>
-        <div class="form-group col-sm-6 m-b-0">
-          <a class="c-pointer addOrganizationType" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
-            <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title=""></i>
-             Add Organization
-          </a>
-        </div>
-      </td>
-      <td class="icon-3x text-center">
-          <i class="fa fa-trash text-primary c-pointer"></i>
-      </td>
-    </tr>
-  </table>
+    <table>
+        <tr class="domain_row">
+            <td>
+                <div class="form-group col-sm-6 m-b-0">
+                    <select class="form-control input-sm domain">
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-sm-6 m-b-0">
+                    <input class="form-control input-sm activationdate" type="text" value="">
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-sm-6 m-b-0">
+                    <a class="c-pointer addOrganizationType" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
+                        <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title=""></i> Add Organization
+                    </a>
+                </div>
+            </td>
+            <td class="icon-3x text-center">
+                <i class="fa fa-trash text-primary c-pointer"></i>
+            </td>
+        </tr>
+    </table>
 </div>
 <div class="dconfig-templates default-display-none">
-  <table class="table-dconfig-list">
-    <tr class="table-dconfig-countries-row">
-      <td><mark class="dconfig-country-name"></mark>
-      <input type="hidden" class="inputCountry" value=""></td>
-      <td align="center">From</td>
-      <td align="center">To</td>
-    </tr>
-    <tr class="table-dconfig-domain-row" >
-      <td class="dconfig-domain-name" >
-         <input type="hidden" class="inputDomain" value="">
-      </td>
-      <td align="center">
-        <div class="col-sm-offset-3 col-sm-6" >
-          <select class="form-control input-sm tl-from">
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-        </div>
-      </td>
-      <td align="center">
-        <div class="col-sm-offset-3 col-sm-6">
-          <select class="form-control input-sm tl-to">
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12" selected="selected">December</option>
-          </select>
-        </div>
-      </td>
-    </tr>
-  </table>
-</div>        
-
+    <table class="table-dconfig-list">
+        <tr class="table-dconfig-countries-row">
+            <td>
+                <mark class="dconfig-country-name"></mark>
+                <input type="hidden" class="inputCountry" value="">
+            </td>
+            <td align="center">From</td>
+            <td align="center">To</td>
+        </tr>
+        <tr class="table-dconfig-domain-row">
+            <td class="dconfig-domain-name">
+                <input type="hidden" class="inputDomain" value="">
+            </td>
+            <td align="center">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <select class="form-control input-sm tl-from">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+            </td>
+            <td align="center">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <select class="form-control input-sm tl-to">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12" selected="selected">December</option>
+                    </select>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
 <div class="user-list-drop-down default-display-none">
-  <li></li>
+    <li></li>
 </div>
 <div class="text default-display-none">
     <span class="p-t-7"></span>
@@ -500,6 +488,5 @@
         <option></option>
     </select>
 </div>
-
 <script type="text/javascript" src="/script/client-master/client-master.js"></script>
 {% endblock %}
