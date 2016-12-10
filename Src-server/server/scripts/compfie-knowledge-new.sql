@@ -1004,7 +1004,7 @@ CREATE TABLE `tbl_user_account_reassign_history` (
   `user_category_id` int(11) NOT NULL,
   `reassigned_from` int(11) DEFAULT NULL,
   `reassigned_to` int(11) DEFAULT NULL,
-  `reassinged_data` varchar(500) DEFAULT NULL,
+  `reassigned_data` varchar(500) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,
