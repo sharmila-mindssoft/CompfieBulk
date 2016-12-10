@@ -2204,7 +2204,7 @@ def get_domain_managers_for_user(db, session_user):
     # Parameters - session user
     #
     users = db.call_proc_with_multiresult_set(
-        "sp_users_domain_managers", (session_user), 2) 
+        "sp_users_domain_managers", [session_user], 2) 
 
     return return_domain_managers(users[1])
 
