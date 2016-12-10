@@ -1,6 +1,4 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
-
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
     <div class="row" id="animationSandbox">
         <div class="col-sm-12">
@@ -22,10 +20,10 @@
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="country" value="">
-                                        <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1"/>
+                                        <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1" />
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <div id="ac-country" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                     </div>
                                 </div>
@@ -36,30 +34,28 @@
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" id="group">
                                         <div id="ac-group" class="ac-textbox default-display-none">
-                                            <ul style="width:85%;" ></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="businessgroupval" placeholder="Enter Business Group"
-                                        tabindex="3">
+                                        <input type="text" class="form-control input-sm" id="businessgroupval" placeholder="Enter Business Group" tabindex="3">
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" id="businessgroup">
                                         <div id="ac-businessgroup" class="ac-textbox default-display-none">
-                                            <ul style="width:85%;" ></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="legalentityval" placeholder="Enter Legal Entity"
-                                        tabindex="4">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" placeholder="Enter Legal Entity" tabindex="4">
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" id="legalentity">
-                                        <div id="ac-legalentity" class="ac-textbox default-display-none" >
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
                                             <ul style="width:85%;"></ul>
                                         </div>
                                     </div>
@@ -69,8 +65,7 @@
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Domain:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="domainval" placeholder="Enter Domain Name"
-                                        tabindex="5">
+                                        <input type="text" class="form-control input-sm" id="domainval" placeholder="Enter Domain Name" tabindex="5">
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" id="domain" value="">
                                         <div id="ac-domain" class="ac-textbox default-display-none">
@@ -97,7 +92,7 @@
                                 <center>
                                     <div class="form-group m-b-0">
                                         <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit"  id="export"> Export </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export"> Export </button>
                                     </div>
                                 </center>
                             </div>
@@ -105,194 +100,189 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             <div id="compliance_animation">
-            <div class="card-box details" style="display: none">
-              <div class="grid-table-rpt default-display-none">
-                <div class="table-responsive">
-                        <div class="col-sm-12">
-                            <div class="col-sm-12 text-center">
-                                <h4>Client Agreement Master Report</h4>
+                <div class="card-box details" style="display: none">
+                    <div class="grid-table-rpt default-display-none">
+                        <div class="table-responsive">
+                            <div class="col-sm-12">
+                                <div class="col-sm-12 text-center">
+                                    <h4>Client Agreement Master Report</h4>
+                                </div>
                             </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                          <tbody class="table-client-agreement-list" id="accordion">
-
-                          </tbody>
-                        </table>
-                    <table class="pagination-view default-display-none">
-                        <tr>
-                            <td>
-                                <span class="compliance_count"> </span>
-                                <span class="divider-view"> | </span>
-                                <span class="items-per-page">
+                            <div class="clearfix"></div>
+                            <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr align="left" style="height:30px;" class="heading-list">
+                                        <th class="header-bg" width="01%" align="center">#</th>
+                                        <th class="header-bg" width="10%" align="left">Legal Entity</th>
+                                        <th class="header-bg text-center" width="13%" align="left">User Licenses
+                                            <br/>Used/Total</th>
+                                        <th class="header-bg text-center" width="10%" align="left">File Space
+                                            <br/>Used/Total</th>
+                                        <th class="header-bg" width="10%" align="left">LE/ Group Admin Details</th>
+                                        <th class="header-bg" width="10%" align="left">Contact Details</th>
+                                        <th class="header-bg" width="06%" align="left">Domain</th>
+                                        <th class="header-bg" width="12%" align="left">Units Per Domain
+                                            <br/>Used/Total</th>
+                                        <th class="header-bg" width="12%" align="left">Date of Agreement Inception</th>
+                                        <th class="header-bg" width="08%" align="left">Contract From</th>
+                                        <th class="header-bg" width="08%" align="left">Contract To</th>
+                                        <th class="header-bg" width="05%" align="left">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-client-agreement-list" id="accordion"></tbody>
+                            </table>
+                            <table class="pagination-view default-display-none">
+                                <tr>
+                                    <td>
+                                        <span class="compliance_count"> </span>
+                                        <span class="divider-view"> | </span>
+                                        <span class="items-per-page">
                                 Show
                                 <select id="items_per_page">
                                 </select>
                                 entries
                                 </span>
-                            </td>
-                            <td style="text-align:right;padding-right:10px;">
-                                <ul id="pagination-rpt"></ul>
-                            </td>
-                        </tr>
-                    </table>
+                                    </td>
+                                    <td style="text-align:right;padding-right:10px;">
+                                        <ul id="pagination-rpt"></ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-          </div>
         </div>
     </div>
 </div>
 <div id="templates">
-<table class="table-agreement-list" style="display: none;">
-
- <tr align="left" style="height:30px;" class="heading-list">
-    <th class="header-bg" width="01%" align="center">#</th>
-    <th class="header-bg" width="10%" align="left">Legal Entity</th>
-    <th class="header-bg text-center" width="13%" align="left">User Licenses<br/>Used/Total</th>
-    <th class="header-bg text-center" width="10%" align="left">File Space<br/>Used/Total</th>
-    <th class="header-bg" width="10%" align="left">LE/ Group Admin Details</th>
-    <th class="header-bg" width="10%" align="left">Contact Details</th>
-    <th class="header-bg" width="06%" align="left">Domain</th>
-    <th class="header-bg" width="12%" align="left">Units Per Domain<br/>Used/Total</th>
-    <th class="header-bg" width="12%" align="left">Date of Agreement Inception</th>
-    <th class="header-bg" width="08%" align="left">Contract From</th>
-    <th class="header-bg" width="08%" align="left">Contract To</th>
-    <th class="header-bg" width="05%" align="left">Status</th>
-  </tr>
-
- <tr class="group-list">
-  <td colspan="2">
-    <div class="col-sm-12 no-padding">
-      <mark class="p-l-10 p-r-10 group-name"></mark>
-    </div>
-  </td>
-  <td>
-    <div class="col-sm-12 no-padding">
-      <mark class="p-l-10 p-r-10 business-group-name"></mark>
-    </div>
-  </td>
-  <td class="group-admin-email"></td>
-  <td class="le-contactno"></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-</tr>
-
-
-
-<tbody class="accordion-toggle tbody-agreement-list">
-  <tr class="agreement-row-list">
-    <td class="sno"></td>
-    <td class="le"></td>
-    <td class="user-license"></td>
-    <td class="file-space"></td>
-    <td class="le-email"></td>
-    <td class="le-contactno"></td>
-    <td class="domain-count"></td>
-    <td ></td>
-    <td ></td>
-    <td class="contract-from"></td>
-    <td class="contract-to"></td>
-    <td class="status"></td>
-  </tr>
-</tbody>
-<tr class="tree-data agreement-inner-list">
-  <td colspan="6">&nbsp;</td>
-  <td colspan="100%">
-    <ul class="tree">
-      <li>
-      <table width="100%">
-        <tbody>
-          <tr class="smallfont">
-           <td width="20%" class="inner-domain-name"></td>
-           <td width="16%">
-           <a href="#" class="inner-domain-units"></a>
-           </td>
-           <td width="23%" class="inner-activation-date"></td>
-           <td width="20%"></td>
-           <td width="0%"></td>
-           <td width="0%"></td>
-          </tr>
-        </tbody>
-      </table>
-      </li>
-    </ul>
-  </td>
-</tr>
-</table>
-</div>
-
-<div id="no-record-templates" class="default-display-none">
-  <table class="table-no-content">
-  <tr align="left" class="table-row-no-content">
-  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
-  </tr>
-  </table>
-</div>
-
-<div id="popup1" class="overlay" style="display: none;">
-  <div class="popup">
-    <a class="close">x</a>
-    <div class="content">
-
-     <table width="100%" id="popup_table">
-     <tr>
-     <th colspan="2" align="center" class="popup-heading"></th>
-     </tr>
-
-     <tr class="header-bg">
-     <th> Organization Name</th>
-     <th> Units Used / Total</th>
-     </tr>
-     <tbody class="popup-list">
-    </tbody>
+    <table class="table-agreement-list" style="display: none;">
+        <tr class="group-list">
+            <td colspan="2">
+                <div class="col-sm-12 no-padding">
+                    <mark class="p-l-10 p-r-10 group-name"></mark>
+                </div>
+            </td>
+            <td>
+                <div class="col-sm-12 no-padding">
+                    <mark class="p-l-10 p-r-10 business-group-name"></mark>
+                </div>
+            </td>
+            <td></td>
+            <td class="group-admin-email"></td>
+            <td class="le-contactno"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="accordion-toggle agreement-row-list">
+            <td class="sno"></td>
+            <td class="le"></td>
+            <td class="user-license"></td>
+            <td class="file-space"></td>
+            <td class="le-email"></td>
+            <td class="le-contactno"></td>
+            <td>
+                <a class="domain-count c-pointer"></a>
+            </td>
+            <td></td>
+            <td></td>
+            <td class="contract-from"></td>
+            <td class="contract-to"></td>
+            <td class="status"></td>
+        </tr>
+        <tr class="agreement-inner-list" style="display: none;">
+            <td colspan="6">&nbsp;</td>
+            <td colspan="100%">
+                <ul class="tree">
+                    <li>
+                        <table width="100%">
+                            <tbody>
+                                <tr class="smallfont">
+                                    <td width="20%" class="inner-domain-name"></td>
+                                    <td width="16%">
+                                        <a class="inner-domain-units c-pointer"></a>
+                                    </td>
+                                    <td width="23%" class="inner-activation-date"></td>
+                                    <td width="20%"></td>
+                                    <td width="0%"></td>
+                                    <td width="0%"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+            </td>
+        </tr>
     </table>
-    </div>
-  </div>
 </div>
-
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
 <div id="templates">
-  <table class="table-popup-list" style="display: none;">
-    <tr class="table-row">
-      <td class="popup_organization_name"></td>
-      <td class="popup_unit_count" align="center"></td>
-    </tr>
-  </table>
+    <table class="table-popup-list" style="display: none;">
+        <tr class="table-row">
+            <td class="popup_organization_name" align="center"></td>
+            <td class="popup_unit_count" align="center"></td>
+        </tr>
+    </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10 popup-heading"></h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="table-responsive">
+                <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                    <tr class="header-bg table_bg_01">
+                        <td align="center"> Organization Name</td>
+                        <td align="center"> Units Used / Total</td>
+                    </tr>
+                    <tbody class="popup-list"> </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
 </div>
 <script type="text/javascript" src="/script/client-agreement-master-report/client-agreement-report.js"></script>
-
 <script type="text/javascript">
 $(function() {
-    $("#fromdate" ).datepicker({
-  changeMonth: true,
-  changeYear: true,
-  numberOfMonths: 1,
-  dateFormat: "dd-M-yy",
-  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  onClose: function( selectedDate ) {
-  $( "#todate" ).datepicker( "option", "minDate", selectedDate );
-  }
-});
+    $("#fromdate").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#todate").datepicker("option", "minDate", selectedDate);
+        }
+    });
 
-$( "#todate" ).datepicker({
-  changeMonth: true,
-  changeYear: true,
-  numberOfMonths: 1,
-  dateFormat: "dd-M-yy",
-  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  onClose: function( selectedDate ) {
-  $( "#fromdate" ).datepicker( "option", "maxDate", selectedDate );
-  }
-});
+    $("#todate").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#fromdate").datepicker("option", "maxDate", selectedDate);
+        }
+    });
 });
 </script>
 {% endblock %}

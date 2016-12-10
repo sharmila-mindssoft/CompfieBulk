@@ -474,7 +474,7 @@ api_params = {
     "act_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "StatutorySettingActGroup"},
     "compliance_statutories_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "StatutorySettingCompliances"},
     "level_one_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Level1StatutoryList"},
-    'compliance_task': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': False},
+    'compliance_task': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statutory_notifictions_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "StatutoryNotificationList"},
     'statutory_id_optional': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'from_date_optional': {'type': 'TEXT', 'length': 11, 'validation_method': None, 'is_optional': True},
