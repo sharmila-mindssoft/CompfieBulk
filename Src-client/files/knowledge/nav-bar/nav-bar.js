@@ -29,6 +29,10 @@ function initializeNavBar() {
       $('.menu-url', itemObject).append('<i class ="ti-settings m-r-5"></i>')
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
     }
+    else if (form_name == "View Profile") {
+      $('.menu-url', itemObject).append('<i class ="ti-user m-r-5"></i>')
+      $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
+    }
     else {
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
     }
