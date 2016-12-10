@@ -131,8 +131,7 @@
                                         <th class="header-bg" width="05%" align="left">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody class="table-client-agreement-list" id="accordion">
-                                </tbody>
+                                <tbody class="table-client-agreement-list" id="accordion"></tbody>
                             </table>
                             <table class="pagination-view default-display-none">
                                 <tr>
@@ -187,10 +186,8 @@
             <td class="file-space"></td>
             <td class="le-email"></td>
             <td class="le-contactno"></td>
-            <td class="d-count">
-                <a class="tree-open-close">
-                    <span class="domain-count" href="#"></span>
-                </a>
+            <td>
+                <a class="domain-count c-pointer"></a>
             </td>
             <td></td>
             <td></td>
@@ -198,7 +195,7 @@
             <td class="contract-to"></td>
             <td class="status"></td>
         </tr>
-        <tr class="tree-data agreement-inner-list">
+        <tr class="agreement-inner-list" style="display: none;">
             <td colspan="6">&nbsp;</td>
             <td colspan="100%">
                 <ul class="tree">
@@ -208,7 +205,7 @@
                                 <tr class="smallfont">
                                     <td width="20%" class="inner-domain-name"></td>
                                     <td width="16%">
-                                        <a href="#" class="inner-domain-units"></a>
+                                        <a class="inner-domain-units c-pointer"></a>
                                     </td>
                                     <td width="23%" class="inner-activation-date"></td>
                                     <td width="20%"></td>
@@ -230,31 +227,33 @@
         </tr>
     </table>
 </div>
-<div id="popup1" class="overlay" style="display: none;">
-    <div class="popup">
-        <a class="close">x</a>
-        <div class="content">
-            <table width="100%" id="popup_table">
-                <tr>
-                    <th colspan="2" align="center" class="popup-heading"></th>
-                </tr>
-                <tr class="header-bg">
-                    <th> Organization Name</th>
-                    <th> Units Used / Total</th>
-                </tr>
-                <tbody class="popup-list">
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 <div id="templates">
     <table class="table-popup-list" style="display: none;">
         <tr class="table-row">
-            <td class="popup_organization_name"></td>
+            <td class="popup_organization_name" align="center"></td>
             <td class="popup_unit_count" align="center"></td>
         </tr>
     </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10 popup-heading"></h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="table-responsive">
+                <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                    <tr class="header-bg table_bg_01">
+                        <td align="center"> Organization Name</td>
+                        <td align="center"> Units Used / Total</td>
+                    </tr>
+                    <tbody class="popup-list"> </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
 </div>
 <script type="text/javascript" src="/script/client-agreement-master-report/client-agreement-report.js"></script>
 <script type="text/javascript">
