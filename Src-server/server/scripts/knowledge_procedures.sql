@@ -4453,7 +4453,7 @@ CREATE PROCEDURE `sp_usermapping_report_group_details`(
 in userCatgId int(11), userId int(11))
 BEGIN
     if(userCatgId = 1)then
-        select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+        select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
         from tbl_legal_entities as tle,
         tbl_client_groups as tcg
@@ -4464,7 +4464,7 @@ BEGIN
         tle.is_closed != 1;
     end if;
     if(userCatgId = 5 or userCatgId = 6)then
-        select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+        select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
         from tbl_legal_entities as tle,
         tbl_client_groups as tcg
@@ -4476,7 +4476,7 @@ BEGIN
         tle.is_closed != 1;
     end if;
     if(userCatgId = 7 or userCatgId = 8)then
-        select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+        select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
         from
         tbl_legal_entities as tle,
