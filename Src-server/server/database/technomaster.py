@@ -2034,10 +2034,14 @@ def get_unassigned_units_list(db, session_user):
     # To get list of unassigned units
     #  Parameters - None
     #
-    units = db.call_proc(
-        "sp_userunits_list", [session_user]
+
+    units = db.call_proc_with_multiresult_set(
+        "sp_userunits_list", [session_user], 2
     )
-    return return_unassigned_units(units)
+    # units = db.call_proc(
+    #     "sp_userunits_list", [session_user]
+    # )
+    return return_unassigned_units(units[1])
 
 
 ###############################################################################
