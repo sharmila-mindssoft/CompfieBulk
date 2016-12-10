@@ -554,7 +554,7 @@ CREATE TABLE `tbl_legal_entities` (
   `file_space_limit` float DEFAULT '0',
   `used_file_space` float DEFAULT '0',
   `total_licence` int(11) DEFAULT '0',
-  `used_licencce` int(11) DEFAULT '0',
+  `used_licence` int(11) DEFAULT '0',
   `is_closed` tinyint(4) DEFAULT '1',
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
