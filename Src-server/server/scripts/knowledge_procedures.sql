@@ -2955,21 +2955,42 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_userunits_list`( IN userid_ INT(11))
 BEGIN
-    select count(tu.unit_id) as total_units, tu.client_id,
-    tu.legal_entity_id, domain_id, (
-        SELECT domain_name from tbl_domains td
-        WHERE td.domain_id=tud.domain_id
-    ) as domain_name,(
-        SELECT group_name FROM tbl_client_groups tcg
-        WHERE tcg.client_id=tu.client_id
-    ) as client_name,(
-        SELECT count(unit_id) FROM tbl_user_units tuu
-        WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
-    ) as assigned_units
-    from tbl_units tu inner join tbl_units_organizations tud
-    ON tu.unit_id = tud.unit_id 
-    inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= tu.client_id
-    group by client_id, domain_id;
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
+    IF @u_cat_id = 5 THEN
+        select count(tu.unit_id) as total_units, tu.client_id,
+        tu.legal_entity_id, tud.domain_id, (
+            SELECT domain_name from tbl_domains td
+            WHERE td.domain_id=tud.domain_id
+        ) as domain_name,(
+            SELECT group_name FROM tbl_client_groups tcg
+            WHERE tcg.client_id=tu.client_id
+        ) as client_name,(
+            SELECT count(unit_id) FROM tbl_user_units tuu
+            WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
+        ) as assigned_units
+        from tbl_units tu inner join tbl_units_organizations tud
+        ON tu.unit_id = tud.unit_id 
+        inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= tu.client_id
+        group by tu.client_id, tud.domain_id;
+    ELSE
+        select count(tu.unit_id) as total_units, tu.client_id,
+        tu.legal_entity_id, tud.domain_id, (
+            SELECT domain_name from tbl_domains td
+            WHERE td.domain_id=tud.domain_id
+        ) as domain_name,(
+            SELECT group_name FROM tbl_client_groups tcg
+            WHERE tcg.client_id=tu.client_id
+        ) as client_name,(
+            SELECT count(unit_id) FROM tbl_user_units tuu
+            WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
+        ) as assigned_units
+        from tbl_units tu inner join tbl_units_organizations tud
+        ON tu.unit_id = tud.unit_id 
+        inner join tbl_user_units uu ON uu.user_id = userid_ and uu.client_id= tu.client_id 
+        and uu.unit_id = tu.unit_id
+        group by tu.client_id, tud.domain_id;
+    END IF;
+    
 END//
 DELIMITER ;
 
@@ -6312,7 +6333,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
 
 DELIMITER //
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(
+CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(
 in clientid int(11),
 in businessgroupid int(11),
 in legalentityid int(11),
@@ -6366,6 +6387,9 @@ BEGIN
     t1.legal_entity_id = legalentityid;
 END //
 
+
+DELIMITER //
+
 DROP PROCEDURE IF EXISTS `sp_user_clients_save`;
 
 DELIMITER //
@@ -6381,3 +6405,4 @@ BEGIN
     values
     (userid, @u_cat_id, clientid);
 END //
+

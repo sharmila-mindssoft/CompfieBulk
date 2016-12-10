@@ -95,29 +95,33 @@
                             </div>
                             <div class="col-sm-12">
                                 <center>
-                                    <div class="form-group">
+                                    <div class="form-group m-b-0">
                                         <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Show </button>
                                         <button class="btn btn-info waves-effect waves-light" type="submit"  id="export"> Export </button>
                                     </div>
                                 </center>
                             </div>
+                            <div class="clear"></div>
                         </div>
                     </div>
                 </div>
-                <div class="clear"></div>
+
             </div>
-            <div class="card-box default-display-none">
+            <div id="compliance_animation">
+            <div class="card-box details" style="display: none">
+              <div class="grid-table-rpt default-display-none">
                 <div class="table-responsive">
-                    <div class="grid-table-rpt default-display-none">
                         <div class="col-sm-12">
                             <div class="col-sm-12 text-center">
                                 <h4>Client Agreement Master Report</h4>
                             </div>
                         </div>
                         <div class="clearfix"></div>
-                        <table style="border:1px dotted #CCCCCC;" class="table-client-agreement-list"  id="accordion">
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                          <tbody class="table-client-agreement-list" id="accordion">
+
+                          </tbody>
                         </table>
-                    </div>
                     <table class="pagination-view default-display-none">
                         <tr>
                             <td>
@@ -135,39 +139,44 @@
                             </td>
                         </tr>
                     </table>
+                    </div>
                 </div>
             </div>
+          </div>
         </div>
     </div>
 </div>
 <div id="templates">
 <table class="table-agreement-list" style="display: none;">
 
- <tbody class="heading-list">
- <tr align="left" style="height:30px;" class="">
-    <th class="header-bg" width="2%" align="center">#</th>
-    <th class="header-bg" width="12%" align="left">Legal Entity</th>
-    <th class="header-bg" width="12%" align="left">User Licenses<br/>Used/Total</th>
-    <th class="header-bg" width="10%" align="left">File Space<br/>Used/Total</th>
-    <th class="header-bg" width="15%" align="left">LE/ Group Admin Details</th>
-    <th class="header-bg" width="15%" align="left">Contact Details</th>
-    <th class="header-bg" width="12%" align="left">Domain</th>
-    <th class="header-bg" width="13%" align="left">Units Per Domain<br/>Used/Total</th>
-    <th class="header-bg" width="10%" align="left">Date of Agreement Inception</th>
-    <th class="header-bg" width="10%" align="left">Contract From</th>
-    <th class="header-bg" width="10%" align="left">Contract To</th>
-    <th class="header-bg" width="8%" align="left">Status</th>
+ <tr align="left" style="height:30px;" class="heading-list">
+    <th class="header-bg" width="01%" align="center">#</th>
+    <th class="header-bg" width="10%" align="left">Legal Entity</th>
+    <th class="header-bg text-center" width="13%" align="left">User Licenses<br/>Used/Total</th>
+    <th class="header-bg text-center" width="10%" align="left">File Space<br/>Used/Total</th>
+    <th class="header-bg" width="10%" align="left">LE/ Group Admin Details</th>
+    <th class="header-bg" width="10%" align="left">Contact Details</th>
+    <th class="header-bg" width="06%" align="left">Domain</th>
+    <th class="header-bg" width="12%" align="left">Units Per Domain<br/>Used/Total</th>
+    <th class="header-bg" width="12%" align="left">Date of Agreement Inception</th>
+    <th class="header-bg" width="08%" align="left">Contract From</th>
+    <th class="header-bg" width="08%" align="left">Contract To</th>
+    <th class="header-bg" width="05%" align="left">Status</th>
   </tr>
-  </tbody>
 
-<tbody class="group-list">
- <tr class="largefont">
-  <td colspan="4">
-  <div style="background:#eee;padding:4px 8px; width: 80px;border:1px dotted #CCCCCC; border-radius: 0.3em;" class="group-name">
-  </div>
+ <tr class="group-list">
+  <td colspan="2">
+    <div class="col-sm-12 no-padding">
+      <mark class="p-l-10 p-r-10 group-name"></mark>
+    </div>
+  </td>
+  <td>
+    <div class="col-sm-12 no-padding">
+      <mark class="p-l-10 p-r-10 business-group-name"></mark>
+    </div>
   </td>
   <td class="group-admin-email"></td>
-  <td ></td>
+  <td class="le-contactno"></td>
   <td ></td>
   <td ></td>
   <td ></td>
@@ -175,27 +184,11 @@
   <td ></td>
   <td ></td>
 </tr>
-</tbody>
 
-<tbody class="business-group-list">
- <tr class="largefont">
-  <td colspan="4">
-  <div style="background:#eee;padding:4px 8px; width: 80px;border:1px dotted #CCCCCC; border-radius: 0.3em;" class="business-group-name">
-  </div>
-  </td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-  <td ></td>
-</tr>
-</tbody>
+
 
 <tbody class="accordion-toggle tbody-agreement-list">
-  <tr  class="largefont agreement-row-list">
+  <tr class="agreement-row-list">
     <td class="sno"></td>
     <td class="le"></td>
     <td class="user-license"></td>
@@ -210,22 +203,24 @@
     <td class="status"></td>
   </tr>
 </tbody>
-<tr class="agreement-inner-list">
-
-  <td colspan="12">
+<tr class="tree-data agreement-inner-list">
+  <td colspan="6">&nbsp;</td>
+  <td colspan="100%">
     <ul class="tree">
       <li>
-      <table>
-        <tr class="smallfont">
-         <td width="20%" class="inner-domain-name"></td>
-         <td width="18%">
-         <a href="#" class="inner-domain-units"></a>
-         </td>
-         <td width="18%" class="inner-activation-date"></td>
-         <td width="20%"></td>
-         <td width="20%"></td>
-         <td width="20%"></td>
-        </tr>
+      <table width="100%">
+        <tbody>
+          <tr class="smallfont">
+           <td width="20%" class="inner-domain-name"></td>
+           <td width="16%">
+           <a href="#" class="inner-domain-units"></a>
+           </td>
+           <td width="23%" class="inner-activation-date"></td>
+           <td width="20%"></td>
+           <td width="0%"></td>
+           <td width="0%"></td>
+          </tr>
+        </tbody>
       </table>
       </li>
     </ul>

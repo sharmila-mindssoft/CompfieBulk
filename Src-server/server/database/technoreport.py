@@ -403,9 +403,9 @@ def return_domainwise_agreement_report(domainwise_agreement_list):
 def get_statutory_notifications_report_data(db, request_data):
     country_id = request_data.country_id
     domain_id = request_data.domain_id
-    level_1_statutory_id = request_data.level_1_statutory_id
-    from_date = request_data.from_date
-    to_date = request_data.to_date
+    level_1_statutory_id = request_data.statutory_id_optional
+    from_date = request_data.from_date_optional
+    to_date = request_data.to_date_optional
     from_count = request_data.from_count
     page_count = request_data.page_count
 
@@ -448,9 +448,9 @@ def get_statutory_notifications_report_count(
 ):
     country_id = request_data.country_id
     domain_id = request_data.domain_id
-    level_1_statutory_id = request_data.level_1_statutory_id
-    from_date = request_data.from_date
-    to_date = request_data.to_date
+    level_1_statutory_id = request_data.statutory_id_optional
+    from_date = request_data.from_date_optional
+    to_date = request_data.to_date_optional
 
     if from_date is not None:
         from_date = string_to_datetime(from_date).date()
@@ -458,8 +458,9 @@ def get_statutory_notifications_report_count(
         to_date = string_to_datetime(to_date).date()
 
     statutory_notifictions_list_count = db.call_proc(
-        "sp_statutory_notification_details_count", (country_id, domain_id,
-            level_1_statutory_id, from_date, to_date)
+        "sp_statutory_notification_details_count", (
+            country_id, domain_id, level_1_statutory_id, from_date, to_date
+        )
     )
 
     return statutory_notifictions_list_count[0]["total_record"]
@@ -991,7 +992,7 @@ def get_user_category_details(db, session_user):
 
 
 def get_countries_for_usermapping_report_filter(db, user_category_id, user_id):
-    
+
     result = db.call_proc("sp_countries_for_usermapping_report", (user_category_id, user_id))
     print "countries"
     print result
