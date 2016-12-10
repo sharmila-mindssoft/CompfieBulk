@@ -98,13 +98,15 @@
     <h4 class="custom-modal-title p-t-10 p-b-10">Legal Entity Closure</h4>
     <div class="custom-modal-text box-width-400">
         <form role="form">
+            <input type="hidden" class="popup_legal_entity_id">
+            <input type="hidden" class="popup_mode">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password</label>
                 <input type="password" class="form-control"  id="techno_pwd" placeholder="Password">
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason</label>
-                <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason" id="remarks"></textarea>
+                <textarea class="form-control input-sm" rows="2" placeholder="Enter Reason" id="remarks"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light"  id="update_status">Submit</button>
 
