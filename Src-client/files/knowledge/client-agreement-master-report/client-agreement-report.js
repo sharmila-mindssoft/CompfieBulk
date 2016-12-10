@@ -207,7 +207,7 @@ function loadCompliances(data) {
             acc_count++;
 
             var tableRowvalues_ul = $('#templates .agreement-inner-list');
-            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree'+key);;
+            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree' + key);;
             $('.inner-domain-name', cloneval_ul).html(value.d_name);
             $('.inner-domain-units', cloneval_ul).text(domain_units);
             $('.inner-domain-units', cloneval_ul).on('click', function() {
@@ -217,7 +217,7 @@ function loadCompliances(data) {
             $('.table-client-agreement-list').append(cloneval_ul);
         } else {
             var tableRowvalues_ul = $('#templates .agreement-inner-list');
-            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree'+key);;
+            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree' + key);;
             $('.inner-domain-name', cloneval_ul).html(value.d_name);
             $('.inner-domain-units', cloneval_ul).text(domain_units);
             $('.inner-domain-units', cloneval_ul).on('click', function() {
@@ -235,7 +235,7 @@ function loadCompliances(data) {
 }
 
 function tree_open_close(id) {
-    $('.tree'+id).toggle("slow");
+    $('.tree' + id).toggle("slow");
 }
 
 function processSubmit(csv) {
