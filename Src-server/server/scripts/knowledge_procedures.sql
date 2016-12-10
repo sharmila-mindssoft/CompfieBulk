@@ -6169,7 +6169,6 @@ END //
 DELIMITER ;
 
 
-
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
 
 DELIMITER //
