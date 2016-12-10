@@ -94,17 +94,13 @@ function loadStatNatureData(data) {
     $('.statutory-nature-name', clone).text(statutory_nature_name);
 
     if (isActive == true){
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
+      $('.status', clone).text("Active")
     }
     else{
-      $('.status', clone).removeClass('fa-check text-success');
-      $('.status', clone).addClass('fa-times text-danger');
+      $('.status', clone).text("In active")
     }
 
-    $('.status').hover(function(){
-      showTitle(this);
-    });
+
     viewTable.append(clone);
     j = j + 1;
   });

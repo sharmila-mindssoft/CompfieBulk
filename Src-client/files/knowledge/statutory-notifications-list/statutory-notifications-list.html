@@ -15,7 +15,7 @@
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                        <div class="form-horizontal group-border-dashed">
                             <div class="col-sm-6">
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
@@ -25,7 +25,7 @@
                                         <div id="ac-country" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
                                         </div>
-                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <i class="form-control-feedback fa fa-search"></i>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
@@ -36,7 +36,7 @@
                                         <div id="ac-domain" class="ac-textbox default-display-none" >
                                           <ul style="width:85%;"></ul>
                                         </div>
-                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <i class="form-control-feedback fa fa-search"></i>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
@@ -47,7 +47,7 @@
                                         <div id="ac-statutory" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
                                         </div>
-                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <i class="form-control-feedback fa fa-search"></i>
                                     </div>
                                 </div>
                             </div>
@@ -56,20 +56,20 @@
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">From Date:</label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate">
-                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">To Date:</label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate">
-                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <center>
-                                    <div class="form-group">
+                                    <div class="form-group m-b-0">
                                         <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Show </button>
                                         <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
                                     </div>
@@ -80,66 +80,62 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-table-rpt default-display-none">
-                <div class="card-box">
-                <div class="table-responsive">
-                  <div class="col-sm-12">
-                    <div class="col-sm-12 text-center"><h4>Statutory Notification List</h4></div>
-                    <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="disp_country"></span></h6></div>
-                    <div class="col-sm-6 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                  <div class="grid-table-rpt default-display-none">
+                    <div class="table-responsive">
+                      <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4>Statutory Notification List</h4></div>
+                        <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="disp_country"></span></h6></div>
+                        <div class="col-sm-6 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
+                      </div>
+                      <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <tbody class="table-statutory-notifications-list">
+                            </tbody>
+                        </table>
+                        <table class="pagination-view default-display-none">
+                          <tr>
+                            <td>
+                              <span class="compliance_count"> </span>
+                              <span class="divider-view"> | </span>
+                              <span class="items-per-page">
+                              Show
+                              <select id="items_per_page">
+                              </select>
+                              entries
+                              </span>
+                            </td>
+                            <td style="width:650px;"></td>
+                            <td style="text-align:right;padding-right:10px;">
+                              <ul id="pagination-rpt"></ul>
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
                   </div>
-
-            </div>
-            <div class="card-box">
-                <div class="table-responsive">
-                  <div class="col-sm-12">
-                    <div class="col-sm-12 text-center"><h4>Statutory Notification List</h4></div>
-                    <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="disp_country"></span></h6></div>
-                    <div class="col-sm-6 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
-                  </div>
-                  <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                        <tbody class="table-statutory-notifications-list">
-                        </tbody>
-                    </table>
-                    <table class="pagination-view default-display-none">
-                      <tr>
-                        <td>
-                          <span class="compliance_count"> </span>
-                          <span class="divider-view"> | </span>
-                          <span class="items-per-page">
-                          Show
-                          <select id="items_per_page">
-                          </select>
-                          entries
-                          </span>
-                        </td>
-                        <td style="width:650px;"></td>
-                        <td style="text-align:right;padding-right:10px;">
-                          <ul id="pagination-rpt"></ul>
-                        </td>
-                      </tr>
-                    </table>
                 </div>
             </div>
-        </div>
         <!-- end col -->
     </div>
 </div>
 <div id="templates">
 <table class="table-statutory-notification-list">
-  <tr align="left" style="height:30px;" class="heading-list">
-    <th class="header-bg" width="3%" align="center">#</th>
-    <th class="header-bg" width="20%" >Act</th>
-    <th class="header-bg" width="25%" >Compliance Task</th>
-    <th class="header-bg" width="15%" align="center">Date</th>
-    <th class="header-bg" width="47%">Notifications Content</th>
+  <tr align="left" class="heading-list">
+    <th class="header-bg" width="1%" align="center">#</th>
+    <th class="header-bg" width="15%" >Act</th>
+    <th class="header-bg" width="20%" >Compliance Task</th>
+    <th class="header-bg" width="10%" >Date</th>
+    <th class="header-bg" width="20%">Notifications Content</th>
   </tr>
 
 <tr class="tbody-statutory-notification-list">
   <td class="sno"></td>
   <td class="act"></td>
-  <td class="compliancetask"></td>
-  <td class="date" align="center"></td>
+  <td>
+    <i class="zmdi zmdi-info c-pointer" data-toggle="tooltip"></i>
+    <span class="compliancetask"></span>
+  </td>
+  <td class="date"></td>
   <td class="notification"></td>
 </tr>
 
