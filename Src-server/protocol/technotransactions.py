@@ -806,7 +806,7 @@ class AssignedStatutories(object):
 class GroupAdmin_GroupList(object):
     def __init__(
         self, client_id, group_name, no_of_legal_entities, c_names, ug_name, email_id,
-        user_id, emp_code_name
+        user_id_search, emp_code_name
     ):
         self.client_id = client_id
         self.group_name = group_name
@@ -814,14 +814,14 @@ class GroupAdmin_GroupList(object):
         self.c_names = c_names
         self.ug_name = ug_name
         self.email_id = email_id
-        self.user_id = user_id
+        self.user_id_search = user_id_search
         self.emp_code_name = emp_code_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "client_id", "group_name", "no_of_legal_entities", "c_names",
-            "ug_name", "email_id", "user_id", "emp_code_name"
+            "ug_name", "email_id", "user_id_search", "emp_code_name"
         ])
         client_id = data.get("client_id")
         group_name = data.get("group_name")
@@ -829,11 +829,11 @@ class GroupAdmin_GroupList(object):
         c_names = data.get("c_names")
         ug_name = data.get("ug_name")
         email_id = data.get("email_id")
-        user_id = data.get("user_id")
+        user_id_search = data.get("user_id_search")
         emp_code_name = data.get("emp_code_name")
         return GroupAdmin_GroupList(
             client_id, group_name, no_of_legal_entities, c_names, ug_name, email_id,
-            user_id, emp_code_name
+            user_id_search, emp_code_name
         )
 
     def to_structure(self):
@@ -844,14 +844,14 @@ class GroupAdmin_GroupList(object):
             "c_names": self.c_names,
             "ug_name": self.ug_name,
             "email_id": self.email_id,
-            "user_id": self.user_id,
+            "user_id_search": self.user_id_search,
             "emp_code_name": self.emp_code_name
         }
 
 class GroupAdmin_UnitList(object):
     def __init__(
         self, client_id, legal_entity_id, legal_entity_name, country_name, unit_count,
-        unit_creation_informed, statutory_assigned_informed, email_id, user_id, emp_code_name,
+        unit_creation_informed, statutory_assigned_informed, email_id, user_id_search, emp_code_name,
         statutory_count
     ):
         self.client_id = client_id
@@ -862,7 +862,7 @@ class GroupAdmin_UnitList(object):
         self.unit_creation_informed = unit_creation_informed
         self.statutory_assigned_informed = statutory_assigned_informed
         self.email_id = email_id
-        self.user_id = user_id
+        self.user_id_search = user_id_search
         self.emp_code_name = emp_code_name
         self.statutory_count = statutory_count
 
@@ -871,7 +871,7 @@ class GroupAdmin_UnitList(object):
         data = parse_dictionary(data, [
             "client_id", "legal_entity_id", "legal_entity_name", "country_name",
             "unit_count", "unit_creation_informed", "statutory_assigned_informed", "email_id",
-            "user_id", "emp_code_name", "statutory_count"
+            "user_id_search", "emp_code_name", "statutory_count"
         ])
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
@@ -881,12 +881,12 @@ class GroupAdmin_UnitList(object):
         unit_creation_informed = data.get("unit_creation_informed")
         statutory_assigned_informed = data.get("statutory_assigned_informed")
         email_id = data.get("email_id")
-        user_id = data.get("user_id")
+        user_id_search = data.get("user_id_search")
         emp_code_name = data.get("emp_code_name")
         statutory_count = data.get("statutory_count")
         return GroupAdmin_UnitList(
             client_id, legal_entity_id, legal_entity_name, country_name, unit_count,
-            unit_creation_informed, statutory_assigned_informed, email_id, user_id,
+            unit_creation_informed, statutory_assigned_informed, email_id, user_id_search,
             emp_code_name, statutory_count
         )
 
@@ -900,7 +900,7 @@ class GroupAdmin_UnitList(object):
             "unit_creation_informed": self.unit_creation_informed,
             "statutory_assigned_informed": self.statutory_assigned_informed,
             "email_id": self.email_id,
-            "user_id": self.user_id,
+            "user_id_search": self.user_id_search,
             "emp_code_name": self.emp_code_name,
             "statutory_count": self.statutory_count,
         }
