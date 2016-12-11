@@ -785,6 +785,7 @@ function getDomainAssigned(domain_header, unit_id, data)
 function getUnitName(unit_id)
 {
   var unit_code_name=null;
+  console.log("data:"+assignedUnitList)
   for(var i =0; i < assignedUnitList.length; i++)
   {
     if(unit_id == assignedUnitList[i].unit_id)
