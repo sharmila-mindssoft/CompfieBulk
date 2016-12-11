@@ -291,7 +291,7 @@ api_params = {
     "unit_id_name": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "Unit"},
     "categories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Category"},
 
-    "ug_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "ug_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "user_group_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "ug_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "form_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
@@ -482,10 +482,10 @@ api_params = {
     'notification_date': {'type': 'TEXT', 'length': 11, 'validation_method': None, 'is_optional': False},
     "mapped_compliances": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'core', "class_name": "MappedCompliance"},
 
-    "unit_creation_informed": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': False},
-    "statutory_assigned_informed": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': False},
-    "groupadmin_groupList": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "GroupAdmin_GroupList"},
-    "groupadmin_unitList": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "GroupAdmin_UnitList"},
+    "unit_creation_informed": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
+    "statutory_assigned_informed": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
+    "groupadmin_groupList": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'technotransactions', "class_name": "GroupAdmin_GroupList"},
+    "groupadmin_unitList": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'technotransactions', "class_name": "GroupAdmin_UnitList"},
     "emp_code_name": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     'statutory_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'grp_mode': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
