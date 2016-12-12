@@ -2248,6 +2248,10 @@ def generate_unit_domain_industry_map(industry_details):
     return detail_map
 
 
+def get_user_category_id(db, session_user):
+    result = db.call_proc("sp_get_user_category_id_by_userid", (int(session_user),))
+    return result[0]["user_category_id"]
+
 def save_assigned_units(db, request, session_user):
     domain_manager_id = request.user_id
     client_id = request.client_id
@@ -2255,6 +2259,7 @@ def save_assigned_units(db, request, session_user):
     values_list = []
     current_time_stamp = get_date_time()
     domains = get_user_domains(db, session_user)
+    user_category_id = get_user_category_id(db, session_user)
     domain_name_id_map = {}
     for domain in domains:
         domain_name_id_map[domain.domain_name] = domain.domain_id
@@ -2264,7 +2269,7 @@ def save_assigned_units(db, request, session_user):
     ]
     for unit in active_units:
         value_tuple = (
-            domain_manager_id, 7, client_id,  unit.legal_entity_id,
+            domain_manager_id, user_category_id, client_id,  unit.legal_entity_id,
             unit.unit_id, domain_name_id_map[unit.domain_name],
             session_user, current_time_stamp
         )
