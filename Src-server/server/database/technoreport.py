@@ -403,9 +403,9 @@ def return_domainwise_agreement_report(domainwise_agreement_list):
 def get_statutory_notifications_report_data(db, request_data):
     country_id = request_data.country_id
     domain_id = request_data.domain_id
-    level_1_statutory_id = request_data.level_1_statutory_id
-    from_date = request_data.from_date
-    to_date = request_data.to_date
+    level_1_statutory_id = request_data.statutory_id_optional
+    from_date = request_data.from_date_optional
+    to_date = request_data.to_date_optional
     from_count = request_data.from_count
     page_count = request_data.page_count
 
@@ -448,9 +448,9 @@ def get_statutory_notifications_report_count(
 ):
     country_id = request_data.country_id
     domain_id = request_data.domain_id
-    level_1_statutory_id = request_data.level_1_statutory_id
-    from_date = request_data.from_date
-    to_date = request_data.to_date
+    level_1_statutory_id = request_data.statutory_id_optional
+    from_date = request_data.from_date_optional
+    to_date = request_data.to_date_optional
 
     if from_date is not None:
         from_date = string_to_datetime(from_date).date()
@@ -458,8 +458,9 @@ def get_statutory_notifications_report_count(
         to_date = string_to_datetime(to_date).date()
 
     statutory_notifictions_list_count = db.call_proc(
-        "sp_statutory_notification_details_count", (country_id, domain_id,
-            level_1_statutory_id, from_date, to_date)
+        "sp_statutory_notification_details_count", (
+            country_id, domain_id, level_1_statutory_id, from_date, to_date
+        )
     )
 
     return statutory_notifictions_list_count[0]["total_record"]
@@ -991,7 +992,7 @@ def get_user_category_details(db, session_user):
 
 
 def get_countries_for_usermapping_report_filter(db, user_category_id, user_id):
-    
+
     result = db.call_proc("sp_countries_for_usermapping_report", (user_category_id, user_id))
     print "countries"
     print result
@@ -1108,31 +1109,33 @@ def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
     result = db.call_proc_with_multiresult_set("sp_reassign_user_report_getdata", args, 2)
     reassign_group_list = []
     print len(result)
+    print len(result[0])
     print result
-    for cl in result[0]:
-        print "inside 1 loop"
-        client_id = int(cl.get("client_id"))
-        print client_id
-        group_name = cl.get("group_name")
-        print group_name
-        assigned_on = cl.get("assigned_on")
-        emp_code_name = cl.get("emp_code_name")
-        remarks = cl.get("remarks")
-        le_count = int(cl.get("le_count"))
-        for country in result[1]:
-            print "inside 2 loop"
-            c_names = []
+    if len(result[0]) > 0:
+        for cl in result[0]:
+            print "inside 1 loop"
+            client_id = int(cl.get("client_id"))
             print client_id
-            if client_id == country.get("client_id"):
-                print country.get("client_id")
-                c_names.append(country.get("country_name"))
+            group_name = cl.get("group_name")
+            print group_name
+            assigned_on = cl.get("assigned_on")
+            emp_code_name = cl.get("emp_code_name")
+            remarks = cl.get("remarks")
+            le_count = int(cl.get("le_count"))
+            for country in result[1]:
+                print "inside 2 loop"
+                c_names = []
+                print client_id
+                if client_id == country.get("client_id"):
+                    print country.get("client_id")
+                    c_names.append(country.get("country_name"))
 
-        reassign_group_list.append(technoreports.ReassignedUserList(
-            client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks
-        ))
-        print "inside database"
-        print reassign_group_list
-        return reassign_group_list
+            reassign_group_list.append(technoreports.ReassignedUserList(
+                client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks
+            ))
+    print "inside database"
+    print reassign_group_list
+    return reassign_group_list
 
 def get_ReassignUserDomainReportData(db, request_data):
     user_category_id = request_data.user_category_id

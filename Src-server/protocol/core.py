@@ -2927,6 +2927,7 @@ class FormCategory(object):
             "form_category": self.form_category,
         }
 
+
 class UserCategory(object):
     def __init__(self, user_category_id, user_category_name):
         self.user_category_id = user_category_id
@@ -3433,12 +3434,12 @@ class AssignLegalEntity(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "client_id", "country_name", "group_name"
+                "client_id", "country_names", "group_name"
                 "no_of_legal_entities", "no_of_assigned_legal_entities"
             ]
         )
         client_id = data.get("client_id")
-        country_name = data.get("country_name")
+        country_name = data.get("country_names")
         group_name = data.get("group_name")
         no_of_legal_entities = data.get("no_of_legal_entities")
         no_of_assigned_legal_entities = data.get("no_of_assigned_legal_entities")
@@ -3451,7 +3452,7 @@ class AssignLegalEntity(object):
     def to_structure(self):
         return {
             "client_id": self.client_id,
-            "country_name": self.country_name,
+            "country_names": self.country_name,
             "group_name": self.group_name,
             "no_of_legal_entities": self.no_of_legal_entities,
             "no_of_assigned_legal_entities": self.no_of_assigned_legal_entities

@@ -275,7 +275,8 @@ def process_get_statutory_notifications_filters(db, request_frame, user_id):
 
 def process_get_statutory_notifications_report_data(db, request, user_id):
     result = get_statutory_notifications_report_data(db, request)
-
+    print "stat not list"
+    print result
     total_count = get_statutory_notifications_report_count(
             db, request
         )

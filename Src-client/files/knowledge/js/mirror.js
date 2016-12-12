@@ -1234,7 +1234,20 @@ function initMirror() {
     callerName = 'techno';
     var request = [
       'GetClients',
-      { 'typelistedit' : type }
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getClientsEdit(client_id, business_group_id, legal_entity_id, country_id, callback) {
+    callerName = 'techno';
+    var request = [
+      'GetClientsEdit',
+      {
+        'client_id' : client_id,
+        'bg_id' : business_group_id,
+        'le_id' : legal_entity_id,
+        'c_id' : country_id,
+      }
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1403,16 +1416,18 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, callback) {
+  function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, from_count, page_count, callback) {
     callerName = 'techno_report';
     var request = [
       'GetStatutoryNotificationsReportData',
       {
         'country_id': countryId,
         'domain_id': domainId,
-        'level_1_statutory_id': level1Id,
-        'from_date': fromDate,
-        'to_date': toDate
+        'statutory_id_optional': level1Id,
+        'from_date_optional': fromDate,
+        'to_date_optional': toDate,
+        'from_count': from_count,
+        'page_count': page_count
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1449,7 +1464,7 @@ function initMirror() {
       {
         'from_date': fromDate,
         'to_date': toDate,
-        'user_id': userId,
+        'user_id_search': userId,
         'form_id_search': formId,
         'country_id': countryId,
         'category_id': categoryId,
@@ -2053,7 +2068,7 @@ function initMirror() {
         "grp_mode": action_mode
       }
     ];
-    //apiRequest(callerName, request, callback);
+    apiRequest(callerName, request, callback);
   }
   //Verify Password
   function verifyPassword(password, callback) {
@@ -2268,6 +2283,7 @@ function initMirror() {
     validateResetToken: validateResetToken,
     resetPassword: resetPassword,
     getClients: getClients,
+    getClientsEdit: getClientsEdit,
     getBusinessGroupDict: getBusinessGroupDict,
     getLegalEntityDict: getLegalEntityDict,
     getDivisionDict: getDivisionDict,

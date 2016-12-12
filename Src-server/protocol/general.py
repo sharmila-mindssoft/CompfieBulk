@@ -310,10 +310,10 @@ class UpdateStatutoryNotificationStatus(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self, from_date, to_date, user_id, form_id_search, country_id, category_id, record_count, page_count):
+    def __init__(self, from_date, to_date, user_id_search, form_id_search, country_id, category_id, record_count, page_count):
         self.from_date = from_date
         self.to_date = to_date
-        self.user_id = user_id
+        self.user_id_search = user_id_search
         self.form_id_search = form_id_search
         self.country_id = country_id
         self.category_id = category_id
@@ -322,10 +322,10 @@ class GetAuditTrails(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+        data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
         from_date = data.get("from_date")
         to_date = data.get("to_date")
-        user_id = data.get("user_id_search")
+        user_id_search = data.get("user_id_search")
         form_id_search = data.get("form_id_search")
         country_id = data.get("country_id")
         category_id = data.get("category_id")
@@ -333,7 +333,7 @@ class GetAuditTrails(Request):
         page_count = data.get("page_count")
         return GetAuditTrails(
             from_date, to_date,
-            user_id, form_id_search,
+            user_id_search, form_id_search,
             country_id, category_id,
             record_count, page_count
         )
@@ -342,7 +342,7 @@ class GetAuditTrails(Request):
         return {
             "from_date": self.from_date,
             "to_date": self.to_date,
-            "user_id_search": self.user_id,
+            "user_id_search": self.user_id_search,
             "form_id_search": self.form_id_search,
             "country_id": self.country_id,
             "category_id": self.category_id,
@@ -963,7 +963,7 @@ class AuditTrailForm(object):
         }
 
 
-#      
+#
 # Message
 #
 
@@ -997,7 +997,7 @@ class Message(object):
             "created_on": self.created_on,
         }
 
-#      
+#
 # StatutoryNotiification
 #
 

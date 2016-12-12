@@ -11,7 +11,7 @@ function getGroupAdmin_Group()
 		fillGroupAdmingroupData(groupAdmin_GroupList);
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
 	mirror.getGroupAdminGroupList(function (error, response) {
 		if (error == null) {
@@ -28,27 +28,33 @@ function processGroupAdminFilters()
 	searchList = []
 	var grp_admin_table = $('#table-group-admin-group-list').attr('style');
 	var grp_admin_unit_table = $('#table-grp-admin-unit-list').attr('style');
-	if(grp_admin_table == "display: block;" && grp_admin_unit_table == "display: none;")
+	if(grp_admin_table == "display: block;")
 	{
 		search_1 = $('#search-country-name').val().toLowerCase();
-		console.log("search_1:"+search_1)
 		search_2 = $('#search-Group-name').val().toLowerCase();
 		search_3 = $('#search-no-legal-entity').val();
 
 		for(var i in groupAdmin_GroupList)
 		{
 			row_data = groupAdmin_GroupList[i];
-			var c_names = jQuery.inArray(search_1, row_data.c_names)
-			console.log(c_names)
-			if((c_names > 0) && (~row_data.group_name.toLowerCase().indexOf(search_2)) &&
-			(~row_data.no_of_le.indexOf(search_3)))
+			console.log(row_data)
+			var flg = false;
+			for (var c in row_data.c_names) {
+	          if (~row_data.c_names[c].toLowerCase().indexOf(search_1)){
+	              flg = true;
+	              continue;
+	          }
+	        }
+
+			if((~row_data.group_name.toLowerCase().indexOf(search_2)) &&
+			(~row_data.no_of_legal_entities.toString().indexOf(search_3)) && (flg == true))
 			{
 				searchList.push(row_data)
 			}
 		}
 		fillGroupAdmingroupData(searchList);
 	}
-	else if(grp_admin_table == "display: none;" && grp_admin_unit_table == "")
+	else if(grp_admin_table == "display: none;")
 	{
 		console.log("unit search")
 		search_1 = $('#search-unit-country-name').val().toLowerCase();
@@ -59,13 +65,17 @@ function processGroupAdminFilters()
 		for(var i=0;i<table_tr.length;i++)
 		{
 			var table_ctry = table_tr[i].childNodes[3].innerText.toLowerCase();
+			console.log(table_ctry)
 			var table_le = table_tr[i].childNodes[5].innerText.toLowerCase();
+			console.log(table_le)
 			var table_lecnt = table_tr[i].childNodes[7].innerText.toLowerCase();
+			console.log(table_lecnt)
 			if((~table_ctry.indexOf(search_1)) &&
 			(~table_le.toLowerCase().indexOf(search_2)) &&
 			(~table_lecnt.indexOf(search_3)))
 			{
-				searchList.push(row_data)
+				console.log("matched")
+				searchList.push(groupAdmin_UnitList[i])
 			}
 		}
 		bindsearchedUnitList(searchList);
@@ -113,10 +123,10 @@ function sendCredentials(_cl_id, _u_name, _e_id ) {
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      custom_alert(msg.resend);
+      displaySuccessMessage(msg.resend);
     }
     else {
-      custom_alert(error);
+      displayMessage(error);
     }
   });
 }
@@ -125,7 +135,7 @@ function bindsearchedUnitList(data)
 	$('#table-group-admin-group-list').hide();
 	$('#table-grp-admin-unit-list').show();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
-	$('.btn-back').show();
+	$('#btn-back').show();
 	var i = 1;
 	$.each(data, function(k, v) {
 		var tableRow = $('#templates .table-group-admin-unit-master .table-row');
@@ -184,7 +194,8 @@ function displayLegalEntityList(client_id, group_name)
 	$('#table-group-admin-group-list').hide();
 	$('#table-grp-admin-unit-list').show();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
-	$('.btn-back').show();
+	$('#btn-back').show(groupAdmin_UnitList.length);
+	console.log()
 	var i = 1;
 	$.each(groupAdmin_UnitList, function(k, v) {
 		if(v.client_id == client_id)
@@ -256,10 +267,10 @@ function sendmail(_mode, _u_id, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_na
   mirror.sendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      custom_alert(message.resend);
+      displaySuccessMessage(message.resend);
     }
     else {
-      custom_alert(error);
+      displayMessage(error);
     }
   });
 }
@@ -269,15 +280,15 @@ function initialize_form()
 	console.log("initialize_form")
 	$('.table-grp-admin-unit-list').hide();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
-	$('.btn-back').hide();
+	$('#btn-back').hide();
 	getGroupAdmin_Group();
 }
 
-$('.btn-back').click(function() {
+$('#btn-back').click(function() {
     $('#table-group-admin-group-list').show();
 	$('#table-grp-admin-unit-list').hide();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
-	$('.btn-back').hide();
+	$('#btn-back').hide();
   });
 
 $('.filter-text-box').keyup(function() {

@@ -1414,7 +1414,7 @@ class ConvertJsonToCSV(object):
 
         client_agreement_list = db.call_proc(
             "sp_client_agreement_details", (country_id, client_id, business_group_id, 
-        legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+        legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
         )
 
         for client_agreement in client_agreement_list:

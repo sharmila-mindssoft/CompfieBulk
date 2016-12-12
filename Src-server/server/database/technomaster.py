@@ -418,20 +418,11 @@ def save_client_domains(db, client_id, request, legal_entity_name_id_map):
 #  Return Type : Boolean - Raises Process exception if insertion fails /
 #   returns True
 ##########################################################################
-def save_incharge_persons(db, client_id, request, legal_entity_id_name_map):
-    db.call_update_proc(
-        "sp_user_clients_delete", (client_id, )
-    )
-    values_list = []
-    columns = ["client_id", "legal_entity_id", "user_id"]
-    for entity in request.legal_entities:
-        for incharge_person in entity.incharge_persons:
-            values_tuple = (
-                client_id, legal_entity_id_name_map[entity.legal_entity_name],
-                incharge_person
-            )
-            values_list.append(values_tuple)
-    r = db.bulk_insert(tblUserClients, columns, values_list)
+def save_incharge_persons(db, client_id, request, user_id):
+    # db.call_update_proc(
+    #     "sp_user_clients_delete", (client_id, )
+    # )
+    r = db.call_insert_proc("sp_user_clients_save", (user_id, client_id))
     if r is False:
         raise process_error("E043")
     return r
@@ -1654,23 +1645,24 @@ def return_units_assign(units):
 
 
 def get_unit_details_for_user(db, user_id, request):
-    print "--", user_id
-    typelistedit = request.typelistedit
     where_condition_val = [user_id]
-    if typelistedit == "edit":
-        result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
-    else:
-        result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
+    result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
+    return return_unit_details(result)
+
+
+def get_unit_details_for_user_edit(db, user_id, request):
+    print request.to_structure()
+    where_condition_val = [request.client_id, request.business_group_id, request.legal_entity_id, request.country_id, user_id]
+    result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 
 
 def return_unit_details(result):
     unitdetails = []
     for r in result[0]:
-        print r
         unit_id = int(r.get("unit_id"))
         client_id = int(r.get("client_id"))
-        business_group_id = int(r.get("business_group_id"))
+        business_group_id = r.get("business_group_id")
         legal_entity_id = int(r.get("legal_entity_id"))
         country_id = int(r.get("country_id"))
         division_id = int(r.get("division_id"))
@@ -2037,15 +2029,19 @@ def return_assign_legalentities(assign_legalentities_list):
 #  Parameters : Object of database
 #  Return Type : Returns List of object of UnassignedUnit
 ##########################################################################
-def get_unassigned_units_list(db):
+def get_unassigned_units_list(db, session_user):
     #
     # To get list of unassigned units
     #  Parameters - None
     #
-    units = db.call_proc(
-        "sp_userunits_list", None
+
+    units = db.call_proc_with_multiresult_set(
+        "sp_userunits_list", [session_user], 2
     )
-    return return_unassigned_units(units)
+    # units = db.call_proc(
+    #     "sp_userunits_list", [session_user]
+    # )
+    return return_unassigned_units(units[1])
 
 
 ###############################################################################
@@ -2160,7 +2156,7 @@ def return_assigned_unit_details(units, unit_industry_name_map):
 def get_data_for_assign_unit(db, request, session_user):
     business_groups = get_business_groups_for_client(db, request.client_id)
     legal_entities = get_legal_entities_for_client(db, request.client_id)
-    units = get_units_of_client(db, request.client_id, request.domain_id)
+    units = get_units_of_client(db, request.client_id, request.domain_id, session_user)
     domain_managers = get_domain_managers_for_user(db, session_user)
     return business_groups, legal_entities, units, domain_managers
 
@@ -2207,32 +2203,33 @@ def get_domain_managers_for_user(db, session_user):
     # To get list of domain managers assigned under a session user
     # Parameters - session user
     #
-    users = db.call_proc(
-        "sp_users_domain_managers", (session_user,)
-    )
-    return return_domain_managers(users)
+    users = db.call_proc_with_multiresult_set(
+        "sp_users_domain_managers", [session_user], 2) 
+
+    return return_domain_managers(users[1])
 
 
 def return_domain_managers(data):
     fn = core.User
     result = [
         fn(
-            user_id=datum["user_id"], employee_name=datum["employee_name"],
-            is_active=bool(datum["is_active"])
+            user_id=datum["user_id"], user_category_id=datum["user_category_id"], 
+            employee_name=datum["employee_name"], is_active=bool(datum["is_active"])
         ) for datum in data
     ]
     return result
 
 
-def get_units_of_client(db, client_id, domain_id):
+def get_units_of_client(db, client_id, domain_id, session_user):
     #
     # To get list of units under a client and domain
     # Parameters - client id, domain id
     #
     result = db.call_proc_with_multiresult_set(
-        "sp_units_list", (client_id, domain_id), 2)
-    units = result[0]
-    industry_details = result[1]
+        "sp_units_list", (client_id, domain_id, session_user), 3)
+
+    units = result[1]
+    industry_details = result[2]
     domain_industry_map = generate_unit_domain_industry_map(industry_details)
     return return_assigned_unit_details(units, domain_industry_map)
 
@@ -2242,7 +2239,7 @@ def generate_unit_domain_industry_map(industry_details):
     for detail in industry_details:
         unit_id = detail["unit_id"]
         domain_name = detail["domain_name"]
-        industry_name = detail["industry_name"]
+        industry_name = detail["organisation_name"]
         if unit_id not in detail_map:
             detail_map[unit_id] = {}
         if domain_name not in detail_map[unit_id]:

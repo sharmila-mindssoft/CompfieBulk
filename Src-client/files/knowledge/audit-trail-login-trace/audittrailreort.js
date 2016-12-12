@@ -136,7 +136,15 @@ Auditpage.prototype.getValue = function(field_name, f_id){
 
 Auditpage.prototype.validateMandatory = function(){
     is_valid = true;
-    if (this.getValue("fromdate") == '') {
+    if (this.getValue("category") == '') {
+        this.displayMessage(message.catgname_required);
+        is_valid = false;
+    }
+    else if (this.getValue("country") == '') {
+        this.displayMessage(message.country_required);
+        is_valid = false;
+    }
+    else if (this.getValue("fromdate") == '') {
         this.displayMessage(message.fromdate_required);
         is_valid = false;
     }

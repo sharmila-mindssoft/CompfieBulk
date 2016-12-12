@@ -1,5 +1,6 @@
 var countriesList;
 var geographiesList;
+var searchList = []
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -30,7 +31,7 @@ var ReportData;
 function getGeography() {
   function onSuccess(data) {
     console.log(data)
-    geographiesList = data.geographies;
+    geographiesList = data.geography_report;
     countriesList = data.countries;
   }
   function onFailure(error) {
@@ -51,41 +52,44 @@ function processSearch()
 
   usr_status = $('.search-status-li.active').attr('value');
 
-  searchList = []
 
   var cId = '';
-  if ($('#country').val() != '')
+  if ($('#country').val() != ''){
+
     cId = $('#country').val();
-  var geographyList = geographiesList[cId];
+    for(var i in geographiesList){
+      data = geographiesList[i];
+      if(cId == data.country_id)
+      {
+        data_g_name = data.geography_mapping.toLowerCase();
+        data_is_active = data.is_active;
 
-  for(var i in geographyList){
-    data = geographyList[i];
-
-    data_g_name = data.geography.toLowerCase();
-    data_is_active = data.is_active;
-
-    if (
-      (~data_g_name.indexOf(g_name)))
-    {
-      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-        searchList.push(data);
+        if (
+        (~data_g_name.indexOf(g_name)))
+        {
+          if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+            searchList.push(data);
+          }
+        }
       }
     }
   }
-  loadGeographyList(searchList);
+  processPaging();
+  //loadGeographyList(searchList);
 }
 
 //display geography master details in view page
 function loadGeographyList(geographyList) {
+  console.log("geographyList:"+geographyList)
   var sno = 0;
   var geography = '';
   var isActive = 0;
   var title;
   $('.tbody-geography-report-list').find('tr').remove();
   for (var list in geographyList) {
-    geography = geographyList[list].geography;
+    geography = geographyList[list].geography_mapping;
     isActive = geographyList[list].is_active;
-    var geographyimage = geography.replace(/>>/gi, ' <img src=\'/common/images/right_arrow.png\'/> ');
+    //var geographyimage = geography.replace(/>>/gi, ' <img src=\'/common/images/right_arrow.png\'/> ');
     if (isActive == 1) {
       title = 'Active';
     } else {
@@ -95,7 +99,7 @@ function loadGeographyList(geographyList) {
     var clone = tableRow.clone();
     sno = sno + 1;
     $('.sno', clone).text(sno);
-    $('.geography-name', clone).html(geographyimage);
+    $('.geography-name', clone).html(geography);
     if (isActive == true){
       $('.status', clone).removeClass('fa-times text-danger');
       $('.status', clone).addClass('fa-check text-success');
@@ -203,10 +207,8 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  var cId = '';
-  if ($('#country').val() != '')
-    cId = $('#country').val();
-  var geographyList = geographiesList[cId];
+  console.log("sno:"+sno)
+  var geographyList = geographiesList;
 
   totalRecord = geographyList.length;
   ReportData = pageData(on_current_page);
@@ -238,12 +240,23 @@ function pageData(on_current_page){
   var cId = '';
   if ($('#country').val() != '')
     cId = $('#country').val();
-  var geographyList = geographiesList[cId];
+  var geographyList = geographiesList;
 
-  for(i=sno;i<geographyList.length;i++)
+  if(searchList.length > 0)
+  {
+    recordData = searchList;
+  }
+  else
+  {
+    recordData = geographyList;
+  }
+
+  for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    data.push(geographyList[i]);
+    if(recordData[i].country_id == cId){
+      data.push(recordData[i]);
+    }
     if(i == (recordLength-1))
     {
       break;
@@ -258,6 +271,7 @@ function pageData(on_current_page){
     else
       showPagePan(showFrom, totalRecord, totalRecord);
   }
+  console.log("data:"+data)
   return data;
 }
 
@@ -268,7 +282,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
   value_element.val(val[1]);
   id_element.val(val[0]);
   value_element.focus();
-  var geographyList = geographiesList[val[0]];
+  var geographyList = geographiesList;
   $('#search-geography-name').val('');
   totalRecord = geographyList.length;
   processPaging();
@@ -307,5 +321,6 @@ $('#countryval').keyup(function (e) {
 //initialization
 $(function () {
   renderControls();
+  loadItemsPerPage();
   $('#countryval').focus();
 });
