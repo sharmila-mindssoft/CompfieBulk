@@ -24,16 +24,13 @@ function initializeNavBar() {
     if (form_name == "Logout") {
       $('.menu-url', itemObject).append('<i class ="ti-power-off m-r-5"></i>');
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
-    }
-    else if (form_name == "Change Password") {
+    } else if (form_name == "Change Password") {
       $('.menu-url', itemObject).append('<i class ="ti-settings m-r-5"></i>')
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
-    }
-    else if (form_name == "View Profile") {
-      $('.menu-url', itemObject).append('<i class ="ti-user m-r-5"></i>')
+    } else if (form_name == "View Profile") {
+      $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>')
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
-    }
-    else {
+    } else {
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
     }
     // $('.menu-item', itemObject).text(form_name);
@@ -116,14 +113,19 @@ function initializeNavBar() {
     }
   }
   var employee_name = mirror.getEmployeeName();
-  // profile_url = '/knowledge/profile';
+  profile_url = '/knowledge/profile';
+  if (employee_name != 'undefined' && employee_name != 'Administrator') {
+    var item = getItemObject(profile_url, 'View Profile');
+    $('ul', settingsMenuObject).append(item);
+  }
+
   // change_password_url = '/knowledge/change-password';
-  // if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
-  //   var item = getItemObject(profile_url, 'View Profile');
-  //   $('ul', settingsMenuObject).append(item);
-  // }
+  /*if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
+    var item = getItemObject(profile_url, 'View Profile');
+    $('ul', settingsMenuObject).append(item);
+  }*/
   // var item = getItemObject(change_password_url, 'Change Password');
-  // $('ul', settingsMenuObject).append(item);
+  //$('ul', settingsMenuObject).append(item);
 
   var item = getItemObject(null, 'Logout');
   item.on('click', function () {

@@ -5,6 +5,11 @@ var BusinessGroupList;
 var LegalEntityList;
 var ReportData;
 
+//Pagination variable declaration
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var sno = 0;
 var totalRecord;
@@ -54,6 +59,13 @@ function resetValues() {
 
 function initialize() {
     //resetValues();
+    ItemsPerPage.on('change', function (e) {
+        perPage = parseInt($(this).val());
+          sno = 0;
+          on_current_page = 1;
+          createPageView(totalRecord);
+          processPaging();
+      });
     mirror.getClientAgreementReportFilters(function(error, data) {
         if (error == null) {
             console.log(data)
@@ -153,15 +165,47 @@ function displayPopup(LE_ID, D_ID) {
     );
 }
 
+function showPagePan(showFrom, showTo, total) {
+    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
+    CompliacneCount.text(showText);
+    PaginationView.show();
+};
+
+function hidePagePan() {
+    CompliacneCount.text('');
+    PaginationView.hide();
+}
+
+function createPageView(total_records) {
+    perPage = parseInt(ItemsPerPage.val());
+    Pagination.empty();
+    Pagination.removeData('twbs-pagination');
+    Pagination.unbind('page');
+
+    Pagination.twbsPagination({
+        totalPages: Math.ceil(total_records/perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cPage = parseInt(page);
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
+                processSubmit();
+            }
+        }
+    });
+};
+
 function loadCompliances(data) {
     $('.table-client-agreement-list').empty();
     $('.table-agreement-list').show();
+    var showFrom = sno + 1;
+    var is_null = true;
     var tableRow_tr = $('#templates .table-agreement-list .heading-list');
     var clonetr = tableRow_tr.clone();
     $('.table-client-agreement-list').append(clonetr);
 
     $.each(data, function(key, value) {
-
+        is_null = false;
         var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;
         var license_details = value.used_licence + ' / ' + value.total_licence;
 
@@ -183,7 +227,6 @@ function loadCompliances(data) {
         }
 
         if (lastLE != value.legal_entity_name) {
-
             var tableRow = $('#templates .agreement-row-list');
             var clone = tableRow.clone();
             sno = sno + 1;
@@ -232,6 +275,13 @@ function loadCompliances(data) {
         $(this).next().slideToggle('fast');
         $('.accordion-content').not($(this).next()).slideUp('fast');
     });
+
+    if (is_null == true) {
+      hidePagePan();
+    }
+    else {
+      showPagePan(showFrom, sno, totalRecord);
+    }
 }
 
 function tree_open_close(id) {
@@ -291,9 +341,9 @@ function processSubmit(csv) {
                             hideLoader();
                         } else {
                             if (sno == 0) {
-                                //createPageView(totalRecord);
+                                createPageView(totalRecord);
                             }
-                            //$('.pagination-view').show();
+                            PaginationView.show();
                             $('.grid-table-rpt').show();
                             loadCompliances(ReportData);
                         }
@@ -339,6 +389,8 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 function pageControls() {
+
+
     SubmitButton.click(function() {
         processSubmit(false);
     });
@@ -412,7 +464,7 @@ function pageControls() {
         }
     });
 
-    //load legalentity list in autocomplete text box 
+    //load legalentity list in autocomplete text box
     LegalEntityVal.keyup(function(e) {
         if (Country.val() != '') {
             var condition_fields = [];
@@ -436,6 +488,12 @@ function pageControls() {
     });
 }
 $(document).ready(function() {
+    loadItemsPerPage();
+
     initialize();
     pageControls();
+
+    $('.tree-open-close').click(function() {
+        $('.tree-data').toggle("slow");
+    });
 });

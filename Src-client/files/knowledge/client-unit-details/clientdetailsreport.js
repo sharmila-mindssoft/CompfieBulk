@@ -90,6 +90,12 @@ $('#show-button').click(function () {
   lastLE = '';
   lastDv = '';
   $('.tbody-clientdetails-list').empty();
+  $('.details').show();
+  $('#compliance_animation')
+    .removeClass().addClass('bounceInLeft animated')
+    .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+    $(this).removeClass();
+  });
   loadunitdetailsreport();
 });
 

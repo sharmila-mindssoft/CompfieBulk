@@ -1703,7 +1703,7 @@ BEGIN
             )
         ) as client_countries
         FROM tbl_client_groups tcg
-        WHERE is_approved != 1
+        WHERE is_approved = 0
     ) a WHERE count > 0;
 END //
 
@@ -4497,7 +4497,7 @@ CREATE PROCEDURE `sp_usermapping_report_group_details`(
 in userCatgId int(11), userId int(11))
 BEGIN
     if(userCatgId = 1)then
-        select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+        select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
         from tbl_legal_entities as tle,
         tbl_client_groups as tcg
@@ -4508,7 +4508,7 @@ BEGIN
         tle.is_closed != 1;
     end if;
     if(userCatgId = 5 or userCatgId = 6)then
-        select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+        select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
         from tbl_legal_entities as tle,
         tbl_client_groups as tcg
@@ -4520,7 +4520,7 @@ BEGIN
         tle.is_closed != 1;
     end if;
     if(userCatgId = 7 or userCatgId = 8)then
-        select tcg.client_id, tcg.short_name as client_name, tle.legal_entity_id, tle.country_id,
+        select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
         from
         tbl_legal_entities as tle,
@@ -4543,14 +4543,14 @@ DROP PROCEDURE IF EXISTS `sp_usermapping_report_details`;
 
 DELIMITER //
 
-
 CREATE PROCEDURE `sp_usermapping_report_details`(
-    in userId int(11), clientId int(11), legalId int(11), counrtyId int(11))
+    in userId int(11), clientId int(11), legalId int(11), counrtyId int(11),
+    bgrp_id int(11), _divi_id int(11), _cg_id int(11), _unit_id int(11))
 BEGIN
     SELECT @_user_category_id := user_category_id as user_category_id
-    FROM tbl_users WHERE user_id = userId;
+    FROM tbl_user_login_details WHERE user_id = userId;
 
-    if(userId = 1)then
+    if(@_user_category_id = 1)then
         select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user
         from
         tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
@@ -4704,7 +4704,7 @@ BEGIN
         t1.client_id = clientId
         order by t3.domain_name;
     end if;
-END//
+    END//
 
 DELIMITER ;
 
@@ -5141,49 +5141,51 @@ DELIMITER //
 CREATE PROCEDURE `sp_groupadmin_registration_email_groupslist`(
 in _user_id int(11))
 BEGIN
-    case when _user_id = 1 then
-        SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
-        select t3.client_id, t3.short_name as group_name, count(t2.legal_entity_id ) as
-        no_of_legal_entities, t3.group_admin_username as ug_name, t4.email_id as email_id,
-        t4.user_id, concat(t4.employee_name,'-',(case when t4.employee_code is null then
-            '' else t4.employee_code end)) as emp_code_name
+    SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+
+    if @u_cat_id = 1 then
+        
+        select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
+        no_of_legal_entities, t3.group_admin_username as ug_name,
+        (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
+        (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
+        (select concat(employee_name,'-',(case when employee_code is null then
+            '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name
         from
-        tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
-        tbl_client_users as t4
+        tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         where
-        t4.client_id = t3.client_id and
+
         t3.client_id = t2.client_id and t2.client_id = t1.client_id
-        group by t2.client_id order by t3.short_name;
+        group by t2.client_id order by t3.group_name;
 
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id;
     else
-        SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
         if @u_cat_id = 5 then
-            select t3.client_id, t3.short_name as group_name, count(t2.legal_entity_id )
+            select t3.client_id, t3.group_name, count(t2.legal_entity_id )
             as no_of_legal_entities, t3.group_admin_username as ug_name,
-            t4.email_id as email_id, t4.user_id, concat(t4.employee_name,'-',(case when t4.employee_code is null then
-            '' else t4.employee_code end)) as emp_code_name
+            (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
+            (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
+            (select concat(employee_name,'-',(case when employee_code is null then
+            '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name
             from
-            tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
-            tbl_client_users as t4
+            tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
             where
-            t4.client_id = t3.client_id and
+
             t3.client_id = t2.client_id and t2.client_id = t1.client_id and
             t1.user_category_id = @u_cat_id and t1.user_id = _user_id
-            group by t2.country_id order by t3.short_name;
+            group by t2.country_id order by t3.group_name;
 
             select t2.client_id, t3.country_id, t3.country_name
             from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
             where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
             t1.user_category_id = @u_cat_id and t1.user_id = _user_id;
         end if;
-    end case;
+    end if;
 END//
 
 DELIMITER ;
-
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
@@ -5196,7 +5198,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
 in _user_id int(11))
 BEGIN
-    case when _user_id = 1 then
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+    
+    if @u_cat_id = 1 then
         SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
         select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
         unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
@@ -5206,20 +5210,22 @@ BEGIN
         (select assign_statutory_informed from tbl_group_admin_email_notification  where client_id =
         client_informed_id = (select max(client_informed_id) from tbl_group_admin_email_notification
         where t2.client_id and legal_entity_id = t2.legal_entity_id)) as statutory_assigned_informed,
-        t5.email_id, t5.user_id, concat(t5.employee_name,'-',(case when t5.employee_code is null then
-        '' else t5.employee_code end)) as emp_code_name,
+        (select email_id from tbl_client_users where client_id = t4.client_id) as email_id,
+        (select user_id from tbl_client_users where client_id = t4.client_id) as user_id,
+        (select concat(employee_name,'-',(case when employee_code is null then
+        '' else employee_code end)) from tbl_client_users where client_id = t4.client_id) as emp_code_name,
         (select count(*) from tbl_client_statutories where client_id = t4.client_id and
         unit_id = t4.unit_id) as statutory_count
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
-        tbl_units as t4, tbl_client_users as t5
+        tbl_units as t4
         where
-        t5.client_id = t3.client_id and
+
         t4.country_id = t2.country_id and t4.legal_entity_id = t2.legal_entity_id and
         t4.client_id = t3.client_id and t3.client_id = t2.client_id and
         t2.client_id = t1.client_id order by t2.legal_entity_name;
     else
-        SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+        SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
         if @u_cat_id = 5 then
             select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
             unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
@@ -5227,21 +5233,23 @@ BEGIN
             t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
             (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
             t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
-            t5.email_id, t5.user_id, concat(t5.employee_name,'-',(case when t5.employee_code is null then
-            '' else t5.employee_code end)) as emp_code_name,
+            (select email_id from tbl_client_users where client_id = t4.client_id) as email_id,
+        (select user_id from tbl_client_users where client_id = t4.client_id) as user_id,
+        (select concat(employee_name,'-',(case when employee_code is null then
+        '' else employee_code end)) from tbl_client_users where client_id = t4.client_id) as emp_code_name,
             (select count(*) from tbl_client_statutories where client_id = t4.client_id and
             unit_id = t4.unit_id) as statutory_count
             from
             tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
-            tbl_units as t4, tbl_client_users as t5
+            tbl_units as t4
             where
-            t5.client_id = t3.client_id and
+
             t4.country_id = t2.country_id and t4.legal_entity_id = t2.legal_entity_id and
             t4.client_id = t2.client_id and t3.client_id = t2.client_id and
             t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id and
             t1.user_id = _user_id order by t2.legal_entity_name;
         end if;
-    end case;
+    end if;
 END//
 
 DELIMITER ;
@@ -5503,17 +5511,18 @@ BEGIN
     if _u_cg_id = 5 then
         select t1.client_id, t2.short_name as group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        concat(t4.employee_code,'-',t4.employee_name) as emp_code_name,
+        (select concat(employee_code,'-',employee_name)
+        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
         tbl_user_clients as t1,
         tbl_client_groups as t2,
-        tbl_user_account_reassign_history as t3,
-        tbl_users as t4
+        tbl_user_account_reassign_history as t3
+
         where
-        t4.user_id = t3.assigned_by and
-        t3.reassinged_data = t1.client_id and
+
+        t3.reassigned_data = t1.client_id and
         t2.client_id = t1.client_id and
         (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
         t1.user_id = _u_id;
@@ -5527,17 +5536,18 @@ BEGIN
     if _u_cg_id =  6 then
         select t1.client_id, t2.short_name as group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        concat(t4.employee_code,'-',t4.employee_name) as emp_code_name,
+        (select concat(employee_code,'-',employee_name)
+        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
         tbl_user_legalentity as t1,
         tbl_client_groups as t2,
-        tbl_user_account_reassign_history as t3,
-        tbl_users as t4
+        tbl_user_account_reassign_history as t3
+
         where
-        t4.user_id = t3.assigned_by and
-        t3.reassinged_data = t1.client_id and
+
+        t3.reassigned_data = t1.client_id and
         t2.client_id = t1.client_id and
         (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
         t1.user_id = _u_id;
@@ -5551,16 +5561,17 @@ BEGIN
     if _u_cg_id = 7 or _u_cg_id = 8 then
         select t1.client_id, t2.short_name as group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        concat(t4.employee_code,'-',t4.employee_name) as emp_code_name,
+        (select concat(employee_code,'-',employee_name)
+        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
         tbl_user_units as t1,
         tbl_client_groups as t2,
-        tbl_user_account_reassign_history as t3,
-        tbl_users as t4
+        tbl_user_account_reassign_history as t3
+
         where
-        t4.user_id = t3.assigned_by and
+
         t3.reassinged_data = t1.unit_id and
         t2.client_id = t1.client_id and
         (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
@@ -6155,7 +6166,7 @@ BEGIN
         tbl_users as t5
         where
         t5.user_id = t4.assigned_by and
-        t4.reassinged_data = t1.unit_id and
+        t4.reassigned_data = t1.unit_id and
         t3.domain_id like t1.domain_id and t3.unit_id = t2.unit_id and
         t2.business_group_id like _bg_id and
         t2.unit_id = t1.unit_id and
