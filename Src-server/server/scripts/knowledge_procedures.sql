@@ -1703,7 +1703,7 @@ BEGIN
             )
         ) as client_countries
         FROM tbl_client_groups tcg
-        WHERE is_approved != 1
+        WHERE is_approved = 0
     ) a WHERE count > 0;
 END //
 
@@ -5143,8 +5143,10 @@ DELIMITER //
 CREATE PROCEDURE `sp_groupadmin_registration_email_groupslist`(
 in _user_id int(11))
 BEGIN
-    case when _user_id = 1 then
-        SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+    SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+
+    if @u_cat_id = 1 then
+        
         select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
         (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
@@ -5162,7 +5164,6 @@ BEGIN
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id;
     else
-        SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
         if @u_cat_id = 5 then
             select t3.client_id, t3.group_name, count(t2.legal_entity_id )
             as no_of_legal_entities, t3.group_admin_username as ug_name,
@@ -5183,11 +5184,10 @@ BEGIN
             where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
             t1.user_category_id = @u_cat_id and t1.user_id = _user_id;
         end if;
-    end case;
+    end if;
 END//
 
 DELIMITER ;
-
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
@@ -5200,7 +5200,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
 in _user_id int(11))
 BEGIN
-    case when _user_id = 1 then
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+    
+    if @u_cat_id = 1 then
         SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
         select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
         unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
@@ -5225,7 +5227,7 @@ BEGIN
         t4.client_id = t3.client_id and t3.client_id = t2.client_id and
         t2.client_id = t1.client_id order by t2.legal_entity_name;
     else
-        SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
+        SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
         if @u_cat_id = 5 then
             select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
             unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
@@ -5249,7 +5251,7 @@ BEGIN
             t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id and
             t1.user_id = _user_id order by t2.legal_entity_name;
         end if;
-    end case;
+    end if;
 END//
 
 DELIMITER ;
