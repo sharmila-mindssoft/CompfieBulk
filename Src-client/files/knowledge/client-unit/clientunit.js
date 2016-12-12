@@ -438,6 +438,7 @@ function getDivisionName(divisionId)
 function loadUnitValues(unitval)
 {
   //alert("inside loading")
+  
   var unit_second_cnt = $('.unitcnt-'+ division_cnt + '-' + 1).val();
   var firstlist = unitval
   var cid = firstlist.country_id;
@@ -563,7 +564,7 @@ function loadUnitValues(unitval)
     }
   } else {
     var classname = 'imgactivedclass-' + division_cnt + '-' + unit_second_cnt;
-    $('.activedclass-' + division_cnt + '-' + unit_second_cnt).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \'' + firstlist.unit_id + '\', \'' + clientunitId + '\');">');
+    // $('.activedclass-' + division_cnt + '-' + unit_second_cnt).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \'' + firstlist.unit_id + '\', \'' + clientunitId + '\');">');
   }
   //alert("approve:"+firstlist.is_approved)
 
