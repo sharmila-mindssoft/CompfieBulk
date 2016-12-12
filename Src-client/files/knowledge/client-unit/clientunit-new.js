@@ -562,7 +562,7 @@ function loadUnitValues(unitval)
     }
   } else {
     var classname = 'imgactivedclass-' + division_cnt + '-' + unit_second_cnt;
-    $('.activedclass-' + division_cnt + '-' + unit_second_cnt).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \'' + firstlist.unit_id + '\', \'' + clientunitId + '\');">');
+    // $('.activedclass-' + division_cnt + '-' + unit_second_cnt).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \'' + firstlist.unit_id + '\', \'' + clientunitId + '\');">');
   }
   //alert("approve:"+firstlist.is_approved)
 
