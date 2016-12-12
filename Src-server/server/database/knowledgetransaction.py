@@ -1,3 +1,4 @@
+
 import os
 import json
 import datetime
@@ -5,7 +6,7 @@ from server.database.tables import *
 from server.database.forms import *
 from protocol import (core, knowledgetransaction)
 from server.constants import (
-    KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
+    KNOWLEDGE_FORMAT_DOWNLOAD_URL
 )
 from server.common import (
     convert_to_dict, get_date_time, datetime_to_string_time, make_summary
@@ -1350,7 +1351,7 @@ def get_compliance_details(db, user_id, compliance_id):
 
     if statutory_dates is not None:
         statutory_dates = json.loads(statutory_dates)
-        
+
         for date in statutory_dates:
             s_date = core.StatutoryDate(
                 date["statutory_date"],
