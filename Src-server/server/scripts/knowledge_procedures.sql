@@ -4455,31 +4455,29 @@ BEGIN
     if(userCatgId = 1)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name,tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, tu.division_id, tu.category_id,
-        (select division_name from tbl_divisions where division_id = tu.division_id)
-        as division_name,
-        (select category_name from tbl_categories where category_id = tu.category_id)
-        as category_name
+        tu.country_id, td.division_id, td.division_name, tc.category_id,
+        tc.category_name
         from
-        tbl_units as tu
-        -- tbl_divisions as td,
-        -- tbl_categories as tc
+        tbl_units as tu,
+        tbl_divisions as td,
+        tbl_categories as tc
         where
-            tu.unit_id in (select distinct(unit_id) from tbl_user_units);
+        tc.category_id = tu.category_id and
+        td.division_id = tu.division_id and
+        tu.unit_id in (select distinct(unit_id) from tbl_user_units);
     end if;
     if(userCatgId = 5 or userCatgId = 6 or userCatgId = 7 or userCatgId = 8)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, td.division_id, tc.category_id,
-        (select division_name from tbl_divisions where division_id = tu.division_id)
-        as division_name,
-        (select category_name from tbl_categories where category_id = tu.category_id)
-        as category_name
+        tu.country_id, td.division_id, td.division_name, tc.category_id,
+        tc.category_name
         from
-        tbl_units as tu
-
+        tbl_units as tu,
+        tbl_divisions as td,
+        tbl_categories as tc
         where
-
+        tc.category_id = tu.category_id and
+        td.division_id = tu.division_id and
         tu.unit_id in (select distinct(unit_id) from tbl_user_units
         where user_id = userId and user_category_id = userCatgId);
     end if;
@@ -4550,9 +4548,9 @@ CREATE PROCEDURE `sp_usermapping_report_details`(
     bgrp_id int(11), _divi_id int(11), _cg_id int(11), _unit_id int(11))
 BEGIN
     SELECT @_user_category_id := user_category_id as user_category_id
-    FROM tbl_users WHERE user_id = userId;
+    FROM tbl_user_login_details WHERE user_id = userId;
 
-    if(userId = 1)then
+    if(@_user_category_id = 1)then
         select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user
         from
         tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
@@ -4706,7 +4704,7 @@ BEGIN
         t1.client_id = clientId
         order by t3.domain_name;
     end if;
-END//
+    END//
 
 DELIMITER ;
 
