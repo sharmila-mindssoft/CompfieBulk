@@ -73,6 +73,7 @@ api_params = {
 
     'industry_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'industry_name': {'type': 'STRING', 'length': 50, 'validation_method': is_industry, 'is_optional': False},
+    'industry_id_optional': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
 
     'organization_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'organization_name': {'type': 'STRING', 'length': 50, 'validation_method': is_industry, 'is_optional': False},
@@ -517,7 +518,7 @@ api_params = {
     "created_on": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
     "statutory_notifications": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "StatutoryNotification"},
     'notification_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    "level_1_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},
+    "level_1_statutories": {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},
 
     "knowledgeusers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'module_name': 'core', 'class_name': 'ChildUsers'},
     'a_i_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -530,6 +531,7 @@ api_params = {
     'approv_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'MappingApproveInfo'},
     'comp_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'ComplianceList'},
     "typelistedit": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    'a_g_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

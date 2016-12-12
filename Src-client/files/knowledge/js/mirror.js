@@ -812,11 +812,11 @@ function initMirror() {
     var filter = {};
     filter.c_id = cId;
     filter.d_id = dId;
-    filter.i_id = iId;
-    filter.s_n_id = sNId;
-    filter.g_id = gId;
-    filter.level_1_s_id = level1SId;
-    filter.f_id = fId;
+    filter.a_i_id = iId;
+    filter.a_s_n_id = sNId;
+    filter.a_g_id = gId;
+    filter.statutory_id_optional = level1SId;
+    filter.frequency_id = fId;
     filter.r_count = rCount;
     return filter;
   }
