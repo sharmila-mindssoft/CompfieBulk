@@ -3075,13 +3075,20 @@ DELIMITER //
 CREATE PROCEDURE `sp_users_domain_managers`(
     IN session_user INT(11)
 )
-BEGIN
-    SELECT user_id,
-    concat(employee_code, "-", employee_name) as employee_name,
-    is_active, user_category_id FROM tbl_users WHERE user_category_id = 
-    (SELECT user_category_id from tbl_user_login_details where user_id = session_user) and
-    user_id in (SELECT child_user_id FROM tbl_user_mapping
-    WHERE parent_user_id=session_user);
+SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = session_user;
+    IF @u_cat_id = 7 THEN
+        SELECT user_id,
+        concat(employee_code, "-", employee_name) as employee_name,
+        is_active, user_category_id FROM tbl_users WHERE user_category_id = 8 and
+        user_id in (SELECT child_user_id FROM tbl_user_mapping
+        WHERE parent_user_id=session_user);
+    ELSE
+        SELECT user_id,
+        concat(employee_code, "-", employee_name) as employee_name,
+        is_active, user_category_id FROM tbl_users WHERE user_category_id = 7 and
+        user_id in (SELECT child_user_id FROM tbl_user_mapping
+        WHERE parent_user_id=session_user);
+    END IF;
 END //
 
 DELIMITER ;
@@ -6500,3 +6507,23 @@ BEGIN
 END
 
 DELIMITER;
+
+
+-- --------------------------------------------------------------------------------
+-- Get user category id using userid
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_user_category_id_by_userid`;
+
+DELIMITER //
+
+
+CREATE  PROCEDURE `sp_get_user_category_id_by_userid`(
+in userid_ int(11))
+BEGIN
+    select user_category_id
+    from tbl_user_login_details
+    where
+    user_id = userid_;
+END //
+
+DELIMITER ;
