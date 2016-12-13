@@ -479,7 +479,7 @@ function loadLegalEntity(){
     $.each(LEGAL_ENTITIES, function(key, value){
         if(entities_assigned_to_selected_user != undefined && entities_assigned_to_selected_user.indexOf(value.legal_entity_id) > -1 ){
             var clone = LegalEntityViewRow.clone();
-            $(Group_Name, clone).text(client_id_name_map[value.group_id]);
+            $(Group_Name, clone).text(client_id_name_map[value.client_id]);
             $(BG_Name, clone).text(business_group_id_name_map[value.business_group_id]);
             $(Country, clone).text(country_id_name_map[value.country_id]);
             $(Entity, clone).text(value.legal_entity_name);
