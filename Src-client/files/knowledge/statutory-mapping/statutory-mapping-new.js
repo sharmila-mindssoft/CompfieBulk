@@ -1225,16 +1225,20 @@ function ListPage() {
             var x = 1;
             $.each(cdata, function(k, c) {
                 row = $('#templates .compliance-row').clone();
-                if (c.is_approved == 4) {
-                    row.addClass('rejected_row');
-                }
+
                 $('.comp_name', row).text(c.comp_name);
-                $('.comp_approval_status', row).text(c.approval_status_text);
                 $('.comp_edit', row).attr('title', 'Edit');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
                 $('.comp_edit', row).on('click', function() {
                     _listPage.displayMappingEdit(mapping_id, c.comp_id);
                 });
+                if (c.is_approved == 4) {
+                    row.addClass('rejected_row');
+                    $('.comp_approval_status', row).append(
+                        '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'
+                    );
+                }
+                $('.comp_approval_status', row).append(c.approval_status_text);
                 rowObjec.append(row);
             });
         }
