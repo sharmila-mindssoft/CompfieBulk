@@ -233,7 +233,7 @@ def update_legal_entities(db, request, group_id, session_user):
         "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
         "file_space_limit", "total_licence",
-        'is_active', "created_by", "created_on", 'updated_by', "updated_on"
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on"
     ]
     values = []
     insert_values = []
@@ -284,7 +284,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
-                1, session_user, current_time_stamp,
+                0, session_user, current_time_stamp,
                 session_user, current_time_stamp
             )
             insert_values.append(insert_value_tuple)
