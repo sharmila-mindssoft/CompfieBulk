@@ -2986,7 +2986,7 @@ BEGIN
         ) as assigned_units
         from tbl_units tu inner join tbl_units_organizations tud
         ON tu.unit_id = tud.unit_id
-        left join tbl_user_units uu ON uu.user_id = userid_ and uu.client_id= tu.client_id
+        inner join tbl_user_units uu ON uu.user_id = userid_ and uu.client_id= tu.client_id
         and uu.unit_id = tu.unit_id
         group by tu.client_id, tud.domain_id;
     END IF;
