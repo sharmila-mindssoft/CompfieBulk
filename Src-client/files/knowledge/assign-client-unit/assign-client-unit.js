@@ -14,6 +14,8 @@ var DOMAIN_MANAGER_USERS = '';
 var LEGAL_ENTITIES = '';
 var ASSIGN_UNIT_SAVE_DETAILS = {};
 var LEGAL_ENTITY_UNIT_MAP = {};
+var USER_CAREGORY ='';
+
 
 function clearForm(){
     DOMAIN_ID = '';
@@ -52,6 +54,11 @@ function initialize(type_of_form){
         clearForm();
         function onSuccess(data) {
             UNASSIGNED_UNITS = data["unassigned_units_list"];
+            if(data["user_category_id"] == 5){
+                USER_CAREGORY = "Domain Manager";
+            }else{
+                USER_CAREGORY = "Domain Executive";
+            }
             loadUnAssignedUnitsList();
         }
         function onFailure(error) {
@@ -156,6 +163,7 @@ $(".cancel-assign-unit").click(function(){
 
 function loadUnAssignedUnitsList(){
     $(".unassign-list").empty();
+    $(".category_title").text(USER_CAREGORY);
     var row = $("#templates .unassign-row tr");
     var sno = 0;
     $.each(UNASSIGNED_UNITS, function(key, value){

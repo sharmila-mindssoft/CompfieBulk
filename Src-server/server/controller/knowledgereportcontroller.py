@@ -16,6 +16,9 @@ from server.database.knowledgemaster import (
     get_industries, get_statutory_nature,
     get_geographies, get_country_wise_level_1_statutoy
 )
+from server.database.admin import (
+    get_level_1_statutories
+)
 from server.database.knowledgereport import *
 
 __all__ = [
@@ -90,7 +93,8 @@ def process_get_statutory_mapping_filters(db, request_frame, user_id):
     industries = get_industries(db)
     statutory_nature = get_statutory_nature(db)
     geographies = get_geographies(db)
-    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+    #level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+    level_1_statutories = get_level_1_statutories(db)
     compliance_frequency = get_compliance_frequency(db)
     return knowledgereport.GetStatutoryMappingReportFiltersSuccess(
         countries, domains, industries, statutory_nature,
