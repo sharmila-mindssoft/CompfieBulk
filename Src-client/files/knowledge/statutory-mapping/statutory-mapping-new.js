@@ -1113,7 +1113,7 @@ function FetchBack() {
                 possibleFailure(status);
             }
             else {
-                this.getMappedList(0, 0);
+                _fetchback.getMappedList(0, 0);
             }
         });
     };
