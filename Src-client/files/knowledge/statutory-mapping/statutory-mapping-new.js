@@ -46,6 +46,7 @@ Penal = $('#penal_consequences');
 ReferenceLink = $('#reference_link');
 Comp_id = $('#comp_id');
 Temp_id = $('#temp_id');
+RepeatBy = null;
 
 
 
@@ -84,7 +85,7 @@ possibleFailure = function(err, extra_details) {
     else if ( err == "ComplianceNameAlreadyExists") {
         displayMessage(msg.compliancename_exists + extra_details);
     }
-    else if (err = "TransactionExists") {
+    else if (err == "TransactionExists") {
         displayMessage(msg.transaction_exists);
     }
     else {
@@ -375,7 +376,7 @@ function RenderInput() {
         );
         $.each(REPEATSTYPE_INFO, function(ke, val) {
             RepeatsType.append(
-                _renderinput.make_option(val.repeat_type, val.repeat_type)
+                _renderinput.make_option(val.repeat_type, val.repeat_type_id)
             );
         });
     };
@@ -615,7 +616,7 @@ function RenderInput() {
     this.loadMonths = function(freq_val) {
         if (freq_val == 1) {
             $('#otstatutory_month').empty();
-            this.loadMonthAndData($('#otstatutory_month'));
+            _renderinput.loadMonthAndData($('#otstatutory_month'));
             $('#otstatutory_month').change(function(){
                 $('#otstatutory_date').empty();
                 $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
@@ -630,7 +631,7 @@ function RenderInput() {
         }
         else {
             $('#rcstatutory_month').empty();
-            this.loadMonthAndData($('#rcstatutory_month'));
+            _renderinputs.loadMonthAndData($('#rcstatutory_month'));
             $('#rcstatutory_month').change(function(){
                 $('#rcstatutory_date').empty();
                 $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
@@ -656,8 +657,6 @@ function RenderInput() {
         this.hideFrequencyAll();
         this.showFrequencyVal();
         if (data.f_id == 1) {
-        // this.loadMonths();
-
             if (data.statu_dates.length > 0) {
                 $('#otstatutory_month').val(data.statu_dates[0]['statutory_month']);
 
@@ -675,17 +674,52 @@ function RenderInput() {
             }
         }
         else if (data.f_id == 5) {
-            Duration.text(data.duration);
-            alert(data.d_type_id);
+            Duration.val(data.duration);
+
             DurationType.val(data.d_type_id);
         }
         else {
+            console.log(data);
             RepeatsType.val(data.r_type_id);
             RepeatsEvery.val(data.r_every);
 
+            $('.date-list').empty();
+            $.each(data.statu_dates, function(k, v) {
+                console.log(v);
+
+                date_pan = $("#templates #date-list-templates").clone();
+
+                $('.month-select', date_pan).empty();
+                _renderinput.loadMonthAndData($('.month-select', date_pan));
+                $('.month-select', date_pan).change(function(){
+                    $('.date-select', date_pan).empty();
+                    $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
+                        if (v.m_id == parseInt($('.month-select', date_pan).val())) {
+                            for (var i=1; i<=v.range; i++) {
+                                dopt =_renderinput.make_option(i, i);
+                                $('.date-select', date_pan).append(dopt);
+                            }
+                        }
+                    });
+                });
+
+                $('.month-select', date_pan).val(v['statutory_month']);
+                $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
+                    if (vv.m_id == v["statutory_month"]) {
+                        for (var i=1; i<vv.range; i++) {
+                            opt = _renderinput.make_option(i, i);
+                            $('.date-select', date_pan).append(opt);
+                        }
+                    }
+                });
+                $('.date-select', date_pan).val(v['statutory_date']);
+                $('.trigger-value', date_pan).val(v['trigger_before_days']);
+                $('.date-list').append(date_pan);
+            });
+
+
         }
-        console.log(data.comp_id);
-        console.log(data.temp_id);
+
         Comp_id.val(data.comp_id);
         if (data.comp_id == null) {
             Temp_id.val(data.temp_id);
@@ -693,8 +727,6 @@ function RenderInput() {
         else {
             Temp_id.val(data.comp_id);
         }
-        console.log(Comp_id.val());
-        console.log(Temp_id.val());
 
     };
     this.clearCompliance = function(){
@@ -704,11 +736,6 @@ function RenderInput() {
         Document.val('');
         Penal.val('');
         ReferenceLink.val('');
-
-        // Duration.val('');
-        // DurationType.val('');
-        // RepeatsType.val('');
-        // RepeatsEvery.val('');
 
         Comp_id.val('');
         Temp_id.val('');
@@ -902,6 +929,7 @@ function RenderInput() {
             }
             else if (freq_val == 5) {
                 OccasionalPan.show();
+                DurationType.empty();
                 DurationType.append(
                     _renderinput.make_option("Select", "")
                 );
@@ -937,7 +965,24 @@ function RenderInput() {
             }
             else {
                 RecurringPan.show();
-                _renderinput.loadMonths(freq_val);
+                _renderinput.loadRepeats();
+                $('.date-list').empty();
+                date_pan = $("#templates #date-list-templates").clone();
+
+                $('.month-select', date_pan).empty();
+                this.loadMonthAndData($('.month-select', date_pan));
+                $('.month-select', date_pan).change(function(){
+                    $('.date-select', date_pan).empty();
+                    $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
+                        if (v.m_id == parseInt($('.month-select', date_pan).val())) {
+                            for (var i=1; i<=v.range; i++) {
+                                dopt =_renderinput.make_option(i, i);
+                                $('.date-select', date_pan).append(dopt);
+                            }
+                        }
+                    });
+                });
+                $('.date-list').append(date_pan);
             }
 
         }
@@ -1157,6 +1202,7 @@ function FetchBack() {
                 IS_EDIT = false;
             }
             else {
+                console.log(status);
                 possibleFailure(status);
                 return false;
             }
@@ -1296,7 +1342,6 @@ function ViewPage() {
     };
     this.showThirdTab = function(){
         _renderinput.loadFrequency();
-        _renderinput.loadRepeats();
         //validate mandatory
         // if file uploaded validate file format and size
         // frequency validate and render multiple input
@@ -1651,18 +1696,57 @@ function pageControls() {
         info['duration'] = null;
         info['r_type_id'] = null;
         info['r_every'] = null;
+        _renderinput.statu_dates = [];
         if (Frequency.val() == 5) {
+
             info['d_type_id'] = parseInt(DurationType.val());
             info['duration'] = parseInt(Duration.val());
         }
         else if (
-            (Frequency.val() == 2) && (Frequency.val() == 3) &&
+            (Frequency.val() == 2) ||
+            (Frequency.val() == 3) ||
             (Frequency.val() == 4)
         ){
+            console.log(RepeatsType.val());
             info['r_type_id'] = parseInt(RepeatsType.val());
             info['r_every'] = parseInt(RepeatsEvery.val());
+            date_list = [];
+            repeat_by = $("input[name='radioSingle1']:checked").val();
+            repeat_by = parseInt(repeat_by);
+            console.log(repeat_by);
+
+            $(".date-list").each(function(){
+                statu = {};
+                statu['statutory_date'] = null;
+                statu['statutory_month'] = null;
+                statu['trigger_before_days'] = null;
+                statu['repeat_by'] = null;
+
+                if (repeat_by == 1) {
+                    dt = $(".date-select", this).val();
+                }
+                else {
+                    dt = $(".date-select option:last", this).val();
+                }
+                mon = $(".month-select", this).val();
+                trig = $(".trigger-value", this).val();
+                statu['repeat_by'] = repeat_by;
+                if (dt != '') {
+                    statu['statutory_date'] = parseInt(dt);
+                }
+                if (mon != '') {
+                    statu['statutory_month'] = parseInt(mon);
+                }
+                if (trig != '') {
+                    statu['trigger_before_days'] = parseInt(trig)
+                }
+                _renderinput.statu_dates.push(statu);
+            });
+            console.log(info);
+
         }
         else {
+
             statu = {};
             statu['statutory_date'] = null;
             statu['statutory_month'] = null;
@@ -1748,6 +1832,22 @@ function pageControls() {
         _viewPage.hide();
         _listPage.show();
     });
+
+    $(".radio-class").click(function() {
+        selected_val = $("input[name='radioSingle1']:checked").val();
+        if (selected_val == "1") {
+            $(".date-list").each(function(){
+                $(".date-select", this).show();
+            });
+        }
+        else {
+            $(".date-list").each(function(){
+                $(".date-select", this).hide();
+            });
+        }
+    });
+
+
 
 }
 function initialize() {

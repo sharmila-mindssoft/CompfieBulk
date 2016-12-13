@@ -1366,8 +1366,8 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
-    SELECT user_category_id INTO user_category 
-    FROM tbl_user_login_details WHERE user_id = userId; 
+    SELECT user_category_id INTO user_category
+    FROM tbl_user_login_details WHERE user_id = userId;
     IF user_category in (1,2) then
         select legal_entity_id, legal_entity_name, business_group_id,
         client_id, country_id from tbl_legal_entities
@@ -3078,7 +3078,7 @@ CREATE PROCEDURE `sp_users_domain_managers`(
 BEGIN
     SELECT user_id,
     concat(employee_code, "-", employee_name) as employee_name,
-    is_active, user_category_id FROM tbl_users WHERE user_category_id = 
+    is_active, user_category_id FROM tbl_users WHERE user_category_id =
     (SELECT user_category_id from tbl_user_login_details where user_id = session_user) and
     user_id in (SELECT child_user_id FROM tbl_user_mapping
     WHERE parent_user_id=session_user);
@@ -3119,21 +3119,21 @@ BEGIN
         inner join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
         WHERE tu.client_id=clientid and tui.domain_id=domainid and
         tu.unit_id not in (
-            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid 
+            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid
         )
         order by unit_name ASC;
 
-        SELECT tui.unit_id, (SELECT domain_name FROM tbl_domains td WHERE td.domain_id = tui.domain_id) 
-            as domain_name, (SELECT organisation_name FROM tbl_organisation ti 
-            WHERE ti.organisation_id = tui.organisation_id) as organisation_name 
+        SELECT tui.unit_id, (SELECT domain_name FROM tbl_domains td WHERE td.domain_id = tui.domain_id)
+            as domain_name, (SELECT organisation_name FROM tbl_organisation ti
+            WHERE ti.organisation_id = tui.organisation_id) as organisation_name
         FROM tbl_units tu
         INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
         inner join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
         WHERE tu.client_id=clientid and tui.domain_id=domainid and
         tu.unit_id not in (
-            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid 
+            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid
         );
-        
+
     ELSE
         SELECT tu.unit_id, unit_code, unit_name,
         address, (
@@ -3152,9 +3152,9 @@ BEGIN
         ) as geography_name
         FROM tbl_units tu
         INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
-        inner join tbl_user_units uu ON uu.user_id = userid and uu.client_id= tu.client_id 
+        inner join tbl_user_units uu ON uu.user_id = userid and uu.client_id= tu.client_id
         and uu.unit_id = tu.unit_id
-        WHERE tu.client_id=clientid and tui.domain_id=domainid 
+        WHERE tu.client_id=clientid and tui.domain_id=domainid
         order by unit_name ASC;
 
         SELECT tui.unit_id, (
@@ -3163,10 +3163,10 @@ BEGIN
         ) as domain_name, (
             SELECT organisation_name FROM tbl_organisation ti
             WHERE ti.organisation_id = tui.organisation_id
-        ) as organisation_name 
+        ) as organisation_name
         FROM tbl_units tu
         INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
-        inner join tbl_user_units uu ON uu.user_id = userid and uu.client_id= tu.client_id 
+        inner join tbl_user_units uu ON uu.user_id = userid and uu.client_id= tu.client_id
         and uu.unit_id = tu.unit_id
         WHERE tu.client_id=clientid and tui.domain_id=domainid;
     END IF;
@@ -4335,9 +4335,10 @@ BEGIN
     where t4.user_id = userid and t2.is_approved = approvestatus;
 
     select t1.statutory_mapping_id, t1.statutory_id,
-    (select concat(parent_names, ' >> ', statutory_name) from tbl_statutories where statutory_id = t1.statutory_id) as statutory_name
+    t3.statutory_name, t3.parent_names
     from tbl_mapped_statutories as t1
     inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_statutories as t3 on t1.statutory_id = t3.statutory_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id  and
     t4.country_id = t2.country_id
     where t4.user_id = userid and t2.is_approved = approvestatus;
@@ -6090,7 +6091,7 @@ BEGIN
         t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id,
         t1.duration, t1.is_active,
         (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
-        (select repeat_type from tbl_compliance_repeat_type where repeats_type_id = t1.repeats_type_id) as repeat_type,
+        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration
     FROM tbl_compliances as t1 inner join tbl_statutory_mappings as t2
     on t1.statutory_mapping_id = t2.statutory_mapping_id
