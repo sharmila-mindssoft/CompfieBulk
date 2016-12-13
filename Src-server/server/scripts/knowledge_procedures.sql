@@ -3068,6 +3068,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get domain managers
 -- --------------------------------------------------------------------------------
+
 DROP PROCEDURE IF EXISTS `sp_users_domain_managers`;
 
 DELIMITER //
@@ -3075,7 +3076,8 @@ DELIMITER //
 CREATE PROCEDURE `sp_users_domain_managers`(
     IN session_user INT(11)
 )
-SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = session_user;
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = session_user;
     IF @u_cat_id = 7 THEN
         SELECT user_id,
         concat(employee_code, "-", employee_name) as employee_name,
@@ -5152,7 +5154,7 @@ BEGIN
     SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
 
     if @u_cat_id = 1 then
-        
+
         select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
         (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
@@ -5207,7 +5209,7 @@ CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
 in _user_id int(11))
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
-    
+
     if @u_cat_id = 1 then
         SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
         select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
@@ -6453,7 +6455,6 @@ END //
 
 DELIMITER ;
 
-DELIMITER //
 
 DROP PROCEDURE IF EXISTS `sp_user_clients_save`;
 
@@ -6507,7 +6508,7 @@ BEGIN
     END IF;
 END
 
-DELIMITER;
+DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
