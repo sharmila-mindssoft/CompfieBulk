@@ -786,7 +786,8 @@ BEGIN
     created_on) VALUES (groupname, shortname, emailid,
     no_of_view_licence, 1, current_ist_datetime(),
     0, session_user, current_ist_datetime());
-END//
+END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2826,7 +2827,9 @@ BEGIN
     inner join tbl_countries as t4 on t4.country_id = t2.country_id
     where
     t1.user_id = session_user;
-END//
+
+END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2858,6 +2861,8 @@ BEGIN
                 t2.client_id in (select client_id from tbl_client_users)
             order by organisation_name;
    END IF;
+END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2883,7 +2888,9 @@ BEGIN
         client_id = clientId and
         unit_id != unitId;
     end if;
-END
+
+END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -2899,18 +2906,19 @@ BEGIN
     select count(*) as unit_id_cnt from
     tbl_units where
     unit_id = unitId;
-END
+END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- check dupliaction of id for save units
 -- --------------------------------------------------------------------------------
+
 DROP PROCEDURE IF EXISTS `sp_tbl_units_check_unitgroupid`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_tbl_units_check_unitgroupid`(
-in tableName varchar(50), param int(11))
+CREATE PROCEDURE `sp_tbl_units_check_unitgroupid`(in tableName varchar(50), param int(11))
 BEGIN
     if tableName = 'client_id' then
         select count(0) as client_cnt from
@@ -2928,8 +2936,11 @@ BEGIN
         select count(0) as divi_cnt from
         tbl_divisions where division_id = param;
     end if;
-END
+
+END //
+
 DELIMITER ;
+
 
 -- --------------------------------------------------------------------------------
 -- Get unit max id
@@ -2991,7 +3002,7 @@ BEGIN
         group by tu.client_id, tud.domain_id;
     END IF;
 
-END//
+END //
 
 DELIMITER ;
 
@@ -3091,6 +3102,7 @@ BEGIN
         user_id in (SELECT child_user_id FROM tbl_user_mapping
         WHERE parent_user_id=session_user);
     END IF;
+
 END //
 
 DELIMITER ;
@@ -3179,6 +3191,7 @@ BEGIN
         and uu.unit_id = tu.unit_id
         WHERE tu.client_id=clientid and tui.domain_id=domainid;
     END IF;
+
 END //
 
 DELIMITER ;
@@ -3251,6 +3264,7 @@ BEGIN
         select count(0) as div_name_cnt from
         tbl_divisions where division_name = param;
     end if;
+
 END //
 
 DELIMITER ;
@@ -3369,6 +3383,7 @@ BEGIN
         SELECT concat(unit_code, "-", unit_name) as name
         FROM tbl_units WHERE find_in_set(assigned_ids, unit_id);
     END IF;
+
 END //
 
 DELIMITER ;
@@ -3676,6 +3691,7 @@ BEGIN
     ))))
     group by t1.legal_entity_id
     order by t1.legal_entity_name limit fromcount_, pagecount_;
+
 END //
 
 DELIMITER ;
@@ -3722,6 +3738,7 @@ BEGIN
         ))
     ,1
     ))));
+
 END //
 
 DELIMITER ;
@@ -3738,25 +3755,25 @@ CREATE PROCEDURE `sp_statutory_notification_details`(
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
 IN fromcount_ INT(11), IN pagecount_ INT(11))
 BEGIN
-    SELECT
-    ts.statutory_name,
-    tc.compliance_task,
-    tsnl.notification_text,
-    tsnl.created_on
-FROM
-    tbl_statutory_notifications tsnl
-        INNER JOIN
-    tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
-        INNER JOIN
-    tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
-        INNER JOIN
-    tbl_statutories ts ON ts.statutory_id = tms.statutory_id
-WHERE
-    tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
-    IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
-    IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
-limit fromcount_, pagecount_;
+        SELECT
+        ts.statutory_name,
+        tc.compliance_task,
+        tsnl.notification_text,
+        tsnl.created_on
+    FROM
+        tbl_statutory_notifications tsnl
+            INNER JOIN
+        tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
+            INNER JOIN
+        tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
+            INNER JOIN
+        tbl_statutories ts ON ts.statutory_id = tms.statutory_id
+    WHERE
+        tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
+        IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+        IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
+        IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+    limit fromcount_, pagecount_;
 END //
 
 DELIMITER ;
@@ -3923,7 +3940,10 @@ BEGIN
             SELECT unit_id FROM tbl_user_units
             WHERE user_id = userid
         ) order by unit_name ASC;
-    END IF;
+    END IF ;
+
+END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -4011,6 +4031,7 @@ BEGIN
         SELECT statutory_mapping_id from statutory_mappings
     );
     DROP TEMPORARY TABLE statutory_mappings;
+
 END //
 
 DELIMITER ;
@@ -4032,6 +4053,7 @@ BEGIN
     FROM tbl_client_statutories WHERE client_id = clientid
     AND find_in_set(unit_id, unit_ids)
     order by client_statutory_id DESC;
+
 END //
 
 DELIMITER ;
@@ -4066,6 +4088,7 @@ BEGIN
     ON (tle.legal_entity_id = tu.legal_entity_id) INNER JOIN tbl_client_groups tcg
     ON tcg.client_id = tu.client_id INNER JOIN tbl_geographies tg
     ON tg.geography_id = tu.geography_id;
+
 END //
 
 DELIMITER ;
@@ -4104,6 +4127,7 @@ BEGIN
     INNER JOIN tbl_statutories ts ON ts.statutory_id = tcc.statutory_id
     INNER JOIN tbl_mapped_locations tml ON tml.statutory_mapping_id = tc.statutory_mapping_id
     WHERE client_statutory_id=cs_id;
+
 END //
 
 DELIMITER ;
@@ -4414,6 +4438,7 @@ BEGIN
         (select country_id from tbl_user_countries
             where user_id = userId) and is_active = 1;
     end if;
+
 END //
 
 DELIMITER ;
@@ -4476,6 +4501,7 @@ BEGIN
         td.division_id = tu.division_id and
         tu.unit_id in (select distinct(unit_id) from tbl_user_units);
     end if;
+
     if(userCatgId = 5 or userCatgId = 6 or userCatgId = 7 or userCatgId = 8)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
@@ -4491,6 +4517,7 @@ BEGIN
         tu.unit_id in (select distinct(unit_id) from tbl_user_units
         where user_id = userId and user_category_id = userCatgId);
     end if;
+
 END //
 
 DELIMITER ;
@@ -4543,7 +4570,9 @@ BEGIN
         tle.client_id in (select distinct(client_id) from tbl_user_units
         where user_id = userId);
     end if;
-END//
+
+END //
+
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
@@ -4714,7 +4743,8 @@ BEGIN
         t1.client_id = clientId
         order by t3.domain_name;
     end if;
-    END//
+
+END //
 
 DELIMITER ;
 
@@ -4801,8 +4831,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_units_getCountries`;
 DELIMITER //
 
 
-CREATE PROCEDURE `sp_tbl_units_getCountries`(
-in clientId int(11), userId int(11))
+CREATE PROCEDURE `sp_tbl_units_getCountries`(in clientId int(11), userId int(11))
 BEGIN
     select t1.country_id
     from
@@ -4816,7 +4845,8 @@ BEGIN
     tul.client_id = clientID and
     tul.user_id = userId
     group by t2.business_group_id;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -4836,7 +4866,8 @@ BEGIN
     tbl_legal_entities as t2 where t2.client_id = t1.client_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t1.user_id = userId) order by level_position;
-END//
+
+END //
 
 DELIMITER ;
 -- --------------------------------------------------------------------------------
@@ -4860,7 +4891,7 @@ BEGIN
         tbl_legal_entities as t2 where t2.client_id = t1.client_id and
         t2.legal_entity_id = t1.legal_entity_id and
         t1.user_id = userId);
-END//
+END //
 
 DELIMITER ;
 
@@ -4878,7 +4909,7 @@ BEGIN
     delete from tbl_units_organizations
     where
     unit_id in (unitId);
-END//
+END //
 
 DELIMITER ;
 
@@ -4920,7 +4951,7 @@ BEGIN
         t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
         and t1.user_id = _user_id order by t3.short_name asc;
     end if;
-END//
+END //
 
 DELIMITER ;
 
@@ -4969,7 +5000,8 @@ BEGIN
         t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
         and t1.user_id = _user_id order by t3.business_group_name asc;
     end if;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5019,7 +5051,7 @@ BEGIN
         t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
         and t1.user_id = _user_id order by t4.unit_name asc;
     end if;
-END//
+END //
 
 DELIMITER ;
 
@@ -5074,7 +5106,7 @@ BEGIN
         t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
         and t1.user_id = _user_id;
     end if;
-END//
+END //
 
 DELIMITER ;
 
@@ -5136,7 +5168,7 @@ BEGIN
     case when _u_id <> 0 then t1.unit_id = _u_id else t1.unit_id = t1.unit_id end and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
     group by t2.compliance_id;
-END//
+END //
 
 DELIMITER ;
 
@@ -5193,7 +5225,7 @@ BEGIN
             t1.user_category_id = @u_cat_id and t1.user_id = _user_id;
         end if;
     end if;
-END//
+END //
 
 DELIMITER ;
 -- --------------------------------------------------------------------------------
@@ -5259,8 +5291,10 @@ BEGIN
             t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id and
             t1.user_id = _user_id order by t2.legal_entity_name;
         end if;
+
     end if;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5290,7 +5324,8 @@ BEGIN
         values
         (_cl_id, _le_id, _admin_mail_id, _mode_creation, _mode_sent_by, _mode_sent_on);
     end if;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5308,7 +5343,8 @@ CREATE PROCEDURE `sp_tbl_client_email_verification_save`(
 BEGIN
     INSERT INTO tbl_client_email_verification(client_id, email_id, verification_code, verification_type_id, expiry_date)
     VALUES (cl_id, e_id, r_token, t_type, e_date);
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5406,7 +5442,8 @@ BEGIN
     tbl_units as t2, tbl_units_organizations as t3
     where
     t3.unit_id = t2.unit_id;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5454,7 +5491,8 @@ BEGIN
         t4.client_id = t2.client_id and
         t2.client_id = t1.client_id order by t2.legal_entity_name;
     end if;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5503,7 +5541,7 @@ BEGIN
     t2.client_id  = t1.client_id and
     t1.user_id in (select user_id from tbl_users);
 
-END//
+END //
 
 DELIMITER ;
 
@@ -5594,7 +5632,8 @@ BEGIN
         (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
         t1.user_id = _u_id and t1.user_category_id = _u_cg_id;
     end if;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5622,7 +5661,8 @@ BEGIN
     tbl_user_clients as t1, tbl_legal_entities as t2
     where
     t2.client_id  = t1.client_id and t1.user_id = _u_id;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5641,7 +5681,8 @@ BEGIN
     set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
     closed_remarks = _rem where
     legal_entity_id = _le_id;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5664,7 +5705,7 @@ BEGIN
     WHERE
         u.user_id = userid_ AND u.password = password_ AND u.is_active = 1;
 
-END//
+END //
 
 DELIMITER ;
 
@@ -5686,7 +5727,7 @@ BEGIN
          where level_id = t1.level_id) position
          FROM tbl_geographies t1
          ORDER BY position, parent_names, geography_name;
-END//
+END //
 
 DELIMITER ;
 
@@ -5718,7 +5759,8 @@ BEGIN
             INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id
             ORDER BY country_name, level_position, geography_name;
     end if;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5738,7 +5780,8 @@ BEGIN
     UPDATE tbl_users set contact_no = contactno_, address = address_,
     mobile_no = mobileno_, email_id = emailid_  WHERE user_id= userid_;
     UPDATE tbl_user_login_details set email_id = emailid_  WHERE user_id= userid_;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5764,7 +5807,8 @@ BEGIN
     AND mu.user_id = userid_
     where m.user_category_id = @u_cat_id
     order by created_on DESC limit pagecount_;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5787,7 +5831,8 @@ BEGIN
     from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = userid_
     order by su.read_status DESC, s.created_on DESC limit pagecount_;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5804,6 +5849,7 @@ CREATE PROCEDURE `sp_statutory_notification_read_status`(
 BEGIN
     UPDATE tbl_statutory_notifications_users set read_status = readstatus_
     WHERE notification_id=notificationid_ AND user_id = userid_;
+
 END //
 
 DELIMITER ;
@@ -5824,7 +5870,8 @@ BEGIN
 	INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
 	INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
 	WHERE t2.level_position=1;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5854,7 +5901,8 @@ BEGIN
 		INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
 		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id;
 	end if;
-END//
+
+END //
 
 DELIMITER ;
 
@@ -5880,7 +5928,7 @@ BEGIN
 	FROM tbl_users;
 
 	SELECT user_id, form_id, action, created_on FROM tbl_activity_log;
-END//
+END //
 
 DELIMITER ;
 
@@ -5894,7 +5942,7 @@ BEGIN
     select level_id, level_position, level_name, country_id from
     tbl_geography_levels order by level_position;
 
-END//
+END //
 
 DELIMITER ;
 -- --------------------------------------------------------------------------------
@@ -5910,7 +5958,8 @@ BEGIN
     select level_id, level_name, level_position, country_id
     from tbl_geography_levels
     order by level_position;
-END//
+
+END //
 
 DELIMITER ;
 -- --------------------------------------------------------------------------------
@@ -5926,7 +5975,8 @@ CREATE PROCEDURE `sp_check_level_in_geographies`(
 BEGIN
     select count(*) from tbl_geographies where
     level_id = levelId;
-END//
+
+END //
 
 DELIMITER ;
 -- --------------------------------------------------------------------------------
@@ -5942,7 +5992,7 @@ CREATE PROCEDURE `sp_delete_geographylevel`(
 BEGIN
     delete from tbl_geography_levels where
     level_id = levelId;
-END//
+END //
 
 DELIMITER ;
 -- --------------------------------------------------------------------------------
@@ -5981,7 +6031,7 @@ BEGIN
     set level_name  = _level_name, level_position = _level_position,
     updated_by = _updated_by where
     level_id = _level_id;
-END//
+END //
 
 DELIMITER ;
 
@@ -6188,7 +6238,7 @@ BEGIN
 
     end if;
 
-END//
+END //
 
 DELIMITER ;
 
@@ -6482,7 +6532,7 @@ CREATE PROCEDURE `sp_statutory_mapping_report_frequency`()
 BEGIN
     select frequency_id, frequency from
     tbl_compliance_frequency;
-END//
+END //
 
 DELIMITER ;
 
