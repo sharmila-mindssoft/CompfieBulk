@@ -35,7 +35,7 @@ __all__ = [
     "save_reassigned_user_account", "get_assigned_legal_entities",
     "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status",
     "get_countries_for_user_filter",
-    "get_child_users"
+    "get_child_users", "get_categories_for_user"
 ]
 
 
@@ -62,12 +62,13 @@ def get_domains_for_user(db, user_id):
 def return_country_list_of_domain(domain_id, countries):
     c_ids = []
     c_names = []
-    for c in countries :
+    for c in countries:
         if int(c["domain_id"]) == domain_id:
             c_ids.append(int(c["country_id"]))
             c_names.append(c["country_name"])
 
     return c_ids, c_names
+
 
 def return_domains(data):
     results = []
@@ -96,13 +97,14 @@ def save_domain_country(db, c_ids, d_id):
     if result is False:
         raise process_error("E034")
 
+
 def save_domain(db, country_ids, domain_name, user_id):
     domain_id = db.call_insert_proc(
         "sp_domains_save", (None, domain_name, user_id)
     )
     if domain_id is False:
         raise process_error("E024")
-    else :
+    else:
         save_domain_country(db, country_ids, domain_id)
     action = "Add Domain - \"%s\"" % domain_name
     db.save_activity(user_id, 2, action)
@@ -257,7 +259,7 @@ def get_level_1_statutories(db):
 #############################################################################
 def get_countries_for_user(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_countries_for_user", (user_id,), 2)
-    if len(result) > 1 :
+    if len(result) > 1:
         result = result[1]
     return return_countries(result)
 
@@ -516,7 +518,7 @@ def save_user_group(
             action = "Created User Group \"%s\"" % user_group_name
             db.save_activity(0, 3, action)
             return True
-        else :
+        else:
             return False
     else:
         raise process_error("E030")
@@ -545,7 +547,7 @@ def update_user_group(
             action = "Updated User Group \"%s\"" % user_group_name
             db.save_activity(0, 3, action)
             return True
-        else :
+        else:
             return False
     else:
         raise process_error("E031")
@@ -636,14 +638,15 @@ def save_registraion_token(db, user_id, emp_name, email_id):
     )
     notify_user_thread.start()
 
-    if (_del_olddata()) :
+    if (_del_olddata()):
         db.call_insert_proc(
             "sp_tbl_email_verification_save",
             (user_id, registration_token, 1, expiry_date)
         )
         return True
-    else :
+    else:
         return False
+
 
 ###############################################################################
 # To save User
@@ -1100,10 +1103,10 @@ def save_reassigned_user_account_history(db, request, session_user):
         for datum in data:
             names += datum["name"]
 
-        if user_type == 1:
+        if user_type == 5:
             reassigned_data = "Following groups were reassigned :- %s " % (
                 names)
-        elif user_type == 2:
+        elif user_type == 6:
             reassigned_data = "Following legal entities were " + \
                 " reassigned :- %s" % (
                     names)
@@ -1133,10 +1136,10 @@ def save_reassigned_user_account(db, request, session_user):
             value_list.append(
                 (request.new_user_id, session_user, current_time_stamp)
             )
-            if user_type == 1:
+            if user_type == 5:
                 condition = "client_id=%s" % (assigned_id)
                 table = tblUserClients
-            elif user_type == 2:
+            elif user_type == 6:
                 condition = "legal_entity_id=%s" % (assigned_id)
                 table = tblUserLegalEntity
             else:
@@ -1199,10 +1202,20 @@ def return_assigned_clients(data):
     ]
     return result
 
+
 def get_child_users(db, user_id):
     result = db.call_proc("sp_user_knowledge_executives", [user_id])
     data = []
     for r in result:
         data.append(core.ChildUsers(r["child_user_id"], r["emp_name"]))
+
+    return data
+
+
+def get_categories_for_user(db, user_id):
+    result = db.call_proc_with_multiresult_set("sp_get_user_categories_for_user", (user_id,), 2)
+    data = []
+    for r in result[1]:
+        data.append(core.UserCategory(r["user_category_id"], r["user_category_name"]))
 
     return data

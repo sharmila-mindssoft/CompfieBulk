@@ -1464,7 +1464,7 @@ function initMirror() {
       {
         'from_date': fromDate,
         'to_date': toDate,
-        'user_id': userId,
+        'user_id_search': userId,
         'form_id_search': formId,
         'country_id': countryId,
         'category_id': categoryId,
@@ -2068,7 +2068,7 @@ function initMirror() {
         "grp_mode": action_mode
       }
     ];
-    //apiRequest(callerName, request, callback);
+    apiRequest(callerName, request, callback);
   }
   //Verify Password
   function verifyPassword(password, callback) {

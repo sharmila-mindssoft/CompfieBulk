@@ -324,7 +324,7 @@ def process_get_audit_trails(db, request, session_user):
     to_count = request.page_count
     from_date = request.from_date
     to_date = request.to_date
-    user_id = request.user_id
+    user_id = request.user_id_search
     form_id = request.form_id_search
     country_id = request.country_id
     category_id = request.category_id

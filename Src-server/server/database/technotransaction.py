@@ -500,7 +500,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         no_of_legal_entities = groups.get("no_of_legal_entities")
         ug_name = groups.get("ug_name")
         email_id = groups.get("email_id")
-        user_id = groups.get("user_id")
+        user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
         c_names = []
         for countries in groupslist[2]:
@@ -509,7 +509,7 @@ def return_groupadmin_registration_grouplist(groupslist):
 
         groupadmin_grouplist.append(technotransactions.GroupAdmin_GroupList(
                 client_id, group_name, no_of_legal_entities,
-                c_names, ug_name, email_id, user_id, emp_code_name
+                c_names, ug_name, email_id, user_id_search, emp_code_name
             ))
     return groupadmin_grouplist
 

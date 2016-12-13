@@ -121,8 +121,9 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-table-rpt default-display-none">
-                <div class="card-box">
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                    <div class="grid-table-rpt default-display-none">
                     <div class="table-responsive">
                         <div class="col-sm-12">
                             <div class="col-sm-12 text-center"><h4>Statutory Settings Report</h4></div>
@@ -135,6 +136,18 @@
                             </div>
                         </div>
                         <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr align="left" class="tr-heading">
+                                  <th width="3%" align="center" class="header-bg">#</th>
+                                  <th width="30%" class="header-bg">Statutory Provision</th>
+                                  <th width="18%" class="header-bg">Compliance Task</th>
+                                  <th width="10%" class="header-bg">Statutory Nature</th>
+                                  <th width="5%" class="header-bg"><img src="/images/icon-client-comply.png" title="Applicability Status"></th>
+                                  <th width="5%" class="header-bg"><img src="/images/icon-client-tick.png" title="Opted"></th>
+                                  <th width="15%" class="header-bg">Modified By Compfie</th>
+                                  <th width="15%" class="header-bg">Modified By Client</th>
+                                </tr>
+                            </thead>
                             <tbody class="tbody-assigned-statutory-list">
                             </tbody>
                         </table>
@@ -157,8 +170,10 @@
                           </tr>
                         </table>
                     </div>
+            </div>
                 </div>
             </div>
+
         </div>
         <!-- end col -->
     </div>
@@ -175,16 +190,7 @@
 </div>
 <div id="statutory-list" class="default-display-none">
     <table class="table-statutory-list">
-        <tr align="left" class="tr-heading">
-          <th width="3%" align="center" class="header-bg">#</th>
-          <th width="30%" class="header-bg">Statutory Provision</th>
-          <th width="18%" class="header-bg">Compliance Task</th>
-          <th width="10%" class="header-bg">Statutory Nature</th>
-          <th width="5%" class="header-bg"><img src="/images/icon-client-comply.png" title="Applicability Status"></th>
-          <th width="5%" class="header-bg"><img src="/images/icon-client-tick.png" title="Opted"></th>
-          <th width="15%" class="header-bg">Modified By Compfie</th>
-          <th width="15%" class="header-bg">Modified By Client</th>
-        </tr>
+
 
         <tr class="tablerow">
             <td align="center" class="sno"></td>

@@ -2888,21 +2888,17 @@ class StatutoryDate(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
         statutory_date = data.get("statutory_date")
-        statutory_date = parse_structure_OptionalType_CustomIntegerType_1_31(statutory_date)
         statutory_month = data.get("statutory_month")
-        statutory_month = parse_structure_OptionalType_CustomIntegerType_1_12(statutory_month)
         trigger_before_days = data.get("trigger_before_days")
-        trigger_before_days = parse_structure_OptionalType_CustomIntegerType_1_100(trigger_before_days)
         repeat_by = data.get("repeat_by")
-        repeat_by = parse_structure_OptionalType_CustomTextType_20(repeat_by)
         return StatutoryDate(statutory_date, statutory_month, trigger_before_days, repeat_by)
 
     def to_structure(self):
         return {
-            "statutory_date": to_structure_OptionalType_CustomIntegerType_1_31(self.statutory_date),
-            "statutory_month": to_structure_OptionalType_CustomIntegerType_1_12(self.statutory_month),
-            "trigger_before_days": to_structure_OptionalType_CustomIntegerType_1_100(self.trigger_before_days),
-            "repeat_by": to_structure_OptionalType_CustomTextType_20(self.repeat_by)
+            "statutory_date": self.statutory_date,
+            "statutory_month": self.statutory_month,
+            "trigger_before_days": self.trigger_before_days,
+            "repeat_by": self.repeat_by
         }
 
 #
@@ -2926,6 +2922,7 @@ class FormCategory(object):
             "form_category_id": self.form_category_id,
             "form_category": self.form_category,
         }
+
 
 class UserCategory(object):
     def __init__(self, user_category_id, user_category_name):
