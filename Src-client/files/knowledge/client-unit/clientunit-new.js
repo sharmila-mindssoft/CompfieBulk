@@ -1909,8 +1909,7 @@ function getOrganizationName(org_ids)
 }
 
 //industry
-function industrytype(classval) {
-  
+function industrytype(classval) {  
   var lastClass = classval.split(' ').pop();
   var ccount = lastClass.split('-');
   var countval = '-' + ccount[1] + '-' + ccount[2];
@@ -1962,7 +1961,7 @@ function industrytype(classval) {
     else
     {
       var domains = domainList;
-      $('.ul-orgtype-list' + countval).empty();
+      // $('.ul-orgtype-list' + countval).empty();
       for(var i in domains)
       {
         var selectorgtypestatus = '';
@@ -1971,14 +1970,12 @@ function industrytype(classval) {
             selectorgtypestatus = 'checked';
           }
         }
-        console.log("ww--"+domains[i].legal_entity_id);
         if(lentityId == domains[i].legal_entity_id)
         {
-          
           var orgtypeId = parseInt(domains[i].industry_id);
           var orgtypeName = domains[i].industry_name;
-
-          $('.orgtypeselected'+countval).append($(optText).val(orgtypeId).html(orgtypeName).attr(selectorgtypestatus));
+          var optText = '<option></option>';
+          $('.orgtypeselected'+countval).append($(optText).val(orgtypeId).html(orgtypeName)); //.attr(selectorgtypestatus));
          /* var obj = $(".orgtype-list-drop-down li");
           var clone = obj.clone();
           clone.attr("id", orgtypeId);
@@ -2440,7 +2437,8 @@ $('#btn-clientunit-submit').click(function ()
         for (var j=1; j <= unit_cnt; j++)
         {
           var unit;
-          //alert("enter unit:"+$('.unit-id-'+i+'-'+j).val())
+          console.log('.edit-icon-'+i+'-'+j);
+          alert("enter unit:"+$('.unit-id-'+i+'-'+j).val())
           var edit_icon = $('.edit-icon-'+i+'-'+j).attr('style').split(";")[2].trim();
           //alert("edit icon:"+edit_icon)
           var unitId, unitCode, unitName, unitAddress, unitPostalCode, unitGeographyId;
