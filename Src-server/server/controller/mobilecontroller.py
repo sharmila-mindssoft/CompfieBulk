@@ -197,6 +197,9 @@ def approve_statutory_mapping_list(db, user_id):
         if m["updated_by"] is not None :
             u_on = datetime_to_string_time(m["updated_on"])
 
+        map_text = json.loads(m["statutory_mapping"])
+        map_text = " >> ".join(map_text)
+
         statutory_dates = m["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
         date_list = []
@@ -221,7 +224,7 @@ def approve_statutory_mapping_list(db, user_id):
 
         mapped[map_id] = mobile.MappingApproveInfo(
             map_id, m["country_name"], m["domain_name"],
-            m["statutory_nature_name"], orgname, m["statutory_mapping"],
+            m["statutory_nature_name"], orgname, map_text,
             compliance
         )
 
