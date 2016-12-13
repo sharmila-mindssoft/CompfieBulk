@@ -6181,7 +6181,7 @@ BEGIN
 
 END//
 
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_by_id`;
@@ -6289,7 +6289,7 @@ BEGIN
     (_g_name, _l_id, _p_ids, _p_names, _created_by, _created_on);
 END //
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_update_geography_master`;
 
@@ -6307,7 +6307,7 @@ BEGIN
     geography_id = _g_id;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_get_geography_master`;
@@ -6322,7 +6322,7 @@ BEGIN
     geography_id in (_g_id);
 END //
 
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_update_geographies_master_level`;
@@ -6340,7 +6340,7 @@ BEGIN
     where A.geography_id = _g_id AND C.level_id = _l_id;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_check_geography_exists`;
@@ -6355,7 +6355,7 @@ BEGIN
     select count(0) as geo_cnt from tbl_geographies where FIND_IN_SET(_g_id, parent_ids);
 END //
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_geography_update_status`;
 
@@ -6370,7 +6370,7 @@ BEGIN
     where geography_id = _g_id;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_get_geography_by_id`;
 
@@ -6384,7 +6384,7 @@ BEGIN
     FROM tbl_geographies WHERE geography_id = _g_id;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
 
@@ -6444,7 +6444,7 @@ BEGIN
     t1.legal_entity_id = legalentityid;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 DELIMITER //
 
@@ -6464,7 +6464,7 @@ BEGIN
     (userid, @u_cat_id, clientid);
 END //
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_report_frequency`;
 
@@ -6476,7 +6476,7 @@ BEGIN
     tbl_compliance_frequency;
 END//
 
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_get_user_categories_for_user`;
@@ -6500,4 +6500,4 @@ BEGIN
     END IF;
 END
 
-DELIMITER;
+DELIMITER ;

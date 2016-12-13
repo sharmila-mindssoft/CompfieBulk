@@ -1377,7 +1377,7 @@ def get_compliance_details(db, user_id, compliance_id):
     )
 
 def save_approve_mapping(db, user_id, data):
-    user_id = 4
+
     map_id = "None"
     try :
         for d in data :

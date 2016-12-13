@@ -512,7 +512,7 @@ CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `group_admin_username` varchar(20) NULL,
+  `group_admin_username` varchar(20) DEFAULT NULL,
   `total_view_licence` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `remarks` varchar(500) DEFAULT NULL,
