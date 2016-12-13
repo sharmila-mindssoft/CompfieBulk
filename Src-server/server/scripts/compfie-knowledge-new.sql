@@ -660,10 +660,8 @@ CREATE TABLE `tbl_categories` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`category_id`),
-  KEY `fk_tbl_categories_business_groups` (`business_group_id`),
   KEY `fk_tbl_categories_legal_entities` (`legal_entity_id`),
   KEY `fk_tbl_categories_cg_div` (`client_id`),
-  CONSTRAINT `fk_tbl_categories_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_tbl_categories_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_categories_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
