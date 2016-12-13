@@ -1246,11 +1246,13 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
     def return_statutory(mapping_id, statutory_info):
         statutory = []
         for s in statutory_info :
+            print s["statutory_mapping_id"], mapping_id
             if s["statutory_mapping_id"] == mapping_id :
                 if s["parent_names"] != '' and s["parent_names"] is not None:
                     statutory.append(s["parent_names"])
                 statutory.append(s["statutory_name"])
 
+        print statutory
         return [" >> ".join(statutory)]
 
     fromcount = rcount

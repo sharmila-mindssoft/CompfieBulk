@@ -1225,6 +1225,9 @@ function ListPage() {
             var x = 1;
             $.each(cdata, function(k, c) {
                 row = $('#templates .compliance-row').clone();
+                if (c.is_approved == 4) {
+                    row.addClass('rejected_row');
+                }
                 $('.comp_name', row).text(c.comp_name);
                 $('.comp_approval_status', row).text(c.approval_status_text);
                 $('.comp_edit', row).attr('title', 'Edit');
