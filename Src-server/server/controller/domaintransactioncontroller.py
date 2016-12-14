@@ -41,6 +41,21 @@ def process_domain_transaction_request(request, db):
         )
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif type(
+        request_frame
+    ) is domaintransactionprotocol.GetAssignedStatutoryWizardOneUnits:
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryWizardOneData", "process begin"
+        )
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_statutory_units(
+            db, request, user_id
+        )
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryWizardOneData", "process end"
+        )
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 def process_get_approve_statutory_list(db, user_id):
@@ -51,14 +66,7 @@ def process_get_approve_statutory_list(db, user_id):
 
 def process_get_assigned_statutory_wizard_one(db, user_id):
     return get_assigned_statutories_filters(db, user_id)
-    # group_companies = get_clients_by_user(db, user_id)
-    # business_groups = get_business_groups_for_user(db, user_id)
-    # legal_entities = get_legal_entities_for_user(db, user_id)
-    # divisions = get_divisions_for_user(db, user_id)
-    # categories = get_categories_for_user(db, user_id)
-    # domains = get_domains_for_user(db, user_id)
 
-    # return domaintransactionprotocol.GetAssignedStatutoryWizardOneDataSuccess(
-    #     group_companies, business_groups, legal_entities, divisions,
-    #     categories, domains
-    # )
+
+def process_get_statutory_units(db, request, user_id):
+    return get_statutories_units(db, request, user_id)

@@ -1872,6 +1872,22 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getAssignStatutoryWizardOneDataUnits(clientid, bgid, leid, divid, catid, domainid, callback){
+    callerName = 'domain_transaction';
+    var request = [
+      "GetAssignedStatutoryWizardOneUnits",
+      {
+        "ct_id": clientid,
+        "bg_id": bgid,
+        "le_id": leid,
+        "dv_id": dvid,
+        "cat_id": catid,
+        "d_id": domainid
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   function getAssignStatutoryWizardTwoData(
     client_id, business_group_id, legal_entity_id, division_id, category_id,
     domain_id, unit_ids, callback
@@ -2344,6 +2360,7 @@ function initMirror() {
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
     saveReassignUserAccount: saveReassignUserAccount,
     getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
+    getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
     getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
     saveAssignedStatutory: saveAssignedStatutory,
     submitAssignedStatutory: submitAssignedStatutory,
