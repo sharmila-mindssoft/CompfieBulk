@@ -479,7 +479,7 @@ function loadLegalEntity(){
     $.each(LEGAL_ENTITIES, function(key, value){
         if(entities_assigned_to_selected_user != undefined && entities_assigned_to_selected_user.indexOf(value.legal_entity_id) > -1 ){
             var clone = LegalEntityViewRow.clone();
-            $(Group_Name, clone).text(client_id_name_map[value.client_id]);
+            $(Group_Name, clone).text(client_id_name_map[value.group_id]);
             $(BG_Name, clone).text(business_group_id_name_map[value.business_group_id]);
             $(Country, clone).text(country_id_name_map[value.country_id]);
             $(Entity, clone).text(value.legal_entity_name);
@@ -511,11 +511,22 @@ function loadUnits(){
     UnitCheckBoxes = {};
     TBodyReassignListUnitView.empty();
     var assigned_units_of_selected_user = [];
-    if(val_domain_executive_id in user_wise_units){
+    /*if(val_domain_executive_id in user_wise_units){
         assigned_units_of_selected_user = user_wise_units[val_domain_executive_id][val_domain_id]
-        if(val_user_type == 3)
+        if(val_user_type == 7)
             assigned_units_of_selected_user = user_wise_units[val_domain_manager_id][val_domain_id]
+    }*/
+
+    if(val_user_type == 7 && val_domain_manager_id in user_wise_units && user_wise_units[val_domain_manager_id][val_domain_id] != undefined){
+        assigned_units_of_selected_user = user_wise_units[val_domain_manager_id][val_domain_id]
     }
+
+    if(val_user_type == 8 && val_domain_executive_id in user_wise_units && user_wise_units[val_domain_executive_id][val_domain_id] != undefined){
+        assigned_units_of_selected_user = user_wise_units[val_domain_executive_id][val_domain_id]
+    }
+
+    console.log(user_wise_units);
+    console.log(assigned_units_of_selected_user);
     $.each(UNITS, function(key, value){
         if(
             assigned_units_of_selected_user.indexOf(value.unit_id) > -1 &&
@@ -652,8 +663,9 @@ function generateIdNameMaps(){
         if(!(value.user_id in user_wise_units))
             user_wise_units[value.user_id] = {};
         if(!(value.domain_id in user_wise_units[value.user_id]))
-            user_wise_units[value.user_id][domain_id] = [];
-        user_wise_units[value.user_id][domain_id].push(value.unit_id);
+            user_wise_units[value.user_id][value.domain_id] = [];
+        
+        user_wise_units[value.user_id][value.domain_id].push(value.unit_id);
     });
     $.each(ASSIGNED_CLIENTS, function(key, value){
         if(!(value.user_id in user_wise_clients))
