@@ -144,7 +144,7 @@ function initializeNavBar() {
 
       var liObject = $('#nav-bar-templates .messages li').clone();
       $('.cssmenu .menu-ul').append(liObject);
-      
+
       var MESSAGES;
       $('.message-menu').on('click', function (event) {
         if($(event.target).find('i').hasClass("load-msg") || $(event.target).hasClass("load-msg")){
@@ -185,10 +185,10 @@ function initializeNavBar() {
             }
           });
         }
-        
+
       });
 
-      
+
     }
     else if (form.form_name == "Statutory Notification") {
       var liObject = $('#nav-bar-templates .notifications li').clone();
@@ -227,7 +227,7 @@ function initializeNavBar() {
             }
           });
         }
-        
+
       });
     }
   }
