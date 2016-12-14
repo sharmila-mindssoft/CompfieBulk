@@ -35,14 +35,14 @@ def process_techno_transaction_request(request, db):
     if user_id is None:
         return login.InvalidSessionToken()
 
-    if type(request_frame) is technotransactions.GetAssignedStatutories:
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutories(db)
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+    # if type(request_frame) is technotransactions.GetAssignedStatutories:
+    #     logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
+    #     logger.logKnowledgeApi("------", str(time.time()))
+    #     result = process_get_assigned_statutories(db)
+    #     logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
+    #     logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technotransactions.GetAssignedStatutoriesById:
+    if type(request_frame) is technotransactions.GetAssignedStatutoriesById:
         logger.logKnowledgeApi("GetAssignedStatutoriesById", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutories_by_id(db, request_frame, user_id)
@@ -126,7 +126,6 @@ def process_techno_transaction_request(request, db):
         logger.logKnowledgeApi("SaveLegalEntityClosureData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-
     return result
 
 
@@ -175,13 +174,6 @@ def process_save_assigned_statutory(db, request, session_user):
             level_1_statutory_compliance, submission_type, session_user
         )
     return technotransactions.SaveAssignedStatutorySuccess()
-
-
-def process_get_assigned_statutories(db):
-    assigned_statutories = get_assigned_statutories_list(db)
-    return technotransactions.GetAssignedStatutoriesSuccess(
-        assigned_statutories
-    )
 
 
 def process_get_assigned_statutories_by_id(db, request, session_user):

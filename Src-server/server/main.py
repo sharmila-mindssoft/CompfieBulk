@@ -13,7 +13,7 @@ from protocol import (
     admin, consoleadmin, clientadminsettings,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
-    clientcoordinationmaster, mobile
+    clientcoordinationmaster, mobile, domaintransactionprotocol
 )
 # from server.database import KnowledgeDatabase
 import controller
@@ -199,7 +199,6 @@ class API(object):
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
-            print "unbboundddd----", unbound_method
             response_data = unbound_method(self, request_data, _db)
 
             if response_data is None or type(response_data) is bool:
@@ -207,10 +206,10 @@ class API(object):
                 _db.rollback()
                 raise fetch_error()
             elif type(response_data) != technomasters.ClientCreationFailed:
-                print "commit"
                 _db.commit()
             else:
                 _db.rollback()
+
             _db_con.close()
             return respond(response_data)
         except Exception, e:
@@ -335,22 +334,9 @@ class API(object):
     def handle_knowledge_master(self, request, db):
         return controller.process_knowledge_master_request(request, db)
 
-    @csrf.exempt
     @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db):
         return controller.process_knowledge_transaction_request(request, db)
-
-    # @api_request(knowledgetransaction.RequestFormat)
-    # def handle_knowledge_getstatumaster(self, request, db):
-    #     return controller.process_knowledge_transaction_request(request, db)
-
-    # @api_request(knowledgetransaction.RequestFormat)
-    # def handle_knowledge_getmappingmaster(self, request, db):
-    #     return controller.process_knowledge_transaction_request(request, db)
-
-    # @api_request(knowledgetransaction.RequestFormat)
-    # def handle_knowledge_getmapping(self, request, db):
-    #     return controller.process_knowledge_transaction_request(request, db)
 
     @api_request(knowledgereport.RequestFormat)
     def handle_knowledge_report(self, request, db):
@@ -368,6 +354,10 @@ class API(object):
     def handle_client_coordination_master(self, request, db):
         return controller.process_client_coordination_master_request(
             request, db)
+
+    @api_request(domaintransactionprotocol.RequestFormat)
+    def handle_domain_transaction(self, request, db):
+        return controller.process_domain_transaction_request(request, db)
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
@@ -429,12 +419,17 @@ def renderTemplate(pathname, code=None):
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
+        # print tree
+        # print tree.tag
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
             new_url += "?v=%s" % (v)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
+            if node.tag != "link":
+                continue
+
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = set_path(url)
@@ -481,6 +476,7 @@ def run_server(port):
             ("/knowledge/api/knowledge_report", api.handle_knowledge_report),
             ("/knowledge/api/techno_transaction", api.handle_techno_transaction),
             ("/knowledge/api/techno_report", api.handle_techno_report),
+            ("/knowledge/api/domain_transaction", api.handle_domain_transaction),
             ("/knowledge/api/files", api.handle_format_file),
             ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
             ("/knowledge/api/mobile/login", api.handle_mobile_login_request),
@@ -509,5 +505,3 @@ def run_server(port):
         "threaded": True
     }
     app.run(host="0.0.0.0", port=port, **settings)
-
-

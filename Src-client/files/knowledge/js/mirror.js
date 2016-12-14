@@ -1864,7 +1864,7 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
   function getAssignStatutoryWizardOneData(callback){
-    callerName = 'techno_transaction';
+    callerName = 'domain_transaction';
     var request = [
       "GetAssignedStatutoryWizardOneData",
       {}
@@ -1932,7 +1932,7 @@ function initMirror() {
   }
 
   function getAssignedStatutories(callback){
-    callerName = 'techno_transaction';
+    callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutories",
         {}
