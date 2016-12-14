@@ -5,7 +5,8 @@ from server.database.tables import *
 
 __all__ = [
     "get_assigned_statutories_list",
-    "get_assigned_statutories_filters"
+    "get_assigned_statutories_filters",
+    "get_statutories_units"
 ]
 
 def get_assigned_statutories_list(db, user_id):
@@ -99,3 +100,29 @@ def return_statutories_filters(data):
     return domaintransactionprotocol.GetAssignedStatutoryWizardOneDataSuccess(
         group_list, bgroups_list, entity_list, div_list, cat_list, dom_list
     )
+
+def get_statutories_units(db, request, user_id):
+    client_id = request.client_id
+    legal_entity_id = request.legal_entity_id
+    domain_id = request.domain_id
+    b_id = request.business_group_id
+    if b_id is None :
+        b_id = '%'
+    div_id = request.division_id
+    if div_id is None :
+        div_id = '%'
+    cat_id = request.category_id
+    if cat_id is None :
+        cat_id = '%'
+    result = db.call_proc('sp_clientstatutories_units', [
+        user_id, client_id, b_id, legal_entity_id, div_id, cat_id, domain_id
+    ])
+
+    data_list = []
+    for r in result :
+        data_list.append(domaintransactionprotocol.StatutoryUnits(
+            r["unit_id"], r["unit_code"], r["unit_name"],
+            r["address"], r["geography_name"]
+        ))
+
+    return data_list

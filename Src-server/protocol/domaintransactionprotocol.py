@@ -88,6 +88,40 @@ class GetAssignedStatutoryWizardOneData(Request):
         return {}
 
 
+class GetAssignedStatutoryWizardOneUnits(Request):
+    def __init__(
+        self, client_id, business_group_id, legal_entity_id,
+        division_id, category_id,  domain_id
+    ):
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.category_id = category_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["ct_id", "bg_id", "le_id", "dv_id", "cat_id", "d_id"])
+        client_id = data.get("ct_id")
+        business_group_id = data.get("bg_id")
+        legal_entity_id = data.get("le_id")
+        division_id = data.get("dv_id")
+        category_id = data.get("cat_id")
+        return GetAssignedStatutoryWizardOneUnits(
+            client_id, business_group_id, legal_entity_id, division_id, category_id
+        )
+
+    def to_inner_structure(self):
+        return {
+            "ct_id": self.client_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "dv_id": self.division_id,
+            "cat_id": self.category_id,
+            "d_id": self.domain_id
+        }
+
 class GetAssignedStatutoryWizardTwoData(Request):
     def __init__(
         self, client_id, business_group_id, legal_entity_id, division_id,
@@ -241,6 +275,7 @@ def _init_Request_class_map():
         GetAssignedStatutoryWizardOneData,
         GetAssignedStatutoryWizardTwoData,
         SaveAssignedStatutory,
+        GetAssignedStatutoryWizardOneUnits
     ]
     class_map = {}
     for c in classes:
@@ -382,6 +417,21 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
 
         }
 
+class GetAssignedStatutoryWizardOneUnitsSuccess(Response):
+    def __init__(self, units):
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statu_units"])
+        assigned_statutories = data.get("statu_units")
+        return GetAssignedStatutoryWizardOneUnitsSuccess(assigned_statutories)
+
+    def to_inner_structure(self):
+        return {
+            "statu_units": self.units,
+        }
+
 
 class AssignStatutoryCompliance(object):
     def __init__(
@@ -472,6 +522,7 @@ def _init_Response_class_map():
         GetAssignedStatutoryWizardTwoDataSuccess,
         SaveAssignedStatutorySuccess,
         getGroupAdminGroupsUnitsSuccess,
+        GetAssignedStatutoryWizardOneUnitsSuccess
     ]
     class_map = {}
     for c in classes:
@@ -609,4 +660,37 @@ class LegalentityDomains(object):
             "legal_entity_id": self.legal_entity_id,
             "domain_id": self. domain_id,
             "domain_name": self.domain_name
+        }
+
+class StatutoryUnits(object):
+    def __init__(
+        self, unit_id, unit_code, unit_name, address, geography_name
+    ):
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+        self.geography_name = geography_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "u_id", "u_code", "u_name", "address", "g_name"
+            ]
+        )
+        unit_id = data.get("u_id")
+        unit_code = data.get("u_code")
+        unit_name = data.get("u_name")
+        address = data.get("address")
+        geography = data.get("g_name")
+        return StatutoryUnits(unit_id, unit_code, unit_name, address, geography)
+
+    def to_structure(self):
+        return {
+            "u_id": self.unit_id,
+            "u_code": self.unit_code,
+            "u_name": self.unit_name,
+            "address": self.address,
+            "g_name": self. geography_name
         }

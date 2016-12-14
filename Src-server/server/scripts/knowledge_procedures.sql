@@ -4143,6 +4143,27 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_units`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_units`(
+    IN uid INT(11), cid INT(11), bid varchar(10), lid int(11),
+    divid varchar(11), catid varchar(11), domainid INT(11)
+)
+BEGIN
+
+    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t2.geography_name from tbl_units as t1
+    inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
+    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
+    where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
+    IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
+    and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid;
+
+END //
+
+DELIMITER ;
+
 
 -- --------------------------------------------------------------------------------
 -- To get the assigned compliancees by client statutory id
