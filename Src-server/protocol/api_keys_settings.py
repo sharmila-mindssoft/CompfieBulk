@@ -177,6 +177,8 @@ api_params = {
     'group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'client_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'grp_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'ct_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     'country_names': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'next_unit_code': {'type': 'INT', 'length': 1000000, 'validation_method': None, "is_optional": False},
@@ -195,8 +197,10 @@ api_params = {
     'email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'business_group_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'business_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'b_grp_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'legal_entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'legal_entity_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'l_e_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'no_of_licence': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'no_of_view_licence': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'file_space': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
@@ -216,10 +220,14 @@ api_params = {
     'unit_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitDetails"},
     'unit_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'division_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'div_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'cat_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'unit_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'u_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'unit_name': {'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
+    'u_name': {'type': 'TEXT', 'length': 160, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
     'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'postal_code': {'type': 'INT', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
     'domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -235,16 +243,24 @@ api_params = {
     "group_approval_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "ClientGroupApproval"},
     "countries": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Country"},
     "domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Domain"},
+    "dms": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "LegalentityDomains"},
     "industries": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Industry"},
 
     "industry_name_id": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Industries"},
     "groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientGroup"},
+
     "clients": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Client"},
+    "grps": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Client"},
+
     "unit_legal_entity": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "UnitLegalEntity"},
+    "lety": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "UnitLegalEntity"},
+
     "admin_legal_entity": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'admin', "class_name": "LegalEntity"},
     "group_company_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "GroupCompanyForUnitCreation"},
     "business_group_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "BusinessGroup"},
     "divisions": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "Division"},
+    "divs": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "Division"},
+
     "user_categories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "UserCategory"},
 
     "assign_le_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AssignLegalEntity"},
@@ -291,6 +307,7 @@ api_params = {
     "units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UNIT"},
     "unit_id_name": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "Unit"},
     "categories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Category"},
+    "cates": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Category"},
 
     "ug_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "user_group_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
@@ -318,6 +335,7 @@ api_params = {
     "client_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "LegalEntity"},
     "legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntity"},
     "business_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
+    "bgrps": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
     "client_server_name_and_id": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientServerNameAndID"},
     "db_server_name_and_id": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "DBServerNameAndID"},
     "machine_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
@@ -409,9 +427,10 @@ api_params = {
     "locations": {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "compliances_applicablity_status": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "ComplianceApplicablityStatus"},
     "level_1_statutory_wise_compliances": {},
-    "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "AssignedStatutories"},
+    "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutories"},
     "unit_code_with_name": {'type': 'TEXT', 'length': 150, 'validation_method': None, 'is_optional': False},
-    "submission_status": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    "submission_status": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
+    "s_s": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
     "client_statutory_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "submission_type": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': False},
     "compliance_applicability_status": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -532,6 +551,7 @@ api_params = {
     'comp_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'ComplianceList'},
     "typelistedit": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'a_g_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')

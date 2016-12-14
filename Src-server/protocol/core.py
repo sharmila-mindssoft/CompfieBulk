@@ -127,6 +127,32 @@ class USER_TYPE(object):
 # APPROVAL_STATUS
 #
 
+class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
+    def __init__(self):
+        self._value = {
+            0 : "Yet to submit",
+            1 : "Pending",
+            2 : "Assigned",
+            3 : "Rejected"
+        }
+
+    @staticmethod
+    def values():
+        # return ["Yet to submit", "Pending", "Assigned", "Rejected"]
+        return ASSIGN_STATUTORY_APPROVAL_STATUS._value.values()
+
+    def value(self, key):
+        print key
+        return self._value.get(key)
+
+    @staticmethod
+    def parse_structure(data):
+        return parse_enum(data, ASSIGN_STATUTORY_APPROVAL_STATUS.values())
+
+    def to_structure(self):
+        return self._value
+
+
 class APPROVAL_STATUS(object):
     # Pending = "Pending"
     # Approve = "Approved"
@@ -149,6 +175,7 @@ class APPROVAL_STATUS(object):
 
     def to_structure(self):
         return parse_enum(self._value, APPROVAL_STATUS.values())
+
 
 #
 # COMPLIANCE_APPROVAL_STATUS

@@ -4065,29 +4065,79 @@ DROP PROCEDURE IF EXISTS `sp_clientstatutories_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_clientstatutories_list`()
+CREATE PROCEDURE `sp_clientstatutories_list`(
+    IN uid INT(11)
+)
 BEGIN
-    SELECT tcs.client_statutory_id, tcs.client_id, tcs.unit_id, tcs.status
-    FROM tbl_client_statutories tcs;
 
-    SELECT unit_id, tu.country_id, country_name, tu.client_id, group_name,
-    tu.business_group_id, (SELECT business_group_name
-    FROM tbl_business_groups tbg WHERE tbg.business_group_id=tu.business_group_id
-    ) as business_group_name, tu.legal_entity_id, legal_entity_name,
-    tu.division_id, (SELECT division_name
-    FROM tbl_divisions td WHERE td.division_id=tu.division_id) as division_name,
-    tu.category_id, (SELECT category_name FROM tbl_categories tc
-    WHERE tc.category_id = tu.category_id) as category_name,
-    tu.geography_id, geography_name,
-    concat(tu.unit_code, " - ", tu.unit_name) as unit_name,
-    (SELECT group_concat(domain_name) FROM tbl_domains td
-    WHERE find_in_set(td.domain_id,tu.domain_ids)) as domain_name,
-    domain_ids
-    FROM tbl_units tu INNER JOIN tbl_countries tc
-    ON (tc.country_id = tu.country_id) INNER JOIN tbl_legal_entities tle
-    ON (tle.legal_entity_id = tu.legal_entity_id) INNER JOIN tbl_client_groups tcg
-    ON tcg.client_id = tu.client_id INNER JOIN tbl_geographies tg
-    ON tg.geography_id = tu.geography_id;
+    select t1.client_id, t1.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
+    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
+    (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
+    (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
+    (select business_group_name from tbl_business_groups where business_group_id = t2.business_group_id) as business_group_name,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id = t2.legal_entity_id) as legal_entity_name,
+    (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
+    (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
+    (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
+    t1.is_approved
+    from tbl_client_compliances as t1
+    inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+    inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
+    where t3.user_id = uid
+    group by t1.unit_id, t1.domain_id;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_filters`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_filters`(
+    IN uid INT(11)
+)
+BEGIN
+
+    select distinct t1.client_id, t1.group_name, t1.short_name, t1.is_active
+     from tbl_client_groups as t1
+     inner join tbl_user_units as t2
+     on t1.client_id = t2.client_id where t2.user_id = uid;
+
+
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id
+     from tbl_legal_entities as t1
+     inner join tbl_user_units as t2
+     on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+
+
+    select distinct t1.client_id, t1.business_group_id, t1.business_group_name
+     from tbl_business_groups as t1
+     inner join tbl_units as t2 on t1.business_group_id = t2.business_group_id
+     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     where t3.user_id = uid;
+
+    select distinct t1.client_id, t1.division_id, t1.division_name, t1.legal_entity_id,
+    t1.business_group_id
+     from tbl_divisions as t1
+     inner join tbl_units as t2 on t1.division_id = t2.division_id
+     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     where t3.user_id = uid;
+
+    select distinct t1.client_id, t1.category_id, t1.category_name, t1.legal_entity_id,
+    t1.business_group_id, t1.division_id
+     from tbl_categories as t1
+     inner join tbl_units as t2 on t1.category_id = t2.category_id
+     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     where t3.user_id = uid;
+
+
+    select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
+     from tbl_domains as t1
+     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
+     where t3.user_id = uid;
+
 
 END //
 
