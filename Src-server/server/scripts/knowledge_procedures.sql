@@ -6429,3 +6429,43 @@ BEGIN
 END//
 
 DELIMITER;
+
+
+DROP PROCEDURE IF EXISTS `sp_approve_assigned_statutories_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_approve_assigned_statutories_list`(
+in _u_id int(11))
+BEGIN
+    SELECT @_user_category_id := user_category_id as user_category_id
+    FROM tbl_user_login_details WHERE user_id = _u_id;
+
+    if(@_user_category_id = 7)then
+        select  t1.unit_id, t1.statutory_id, t1.domain_id,
+        (select country_name from tbl_countries where country_id = t2.country_id)
+        as country_name,
+        (select group_name from tbl_client_groups where client_id = t1.client_id) as
+        group_name,
+        (select legal_entity_name from tbl_legal_entities where legal_entity_id = t1.legal_entity_id)
+        as legal_entity_name,
+        (select business_group_name from tbl_business_groups where
+        business_group_id = t2.business_group_id) as business_group_name,
+        (select division_name from tbl_divisions where division_id = t2.division_id)
+        as division_name,
+        (select category_name from tbl_categories where category_id = t2.category_id)
+        as category_name,
+        (select domain_name from tbl_domains where domain_id = t1.domain_id) as
+        domain_name, concat(t2.unit_code,' - ',t2.unit_name) as unit_name
+        from
+        tbl_client_compliances as t1,
+        tbl_units as t2
+        where
+        t2.unit_id = t1.unit_id and
+        t1.unit_id = (select distinct(unit_id) from tbl_user_units
+        where user_id = _u_id) and
+        t1.is_saved = 1 AND t1.is_approved = 0;
+    end if;
+END //
+
+DELIMITER;
