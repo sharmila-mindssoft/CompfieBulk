@@ -6,7 +6,7 @@ from server.database.tables import *
 __all__ = [
     "get_assigned_statutories_list",
     "get_assigned_statutories_filters",
-    "get_statutories_units"
+    "get_statutories_units", "get_compliances_to_assign"
 ]
 
 def get_assigned_statutories_list(db, user_id):
@@ -125,4 +125,52 @@ def get_statutories_units(db, request, user_id):
             r["address"], r["geography_name"]
         ))
 
+    return data_list
+
+def get_compliances_to_assign(db, request, user_id):
+
+    unit_id = request.unit_ids[0]
+    domain_id = request.domain_id
+
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id], 4)
+    statu = result[1]
+    organisation = result[2]
+    compliance = result[3]
+
+    def organisation_list(map_id) :
+        org_list = []
+        for o in organisation :
+            print o
+            if o.get("statutory_mapping_id") == map_id :
+                org_list.append(o["organisation_name"])
+        return org_list
+
+    def status_list(map_id):
+        level_1_id = None
+        map_text = None
+        for s in statu :
+            if s["statutory_mapping_id"] == map_id :
+                if s["parent_ids"] == 0 :
+                    level_1_id = s["statutory_id"]
+                    map_text = s["statutory_name"]
+                else :
+                    names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
+                    ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
+                    level_1_id = ids[0]
+                    map_text = " >> ".join(names[1:])
+
+        return level_1_id, map_text
+
+    data_list = []
+    for r in compliance :
+        map_id = r["statutory_mapping_id"]
+        orgs = organisation_list(map_id)
+        level_1, map_text = status_list(map_id)
+        print level_1, map_text
+        data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
+            level_1, map_text,
+            r["statutory_provision"], r["compliance_id"], r["document_name"],
+            r["compliance_task"], r["compliance_description"],
+            orgs
+        ))
     return data_list

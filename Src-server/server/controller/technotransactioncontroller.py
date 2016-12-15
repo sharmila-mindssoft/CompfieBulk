@@ -64,20 +64,20 @@ def process_techno_transaction_request(request, db):
         )
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif(
-        type(
-            request_frame
-        ) is technotransactions.GetAssignedStatutoryWizardTwoData
-    ):
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardTwoData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutory_wizard_two(
-            db, request_frame, user_id
-        )
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardTwoData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+    # elif(
+    #     type(
+    #         request_frame
+    #     ) is technotransactions.GetAssignedStatutoryWizardTwoData
+    # ):
+    #     logger.logKnowledgeApi(
+    #         "GetAssignedStatutoryWizardTwoData", "process begin")
+    #     logger.logKnowledgeApi("------", str(time.time()))
+    #     result = process_get_assigned_statutory_wizard_two(
+    #         db, request_frame, user_id
+    #     )
+    #     logger.logKnowledgeApi(
+    #         "GetAssignedStatutoryWizardTwoData", "process end")
+    #     logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.SaveAssignedStatutory:
         logger.logKnowledgeApi("SaveAssignedStatutory", "process begin")

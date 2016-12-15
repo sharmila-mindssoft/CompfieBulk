@@ -4165,6 +4165,59 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_new`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_compliance_new`(
+    IN unitid INT(11), domainid INT(11)
+)
+BEGIN
+    -- unit location
+    select @gid := geography_id from tbl_units where unit_id = unitid;
+    -- mapped statu names
+    select t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) as parent_ids, t2.parent_names, t1.statutory_mapping_id
+    from tbl_mapped_statutories as t1 inner join tbl_statutories as t2
+    on t1.statutory_id = t2.statutory_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)));
+    -- mapped organistaion
+    select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
+    from tbl_mapped_industries as t1 inner join tbl_organisation as t2
+    on t1.organisation_id = t2.organisation_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)));
+
+    -- compliances
+    select distinct t1.statutory_mapping_id, t1.compliance_id,
+    t1.compliance_task, t1.document_name,
+    t1.compliance_description, t1.statutory_provision
+    from tbl_compliances as t1
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id and
+    t4.geography_id = t3.geography_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid and
+     t3.geography_id IN
+     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+        (select parent_ids from tbl_geographies where geography_id = @gid)))
+    and t1.compliance_id not in
+    (select compliance_id from tbl_client_compliances where unit_id = unitid
+    and domain_id = domainid);
+
+
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To get the assigned compliancees by client statutory id
 -- --------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-from flaskext.mysql import MySQL
+# from flaskext.mysql import MySQL
 import logger
 from server.common import (convert_to_dict, get_date_time)
 from server.exceptionmessage import fetch_error, process_procedure_error
@@ -15,7 +15,7 @@ class BaseDatabase(object):
         self._mysqlPassword = mysqlPassword
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
-        self._mysql = MySQL()
+        # self._mysql = MySQL()
         print self._mysql
 
     def dbConfig(self, app):
