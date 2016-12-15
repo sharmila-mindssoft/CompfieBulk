@@ -1,5 +1,6 @@
 /* Elements */
 var AddButton = $(".btn-assignstatutory-add");
+var CancelButton = $('#btn-user-cancel');
 var AssignStatutoryView = $("#assignstatutory-view");
 var AssignStatutoryAdd = $("#assignstatutory-add");
 
@@ -36,12 +37,10 @@ var SelectedUnitCount = $(".selected_checkbox_count");
 var ChangeAccordianHeaderStatus = ".change_status";
 
 var ActivateStep2 = $("#activate-step-2");
-var Step1Header = $(".step1header");
-var Step2Header = $(".step2header");
-var Step1 = $("#step-1");
-var Step2 = $("#step-2");
+
+
 var BreadCrumbs = $(".breadcrumbs");
-var BreadCrumbImg = $(".bread-crum-img img");
+var BreadCrumbImg = '<i class="fa fa-angle-double-right"></i>';
 
 
 var AccordianHeader = $("#templates .compliances-accordian-header table");
@@ -68,9 +67,11 @@ var NotAtAllApplicableInActiveIcon = "not-atall-applicable-inactive-icon";
 var SavedActiveIcon = "saved-active-icon";
 var SavedInActiveIcon = "saved-inactive-icon";
 
-var Submit = $("#assign-statutory-submit");
-var Save = $("#assign-statutory-save");
-var Previous = $("#previous");
+var CURRENT_TAB = 1;
+var NextButton = $('#btn-next');
+var PreviousButton = $('#btn-previous');
+var SubmitButton = $("#btn-submit");
+var SaveButton = $("#btn-save");
 
 var AssignedStatutoryList = $(".tbody-assignstatutory-list");
 var AssignedStatutoryRow = $("#templates .table-assignstatutory .table-row");
@@ -114,7 +115,6 @@ var SELECTED_COMPLIANCES = {};
 var LEVEL_1_STATUTORYWISE_COMPLIANCES = {}
 var CLIENT_STATUTORY_ID = null;
 
-
 /* API Types */
 var API_Wizard1 = "wizard_1";
 var API_Wizard2 = "wizard_2";
@@ -150,13 +150,13 @@ function callAPI(api_type) {
     else if (api_type == API_Wizard1) {
         mirror.getAssignStatutoryWizardOneData(function(error, data) {
             if (error == null) {
-                GROUPS = data.clients;
-                BUSINESS_GROUPS = data.business_groups;
-                LEGAL_ENTITIES = data.unit_legal_entity;
-                DIVISIONS = data.divisions;
-                CATEGORIES = data.categories;
-                UNITS = data.unit_id_name;
-                DOMAINS = data.domains;
+                GROUPS = data.grps;
+                BUSINESS_GROUPS = data.bgrps;
+                LEGAL_ENTITIES = data.lety;
+                DIVISIONS = data.divs;
+                CATEGORIES = data.cates;
+                //UNITS = data.unit_id_name;
+                DOMAINS = data.dms;
             } else {
                 custom_alert(error);
             }
@@ -164,6 +164,7 @@ function callAPI(api_type) {
     }
 
     else if (api_type == API_Wizard2) {
+        showBreadCrumbText();
         mirror.getAssignStatutoryWizardTwoData(
             int(val_group_id), int(val_business_group_id), int(val_legal_entity_id),
             int(val_division_id), int(val_category_id), int(val_domain_id), ACTIVE_UNITS,
@@ -230,11 +231,28 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 function pageControls() {
+
+   
+    NextButton.click(function() {
+        CURRENT_TAB += 1;
+        showTab();
+    });
+    PreviousButton.click(function() {
+        CURRENT_TAB = CURRENT_TAB - 1;
+        showTab();
+    });
+
     AddButton.click(function() {
+        showTab();
         AssignStatutoryView.hide();
         AssignStatutoryAdd.show();
         callAPI(API_Wizard1);
     });
+
+    CancelButton.click(function() {
+        showList();
+    });
+
     GroupName.keyup(function(e) {
         var text_val = $(this).val();
         commonAutoComplete(
@@ -293,41 +311,23 @@ function pageControls() {
         validateAndShow();
     });
 
-    Submit.click(function(){
+    SubmitButton.click(function(){
         callAPI(SUBMIT_API);
     });
     
-    Save.click(function(){
+    SaveButton.click(function(){
         callAPI(SAVE_API);
     });
-
-    Previous.click(function(){
-        Step1Header.addClass('active');
-        Step1Header.removeClass('inactive');
-        Step2Header.addClass('disabled');
-        Step2Header.removeClass('active');
-        Step1.show();
-        Step2.hide();
-    });
-
-    ActivateStep2.click(function(e) {
+    
+   /* ActivateStep2.click(function(e) {
         if (validateFirstTab()) {
             activateWizardTwo();
             callAPI(API_Wizard2);
         }
-    });
-
-    Step1Header.click(function(e) {
-        Step1Header.addClass('active');
-        Step1Header.removeClass('inactive');
-        Step2Header.addClass('disabled');
-        Step2Header.removeClass('active');
-        Step1.show();
-        Step2.hide();
-    });
+    });*/
 }
 
-function activateWizardTwo(){
+/*function activateWizardTwo(){
     clearMessage();
     Step2Header.addClass('active');
     Step2Header.removeClass('disabled');
@@ -336,24 +336,13 @@ function activateWizardTwo(){
     Step1.hide();
     Step2.show();
     showBreadCrumbText();
-}
+}*/
 
-function activateEditWizardTwo(){
-    clearMessage();
-    Step2Header.addClass('active');
-    Step2Header.removeClass('disabled');
-    Step1Header.addClass('disabled');
-    Step1Header.removeClass('active');
-    Step1.hide();
-    Step2.show();
-    Previous.hide();
-    showBreadCrumbText();
-}
 
 function showBreadCrumbText() {
     BreadCrumbs.empty();
-    var img_clone = BreadCrumbImg.clone();
-    BreadCrumbs.append(GroupName.val() + " ");
+    var img_clone = BreadCrumbImg;
+    BreadCrumbs.append(GroupName.val());
 
     if (BusinessGroupName.val()) {
         BreadCrumbs.append(img_clone);
@@ -391,11 +380,14 @@ function int(val) {
 
 function validateAndShow() {
     val_group_id = GroupId.val();
-    val_business_group_id = BusinessGroupId.val();
     val_legal_entity_id = LegalEntityId.val();
+    val_domain_id = DomainId.val();
+
     val_division_id = DivisionId.val();
     val_category_id = CategoryId.val();
-    val_domain_id = DomainId.val();
+    val_business_group_id = BusinessGroupId.val();
+
+    
     if (val_group_id.trim().length <= 0) {
         displayMessage(message.group_required);
         return false;
@@ -406,55 +398,30 @@ function validateAndShow() {
         displayMessage(message.domain_required);
         return false;
     } else {
-        loadUnits();
+        mirror.getAssignStatutoryWizardOneDataUnits(int(val_group_id), int(val_business_group_id), 
+            int(val_legal_entity_id), int(val_division_id), int(val_category_id), int(val_domain_id), 
+            function(error, data) {
+            if (error == null) {
+                UNITS = data.statu_units;
+                loadUnits();
+            } else {
+                custom_alert(error);
+            }
+        });
     }
 }
 
 function loadUnits() {
     UnitList.empty();
     $.each(UNITS, function(key, value) {
-        var validation_result = true;
-        if (val_business_group_id) {
-            if (val_business_group_id == value.business_group_id) {
-                validation_result = true;
-            } else {
-                validation_result = false;
-            }
-        }
-        if (val_division_id) {
-            if (val_division_id == value.division_id) {
-                validation_result = validation_result & true;
-            } else {
-                validation_result = validation_result & false;
-            }
-        }
-        if (val_category_id) {
-            if (val_category_id == value.category_id) {
-                validation_result = validation_result & true;
-            } else {
-                validation_result = validation_result & false;
-            }
-        }
-        
-        if (validation_result == null) {
-            validation_result = true;
-        }
-
-        if (
-            value.client_id == val_group_id &&
-            value.legal_entity_id == val_legal_entity_id &&
-            $.inArray(parseInt(val_domain_id), value.domain_ids) >= 0 &&
-            validation_result
-        ) {
-            unit_text = value.unit_code + " - " + value.unit_name + " - " + value.address;
-            var clone = UnitRow.clone();
-            clone.text(unit_text);
-            clone.attr('id', value.unit_id);
-            UnitList.append(clone);
-            clone.click(function() {
-                activateUnit(this);
-            });
-        }
+        unit_text = value.unit_code + " - " + value.u_name + " - " + value.address;
+        var clone = UnitRow.clone();
+        clone.html(unit_text + '<i></i>');
+        clone.attr('id', value.u_id);
+        UnitList.append(clone);
+        clone.click(function() {
+            activateUnit(this);
+        });
     });
 }
 
@@ -463,37 +430,34 @@ SelectAll.click(function() {
     $('.unit-list li').each(function (index, el) {
         if(SelectAll.prop('checked')){
           $(el).addClass('active');
+          $(el).find('i').addClass('fa fa-check pull-right');
           var chkid = parseInt($(el).attr('id'));
           ACTIVE_UNITS.push(chkid);
         }else{
           $(el).removeClass('active');
+          $(el).find('i').removeClass('fa fa-check pull-right');
         }
     });
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 });
 
-function activateUnit(element, unit_id) {
+function activateUnit(element) {
     var chkstatus = $(element).attr('class');
     var chkid = parseInt($(element).attr('id'));
     if (chkstatus == 'active') {
         $(element).removeClass('active');
+        $(element).find('i').removeClass('fa fa-check pull-right');
         index = ACTIVE_UNITS.indexOf(chkid)
         ACTIVE_UNITS.splice(index, 1);
     } else {
         $(element).addClass('active');
+        $(element).find('i').addClass('fa fa-check pull-right');
         ACTIVE_UNITS.push(chkid);
     }
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 
-function validateFirstTab() {
-    if (ACTIVE_UNITS.length <= 0) {
-        displayMessage(message.atleast_one_unit_required)
-        return false;
-    } else {
-        return true;
-    }
-}
+
 
 function loadCompliances() {
     AssignStatutoryList.empty();
@@ -690,6 +654,7 @@ function activateInactivateNotAtAllApplicableIcon(element_class, compliance_id){
 }
 
 function showList(){
+    CURRENT_TAB = 1;
     AssignStatutoryView.show();
     AssignStatutoryAdd.hide();
     callAPI(API_LIST);
@@ -752,6 +717,69 @@ function loadAssignedStatutories(){
     });
 }
 
+
+function validateFirstTab() {
+    if (ACTIVE_UNITS.length <= 0) {
+        displayMessage(message.atleast_one_unit_required)
+        return false;
+    } else {
+        callAPI(API_Wizard2);
+        return true;
+    }
+};
+
+function showTab(){
+    hideall = function() {
+        // $('.setup-panel li').addClass('disabled');
+        $('.statutory_mapping_tab li').removeClass('active');
+        $('.tab-pane').removeClass('active in');
+        $('#tab1').hide();
+        $('#tab2').hide();
+        SaveButton.hide();
+        SubmitButton.hide();
+        NextButton.hide();
+        PreviousButton.hide();
+    }
+
+    enabletabevent = function(tab) {
+        if (tab == 1) {
+            $('.tab-step-1 a').attr('href', '#tab1');
+        }
+        else if (tab == 2) {
+            $('.tab-step-2 a').attr('href', '#tab2');
+        }
+    }
+    disabletabevent = function() {
+        $('.tab-step-1 a').removeAttr('href');
+        $('.tab-step-2 a').removeAttr('href');
+    }
+
+    if (CURRENT_TAB == 1) {
+        hideall();
+        disabletabevent();
+        enabletabevent(1);
+        $('.tab-step-1').addClass('active')
+        $('#tab1').addClass("active in");
+        $('#tab1').show();
+        NextButton.show();        
+    }
+    else if (CURRENT_TAB == 2) {
+        if(validateFirstTab() == false) {
+            CURRENT_TAB -= 1;
+            return false;
+        }
+        hideall();
+        enabletabevent(2);
+        $('.tab-step-2').addClass('active')
+        $('#tab2').addClass('active in');
+        $('#tab2').show();
+        SubmitButton.show();
+        PreviousButton.show();
+        SaveButton.show();
+        showBreadCrumbText();
+    }
+};
+
 function EditAssignedStatutory(){
     AssignStatutoryView.hide();
     AssignStatutoryAdd.show();
@@ -759,7 +787,6 @@ function EditAssignedStatutory(){
     callAPI(API_Wizard1);
     callAPI(EDIT_API);
 }
-
 function initialize() {
     pageControls();
     showList();
@@ -769,3 +796,6 @@ $(function() {
     initialize();
 });
 
+/*$('.statutory_mapping_tab li').click(function(e){
+    alert($(e.target).parent().attr('class').hasClass("disabled"))
+});*/

@@ -3479,7 +3479,7 @@ BEGIN
     SELECT t1.child_user_id as user_id, t2.is_active,
     concat(t2.employee_code," - ", t2.employee_name) as employee_name
     from tbl_user_mapping t1
-    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id
+    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
     WHERE t1.parent_user_id = session_user;
     SELECT user_id, country_id FROM tbl_user_countries;
     SELECT user_id, domain_id FROM tbl_user_domains;

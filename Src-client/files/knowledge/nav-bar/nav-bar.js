@@ -170,10 +170,12 @@ function initializeNavBar() {
                 var msgObject = $('#nav-bar-templates .messages-list li').clone();
                 $('.msg-heading', msgObject).text(partHeading);
                 $('.msg-content', msgObject).text(partText);
+                $('.mlink').attr('href', '/knowledge/messages');
                 $('.msg-items-ul').append(msgObject);
               }
               if(MESSAGES.length >= 2){
                 var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
+                $('.mlink').attr('href', '/knowledge/messages');
                 $('.msg-items-ul').append(msgObject1);
               }
 
@@ -214,14 +216,15 @@ function initializeNavBar() {
                 if (msgText != null && msgText.length > 25){
                   partText = msgText.substring(0,24)+'...';
                 }
-
                 var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                 //$('.statu-heading', msgObject).text(partHeading);
                 $('.statu-content', msgObject).text(partText);
+                $('.slink').attr('href', '/knowledge/statutory-notifications');
                 $('.notification-items-ul').append(msgObject);
               }
               if(NOTIFICATIONS.length >= 2){
                 var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
+                $('.slink').attr('href', '/knowledge/statutory-notifications');
                 $('.notification-items-ul').append(msgObject1);
               }
             }

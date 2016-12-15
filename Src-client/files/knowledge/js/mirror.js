@@ -1880,7 +1880,7 @@ function initMirror() {
         "ct_id": clientid,
         "bg_id": bgid,
         "le_id": leid,
-        "dv_id": dvid,
+        "dv_id": divid,
         "cat_id": catid,
         "d_id": domainid
       }
