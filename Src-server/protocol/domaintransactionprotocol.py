@@ -125,44 +125,26 @@ class GetAssignedStatutoryWizardOneUnits(Request):
 
 class GetAssignedStatutoryWizardTwoData(Request):
     def __init__(
-        self, client_id, business_group_id, legal_entity_id, division_id,
-        category_id, domain_id_optional, unit_ids
+        self, unit_ids, domain_id
     ):
-        self.client_id = client_id
-        self.business_group_id = business_group_id
-        self.legal_entity_id = legal_entity_id
-        self.division_id = division_id
-        self.category_id = category_id
-        self.domain_id_optional = domain_id_optional
         self.unit_ids = unit_ids
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "client_id", "business_group_id", "legal_entity_id", "division_id",
-            "category_id", "domain_id_optional", "unit_ids"
+            "unit_ids", "d_id"
         ])
-        client_id = data.get("client_id")
-        business_group_id = data.get("business_group_id")
-        legal_entity_id = data.get("legal_entity_id")
-        division_id = data.get("division_id")
-        category_id = data.get("category_id")
-        domain_id_optional = data.get("domain_id_optional")
+        domain_id = data.get("d_id")
         unit_ids = data.get("unit_ids")
         return GetAssignedStatutoryWizardTwoData(
-            client_id, business_group_id, legal_entity_id, division_id,
-            category_id, domain_id_optional, unit_ids
+            unit_ids, domain_id
         )
 
     def to_inner_structure(self):
         return {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "division_id": self.division_id,
-            "category_id": self.category_id,
-            "domain_id_optional": self.domain_id_optional,
-            "unit_ids": self.unit_ids
+            "unit_ids": self.unit_ids,
+            "d_id": self.domain_id
         }
 
 
@@ -343,7 +325,7 @@ class GetAssignedStatutoriesByIdSuccess(Response):
         ])
         level_1_statutories_list = data.get("level_1_statutories_list")
         statutories_for_assigning = data.get("statutories_for_assigning")
-        return GetAssignedStatutoryWizardTwoDataSuccess(
+        return GetAssignedStatutoriesByIdSuccess(
             level_1_statutories_list, statutories_for_assigning
         )
 
@@ -436,70 +418,68 @@ class GetAssignedStatutoryWizardOneUnitsSuccess(Response):
 
 class AssignStatutoryCompliance(object):
     def __init__(
-        self, level_1_statutory_index, statutory_provision, compliance_id,
-        document_name, compliance_name, description, organizations, locations
+        self, level_one_id, mapping_text, statutory_provision, compliance_id,
+        document_name, compliance_name, description, organizations
     ):
-        self.level_1_statutory_index = level_1_statutory_index
+        self.level_one_id = level_one_id
+        self.mapping_text = mapping_text
         self.statutory_provision = statutory_provision
         self.compliance_id = compliance_id
         self.document_name = document_name
         self.compliance_name = compliance_name
         self.description = description
         self.organizations = organizations
-        self.locations = locations
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "level_1_statutory_index", "statutory_provision", "compliance_id",
-            "document_name", "compliance_name", "description",
-            "organizations", "locations"
+            "level_1_s_id", "map_text" "s_provision", "comp_id",
+            "doc_name", "c_name", "descrip",
+            "org_names",
         ])
-        level_1_statutory_index = data.get("level_1_statutory_index")
-        statutory_provision = data.get("statutory_provision")
-        compliance_id = data.get("compliance_id")
-        document_name = data.get("document_name")
-        compliance_name = data.get("compliance_name")
-        description = data.get("description")
-        organizations = data.get("organizations")
-        locations = data.get("locations")
+        level_one_id = data.get("level_1_s_id")
+        map_text = data.get("map_text")
+        statutory_provision = data.get("s_provision")
+        compliance_id = data.get("comp_id")
+        document_name = data.get("doc_name")
+        compliance_name = data.get("c_name")
+        description = data.get("descrip")
+        organizations = data.get("org_names")
+
         return AssignStatutoryCompliance(
-            level_1_statutory_index, statutory_provision, compliance_id,
+            level_one_id, map_text, statutory_provision, compliance_id,
             document_name, compliance_name, description,
-            organizations, locations
+            organizations,
         )
 
     def to_structure(self):
         return {
-            "level_1_statutory_index": self.level_1_statutory_index,
-            "statutory_provision": self.statutory_provision,
-            "compliance_id": self.compliance_id,
-            "document_name": self.document_name,
-            "compliance_name": self.compliance_name,
-            "description": self.description,
-            "organizations": self.organizations,
-            "locations": self.locations
+            "level_1_s_id": self.level_one_id,
+            "map_text": self.mapping_text,
+            "s_provision": self.statutory_provision,
+            "comp_id": self.compliance_id,
+            "doc_name": self.document_name,
+            "c_name": self.compliance_name,
+            "descrip": self.description,
+            "org_names": self.organizations,
         }
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
-    def __init__(self, level_1_statutories_list, statutories_for_assigning):
-        self.level_1_statutories_list = level_1_statutories_list
+    def __init__(self, statutories_for_assigning):
         self.statutories_for_assigning = statutories_for_assigning
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "level_1_statutories_list", "statutories_for_assigning"
+            "statutories_for_assigning"
         ])
-        level_1_statutories_list = data.get("level_1_statutories_list")
         statutories_for_assigning = data.get("statutories_for_assigning")
         return GetAssignedStatutoryWizardTwoDataSuccess(
-            level_1_statutories_list, statutories_for_assigning
+            statutories_for_assigning
         )
 
     def to_inner_structure(self):
         return {
-            "level_1_statutories_list": self.level_1_statutories_list,
             "statutories_for_assigning": self.statutories_for_assigning,
         }
 

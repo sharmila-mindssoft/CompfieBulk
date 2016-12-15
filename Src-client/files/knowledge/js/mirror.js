@@ -1889,19 +1889,13 @@ function initMirror() {
   }
 
   function getAssignStatutoryWizardTwoData(
-    client_id, business_group_id, legal_entity_id, division_id, category_id,
     domain_id, unit_ids, callback
   ){
-      callerName = 'techno_transaction';
+      callerName = 'domain_transaction';
       var request = [
         "GetAssignedStatutoryWizardTwoData",
         {
-          "client_id": client_id,
-          "business_group_id": business_group_id,
-          "legal_entity_id": legal_entity_id,
-          "division_id": division_id,
-          "category_id": category_id,
-          "domain_id_optional": domain_id,
+          "d_id": domain_id,
           "unit_ids": unit_ids
         }
       ];

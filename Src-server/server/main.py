@@ -355,6 +355,7 @@ class API(object):
         return controller.process_client_coordination_master_request(
             request, db)
 
+    @csrf.exempt
     @api_request(domaintransactionprotocol.RequestFormat)
     def handle_domain_transaction(self, request, db):
         return controller.process_domain_transaction_request(request, db)

@@ -56,6 +56,14 @@ def process_domain_transaction_request(request, db):
         )
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif type(
+        request_frame
+    ) is domaintransactionprotocol.GetAssignedStatutoryWizardTwoData:
+
+        result = process_get_compliances_toassign(
+            db, request_frame, user_id
+        )
+
     return result
 
 def process_get_approve_statutory_list(db, user_id):
@@ -70,3 +78,7 @@ def process_get_assigned_statutory_wizard_one(db, user_id):
 
 def process_get_statutory_units(db, request, user_id):
     return get_statutories_units(db, request, user_id)
+
+def process_get_compliances_toassign(db, request, user_id):
+    data = get_compliances_to_assign(db, request, user_id)
+    return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data)
