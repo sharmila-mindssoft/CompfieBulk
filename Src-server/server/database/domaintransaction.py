@@ -152,6 +152,7 @@ def get_compliances_to_assign(db, request, user_id):
         map_text = None
         for s in statu :
             if s["statutory_mapping_id"] == map_id :
+
                 if s["parent_ids"] == 0 :
                     level_1_id = s["statutory_id"]
                     map_text = s["statutory_name"]
@@ -176,3 +177,6 @@ def get_compliances_to_assign(db, request, user_id):
             orgs
         ))
     return data_list
+
+def save_statutory_compliances(db, request, user_id):
+    pass

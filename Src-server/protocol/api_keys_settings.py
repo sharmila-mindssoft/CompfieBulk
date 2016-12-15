@@ -428,7 +428,7 @@ api_params = {
     "level_1_statutory_index": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "statutory_provision": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "locations": {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    "compliances_applicablity_status": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "ComplianceApplicablityStatus"},
+    "compliances_applicablity_status": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "SaveComplianceStatus"},
     "level_1_statutory_wise_compliances": {},
     "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutories"},
     "unit_code_with_name": {'type': 'TEXT', 'length': 150, 'validation_method': None, 'is_optional': False},
