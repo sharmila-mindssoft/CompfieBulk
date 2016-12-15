@@ -231,8 +231,6 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 function pageControls() {
-
-   
     NextButton.click(function() {
         CURRENT_TAB += 1;
         showTab();
