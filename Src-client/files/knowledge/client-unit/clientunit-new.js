@@ -189,7 +189,7 @@ function getCountryName(countryId) {
   });
   return countryName;
 }
-//Edit client Unit -----------------------------------------------------------------------------------------------
+//Edit client Unit  -----------------------------------------------------------------------------------------------
 function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId) {
   //alert("edit")
   isUpdate = true;
@@ -751,7 +751,7 @@ function loadUnitValues_exists(unitval, start_cnt)
   }
   
 }
-//Add Button-------------------------------------------------------------------------------------------------
+//Add Button  -------------------------------------------------------------------------------------------------
 $('#btn-clientunit-add').click(function () {
   isUpdate = false;
   units_count = [];
@@ -800,17 +800,20 @@ $('#btn-clientunit-add').click(function () {
   countryUnitList.empty();
   loadClientGroups(groupList);
 });
-//Cancel Button ----------------------------------------------------------------------------------------------
+//Cancel Button  ----------------------------------------------------------------------------------------------
 $('#btn-clientunit-cancel').click(function () {
+
+  clientUnitAdd.hide();
+  clientUnitView.show();
   
-  var msgstatus = message.cancel_operation;
+  /*var msgstatus = message.cancel_operation;
   
   confirm_alert(msgstatus, function(isConfirm){
     if(isConfirm){
       clientUnitAdd.hide();
       clientUnitView.show();
     }
-  });
+  });*/
 
   // $('.warning-confirm').dialog({
   //   title: 'Cancel',
@@ -834,9 +837,9 @@ $('#btn-clientunit-cancel').click(function () {
   //   open: function () {
   //     $('.warning-message').html(msgstatus);
   //   }
-  // });
+  // });`
 });
-//Load All Groups---------------------------------------------------------------------------------------------
+//Load All Groups  ---------------------------------------------------------------------------------------------
 function loadClientGroups(groupsList) {
   $('#group-select').focus();
   var clients = groupsList;
@@ -1009,7 +1012,7 @@ function LoadCountry(country_id)
     }
   }
 }
-//Load LegalEntities ---------------------------------------------------------------------------------------------
+//Load LegalEntities  ---------------------------------------------------------------------------------------------
 function loadLegalEntity() {
   var clientId = clientSelect.val();
   var businessGroupId = bgrpSelect.val();
