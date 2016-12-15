@@ -2182,6 +2182,25 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getAssignedStatutoriesList(callback) {
+    var request = [
+      'GetAssignedStatutoriesList',
+      {}
+    ];
+    apiRequest('techno_report', request, callback);
+  }
+
+  function getComplianceStatutoriesList(unitId, domainId, callback){
+    var request = [
+      'GetComplianceStatutoriesList',
+      {
+        'unit_id': unitId,
+        'd_id': domainId
+      }
+    ];
+    apiRequest("techno_report", request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2369,7 +2388,9 @@ function initMirror() {
     getStatutoryNotifications: getStatutoryNotifications,
     updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
     getReassignUserDomainReportData: getReassignUserDomainReportData,
-    getStatutoryMappingsEdit: getStatutoryMappingsEdit
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit,
+    getAssignedStatutoriesList: getAssignedStatutoriesList,
+    getComplianceStatutoriesList: getComplianceStatutoriesList
   };
 }
 var mirror = initMirror();
