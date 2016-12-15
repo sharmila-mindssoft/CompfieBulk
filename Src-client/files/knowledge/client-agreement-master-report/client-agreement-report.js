@@ -275,6 +275,7 @@ function loadCompliances(data) {
         $(this).next().slideToggle('fast');
         $('.accordion-content').not($(this).next()).slideUp('fast');
     });
+
     if (is_null == true) {
       hidePagePan();
     }
@@ -491,6 +492,7 @@ $(document).ready(function() {
 
     initialize();
     pageControls();
+
     $('.tree-open-close').click(function() {
         $('.tree-data').toggle("slow");
     });

@@ -218,7 +218,7 @@ def approve_client_group(db, request, session_user):
         approval_status = detail.approval_status
         reason = detail.reason
         value_tuple = (
-           1 if approval_status is True else 0,
+           1 if approval_status is True else 2,
            reason, session_user, current_time_stamp
         )
         values.append(value_tuple)

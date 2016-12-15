@@ -1,5 +1,5 @@
 import time
-from protocol import login, technotransactions
+from protocol import login, technotransactions, technomasters
 from generalcontroller import (
     validate_user_session, validate_user_forms
 )

@@ -414,7 +414,7 @@ def to_structure_dictionary_values(x):
         if _type == 'VECTOR_TYPE':
             assert _module_name is not None
             assert _class_name is not None
-            print val
+            # print val
             # if param.get("is_optional") is and val is None :
 
             val = to_VectorType(
@@ -454,13 +454,14 @@ def to_structure_dictionary_values(x):
             assert _class_name is not None
             val = to_EnumType(_module_name, _class_name, val)
         else:
-            print field_name, param, val
+            # print field_name, param, val
             val = parse_values(field_name, param, val)
         if(
             val is not None and _validation_method is not None and
             _type != 'MAP_TYPE' and _type != 'MAP_TYPE_VECTOR_TYPE' and
             type(val) != list
         ):
+            print field_name
             val = _validation_method(val)
 
         x[field_name] = val

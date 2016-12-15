@@ -2068,7 +2068,7 @@ function initMirror() {
         "grp_mode": action_mode
       }
     ];
-    //apiRequest(callerName, request, callback);
+    apiRequest(callerName, request, callback);
   }
   //Verify Password
   function verifyPassword(password, callback) {

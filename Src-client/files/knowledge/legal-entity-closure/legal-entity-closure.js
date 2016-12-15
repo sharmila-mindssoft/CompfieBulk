@@ -5,7 +5,6 @@ function loadLegalEntityClosureList()
 {
 	console.log("inside getGroupAdmin_Group")
 	function onSuccess(data) {
-		console.log("data:"+data)
 		legalEntityClosureList = data.legalentity_closure;
 		LegalEntityClosureData(legalEntityClosureList);
 	}
@@ -45,7 +44,7 @@ function LegalEntityClosureData(data)
 	          target: '#custom-modal',
 	          effect: 'contentscale',
 	          open:   function() {
-	            popup_toggle(this.className, val.legal_entity_id, 'close');
+	            popup_toggle(val.legal_entity_id, 'close');
 	          } 
 	        });
 	            
@@ -58,8 +57,7 @@ function LegalEntityClosureData(data)
 		}
 		else
 		{
-			console.log("validity:"+val.validity_days)
-			if(parseInt(val.validity_days) > 90)
+			if(parseInt(val.validity_days) > 1)
 			{
 				$('#close', clone).hide();
 				$('#reactive', clone).hide();
@@ -69,17 +67,15 @@ function LegalEntityClosureData(data)
 			}
 			else
 			{
-				console.log('validity')
 				$('#close', clone).hide();
 				$('#reactive', clone).show();
 				$('#reactive', clone).addClass('-'+val.legal_entity_id)
-				var closeclassname = $('#reactive', clone).hasclass();
 				$('#reactive', clone).on('click', function() {
 					Custombox.open({
 				        target: '#custom-modal',
 				        effect: 'contentscale',
 				        open:   function() {
-				          popup_toggle(closeclassname, val.legal_entity_id, 'reactive');
+				          popup_toggle(val.legal_entity_id, 'reactive');
 				        } 
 	  				});
 	      		});
@@ -129,127 +125,129 @@ function LegalEntityClosureData(data)
 	// 	}
 	// }
 }
-function bindLegalEntityClosureData(data, j)
-{	
-	console.log(data);
-	val = data;
-	var tableRow = $('#templates .table-row');
-	var clone = tableRow.clone();
-	$('.sno', clone).text(j);
-	$('.Country', clone).text(val.country_name);
-	$('.Group', clone).text(val.group_name);
-	$('.Business-group', clone).text(val.business_group_name);
-	$('#le_id', clone).addClass('-'+val.legal_entity_id);
-	$('.legal-entity', clone).text(val.legal_entity_name);
-	$('.le_id', clone).text(val.legal_entity_id);
+// function bindLegalEntityClosureData(data, j)
+// {	
+// 	console.log(data);
+// 	val = data;
+// 	var tableRow = $('#templates .table-row');
+// 	var clone = tableRow.clone();
+// 	$('.sno', clone).text(j);
+// 	$('.Country', clone).text(val.country_name);
+// 	$('.Group', clone).text(val.group_name);
+// 	$('.Business-group', clone).text(val.business_group_name);
+// 	$('#le_id', clone).addClass('-'+val.legal_entity_id);
+// 	$('.legal-entity', clone).text(val.legal_entity_name);
+// 	$('.le_id', clone).text(val.legal_entity_id);
 
-	console.log(j)
-	console.log("le:"+val.legal_entity_id)
-	if(val.is_active == true)
-	{
-		$('#close', clone).show();
-		$('#close', clone).addClass('-'+val.legal_entity_id)
-		$('#close', clone).on('click', function() {
-			Custombox.open({
-			  target: '#custom-modal',
-			  effect: 'contentscale',
-			  open:   function() {
-			    popup_toggle(this.className, val.legal_entity_id, 'close');
-			  } 
-			});	    
-		});
-		//$('.modal')
-		$('#reactive', clone).hide();
-		$('.closed', clone).hide();
-		$('.closed', clone).text('');
-		//break;
-	}
-	else
-	{
-		console.log("validity:"+val.validity_days)
-		if(parseInt(val.validity_days) > 90)
-		{
-			$('#close', clone).hide();
-			$('#reactive', clone).hide();
-			$('.closed', clone).show();
-			$('.closed', clone).text('Closed');
-			//break;
-		}
-		else
-		{
-			console.log('validity')
-			$('#close', clone).hide();
-			$('#reactive', clone).show();
-			$('#reactive', clone).addClass('-'+val.legal_entity_id)
-			$('#reactive', clone).on('click', function() {
-				Custombox.open({
-			        target: '#custom-modal',
-			        effect: 'contentscale',
-			        open:   function() {
-			          popup_toggle(this.className, val.legal_entity_id, 'reactive');
-			        } 
-  				});
-            });
-			$('#reactive', clone).attr('title', val.validity_days+' days left')
-			$('.closed', clone).hide();
-			$('.closed', clone).text('');
-			//break;
-		}
-	}
+// 	console.log(j)
+// 	console.log("le:"+val.legal_entity_id)
+// 	if(val.is_active == true)
+// 	{
+// 		$('#close', clone).show();
+// 		$('#close', clone).addClass('-'+val.legal_entity_id)
+// 		$('#close', clone).on('click', function() {
+// 			Custombox.open({
+// 			  target: '#custom-modal',
+// 			  effect: 'contentscale',
+// 			  open:   function() {
+// 			    popup_toggle(this.className, val.legal_entity_id, 'close');
+// 			  } 
+// 			});	    
+// 		});
+// 		//$('.modal')
+// 		$('#reactive', clone).hide();
+// 		$('.closed', clone).hide();
+// 		$('.closed', clone).text('');
+// 		//break;
+// 	}
+// 	else
+// 	{
+// 		console.log("validity:"+val.validity_days)
+// 		if(parseInt(val.validity_days) > 90)
+// 		{
+// 			$('#close', clone).hide();
+// 			$('#reactive', clone).hide();
+// 			$('.closed', clone).show();
+// 			$('.closed', clone).text('Closed');
+// 			//break;
+// 		}
+// 		else
+// 		{
+// 			console.log('validity')
+// 			$('#close', clone).hide();
+// 			$('#reactive', clone).show();
+// 			$('#reactive', clone).addClass('-'+val.legal_entity_id)
+// 			$('#reactive', clone).on('click', function() {
+// 				Custombox.open({
+// 			        target: '#custom-modal',
+// 			        effect: 'contentscale',
+// 			        open:   function() {
+// 			          popup_toggle(val.legal_entity_id, 'reactive');
+// 			        } 
+//   				});
+//             });
+// 			$('#reactive', clone).attr('title', val.validity_days+' days left')
+// 			$('.closed', clone).hide();
+// 			$('.closed', clone).text('');
+// 			//break;
+// 		}
+// 	}
 
-	$('.tbody-le-closure-list').append(clone);
-}
+// 	$('.tbody-le-closure-list').append(clone);
+// }
 
-function popup_toggle(e, le_id, mode)
+function popup_toggle(le_id, mode)
 {
-	var split_e_le_id = e.split("-")[2].trim();
+	$(".popup_legal_entity_id").val(le_id);
+	$(".popup_mode").val(mode);
+	//console.log("e--------"+e);
+	//var split_e_le_id = e.split("-")[2].trim();
 	//$('.modal').show();
 	$('#techno_pwd').val('');
 	$('#remarks').val('');
-	toggle_le_id = split_e_le_id+","+mode;
-	alert(toggle_le_id);
+	//toggle_le_id = split_e_le_id+","+mode;
+	//alert(toggle_le_id);
 }
 
-function closeToggle()
-{
-	$('.modal').hide();
-	toggle_le_id = null;
-}
+// function closeToggle()
+// {
+// 	$('.modal').hide();
+// 	toggle_le_id = null;
+// }
 
 $('#update_status').click(function() {
 	var txtpwd = $('#techno_pwd').val();
 	var txtRemarks = $('#remarks').val();
 	var le_id, action_mode;
-	alert(toggle_le_id);
 	if(txtpwd != '' && txtRemarks != '')
 	{
-		if(toggle_le_id.indexOf(",") >= 0)
-		{
-			le_id = toggle_le_id.split(',')[0];
-			action_mode = toggle_le_id.split(',')[1];
-			function onSuccess(data) {
-				loadLegalEntityClosureList();
-			}
-			function onFailure(error) {
-				custom_alert(error);
-			}
-			mirror.saveLegalEntityClosureData(txtpwd, txtRemarks, parseInt(le_id), action_mode, function (error, response) {
-				if (error == null) {
-					$('.modal').hide();
-					toggle_le_id = null;
-					if (action_mode == "close")
-						displayMessage(message.legal_entity_closed);
-					else if (action_mode == "reactive")
-						displayMessage(message.legal_entity_reactivated);
-			  		onSuccess(response);
-				} else {
-		  			onFailure(error);
-				}
-			});
+		le_id = $(".popup_legal_entity_id").val();
+		action_mode = $(".popup_mode").val();
+		function onSuccess(data) {
+			displaySuccessMessage(message.action_success);
+			loadLegalEntityClosureList();
 		}
+		function onFailure(error) {
+			displayMessage(error);
+		}
+		mirror.saveLegalEntityClosureData(txtpwd, txtRemarks, parseInt(le_id), action_mode, function (error, response) {
+			if (error == null) {
+				Custombox.close();
+				$(".popup_legal_entity_id").val('');
+				$(".popup_mode").val('');
+				if (action_mode == "close")
+					displayMessage(message.legal_entity_closed);
+				else if (action_mode == "reactive")
+					displayMessage(message.legal_entity_reactivated);
+		  		onSuccess(response);
+			} else {
+	  			onFailure(error);
+			}
+		});	
 	}
 	else
 	{
+		console.log("Welcome2");
 		if(txtpwd == '')
 		{
 			displayMessage(message.enter_password);

@@ -189,7 +189,7 @@ function getCountryName(countryId) {
   });
   return countryName;
 }
-//Edit client Unit -----------------------------------------------------------------------------------------------
+//Edit client Unit  -----------------------------------------------------------------------------------------------
 function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId) {
   //alert("edit")
   isUpdate = true;
@@ -562,7 +562,7 @@ function loadUnitValues(unitval)
     }
   } else {
     var classname = 'imgactivedclass-' + division_cnt + '-' + unit_second_cnt;
-    $('.activedclass-' + division_cnt + '-' + unit_second_cnt).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \'' + firstlist.unit_id + '\', \'' + clientunitId + '\');">');
+    // $('.activedclass-' + division_cnt + '-' + unit_second_cnt).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \'' + firstlist.unit_id + '\', \'' + clientunitId + '\');">');
   }
   //alert("approve:"+firstlist.is_approved)
 
@@ -751,7 +751,7 @@ function loadUnitValues_exists(unitval, start_cnt)
   }
   
 }
-//Add Button-------------------------------------------------------------------------------------------------
+//Add Button  -------------------------------------------------------------------------------------------------
 $('#btn-clientunit-add').click(function () {
   isUpdate = false;
   units_count = [];
@@ -800,17 +800,20 @@ $('#btn-clientunit-add').click(function () {
   countryUnitList.empty();
   loadClientGroups(groupList);
 });
-//Cancel Button ----------------------------------------------------------------------------------------------
+//Cancel Button  ----------------------------------------------------------------------------------------------
 $('#btn-clientunit-cancel').click(function () {
+
+  clientUnitAdd.hide();
+  clientUnitView.show();
   
-  var msgstatus = message.cancel_operation;
+  /*var msgstatus = message.cancel_operation;
   
   confirm_alert(msgstatus, function(isConfirm){
     if(isConfirm){
       clientUnitAdd.hide();
       clientUnitView.show();
     }
-  });
+  });*/
 
   // $('.warning-confirm').dialog({
   //   title: 'Cancel',
@@ -834,9 +837,9 @@ $('#btn-clientunit-cancel').click(function () {
   //   open: function () {
   //     $('.warning-message').html(msgstatus);
   //   }
-  // });
+  // });`
 });
-//Load All Groups---------------------------------------------------------------------------------------------
+//Load All Groups  ---------------------------------------------------------------------------------------------
 function loadClientGroups(groupsList) {
   $('#group-select').focus();
   var clients = groupsList;
@@ -1009,7 +1012,7 @@ function LoadCountry(country_id)
     }
   }
 }
-//Load LegalEntities ---------------------------------------------------------------------------------------------
+//Load LegalEntities  ---------------------------------------------------------------------------------------------
 function loadLegalEntity() {
   var clientId = clientSelect.val();
   var businessGroupId = bgrpSelect.val();
@@ -1909,8 +1912,7 @@ function getOrganizationName(org_ids)
 }
 
 //industry
-function industrytype(classval) {
-  
+function industrytype(classval) {  
   var lastClass = classval.split(' ').pop();
   var ccount = lastClass.split('-');
   var countval = '-' + ccount[1] + '-' + ccount[2];
@@ -1962,7 +1964,7 @@ function industrytype(classval) {
     else
     {
       var domains = domainList;
-      $('.ul-orgtype-list' + countval).empty();
+      // $('.ul-orgtype-list' + countval).empty();
       for(var i in domains)
       {
         var selectorgtypestatus = '';
@@ -1971,14 +1973,12 @@ function industrytype(classval) {
             selectorgtypestatus = 'checked';
           }
         }
-        console.log("ww--"+domains[i].legal_entity_id);
         if(lentityId == domains[i].legal_entity_id)
         {
-          
           var orgtypeId = parseInt(domains[i].industry_id);
           var orgtypeName = domains[i].industry_name;
-
-          $('.orgtypeselected'+countval).append($(optText).val(orgtypeId).html(orgtypeName).attr(selectorgtypestatus));
+          var optText = '<option></option>';
+          $('.orgtypeselected'+countval).append($(optText).val(orgtypeId).html(orgtypeName)); //.attr(selectorgtypestatus));
          /* var obj = $(".orgtype-list-drop-down li");
           var clone = obj.clone();
           clone.attr("id", orgtypeId);
@@ -2440,7 +2440,8 @@ $('#btn-clientunit-submit').click(function ()
         for (var j=1; j <= unit_cnt; j++)
         {
           var unit;
-          //alert("enter unit:"+$('.unit-id-'+i+'-'+j).val())
+          console.log('.edit-icon-'+i+'-'+j);
+          alert("enter unit:"+$('.unit-id-'+i+'-'+j).val())
           var edit_icon = $('.edit-icon-'+i+'-'+j).attr('style').split(";")[2].trim();
           //alert("edit icon:"+edit_icon)
           var unitId, unitCode, unitName, unitAddress, unitPostalCode, unitGeographyId;

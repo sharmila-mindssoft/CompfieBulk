@@ -1,3 +1,4 @@
+
 import os
 import json
 import datetime
@@ -5,7 +6,7 @@ from server.database.tables import *
 from server.database.forms import *
 from protocol import (core, knowledgetransaction)
 from server.constants import (
-    KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
+    KNOWLEDGE_FORMAT_DOWNLOAD_URL
 )
 from server.common import (
     convert_to_dict, get_date_time, datetime_to_string_time, make_summary
@@ -1243,11 +1244,16 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         return locations
 
     def return_statutory(mapping_id, statutory_info):
-        statutory = [
-            s["statutory_name"] for s in statutory_info
-            if s["statutory_mapping_id"] == mapping_id
-        ]
-        return statutory
+        statutory = []
+        for s in statutory_info :
+            print s["statutory_mapping_id"], mapping_id
+            if s["statutory_mapping_id"] == mapping_id :
+                if s["parent_names"] != '' and s["parent_names"] is not None:
+                    statutory.append(s["parent_names"])
+                statutory.append(s["statutory_name"])
+
+        print statutory
+        return [" >> ".join(statutory)]
 
     fromcount = rcount
     tocount = rcount + RECORD_DISPLAY_COUNT
@@ -1320,12 +1326,15 @@ def approve_statutory_mapping_list(db, user_id, request):
         if m["updated_by"] is not None :
             u_on = datetime_to_string_time(m["updated_on"])
 
+        map_text = json.loads(m["statutory_mapping"])
+        map_text = " >> ".join(map_text)
+
         data.append(knowledgetransaction.MappingApproveInfo(
             map_id, m["compliance_id"],
             m["country_id"], m["domain_id"],
             c_name, bool(m["is_active"]), m["created_by"],
             c_on, m["updated_by"], u_on,
-            m["statutory_nature_name"], orgname, m["statutory_mapping"]
+            m["statutory_nature_name"], orgname, map_text
         ))
 
     return data
@@ -1350,7 +1359,7 @@ def get_compliance_details(db, user_id, compliance_id):
 
     if statutory_dates is not None:
         statutory_dates = json.loads(statutory_dates)
-        
+
         for date in statutory_dates:
             s_date = core.StatutoryDate(
                 date["statutory_date"],
@@ -1361,7 +1370,6 @@ def get_compliance_details(db, user_id, compliance_id):
             date_list.append(s_date)
     summary = make_summary(date_list, c_info["frequency_id"], c_info)
 
-
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
         c_name, c_info["compliance_description"],
@@ -1371,7 +1379,7 @@ def get_compliance_details(db, user_id, compliance_id):
     )
 
 def save_approve_mapping(db, user_id, data):
-    user_id = 4
+
     map_id = "None"
     try :
         for d in data :
