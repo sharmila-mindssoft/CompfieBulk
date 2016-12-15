@@ -192,64 +192,74 @@ class SaveAssignedStatutory(Request):
         data = parse_dictionary(
             data, [
                 "compliances_applicablity_status",
-                "submission_type"
+                "submission_status"
             ]
         )
         return SaveAssignedStatutory(
-            data.get("compliance_applicable_status"),
-            data.get("submission_type")
+            data.get("compliances_applicablity_status"),
+            data.get("submission_status")
         )
 
     def to_inner_structure(self):
         return {
             "compliances_applicablity_status": self.compliances_applicablity_status,
-            "submission_type": self.submission_type
+            "submission_status": self.submission_type
         }
 
 
 class SaveComplianceStatus(object):
     def __init__(
-        self, unit_id, domain_id, compliance_id, level_1_id,
-        status, remarks
+        self, client_id, legal_entity_id, unit_id, domain_id,
+        compliance_id, compliance_status,
+        level_1_id, status, remarks
 
     ):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.domain_id = domain_id
         self.compliance_id = compliance_id
+        self.compliance_status = compliance_status
         self.level_1_id = level_1_id
         self.status = status
+        self.remarks = remarks
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "u_id", "d_id", "comp_id", "level_1_id",
-            "status", "remarks"
+            "ct_id", "le_id", "u_id", "d_id",
+            "comp_id", "comp_status",
+            "level_1_s_id",
+            "a_status", "remarks"
         ])
-        level_one_id = data.get("level_1_s_id")
-        map_text = data.get("map_text")
-        statutory_provision = data.get("s_provision")
-        compliance_id = data.get("comp_id")
-        document_name = data.get("doc_name")
-        compliance_name = data.get("c_name")
-        description = data.get("descrip")
-        organizations = data.get("org_names")
 
-        return saveComplianceStatus(
-            level_one_id, map_text, statutory_provision, compliance_id,
-            document_name, compliance_name, description,
-            organizations,
+        client_id = data.get("ct_id")
+        legal_entity_id = data.get("le_id")
+        unit_id = data.get("u_id")
+        domain_id = data.get("d_id")
+        compliance_id = data.get("comp_id")
+        compliance_status = data.get("comp_status")
+        level_one_id = data.get("level_1_s_id")
+        a_status = data.get("a_status")
+        remarks = data.get("remarks")
+
+        return SaveComplianceStatus(
+            client_id, legal_entity_id,
+            unit_id, domain_id, compliance_id, compliance_status,
+            level_one_id, a_status, remarks
         )
 
     def to_structure(self):
         return {
-            "level_1_s_id": self.level_one_id,
-            "map_text": self.mapping_text,
-            "s_provision": self.statutory_provision,
+            "ct_id": self.client_id,
+            "le_id": self.legal_entity_id,
+            "u_id": self.unit_id,
+            "d_id": self.domain_id,
             "comp_id": self.compliance_id,
-            "doc_name": self.document_name,
-            "c_name": self.compliance_name,
-            "descrip": self.description,
-            "org_names": self.organizations,
+            "comp_status": self.compliance_status,
+            "level_1_s_id": self.level_1_id,
+            "a_status": self.status,
+            "remarks": self.remarks
         }
 
 def _init_Request_class_map():
@@ -419,10 +429,11 @@ class GetAssignedStatutoryWizardOneUnitsSuccess(Response):
 
 class AssignStatutoryCompliance(object):
     def __init__(
-        self, level_one_id, mapping_text, statutory_provision, compliance_id,
+        self, level_one_id, level_one_name, mapping_text, statutory_provision, compliance_id,
         document_name, compliance_name, description, organizations
     ):
         self.level_one_id = level_one_id
+        self.level_one_name = level_one_name
         self.mapping_text = mapping_text
         self.statutory_provision = statutory_provision
         self.compliance_id = compliance_id
@@ -434,11 +445,12 @@ class AssignStatutoryCompliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "level_1_s_id", "map_text" "s_provision", "comp_id",
+            "level_1_s_id", "level_1_s_name", "map_text" "s_provision", "comp_id",
             "doc_name", "comp_name", "descrip",
             "org_names",
         ])
         level_one_id = data.get("level_1_s_id")
+        level_one_name = data.get("level_1_s_name")
         map_text = data.get("map_text")
         statutory_provision = data.get("s_provision")
         compliance_id = data.get("comp_id")
@@ -448,7 +460,7 @@ class AssignStatutoryCompliance(object):
         organizations = data.get("org_names")
 
         return AssignStatutoryCompliance(
-            level_one_id, map_text, statutory_provision, compliance_id,
+            level_one_id, level_one_name, map_text, statutory_provision, compliance_id,
             document_name, compliance_name, description,
             organizations,
         )
@@ -456,6 +468,7 @@ class AssignStatutoryCompliance(object):
     def to_structure(self):
         return {
             "level_1_s_id": self.level_one_id,
+            "level_1_s_name": self.level_one_name,
             "map_text": self.mapping_text,
             "s_provision": self.statutory_provision,
             "comp_id": self.compliance_id,

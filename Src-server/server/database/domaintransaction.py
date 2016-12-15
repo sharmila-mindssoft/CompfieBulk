@@ -1,12 +1,15 @@
 from protocol import (core, domaintransactionprotocol)
-# from server.exceptionmessage import process_error
+from server.exceptionmessage import process_error
 from server.database.tables import *
-# from server.common import (get_date_time)
+from server.common import (get_date_time)
+
 
 __all__ = [
     "get_assigned_statutories_list",
     "get_assigned_statutories_filters",
-    "get_statutories_units", "get_compliances_to_assign"
+    "get_statutories_units", "get_compliances_to_assign",
+    "save_client_statutories",
+    "save_statutory_compliances"
 ]
 
 def get_assigned_statutories_list(db, user_id):
@@ -156,27 +159,83 @@ def get_compliances_to_assign(db, request, user_id):
                 if s["parent_ids"] == 0 :
                     level_1_id = s["statutory_id"]
                     map_text = s["statutory_name"]
+                    level_1_name = s["statutory_name"]
                 else :
                     names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
                     ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
                     level_1_id = ids[0]
+                    level_1_name = names[0]
                     map_text = " >> ".join(names[1:])
 
-        return level_1_id, map_text
+        return level_1_id, level_1_name, map_text
 
     data_list = []
     for r in compliance :
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
-        level_1, map_text = status_list(map_id)
+        level_1, level_1_name, map_text = status_list(map_id)
         print level_1, map_text
         data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
-            level_1, map_text,
+            level_1, level_1_name, map_text,
             r["statutory_provision"], r["compliance_id"], r["document_name"],
             r["compliance_task"], r["compliance_description"],
             orgs
         ))
     return data_list
 
-def save_statutory_compliances(db, request, user_id):
-    pass
+def save_client_statutories(db, request, user_id):
+    status = request.submission_type
+    comps = request.compliances_applicablity_status
+    q = "INSERT INTO tbl_client_statutories(client_id, unit_id, status)" + \
+        " values (%s, %s, %s)"
+
+    for c in comps :
+        csid = db.execute_insert(q, [c.client_id, c.unit_id, status])
+        if csid is False :
+            raise process_error("E088")
+
+        else :
+            save_statutory_compliances(
+                db, comps,
+                c.unit_id, status, user_id, csid
+            )
+
+    return True
+
+
+def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
+    value_list = []
+    for r in data :
+        if r.unit_id == unit_id :
+            remarks = r.remarks
+            if remarks is None :
+                remarks = ''
+            value_list.append(
+                (
+                    csid, r.client_id, r.legal_entity_id, unit_id, r.domain_id,
+                    r.level_1_id, r.status, remarks,
+                    r.compliance_id, r.compliance_status, status,
+                    user_id, get_date_time(), status
+                )
+            )
+
+    table = "tbl_client_compliances"
+    column = [
+        "client_statutory_id",
+        "client_id", "legal_entity_id", "unit_id",
+        "domain_id", "statutory_id", "statutory_applicable_status",
+        "remarks", "compliance_id",
+        "compliance_applicable_status", "is_saved",
+        "saved_by", "saved_on", "is_approved"
+    ]
+    update_column = [
+        "statutory_id", "statutory_applicable_status", "remarks",
+        "compliance_id", "compliance_applicable_status", "is_saved",
+        "saved_by", "saved_on", "is_approved"
+    ]
+
+    result = db.on_duplicate_key_update(
+        table, ",".join(column), value_list, update_column
+    )
+    if result is False :
+        raise process_error("E088")

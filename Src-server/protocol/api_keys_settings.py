@@ -123,6 +123,7 @@ api_params = {
     'summary': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     's_m_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'a_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
+    'comp_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
     'r_reason': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     's_pro': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'n_text': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},

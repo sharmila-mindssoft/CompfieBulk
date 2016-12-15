@@ -606,6 +606,7 @@ class Database(object):
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
+        print query
         return self.execute(query)
 
     ########################################################

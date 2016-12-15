@@ -86,6 +86,7 @@ messages = {
     "E085": "There are no common domains among the selected units",
     "E086": "There are no common organisations among the selected units",
     "E087": "Invalid statutory mapping",
+    "E088": "Save process failed"
 }
 
 client_message = {

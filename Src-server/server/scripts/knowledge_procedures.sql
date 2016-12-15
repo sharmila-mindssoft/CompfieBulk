@@ -4201,8 +4201,7 @@ BEGIN
     from tbl_compliances as t1
     inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
-    inner join tbl_units as t4 on t4.country_id = t1.country_id and
-    t4.geography_id = t3.geography_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid and
