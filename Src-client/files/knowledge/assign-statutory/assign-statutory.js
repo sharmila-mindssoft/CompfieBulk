@@ -40,7 +40,7 @@ var ActivateStep2 = $("#activate-step-2");
 
 
 var BreadCrumbs = $(".breadcrumbs");
-var BreadCrumbImg = $(".bread-crum-img img");
+var BreadCrumbImg = '<i class="fa fa-angle-double-right"></i>';
 
 
 var AccordianHeader = $("#templates .compliances-accordian-header table");
@@ -164,6 +164,7 @@ function callAPI(api_type) {
     }
 
     else if (api_type == API_Wizard2) {
+        showBreadCrumbText();
         mirror.getAssignStatutoryWizardTwoData(
             int(val_group_id), int(val_business_group_id), int(val_legal_entity_id),
             int(val_division_id), int(val_category_id), int(val_domain_id), ACTIVE_UNITS,
@@ -340,8 +341,8 @@ function pageControls() {
 
 function showBreadCrumbText() {
     BreadCrumbs.empty();
-    var img_clone = BreadCrumbImg.clone();
-    BreadCrumbs.append(GroupName.val() + " ");
+    var img_clone = BreadCrumbImg;
+    BreadCrumbs.append(GroupName.val());
 
     if (BusinessGroupName.val()) {
         BreadCrumbs.append(img_clone);
@@ -397,9 +398,11 @@ function validateAndShow() {
         displayMessage(message.domain_required);
         return false;
     } else {
-        mirror.getUnits(val_group_id, val_legal_entity_id, val_domain_id, function(error, data) {
+        mirror.getAssignStatutoryWizardOneDataUnits(int(val_group_id), int(val_business_group_id), 
+            int(val_legal_entity_id), int(val_division_id), int(val_category_id), int(val_domain_id), 
+            function(error, data) {
             if (error == null) {
-                UNITS = data.UNITS;
+                UNITS = data.statu_units;
                 loadUnits();
             } else {
                 custom_alert(error);
@@ -411,57 +414,14 @@ function validateAndShow() {
 function loadUnits() {
     UnitList.empty();
     $.each(UNITS, function(key, value) {
-        
-        unit_text = value.unit_code + " - " + value.unit_name + " - " + value.address;
+        unit_text = value.unit_code + " - " + value.u_name + " - " + value.address;
         var clone = UnitRow.clone();
-        clone.text(unit_text);
-        clone.attr('id', value.unit_id);
+        clone.html(unit_text + '<i></i>');
+        clone.attr('id', value.u_id);
         UnitList.append(clone);
         clone.click(function() {
             activateUnit(this);
         });
-/*        var validation_result = true;
-        if (val_business_group_id) {
-            if (val_business_group_id == value.business_group_id) {
-                validation_result = true;
-            } else {
-                validation_result = false;
-            }
-        }
-        if (val_division_id) {
-            if (val_division_id == value.division_id) {
-                validation_result = validation_result & true;
-            } else {
-                validation_result = validation_result & false;
-            }
-        }
-        if (val_category_id) {
-            if (val_category_id == value.category_id) {
-                validation_result = validation_result & true;
-            } else {
-                validation_result = validation_result & false;
-            }
-        }
-        
-        if (validation_result == null) {
-            validation_result = true;
-        }
-
-        if (
-            value.client_id == val_group_id &&
-            value.legal_entity_id == val_legal_entity_id &&
-            $.inArray(parseInt(val_domain_id), value.domain_ids) >= 0 &&
-            validation_result
-        ) {
-            unit_text = value.unit_code + " - " + value.unit_name + " - " + value.address;
-            var clone = UnitRow.clone();
-            clone.text(unit_text);
-            clone.attr('id', value.unit_id);
-            UnitList.append(clone);
-            clone.click(function() {
-                activateUnit(this);
-            });
-        }*/
     });
 }
 
@@ -470,10 +430,12 @@ SelectAll.click(function() {
     $('.unit-list li').each(function (index, el) {
         if(SelectAll.prop('checked')){
           $(el).addClass('active');
+          $(el).find('i').addClass('fa fa-check pull-right');
           var chkid = parseInt($(el).attr('id'));
           ACTIVE_UNITS.push(chkid);
         }else{
           $(el).removeClass('active');
+          $(el).find('i').removeClass('fa fa-check pull-right');
         }
     });
     SelectedUnitCount.text(ACTIVE_UNITS.length);
@@ -484,10 +446,12 @@ function activateUnit(element) {
     var chkid = parseInt($(element).attr('id'));
     if (chkstatus == 'active') {
         $(element).removeClass('active');
+        $(element).find('i').removeClass('fa fa-check pull-right');
         index = ACTIVE_UNITS.indexOf(chkid)
         ACTIVE_UNITS.splice(index, 1);
     } else {
         $(element).addClass('active');
+        $(element).find('i').addClass('fa fa-check pull-right');
         ACTIVE_UNITS.push(chkid);
     }
     SelectedUnitCount.text(ACTIVE_UNITS.length);
@@ -757,7 +721,7 @@ function loadAssignedStatutories(){
 function validateFirstTab() {
     if (ACTIVE_UNITS.length <= 0) {
         displayMessage(message.atleast_one_unit_required)
-        return true;
+        return false;
     } else {
         callAPI(API_Wizard2);
         return true;
@@ -812,6 +776,7 @@ function showTab(){
         SubmitButton.show();
         PreviousButton.show();
         SaveButton.show();
+        showBreadCrumbText();
     }
 };
 

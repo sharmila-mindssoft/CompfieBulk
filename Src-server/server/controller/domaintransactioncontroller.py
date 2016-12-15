@@ -49,7 +49,7 @@ def process_domain_transaction_request(request, db):
         )
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_units(
-            db, request, user_id
+            db, request_frame, user_id
         )
         logger.logKnowledgeApi(
             "GetAssignedStatutoryWizardOneData", "process end"

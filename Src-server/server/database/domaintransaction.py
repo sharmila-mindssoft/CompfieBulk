@@ -125,4 +125,6 @@ def get_statutories_units(db, request, user_id):
             r["address"], r["geography_name"]
         ))
 
-    return data_list
+    return domaintransactionprotocol.GetAssignedStatutoryWizardOneUnitsSuccess(
+        data_list
+    )

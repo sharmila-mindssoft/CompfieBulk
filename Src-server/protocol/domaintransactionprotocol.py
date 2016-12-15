@@ -108,8 +108,9 @@ class GetAssignedStatutoryWizardOneUnits(Request):
         legal_entity_id = data.get("le_id")
         division_id = data.get("dv_id")
         category_id = data.get("cat_id")
+        domain_id = data.get("d_id")
         return GetAssignedStatutoryWizardOneUnits(
-            client_id, business_group_id, legal_entity_id, division_id, category_id
+            client_id, business_group_id, legal_entity_id, division_id, category_id, domain_id
         )
 
     def to_inner_structure(self):
@@ -676,11 +677,11 @@ class StatutoryUnits(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "u_id", "u_code", "u_name", "address", "g_name"
+                "u_id", "unit_code", "u_name", "address", "g_name"
             ]
         )
         unit_id = data.get("u_id")
-        unit_code = data.get("u_code")
+        unit_code = data.get("unit_code")
         unit_name = data.get("u_name")
         address = data.get("address")
         geography = data.get("g_name")
@@ -689,7 +690,7 @@ class StatutoryUnits(object):
     def to_structure(self):
         return {
             "u_id": self.unit_id,
-            "u_code": self.unit_code,
+            "unit_code": self.unit_code,
             "u_name": self.unit_name,
             "address": self.address,
             "g_name": self. geography_name
