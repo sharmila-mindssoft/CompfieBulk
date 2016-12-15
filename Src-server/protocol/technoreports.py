@@ -571,6 +571,19 @@ class GetReassignUserReportData(Request):
         print "inside protocol"
         return data
 
+class GetAssignedStatutoriesList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAssignedStatutoriesList()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetReassignUserDomainReportData(Request):
     def __init__(self, user_category_id, user_id, group_id_none, bg_id, le_id, d_id):
         self.user_category_id = user_category_id
@@ -606,6 +619,26 @@ class GetReassignUserDomainReportData(Request):
         }
         return data
 
+class GetComplianceStatutoriesList(Request):
+    def __init__(self, unit_id, d_id):
+        self.unit_id = unit_id
+        self.d_id = d_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_id", "d_id"])
+        unit_id = data.get("unit_id")
+        d_id = data.get("d_id")
+
+        return GetComplianceStatutoriesList(unit_id, d_id)
+
+    def to_inner_structure(self):
+        data = {
+            "unit_id": self.unit_id,
+            "d_id": self.d_id,
+        }
+        return data
+
 def _init_Request_class_map():
     classes = [
         GetClientDetailsReportFilters,
@@ -625,7 +658,9 @@ def _init_Request_class_map():
         GetGroupAdminReportData,
         GetAssignedUserClientGroups,
         GetReassignUserReportData,
-        GetReassignUserDomainReportData
+        GetReassignUserDomainReportData,
+        GetAssignedStatutoriesList,
+        GetComplianceStatutoriesList
     ]
 
     class_map = {}
@@ -1106,6 +1141,24 @@ class ReassignUserDomainReportDataSuccess(Response):
         print data
         return data
 
+class ApproveAssignedStatutoriesListSuccess(Response):
+    def __init__(self, approve_assigned_statutories):
+        self.approve_assigned_statutories = approve_assigned_statutories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["approve_assigned_statutories"])
+        approve_assigned_statutories = data.get("approve_assigned_statutories")
+        return ApproveAssignedStatutoriesListSuccess(approve_assigned_statutories)
+
+    def to_inner_structure(self):
+        data = {
+            "approve_assigned_statutories": self.approve_assigned_statutories,
+        }
+        print "inside success"
+        print data
+        return data
+
 def _init_Response_class_map():
     classes = [
                 GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess,
@@ -1113,7 +1166,7 @@ def _init_Response_class_map():
                 GetClientAgreementReportFiltersSuccess, GetClientAgreementReportDataSuccess, GetDomainwiseAgreementReportDataSuccess,
                 GetOrganizationWiseUnitCountSuccess, ExportToCSVSuccess, GetUserMappingReportFiltersSuccess, GetUserMappingReportDataSuccess,
                 GetGroupAdminReportDataSuccess, GetAssignedUserClientGroupsSuccess, ReassignUserReportDataSuccess,
-                ReassignUserDomainReportDataSuccess
+                ReassignUserDomainReportDataSuccess, ApproveAssignedStatutoriesListSuccess
             ]
 
     class_map = {}
@@ -2116,5 +2169,63 @@ class ReassignedDomainUserList(object):
             "unit_email_date": self.unit_email_date,
             "emp_code_name": self.emp_code_name,
             "remarks": self.remarks,
+        }
+        return data
+
+class ApproveAssignedStatutories(object):
+    def __init__(
+        self, country_name, group_name, legal_entity_name, business_group_name, division_name,
+        category_name, unit_id, unit_name, domain_name, statutory_id, domain_id
+
+    ):
+        self.country_name = country_name
+        self.group_name = group_name
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
+        self.division_name = division_name
+        self.category_name = category_name
+        self.unit_id = unit_id
+        self.unit_name = unit_name
+        self.domain_name = domain_name
+        self.statutory_id = statutory_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "country_name", "group_name", "legal_entity_name", "business_group_name",
+            "division_name", "category_name", "unit_id", "unit_name", "domain_name",
+            "statutory_id", "domain_id"
+        ])
+        country_name = data.get("country_name")
+        group_name = data.get("group_name")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_name = data.get("business_group_name")
+        division_name = data.get("division_name")
+        category_name = data.get("category_name")
+        unit_id = data.get("unit_id")
+        unit_name = data.get("unit_name")
+        domain_name = data.get("domain_name")
+        statutory_id = data.get("statutory_id")
+        domain_id = data.get("domain_id")
+
+        return ReassignedUserList(
+            country_name, group_name, legal_entity_name, business_group_name, division_name,
+            category_name, unit_id, unit_name, domain_name, statutory_id, domain_id
+        )
+
+    def to_structure(self):
+        data = {
+            "country_name": self.country_name,
+            "group_name": self.group_name,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_name": self.business_group_name,
+            "division_name": self.division_name,
+            "category_name": self.category_name,
+            "unit_id": self.unit_id,
+            "unit_name": self.unit_name,
+            "domain_name": self.domain_name,
+            "statutory_id": self.statutory_id,
+            "domain_id": self.domain_id,
         }
         return data
