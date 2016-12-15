@@ -164,13 +164,12 @@ function callAPI(api_type) {
     }
 
     else if (api_type == API_Wizard2) {
+        alert(ACTIVE_UNITS)
         showBreadCrumbText();
         mirror.getAssignStatutoryWizardTwoData(
-            int(val_group_id), int(val_business_group_id), int(val_legal_entity_id),
-            int(val_division_id), int(val_category_id), int(val_domain_id), ACTIVE_UNITS,
+            int(val_domain_id), ACTIVE_UNITS,
             function(error, data) {
                 if (error == null) {
-                    LEVEL_1_STATUTORIES = data.level_1_statutories_list;
                     COMPLIANCES_LIST = data.statutories_for_assigning;
                     loadCompliances();
                 } else {

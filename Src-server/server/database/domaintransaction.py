@@ -152,14 +152,17 @@ def get_compliances_to_assign(db, request, user_id):
         map_text = None
         for s in statu :
             if s["statutory_mapping_id"] == map_id :
-                if s["parent_ids"] == 0 :
+                if s["parent_ids"] == 0 or s["parent_ids"] == '0,':
                     level_1_id = s["statutory_id"]
                     map_text = s["statutory_name"]
                 else :
                     names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
                     ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
                     level_1_id = ids[0]
-                    map_text = " >> ".join(names[1:])
+                    if len(names) > 1 :
+                        map_text = " >> ".join(names[1:])
+                    else :
+                        map_text = names[0]
 
         return level_1_id, map_text
 

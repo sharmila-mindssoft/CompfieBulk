@@ -434,7 +434,7 @@ class AssignStatutoryCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "level_1_s_id", "map_text" "s_provision", "comp_id",
-            "doc_name", "c_name", "descrip",
+            "doc_name", "comp_name", "descrip",
             "org_names",
         ])
         level_one_id = data.get("level_1_s_id")
@@ -442,7 +442,7 @@ class AssignStatutoryCompliance(object):
         statutory_provision = data.get("s_provision")
         compliance_id = data.get("comp_id")
         document_name = data.get("doc_name")
-        compliance_name = data.get("c_name")
+        compliance_name = data.get("comp_name")
         description = data.get("descrip")
         organizations = data.get("org_names")
 
@@ -459,7 +459,7 @@ class AssignStatutoryCompliance(object):
             "s_provision": self.statutory_provision,
             "comp_id": self.compliance_id,
             "doc_name": self.document_name,
-            "c_name": self.compliance_name,
+            "comp_name": self.compliance_name,
             "descrip": self.description,
             "org_names": self.organizations,
         }
