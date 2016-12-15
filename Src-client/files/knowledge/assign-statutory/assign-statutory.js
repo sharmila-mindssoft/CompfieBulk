@@ -164,7 +164,6 @@ function callAPI(api_type) {
     }
 
     else if (api_type == API_Wizard2) {
-        alert(ACTIVE_UNITS)
         showBreadCrumbText();
         mirror.getAssignStatutoryWizardTwoData(
             int(val_domain_id), ACTIVE_UNITS,

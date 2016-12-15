@@ -155,25 +155,28 @@ def get_compliances_to_assign(db, request, user_id):
                 if s["parent_ids"] == 0 or s["parent_ids"] == '0,':
                     level_1_id = s["statutory_id"]
                     map_text = s["statutory_name"]
+                    level_1_s_name = map_text
                 else :
                     names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
                     ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
                     level_1_id = ids[0]
+                    level_1_s_name = names[0]
                     if len(names) > 1 :
-                        map_text = " >> ".join(names[1:])
+                        map_text = " >> ".join(names[1:]) 
+                        map_text += " >> %s" % (s["statutory_name"])
                     else :
-                        map_text = names[0]
+                        map_text = s["statutory_name"]
 
-        return level_1_id, map_text
+        return level_1_id, level_1_s_name, map_text
 
     data_list = []
     for r in compliance :
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
-        level_1, map_text = status_list(map_id)
+        level_1, level_1_s_name, map_text = status_list(map_id)
         print level_1, map_text
         data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
-            level_1, map_text,
+            level_1, level_1_s_name, map_text,
             r["statutory_provision"], r["compliance_id"], r["document_name"],
             r["compliance_task"], r["compliance_description"],
             orgs

@@ -418,10 +418,11 @@ class GetAssignedStatutoryWizardOneUnitsSuccess(Response):
 
 class AssignStatutoryCompliance(object):
     def __init__(
-        self, level_one_id, mapping_text, statutory_provision, compliance_id,
+        self, level_one_id, level_1_s_name, mapping_text, statutory_provision, compliance_id,
         document_name, compliance_name, description, organizations
     ):
         self.level_one_id = level_one_id
+        self.level_1_s_name = level_1_s_name
         self.mapping_text = mapping_text
         self.statutory_provision = statutory_provision
         self.compliance_id = compliance_id
@@ -433,11 +434,11 @@ class AssignStatutoryCompliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "level_1_s_id", "map_text" "s_provision", "comp_id",
-            "doc_name", "comp_name", "descrip",
-            "org_names",
+            "level_1_s_id", "level_1_s_name", "map_text" "s_provision", "comp_id",
+            "doc_name", "comp_name", "descrip", "org_names",
         ])
         level_one_id = data.get("level_1_s_id")
+        level_1_s_name = data.get("level_1_s_name")
         map_text = data.get("map_text")
         statutory_provision = data.get("s_provision")
         compliance_id = data.get("comp_id")
@@ -447,7 +448,7 @@ class AssignStatutoryCompliance(object):
         organizations = data.get("org_names")
 
         return AssignStatutoryCompliance(
-            level_one_id, map_text, statutory_provision, compliance_id,
+            level_one_id, level_1_s_name, map_text, statutory_provision, compliance_id,
             document_name, compliance_name, description,
             organizations,
         )
@@ -455,6 +456,7 @@ class AssignStatutoryCompliance(object):
     def to_structure(self):
         return {
             "level_1_s_id": self.level_one_id,
+            "level_1_s_name": self.level_1_s_name,
             "map_text": self.mapping_text,
             "s_provision": self.statutory_provision,
             "comp_id": self.compliance_id,
