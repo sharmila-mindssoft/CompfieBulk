@@ -122,8 +122,8 @@ api_params = {
     'freq': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'summary': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     's_m_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    'a_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
-    'comp_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
+    'a_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
+    'comp_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
     'r_reason': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     's_pro': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'n_text': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -576,6 +576,8 @@ api_params['applicable'] = api_params.get('is_active')
 api_params['not_applicable'] = api_params.get('is_active')
 api_params['not_at_all_applicable'] = api_params.get('is_active')
 api_params['is_saved'] = api_params.get('is_active')
+api_params['is_new'] = api_params.get('is_active')
+api_params['is_rejected'] = api_params.get('is_active')
 api_params['parent_id'] = api_params.get('geography_id')
 api_params['parent_mappings'] = api_params.get('mapping')
 api_params['p_maps'] = api_params.get('s_pnames')

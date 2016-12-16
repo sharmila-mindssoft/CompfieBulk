@@ -60,18 +60,21 @@ class GetAssignedStatutories(Request):
 
 
 class GetAssignedStatutoriesById(Request):
-    def __init__(self, client_statutory_id):
-        self.client_statutory_id = client_statutory_id
+    def __init__(self, unit_id, domain_id):
+        self.unit_id = unit_id
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_statutory_id"])
-        client_statutory_id = data.get("client_statutory_id")
-        return GetAssignedStatutoriesById(client_statutory_id)
+        data = parse_dictionary(data, ["u_id", "d_id"])
+        unit_id = data.get("u_id")
+        domain_id = data.get("d_id")
+        return GetAssignedStatutoriesById(unit_id, domain_id)
 
     def to_inner_structure(self):
         return {
-            "client_statutory_id": self.client_statutory_id,
+            "u_id": self.unit_id,
+            "d_id": self.domain_id
         }
 
 
@@ -429,8 +432,11 @@ class GetAssignedStatutoryWizardOneUnitsSuccess(Response):
 
 class AssignStatutoryCompliance(object):
     def __init__(
-        self, level_one_id, level_one_name, mapping_text, statutory_provision, compliance_id,
-        document_name, compliance_name, description, organizations
+        self, level_one_id, level_one_name, mapping_text,
+        statutory_provision, compliance_id,
+        document_name, compliance_name, description, organizations,
+        level_one_status, level_one_remarks,
+        compliance_status, is_saved,
     ):
         self.level_one_id = level_one_id
         self.level_one_name = level_one_name
@@ -442,12 +448,18 @@ class AssignStatutoryCompliance(object):
         self.description = description
         self.organizations = organizations
 
+        self.level_one_status = level_one_status
+        self.level_one_remarks = level_one_remarks
+        self.compliance_status = compliance_status
+        self.is_saved = is_saved
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "level_1_s_id", "level_1_s_name", "map_text" "s_provision", "comp_id",
-            "doc_name", "comp_name", "descrip",
-            "org_names",
+            "doc_name", "comp_name", "descrip", "org_names",
+
+            "a_status", "remarks", "comp_status", "is_saved",
         ])
         level_one_id = data.get("level_1_s_id")
         level_one_name = data.get("level_1_s_name")
@@ -459,10 +471,16 @@ class AssignStatutoryCompliance(object):
         description = data.get("descrip")
         organizations = data.get("org_names")
 
+        level_one_status = data.get("a_status")
+        level_one_remarks = data.get("remarks")
+        compliance_status = data.get("compliance_status")
+        is_saved = data.get("is_saved")
+
         return AssignStatutoryCompliance(
             level_one_id, level_one_name, map_text, statutory_provision, compliance_id,
-            document_name, compliance_name, description,
-            organizations,
+            document_name, compliance_name, description, organizations,
+            level_one_status, level_one_remarks, compliance_status,
+            is_saved,
         )
 
     def to_structure(self):
@@ -476,6 +494,11 @@ class AssignStatutoryCompliance(object):
             "comp_name": self.compliance_name,
             "descrip": self.description,
             "org_names": self.organizations,
+
+            "a_status": self.level_one_status,
+            "remarks": self.level_one_remarks,
+            "comp_status": self.compliance_status,
+            "is_saved": self.is_saved,
         }
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):

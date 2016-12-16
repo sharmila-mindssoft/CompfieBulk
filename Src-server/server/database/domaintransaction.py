@@ -9,7 +9,8 @@ __all__ = [
     "get_assigned_statutories_filters",
     "get_statutories_units", "get_compliances_to_assign",
     "save_client_statutories",
-    "save_statutory_compliances"
+    "save_statutory_compliances",
+    "get_assigned_compliance_by_id"
 ]
 
 def get_assigned_statutories_list(db, user_id):
@@ -175,11 +176,13 @@ def get_compliances_to_assign(db, request, user_id):
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
         print level_1, map_text
+        # before save rest of the field will be null before save in assignstatutorycompliance
         data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
             level_1, level_1_name, map_text,
             r["statutory_provision"], r["compliance_id"], r["document_name"],
-            r["compliance_task"], r["compliance_description"],
-            orgs
+            r["compliance_task"], r["compliance_description"], orgs,
+            None, None, None, None,
+
         ))
     return data_list
 
@@ -239,3 +242,58 @@ def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
     )
     if result is False :
         raise process_error("E088")
+
+
+def get_assigned_compliance_by_id(db, request, user_id):
+    # is_saved = 0 , is_submmitted = 1, is_rejected = 2, is_assigned = 3, is_new = 4
+    unit_id = request.unit_id
+    domain_id = request.domain_id
+
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_edit", [unit_id, domain_id], 4)
+    statu = result[1]
+    organisation = result[2]
+    compliance = result[3]
+
+    def organisation_list(map_id) :
+        org_list = []
+        for o in organisation :
+            print o
+            if o.get("statutory_mapping_id") == map_id :
+                org_list.append(o["organisation_name"])
+        return org_list
+
+    def status_list(map_id):
+        level_1_id = None
+        map_text = None
+        for s in statu :
+            if s["statutory_mapping_id"] == map_id :
+
+                if s["parent_ids"] == 0 :
+                    level_1_id = s["statutory_id"]
+                    map_text = s["statutory_name"]
+                    level_1_name = s["statutory_name"]
+                else :
+                    names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
+                    ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
+                    level_1_id = ids[0]
+                    level_1_name = names[0]
+                    map_text = " >> ".join(names[1:])
+
+        return level_1_id, level_1_name, map_text
+
+    data_list = []
+    for r in compliance :
+        map_id = r["statutory_mapping_id"]
+        orgs = organisation_list(map_id)
+        level_1, level_1_name, map_text = status_list(map_id)
+        print level_1, map_text
+        # before save rest of the field will be null before save in assignstatutorycompliance
+        data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
+            level_1, level_1_name, map_text,
+            r["statutory_provision"], r["compliance_id"], r["document_name"],
+            r["compliance_task"], r["compliance_description"], orgs,
+            r["statutory_applicable_status"], r["remarks"],
+            r["compliance_applicable_status"], r["is_approved"]
+
+        ))
+    return data_list
