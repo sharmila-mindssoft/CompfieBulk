@@ -1902,27 +1902,39 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
 
+  function saveComplianceStatus(client_id, legal_entity_id, unit_id, 
+        domain_id, compliance_id, compliance_status,
+        level_1_id, status, remarks, client_statutory_id) 
+  {
+    var saveCompliance = {};
+    saveCompliance.ct_id = client_id;
+    saveCompliance.le_id = legal_entity_id;
+    saveCompliance.u_id = unit_id;
+    saveCompliance.d_id = domain_id;
+    saveCompliance.comp_id = compliance_id;
+    saveCompliance.comp_status = compliance_status;
+    saveCompliance.level_1_s_id = level_1_id;
+    saveCompliance.a_status = status;
+    saveCompliance.remarks = remarks;
+    saveCompliance.client_statutory_id = client_statutory_id;
+    return saveCompliance;
+  }
+
   function saveAssignedStatutory(
-    client_statutory_id, units, client_id, unit_ids, compliances_list,
-    level_1_statutory_wise_compliances, callback
+    compliances_applicablity_status, submission_type, callback
   ){
-    callerName = 'techno_transaction';
+    callerName = 'domain_transaction';
     var request = [
         "SaveAssignedStatutory",
         {
-          "client_statutory_id": client_statutory_id,
-          "unit_id_name": units,
-          "client_id": client_id,
-          "unit_ids": unit_ids,
-          "compliances_applicablity_status": compliances_list,
-          "level_1_statutory_wise_compliances": level_1_statutory_wise_compliances,
-          "submission_type": "save"
+          "compliances_applicablity_status": compliances_applicablity_status,
+          "submission_status": submission_type
         }
       ];
       apiRequest(callerName, request, callback);
   }
 
-  function submitAssignedStatutory(
+  /*function submitAssignedStatutory(
     client_statutory_id, units, client_id, unit_ids, compliances_list, level_1_statutory_wise_compliances, callback
   ){
     callerName = 'techno_transaction';
@@ -1939,7 +1951,7 @@ function initMirror() {
         }
       ];
       apiRequest(callerName, request, callback);
-  }
+  }*/
 
   function getAssignedStatutories(callback){
     callerName = 'domain_transaction';
@@ -2357,7 +2369,7 @@ function initMirror() {
     getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
     getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
     saveAssignedStatutory: saveAssignedStatutory,
-    submitAssignedStatutory: submitAssignedStatutory,
+    //submitAssignedStatutory: submitAssignedStatutory,
     getAssignedStatutories: getAssignedStatutories,
     getAssignedStatutoriesById: getAssignedStatutoriesById,
     changeAdminDisaleStatus: changeAdminDisaleStatus,
@@ -2380,7 +2392,8 @@ function initMirror() {
     getStatutoryNotifications: getStatutoryNotifications,
     updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
     getReassignUserDomainReportData: getReassignUserDomainReportData,
-    getStatutoryMappingsEdit: getStatutoryMappingsEdit
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit,
+    saveComplianceStatus: saveComplianceStatus,
   };
 }
 var mirror = initMirror();

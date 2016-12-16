@@ -125,6 +125,8 @@ var EDIT_API = "edit"
 
 var LastAct='';
 var LastSubAct='';
+var statutoriesCount;
+var actCount;
 
 function callAPI(api_type) {
     if (api_type == API_LIST){
@@ -189,8 +191,46 @@ function callAPI(api_type) {
                 value
             );
         });*/
-        mirror.saveAssignedStatutory(CLIENT_STATUTORY_ID, UNITS, parseInt(val_group_id), ACTIVE_UNITS,
-            selected_compliances_list, LEVEL_1_STATUTORYWISE_COMPLIANCES,
+        var submission_status = 1;
+
+        statutorysetting = [];
+        var totalCompliance = 1;
+       
+        for(var i=1; i<=(actCount-1); i++){
+            var aStatus = parseInt($('#act'+i).attr("for"));
+            var remark = null;
+            if($('#remark'+i).val().trim()){
+                remark = $('#remark'+i).val().trim();
+            }
+            if((aStatus == 2 || aStatus==3) && remark==null){
+                displayMessage(message.act_remarks_required);
+                return false;
+            }
+
+            var actComplianceCount = $('.statutoryclass'+i).length / 3;
+            for(var j=1; j<=actComplianceCount; j++){
+                var complianceStatusVal = 0;
+                if($('input[name=statutory'+totalCompliance+']:checked').val() != undefined){
+                    complianceStatusVal = parseInt($('input[name=statutory'+totalCompliance+']:checked').val());
+                }
+
+                var combineidVal = $('#combineid'+totalCompliance).val().split('#');
+                var comp_id = parseInt(combineidVal[0]);
+                var level_1_s_id = parseInt(combineidVal[1]);
+                var client_statutory_id = null;
+              
+                
+                statutorysettingData = mirror.saveComplianceStatus(
+                    int(val_group_id), int(val_legal_entity_id), 1, 
+                    int(val_domain_id), comp_id, complianceStatusVal,
+                    level_1_s_id, aStatus, remark, client_statutory_id
+                );
+                statutorysetting.push(statutorysettingData);
+                totalCompliance++;
+            }
+        }
+        console.log(statutorysetting)
+        mirror.saveAssignedStatutory(statutorysetting, submission_status, 
             function(error, data) {
                 if (error == null) {
                     displayMessage(message.save_success);
@@ -497,8 +537,8 @@ function compliancestatus(element) {
 function loadCompliances() {
     var ccount = 1;
     var count = 1;
-    var statutoriesCount = 1;
-    var actCount = 1;
+    statutoriesCount = 1;
+    actCount = 1;
     AssignStatutoryList.empty();
     var sno = 0;
     $.each(COMPLIANCES_LIST, function(key, value) {
@@ -550,7 +590,7 @@ function loadCompliances() {
         
         var complianceDetailtableRow = $('#statutory-value .table-statutory-values .compliance-details');
         var clone2 = complianceDetailtableRow.clone();
-        var combineId = comp_id + '#' + level_1_s_id;
+        var combineId = value.comp_id + '#' + value.level_1_s_id;
         $('.combineid-class', clone2).attr('id', 'combineid'+statutoriesCount);
         $('.combineid-class', clone2).val(combineId);
 
@@ -583,7 +623,7 @@ function loadCompliances() {
 
         $('.comp', clone2).on('click', function () {
             compliancestatus(this);
-            setApplicabilityStatus(value.compliance_id, $(this).val(), true, 1);
+            //setApplicabilityStatus(value.compliance_id, $(this).val(), true, 1);
         });
         
         /* if (compliance_applicable_status == false) {
@@ -611,7 +651,7 @@ function loadCompliances() {
     }
 }
 
-function setApplicabilityStatus(
+/*function setApplicabilityStatus(
     compliance_id, applicable, not_applicable, not_at_all_applicable, saved,
     statutory_applicability_status
 ){
@@ -731,7 +771,7 @@ function activateInactivateNotAtAllApplicableIcon(element_class, compliance_id){
         element.removeClass(NotAtAllApplicableInActiveIcon);
         setApplicabilityStatus(compliance_id, false, false, true, false, 1);
     }
-}
+}*/
 
 function showList(){
     CURRENT_TAB = 1;
