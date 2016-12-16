@@ -4261,7 +4261,7 @@ BEGIN
     from tbl_client_compliances as t1
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (0, 1, 2);
+    and t1.is_approved in (1, 2, 3);
 
 
 
