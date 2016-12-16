@@ -611,7 +611,7 @@ function loadCompliances() {
     }
 }
 
-function setApplicabilityStatus(
+/*function setApplicabilityStatus(
     compliance_id, applicable, not_applicable, not_at_all_applicable, saved,
     statutory_applicability_status
 ){
@@ -731,7 +731,7 @@ function activateInactivateNotAtAllApplicableIcon(element_class, compliance_id){
         element.removeClass(NotAtAllApplicableInActiveIcon);
         setApplicabilityStatus(compliance_id, false, false, true, false, 1);
     }
-}
+}*/
 
 function showList(){
     CURRENT_TAB = 1;
