@@ -118,7 +118,7 @@ def get_statutories_units(db, request, user_id):
     for r in result :
         data_list.append(domaintransactionprotocol.StatutoryUnits(
             r["unit_id"], r["unit_code"], r["unit_name"],
-            r["address"], r["geography_name"]
+            r["address"], r["geography_name"], r["client_statutory_id"]
         ))
 
     return domaintransactionprotocol.GetAssignedStatutoryWizardOneUnitsSuccess(
@@ -218,7 +218,7 @@ def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
             value_list.append(
                 (
                     csid, r.client_id, r.legal_entity_id, unit_id, r.domain_id,
-                    r.level_1_id, r.status, remarks,
+                    r.level_1_id, r.status, str(remarks),
                     r.compliance_id, r.compliance_status, status,
                     user_id, get_date_time(), status
                 )

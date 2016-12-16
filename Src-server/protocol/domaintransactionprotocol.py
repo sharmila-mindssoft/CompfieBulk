@@ -692,19 +692,21 @@ class LegalentityDomains(object):
 
 class StatutoryUnits(object):
     def __init__(
-        self, unit_id, unit_code, unit_name, address, geography_name
+        self, unit_id, unit_code, unit_name, address, geography_name, client_statutory_id
     ):
         self.unit_id = unit_id
         self.unit_code = unit_code
         self.unit_name = unit_name
         self.address = address
         self.geography_name = geography_name
+        self.client_statutory_id = client_statutory_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "u_id", "unit_code", "u_name", "address", "g_name"
+                "u_id", "unit_code", "u_name", "address", "g_name",
+                "client_statutory_id"
             ]
         )
         unit_id = data.get("u_id")
@@ -712,7 +714,8 @@ class StatutoryUnits(object):
         unit_name = data.get("u_name")
         address = data.get("address")
         geography = data.get("g_name")
-        return StatutoryUnits(unit_id, unit_code, unit_name, address, geography)
+        client_statutory_id = data.get("client_statutory_id")
+        return StatutoryUnits(unit_id, unit_code, unit_name, address, geography, client_statutory_id)
 
     def to_structure(self):
         return {
@@ -720,5 +723,6 @@ class StatutoryUnits(object):
             "unit_code": self.unit_code,
             "u_name": self.unit_name,
             "address": self.address,
-            "g_name": self. geography_name
+            "g_name": self. geography_name,
+            "client_statutory_id": self.client_statutory_id
         }
