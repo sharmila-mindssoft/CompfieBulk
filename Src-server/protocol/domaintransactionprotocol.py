@@ -459,10 +459,11 @@ class AssignStatutoryCompliance(object):
             "level_1_s_id", "level_1_s_name", "map_text" "s_provision", "comp_id",
             "doc_name", "comp_name", "descrip", "org_names",
 
-            "a_status", "remarks", "comp_status", "is_saved",
+            "a_status", "remarks", "comp_status", "s_s",
         ])
         level_one_id = data.get("level_1_s_id")
         level_one_name = data.get("level_1_s_name")
+
         map_text = data.get("map_text")
         statutory_provision = data.get("s_provision")
         compliance_id = data.get("comp_id")
@@ -474,7 +475,7 @@ class AssignStatutoryCompliance(object):
         level_one_status = data.get("a_status")
         level_one_remarks = data.get("remarks")
         compliance_status = data.get("compliance_status")
-        is_saved = data.get("is_saved")
+        is_saved = data.get("s_s")
 
         return AssignStatutoryCompliance(
             level_one_id, level_one_name, map_text, statutory_provision, compliance_id,
@@ -498,7 +499,7 @@ class AssignStatutoryCompliance(object):
             "a_status": self.level_one_status,
             "remarks": self.level_one_remarks,
             "comp_status": self.compliance_status,
-            "is_saved": self.is_saved,
+            "s_s": self.is_saved,
         }
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
