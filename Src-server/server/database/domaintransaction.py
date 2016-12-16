@@ -26,21 +26,13 @@ def return_assigned_statutories(data):
     data_list = []
     for d in data :
         c_name = "%s - %s" % (d["unit_code"], d["unit_name"])
-        print (
-            d["country_name"], d["client_id"], d["group_name"],
-            d["business_group_name"], d["legal_entity_name"],
-            d["division_name"], c_name, d["geography_name"],
-            d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
-            d["is_approved"],
-            core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["is_approved"])
-        )
         data_list.append(fn(
             d["country_name"], d["client_id"], d["group_name"],
             d["business_group_name"], d["legal_entity_name"],
             d["division_name"], c_name, d["geography_name"],
             d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
             core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["is_approved"]),
-            d["is_approved"]
+            d["is_approved"], d["client_statutory_id"]
         ))
 
     return data_list
@@ -195,16 +187,23 @@ def save_client_statutories(db, request, user_id):
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, status)" + \
         " values (%s, %s, %s)"
 
+    saved_unit = None
     for c in comps :
-        csid = db.execute_insert(q, [c.client_id, c.unit_id, status])
-        if csid is False :
-            raise process_error("E088")
-
+        if saved_unit == c.unit_id :
+            continue
+        if c.client_statutory_id is None :
+            csid = db.execute_insert(q, [c.client_id, c.unit_id, status])
+            if csid is False :
+                raise process_error("E088")
         else :
-            save_statutory_compliances(
-                db, comps,
-                c.unit_id, status, user_id, csid
-            )
+            csid = c.client_statutory_id
+
+        saved_unit = c.unit_id
+
+        save_statutory_compliances(
+            db, comps,
+            c.unit_id, status, user_id, csid
+        )
 
     return True
 
@@ -301,6 +300,5 @@ def get_assigned_compliance_by_id(db, request, user_id):
             r["compliance_task"], r["compliance_description"], orgs,
             r["statutory_applicable_status"], r["remarks"],
             r["compliance_applicable_status"], r["is_approved"]
-
         ))
     return data_list
