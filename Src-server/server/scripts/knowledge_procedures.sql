@@ -6229,7 +6229,11 @@ DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
 
 DELIMITER //
 
-CREATE  PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(in userId INT(11))
+CREATE  PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(in clientid int(11),
+in businessgroupid varchar(11),
+in legalentityid int(11),
+in countryid int(11),
+in userId INT(11))
 BEGIN
     select t2.unit_id, t2.client_id, t2.business_group_id,
     t2.legal_entity_id, t2.division_id,
@@ -6257,7 +6261,11 @@ BEGIN
     t4.legal_entity_id = t2.legal_entity_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and
-    t1.user_id = userId
+    t1.user_id = userId and
+    t2.country_id = countryid and
+    t2.legal_entity_id = legalentityid and
+    t2.client_id = clientid and
+    t2.business_group_id like businessgroupid
     order by group_name, b_group, l_entity, country_name;
 
     select t3.unit_id, t3.domain_id, t3.organisation_id
@@ -6269,7 +6277,9 @@ BEGIN
     t3.unit_id = t2.unit_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and
-    t1.user_id =userId;
+    t1.user_id =userId and
+    t2.country_id = countryid and
+    t1.legal_entity_id = legalentityid;
 END //
 
 DELIMITER ;
@@ -6386,67 +6396,6 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp_tbl_unit_getunitdetailsforuser_edit`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(
-in clientid int(11),
-in businessgroupid int(11),
-in legalentityid int(11),
-in countryid int(11),
-in userId INT(11))
-BEGIN
-    select t2.unit_id, t2.client_id, t2.business_group_id,
-    t2.legal_entity_id, t2.division_id,
-    t2.geography_id, t2.unit_code,t2.country_id,
-    t2.unit_name, t2.address, t2.postal_code,
-    t2.is_approved, t2.is_closed as is_active,
-    t4.legal_entity_name as l_entity,
-    (select business_group_name from tbl_business_groups
-        where business_group_id = t2.business_group_id) as b_group,
-    (select division_name from tbl_divisions
-        where division_id = t2.division_id) as division,
-    (select category_name from tbl_categories
-        where category_id = t2.category_id) as category_name,
-    t9.short_name as group_name,
-    t8.country_name, t2.category_id, t2.remarks
-    from
-    tbl_user_legalentity as t1,
-    tbl_units as t2,
-    tbl_legal_entities as t4,
-    tbl_countries as t8,
-    tbl_client_groups as t9
-    where
-    t9.client_id = t2.client_id and
-    t8.country_id = t2.country_id and
-    t4.legal_entity_id = t2.legal_entity_id and
-    t2.legal_entity_id = t1.legal_entity_id and
-    t2.client_id = t1.client_id and
-    t1.user_id = userId and
-    t2.country_id = countryid and
-    t2.legal_entity_id = legalentityid and
-    t2.client_id = clientid and
-    t2.business_group_id = businessgroupid
-    order by group_name, b_group, l_entity, country_name;
-
-    select t3.unit_id, t3.domain_id, t3.organisation_id
-    from
-    tbl_user_legalentity as t1,
-    tbl_units as t2,
-    tbl_units_organizations as t3
-    where
-    t3.unit_id = t2.unit_id and
-    t2.legal_entity_id = t1.legal_entity_id and
-    t2.client_id = t1.client_id and
-    t1.user_id =userId and
-    t2.country_id = countryid and
-    t1.legal_entity_id = legalentityid;
-END //
-
-DELIMITER ;
-
-DELIMITER //
 
 DROP PROCEDURE IF EXISTS `sp_user_clients_save`;
 
@@ -6540,3 +6489,10 @@ BEGIN
     END IF;
 END
 
+------------------------
+ALTER TABLE `compfie_knowledge_updated`.`tbl_categories`
+DROP FOREIGN KEY `fk_tbl_categories_business_groups`;
+ALTER TABLE `compfie_knowledge_updated`.`tbl_categories`
+DROP INDEX `fk_tbl_categories_business_groups` ;
+
+---------------------
