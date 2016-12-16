@@ -434,7 +434,7 @@ api_params = {
     "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutories"},
     "unit_code_with_name": {'type': 'TEXT', 'length': 150, 'validation_method': None, 'is_optional': False},
     "submission_status": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
-    "s_s": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
+    "s_s": {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
     "client_statutory_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "submission_type": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': False},
     "compliance_applicability_status": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
