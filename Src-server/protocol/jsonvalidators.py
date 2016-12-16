@@ -278,6 +278,8 @@ def parse_values(field_name, param, val, type="To"):
             val = parse_optional_custom_string(val, _length)
 
     elif _type == 'TEXT':
+        print field_name
+        print param
         if _is_optional is False:
             val = parse_string(val)
         else:

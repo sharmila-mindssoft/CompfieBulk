@@ -122,7 +122,8 @@ api_params = {
     'freq': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'summary': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     's_m_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    'a_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
+    'a_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
+    'comp_status': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
     'r_reason': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     's_pro': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'n_text': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -428,12 +429,12 @@ api_params = {
     "level_1_statutory_index": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "statutory_provision": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "locations": {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    "compliances_applicablity_status": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technotransactions', "class_name": "ComplianceApplicablityStatus"},
+    "compliances_applicablity_status": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "SaveComplianceStatus"},
     "level_1_statutory_wise_compliances": {},
     "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutories"},
     "unit_code_with_name": {'type': 'TEXT', 'length': 150, 'validation_method': None, 'is_optional': False},
     "submission_status": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
-    "s_s": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
+    "s_s": {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
     "client_statutory_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "submission_type": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': False},
     "compliance_applicability_status": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -575,6 +576,8 @@ api_params['applicable'] = api_params.get('is_active')
 api_params['not_applicable'] = api_params.get('is_active')
 api_params['not_at_all_applicable'] = api_params.get('is_active')
 api_params['is_saved'] = api_params.get('is_active')
+api_params['is_new'] = api_params.get('is_active')
+api_params['is_rejected'] = api_params.get('is_active')
 api_params['parent_id'] = api_params.get('geography_id')
 api_params['parent_mappings'] = api_params.get('mapping')
 api_params['p_maps'] = api_params.get('s_pnames')
