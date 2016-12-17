@@ -86,6 +86,7 @@ var val_domain_id = null;
 var val_unit_id = null;
 var ACTIVE_UNITS = [];
 var bred_crump_text = null;
+var CLIENT_STATUTORY_ID = null;
 
 
 /* API Types */
@@ -177,13 +178,11 @@ function callAPI(api_type) {
                 var comp_id = parseInt(combineidVal[0]);
                 var level_1_s_id = parseInt(combineidVal[1]);
                 var u_id = 1;
-                var client_statutory_id = null;
-              
-                
+            
                 statutorysettingData = mirror.saveComplianceStatus(
                     int(val_group_id), int(val_legal_entity_id), u_id, 
                     int(val_domain_id), comp_id, complianceStatusVal,
-                    level_1_s_id, aStatus, remark, client_statutory_id
+                    level_1_s_id, aStatus, remark, CLIENT_STATUTORY_ID
                 );
                 statutorysetting.push(statutorysettingData);
                 totalCompliance++;
@@ -219,6 +218,7 @@ function pageControls() {
     });
 
     AddButton.click(function() {
+        reset();
         showTab();
         AssignStatutoryView.hide();
         AssignStatutoryAdd.show();
@@ -313,6 +313,19 @@ function pageControls() {
     
 }
 
+function reset(){
+    GroupName.val('');
+    BusinessGroupName.val('');
+    LegalEntityName.val('');
+    DivisionName.val('');
+    CategoryName.val('');
+    DomainName.val('');
+    val_group_id = null;
+    val_domain_id = null;
+    val_legal_entity_id = null;
+    CLIENT_STATUTORY_ID = null;
+    AssignStatutoryList.empty();
+}
 function showBreadCrumbText() {
     BreadCrumbs.empty();
     var img_clone = BreadCrumbImg;
@@ -625,7 +638,7 @@ function loadAssignedStatutories(){
         $(TblLoc, clone).text(value.g_name);
         $(TblUnit, clone).text(value.u_name);
         $(TblDomain, clone).text(value.d_name);
-        var status_text = null;
+        /*var status_text = null;
         if(value.a_s_id == 1){
             status_text = "Yet to submit";
         }else if(value.a_s_id == 2){
@@ -634,27 +647,28 @@ function loadAssignedStatutories(){
             status_text = "Rejected";
         }else if(value.a_s_id == 4){
             status_text = "Assigned";
+        }*/
+        $(TblStatus, clone).text(value.approval_status_text);
+        if(value.a_s_id != 'Assigned'){
+            $('.edit-icon', clone).addClass('fa fa-pencil text-primary c-pointer');
+            $('.edit-icon', clone).on('click', function () {
+                GroupName.val(value.grp_name);
+                BusinessGroupName.val(value.b_grp_name);
+                LegalEntityName.val(value.l_e_name);
+                DivisionName.val(value.div_name);
+                CategoryName.val(value.cat_name);
+                DomainName.val(value.d_name);
+                //GroupId.val(value.ct_id);
+                val_group_id = value.ct_id.toString();
+                //DomainId.val(value.d_id)
+                val_domain_id = value.d_id.toString();
+                //LegalEntityId.val(value.le_id);
+                val_legal_entity_id = value.le_id.toString();
+                CLIENT_STATUTORY_ID = value.client_statutory_id;
+                EditAssignedStatutory(value.u_id, value.d_id);
+            });
         }
-        $(TblStatus, clone).text(status_text);
-
-        GroupName.val(value.grp_name);
-        BusinessGroupName.val(value.b_grp_name);
-        LegalEntityName.val(value.l_e_name);
-        DivisionName.val(value.div_name);
-        CategoryName.val(value.cat_name);
-        DomainName.val(value.d_name);
-        /*GroupId.val(value.client_id);
-        val_group_id = value.client_id;
-        BusinessGroupId.val(value.business_group_id);
-        LegalEntityId.val(value.legal_entity_id);
-        DivisionId.val(value.division_id);
-        CategoryId.val(value.category_id);
-        CLIENT_STATUTORY_ID = value.client_statutory_id;
-        ACTIVE_UNITS.push(value.unit_id);*/
-
-        $('.edit-icon', clone).on('click', function () {
-           EditAssignedStatutory(value.u_id, value.d_id);
-        });
+        
         AssignedStatutoryList.append(clone);       
     });
 }
