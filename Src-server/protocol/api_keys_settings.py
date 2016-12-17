@@ -154,8 +154,8 @@ api_params = {
     'comp_approval_status': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     'approval_status_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
     'a_s_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
-    'approval_status_text': {'type': 'STRING', 'length': 100, 'validation_method': allow_specialchar, 'is_optional': False},
-    'a_s_t': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'approval_status_text': {'type': 'TEXT', 'length': 100, 'validation_method': allow_specialchar, 'is_optional': False},
+    'a_s_t': {'type': 'TEXT', 'length': 100, 'validation_method': allow_specialchar, 'is_optional': False},
 
     'levels': {'type': 'VECTOR_TYPE', 'module_name': 'knowledgemaster', 'class_name': 'Level'},
     "geography_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "GeographyLevel"},

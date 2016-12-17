@@ -441,6 +441,7 @@ class AssignStatutoryCompliance(object):
         document_name, compliance_name, description, organizations,
         level_one_status, level_one_remarks,
         compliance_status, is_saved,
+        unit_id
     ):
         self.level_one_id = level_one_id
         self.level_one_name = level_one_name
@@ -456,6 +457,7 @@ class AssignStatutoryCompliance(object):
         self.level_one_remarks = level_one_remarks
         self.compliance_status = compliance_status
         self.is_saved = is_saved
+        self.unit_id = unit_id
 
     @staticmethod
     def parse_structure(data):
@@ -480,12 +482,13 @@ class AssignStatutoryCompliance(object):
         level_one_remarks = data.get("remarks")
         compliance_status = data.get("compliance_status")
         is_saved = data.get("s_s")
+        unit_id = data.get("u_id")
 
         return AssignStatutoryCompliance(
             level_one_id, level_one_name, map_text, statutory_provision, compliance_id,
             document_name, compliance_name, description, organizations,
             level_one_status, level_one_remarks, compliance_status,
-            is_saved,
+            is_saved, unit_id
         )
 
     def to_structure(self):
@@ -504,6 +507,7 @@ class AssignStatutoryCompliance(object):
             "remarks": self.level_one_remarks,
             "comp_status": self.compliance_status,
             "s_s": self.is_saved,
+            "u_id": self.unit_id
         }
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
