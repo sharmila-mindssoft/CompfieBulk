@@ -1161,3 +1161,22 @@ def get_ReassignUserDomainReportData(db, request_data):
     print "after append"
     print reassign_group_list
     return reassign_group_list
+
+def get_assigned_statutories_list(db, user_id):
+    assigned_statutories = []
+    result = db.call_proc_with_multiresult_set("sp_approve_assigned_statutories_list", (user_id,), 2)
+    for row in result[1]:
+        assigned_statutories.append(technoreports.ApproveAssignedStatutories(
+            row["country_name"], row["group_name"], row["legal_entity_name"],
+            row["business_group_name"], row["division_name"], row["category_name"],
+            row["unit_id"], row["unit_name"], row["domain_name"], row["statutory_id"],
+            row["domain_id"]
+        ))
+    print "approved list"
+    print assigned_statutories
+    return assigned_statutories
+
+def get_ComplianceStatutoriesList(db, unit_id, domain_id, user_id):
+    compliance_statutories = []
+    args = [unit_id, domain_id]
+    result = db.call_proc_with_multiresult_set("sp_approve_assigned_statutories_compliance_list", args, 3)

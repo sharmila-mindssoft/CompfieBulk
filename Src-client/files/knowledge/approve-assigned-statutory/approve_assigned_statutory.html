@@ -1,0 +1,121 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h4 class="page-title">Approve Assigned Statutory</h4>
+    </div>
+  </div>
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-12">
+      <div class="panel panel-default panel-info">
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+          <div class="dataTable_wrapper">
+            <table  class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th align="center" width="2%">#</th>
+                  <th width="10%">Country</th>
+                  <th width="10%">Group</th>
+                  <th width="10%">Business Group</th>
+                  <th width="10%">Legal Entity</th>
+                  <th width="10%">Division</th>
+                  <th width="10%">Category</th>
+                  <th width="10%">Unit</th>
+                  <th width="10%">Domain</th>
+                  <th width="08%" class="text-center">View</th>
+                </tr>
+                <tr class="odd gradeX">
+                  <td align="center"></td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" id="search-country-name" tabindex="1" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" id="search-group-name" tabindex="2" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" id="search-bg-name" tabindex="3" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" tabindex="4" id="search-le-name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" tabindex="5" id="search-division-name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" tabindex="6" id="search-category-name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" tabindex="7" id="search-unit-name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td>
+                      <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                        <input type="text" class="form-control input-sm filter-text-box" tabindex="8" id="search-domain-name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  <td align="center">&nbsp;
+                      <input type="hidden" id="statutory_id" />
+                  </td>
+                </tr>
+              </thead>
+              <tbody class="tbody-approved-assigned-statutories-list">
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="templates">
+<table class="table-approved-assigned-statutories">
+  <tr class="table-row">
+    <td align="center" class="sno"></td>
+    <td class="country-name"></td>
+    <td class="group-name"></td>
+    <td class="bg-name"></td>
+    <td class="le-name"></td>
+    <td class="division-name"></td>
+    <td class="category-name"></td>
+    <td class="unit-name"></td>
+    <td class="domain-name"></td>
+    <td class="text-center view-btn"><button class="btn btn-primary waves-effect m-l-5" type="reset" id="btn-view"> View</button>
+    </td>
+  </tr>
+</table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/script/approve-assigned-statutory/approve_assigned_statutory.js"></script>
+{% endblock %}

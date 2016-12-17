@@ -1652,7 +1652,11 @@ def get_unit_details_for_user(db, user_id, request):
 
 def get_unit_details_for_user_edit(db, user_id, request):
     print request.to_structure()
-    where_condition_val = [request.client_id, request.business_group_id, request.legal_entity_id, request.country_id, user_id]
+    if(request.business_group_id is None):
+        where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id]
+    else:
+        where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
+    print where_condition_val
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 
@@ -2204,7 +2208,7 @@ def get_domain_managers_for_user(db, session_user):
     # Parameters - session user
     #
     users = db.call_proc_with_multiresult_set(
-        "sp_users_domain_managers", [session_user], 2) 
+        "sp_users_domain_managers", [session_user], 2)
 
     return return_domain_managers(users[1])
 
@@ -2213,7 +2217,7 @@ def return_domain_managers(data):
     fn = core.User
     result = [
         fn(
-            user_id=datum["user_id"], user_category_id=datum["user_category_id"], 
+            user_id=datum["user_id"], user_category_id=datum["user_category_id"],
             employee_name=datum["employee_name"], is_active=bool(datum["is_active"])
         ) for datum in data
     ]
