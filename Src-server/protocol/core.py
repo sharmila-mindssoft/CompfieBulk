@@ -1364,7 +1364,7 @@ class MappedCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id," "comp_name", "is_active",
-            "is_approved", "a_s_t",
+            "is_approved", "approval_status_text",
             "remarks"
         ])
         compliance_id = data.get("comp_id")

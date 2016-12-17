@@ -1,7 +1,5 @@
-import time
 from protocol import login, domaintransactionprotocol
 from generalcontroller import (validate_user_session)
-from server import logger
 from server.database.domaintransaction import *
 # from server.database.login import verify_password
 
@@ -20,41 +18,21 @@ def process_domain_transaction_request(request, db):
         return login.InvalidSessionToken()
 
     if type(request_frame) is domaintransactionprotocol.GetAssignedStatutories:
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_approve_statutory_list(db, user_id)
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(
         request_frame
     ) is domaintransactionprotocol.GetAssignedStatutoryWizardOneData:
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_wizard_one(
             db, user_id
         )
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(
         request_frame
     ) is domaintransactionprotocol.GetAssignedStatutoryWizardOneUnits:
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_units(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(
         request_frame
