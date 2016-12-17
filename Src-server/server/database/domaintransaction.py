@@ -148,7 +148,7 @@ def get_compliances_to_assign(db, request, user_id):
         map_text = None
         for s in statu :
             if s["statutory_mapping_id"] == map_id :
-                if s["parent_ids"] == 0 or s["parent_ids"] == '0,':
+                if s["parent_ids"] == '' or s["parent_ids"] == 0 or s["parent_ids"] == '0,':
                     level_1_id = s["statutory_id"]
                     map_text = s["statutory_name"]
                     level_1_s_name = map_text
@@ -176,7 +176,7 @@ def get_compliances_to_assign(db, request, user_id):
             level_1, level_1_name, map_text,
             r["statutory_provision"], r["compliance_id"], r["document_name"],
             r["compliance_task"], r["compliance_description"], orgs,
-            None, None, None, None,
+            None, None, None, None, unit_id
 
         ))
     return data_list
@@ -299,6 +299,6 @@ def get_assigned_compliance_by_id(db, request, user_id):
             r["statutory_provision"], r["compliance_id"], r["document_name"],
             r["compliance_task"], r["compliance_description"], orgs,
             r["statutory_applicable_status"], r["remarks"],
-            r["compliance_applicable_status"], r["is_approved"]
+            r["compliance_applicable_status"], r["is_approved"], unit_id
         ))
     return data_list
