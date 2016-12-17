@@ -593,7 +593,6 @@ display: none !important;
       </div>
     </div>
   </div>
-
   <div id="statutory-value">
     <table class="table-statutory-values">
       <tr class="sub-title-row">
@@ -610,7 +609,6 @@ display: none !important;
           <td>
             <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
             <span class="compliancetask"> </span>
-
           </td>
           <td class="compliancedescription"> 
 
@@ -636,6 +634,134 @@ display: none !important;
       </tr>
     </table>
   </div>
+
+
+  <div id="multi-act-templates" class="default-display-none">
+    <div class="p-head">
+      <div class="panel panel-default bx-shadow-none">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="m-b-0 m-t-0">
+              <div class="gt" style="float:left; width:3%;">
+                <label class="change_status" for="1"> 
+                <img src="images/tick1bold.png">
+                </label> 
+              </div>
+              <div class="panel-title">
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion" 
+                    aria-expanded="true" >
+                    <span></span>
+                <div class="controls pull-right m-t-m-5">
+                  <div class="col-sm-12 no-padding">
+                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
+                  </div>
+              </div>
+                
+                </a>
+              </div>
+              
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th align="center" width="2%">#</th>
+                                <th width="15%">Statutory Provision</th>
+                                <th width="15%">Compliance Task</th>
+                                <th width="30%">Compliance Description</th>
+                                <th width="12%" colspan="3">Applicable Units</th>
+                                <th width="1%">Saved</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-compliance-list">                               
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div id="multi-statutory-value">
+    <table class="table-statutory-values">
+      <tr class="compliance-details">
+          <td><span class="sno"> </span></td>
+          <td class="statutoryprovision"></td>
+          <td>
+            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
+            <span class="compliancetask"> </span>
+          </td>
+          <td class="compliancedescription"> 
+
+          </td>
+          <td colspan="3" align="center" class="applicablelocation"> 
+
+          </td>
+
+          <td align="center">
+              <i class="fa c-pointer text-warning saved"></i>
+          </td>
+      </tr>
+
+      <tr class="unit-head">
+        <th align="center" width="2%"></th>
+        <th width="15%">Location</th>
+        <th width="15%" colspan="2">Unit Name</th>
+        <th width="04%" class="text-center">
+            <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
+                <input class="sub-tick" value="1" type="checkbox">
+                <label></label>
+            </div>
+        </th>
+        <th width="04%" class="text-center">
+            <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
+                <input class="sub-untick" value="2" type="checkbox">
+                <label></label>
+            </div>
+        </th>
+        <th width="04%" class="text-center">
+            <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
+                <input  class="sub-minus" value="3" type="checkbox">
+                <label></label>
+
+                <!-- <input id="singleCheckbox3" value="option2" type="checkbox">
+                <label for="singleCheckbox3"></label> -->
+            </div>
+        </th>
+        <th width="1%"></th>
+      </tr>
+
+      <tr class="unit-row">
+        <td align="center" width="2%">
+          <input type="hidden" class="combineid-class" />
+        </td>
+        <td width="15%" class="unit-locatiion"></td>
+        <td width="15%" colspan="2" class="unit-name"></td>
+        <td align="center" class="gt">
+            <input type="radio" class="comp compliance-ck-box-1">
+            <label class="compliance-label-1"></label>
+        </td>
+
+        <td align="center" class="gt-cross">
+            <input type="radio" class="comp compliance-ck-box-2">
+            <label class="compliance-label-2"></label>
+        </td>
+
+        <td align="center" class="gt-minus">
+            <input type="radio" class="comp compliance-ck-box-3">
+            <label class="compliance-label-3"></label>
+        </td>
+        <td width="1%"></td>
+      </tr>
+
+    </table>
+
+  </div>
+
 </div>
 <script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
 {% endblock %}

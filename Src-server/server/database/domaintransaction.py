@@ -147,7 +147,6 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id):
     def organisation_list(map_id) :
         org_list = []
         for o in organisation :
-            print o
             if o.get("statutory_mapping_id") == map_id :
                 org_list.append(o["organisation_name"])
         return org_list
