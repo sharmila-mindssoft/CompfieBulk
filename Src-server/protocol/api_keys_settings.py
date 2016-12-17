@@ -555,7 +555,7 @@ api_params = {
     'comp_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'ComplianceList'},
     "typelistedit": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'a_g_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-
+    "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

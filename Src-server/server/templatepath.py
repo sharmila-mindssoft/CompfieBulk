@@ -278,6 +278,11 @@ TEMPLATE_PATHS = [
         "files/knowledge/statutory-mapping/statutory-mapping-list.html",
         None, {}
     ),
+    (
+        "/knowledge/approve-assigned-statutory",
+        "files/knowledge/approve-assigned-statutory/approve_assigned_statutory.html",
+        None, {}
+    ),
     # knowledge Reports
     (
         "/knowledge/statutory-mapping-report",

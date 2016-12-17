@@ -49,7 +49,7 @@ function initializeNavBar() {
     'Report',
     'My Accounts'
   ];
-
+  
   // var homeMenu = $('.cssmenu .menu-ul .home-menu');
   // if ('Home' in navBarItems) {
   //   homeMenu.attr('href', '/dashboard');
