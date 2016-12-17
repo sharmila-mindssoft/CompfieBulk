@@ -32,7 +32,7 @@ def return_assigned_statutories(data):
             d["division_name"], c_name, d["geography_name"],
             d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
             core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["is_approved"]),
-            d["is_approved"], d["client_statutory_id"]
+            d["is_approved"], d["client_statutory_id"], d["legal_entity_id"]
         ))
 
     return data_list

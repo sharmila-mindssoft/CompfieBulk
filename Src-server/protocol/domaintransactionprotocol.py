@@ -595,7 +595,8 @@ class AssignedStatutories(object):
         client_id, group_name, business_group_name,
         legal_entity_name, division_name, unit_code_with_name,
         geography_name, unit_id, domain_id, domain_name, category_name,
-        approve_status, approved_status_id, client_statutory_id
+        approve_status, approved_status_id, client_statutory_id,
+        legal_entity_id
     ):
         self.country_name = country_name
         self.client_id = client_id
@@ -612,6 +613,7 @@ class AssignedStatutories(object):
         self.submission_status = approve_status
         self.approved_status_id = approved_status_id
         self.client_statutory_id = client_statutory_id
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_structure(data):
@@ -620,7 +622,7 @@ class AssignedStatutories(object):
             "l_e_name", "div_name",
             "u_id", "u_name", "g_name", "d_id",
             "d_name", "cat_name", "approval_status_text", "a_s_id",
-            "client_statutory_id"
+            "client_statutory_id", "le_id"
         ])
         country_name = data.get("c_name")
         client_id = data.get("ct_id")
@@ -637,6 +639,7 @@ class AssignedStatutories(object):
         submission_status = data.get("approval_status_text")
         approved_status_id = data.get("a_s_id")
         client_statutory_id = data.get("client_statutory_id")
+        legal_entity_id = data.get("le_id")
         return AssignedStatutories(
             country_name,
             client_id, group_name, business_group_name,
@@ -644,7 +647,7 @@ class AssignedStatutories(object):
             unit_code_with_name, geography_name, unit_id, domain_id,
             domain_name, category_name,
             submission_status, approved_status_id,
-            client_statutory_id
+            client_statutory_id, legal_entity_id
         )
 
     def to_structure(self):
@@ -664,7 +667,8 @@ class AssignedStatutories(object):
             "cat_name": self.category_name,
             "approval_status_text": self.submission_status,
             "a_s_id": self.approved_status_id,
-            "client_statutory_id": self.client_statutory_id
+            "client_statutory_id": self.client_statutory_id,
+            "le_id": self.legal_entity_id
         }
 
 class LegalentityDomains(object):

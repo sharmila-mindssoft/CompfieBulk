@@ -83,7 +83,7 @@ display: none !important;
           <!-- /.panel-heading -->
           <div class="panel-body">
             <div class="dataTable_wrapper">
-              <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+              <table  class="table table-striped dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th align="center" width="2%">#</th>
@@ -103,61 +103,61 @@ display: none !important;
                     <td align="center"></td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Country" id="filter1">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Country" id="filter1">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Group" id="filter2">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Group" id="filter2">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Business Group" id="filter3">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Business Group" id="filter3">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Legal Entity" id="filter4">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Legal Entity" id="filter4">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Division" id="filter5">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Division" id="filter5">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Category" id="filter6">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Category" id="filter6">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Location" id="filter7">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Location" id="filter7">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Unit" id="filter8">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Unit" id="filter8">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Domain" id="filter9">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Domain" id="filter9">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                          <input class="form-control input-sm listfilter" type="text" placeholder="Status" id="filter10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Status" id="filter10">
                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
@@ -529,9 +529,11 @@ display: none !important;
           <td class="tbl_unit"></td>
           <td class="tbl_domain"></td>
           <td class="tbl_status"></td>
-          <td align="center">
-              <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
+          
+          <td class="icon-3x text-center">
+            <i class="edit-icon" data-toggle="tooltip" title="Click here to Edit"></i>
           </td>
+              
       </tr>
   </table>
   <div class="unit-row">
@@ -554,14 +556,16 @@ display: none !important;
                 <a role="button" data-toggle="collapse"
                     data-parent="#accordion" 
                     aria-expanded="true" >
+                    <span></span>
+                <div class="controls pull-right m-t-m-5">
+                  <div class="col-sm-12 no-padding">
+                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
+                  </div>
+              </div>
                 
                 </a>
               </div>
-              <div class="col-sm-3 controls pull-right m-t-m-5">
-                <div class="col-sm-9 no-padding">
-                <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
-                </div>
-            </div>
+              
             </h4>
         </div>
         <div class="panel-collapse collapse in coll-title" role="tabpanel">

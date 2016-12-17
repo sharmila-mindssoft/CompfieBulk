@@ -4070,7 +4070,7 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 )
 BEGIN
 
-    select t1.client_statutory_id, t1.client_id, t1.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
+    select t1.client_statutory_id, t1.client_id, t2.legal_entity_id, t1.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
     (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
