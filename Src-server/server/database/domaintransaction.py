@@ -118,7 +118,7 @@ def get_statutories_units(db, request, user_id):
     for r in result :
         data_list.append(domaintransactionprotocol.StatutoryUnits(
             r["unit_id"], r["unit_code"], r["unit_name"],
-            r["address"], r["geography_name"]
+            r["address"], r["geography_name"], r["client_statutory_id"]
         ))
 
     return domaintransactionprotocol.GetAssignedStatutoryWizardOneUnitsSuccess(

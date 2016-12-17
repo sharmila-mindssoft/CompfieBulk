@@ -4153,9 +4153,12 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
 )
 BEGIN
 
-    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t2.geography_name from tbl_units as t1
+    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t2.geography_name ,
+    t4.client_statutory_id
+    from tbl_units as t1
     inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
+    left join tbl_client_statutories as t4 on t1.unit_id = t4.unit_id
     where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
     IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
     and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid;
@@ -4198,7 +4201,9 @@ BEGIN
     select distinct t1.statutory_mapping_id, t1.compliance_id,
     t1.compliance_task, t1.document_name,
     t1.compliance_description, t1.statutory_provision
+    t.statutory_mapping
     from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
     inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
     inner join tbl_units as t4 on t4.country_id = t1.country_id
@@ -4210,8 +4215,8 @@ BEGIN
         (select parent_ids from tbl_geographies where geography_id = @gid)))
     and t1.compliance_id not in
     (select compliance_id from tbl_client_compliances where unit_id = unitid
-    and domain_id = domainid);
-
+    and domain_id = domainid)
+    order by statutory_mappings;
 
 END //
 
@@ -4260,8 +4265,10 @@ BEGIN
     t1.compliance_applicable_status, t1.is_approved
     from tbl_client_compliances as t1
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
+    inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 3);
+    and t1.is_approved in (1, 2, 3)
+    order by statutory_mappings;
 
 
 
