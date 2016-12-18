@@ -816,6 +816,7 @@ function loadMultipleUnitCompliances() {
         SaveButton.show();
     }
 }
+
 function showList(){
     CURRENT_TAB = 1;
     AssignStatutoryView.show();
@@ -959,6 +960,7 @@ function EditAssignedStatutory(u_id, d_id){
         }
     });
 }
+
 function initialize() {
     pageControls();
     showList();
