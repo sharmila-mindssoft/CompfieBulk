@@ -2,20 +2,6 @@ from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list, parse_VariantType,
     to_VariantType, to_structure_dictionary_values
 )
-from protocol.parse_structure import (
-    parse_structure_UnsignedIntegerType_32,
-    parse_structure_MapType_UnsignedIntegerType_32_Bool,
-    parse_structure_Bool,
-    parse_structure_OptionalType_CustomTextType_500,
-
-)
-from protocol.to_structure import (
-    to_structure_UnsignedIntegerType_32,
-    to_structure_MapType_UnsignedIntegerType_32_Bool,
-    to_structure_Bool,
-    to_structure_OptionalType_CustomTextType_500,
-)
-
 
 #
 # Request
@@ -57,6 +43,18 @@ class GetAssignedStatutories(Request):
     def to_inner_structure(self):
         return {
         }
+
+class GetAssignedStatutoriesForApprove(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAssignedStatutoriesForApprove()
+
+    def to_inner_structure(self):
+        return {}
 
 
 class GetAssignedStatutoriesById(Request):
@@ -151,38 +149,6 @@ class GetAssignedStatutoryWizardTwoData(Request):
         }
 
 
-class AssignedStatutoryCompliance(object):
-    def __init__(
-        self, level_1_statutory_id, compliances,
-        applicable_status, not_applicable_remarks
-    ):
-        self.level_1_statutory_id = level_1_statutory_id
-        self.compliances = compliances
-        self.applicable_status = applicable_status
-        self.not_applicable_remarks = not_applicable_remarks
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["level_1_s_id", "compliances", "a_status", "n_a_remarks"])
-        level_1_statutory_id = data.get("level_1_s_id")
-        level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
-        compliances = data.get("compliances")
-        compliances = parse_structure_MapType_UnsignedIntegerType_32_Bool(compliances)
-        applicable_status = data.get("a_status")
-        applicable_status = parse_structure_Bool(applicable_status)
-        not_applicable_remarks = data.get("n_a_remarks")
-        not_applicable_remarks = parse_structure_OptionalType_CustomTextType_500(not_applicable_remarks)
-        return AssignedStatutoryCompliance(level_1_statutory_id, compliances, applicable_status, not_applicable_remarks)
-
-    def to_structure(self):
-        return {
-            "level_1_s_id": to_structure_UnsignedIntegerType_32(self.level_1_statutory_id),
-            "compliances": to_structure_MapType_UnsignedIntegerType_32_Bool(self.compliances),
-            "a_status": to_structure_Bool(self.applicable_status),
-            "n_a_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks)
-        }
-
-
 class SaveAssignedStatutory(Request):
     def __init__(
         self, compliances_applicablity_status, submission_type
@@ -207,6 +173,46 @@ class SaveAssignedStatutory(Request):
         return {
             "compliances_applicablity_status": self.compliances_applicablity_status,
             "submission_status": self.submission_type
+        }
+
+
+class ApproveAssignedStatutory(Request):
+    def __init__(
+        self, unit_id, domain_id, client_statutory_id, compliance_ids,
+        submission_type, remarks
+    ):
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.client_statutory_id = client_statutory_id
+        self.compliance_ids = compliance_ids
+        self.submission_type = submission_type
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "u_id", "d_id", "client_statutory_id", "comp_ids"
+                "submission_status", "remarks"
+            ]
+        )
+        return SaveAssignedStatutory(
+            data.get("u_id"),
+            data.get("d_id"),
+            data.get("client_statutory_id"),
+            data.get("comp_ids"),
+            data.get("submission_status"),
+            data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "u_id": self.unit_id,
+            "d_id": self.domain_id,
+            "client_statutory_id": self.client_statutory_id,
+            "comp_ids": self.compliance_ids,
+            "submission_status": self.submission_type,
+            "remarks": self.remarks
         }
 
 
@@ -272,11 +278,13 @@ class SaveComplianceStatus(object):
 def _init_Request_class_map():
     classes = [
         GetAssignedStatutories,
+        GetAssignedStatutoriesForApprove,
         GetAssignedStatutoriesById,
         GetAssignedStatutoryWizardOneData,
         GetAssignedStatutoryWizardTwoData,
         SaveAssignedStatutory,
-        GetAssignedStatutoryWizardOneUnits
+        GetAssignedStatutoryWizardOneUnits,
+        ApproveAssignedStatutory
     ]
     class_map = {}
     for c in classes:
@@ -353,29 +361,6 @@ class GetAssignedStatutoriesByIdSuccess(Response):
             "statutories_for_assigning": self.statutories_for_assigning,
         }
 
-class getGroupAdminGroupsUnitsSuccess(Response):
-    def __init__(self, groupadmin_groupList, groupadmin_unitList):
-        self.groupadmin_groupList = groupadmin_groupList
-        self.groupadmin_unitList = groupadmin_unitList
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "groupadmin_groupList", "groupadmin_unitList"
-        ])
-        groupadmin_groupList = data.get("groupadmin_groupList")
-        groupadmin_unitList = data.get("groupadmin_unitList")
-        return getGroupAdminGroupsUnitsSuccess(
-            groupadmin_groupList, groupadmin_unitList
-        )
-
-    def to_inner_structure(self):
-        print "inside protocol"
-        return {
-            "groupadmin_groupList": self.groupadmin_groupList,
-            "groupadmin_unitList": self.groupadmin_unitList,
-        }
-
 class GetAssignedStatutoryWizardOneDataSuccess(Response):
     def __init__(
         self, clients, business_groups, unit_legal_entity, divisions,
@@ -432,7 +417,6 @@ class GetAssignedStatutoryWizardOneUnitsSuccess(Response):
         return {
             "statu_units": self.units,
         }
-
 
 class AssignStatutoryCompliance(object):
     def __init__(
@@ -542,14 +526,27 @@ class SaveAssignedStatutorySuccess(Response):
         return {
         }
 
+class ApproveAssignedStatutorySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ApproveAssignedStatutorySuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         GetAssignedStatutoriesSuccess, GetAssignedStatutoriesByIdSuccess,
         GetAssignedStatutoryWizardOneDataSuccess,
         GetAssignedStatutoryWizardTwoDataSuccess,
         SaveAssignedStatutorySuccess,
-        getGroupAdminGroupsUnitsSuccess,
-        GetAssignedStatutoryWizardOneUnitsSuccess
+        GetAssignedStatutoryWizardOneUnitsSuccess,
+        ApproveAssignedStatutorySuccess
     ]
     class_map = {}
     for c in classes:

@@ -1418,16 +1418,21 @@ def save_approve_mapping(db, user_id, data):
         raise fetch_error()
 
 def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
-    m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
-        "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
-    msg_id = db.execute_insert(m1, [
-        user_cat_id, message_head, message_text, link, created_by, get_date_time()]
-    )
+    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
+    msg_user_id = []
+    if user_cat_id == 4 :
+        # get reporting manager id
+        q = "select parent_user_id from tbl_user_mapping where child_user_id = %s"
+    else :
+        # get executive id
+        q = "select child_user_id from tbl_user_mapping where parent_user_id = %s"
 
-    if msg_id is False or msg_id == 0 :
-        raise fetch_error()
-    m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
-    db.execute(m2 , [msg_id, created_by])
+    row = db.execute(q, [created_by])
+    if row :
+        msg_user_id.append(row[0]["parent_user_id"])
+
+    if msg_user_id is not None :
+        db.save_messages_users(msg_id, msg_user_id)
 
 
 def save_approve_notify(db, text, user_id, comppliance_id):

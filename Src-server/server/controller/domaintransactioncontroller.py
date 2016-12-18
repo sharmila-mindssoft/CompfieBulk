@@ -48,6 +48,9 @@ def process_domain_transaction_request(request, db):
     elif type(request_frame) is domaintransactionprotocol.GetAssignedStatutoriesById :
         result = process_get_assigned_compliance_byid(db, request_frame, user_id)
 
+    elif type(request_frame) is domaintransactionprotocol.GetAssignedStatutoriesForApprove :
+        result = process_get_assigned_compliance_byid(db, request_frame, user_id)
+
     return result
 
 def process_get_approve_statutory_list(db, user_id):
@@ -73,7 +76,17 @@ def process_save_assign_satutory(db, request, user_id):
     if data is True :
         return domaintransactionprotocol.SaveAssignedStatutorySuccess()
 
-
 def process_get_assigned_compliance_byid(db, request, user_id):
     data = get_assigned_compliance_by_id(db, request, user_id)
     return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data)
+
+def process_get_assigned_statutory_approve_list(db, request, user_id):
+    data = get_assigned_statutories_to_approve(db, request, user_id)
+    return domaintransactionprotocol.GetAssignedStatutoriesSuccess(
+        data
+    )
+
+def process_save_assigned_statutory(db, request, user_id):
+    data = save_approve_statutories(db, request, user_id)
+    if data is True :
+        return domaintransactionprotocol.ApproveAssignedStatutorySuccess()

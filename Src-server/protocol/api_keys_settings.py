@@ -425,6 +425,7 @@ api_params = {
     "cat_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "domain_id_optional": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "unit_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "comp_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "organizations": {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "level_1_statutory_index": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "statutory_provision": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},

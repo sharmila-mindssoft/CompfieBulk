@@ -10,9 +10,14 @@ __all__ = [
     "get_statutories_units", "get_compliances_to_assign",
     "save_client_statutories",
     "save_statutory_compliances",
-    "get_assigned_compliance_by_id"
+    "get_assigned_compliance_by_id",
+    "get_assigned_statutories_to_approve",
+    "save_approve_statutories"
 ]
 
+#
+# Domain executive assigne statutory apis
+#
 def get_assigned_statutories_list(db, user_id):
     result = db.call_proc(
         "sp_clientstatutories_list", [user_id]
@@ -344,3 +349,78 @@ def get_assigned_compliance_by_id(db, request, user_id):
 
     data_list.sort(key=lambda x : (x.level_one_id, x.compliance_id))
     return data_list
+
+
+#
+# domain manager approve assign statutory apis
+#
+
+def get_assigned_statutories_to_approve(db, request, user_id):
+    result = db.call_proc(
+        "sp_clientstatutories_approvelist", [user_id]
+    )
+    return return_assigned_statutories(result)
+
+def save_approve_statutories(db, request, user_id):
+    unit_id = request.unit_id
+    domain_id = request.domain_id
+    client_statutory_id = request.client_statutory_id
+    compliance_ids = request.compliance_ids
+    s_s = request.submission_type
+    reason = request.remarks
+    if s_s not in (3, 4) :
+        raise process_error("E089")
+
+    if reason is None :
+        reason = ''
+
+    q = "update tbl_client_statutories set reason = %s, status = %s where unit_id = %s and client_statutory_id = %s"
+    params = [reason, s_s, unit_id, client_statutory_id]
+    db.execute(q, params)
+
+    if s_s == 4 :
+        value_list = []
+        for c in compliance_ids :
+
+            value_list.append((
+                client_statutory_id, unit_id, domain_id, c, 4, user_id, get_date_time()
+            ))
+
+        table = "tbl_client_compliances"
+        column = [
+            "client_statutory_id",
+            "unit_id", "domain_id", "compliance_id", "is_approved",
+            "approved_by", "approved_on"
+        ]
+        update_column = [
+            "compliance_id", "domain_id", "is_approved",
+            "approved_by", "approved_on"
+        ]
+
+        result = db.on_duplicate_key_update(
+            table, ",".join(column), value_list, update_column
+        )
+    else :
+        q1 = "update tbl_client_compliances set is_approved=%s where client_statutory_id = %s"
+        db.execute(q1, [s_s, client_statutory_id])
+
+    if result is False :
+        raise process_error("E088")
+
+
+def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
+    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
+    msg_user_id = []
+    if user_cat_id == 8:
+        # get reporting manager id
+        q = "select parent_user_id from tbl_user_mapping where child_user_id = %s"
+    else :
+        # get executive id
+        q = "select child_user_id from tbl_user_mapping where parent_user_id = %s"
+
+    row = db.execute(q, [created_by])
+    if row :
+        msg_user_id.append(row[0]["parent_user_id"])
+
+    if msg_user_id is not None :
+        db.save_messages_users(msg_id, msg_user_id)
