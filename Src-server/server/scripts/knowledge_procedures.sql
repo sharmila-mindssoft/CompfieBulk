@@ -4091,6 +4091,37 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_approvelist`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_approvelist`(
+    IN uid INT(11)
+)
+BEGIN
+
+    select t1.client_statutory_id, t1.client_id, t2.legal_entity_id, t1.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
+    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
+    (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
+    (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
+    (select business_group_name from tbl_business_groups where business_group_id = t2.business_group_id) as business_group_name,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id = t2.legal_entity_id) as legal_entity_name,
+    (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
+    (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
+    (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
+    t1.is_approved
+    from tbl_client_compliances as t1
+    inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+    inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
+    where t3.user_id = uid and t1.is_approved = 2
+    group by t1.unit_id, t1.domain_id;
+
+END //
+
+DELIMITER ;
+
+
+
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_filters`;
 
 DELIMITER //

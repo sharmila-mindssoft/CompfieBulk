@@ -130,10 +130,10 @@ class USER_TYPE(object):
 class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
     def __init__(self):
         self._value = {
-            0 : "Yet to submit",
-            1 : "Pending",
-            2 : "Assigned",
-            3 : "Rejected"
+            1 : "Yet to submit",
+            2 : "Pending",
+            3 : "Assigned",
+            4 : "Rejected"
         }
 
     @staticmethod
