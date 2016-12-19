@@ -3,6 +3,7 @@ var CancelButton = $('#btn-user-cancel');
 var AssignStatutoryView = $("#assignstatutory-view");
 var AssignStatutoryAdd = $("#assignstatutory-add");
 var SubmitButton = $("#btn-submit");
+var PasswordSubmitButton = $('#password-submit');
 
 var AssignStatutoryList = $(".tbody-assignstatutory");
 var StatutoryProvision = ".statutoryprovision";
@@ -24,6 +25,10 @@ var TblDomain = ".tbl_domain";
 var TblStatus = ".tbl_status";
 var TblView = ".view-icon";
 
+var ApprovalStatus = $('#approval-status');
+var CurrentPassword = $('#current-password');
+var isAuthenticate;
+
 /* Data */
 
 var COMPLIANCES_LIST = null;
@@ -35,6 +40,8 @@ var DOMAIN_ID = null;
 var UNIT_ID = null;
 var REJ_COMP = [];
 var CLIENT_STATUTORY_ID = null;
+var UNIT_TEXT = null;
+var DOMAIN_TEXT = null;
 
 var LastAct='';
 var LastSubAct='';
@@ -146,6 +153,26 @@ function EditAssignedStatutory(u_id, d_id){
     });
 }
 
+//validate
+function validateAuthentication() {
+    var password = CurrentPassword.val().trim();
+    if (password.length == 0) {
+        displayMessage(msg.password_required);
+        CurrentPassword.focus();
+        return false;
+    } else {
+        validateMaxLength('password', password, "Password");
+    }
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            isAuthenticate = true;
+            Custombox.close();
+        } else {
+            displayMessage(error);
+        }
+    });
+}
+
 function loadAssignedStatutories(){
     var sno = 0;
     REJ_COMP = [];
@@ -165,42 +192,69 @@ function loadAssignedStatutories(){
         $(TblDomain, clone).text(value.d_name);
         
         $('.view-icon', clone).on('click', function () {
+        	REJ_COMP = [];
             DOMAIN_ID = value.d_id;
             UNIT_ID = value.u_id;
             CLIENT_STATUTORY_ID = value.client_statutory_id;
+            UNIT_TEXT = value.u_name;
+            DOMAIN_TEXT = value.d_name;
             EditAssignedStatutory(value.u_id, value.d_id);
         });
         AssignedStatutoryList.append(clone);       
     });
 }
 
+ApprovalStatus.on('change', function() {
+    if($(this).val() == 4){
+    	$(".reason-view").show();
+    }else{
+    	$(".reason-view").hide();
+    }
+});
 
 SubmitButton.click(function(){
-    var approval_status = $('#approval-status').val();
+
+    var approval_status = ApprovalStatus.val();
     var reason = $('#reason').val().trim();
 
      if (approval_status.length <= 0) {
         displayMessage(message.action_required);
         return false;
-    } else if (reason.trim().length <= 0) {
+    } else if (approval_status == 4 && reason.trim().length <= 0) {
         displayMessage(message.reason_required);
         return false;
-    } else if (approval_status == 2 && REJ_COMP.length == 0) {
+    } else if (approval_status == 4 && REJ_COMP.length == 0) {
         displayMessage(message.no_compliance_to_reject);
         return false;
     } else {
-    	mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP,
-	    parseInt(approval_status), reason,
-	        function(error, data) {
-	            if (error == null) {
-	                displaySuccessMessage(message.action_success);
-	                initialize();
-	            } else {
-	                custom_alert(error);
+    	Custombox.open({
+	        target: '#custom-modal',
+	        effect: 'contentscale',
+	        complete: function() {
+	            CurrentPassword.focus();
+	            isAuthenticate = false;
+	        },
+	        close: function() {
+	            if (isAuthenticate) {
+	                mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP, 
+				    parseInt(approval_status), reason, UNIT_TEXT, DOMAIN_TEXT,
+				        function(error, data) {
+				            if (error == null) {
+				                displaySuccessMessage(message.action_success);
+				                initialize();
+				            } else {
+				                custom_alert(error);
+				            }
+				        }
+				    );
 	            }
-	        }
-	    );
+	        },
+	    });
     }
+});
+
+PasswordSubmitButton.click(function() {
+    validateAuthentication();
 });
 
 CancelButton.click(function() {

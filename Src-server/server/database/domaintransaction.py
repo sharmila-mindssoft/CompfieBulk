@@ -416,7 +416,7 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by,
     msg_user_id = []
     q = "select user_id from tbl_user_units where user_category_id = %s and unit_id = %s;"
 
-    row = db.execute(q, [user_cat_id, unit_id])
+    row = db.select_one(q, [user_cat_id, unit_id])
     if row :
         msg_user_id.append(row[0]["user_id"])
 
