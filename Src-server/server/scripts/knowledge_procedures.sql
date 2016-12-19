@@ -4259,7 +4259,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
     inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 3)
+    and t1.is_approved in (1, 2, 4)
     order by t.statutory_mapping;
 
 END //
@@ -4311,7 +4311,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
     inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 3)
+    and t1.is_approved in (1, 2, 4)
     order by statutory_mapping;
 
     -- new compliances

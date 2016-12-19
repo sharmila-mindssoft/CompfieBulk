@@ -192,11 +192,11 @@ class ApproveAssignedStatutory(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "u_id", "d_id", "client_statutory_id", "comp_ids"
+                "u_id", "d_id", "client_statutory_id", "comp_ids", 
                 "submission_status", "remarks"
             ]
         )
-        return SaveAssignedStatutory(
+        return ApproveAssignedStatutory(
             data.get("u_id"),
             data.get("d_id"),
             data.get("client_statutory_id"),

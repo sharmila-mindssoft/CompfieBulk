@@ -586,6 +586,15 @@ function loadSingleUnitCompliances() {
             LastSubAct = value.map_text;
         }
         
+        
+        if(value.s_s == 4){
+            var rclone = $("#statutory-value .table-statutory-values");
+            $('.compliance-details', rclone).addClass('rejected_row');
+        }else{
+            var rclone = $("#statutory-value .table-statutory-values");
+            $('.compliance-details', rclone).removeClass('rejected_row');
+        }
+
         var complianceDetailtableRow = $('#statutory-value .table-statutory-values .compliance-details');
         var clone2 = complianceDetailtableRow.clone();
         var combineId = value.comp_id + '#' + value.level_1_s_id + '#' + value.u_id;
@@ -840,6 +849,11 @@ function loadAssignedStatutories(){
     AssignedStatutoryList.empty();
     $.each(ASSIGNED_STATUTORIES, function(key, value){
         ++ sno;
+        if(value.approval_status_text == 'Rejected'){
+            var rclone = $("#templates .table-assignstatutory");
+            $('.table-row', rclone).addClass('rejected_row');
+            AssignedStatutoryList.append(rclone);
+        }
         var clone = AssignedStatutoryRow.clone();
         $(TblSno, clone).text(sno);
         $(TblCountry, clone).text(value.c_name);

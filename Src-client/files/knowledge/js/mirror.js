@@ -2224,6 +2224,31 @@ function initMirror() {
     apiRequest("techno_report", request, callback);
   }
 
+  function getAssignedStatutoriesForApprove(callback){
+    callerName = 'domain_transaction';
+    var request = [
+        "GetAssignedStatutoriesForApprove",
+        {}
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function approveAssignedStatutory(unitId, domainId, cSID, complience_ids, submissionStatus, remark, callback){
+    callerName = 'domain_transaction';
+    var request = [
+        "ApproveAssignedStatutory",
+        {
+          'u_id': unitId,
+          'd_id': domainId,
+          'client_statutory_id': cSID,
+          'comp_ids': complience_ids,
+          'submission_status': submissionStatus,
+          'remarks': remark
+        }
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2415,7 +2440,9 @@ function initMirror() {
     getStatutoryMappingsEdit: getStatutoryMappingsEdit,
     saveComplianceStatus: saveComplianceStatus,
     getAssignedStatutoriesList: getAssignedStatutoriesList,
-    getComplianceStatutoriesList: getComplianceStatutoriesList
+    getComplianceStatutoriesList: getComplianceStatutoriesList,
+    getAssignedStatutoriesForApprove: getAssignedStatutoriesForApprove,
+    approveAssignedStatutory: approveAssignedStatutory
   };
 }
 var mirror = initMirror();
