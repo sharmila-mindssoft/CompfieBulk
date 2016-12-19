@@ -56,6 +56,7 @@ INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/
 INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-storage', 27, null);
 INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
+INSERT INTO tbl_forms VALUES(50, 2,  'Approve Assigned Statutory', '/knowledge/approve-assigned-statutory', '50', null);
 
 
 -- Reports
@@ -118,6 +119,7 @@ INSERT INTO tbl_form_category VALUES(26, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(27, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(28, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(29, 0, 1, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(50, 0, 0, 0, 0, 0, 0, 1, 0);
 -- Reports
 INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(31, 1, 0, 0, 0, 0, 0, 0, 0);

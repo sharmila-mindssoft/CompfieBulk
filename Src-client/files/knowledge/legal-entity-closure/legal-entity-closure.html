@@ -1,96 +1,92 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
-
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="col-sm-10 col-xs-offset-1">
-      <h4 class="page-title">Legal Entity Closure</h4>
-    </div>
-  </div>
-  <div class="row">
-  <div id="animationSandbox">
-    <div class="col-lg-10 col-xs-offset-1">
-      <div class="panel panel-default panel-info">
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-          <div class="dataTable_wrapper">
-            <table  class="table table-striped dt-responsive nowrap highlight m-b-0 js-filterable" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th align="center" width="2%">#</th>
-                  <th width="15%">Country</th>
-                  <th width="15%">Group</th>
-                  <th width="15%">Business Group</th>
-                  <th width="15%">Legal Entity</th>
-                  <th width="10%" class="text-center">Status</th>
-                  <th width="10%" class="text-center">Closure</th>
-                </tr>
-                <tr class="odd gradeX filter-tr">
-                  <td align="center"></td>
-                  <td>
-                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Country"  />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                  <td>
-                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Group" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                  <td>
-                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Business Group" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                  <td>
-                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Legal Entity" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                  <td align="center">
-                      <div class="btn-group">
-                          <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                              All
-                              <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu msdropdown" id="status_select">
-                              <li class="search-status-li"><a>All</a></li>
-                              <li class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
-                              <li class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
-                          </ul>
-                      </div>
-                  </td>
-                  <td align="center">
-                      <div class="btn-group">
-                          <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                              All
-                              <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu" id="status_select_1">
-                              <li class="search-status-li-1"><a>All</a></li>
-                              <li class="search-status-li-1"><a>Close</a></li>
-                              <li class="search-status-li-1"><a>Closed</a></li>
-                              <li class="search-status-li-1"><a>Reactivate</a></li>
-                          </ul>
-                      </div>
-                  </td>
-                </tr>
-              </thead>
-            <tbody class="tbody-le-closure-list">
-              </tbody>
-            </table>
-          </div>
+    <div class="row">
+        <div class="col-sm-10 col-xs-offset-1">
+            <h4 class="page-title">Legal Entity Closure</h4>
         </div>
-      </div>
     </div>
-  </div>
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-lg-10 col-xs-offset-1">
+                <div class="panel panel-default panel-info">
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-striped dt-responsive nowrap highlight m-b-0 js-filtertable" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th align="center" width="2%">#</th>
+                                        <th width="15%">Country</th>
+                                        <th width="15%">Group</th>
+                                        <th width="15%">Business Group</th>
+                                        <th width="15%">Legal Entity</th>
+                                        <th width="10%" class="text-center">Status</th>
+                                        <th width="10%" class="text-center">Closure</th>
+                                    </tr>
+                                    <tr class="filter-tr">
+                                        <td align="center"></td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" placeholder="Enter Country" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" placeholder="Enter Group" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" placeholder="Enter Business Group" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" placeholder="Enter Legal Entity" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td align="center">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                                    All
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu msdropdown" id="status_select">
+                                                    <li class="search-status-li"><a>All</a></li>
+                                                    <li class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                                                    <li class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td align="center">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                                    All
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" id="status_select_1">
+                                                    <li class="search-status-li-1"><a>All</a></li>
+                                                    <li class="search-status-li-1"><a>Close</a></li>
+                                                    <li class="search-status-li-1"><a>Closed</a></li>
+                                                    <li class="search-status-li-1"><a>Reactivate</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody-le-closure-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</div>
-
 <div id="custom-modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -102,39 +98,36 @@
             <input type="hidden" class="popup_mode">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password</label>
-                <input type="password" class="form-control"  id="techno_pwd" placeholder="Password">
+                <input type="password" class="form-control" id="techno_pwd" placeholder="Password">
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason</label>
                 <textarea class="form-control input-sm" rows="2" placeholder="Enter Reason" id="remarks"></textarea>
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light"  id="update_status">Submit</button>
-
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="update_status">Submit</button>
         </form>
     </div>
 </div>
-
 <div id="templates">
-  <table>
-    <tr class="table-row">
-      
-     <td class="sno" align="center"></td>
-      <td class="Country"></td>
-      <td class="Group"></td>
-      <td class="Business-group"></td>
-      <td class="legal-entity" id="le_id" align="center">
-        <span class="le_id" style="display: none;"></span>
-      </td>
-      <td class="icon-3x text-center">
-          <i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i>
-      </td>
-      <td class="text-center closure-sel">
-        <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="close"> Close</a>
-          <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="reactive"> Reactivate</a>
-          <span class="closed" style="display: none;"></span>
-      </td>
-    </tr>
-  </table>
+    <table>
+        <tr class="table-row">
+            <td class="sno" align="center"></td>
+            <td class="Country"></td>
+            <td class="Group"></td>
+            <td class="Business-group"></td>
+            <td class="legal-entity" id="le_id" align="center">
+                <span class="le_id" style="display: none;"></span>
+            </td>
+            <td class="icon-3x text-center">
+                <i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i>
+            </td>
+            <td class="text-center closure-sel">
+                <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="close"> Close</a>
+                <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="reactive"> Reactivate</a>
+                <span class="closed" style="display: none;"></span>
+            </td>
+        </tr>
+    </table>
 </div>
 <script type="text/javascript" src="/script/legal-entity-closure/legal-entity-closure.js"></script>
 {% endblock %}

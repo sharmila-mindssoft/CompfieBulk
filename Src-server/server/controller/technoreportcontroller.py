@@ -53,7 +53,9 @@ from server.database.technoreport import (
     get_GroupAdminReportData,
     get_AssignedUserClientGroupsDetails,
     get_ReassignUserReportData,
-    get_ReassignUserDomainReportData
+    get_ReassignUserDomainReportData,
+    get_assigned_statutories_list,
+    get_ComplianceStatutoriesList
 )
 
 __all__ = [
@@ -236,7 +238,19 @@ def process_techno_report_request(request, db):
         result = process_get_ReassignUserDomainReportData(db, request_frame, user_id)
         logger.logKnowledgeApi("GetReassignUserDomainReportData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
+    elif type(request_frame) is technoreports.GetAssignedStatutoriesList:
+        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_AssignedStatutoriesList(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
+    elif type(request_frame) is technoreports.GetComplianceStatutoriesList:
+        logger.logKnowledgeApi("GetComplianceStatutoriesList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_ComplianceStatutoriesList(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetComplianceStatutoriesList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 
@@ -582,3 +596,14 @@ def process_get_ReassignUserDomainReportData(db, request_frame, user_id):
     print "from controller"
     print result
     return technoreports.ReassignUserDomainReportDataSuccess(result)
+
+def process_get_AssignedStatutoriesList(db, request_frame, user_id):
+    print "user_id"
+    print user_id
+    result = get_assigned_statutories_list(db, user_id)
+    return technoreports.ApproveAssignedStatutoriesListSuccess(result)
+
+def process_get_ComplianceStatutoriesList(db, request_frame, user_id):
+    unit_id = request_frame.unit_id
+    domain_id = request_frame.domain_id
+    result = get_ComplianceStatutoriesList(db, unit_id, domain_id, user_id)

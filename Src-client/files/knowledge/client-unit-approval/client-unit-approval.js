@@ -288,6 +288,9 @@ function submitApprovalForm(){
     }    
 }
 //initialization
-$(function () {
+$(function() {
     initialize("list");
+    $(document).find('.js-filtertable').each(function() {
+        $(this).filtertable().addFilter('.js-filter');
+    });
 });

@@ -434,7 +434,7 @@ api_params = {
     "level_1_statutory_wise_compliances": {},
     "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutories"},
     "unit_code_with_name": {'type': 'TEXT', 'length': 150, 'validation_method': None, 'is_optional': False},
-    "submission_status": {'type': 'INT', 'length': 3, 'validation_method': None, 'is_optional': True},
+    "submission_status": {'type': 'INT', 'length': 4, 'validation_method': None, 'is_optional': True},
     "s_s": {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},
     "client_statutory_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "submission_type": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': False},
@@ -556,7 +556,7 @@ api_params = {
     'comp_list': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'ComplianceList'},
     "typelistedit": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'a_g_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-
+    "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
