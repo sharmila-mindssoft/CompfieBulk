@@ -88,6 +88,7 @@ messages = {
     "E087": "Invalid statutory mapping",
     "E088": "Save process failed",
     "E089": "Invalid status code"
+
 }
 
 client_message = {
