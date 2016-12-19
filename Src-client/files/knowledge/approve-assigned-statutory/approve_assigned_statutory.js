@@ -30,7 +30,6 @@ var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
 /* Data */
-
 var COMPLIANCES_LIST = null;
 var ASSIGNED_STATUTORIES = null;
 
