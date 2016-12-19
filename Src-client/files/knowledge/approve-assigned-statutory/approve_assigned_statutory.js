@@ -30,7 +30,6 @@ var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
 /* Data */
-
 var COMPLIANCES_LIST = null;
 var ASSIGNED_STATUTORIES = null;
 
@@ -130,7 +129,6 @@ function loadCompliances() {
         statutoriesCount++;
         count++;
     });
-
 }
 
 function ifNullReturnHyphen(value){
@@ -140,6 +138,7 @@ function ifNullReturnHyphen(value){
         return "-";
     }
 }
+
 function EditAssignedStatutory(u_id, d_id){
     AssignStatutoryView.hide();
     AssignStatutoryAdd.show();

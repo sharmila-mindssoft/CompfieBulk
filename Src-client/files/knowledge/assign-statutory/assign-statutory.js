@@ -195,7 +195,7 @@ function callAPI(api_type) {
                 if(CLIENT_STATUTORY_ID == null){
                     CLIENT_STATUTORY_ID = UNIT_CS_ID[u_id].client_statutory_id;
                     DOMAIN_TEXT = DomainName.val();
-                    UNIT_TEXT = UNIT_CS_ID[u_id].unit_code+' - '+UNIT_CS_ID[u_id].u_name+', '+UNIT_CS_ID[u_id].address;
+                    UNIT_TEXT = UNIT_CS_ID[u_id].unit_code+' - '+UNIT_CS_ID[u_id].u_name;
                 }
                 statutorysettingData = mirror.saveComplianceStatus(
                     int(val_group_id), int(val_legal_entity_id), u_id, 
@@ -360,6 +360,7 @@ function reset(){
     AssignStatutoryList.empty();
     UnitList.empty();
 }
+
 function showBreadCrumbText() {
     BreadCrumbs.empty();
     var img_clone = BreadCrumbImg;
@@ -495,23 +496,23 @@ function compliancestatus(element) {
     var sname = $(element).attr('name');
     var sid = sname.substr(sname.lastIndexOf('y') + 1);
     $('#save'+sid).addClass('fa-square');
-  /*var sClass = $(element).attr('class').split(' ')[2];
-  var actSelect = sClass.substr(sClass.lastIndexOf('s') + 1);
-  var cStatus = false;
-  $('.' + sClass).each(function () {
-    var checkedVal = $('input[name=statutory'+actSelect+']:checked').val();
-    if (checkedVal != 2) {
-      cStatus = true;
-    }
-  });
+      /*var sClass = $(element).attr('class').split(' ')[2];
+      var actSelect = sClass.substr(sClass.lastIndexOf('s') + 1);
+      var cStatus = false;
+      $('.' + sClass).each(function () {
+        var checkedVal = $('input[name=statutory'+actSelect+']:checked').val();
+        if (checkedVal != 2) {
+          cStatus = true;
+        }
+      });
 
-  if (cStatus) {
-    $('#act'+actSelect).html('<img src="images/tick1bold.png">').attr('for','1');
-    $('#remark' + actSelect).hide();
-  } else {
-    $('#act'+actSelect).html('<img src="images/deletebold.png">').attr('for','2');
-    $('#remark' + actSelect).show();
-  }*/
+      if (cStatus) {
+        $('#act'+actSelect).html('<img src="images/tick1bold.png">').attr('for','1');
+        $('#remark' + actSelect).hide();
+      } else {
+        $('#act'+actSelect).html('<img src="images/deletebold.png">').attr('for','2');
+        $('#remark' + actSelect).show();
+      }*/
   
 }
 
