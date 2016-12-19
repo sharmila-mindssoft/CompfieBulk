@@ -63,14 +63,14 @@ class GetStatutoryMappingReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "d_id", "i_id", "s_n_id", "g_id", "level_1_s_id", "f_id", "r_count"])
+        data = parse_dictionary(data, ["c_id", "d_id", "a_i_id", "a_s_n_id", "a_g_id", "statutory_id_optional", "frequency_id", "r_count"])
         country_id = data.get("c_id")
         domain_id = data.get("d_id")
-        industry_id = data.get("i_id")
-        statutory_nature_id = data.get("s_n_id")
-        geography_id = data.get("g_id")
-        level_1_statutory_id = data.get("level_1_s_id")
-        frequency_id = data.get("f_id")
+        industry_id = data.get("a_i_id")
+        statutory_nature_id = data.get("a_s_n_id")
+        geography_id = data.get("a_g_id")
+        level_1_statutory_id = data.get("statutory_id_optional")
+        frequency_id = data.get("frequency_id")
         record_count = data.get("r_count")
         return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, frequency_id, record_count)
 
@@ -78,11 +78,11 @@ class GetStatutoryMappingReportData(Request):
         return {
             "c_id": self.country_id,
             "d_id": self.domain_id,
-            "i_id": self.industry_id,
-            "s_n_id": self.statutory_nature_id,
-            "g_id": self.geography_id,
-            "level_1_s_id": self.level_1_statutory_id,
-            "f_id": self.frequency_id,
+            "a_i_id": self.industry_id,
+            "a_s_n_id": self.statutory_nature_id,
+            "a_g_id": self.geography_id,
+            "statutory_id_optional": self.level_1_statutory_id,
+            "frequency_id": self.frequency_id,
             "r_count": self.record_count
         }
 
@@ -179,13 +179,13 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "geographies", "level_1_statutories"])
+        data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "geographies", "level_one_statutories"])
         countries = data.get("countries")
         domains = data.get("domains")
         industries = data.get("industries")
         statutory_natures = data.get("statutory_natures")
         geographies = data.get("geographies")
-        level_1_statutories = data.get("level_1_statutories")
+        level_1_statutories = data.get("level_one_statutories")
         return GetStatutoryMappingReportFiltersSuccess(countries, domains, industries, statutory_natures, geographies, level_1_statutories)
 
     def to_inner_structure(self):
@@ -195,7 +195,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
             "industries": self.industries,
             "statutory_natures": self.statutory_natures,
             "geographies": self.geographies,
-            "level_1_statutories": self.level_1_statutories,
+            "level_one_statutories": self.level_1_statutories,
             "compliance_frequency": self.compliance_frequency,
         }
         return to_structure_dictionary_values(data)

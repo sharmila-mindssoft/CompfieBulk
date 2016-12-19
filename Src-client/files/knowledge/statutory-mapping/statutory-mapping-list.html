@@ -98,6 +98,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="clear"></div>
                 </div>
             </div>
         </div>
@@ -144,7 +145,7 @@
                                                 <td>
                                                     <h6 class="m-t-0">Domain</h6>
                                                     <div class="form-group has-feedback m-b-0">
-                                                    <div class="form-group has-feedback">
+
                                                         <input class="form-control input-sm" placeholder="Domain" type="text">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
@@ -154,7 +155,7 @@
                                                 <td>
                                                     <h6 class="m-t-0">Organization</h6>
                                                     <div class="form-group has-feedback m-b-0">
-                                                    <div class="form-group has-feedback">
+
                                                         <input class="form-control input-sm" placeholder="Organization" type="text">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
@@ -164,7 +165,7 @@
                                                 <td>
                                                     <h6 class="m-t-0">Statutory Nature</h6>
                                                     <div class="form-group has-feedback m-b-0">
-                                                    <div class="form-group has-feedback">
+
                                                         <input class="form-control input-sm" placeholder="Statutory Nature" type="text">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
@@ -288,7 +289,7 @@
                                             <div class="card-box p-10 recurring scroll_box max-height-150 m-b-0" id="Recurring" style="display: none;">
                                                 <h4 class="header-title m-t-0 m-b-10 legentclass">Periodical</h4>
                                                 <div class="form-group clearfix m-b-5">
-                                                    <label class="col-sm-3 control-label">Repeats Every <span class="mandatory remove-manditory">*</span></label>
+                                                    <label class="col-sm-2 p-l-0 control-label">Repeats Every <span class="mandatory remove-manditory">*</span></label>
                                                     <div class="col-sm-2">
                                                         <input type="text" value="2" id="repeats_every" class="form-control input-sm">
                                                     </div>
@@ -311,11 +312,11 @@
                                                         <label class="col-sm-4 control-label">Repeat by <span class="mandatory remove-manditory">*</span></label>
                                                         <div class="col-sm-7 clearfix m-b-0 ">
                                                             <div class="radio radio-success radio-single m-t-0">
-                                                                <input id="singleRadio1" name="radioSingle1" checked="" type="radio">
+                                                                <input id="singleRadio1" class="radio-class" name="radioSingle1" checked="checked" value="1" type="radio">
                                                                 <label for="singleRadio1" class="singleRadio1">Day of the month</label>
                                                             </div>
                                                             <div class="radio radio-success radio-single m-t-0 m-b-0">
-                                                                <input id="singleRadio2" name="radioSingle1"  type="radio">
+                                                                <input id="singleRadio2" class="radio-class" name="radioSingle1" value="2"  type="radio">
                                                                 <label for="singleRadio2" class="singleRadio2">End day of the month</label>
                                                             </div>
                                                         </div>
@@ -323,59 +324,20 @@
                                                     </div>
                                                     <div class="form-group clearfix m-b-10">
                                                         <label class="col-sm-3 control-label">Summary</label>
-                                                        <div class="col-sm-9"> Repeats Every 6 Month(s)</div>
+                                                        <div class="col-sm-9 "> Repeats Every 6 Month(s)</div>
                                                     </div>
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <div class="col-sm-12 clearfix m-b-10 show-statutory-date-single">
-                                                            <label class="col-sm-5 control-label no-padding-left p-t-7"> Statutory Date</label>
-                                                            <div class="col-sm-4 no-padding-left show-statutory-date-month">
-                                                                <select id="rcstatutory_month" class="form-control input-sm"></select>
-                                                            </div>
-                                                            <div class="col-sm-3 no-padding show-statutory-date-day">
-                                                                <select id="rcstatutory_date" class="form-control input-sm"></select>
-                                                            </div>
+
+                                                        <div class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1" >
+                                                            <label class="col-sm-6 control-label no-padding-left"> Statutory Date</label>
+                                                            <label class="col-sm-6 control-label no-padding-left"> Trigger Before(days)</label>
                                                         </div>
-                                                        <div class="col-sm-12 clearfix m-b-10 show-statutory-date-single">
-                                                            <label class="col-sm-5 control-label no-padding-left p-t-7"> Trigger Before</label>
-                                                            <div class="col-sm-2 no-padding">
-                                                                <input type="text" value="15" class="form-control input-sm">
-                                                            </div>
-                                                            <label class="col-sm-1 control-label p-t-7">Days</label>
-                                                            <!-- <div class="col-sm-2 p-t-7 no-padding-left">Days</div> -->
+                                                        <div class="date-list">
+
                                                         </div>
-                                                        <div class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1" style="display:none;">
-                                                            <label class="col-sm-8 control-label no-padding-left"> Statutory Date</label>
-                                                            <label class="col-sm-4 control-label no-padding-left"> Trigger Before</label>
-                                                        </div>
-                                                        <div class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1" style="display:none;">
-                                                            <div class="col-sm-8 no-padding-left">
-                                                            <div class="col-sm-6 no-padding-left show-statutory-date-month-multiple-1">
-                                                                <select class="form-control input-sm"><option selected="selected">Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option >Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
-                                                            </div>
-                                                            <div class="col-sm-6 no-padding show-statutory-date-day-multiple-1">
-                                                                <select class="form-control input-sm"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option selected="selected">20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
-                                                            </div>
-                                                            </div>
-                                                            <div class="col-sm-3 no-padding show-statutory-date-month-multiple-2">
-                                                                <input type="text" value="15" class="form-control input-sm">
-                                                            </div>
-                                                            <!-- <label class="col-sm-1 control-label p-t-7">Days</label> -->
-                                                        </div>
-                                                        <div class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1" style="display:none;">
-                                                            <div class="col-sm-8 no-padding-left">
-                                                            <div class="col-sm-6 no-padding-left show-statutory-date-month-multiple-1">
-                                                                <select class="form-control input-sm"><option selected="selected">Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option >Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
-                                                            </div>
-                                                            <div class="col-sm-6 no-padding show-statutory-date-day-multiple-1">
-                                                                <select class="form-control input-sm"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option selected="selected">20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
-                                                            </div>
-                                                            </div>
-                                                            <div class="col-sm-3 no-padding show-statutory-date-month-multiple-2">
-                                                                <input type="text" value="15" class="form-control input-sm">
-                                                            </div>
-                                                            <!-- <label class="col-sm-1 control-label p-t-7">Days</label> -->
-                                                        </div>
+
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -440,74 +402,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-sm-12 scroll_box">
-                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list m-b-0" width="100%" cellspacing="0" style="height: 190px;">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <h6 class="m-t-0">Corporation</h6>
-                                                        <div class="form-group has-feedback m-b-0">
-                                                            <input class="form-control input-sm" placeholder="Corporation" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <ul class="list-unstyled box-height-100">
-                                                            <li>Select All</li>
-                                                            <li class="heading">Madurai</li>
-                                                            <li>Madurai Corporation</li>
-                                                            <li class="heading">Coimbatore</li>
-                                                            <li>Coimbatore Corporation</li>
-                                                        </ul>
-                                                    </td>
-                                                    <td>
-                                                        <h6 class="m-t-0">Municipality</h6>
-                                                        <div class="form-group has-feedback m-b-0">
-                                                            <input class="form-control input-sm" placeholder="Municipality" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <ul class="list-unstyled box-height-100">
-                                                            <li>Select All</li>
-                                                            <li class="heading">Madurai</li>
-                                                            <li>Anaiyur</li>
-                                                            <li class="active">Avaniyapuram<i class="fa fa-check pull-right"></i></li>
-                                                        </ul>
-                                                    </td>
-                                                    <td>
-                                                        <h6 class="m-t-0">Town</h6>
-                                                        <div class="form-group has-feedback m-b-0">
-                                                            <input class="form-control input-sm" placeholder="Town" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <ul class="list-unstyled box-height-100">
-                                                            <li class="active">Select All <i class="fa fa-check pull-right"></i></li>
-                                                            <li>Alanganallur</li>
-                                                            <li>Sholavandan </li>
-                                                            <li>Vilangudi</li>
-                                                            <li>Palamedu</li>
-                                                            <li>Paravai</li>
-                                                        </ul>
-                                                    </td>
-                                                    <td>
-                                                        <h6 class="m-t-0">Panchayat</h6>
-                                                        <div class="form-group has-feedback m-b-0">
-                                                            <input class="form-control input-sm" placeholder="Panchayat" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <ul class="list-unstyled box-height-100">
-                                                            <li>Select All</li>
-                                                            <li>Alanganallur</li>
-                                                            <li>Alagapuri</li>
-                                                            <li class="active">Chinnailanthaikulam  <i class="fa fa-check pull-right"></i></li>
-                                                            <li>Kalvelipatti</li>
-                                                            <li>Kotankipatti</li>
-                                                            <li>Muduvarpatty</li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div> -->
+
                                 <div class="clearfix"></div>
                             </div>
                             <ul class="pager wizard m-b-0">
@@ -646,6 +541,19 @@
     </li>
   </div>
 
+    <div id="date-list-templates" class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1">
+        <div class="col-sm-8 no-padding-left">
+            <div class="col-sm-6 no-padding-left show-statutory-date-month-multiple-1">
+                <select class="form-control input-sm month-select"></select>
+            </div>
+            <div class="col-sm-6 no-padding show-statutory-date-day-multiple-1">
+                <select class="form-control input-sm date-select"></select>
+            </div>
+        </div>
+        <div class="col-sm-3 no-padding show-statutory-date-month-multiple-2">
+            <input type="text" value="15" class="form-control input-sm trigger-value">
+        </div>
+    </div>
 
 </div>
 

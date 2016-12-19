@@ -554,31 +554,25 @@ def update_geography(
     db, geography_id, name, parent_ids, parent_names, updated_by
 ):
     oldData = get_geography_by_id(db, geography_id)
-    print "oldData"
-    print oldData
+
     if bool(oldData) is False:
         return False
     values = [geography_id, name, parent_ids, parent_names, updated_by]
     if (db.call_update_proc("sp_update_geography_master", values)):
         action = "Geography - %s updated" % name
         db.save_activity(updated_by, 6, action)
-        print len(parent_ids[:-1])
+
         if len(parent_ids[:-1]) == 1 :
             # p_ids = tuple([parent_ids[:-1], str(geography_id)])
             p_ids = parent_ids[:-1] + "," + str(geography_id)
         else :
             p_ids = parent_ids[:-1].split(',')
-            print "1"
-            print p_ids
-            p_ids.append(geography_id)
-            print "2"
-            print p_ids
-            p_ids = tuple(p_ids)
-            print "p_ids"
-            print p_ids
+
+            p_ids.append(str(geography_id))
+
+            p_ids = ", ".join(p_ids)
+
         result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
-        print "result"
-        print result
 
         for row in result:
             if row["geography_id"] == geography_id :
@@ -627,15 +621,14 @@ def check_geography_exists(db, geography_id):
 
 def change_geography_status(db, geography_id, is_active, updated_by):
     oldData = get_geography_by_id(db, geography_id)
-    print "oldData"
-    print oldData
+
     if bool(oldData) is False:
         return False
     # if is_active == 0 :
     #     check_geography_exists(db, geography_id)
 
     values = [geography_id, is_active, updated_by]
-    print values
+
     if (db.call_update_proc("sp_geography_update_status", values)):
         if is_active == 0:
             status = "deactivated"
@@ -739,8 +732,7 @@ def update_statutory(
 
 def get_statutory_master(db, statutory_id=None):
     result = db.call_proc("sp_statutorymapping_report_statutorymaster", (statutory_id,))
-    print "stat master"
-    print result
+
     frame_parent_mappings(db, result, statutory_id)
     return return_statutory_master(result)
 
@@ -749,7 +741,7 @@ def frame_parent_mappings(db, data, statutory_id=None):
     # data = db.call_proc("sp_statutorymapping_report_statutorymaster", (statutory_id,))
 
     statu_names = {}
-    print len(data)
+
     for d in data:
         statu_names[d["statutory_id"]] = d["statutory_name"]
 
@@ -758,8 +750,7 @@ def frame_parent_mappings(db, data, statutory_id=None):
         p_ids = [
             int(x) for x in d["parent_ids"][:-1].split(',')
         ]
-        print "p_ids"
-        print p_ids
+
         names = []
         for pid in p_ids:
             if pid > 0:
@@ -768,8 +759,7 @@ def frame_parent_mappings(db, data, statutory_id=None):
                 else:
                     names.append(statu_names.get(pid))
         names.append(d["statutory_name"])
-        print "names"
-        print names
+
         STATUTORY_PARENTS[d["statutory_id"]] = [
             d["statutory_name"], ">> ".join(names), p_ids
         ]
@@ -777,7 +767,7 @@ def frame_parent_mappings(db, data, statutory_id=None):
 
 def return_statutory_master(data):
     statutories = {}
-    print STATUTORY_PARENTS
+
     for d in data:
         country_id = d["country_id"]
         domain_id = d["domain_id"]
@@ -847,8 +837,7 @@ def check_duplicate_statutory(
 
 def get_country_wise_level_1_statutoy(db, user_id):
     result = db.call_proc("sp_statutorymapping_report_levl1_list", ())
-    print "stat mapping"
-    print result
+
     if bool(STATUTORY_PARENTS) is False:
         get_statutory_master(db)
 

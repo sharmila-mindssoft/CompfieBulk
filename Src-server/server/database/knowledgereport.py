@@ -67,13 +67,13 @@ def get_statutory_mapping_report(
         qry_where += " AND t2.frequency_id = %s "
         qry_val.append(frequency_id)
 
-    q_count = "SELECT  count(distinct t2.compliance_id) " + \
+    q_count = "SELECT  count(distinct t2.compliance_id) as count " + \
         " FROM tbl_statutory_mappings t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.statutory_mapping_id = t1.statutory_mapping_id " + \
-        " INNER JOIN tbl_statutory_industry t3 " + \
+        " INNER JOIN tbl_mapped_industries t3 " + \
         " ON t3.statutory_mapping_id = t1.statutory_mapping_id " + \
-        " INNER JOIN tbl_statutory_geographies t4 " + \
+        " INNER JOIN tbl_mapped_locations t4 " + \
         " ON t4.statutory_mapping_id = t1.statutory_mapping_id " + \
         " INNER JOIN tbl_user_domains t5 " + \
         " ON t5.domain_id = t1.domain_id " + \
@@ -81,7 +81,7 @@ def get_statutory_mapping_report(
         " INNER JOIN tbl_user_countries t6 " + \
         " ON t6.country_id = t1.country_id " + \
         " and t6.user_id = %s " + \
-        " WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND " + \
+        " WHERE t1.is_approved in (2, 3) AND t2.is_active = 1 AND " + \
         " t1.country_id = %s " + \
         " and t1.domain_id = %s "
     order = " ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX( " + \
@@ -95,9 +95,8 @@ def get_statutory_mapping_report(
         q_count += qry_where
         param_lst.extend(qry_val)
     row = db.select_one(q_count + order, param_lst)
-
     if row:
-        r_count = row[0]
+        r_count = row['count']
     else:
         r_count = 0
 
@@ -111,7 +110,7 @@ def get_statutory_mapping_report(
         " (select statutory_nature_name from tbl_statutory_natures " + \
         " where statutory_nature_id = t1.statutory_nature_id) " + \
         " statutory_nature_name,  t1.statutory_ids, t1.geography_ids, " + \
-        " t1.approval_status, t1.is_active, t1.statutory_mapping," + \
+        " t1.is_approved, t1.is_active, t1.statutory_mapping," + \
         " t2.compliance_id, t2.statutory_provision, " + \
         " t2.compliance_task, t2.compliance_description, " + \
         " t2.document_name, t2.format_file, t2.format_file_size, " + \
@@ -121,9 +120,9 @@ def get_statutory_mapping_report(
         " FROM tbl_statutory_mappings t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.statutory_mapping_id = t1.statutory_mapping_id " + \
-        " INNER JOIN tbl_statutory_industry t3 " + \
+        " INNER JOIN tbl_mapped_industries t3 " + \
         " ON t3.statutory_mapping_id = t1.statutory_mapping_id " + \
-        " INNER JOIN tbl_statutory_geographies t4 " + \
+        " INNER JOIN tbl_mapped_locations t4 " + \
         " ON t4.statutory_mapping_id = t1.statutory_mapping_id " + \
         " INNER JOIN tbl_user_domains t5 " + \
         " ON t5.domain_id = t1.domain_id " + \
@@ -155,7 +154,7 @@ def get_statutory_mapping_report(
         "country_name", "domain_id", "domain_name", "industry_ids",
         "statutory_nature_id", "statutory_nature_name",
         "statutory_ids", "geography_ids",
-        "approval_status", "is_active", "statutory_mapping",
+        "is_approved", "is_active", "statutory_mapping",
         "compliance_id", "statutory_provision",
         "compliance_task", "compliance_description",
         "document_name", "format_file",

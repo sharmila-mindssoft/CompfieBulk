@@ -613,7 +613,7 @@ def get_compliance_list_report_techno(
         " FROM tbl_statutory_mappings t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.statutory_mapping_id = t1.statutory_mapping_id " + \
-        " INNER JOIN tbl_statutory_industry t3 " + \
+        " INNER JOIN tbl_mapped_industries t3 " + \
         " ON t3.statutory_mapping_id = t1.statutory_mapping_id " + \
         " INNER JOIN tbl_statutory_geographies t4 " + \
         " ON t4.statutory_mapping_id = t1.statutory_mapping_id " + \
@@ -663,13 +663,13 @@ def get_compliance_list_report_techno(
     else:
         r_count = 0
 
-    industry_qry = "select industry_name, statutory_mapping_id " + \
-        " from tbl_statutory_industry si " + \
-        " INNER JOIN tbl_industries i on " + \
+    industry_qry = "select organisation_name, statutory_mapping_id " + \
+        " from tbl_mapped_industries si " + \
+        " INNER JOIN tbl_organisation i on " + \
         " i.industry_id = si.industry_id "
     industry_rows = db.select_all(industry_qry)
     industry_result = convert_to_dict(
-        industry_rows, ["industry_name", "statutory_mapping_id"]
+        industry_rows, ["organisation_name", "statutory_mapping_id"]
     )
     industry_statutory_mapping = {}
     for row in industry_result:
@@ -677,7 +677,7 @@ def get_compliance_list_report_techno(
         if statu_mapping_id not in industry_statutory_mapping:
             industry_statutory_mapping[statu_mapping_id] = []
         industry_statutory_mapping[statu_mapping_id].append(
-            row["industry_name"]
+            row["organisation_name"]
         )
 
     q = " SELECT distinct t1.statutory_mapping_id, t1.country_id, " + \
@@ -703,7 +703,7 @@ def get_compliance_list_report_techno(
         " FROM tbl_statutory_mappings t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.statutory_mapping_id = t1.statutory_mapping_id " + \
-        " INNER JOIN tbl_statutory_industry t3 " + \
+        " INNER JOIN tbl_mapped_industries t3 " + \
         " ON t3.statutory_mapping_id = t1.statutory_mapping_id " + \
         " INNER JOIN tbl_statutory_geographies t4 " + \
         " ON t4.statutory_mapping_id = t1.statutory_mapping_id " + \
@@ -1161,3 +1161,22 @@ def get_ReassignUserDomainReportData(db, request_data):
     print "after append"
     print reassign_group_list
     return reassign_group_list
+
+def get_assigned_statutories_list(db, user_id):
+    assigned_statutories = []
+    result = db.call_proc_with_multiresult_set("sp_approve_assigned_statutories_list", (user_id,), 2)
+    for row in result[1]:
+        assigned_statutories.append(technoreports.ApproveAssignedStatutories(
+            row["country_name"], row["group_name"], row["legal_entity_name"],
+            row["business_group_name"], row["division_name"], row["category_name"],
+            row["unit_id"], row["unit_name"], row["domain_name"], row["statutory_id"],
+            row["domain_id"]
+        ))
+    print "approved list"
+    print assigned_statutories
+    return assigned_statutories
+
+def get_ComplianceStatutoriesList(db, unit_id, domain_id, user_id):
+    compliance_statutories = []
+    args = [unit_id, domain_id]
+    result = db.call_proc_with_multiresult_set("sp_approve_assigned_statutories_compliance_list", args, 3)

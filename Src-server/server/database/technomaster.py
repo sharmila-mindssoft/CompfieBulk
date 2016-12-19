@@ -233,7 +233,7 @@ def update_legal_entities(db, request, group_id, session_user):
         "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
         "file_space_limit", "total_licence",
-        'is_active', "created_by", "created_on", 'updated_by', "updated_on"
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on"
     ]
     values = []
     insert_values = []
@@ -284,7 +284,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
-                1, session_user, current_time_stamp,
+                0, session_user, current_time_stamp,
                 session_user, current_time_stamp
             )
             insert_values.append(insert_value_tuple)
@@ -1652,7 +1652,11 @@ def get_unit_details_for_user(db, user_id, request):
 
 def get_unit_details_for_user_edit(db, user_id, request):
     print request.to_structure()
-    where_condition_val = [request.client_id, request.business_group_id, request.legal_entity_id, request.country_id, user_id]
+    if(request.business_group_id is None):
+        where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id]
+    else:
+        where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
+    print where_condition_val
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 
@@ -2204,7 +2208,7 @@ def get_domain_managers_for_user(db, session_user):
     # Parameters - session user
     #
     users = db.call_proc_with_multiresult_set(
-        "sp_users_domain_managers", [session_user], 2) 
+        "sp_users_domain_managers", [session_user], 2)
 
     return return_domain_managers(users[1])
 
@@ -2213,7 +2217,7 @@ def return_domain_managers(data):
     fn = core.User
     result = [
         fn(
-            user_id=datum["user_id"], user_category_id=datum["user_category_id"], 
+            user_id=datum["user_id"], user_category_id=datum["user_category_id"],
             employee_name=datum["employee_name"], is_active=bool(datum["is_active"])
         ) for datum in data
     ]
@@ -2248,6 +2252,10 @@ def generate_unit_domain_industry_map(industry_details):
     return detail_map
 
 
+def get_user_category_id(db, session_user):
+    result = db.call_proc("sp_get_user_category_id_by_userid", (int(session_user),))
+    return result[0]["user_category_id"]
+
 def save_assigned_units(db, request, session_user):
     domain_manager_id = request.user_id
     client_id = request.client_id
@@ -2255,6 +2263,7 @@ def save_assigned_units(db, request, session_user):
     values_list = []
     current_time_stamp = get_date_time()
     domains = get_user_domains(db, session_user)
+    user_category_id = get_user_category_id(db, session_user)
     domain_name_id_map = {}
     for domain in domains:
         domain_name_id_map[domain.domain_name] = domain.domain_id
@@ -2264,7 +2273,7 @@ def save_assigned_units(db, request, session_user):
     ]
     for unit in active_units:
         value_tuple = (
-            domain_manager_id, 7, client_id,  unit.legal_entity_id,
+            domain_manager_id, user_category_id, client_id,  unit.legal_entity_id,
             unit.unit_id, domain_name_id_map[unit.domain_name],
             session_user, current_time_stamp
         )

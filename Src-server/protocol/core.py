@@ -127,6 +127,32 @@ class USER_TYPE(object):
 # APPROVAL_STATUS
 #
 
+class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
+    def __init__(self):
+        self._value = {
+            1 : "Yet to submit",
+            2 : "Pending",
+            3 : "Assigned",
+            4 : "Rejected"
+        }
+
+    @staticmethod
+    def values():
+        # return ["Yet to submit", "Pending", "Assigned", "Rejected"]
+        return ASSIGN_STATUTORY_APPROVAL_STATUS._value.values()
+
+    def value(self, key):
+        print key
+        return self._value.get(key)
+
+    @staticmethod
+    def parse_structure(data):
+        return parse_enum(data, ASSIGN_STATUTORY_APPROVAL_STATUS.values())
+
+    def to_structure(self):
+        return self._value
+
+
 class APPROVAL_STATUS(object):
     # Pending = "Pending"
     # Approve = "Approved"
@@ -149,6 +175,7 @@ class APPROVAL_STATUS(object):
 
     def to_structure(self):
         return parse_enum(self._value, APPROVAL_STATUS.values())
+
 
 #
 # COMPLIANCE_APPROVAL_STATUS
@@ -1337,7 +1364,7 @@ class MappedCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id," "comp_name", "is_active",
-            "is_approved", "a_s_t",
+            "is_approved", "approval_status_text",
             "remarks"
         ])
         compliance_id = data.get("comp_id")
@@ -2888,21 +2915,17 @@ class StatutoryDate(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
         statutory_date = data.get("statutory_date")
-        statutory_date = parse_structure_OptionalType_CustomIntegerType_1_31(statutory_date)
         statutory_month = data.get("statutory_month")
-        statutory_month = parse_structure_OptionalType_CustomIntegerType_1_12(statutory_month)
         trigger_before_days = data.get("trigger_before_days")
-        trigger_before_days = parse_structure_OptionalType_CustomIntegerType_1_100(trigger_before_days)
         repeat_by = data.get("repeat_by")
-        repeat_by = parse_structure_OptionalType_CustomTextType_20(repeat_by)
         return StatutoryDate(statutory_date, statutory_month, trigger_before_days, repeat_by)
 
     def to_structure(self):
         return {
-            "statutory_date": to_structure_OptionalType_CustomIntegerType_1_31(self.statutory_date),
-            "statutory_month": to_structure_OptionalType_CustomIntegerType_1_12(self.statutory_month),
-            "trigger_before_days": to_structure_OptionalType_CustomIntegerType_1_100(self.trigger_before_days),
-            "repeat_by": to_structure_OptionalType_CustomTextType_20(self.repeat_by)
+            "statutory_date": self.statutory_date,
+            "statutory_month": self.statutory_month,
+            "trigger_before_days": self.trigger_before_days,
+            "repeat_by": self.repeat_by
         }
 
 #

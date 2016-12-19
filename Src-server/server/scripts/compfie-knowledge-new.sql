@@ -512,7 +512,7 @@ CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `group_admin_username` varchar(20) NULL,
+  `group_admin_username` varchar(20) DEFAULT NULL,
   `total_view_licence` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `remarks` varchar(500) DEFAULT NULL,
@@ -765,7 +765,7 @@ CREATE TABLE `tbl_client_compliances` (
   `client_opted_by` int(11) DEFAULT NULL,
   `client_opted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`,`compliance_id`),
-  UNIQUE KEY `client_compliance_id_UNIQUE` (`client_compliance_id`)
+  UNIQUE KEY (`unit_id`, `domain_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
