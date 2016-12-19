@@ -37,7 +37,7 @@ def return_assigned_statutories(data):
             d["division_name"], c_name, d["geography_name"],
             d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
             core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["status"]),
-            d["status"], d["client_statutory_id"], d["legal_entity_id"]
+            d["status"], d["client_statutory_id"], d["legal_entity_id"], d["reason"]
         ))
 
     return data_list
@@ -236,6 +236,13 @@ def save_client_statutories(db, request, user_id):
             db, comps,
             c.unit_id, status, user_id, csid
         )
+        unit_name = c.unit_name
+        domain_name = c.domain_name
+
+        msg = "Assgined statutories has been approved for following unit(s) %s in %s domain " % (
+            unit_name, domain_name
+        )
+        save_messages(db, cat_domain_manager, "Assign Statutory", msg, "", user_id, c.unit_id)
 
     return True
 
@@ -370,6 +377,8 @@ def save_approve_statutories(db, request, user_id):
     compliance_ids = request.compliance_ids
     s_s = request.submission_type
     reason = request.remarks
+    unit_name = request.unit_name
+    domain_name = request.domain_name
     if s_s not in (3, 4) :
         raise process_error("E089")
 
@@ -387,25 +396,29 @@ def save_approve_statutories(db, request, user_id):
                 " where unit_id = %s and domain_id = %s and compliance_id = %s"
 
             db.execute(q1, [4, user_id, get_date_time(), unit_id, domain_id, c])
+
+        msg = "Assgined statutories has been rejected for unit %s in %s domain with following reason %s" % (
+            unit_name, domain_name, reason
+        )
+
     else :
         q1 = "UPDATE tbl_client_compliances set is_approved=%s where client_statutory_id = %s"
         db.execute(q1, [s_s, client_statutory_id])
+        msg = "Assgined statutories has been approved for unit %s in %s domain " % (
+            unit_name, domain_name
+        )
 
+    save_messages(db, cat_domain_manager, "Approved Assign Statutory", msg, "", user_id, unit_id)
     return True
 
-def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
+def save_messages(db, user_cat_id, message_head, message_text, link, created_by, unit_id):
     msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
     msg_user_id = []
-    if user_cat_id == 8:
-        # get reporting manager id
-        q = "select parent_user_id from tbl_user_mapping where child_user_id = %s"
-    else :
-        # get executive id
-        q = "select child_user_id from tbl_user_mapping where parent_user_id = %s"
+    q = "select user_id from tbl_user_units where user_category_id = %s and unit_id = %s;"
 
-    row = db.execute(q, [created_by])
+    row = db.execute(q, [user_cat_id, unit_id])
     if row :
-        msg_user_id.append(row[0]["parent_user_id"])
+        msg_user_id.append(row[0]["user_id"])
 
     if msg_user_id is not None :
         db.save_messages_users(msg_id, msg_user_id)

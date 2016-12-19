@@ -179,7 +179,7 @@ class SaveAssignedStatutory(Request):
 class ApproveAssignedStatutory(Request):
     def __init__(
         self, unit_id, domain_id, client_statutory_id, compliance_ids,
-        submission_type, remarks
+        submission_type, remarks, unit_name, domain_name
     ):
         self.unit_id = unit_id
         self.domain_id = domain_id
@@ -187,13 +187,16 @@ class ApproveAssignedStatutory(Request):
         self.compliance_ids = compliance_ids
         self.submission_type = submission_type
         self.remarks = remarks
+        self.unit_name = unit_name
+        self.domain_name = domain_name
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "u_id", "d_id", "client_statutory_id", "comp_ids", 
-                "submission_status", "remarks"
+                "u_id", "d_id", "client_statutory_id", "comp_ids",
+                "submission_status", "remarks",
+                "u_name", "d_name"
             ]
         )
         return ApproveAssignedStatutory(
@@ -202,7 +205,9 @@ class ApproveAssignedStatutory(Request):
             data.get("client_statutory_id"),
             data.get("comp_ids"),
             data.get("submission_status"),
-            data.get("remarks")
+            data.get("remarks"),
+            data.get("u_name"),
+            data.get("d_name")
         )
 
     def to_inner_structure(self):
@@ -212,7 +217,9 @@ class ApproveAssignedStatutory(Request):
             "client_statutory_id": self.client_statutory_id,
             "comp_ids": self.compliance_ids,
             "submission_status": self.submission_type,
-            "remarks": self.remarks
+            "remarks": self.remarks,
+            "u_name": self.unit_name,
+            "d_name": self.domain_name
         }
 
 
@@ -220,7 +227,8 @@ class SaveComplianceStatus(object):
     def __init__(
         self, client_id, legal_entity_id, unit_id, domain_id,
         compliance_id, compliance_status,
-        level_1_id, status, remarks, client_statutory_id
+        level_1_id, status, remarks, client_statutory_id,
+        unit_name, domain_name
 
     ):
         self.client_id = client_id
@@ -233,6 +241,8 @@ class SaveComplianceStatus(object):
         self.status = status
         self.remarks = remarks
         self.client_statutory_id = client_statutory_id
+        self.unit_name = unit_name
+        self.domain_name = domain_name
 
     @staticmethod
     def parse_structure(data):
@@ -240,7 +250,8 @@ class SaveComplianceStatus(object):
             "ct_id", "le_id", "u_id", "d_id",
             "comp_id", "comp_status",
             "level_1_s_id",
-            "a_status", "remarks", "client_statutory_id"
+            "a_status", "remarks", "client_statutory_id",
+            "u_name", "d_name"
         ])
 
         client_id = data.get("ct_id")
@@ -253,12 +264,14 @@ class SaveComplianceStatus(object):
         a_status = data.get("a_status")
         remarks = data.get("remarks")
         client_statutory_id = data.get("client_statutory_id")
+        unit_name = data.get("u_name")
+        domain_name = data.get("d_name")
 
         return SaveComplianceStatus(
             client_id, legal_entity_id,
             unit_id, domain_id, compliance_id, compliance_status,
             level_one_id, a_status, remarks,
-            client_statutory_id
+            client_statutory_id, unit_name, domain_name
         )
 
     def to_structure(self):
@@ -272,7 +285,9 @@ class SaveComplianceStatus(object):
             "level_1_s_id": self.level_1_id,
             "a_status": self.status,
             "remarks": self.remarks,
-            "client_statutory_id": self.client_statutory_id
+            "client_statutory_id": self.client_statutory_id,
+            "u_name": self.unit_name,
+            "d_name": self.domain_name
         }
 
 def _init_Request_class_map():
@@ -593,7 +608,7 @@ class AssignedStatutories(object):
         legal_entity_name, division_name, unit_code_with_name,
         geography_name, unit_id, domain_id, domain_name, category_name,
         approve_status, approved_status_id, client_statutory_id,
-        legal_entity_id
+        legal_entity_id, reason
     ):
         self.country_name = country_name
         self.client_id = client_id
@@ -611,6 +626,7 @@ class AssignedStatutories(object):
         self.approved_status_id = approved_status_id
         self.client_statutory_id = client_statutory_id
         self.legal_entity_id = legal_entity_id
+        self.reason = reason
 
     @staticmethod
     def parse_structure(data):
@@ -619,7 +635,7 @@ class AssignedStatutories(object):
             "l_e_name", "div_name",
             "u_id", "u_name", "g_name", "d_id",
             "d_name", "cat_name", "approval_status_text", "a_s_id",
-            "client_statutory_id", "le_id"
+            "client_statutory_id", "le_id", "reason"
         ])
         country_name = data.get("c_name")
         client_id = data.get("ct_id")
@@ -637,6 +653,7 @@ class AssignedStatutories(object):
         approved_status_id = data.get("a_s_id")
         client_statutory_id = data.get("client_statutory_id")
         legal_entity_id = data.get("le_id")
+        reason = data.get("reason")
         return AssignedStatutories(
             country_name,
             client_id, group_name, business_group_name,
@@ -644,7 +661,8 @@ class AssignedStatutories(object):
             unit_code_with_name, geography_name, unit_id, domain_id,
             domain_name, category_name,
             submission_status, approved_status_id,
-            client_statutory_id, legal_entity_id
+            client_statutory_id, legal_entity_id,
+            reason
         )
 
     def to_structure(self):
@@ -665,7 +683,8 @@ class AssignedStatutories(object):
             "approval_status_text": self.submission_status,
             "a_s_id": self.approved_status_id,
             "client_statutory_id": self.client_statutory_id,
-            "le_id": self.legal_entity_id
+            "le_id": self.legal_entity_id,
+            "reason": self.reason
         }
 
 class LegalentityDomains(object):
