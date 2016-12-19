@@ -1427,9 +1427,9 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by)
         # get executive id
         q = "select child_user_id from tbl_user_mapping where parent_user_id = %s"
 
-    row = db.execute(q, [created_by])
+    row = db.select_one(q, [created_by])
     if row :
-        msg_user_id.append(row[0]["parent_user_id"])
+        msg_user_id.append(row["parent_user_id"])
 
     if msg_user_id is not None :
         db.save_messages_users(msg_id, msg_user_id)
