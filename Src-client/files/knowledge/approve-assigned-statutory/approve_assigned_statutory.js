@@ -40,6 +40,8 @@ var DOMAIN_ID = null;
 var UNIT_ID = null;
 var REJ_COMP = [];
 var CLIENT_STATUTORY_ID = null;
+var UNIT_TEXT = null;
+var DOMAIN_TEXT = null;
 
 var LastAct='';
 var LastSubAct='';
@@ -194,6 +196,8 @@ function loadAssignedStatutories(){
             DOMAIN_ID = value.d_id;
             UNIT_ID = value.u_id;
             CLIENT_STATUTORY_ID = value.client_statutory_id;
+            UNIT_TEXT = value.u_name;
+            DOMAIN_TEXT = value.d_name;
             EditAssignedStatutory(value.u_id, value.d_id);
         });
         AssignedStatutoryList.append(clone);       
@@ -232,8 +236,8 @@ SubmitButton.click(function(){
 	        },
 	        close: function() {
 	            if (isAuthenticate) {
-	                mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP,
-				    parseInt(approval_status), reason,
+	                mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP, 
+				    parseInt(approval_status), reason, UNIT_TEXT, DOMAIN_TEXT,
 				        function(error, data) {
 				            if (error == null) {
 				                displaySuccessMessage(message.action_success);
