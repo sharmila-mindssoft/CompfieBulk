@@ -50,14 +50,12 @@ INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '', 21, null);
 INSERT INTO tbl_forms VALUES(22, 2, 'Client Unit', '/knowledge/client-unit', 22, null);
 
 INSERT INTO tbl_forms VALUES(23, 2, 'Assign Statutory', '/knowledge/assign-statutory', 23, null);
-INSERT INTO tbl_forms VALUES(24, 2, 'Approve Assigned Statutory', '/knowledge/assign-statutory', 24, null);
+INSERT INTO tbl_forms VALUES(24, 2, 'Approve Assigned Statutory', '/knowledge/approve-assigned-statutory', 24, null);
 INSERT INTO tbl_forms VALUES(25, 2, 'Configure Database Server', '/knowledge/configure-db-server', 25, null);
 INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/configure-client-server', 26, null);
 INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-storage', 27, null);
 INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
-INSERT INTO tbl_forms VALUES(50, 2,  'Approve Assigned Statutory', '/knowledge/approve-assigned-statutory', '50', null);
-
 
 -- Reports
 INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
