@@ -1902,22 +1902,25 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
 
-  function saveComplianceStatus(client_id, legal_entity_id, unit_id, 
+  function saveComplianceStatus(client_id, legal_entity_id, unit_id,
         domain_id, compliance_id, compliance_status,
-        level_1_id, status, remarks, client_statutory_id) 
-  {
-    var saveCompliance = {};
-    saveCompliance.ct_id = client_id;
-    saveCompliance.le_id = legal_entity_id;
-    saveCompliance.u_id = unit_id;
-    saveCompliance.d_id = domain_id;
-    saveCompliance.comp_id = compliance_id;
-    saveCompliance.comp_status = compliance_status;
-    saveCompliance.level_1_s_id = level_1_id;
-    saveCompliance.a_status = status;
-    saveCompliance.remarks = remarks;
-    saveCompliance.client_statutory_id = client_statutory_id;
-    return saveCompliance;
+        level_1_id, status, remarks, client_statutory_id,
+        unit_name, domain_name
+  ){
+    return {
+        "ct_id": client_id,
+        "le_id": legal_entity_id,
+        "u_id": unit_id,
+        "d_id": domain_id,
+        "comp_id": compliance_id,
+        "comp_status": compliance_status,
+        "level_1_s_id": level_1_id,
+        "a_status": status,
+        "remarks": remarks,
+        "client_statutory_id": client_statutory_id,
+        "u_name": unit_name,
+        "d_name": domain_name
+    }
   }
 
   function saveAssignedStatutory(
@@ -1932,6 +1935,27 @@ function initMirror() {
         }
       ];
       apiRequest(callerName, request, callback);
+  }
+
+  function approveAssignedStatutory(
+    unitId, domainId, cSID, complience_ids, submissionStatus, remark,
+    unitName, domainName, callback
+  ){
+    callerName = 'domain_transaction';
+    var request = [
+        "ApproveAssignedStatutory",
+        {
+          'u_id': unitId,
+          'd_id': domainId,
+          'client_statutory_id': cSID,
+          'comp_ids': complience_ids,
+          'submission_status': submissionStatus,
+          'remarks': remark,
+          'u_name': unitName,
+          'd_name': domainName
+        }
+      ];
+    apiRequest(callerName, request, callback);
   }
 
   /*function submitAssignedStatutory(
@@ -2229,22 +2253,6 @@ function initMirror() {
     var request = [
         "GetAssignedStatutoriesForApprove",
         {}
-      ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function approveAssignedStatutory(unitId, domainId, cSID, complience_ids, submissionStatus, remark, callback){
-    callerName = 'domain_transaction';
-    var request = [
-        "ApproveAssignedStatutory",
-        {
-          'u_id': unitId,
-          'd_id': domainId,
-          'client_statutory_id': cSID,
-          'comp_ids': complience_ids,
-          'submission_status': submissionStatus,
-          'remarks': remark
-        }
       ];
     apiRequest(callerName, request, callback);
   }
