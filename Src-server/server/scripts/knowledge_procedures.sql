@@ -4110,10 +4110,11 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t1.is_approved
-    from tbl_client_compliances as t1
+    from tbl_client_statutories as t
+    inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
     inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
-    where t3.user_id = uid and t1.is_approved = 2
+    where where t.is_approved = 2 and t3.user_id = uid and t1.is_approved = 2
     group by t1.unit_id, t1.domain_id;
 
 END //
@@ -4259,7 +4260,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
     inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 3)
+    and t1.is_approved in (1, 2, 4)
     order by t.statutory_mapping;
 
 END //
@@ -4311,7 +4312,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
     inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 3)
+    and t1.is_approved in (1, 2, 4)
     order by statutory_mapping;
 
     -- new compliances

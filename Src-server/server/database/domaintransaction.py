@@ -226,6 +226,8 @@ def save_client_statutories(db, request, user_id):
             if csid is False :
                 raise process_error("E088")
         else :
+            q1 = "UPDATE tbl_client_statutories set status = %s where client_statutory_id = %s"
+            db.execute(q1, [status, client_statutory_id])
             csid = c.client_statutory_id
 
         saved_unit = c.unit_id
@@ -393,7 +395,7 @@ def save_approve_statutories(db, request, user_id):
             "approved_by", "approved_on"
         ]
         update_column = [
-            "compliance_id", "domain_id", "is_approved",
+            "unit_id", "domain_id", "compliance_id", "is_approved",
             "approved_by", "approved_on"
         ]
 

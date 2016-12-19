@@ -90,3 +90,5 @@ def process_save_assigned_statutory(db, request, user_id):
     data = save_approve_statutories(db, request, user_id)
     if data is True :
         return domaintransactionprotocol.ApproveAssignedStatutorySuccess()
+    else :
+

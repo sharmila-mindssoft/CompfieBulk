@@ -1420,8 +1420,8 @@ def save_approve_mapping(db, user_id, data):
 def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
     msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
     msg_user_id = []
-    if user_cat_id == 4 :
-        # get reporting manager id
+    if user_cat_id == 3 :
+        # get reporting manager id to send executive actions
         q = "select parent_user_id from tbl_user_mapping where child_user_id = %s"
     else :
         # get executive id

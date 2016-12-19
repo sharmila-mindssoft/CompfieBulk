@@ -196,7 +196,7 @@ class ApproveAssignedStatutory(Request):
                 "submission_status", "remarks"
             ]
         )
-        return SaveAssignedStatutory(
+        return ApproveAssignedStatutory(
             data.get("u_id"),
             data.get("d_id"),
             data.get("client_statutory_id"),
