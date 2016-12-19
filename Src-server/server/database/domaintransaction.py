@@ -408,17 +408,23 @@ def save_approve_statutories(db, request, user_id):
             unit_name, domain_name
         )
 
-    save_messages(db, cat_domain_manager, "Approved Assign Statutory", msg, "", user_id, unit_id)
+    save_messages(db, cat_domain_executive, "Approved Assign Statutory", msg, "", user_id, unit_id)
     return True
 
 def save_messages(db, user_cat_id, message_head, message_text, link, created_by, unit_id):
     msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
     msg_user_id = []
-    q = "select user_id from tbl_user_units where user_category_id = %s and unit_id = %s;"
+    q = "select user_id from tbl_user_units where user_category_id = %s and unit_id = %s"
+    # if user_cat_id == cat_domain_executive :
+    #     row = db.select_one(q, [cat_domain_manager, unit_id])
 
+    # elif user_cat_id == cat_domain_manager :
+    #     row = db.select_one(q, [cat_domain_executive, unit_id])
     row = db.select_one(q, [user_cat_id, unit_id])
+    print q % (user_cat_id, unit_id)
+    print row
     if row :
-        msg_user_id.append(row[0]["user_id"])
+        msg_user_id.append(row["user_id"])
 
     if msg_user_id is not None :
         db.save_messages_users(msg_id, msg_user_id)
