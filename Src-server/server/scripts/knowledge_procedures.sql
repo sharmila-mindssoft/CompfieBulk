@@ -5476,6 +5476,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
