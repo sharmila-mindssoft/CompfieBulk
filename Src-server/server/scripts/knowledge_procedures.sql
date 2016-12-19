@@ -4079,8 +4079,9 @@ BEGIN
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
-    t1.is_approved
-    from tbl_client_compliances as t1
+    t.status
+    from tbl_client_statutories as t
+    inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
     inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
     where t3.user_id = uid
@@ -4109,12 +4110,12 @@ BEGIN
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
-    t1.is_approved
+    t.status
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
     inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
-    where where t.is_approved = 2 and t3.user_id = uid and t1.is_approved = 2
+    where t.status = 2 and t3.user_id = uid and t1.is_approved = 2
     group by t1.unit_id, t1.domain_id;
 
 END //

@@ -1,6 +1,8 @@
 from protocol import login, domaintransactionprotocol
 from generalcontroller import (validate_user_session)
 from server.database.domaintransaction import *
+from server.exceptionmessage import process_error
+
 # from server.database.login import verify_password
 
 _all__ = ["process_domain_transaction_request"]
@@ -94,4 +96,4 @@ def process_approve_assigned_statutory(db, request, user_id):
     if data is True :
         return domaintransactionprotocol.ApproveAssignedStatutorySuccess()
     else :
-
+        raise process_error("E088")
