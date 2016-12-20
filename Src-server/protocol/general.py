@@ -896,24 +896,27 @@ class Notification(object):
 # Audit Trail
 #
 class AuditTrail(object):
-    def __init__(self, user_id, form_id, action, date):
+    def __init__(self, user_id, user_category_id, form_id, action, date):
         self.user_id = user_id
+        self.user_category_id = user_category_id
         self.form_id = form_id
         self.action = action
         self.date = date
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "form_id", "action", "date"])
+        data = parse_dictionary(data, ["user_id", "user_category_id", "form_id", "action", "date"])
         user_id = data.get("user_id")
+        user_category_id = data.get("user_category_id")
         form_id = data.get("form_id")
         action = data.get("action")
         date = data.get("date")
-        return AuditTrail(user_id, form_id, action, date)
+        return AuditTrail(user_id, user_category_id, form_id, action, date)
 
     def to_structure(self):
         return {
             "user_id": self.user_id,
+            "user_category_id": self.user_category_id,
             "form_id": self.form_id,
             "action": self.action,
             "date": self.date

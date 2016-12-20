@@ -191,7 +191,7 @@ BEGIN
     ELSE
         Update tbl_validity_date_settings set days=validitydays,
         updated_on = updatedon, updated_by = updatedby
-        WHERE validity_days_id = validitydaysid;
+        WHERE validity_date_id = validitydaysid;
     END IF;
 END //
 
@@ -520,24 +520,47 @@ CREATE PROCEDURE `sp_get_audit_trails`(
 	IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
-	SELECT t1.user_id, t1.form_id, t1.action, t1.created_on
-	FROM tbl_activity_log as t1, tbl_users as t2, tbl_user_countries as t3
-	WHERE
-		date(t1.created_on) >= _from_date
-		AND date(t1.created_on) <= _to_date
-		AND t1.form_id LIKE _form_id
-		AND t1.user_id LIKE t2.user_id
-		AND t3.user_id = t2.user_id
-		AND t2.user_id LIKE _user_id
-		AND t2.user_category_id LIKE _category_id
-		ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
-		limit _from_limit, _to_limit;
+	if _category_id = 1 then
+        SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
+        FROM tbl_activity_log as t1 -- , tbl_users as t2
+        WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        -- AND t2.user_id LIKE _user_id
+        -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
+        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        limit _from_limit, _to_limit;
 
-    SELECT count(0) as total FROM tbl_activity_log
-    WHERE
+        SELECT count(0) as total FROM tbl_activity_log
+        WHERE
         date(created_on) >= _from_date
         AND date(created_on) <= _to_date
-        AND user_id LIKE _user_id AND form_id LIKE _form_id;
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+    end if;
+
+    if _category_id > 2 then
+        SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
+    FROM tbl_activity_log as t1 -- , tbl_users as t2, tbl_user_countries as t3
+    WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        AND t1.user_category_id like _category_id
+        -- AND t3.user_id = t2.user_id
+        -- AND t2.user_id LIKE _user_id
+        -- AND t2.user_category_id LIKE _category_id
+        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        limit _from_limit, _to_limit;
+
+        SELECT count(0) as total FROM tbl_activity_log
+        WHERE
+        date(created_on) >= _from_date
+        AND date(created_on) <= _to_date
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+    end if;
 END //
 
 DELIMITER ;
@@ -1795,7 +1818,7 @@ BEGIN
     WHERE country_id = countryid;
 
     SELECT count(*) as count
-    FROM tbl_client_countries
+    FROM tbl_user_countries
     WHERE country_id = countryid;
 END //
 
@@ -6173,18 +6196,21 @@ DELIMITER //
 CREATE PROCEDURE `sp_countries_for_audit_trails`()
 BEGIN
 	select t1.user_id, t1.country_id,
-	(select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
-	(select country_name from tbl_countries where country_id = t1.country_id) as country_name
-	from
-	tbl_user_countries as t1;
+    (select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
+    (select country_name from tbl_countries where country_id = t1.country_id) as country_name
+    from
+    tbl_user_countries as t1;
 
-	SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
+    SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
 
-	SELECT user_id, user_category_id, employee_name, employee_code, is_active
-	FROM tbl_users;
+    SELECT distinct(t1.user_id), t1.user_category_id,
+    (select employee_name from tbl_users where user_id = t1.user_id) as employee_name,
+    (select employee_code from tbl_users where user_id = t1.user_id) as employee_code,
+    (select is_active from tbl_users where user_id = t1.user_id) as is_active
+    FROM tbl_activity_log as t1;
 
-	SELECT user_id, form_id, action, created_on FROM tbl_activity_log;
-END //
+    SELECT user_id, user_category_id, form_id, action, created_on FROM tbl_activity_log;
+END//
 
 DELIMITER ;
 
@@ -6580,7 +6606,10 @@ BEGIN
     t2.country_id = countryid and
     t2.legal_entity_id = legalentityid and
     t2.client_id = clientid and
-    t2.business_group_id like businessgroupid
+    (case when t2.business_group_id is null then COALESCE(t2.business_group_id,'')
+    like businessgroupid
+    else t2.business_group_id = businessgroupid end)
+
     order by group_name, b_group, l_entity, country_name;
 
     select t3.unit_id, t3.domain_id, t3.organisation_id
@@ -6799,7 +6828,7 @@ BEGIN
     tbl_compliance_frequency;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_approve_assigned_statutories_list`;
@@ -6861,9 +6890,10 @@ BEGIN
         SELECT user_category_id, user_category_name FROM tbl_user_category
         WHERE user_category_id in (8);
     END IF;
-END
+END //
 
-DELIMITER ;
+DELIMITER;
+
 
 -- --------------------------------------------------------------------------------
 -- Get user category id using userid
@@ -6882,3 +6912,18 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_audit_trail_usercategory_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_audit_trail_usercategory_list`()
+BEGIN
+    SELECT user_category_id, user_category_name
+    FROM tbl_user_category where user_category_id > 2
+    or user_category_id = 1;
+END //
+
+DELIMITER;

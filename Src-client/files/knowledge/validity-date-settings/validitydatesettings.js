@@ -66,6 +66,7 @@ function loadValidityDatesList(){
           if(parseInt(value["country_id"]) == country_id &&
             parseInt(value["domain_id"]) == domain_id
           ){
+            console.log("val:"+value["validity_days_id"]);
             $('.validity-day-setting-id', clone1).val(value["validity_days_id"]);
             $('.dconfig-validity-days', clone1).val(value["validity_days"]);
           }
@@ -93,7 +94,7 @@ function save_validity_date_settings() {
       displaySuccessMessage(message.settings_save_success);
     }
     function onFailure(error) {
-      custom_alert(error);
+      displayMessage(error);
     }
     mirror.saveValidityDateSettings(
       values_to_save, function (error, response) {
@@ -110,10 +111,12 @@ function collect_and_validate_values(){
   values_to_save = []
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
+      console.log("domain_list.length;"+domain_list.length)
+      console.log(domain_list)
       domain_id = parseInt(domain_list[dcount])
       validity_days = $(".val-"+country_id+"-"+domain_id).val()
+      console.log("validity_days:"+validity_days)
       validity_days_id = $(".id-"+country_id+"-"+domain_id).val()
-      console.log("validity_days_id:"+validity_days_id)
       if(
           validity_days != "" &&
           validity_days != "undefined" &&
@@ -126,6 +129,7 @@ function collect_and_validate_values(){
         }
         if(validity_days_id){
           validity_days_id = parseInt(validity_days_id)
+          console.log("validity_days_id:"+validity_days_id)
         }
         value = mirror.get_validity_day_setting(
           validity_days_id, parseInt(country_id), parseInt(domain_id),

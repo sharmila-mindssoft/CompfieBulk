@@ -484,6 +484,7 @@ def get_audit_trails(
     from_date, to_date, user_id, form_id,
     country_id, category_id
 ):
+    print "inside database"
     if user_id is None:
         user_id = '%'
     if form_id is None :
@@ -495,6 +496,7 @@ def get_audit_trails(
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
     args = [from_date, to_date, user_id, form_id, country_id, category_id, from_count, to_count]
+    print args
     expected_result = 2
     result = db.call_proc_with_multiresult_set('sp_get_audit_trails', args, expected_result)
     '''
@@ -502,6 +504,7 @@ def get_audit_trails(
     '''
 
     activity_log = result[0]
+    print len(activity_log)
     total = result[1]
 
     assert len(total) > 0
@@ -510,16 +513,26 @@ def get_audit_trails(
     audit_trail_details = []
     for row in activity_log:
         user_id = row["user_id"]
+        user_category_id = row["user_category_id"]
         form_id = row["form_id"]
         action = row["action"]
         date = datetime_to_string_time(row["created_on"])
         audit_trail_details.append(
-            general.AuditTrail(user_id, form_id, action, date)
+            general.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
     return general.GetAuditTrailSuccess(audit_trail_details, c_total)
 
+def get_user_cetegories_audit_trail(db):
+    userCategoryList = []
+    rows = db.call_proc("sp_audit_trail_usercategory_list", None)
+    for row in rows:
+        userCategoryList.append(core.UserCategory(
+            row["user_category_id"], row["user_category_name"])
+        )
+    return userCategoryList
+
 def get_audit_trail_filters(db):
-    user_categories = get_user_cetegories_db(db)
+    user_categories = get_user_cetegories_audit_trail(db)
     expected_result = 4
     result = db.call_proc_with_multiresult_set('sp_countries_for_audit_trails', (), expected_result)
     countries = result[0]
@@ -538,11 +551,12 @@ def get_audit_trail_filters(db):
     audit_trail_details = []
     for row in forms_log:
         user_id = row["user_id"]
+        user_category_id = row["user_category_id"]
         form_id = row["form_id"]
         action = row["action"]
         date = datetime_to_string_time(row["created_on"])
         audit_trail_details.append(
-            general.AuditTrail(user_id, form_id, action, date)
+            general.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
     return general.GetAuditTrailFilterSuccess(user_categories, audit_trail_countries, forms_list, users, audit_trail_details)
 
