@@ -68,12 +68,14 @@ function assignLE(cId, cName, gName) {
     mirror.getEditAssignLegalEntity(cId, function(error, data) {
         if (error == null) {
             ListScreen.hide();
-            AddScreen.hide();
             AddScreen.show();
             Group_Label.text(gName);
             Country_Label.text(cName);
             assignLegalEntitiesList = data.unassign_legal_entities;
             userList = data.techno_users;
+            $(".select_all").prop('checked', false);
+            $(".form_checkbox").prop('checked', false);
+            $('.selected_checkbox_count').html('0');
             loadLegalEntityList(assignLegalEntitiesList);
         } else {
             custom_alert(error);
@@ -121,11 +123,15 @@ function loadGroupList(assignLegalEntitiesList) {
             $('.assign', clone).on('click', function() {
                 assignLE(client_id, countryName, groupName);
             });
+        }else{
+            $('.assign', clone).hide();
         }
         if (unAssignedLE != legalEntityCount) {
             $('.view', clone).on('click', function() {
                 viewLE(client_id, countryName, groupName);
             });
+        }else{
+            $('.view', clone).hide();
         }
         $('.tbody-list').append(clone);
         j = j + 1;
@@ -133,16 +139,8 @@ function loadGroupList(assignLegalEntitiesList) {
 }
 
 $(".select_all").change(function() {
-    $(".form_checkbox").prop('checked', $(this).prop("checked"));
-});
-
-$('.form_checkbox').change(function() {
-    if (false == $(this).prop("checked")) {
-        $("#select_all").prop('checked', false);
-    }
-    if ($('.form_checkbox:checked').length == $('.form_checkbox').length) {
-        $("#select_all").prop('checked', true);
-    }
+    $(".tbody-add-list .form_checkbox").prop('checked', $(this).prop("checked"));
+    $('.selected_checkbox_count').html($('.form_checkbox:checked').length);
 });
 
 function loadLegalEntityList(assignLegalEntitiesList) {
@@ -179,7 +177,7 @@ function loadLegalEntityList(assignLegalEntitiesList) {
 }
 
 function loadUserList(assignLegalEntitiesList) {
-    console.log(assignLegalEntitiesList);
+    var LastName = '';
     var j = 1;
     $('.tbody-view-list').find('tr').remove();
     $.each(assignLegalEntitiesList, function(key, value) {
@@ -187,6 +185,14 @@ function loadUserList(assignLegalEntitiesList) {
         var bgName = '-';
         if (value.business_group_name != null) bgName = value.business_group_name;
         var cName = value.c_name;
+
+        if(LastName != value.employee_name){
+            var tableRow = $('#templates .table-assign-le-view .table-row-name');
+            var clone1 = tableRow.clone();
+            $('.emp-name', clone1).text(value.employee_name);
+            $('.tbody-view-list').append(clone1);
+            LastName = value.employee_name;
+        }
 
         var tableRow = $('#templates .table-assign-le-view .table-row');
         var clone = tableRow.clone();
@@ -311,7 +317,6 @@ function pageControls() {
         if (textval.length > 0) {
             for (var i in users) {
                 if (~users[i].employee_name.toLowerCase().indexOf(textval.toLowerCase()) && users[i].is_active == true) {
-                    console.log(users[i]);
                     if (checkusercountries(users[i].user_id, users[i].country_ids) == 1) {
                         console.log(users[i].user_id);
                         suggestions.push([

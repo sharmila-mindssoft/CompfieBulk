@@ -34,17 +34,19 @@ function initialize() {
 
 function processSearch()
 {
+  searchList = [];
   c_name = FilterCountry.val().toLowerCase();
-
+  console.log("c:"+c_name)
   if(c_name.length > 0){
     usr_status = $('.search-status-li.active').attr('value');
 
-
+    console.log("data len:"+countriesList.length)
   for(var i in countriesList){
       data = countriesList[i];
 
       data_c_name = data.country_name.toLowerCase();
       data_is_active = data.is_active;
+      console.log("stat:"+data.is_active)
 
       if (
         (~data_c_name.indexOf(c_name)))
@@ -55,6 +57,18 @@ function processSearch()
       }
     }
   }
+  else{
+    usr_status = $('.search-status-li.active').attr('value');
+    for(var i in countriesList){
+      data = countriesList[i];
+      data_is_active = data.is_active;
+
+      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+          searchList.push(data);
+        }
+      }
+    }
+  console.log("len:"+searchList.length)
   processPaging();
 }
 
@@ -119,6 +133,7 @@ function renderControls(){
   });
 
   Search_status.change(function() {
+      searchList = [];
       processSearch();
   });
 }

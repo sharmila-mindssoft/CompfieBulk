@@ -320,6 +320,7 @@ def process_get_countries(db, user_id):
 # To retrieve all the audit trails of the given User
 ########################################################
 def process_get_audit_trails(db, request, session_user):
+    print "inside controller"
     from_count = request.record_count
     to_count = request.page_count
     from_date = request.from_date

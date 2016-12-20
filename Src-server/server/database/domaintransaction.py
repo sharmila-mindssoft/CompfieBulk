@@ -217,8 +217,7 @@ def save_client_statutories(db, request, user_id):
     saved_unit = []
 
     for c in comps :
-        print c.unit_id, saved_unit
-        print "-" * 50
+
         if c.unit_id in saved_unit :
             continue
 
@@ -232,7 +231,6 @@ def save_client_statutories(db, request, user_id):
             csid = c.client_statutory_id
 
         saved_unit.append(c.unit_id)
-        print saved_unit
         save_statutory_compliances(
             db, comps,
             c.unit_id, status, user_id, csid

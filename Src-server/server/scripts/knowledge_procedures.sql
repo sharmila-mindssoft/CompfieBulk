@@ -191,7 +191,7 @@ BEGIN
     ELSE
         Update tbl_validity_date_settings set days=validitydays,
         updated_on = updatedon, updated_by = updatedby
-        WHERE validity_days_id = validitydaysid;
+        WHERE validity_date_id = validitydaysid;
     END IF;
 END //
 
@@ -520,24 +520,47 @@ CREATE PROCEDURE `sp_get_audit_trails`(
 	IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
-	SELECT t1.user_id, t1.form_id, t1.action, t1.created_on
-	FROM tbl_activity_log as t1, tbl_users as t2, tbl_user_countries as t3
-	WHERE
-		date(t1.created_on) >= _from_date
-		AND date(t1.created_on) <= _to_date
-		AND t1.form_id LIKE _form_id
-		AND t1.user_id LIKE t2.user_id
-		AND t3.user_id = t2.user_id
-		AND t2.user_id LIKE _user_id
-		AND t2.user_category_id LIKE _category_id
-		ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
-		limit _from_limit, _to_limit;
+	if _category_id = 1 then
+        SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
+        FROM tbl_activity_log as t1 -- , tbl_users as t2
+        WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        -- AND t2.user_id LIKE _user_id
+        -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
+        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        limit _from_limit, _to_limit;
 
-    SELECT count(0) as total FROM tbl_activity_log
-    WHERE
+        SELECT count(0) as total FROM tbl_activity_log
+        WHERE
         date(created_on) >= _from_date
         AND date(created_on) <= _to_date
-        AND user_id LIKE _user_id AND form_id LIKE _form_id;
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+    end if;
+
+    if _category_id > 2 then
+        SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
+    FROM tbl_activity_log as t1 -- , tbl_users as t2, tbl_user_countries as t3
+    WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        AND t1.user_category_id like _category_id
+        -- AND t3.user_id = t2.user_id
+        -- AND t2.user_id LIKE _user_id
+        -- AND t2.user_category_id LIKE _category_id
+        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        limit _from_limit, _to_limit;
+
+        SELECT count(0) as total FROM tbl_activity_log
+        WHERE
+        date(created_on) >= _from_date
+        AND date(created_on) <= _to_date
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+    end if;
 END //
 
 DELIMITER ;
@@ -1592,9 +1615,9 @@ DROP PROCEDURE IF EXISTS `sp_units_approval_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_units_approval_list`()
+CREATE PROCEDURE `sp_units_approval_list`(in userId INT(11))
 BEGIN
-    SELECT legal_entity_id, legal_entity_name,
+    SELECT tle.legal_entity_id, tle.legal_entity_name,
     (
         SELECT country_name FROM tbl_countries tc
         WHERE tc.country_id = tle.country_id
@@ -1607,14 +1630,17 @@ BEGIN
         SELECT group_name FROM tbl_client_groups tcg
         WHERE tcg.client_id = tle.client_id
     ) as group_name,
-    (
-        SELECT count(unit_id) FROM tbl_units tu
-        WHERE is_closed=0 and tu.legal_entity_id=tle.legal_entity_id
-        and is_approved=0
-    ) as unit_count FROM tbl_legal_entities tle;
+    count(unit_id) as unit_count
+    FROM tbl_legal_entities tle
+    inner join tbl_user_clients tuc on tuc.client_id = tle.client_id and tuc.user_id = userId
+    INNER JOIN tbl_units tu on tu.legal_entity_id=tle.legal_entity_id
+    WHERE tu.is_closed=0 and tu.is_approved=0 and tle.is_closed = 0
+    group by tle.legal_entity_id, tle.legal_entity_name
+    order by group_name;
 END //
 
 DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 --  Get list of Units to be approved by legal entity id
 -- --------------------------------------------------------------------------------
@@ -1792,7 +1818,7 @@ BEGIN
     WHERE country_id = countryid;
 
     SELECT count(*) as count
-    FROM tbl_client_countries
+    FROM tbl_user_countries
     WHERE country_id = countryid;
 END //
 
@@ -3422,12 +3448,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_assign_legal_entities_list`()
 BEGIN
-    select client_id, group_name,
+    select tcg.client_id, tcg.group_name,
     (
         select group_concat(country_name) from tbl_countries
         where country_id in (
             select country_id from tbl_legal_entities
-            where client_id=client_id
+            where client_id=tcg.client_id
         )
     ) as country_names,
     (
@@ -3439,7 +3465,8 @@ BEGIN
         WHERE tule.client_id=tcg.client_id group by tule.client_id
     ) as no_of_assigned_legal_entities
 
-    FROM tbl_client_groups tcg;
+    FROM tbl_client_groups tcg where tcg.is_approved = 1 and tcg.is_active = 1
+    order by tcg.group_name;
 
 END //
 
@@ -3479,7 +3506,8 @@ BEGIN
     SELECT t1.child_user_id as user_id, t2.is_active,
     concat(t2.employee_code," - ", t2.employee_name) as employee_name
     from tbl_user_mapping t1
-    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
+    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6 
+    AND t2.is_active = 1 AND t2.is_disable = 0
     WHERE t1.parent_user_id = session_user;
     SELECT user_id, country_id FROM tbl_user_countries;
     SELECT user_id, domain_id FROM tbl_user_domains;
@@ -3498,12 +3526,14 @@ CREATE PROCEDURE `sp_assigned_legal_entity_details_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT t1.legal_entity_id, t1.legal_entity_name,t2.business_group_name, t3.country_name, t3.country_id
+    SELECT t1.legal_entity_id, t1.legal_entity_name,t2.business_group_name, t3.country_name, t3.country_id,
+    (select concat(employee_code, '-' ,employee_name) from tbl_users where user_id = t4.user_id) as employee_name
     FROM tbl_legal_entities t1
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t4.legal_entity_id is not null;
+    WHERE t1.client_id=clientid and t4.legal_entity_id is not null
+    order by t4.user_id;
 END //
 
 DELIMITER ;
@@ -5476,6 +5506,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
@@ -6165,18 +6196,21 @@ DELIMITER //
 CREATE PROCEDURE `sp_countries_for_audit_trails`()
 BEGIN
 	select t1.user_id, t1.country_id,
-	(select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
-	(select country_name from tbl_countries where country_id = t1.country_id) as country_name
-	from
-	tbl_user_countries as t1;
+    (select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
+    (select country_name from tbl_countries where country_id = t1.country_id) as country_name
+    from
+    tbl_user_countries as t1;
 
-	SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
+    SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
 
-	SELECT user_id, user_category_id, employee_name, employee_code, is_active
-	FROM tbl_users;
+    SELECT distinct(t1.user_id), t1.user_category_id,
+    (select employee_name from tbl_users where user_id = t1.user_id) as employee_name,
+    (select employee_code from tbl_users where user_id = t1.user_id) as employee_code,
+    (select is_active from tbl_users where user_id = t1.user_id) as is_active
+    FROM tbl_activity_log as t1;
 
-	SELECT user_id, form_id, action, created_on FROM tbl_activity_log;
-END //
+    SELECT user_id, user_category_id, form_id, action, created_on FROM tbl_activity_log;
+END//
 
 DELIMITER ;
 
@@ -6572,7 +6606,10 @@ BEGIN
     t2.country_id = countryid and
     t2.legal_entity_id = legalentityid and
     t2.client_id = clientid and
-    t2.business_group_id like businessgroupid
+    (case when t2.business_group_id is null then COALESCE(t2.business_group_id,'')
+    like businessgroupid
+    else t2.business_group_id = businessgroupid end)
+
     order by group_name, b_group, l_entity, country_name;
 
     select t3.unit_id, t3.domain_id, t3.organisation_id
@@ -6791,7 +6828,7 @@ BEGIN
     tbl_compliance_frequency;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_approve_assigned_statutories_list`;
@@ -6853,9 +6890,10 @@ BEGIN
         SELECT user_category_id, user_category_name FROM tbl_user_category
         WHERE user_category_id in (8);
     END IF;
-END
+END //
 
-DELIMITER ;
+DELIMITER;
+
 
 -- --------------------------------------------------------------------------------
 -- Get user category id using userid
@@ -6874,3 +6912,18 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_audit_trail_usercategory_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_audit_trail_usercategory_list`()
+BEGIN
+    SELECT user_category_id, user_category_name
+    FROM tbl_user_category where user_category_id > 2
+    or user_category_id = 1;
+END //
+
+DELIMITER;

@@ -125,7 +125,12 @@ function loadApprovalForm(){
     generateDivisionCategoryCombinations();
     $(".approve_group_name").text("Group : "+LE_DICT[LE_ID]["group_name"]);
     $(".approve_country_name").text("Country : "+LE_DICT[LE_ID]["country_name"]);
-    $(".approve_bg_name").text("Business Group : "+LE_DICT[LE_ID]["bg_name"]);
+    if(LE_DICT[LE_ID]["bg_name"] == null){
+        $(".approve_bg_name").text("Business Group : -");
+    }else{
+        $(".approve_bg_name").text("Business Group : "+LE_DICT[LE_ID]["bg_name"]);
+    }
+    
     $(".approve_le_name").text("Legal Entity : "+LE_DICT[LE_ID]["le_name"]);
     $.each(LE_APPROVAL_LIST, function(key, value){
         var division_name = value["division_name"];
@@ -208,6 +213,7 @@ function updateGroupUnitStatus(e){
     var selected_option = $("#"+selected_class).val();
     $('.group-select-'+selected_class).each(function() {
         $('.group-select-'+selected_class).val(selected_option);
+        $('.group-reason-'+selected_class).hide();
     });
     if(selected_option == 2){
         $("#reason-"+selected_class).show();    
@@ -268,7 +274,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(unit_approval_details.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.unit_approve_success);
+                displaySuccessMessage(message.action_success);
                 initialize("list");
             }
             function onFailure(error) {

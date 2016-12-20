@@ -28,14 +28,14 @@
                 <tr class="odd gradeX">
                   <td align="center"></td>
                   <td>
-                    <div class="form-group col-sm-12 no-padding">
-                      <input type="text" class="form-control input-sm js-filter" />
+                    <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                      <input type="text" class="form-control input-sm js-filter" placeholder="Enter Country" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
-                    <div class="form-group col-sm-12 no-padding">
-                      <input type="text" class="form-control input-sm js-filter">
+                    <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                      <input type="text" class="form-control input-sm js-filter" placeholder="Enter Group">
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
@@ -100,7 +100,7 @@
                 <thead>
                   <tr>
                     <th width="2%" align="center">
-                      <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                      <div class="checkbox checkbox-primary checkbox-white m-b-0 m-t-0 p-t-2">
                           <input id="checkbox1" type="checkbox" class="select_all">
                           <label for="checkbox1"></label>
                       </div>
@@ -112,20 +112,20 @@
                   <tr>
                     <td></td>
                     <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm js-filter-add" id="add-filter-country" />
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter-add" id="add-filter-country" placeholder="Enter Country"/>
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm js-filter-add" />
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter-add" placeholder="Enter Business Group"/>
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm js-filter-add"/>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter-add" placeholder="Enter Legal Entity"/>
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
@@ -140,7 +140,7 @@
               <div class="col-lg-12">
                 <form class="form-horizontal" role="form">
                   <div class="form-group has-feedback reassign-du" >
-                    <label class="col-md-5 control-label">Assign To Techno Executive:</label>
+                    <label class="col-md-5 control-label">Assign To Techno Executive: <span class="mandatory">*</span></label>
                     <div class="col-md-3">
                       <input  class="form-control input-sm" id="userval" >
                       <i class="fa-1-5x form-control-feedback fa fa-search"></i>
@@ -248,7 +248,16 @@
     <td class="add-le"></td>
     </tr>
   </table>
-    <table class="table-assign-le-view">
+
+  <table class="table-assign-le-view">
+    <tr class="table-row-name">
+      <td colspan="3">
+      <div class="col-sm-2 no-padding">
+            <mark class="emp-name"></mark>
+        </div>
+      </td>
+    </tr>
+
     <tr class="table-row">
       <td class="view-country"></td>
       <td class="view-bgroup"></td>
