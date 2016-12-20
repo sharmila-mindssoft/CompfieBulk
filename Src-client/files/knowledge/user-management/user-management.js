@@ -71,6 +71,25 @@ function sendCredentials(_u_id, _u_name, _e_id) {
 
     });
 }
+
+//Status Title
+
+function showTitle(e){
+  if(e.className == "fa c-pointer status fa-times text-danger"){
+    e.title = 'Click Here to Activate';
+  }
+  else if(e.className == "fa c-pointer status fa-check text-success")
+  {
+    e.title = 'Click Here to Deactivate';
+  }
+  else if (e.className == "fa c-pointer disable fa-ban text-muted") {
+    e.title = 'Click Here to Disable';;
+  }
+  else if (e.className == "fa c-pointer disable fa-ban text-danger") {
+    e.title = "Click Here to Enable";
+  }
+}
+
 // User List render process
 function renderUserList(response) {
     renderUserData = function() {
@@ -109,15 +128,19 @@ function renderUserList(response) {
 
             if (v.is_active == true) {
                 statusmsg = message.deactive_message;
-                $('.status').attr('title', 'Click Here to Deactivate');
+                // alert(statusmsg);
+                // $('.status').attr('title', 'Click Here to Deactivate');
                 $('.status', rowClone).removeClass('fa-times text-danger');
                 $('.status', rowClone).addClass('fa-check text-success');
             } else {
                 statusmsg = message.active_message;
-                $('.status').attr('title', 'Click Here to Activate');
+                // $('.status').attr('title', 'Click Here to Activate');
                 $('.status', rowClone).removeClass('fa-check text-success');
                 $('.status', rowClone).addClass('fa-times text-danger');
             }
+            $('.status', rowClone).hover(function(){
+                showTitle(this);
+            });
             $('.status', rowClone).on('click', function(e) {
                 CurrentPassword.val('');
                 Remark.val('');
@@ -144,15 +167,18 @@ function renderUserList(response) {
 
             if (v.is_disable == true) {
                 disablemsg = message.enable_message;
-                $('.disable').attr('title', 'Click Here to Disable');
+                // $('.disable').attr('title', 'Click Here to Disable');
                 $('.disable', rowClone).removeClass('fa-ban text-muted');
                 $('.disable', rowClone).addClass('fa-ban text-danger');
             } else {
                 disablemsg = message.disable_message;
-                $('.disable').attr('title', 'Click Here to Enable');
+                // $('.disable').attr('title', 'Click Here to Enable');
                 $('.disable', rowClone).removeClass('fa-ban text-danger');
                 $('.disable', rowClone).addClass('fa-ban text-muted');
             }
+            $('.disable', rowClone).hover(function() {
+                showTitle(this);
+            });
             $('.disable', rowClone).on('click', function(e) {
                 CurrentPassword.val('');
                 Remark.val('');
@@ -247,11 +273,14 @@ function loadUserCategories() {
 function loadCountries() {
     Countries.empty();
     $.each(CountryList, function(key, value) {
+        if (value.is_active == false) {
+            return;
+        }
         var optText = '<option></option>';
-        if ($.inArray(CountryList[key].country_id, Country_ids) >= 0) {
+        if ($.inArray(value.country_id, Country_ids) >= 0) {
             optText = '<option selected="selected"></option>';
         }
-        Countries.append($(optText).val(CountryList[key].country_id).html(CountryList[key].country_name));
+        Countries.append($(optText).val(value.country_id).html(value.country_name));
     });
     Countries.multiselect('rebuild');
 }
@@ -262,23 +291,25 @@ function loadDomains() {
         var sCountries = Countries.val().map(Number);
         var str = '';
         $.each(CountryList, function(key, value) {
-            var cId = CountryList[key].country_id;
+            var cId = value.country_id;
             if ($.inArray(cId, sCountries) >= 0) {
                 var flag = true;
-                $.each(DomainsList, function(key1, value1) {
-                    if ($.inArray(cId, DomainsList[key1].country_ids) >= 0) {
+                $.each(DomainsList, function(key1, v) {
+                    if (v.is_active == false) {
+                        return;
+                    }
+                    if ($.inArray(cId, v.country_ids) >= 0) {
                         var sText = '';
                         $.each(Domain_ids, function(key2, value2) {
-                            if (DomainsList[key1].domain_id == Domain_ids[key2].d_id && cId == Domain_ids[key2].c_id) {
+                            if (v.domain_id == value2.d_id && cId == value2.c_id) {
                                 sText = 'selected="selected"'
                             }
-
                         });
                         if (flag) {
-                            str += '<optgroup label="' + CountryList[key].country_name + '">';
+                            str += '<optgroup label="' + value.country_name + '">';
                         }
-                        var dVal = cId + '-' + DomainsList[key1].domain_id;
-                        str += '<option value="' + dVal + '" ' + sText + '>' + DomainsList[key1].domain_name + '</option>';
+                        var dVal = cId + '-' + v.domain_id;
+                        str += '<option value="' + dVal + '" ' + sText + '>' + v.domain_name + '</option>';
                         flag = false;
                     }
                 });
@@ -569,7 +600,7 @@ function fieldOrder() {
         this.value = isNumbers_Countrycode($(this));
     });
     Mobile_no.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        this.value = isNumbers($(this));
     });
 }
 // List filter process
@@ -691,6 +722,10 @@ function pageControls() {
     });
     PasswordSubmitButton.click(function() {
         validateAuthentication();
+    });
+    User_category.change(function() {
+        User_group_ac.val('');
+        User_group_val.val('');
     });
 
 }

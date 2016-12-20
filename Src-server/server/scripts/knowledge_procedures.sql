@@ -2285,7 +2285,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_users_save`(
     IN u_cat_id INT(11), userid INT(11), emailid VARCHAR(100), ug_id INT(11),
     emp_name VARCHAR(50), emp_code VARCHAR(20),
-    contactno VARCHAR(12), mobileno VARCHAR(15), addr TEXT, desig VARCHAR(50),
+    contactno VARCHAR(50), mobileno VARCHAR(50), addr TEXT, desig VARCHAR(50),
     session_user INT(11)
 )
 BEGIN
@@ -3506,7 +3506,7 @@ BEGIN
     SELECT t1.child_user_id as user_id, t2.is_active,
     concat(t2.employee_code," - ", t2.employee_name) as employee_name
     from tbl_user_mapping t1
-    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6 
+    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
     AND t2.is_active = 1 AND t2.is_disable = 0
     WHERE t1.parent_user_id = session_user;
     SELECT user_id, country_id FROM tbl_user_countries;
@@ -6926,4 +6926,4 @@ BEGIN
     or user_category_id = 1;
 END //
 
-DELIMITER;
+DELIMITER ;

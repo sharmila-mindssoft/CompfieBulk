@@ -21,7 +21,7 @@ $('#btn-country-cancel').click(function () {
   $('#country-add').hide();
   $('#ctry-view').show();
   $('#search-country-name').val('');
-  loadCountriesList(counList);
+  // loadCountriesList(counList);
 });
 //get countries list from api
 function initialize() {
@@ -275,13 +275,11 @@ function processSearch(){
 
   $.each(counList, function (j, value) {
     data = counList[j];
-    console.log("2:"+data)
     data_is_active = counList[j].is_active;
     if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == data_is_active)){
       searchList.push(data);
     }
   });
-  console.log(searchList)
 
   loadCountriesList(searchList);
 }

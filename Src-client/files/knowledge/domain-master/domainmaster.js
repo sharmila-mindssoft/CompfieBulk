@@ -40,28 +40,18 @@ function DomainPage() {
     this._country_ids = [];
 }
 
-DomainPage.prototype.displayMessage = function(message){
-    Msg_pan.text(message);
-    Msg_pan.show();
-};
-
-DomainPage.prototype.clearMessage = function(){
-    Msg_pan.text('');
-    Msg_pan.hide();
-};
-
 DomainPage.prototype.possibleFailures = function(error) {
-    if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage(msg.domainname_exists);
+    if (error == "DomainNameAlreadyExists") {
+        displayMessage(msg.domainname_exists);
     }
     else if (error == 'InvalidDomainId') {
-        this.displayMessage(msg.invalid_domainid);
+        displayMessage(msg.invalid_domainid);
     }
     else if (error == 'InvalidPassword') {
-        this.displayMessage(msg.invalid_password);
+        displayMessage(msg.invalid_password);
     }
     else {
-        this.displayMessage(error);
+        displayMessage(error);
     }
 };
 
@@ -91,17 +81,15 @@ DomainPage.prototype.showList = function() {
     Domain_id.val('');
     SearchDomain.val('');
     SearchCountry.val('');
-    this.fetchDomain();
 };
 DomainPage.prototype.showAddScreen = function() {
     ViewScreen.hide();
     AddScreen.show();
     Domain_id.val('');
     Domain_name.val('');
-    this.displayMessage('');
     this._country_ids = [];
     this.fetchCountryMultiselect();
-    Domain_name.focus();
+    MultiSelect_Country.focus();
 };
 DomainPage.prototype.renderList = function(d_data) {
     t_this = this;
@@ -192,7 +180,7 @@ DomainPage.prototype.validateAuthentication = function() {
     t_this = this;
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
-        this.displayMessage(msg.password_required);
+        displayMessage(msg.password_required);
         CurrentPassword.focus();
         return false;
     } else {
@@ -250,6 +238,7 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
     mirror.changeDomainStatus(d_id, status, function(error, response) {
         if (error == null) {
             t_this.showList();
+            t_this.fetchDomain();
         }
         else {
             t_this.possibleFailures(error);
@@ -261,9 +250,8 @@ DomainPage.prototype.validate = function() {
     var checkLength = domainValidate();
     if (checkLength) {
         if (Domain_name.val().trim().length ==0) {
-            this.displayMessage(msg.domainname_required);
+            displayMessage(msg.domainname_required);
         } else {
-            this.displayMessage('');
             return true;
         }
     }
@@ -286,19 +274,20 @@ function DomainValidate() {
 }
 
 DomainPage.prototype.submitProcess = function() {
+    DomainValidate();
     d_id = parseInt(Domain_id.val());
     name = Domain_name.val().trim();
     c_ids = MultiSelect_Country.val().map(Number);
-    DomainValidate();
+
     t_this = this;
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
             if (error == null) {
-                t_this.displayMessage(error);
                 displaySuccessMessage(message.save_success);
                 t_this.showList();
+                t_this.fetchDomain();
             } else {
-                t_this.displayMessage(error);
+                t_this.possibleFailures(error);
             }
         });
     } else {
@@ -306,8 +295,9 @@ DomainPage.prototype.submitProcess = function() {
             if (error == null) {
                 displaySuccessMessage(message.update_success);
                 t_this.showList();
+                t_this.fetchDomain();
             } else {
-                t_this.displayMessage(error);
+                t_this.possibleFailures(error);
             }
         });
     }
@@ -332,7 +322,7 @@ function list_click(element) {
     if (klass == country_class) {
         $(element).removeClass(country_class);
         d_page._country_ids.splice(d_page._country_ids.indexOf(parseInt(element.id)));
-    } 
+    }
     else {
         $(element).addClass(country_class);
         d_page._country_ids.push(parseInt(element.id));
@@ -527,5 +517,6 @@ $(document).ready(function() {
     });
     PageControls();
     d_page.showList();
+    d_page.fetchDomain();
 });
 
