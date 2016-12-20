@@ -22,7 +22,6 @@ def get_assigned_statutories_list(db, user_id):
     result = db.call_proc(
         "sp_clientstatutories_list", [user_id]
     )
-    print result
     return return_assigned_statutories(result)
 
 
@@ -183,7 +182,6 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id):
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
-        print level_1, map_text
         # before save rest of the field will be null before save in assignstatutorycompliance
         data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
             level_1, level_1_name, map_text,
@@ -197,7 +195,6 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id):
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
-        print level_1, map_text
         # before save rest of the field will be null before save in assignstatutorycompliance
         data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
             level_1, level_1_name, map_text,
@@ -220,6 +217,8 @@ def save_client_statutories(db, request, user_id):
     saved_unit = []
 
     for c in comps :
+        print c.unit_id, saved_unit
+        print "-" * 50
         if c.unit_id in saved_unit :
             continue
 
@@ -233,7 +232,7 @@ def save_client_statutories(db, request, user_id):
             csid = c.client_statutory_id
 
         saved_unit.append(c.unit_id)
-
+        print saved_unit
         save_statutory_compliances(
             db, comps,
             c.unit_id, status, user_id, csid
@@ -301,7 +300,6 @@ def get_assigned_compliance_by_id(db, request, user_id):
     def organisation_list(map_id) :
         org_list = []
         for o in organisation :
-            print o
             if o.get("statutory_mapping_id") == map_id :
                 org_list.append(o["organisation_name"])
         return org_list
@@ -334,7 +332,6 @@ def get_assigned_compliance_by_id(db, request, user_id):
         orgs = organisation_list(map_id)
 
         level_1, level_1_s_name, map_text = status_list(map_id)
-        print level_1, map_text
         # before save rest of the field will be null before save in assignstatutorycompliance
         data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
             level_1, level_1_s_name, map_text,
@@ -349,7 +346,6 @@ def get_assigned_compliance_by_id(db, request, user_id):
         orgs = organisation_list(map_id)
 
         level_1, level_1_s_name, map_text = status_list(map_id)
-        print level_1, map_text
         # before save rest of the field will be null before save in assignstatutorycompliance
         data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
             level_1, level_1_s_name, map_text,
@@ -423,8 +419,6 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by,
     # elif user_cat_id == cat_domain_manager :
     #     row = db.select_one(q, [cat_domain_executive, unit_id])
     row = db.select_one(q, [user_cat_id, unit_id])
-    print q % (user_cat_id, unit_id)
-    print row
     if row :
         msg_user_id.append(row["user_id"])
 
