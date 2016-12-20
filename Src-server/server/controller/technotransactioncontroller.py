@@ -1,5 +1,5 @@
 import time
-from protocol import login, technotransactions
+from protocol import login, technotransactions, technomasters
 from generalcontroller import (
     validate_user_session, validate_user_forms
 )
@@ -35,14 +35,14 @@ def process_techno_transaction_request(request, db):
     if user_id is None:
         return login.InvalidSessionToken()
 
-    if type(request_frame) is technotransactions.GetAssignedStatutories:
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutories(db)
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+    # if type(request_frame) is technotransactions.GetAssignedStatutories:
+    #     logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
+    #     logger.logKnowledgeApi("------", str(time.time()))
+    #     result = process_get_assigned_statutories(db)
+    #     logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
+    #     logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technotransactions.GetAssignedStatutoriesById:
+    if type(request_frame) is technotransactions.GetAssignedStatutoriesById:
         logger.logKnowledgeApi("GetAssignedStatutoriesById", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutories_by_id(db, request_frame, user_id)
@@ -64,20 +64,20 @@ def process_techno_transaction_request(request, db):
         )
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif(
-        type(
-            request_frame
-        ) is technotransactions.GetAssignedStatutoryWizardTwoData
-    ):
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardTwoData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutory_wizard_two(
-            db, request_frame, user_id
-        )
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardTwoData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+    # elif(
+    #     type(
+    #         request_frame
+    #     ) is technotransactions.GetAssignedStatutoryWizardTwoData
+    # ):
+    #     logger.logKnowledgeApi(
+    #         "GetAssignedStatutoryWizardTwoData", "process begin")
+    #     logger.logKnowledgeApi("------", str(time.time()))
+    #     result = process_get_assigned_statutory_wizard_two(
+    #         db, request_frame, user_id
+    #     )
+    #     logger.logKnowledgeApi(
+    #         "GetAssignedStatutoryWizardTwoData", "process end")
+    #     logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.SaveAssignedStatutory:
         logger.logKnowledgeApi("SaveAssignedStatutory", "process begin")
@@ -125,7 +125,6 @@ def process_techno_transaction_request(request, db):
         result = process_Save_LegalEntityClosureData(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveLegalEntityClosureData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
-
 
     return result
 
@@ -177,12 +176,6 @@ def process_save_assigned_statutory(db, request, session_user):
     return technotransactions.SaveAssignedStatutorySuccess()
 
 
-def process_get_assigned_statutories(db):
-    assigned_statutories = get_assigned_statutories_list(db)
-    return technotransactions.GetAssignedStatutoriesSuccess(
-        assigned_statutories
-    )
-
 def process_get_assigned_statutories_by_id(db, request, session_user):
     client_statutory_id = request.client_statutory_id
     level_1_statutories, assigned_statutories = get_assigned_statutories_by_id(db, client_statutory_id)
@@ -190,6 +183,7 @@ def process_get_assigned_statutories_by_id(db, request, session_user):
         level_1_statutories_list=level_1_statutories,
         statutories_for_assigning=assigned_statutories
     )
+
 
 def process_get_groupadmingroup_unit_list(db, session_user):
     print "inside controller"
@@ -202,18 +196,21 @@ def process_get_groupadmingroup_unit_list(db, session_user):
         groupadmin_unitList=groupadmin_unitsList
     )
 
+
 def resend_user_registration_mail(db, request, session_user):
     res = resave_registraion_token(db, request.user_id, request.email_id)
-    if res :
+    if res:
         return technotransactions.ResendRegistraionSuccess()
-    else :
+    else:
         print "send email failed"
+
 
 def process_Send_GroupAdminRegn_Mail(db, request_frame, session_user):
     print "inside group admin controller"
     result = send_groupadmin_registration_mail(db, request_frame, session_user)
     if result is True:
         return technotransactions.SaveGroupAdminRegnSuccess()
+
 
 #
 # To get the legal entity list under the techno manager for closure prrocess
@@ -223,6 +220,7 @@ def process_get_LegalEntityClosureReportData(db, session_user):
     return technotransactions.LegalEntityClosureReportDataSuccess(
         legalentity_closure=result
     )
+
 
 def process_Save_LegalEntityClosureData(db, request_frame, session_user):
     session_user = int(session_user)

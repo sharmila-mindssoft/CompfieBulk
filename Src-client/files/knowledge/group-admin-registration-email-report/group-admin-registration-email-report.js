@@ -30,7 +30,7 @@ function processGroupAdminReportData()
 		//sfillGroupAdmingroupData();
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
 	mirror.getGroupAdminReportData(function (error, response) {
 		if (error == null) {
@@ -45,7 +45,9 @@ function processGroupAdminReportData()
 $('#btn-show').click(function () {
 	totalrecords = 0;
 	var client_id = $('#group-id').val();
-	if(client_id > 0)
+	totalRecord = groupadminList.length;
+
+	if(client_id > 0 && totalRecord > 0)
 	{
 		$('.details').show();
 	    $('#compliance_animation')
@@ -53,9 +55,7 @@ $('#btn-show').click(function () {
 	      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
 	      $(this).removeClass();
 	    });
-		$('.grid-table-rpt').show();
-		$('.tbody-client-admin-regn-list').find('tr').remove();
-		totalRecord = groupadminList.length;
+
     	processPaging();
 		//loadGroupAdminReportData();
 	}
@@ -69,6 +69,8 @@ $('#btn-show').click(function () {
 
 function loadGroupAdminReportData()
 {
+	$('.grid-table-rpt').show();
+		$('.tbody-client-admin-regn-list').find('tr').remove();
 	var j=1;
 	var client_id = $('#group-id').val();
 	var client_name = $('#groupsval').val();

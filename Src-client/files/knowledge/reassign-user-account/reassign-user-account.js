@@ -127,6 +127,7 @@ var DOMAINS = '';
 var ASSIGNED_ENTITIES = '';
 var ASSIGNED_UNITS = '';
 var ASSIGNED_CLIENTS = '';
+var USER_CATEGORIES = '';
 var client_id_name_map = {};
 var country_id_name_map = {};
 var business_group_id_name_map = {};
@@ -144,47 +145,51 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     id_element.val(val[0]);
 }
 
+function usertypeselectionlist(){
+    user_type = UserType.val();
+    clearGrids();
+    if(user_type == 5){ // Techno Manager
+        TechnoManagerDiv.show();
+        TechnoUserDiv.hide();
+        DomainManagerDiv.hide();
+        GroupDiv.hide();
+        BusinessGroupDiv.hide();
+        EntityDiv.hide();
+        DomainDiv.hide();
+        DomainUserDiv.hide();
+    }else if(user_type == 6){ // Techno User
+        TechnoManagerDiv.hide();
+        TechnoUserDiv.show();
+        DomainManagerDiv.hide();
+        GroupDiv.hide();
+        BusinessGroupDiv.hide();
+        EntityDiv.hide();
+        DomainDiv.hide();
+        DomainUserDiv.hide();
+    }else if(user_type == 7){ // Domain Manager
+        TechnoManagerDiv.hide();
+        TechnoUserDiv.hide();
+        DomainManagerDiv.show();
+        GroupDiv.show();
+        BusinessGroupDiv.show();
+        EntityDiv.show();
+        DomainDiv.show();
+        DomainUserDiv.hide();
+    }else if(user_type == 8){ // Domain User
+        TechnoManagerDiv.hide();
+        TechnoUserDiv.hide();
+        DomainManagerDiv.hide();
+        GroupDiv.show();
+        BusinessGroupDiv.show();
+        EntityDiv.show();
+        DomainDiv.show();
+        DomainUserDiv.show();
+    }
+}
+
 function pageControls(){
     UserType.change(function(){
-        user_type = UserType.val();
-        clearGrids();
-        if(user_type == 1){ // Techno Manager
-            TechnoManagerDiv.show();
-            TechnoUserDiv.hide();
-            DomainManagerDiv.hide();
-            GroupDiv.hide();
-            BusinessGroupDiv.hide();
-            EntityDiv.hide();
-            DomainDiv.hide();
-            DomainUserDiv.hide();
-        }else if(user_type == 2){ // Techno User
-            TechnoManagerDiv.hide();
-            TechnoUserDiv.show();
-            DomainManagerDiv.hide();
-            GroupDiv.hide();
-            BusinessGroupDiv.hide();
-            EntityDiv.hide();
-            DomainDiv.hide();
-            DomainUserDiv.hide();
-        }else if(user_type == 3){ // Domain Manager
-            TechnoManagerDiv.hide();
-            TechnoUserDiv.hide();
-            DomainManagerDiv.show();
-            GroupDiv.show();
-            BusinessGroupDiv.show();
-            EntityDiv.show();
-            DomainDiv.show();
-            DomainUserDiv.hide();
-        }else if(user_type == 4){ // Domain User
-            TechnoManagerDiv.hide();
-            TechnoUserDiv.hide();
-            DomainManagerDiv.hide();
-            GroupDiv.show();
-            BusinessGroupDiv.show();
-            EntityDiv.show();
-            DomainDiv.show();
-            DomainUserDiv.show();
-        }
+        usertypeselectionlist();
     });
     
     TechnoManagerName.keyup(function(e){
@@ -350,23 +355,24 @@ function validateAndShowList(){
     val_legal_entity_id = EntityId.val();
     val_domain_id = DomainId.val();
     var validation_result = true;
-    if(val_user_type == 1){
+
+    if(val_user_type == 5){
         if(val_techno_manager_id.trim().length == 0){
             displayMessage(message.techno_manager_required);
             validation_result = false;
         }
-    }else if (val_user_type == 2){
+    }else if (val_user_type == 6){
         if(val_techno_executive_id.trim().length == 0){
             displayMessage(message.techno_executive_required);
             validation_result = false;
         }
     }else{
-        if(val_user_type == 3){
+        if(val_user_type == 7){
             if(val_domain_manager_id.trim().length == 0){
                 displayMessage(message.domain_manager_required);
                 validation_result = false;
             }
-        }else if(val_user_type == 4){
+        }else if(val_user_type == 8){
             if(val_domain_executive_id.trim().length == 0){
                 displayMessage(message.domain_executive_required);
                 validation_result = false;
@@ -406,7 +412,7 @@ function loadAssignList(){
     ViewNote.show();
     RemarksDiv.show();
     Submit.show();
-    if(val_user_type == 1){
+    if(val_user_type == 5){
         GroupView.show();
         LegalEntityView.hide();
         UnitView.hide();
@@ -415,7 +421,7 @@ function loadAssignList(){
         ReassignToDomainManager.hide();
         ReassignToDomainUser.hide();
         loadGroupList();
-    }else if(val_user_type == 2){
+    }else if(val_user_type == 6){
         GroupView.hide();
         LegalEntityView.show();
         UnitView.hide();
@@ -487,6 +493,15 @@ function loadLegalEntity(){
     });
 }
 
+function loadUserCategory(){
+    $.each(USER_CATEGORIES, function(k, val){
+        var obj = $(".usertype-drop-down option");
+        var clone = obj.clone();
+        clone.attr("value", val["user_category_id"]);
+        clone.text(val["user_category_name"]);
+        UserType.append(clone);
+    });
+}
 function activateOrDeactivateEntity(legal_entity_id){
     entity_status = $(".entity-"+legal_entity_id).prop("checked");
     EntityCheckBoxes[legal_entity_id] = entity_status;
@@ -496,11 +511,22 @@ function loadUnits(){
     UnitCheckBoxes = {};
     TBodyReassignListUnitView.empty();
     var assigned_units_of_selected_user = [];
-    if(val_domain_executive_id in user_wise_units){
+    /*if(val_domain_executive_id in user_wise_units){
         assigned_units_of_selected_user = user_wise_units[val_domain_executive_id][val_domain_id]
-        if(val_user_type == 3)
+        if(val_user_type == 7)
             assigned_units_of_selected_user = user_wise_units[val_domain_manager_id][val_domain_id]
+    }*/
+
+    if(val_user_type == 7 && val_domain_manager_id in user_wise_units && user_wise_units[val_domain_manager_id][val_domain_id] != undefined){
+        assigned_units_of_selected_user = user_wise_units[val_domain_manager_id][val_domain_id]
     }
+
+    if(val_user_type == 8 && val_domain_executive_id in user_wise_units && user_wise_units[val_domain_executive_id][val_domain_id] != undefined){
+        assigned_units_of_selected_user = user_wise_units[val_domain_executive_id][val_domain_id]
+    }
+
+    console.log(user_wise_units);
+    console.log(assigned_units_of_selected_user);
     $.each(UNITS, function(key, value){
         if(
             assigned_units_of_selected_user.indexOf(value.unit_id) > -1 &&
@@ -559,22 +585,22 @@ function validateAndSave(){
     var old_user = '';
     var user_validation_msg = '';
     var val_remarks = Remarks.val();
-    if(val_user_type == 1){
+    if(val_user_type == 5){
         check_box_list = GroupCheckBoxes;
         display_text = "Group";
         reassign_to_user = RTTechnoManagerId.val();
         user_validation_msg = message.techno_manager_required;
         old_user = TechnoManagerId.val();
-    }else if (val_user_type == 2){
+    }else if (val_user_type == 6){
         check_box_list = EntityCheckBoxes;
         display_text = "Legal Entity";
         reassign_to_user = RTTechnoUserId.val();
         user_validation_msg = message.techno_executive_required;
         old_user = TechnoUserId.val();
-    }else if (val_user_type == 3 || val_user_type == 4){
+    }else if (val_user_type == 7 || val_user_type == 8){
         check_box_list = UnitCheckBoxes;
         display_text = "Unit";
-        if(val_user_type == 3){
+        if(val_user_type == 7){
             reassign_to_user = RTDomainManagerId.val();
             user_validation_msg = message.domain_manager_required;
             old_user = DomainManagerId.val();
@@ -587,8 +613,9 @@ function validateAndSave(){
     $.each(check_box_list, function(key, value){
         if(value == true){
             ++true_count;
+            ids.push(parseInt(key));
         }
-        ids.push(parseInt(key));
+        
     });
 
     if(true_count <= 0){
@@ -636,8 +663,9 @@ function generateIdNameMaps(){
         if(!(value.user_id in user_wise_units))
             user_wise_units[value.user_id] = {};
         if(!(value.domain_id in user_wise_units[value.user_id]))
-            user_wise_units[value.user_id][domain_id] = [];
-        user_wise_units[value.user_id][domain_id].push(value.unit_id);
+            user_wise_units[value.user_id][value.domain_id] = [];
+        
+        user_wise_units[value.user_id][value.domain_id].push(value.unit_id);
     });
     $.each(ASSIGNED_CLIENTS, function(key, value){
         if(!(value.user_id in user_wise_clients))
@@ -661,7 +689,10 @@ function getFormData(){
         ASSIGNED_ENTITIES = data.assigned_legal_entities;
         ASSIGNED_UNITS = data.assigned_units;
         ASSIGNED_CLIENTS = data.assigned_clients;
+        USER_CATEGORIES = data.user_categories;
         generateIdNameMaps();
+        loadUserCategory();
+        usertypeselectionlist();
     }
     function onFailure(error) {
         custom_alert(error);

@@ -135,9 +135,10 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-table-rpt">
-                <div class="card-box">
-                    <div class="table-responsive">
+            <div id="compliance_animation">
+              <div class="card-box details" style="display: none;">
+                <div class="grid-table-rpt">
+                  <div class="table-responsive">
                         <div class="col-sm-12">
                             <div class="col-sm-12 text-center"><h4>Client Unit Details</h4></div>
                             <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countrynameval"></span></h6></div>
@@ -146,6 +147,20 @@
                             <div class="col-sm-6 text-center"><h6>Legal Entity: <span style="margin-left:10px; font-weight:bold;" class="lentityval"></span></h6></div>
                         </div>
                         <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                          <thead>
+                            <tr align="left" class="tr-heading">
+                              <th width="3%" align="center" class="header-bg">#</th>
+                              <th class="header-bg">Unit Code</th>
+                              <th class="header-bg">Unit Name</th>
+                              <th class="header-bg">Division</th>
+                              <th class="header-bg">Category</th>
+                              <th class="header-bg" width="30%">Domain - Organization Type</th>
+                              <th width="20%" class="header-bg">Address</th>
+                              <th class="header-bg">Created By</th>
+                              <th class="header-bg">Created On</th>
+                              <th class="header-bg">Status</th>
+                            </tr>
+                          </thead>
                             <tbody class="tbody-clientdetails-list">
                             </tbody>
                         </table>
@@ -169,6 +184,7 @@
                         </table>
                     </div>
                 </div>
+              </div>
             </div>
         </div>
         <!-- end col -->
@@ -176,18 +192,7 @@
 </div>
 <div id="templates">
 <table width="100%" style="border:1px dotted #CCCCCC;">
-    <tr align="left" class="tr-heading">
-      <th width="3%" align="center" class="header-bg">#</th>
-      <th class="header-bg">Unit Code</th>
-      <th class="header-bg">Unit Name</th>
-      <th class="header-bg">Division</th>
-      <th class="header-bg">Category</th>
-      <th class="header-bg" width="30%">Domain - Organization Type</th>
-      <th width="20%" class="header-bg">Address</th>
-      <th class="header-bg">Created By</th>
-      <th class="header-bg">Created On</th>
-      <th class="header-bg">Status</th>
-    </tr>
+
 
     <tr class="table-row" >
       <td align="center" class="sno"></td>

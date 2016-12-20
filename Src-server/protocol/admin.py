@@ -1087,7 +1087,7 @@ class GetReassignUserAccountFormdataSuccess(Request):
         self, techno_managers, techno_users, domain_managers,
         domain_users, groups, business_groups, admin_legal_entity,
         domains, countries, unit_id_name, assigned_legal_entities,
-        assigned_units, assigned_clients
+        assigned_units, assigned_clients, user_categories
     ):
         self.techno_managers = techno_managers
         self.techno_users = techno_users
@@ -1102,6 +1102,7 @@ class GetReassignUserAccountFormdataSuccess(Request):
         self.assigned_legal_entities = assigned_legal_entities
         self.assigned_units = assigned_units
         self.assigned_clients = assigned_clients
+        self.user_categories = user_categories
 
     @staticmethod
     def parse_inner_structure(data):
@@ -1109,7 +1110,7 @@ class GetReassignUserAccountFormdataSuccess(Request):
             "techno_managers", "techno_users", "domain_managers",
             "domain_users", "groups", "business_groups", "admin_legal_entity",
             "domains", "countries", "unit_id_name", "assigned_legal_entities",
-            "assigned_units", "assigned_clients"
+            "assigned_units", "assigned_clients", "user_categories"
         ])
         techno_managers = data.get("techno_managers")
         techno_users = data.get("techno_users")
@@ -1124,11 +1125,12 @@ class GetReassignUserAccountFormdataSuccess(Request):
         assigned_legal_entities = data.get("assigned_legal_entities")
         assigned_units = data.get("assigned_units")
         assigned_clients = data.get("assigned_clients")
+        user_categories = data.get("user_categories")
         return GetReassignUserAccountFormdataSuccess(
             techno_managers, techno_users, domain_managers,
             domain_users, groups, business_groups, admin_legal_entity,
             domains, countries, unit_id_name, assigned_legal_entities,
-            assigned_units, assigned_clients
+            assigned_units, assigned_clients, user_categories
         )
 
     def to_inner_structure(self):
@@ -1145,7 +1147,8 @@ class GetReassignUserAccountFormdataSuccess(Request):
             "unit_id_name": self.unit_id_name,
             "assigned_legal_entities": self.assigned_legal_entities,
             "assigned_units": self.assigned_units,
-            "assigned_clients": self.assigned_clients
+            "assigned_clients": self.assigned_clients,
+            "user_categories": self.user_categories
         }
 
 

@@ -307,18 +307,41 @@ class ChangeClientGroupStatus(Request):
 
 
 class GetClients(Request):
-    def __init__(self, typelistedit):
-        self.typelistedit = typelistedit
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["typelistedit"])
-        typelistedit = data.get("typelistedit")
-        return GetClients(typelistedit)
+        data = parse_dictionary(data)
+        return GetClients()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class GetClientsEdit(Request):
+    def __init__(self, client_id, business_group_id, legal_entity_id, country_id):
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "bg_id", "le_id", "c_id"])
+        client_id = data.get("client_id")
+        business_group_id = data.get("bg_id")
+        legal_entity_id = data.get("le_id")
+        country_id = data.get("c_id")
+        return GetClientsEdit(client_id, business_group_id, legal_entity_id, country_id)
 
     def to_inner_structure(self):
         data = {
-            "typelistedit": self.typelistedit
+            "client_id": self.client_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "country_id": self.country_id
         }
         return data
 
@@ -810,6 +833,7 @@ class SaveAsssignedUnits(Request):
             "active_units": self.active_units
         }
 
+
 class ViewAssignLegalEntity(Request):
     def __init__(self, client_id):
         self.client_id = client_id
@@ -829,7 +853,7 @@ class ViewAssignLegalEntity(Request):
 def _init_Request_class_map():
     classes = [
         GetClientGroups, SaveClientGroup, UpdateClientGroup,
-        ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient,
+        ChangeClientGroupStatus, GetClients, GetClientsEdit, SaveClient, UpdateClient,
         ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
         GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData,
         GetAssignLegalEntityList, GetUnassignedUnits, GetAssignedUnits,
@@ -1404,6 +1428,26 @@ class GetClientsSuccess(Response):
         }
         return data
 
+
+class GetClientsEditSuccess(Response):
+    def __init__(self, unit_list):
+        self.unit_list = unit_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_list"])
+        unit_list = data.get("unit_list")
+        return GetClientsEditSuccess(
+            unit_list
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "unit_list": self.unit_list
+        }
+        return data
+
+
 class SaveClientSuccess(Response):
     def __init__(self):
         pass
@@ -1416,6 +1460,7 @@ class SaveClientSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class EmailIDAlreadyExists(Response):
     def __init__(self):
@@ -1430,6 +1475,7 @@ class EmailIDAlreadyExists(Response):
         return {
         }
 
+
 class CannotDeactivateDomain(Response):
     def __init__(self):
         pass
@@ -1442,6 +1488,7 @@ class CannotDeactivateDomain(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class CannotDeactivateCountry(Response):
     def __init__(self):
@@ -1456,6 +1503,7 @@ class CannotDeactivateCountry(Response):
         return {
         }
 
+
 class ShortNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -1469,6 +1517,7 @@ class ShortNameAlreadyExists(Response):
         return {
         }
 
+
 class NotAnImageFile(Response):
     def __init__(self):
         pass
@@ -1481,6 +1530,7 @@ class NotAnImageFile(Response):
     def to_inner_structure(self):
         return {
         }
+
 
 class ServerIsFull(Response):
     def __init__(self):
@@ -1910,18 +1960,21 @@ class AssignedUnitDetails(object):
 
 
 class GetUnassignedUnitsSuccess(Response):
-    def __init__(self, unassigned_units_list):
+    def __init__(self, unassigned_units_list, user_category_id):
         self.unassigned_units_list = unassigned_units_list
+        self.user_category_id = user_category_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["unassigned_units_list"])
         unassigned_units_list = data.get("unassigned_units_list")
-        return GetUnassignedUnitsSuccess(unassigned_units_list)
+        user_category_id = data.get("user_category_id");
+        return GetUnassignedUnitsSuccess(unassigned_units_list, user_category_id)
 
     def to_inner_structure(self):
         return {
-            "unassigned_units_list": self.unassigned_units_list
+            "unassigned_units_list": self.unassigned_units_list,
+            "user_category_id": self.user_category_id
         }
 
 
@@ -2011,7 +2064,7 @@ def _init_Response_class_map():
     classes = [
         GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists,
         UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess,
-        InvalidClientId, GetClientsSuccess, SaveClientSuccess,
+        InvalidClientId, GetClientsSuccess, GetClientsEditSuccess, SaveClientSuccess,
         BusinessGroupNameAlreadyExists, LegalEntityNameAlreadyExists,
         DivisionNameAlreadyExists, UnitNameAlreadyExists,
         UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,

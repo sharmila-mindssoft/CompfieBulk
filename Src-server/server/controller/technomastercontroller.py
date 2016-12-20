@@ -27,6 +27,7 @@ __all__ = [
     "save_client",
     "update_client",
     "get_clients",
+    "get_clients_edit",
     "change_client_status",
     "reactivate_unit",
     "get_client_profile",
@@ -89,6 +90,7 @@ def process_save_client_group(db, request, session_user):
             db, legal_entity_names
         )
         # save_client_user(db, group_id, request.email_id)
+        save_incharge_persons(db, group_id, request, session_user)
         save_organization(
             db, group_id, request, legal_entity_id_name_map, session_user
         )
@@ -446,6 +448,19 @@ def get_clients(db, request, session_user):
         return technomasters.UserIsNotResponsibleForAnyClient()
 
 
+def get_clients_edit(db, request, session_user):
+    group_company_list = get_group_companies_for_user_with_max_unit_count(
+        db, session_user
+    )
+    if len(group_company_list) > 0:
+        unit_list = get_unit_details_for_user_edit(db, session_user, request)
+        return technomasters.GetClientsEditSuccess(
+            unit_list=unit_list
+        )
+    else:
+        return technomasters.UserIsNotResponsibleForAnyClient()
+
+
 ########################################################
 # To Reactivate a closed Unit
 ########################################################
@@ -528,10 +543,12 @@ def get_assign_legal_entity_list(db, request, session_user):
 ############################################################
 # To Get Unassigned units list
 ############################################################
-def get_unassigned_units(db):
-    units_list = get_unassigned_units_list(db)
+def get_unassigned_units(db, session_user):
+    units_list = get_unassigned_units_list(db, session_user)
+    user_category_id = get_user_category_id(db, session_user)
     return technomasters.GetUnassignedUnitsSuccess(
-        unassigned_units_list=units_list
+        unassigned_units_list=units_list,
+        user_category_id=user_category_id
     )
 
 

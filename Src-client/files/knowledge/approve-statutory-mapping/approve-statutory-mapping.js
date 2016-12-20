@@ -260,7 +260,7 @@ function validateForm(){
 
     var country_name = CountryVal.val();
     var domain_name = DomainVal.val();
-    var statutory_nature = StatutoryNatureVal.val();
+    
 
     $.each(ApproveMappingList, function(key, value){
         var map_text = value["map_text"];
@@ -269,6 +269,7 @@ function validateForm(){
         var comp_id = value["comp_id"];
         var u_by = value["u_by"];
         var is_common = false;
+        var statutory_nature = value["s_n_name"];
 
         var action_class = "caction-"+comp_id;
         var reason_class = "creason-"+comp_id;

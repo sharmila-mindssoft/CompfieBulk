@@ -812,11 +812,11 @@ function initMirror() {
     var filter = {};
     filter.c_id = cId;
     filter.d_id = dId;
-    filter.i_id = iId;
-    filter.s_n_id = sNId;
-    filter.g_id = gId;
-    filter.level_1_s_id = level1SId;
-    filter.f_id = fId;
+    filter.a_i_id = iId;
+    filter.a_s_n_id = sNId;
+    filter.a_g_id = gId;
+    filter.statutory_id_optional = level1SId;
+    filter.frequency_id = fId;
     filter.r_count = rCount;
     return filter;
   }
@@ -1234,7 +1234,20 @@ function initMirror() {
     callerName = 'techno';
     var request = [
       'GetClients',
-      { 'typelistedit' : type }
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getClientsEdit(client_id, business_group_id, legal_entity_id, country_id, callback) {
+    callerName = 'techno';
+    var request = [
+      'GetClientsEdit',
+      {
+        'client_id' : client_id,
+        'bg_id' : business_group_id,
+        'le_id' : legal_entity_id,
+        'c_id' : country_id,
+      }
     ];
     apiRequest(callerName, request, callback);
   }
@@ -1403,16 +1416,18 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, callback) {
+  function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, from_count, page_count, callback) {
     callerName = 'techno_report';
     var request = [
       'GetStatutoryNotificationsReportData',
       {
         'country_id': countryId,
         'domain_id': domainId,
-        'level_1_statutory_id': level1Id,
-        'from_date': fromDate,
-        'to_date': toDate
+        'statutory_id_optional': level1Id,
+        'from_date_optional': fromDate,
+        'to_date_optional': toDate,
+        'from_count': from_count,
+        'page_count': page_count
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1449,7 +1464,7 @@ function initMirror() {
       {
         'from_date': fromDate,
         'to_date': toDate,
-        'user_id': userId,
+        'user_id_search': userId,
         'form_id_search': formId,
         'country_id': countryId,
         'category_id': categoryId,
@@ -1849,7 +1864,7 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
   function getAssignStatutoryWizardOneData(callback){
-    callerName = 'techno_transaction';
+    callerName = 'domain_transaction';
     var request = [
       "GetAssignedStatutoryWizardOneData",
       {}
@@ -1857,47 +1872,93 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getAssignStatutoryWizardOneDataUnits(clientid, bgid, leid, divid, catid, domainid, callback){
+    callerName = 'domain_transaction';
+    var request = [
+      "GetAssignedStatutoryWizardOneUnits",
+      {
+        "ct_id": clientid,
+        "bg_id": bgid,
+        "le_id": leid,
+        "dv_id": divid,
+        "cat_id": catid,
+        "d_id": domainid
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
   function getAssignStatutoryWizardTwoData(
-    client_id, business_group_id, legal_entity_id, division_id, category_id,
     domain_id, unit_ids, callback
   ){
-      callerName = 'techno_transaction';
+      callerName = 'domain_transaction';
       var request = [
         "GetAssignedStatutoryWizardTwoData",
         {
-          "client_id": client_id,
-          "business_group_id": business_group_id,
-          "legal_entity_id": legal_entity_id,
-          "division_id": division_id,
-          "category_id": category_id,
-          "domain_id_optional": domain_id,
+          "d_id": domain_id,
           "unit_ids": unit_ids
         }
       ];
       apiRequest(callerName, request, callback);
   }
 
-  function saveAssignedStatutory(
-    client_statutory_id, units, client_id, unit_ids, compliances_list,
-    level_1_statutory_wise_compliances, callback
+  function saveComplianceStatus(client_id, legal_entity_id, unit_id,
+        domain_id, compliance_id, compliance_status,
+        level_1_id, status, remarks, client_statutory_id,
+        unit_name, domain_name
   ){
-    callerName = 'techno_transaction';
+    return {
+        "ct_id": client_id,
+        "le_id": legal_entity_id,
+        "u_id": unit_id,
+        "d_id": domain_id,
+        "comp_id": compliance_id,
+        "comp_status": compliance_status,
+        "level_1_s_id": level_1_id,
+        "a_status": status,
+        "remarks": remarks,
+        "client_statutory_id": client_statutory_id,
+        "u_name": unit_name,
+        "d_name": domain_name
+    }
+  }
+
+  function saveAssignedStatutory(
+    compliances_applicablity_status, submission_type, callback
+  ){
+    callerName = 'domain_transaction';
     var request = [
         "SaveAssignedStatutory",
         {
-          "client_statutory_id": client_statutory_id,
-          "unit_id_name": units,
-          "client_id": client_id,
-          "unit_ids": unit_ids,
-          "compliances_applicablity_status": compliances_list,
-          "level_1_statutory_wise_compliances": level_1_statutory_wise_compliances,
-          "submission_type": "save"
+          "compliances_applicablity_status": compliances_applicablity_status,
+          "submission_status": submission_type
         }
       ];
       apiRequest(callerName, request, callback);
   }
 
-  function submitAssignedStatutory(
+  function approveAssignedStatutory(
+    unitId, domainId, cSID, complience_ids, submissionStatus, remark,
+    unitName, domainName, callback
+  ){
+    callerName = 'domain_transaction';
+    var request = [
+        "ApproveAssignedStatutory",
+        {
+          'u_id': unitId,
+          'd_id': domainId,
+          'client_statutory_id': cSID,
+          'comp_ids': complience_ids,
+          'submission_status': submissionStatus,
+          'remarks': remark,
+          'u_name': unitName,
+          'd_name': domainName
+        }
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
+  /*function submitAssignedStatutory(
     client_statutory_id, units, client_id, unit_ids, compliances_list, level_1_statutory_wise_compliances, callback
   ){
     callerName = 'techno_transaction';
@@ -1914,10 +1975,10 @@ function initMirror() {
         }
       ];
       apiRequest(callerName, request, callback);
-  }
+  }*/
 
   function getAssignedStatutories(callback){
-    callerName = 'techno_transaction';
+    callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutories",
         {}
@@ -1925,12 +1986,13 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function getAssignedStatutoriesById(client_statutory_id, callback){
-    callerName = 'techno_transaction';
+  function getAssignedStatutoriesById(u_id, d_id, callback){
+    callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutoriesById",
         {
-          "client_statutory_id": client_statutory_id
+          "u_id": u_id,
+          "d_id": d_id
         }
       ];
     apiRequest(callerName, request, callback);
@@ -2053,7 +2115,7 @@ function initMirror() {
         "grp_mode": action_mode
       }
     ];
-    //apiRequest(callerName, request, callback);
+    apiRequest(callerName, request, callback);
   }
   //Verify Password
   function verifyPassword(password, callback) {
@@ -2167,6 +2229,34 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getAssignedStatutoriesList(callback) {
+    var request = [
+      'GetAssignedStatutoriesList',
+      {}
+    ];
+    apiRequest('techno_report', request, callback);
+  }
+
+  function getComplianceStatutoriesList(unitId, domainId, callback){
+    var request = [
+      'GetComplianceStatutoriesList',
+      {
+        'unit_id': unitId,
+        'd_id': domainId
+      }
+    ];
+    apiRequest("techno_report", request, callback);
+  }
+
+  function getAssignedStatutoriesForApprove(callback){
+    callerName = 'domain_transaction';
+    var request = [
+        "GetAssignedStatutoriesForApprove",
+        {}
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2268,6 +2358,7 @@ function initMirror() {
     validateResetToken: validateResetToken,
     resetPassword: resetPassword,
     getClients: getClients,
+    getClientsEdit: getClientsEdit,
     getBusinessGroupDict: getBusinessGroupDict,
     getLegalEntityDict: getLegalEntityDict,
     getDivisionDict: getDivisionDict,
@@ -2328,9 +2419,10 @@ function initMirror() {
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
     saveReassignUserAccount: saveReassignUserAccount,
     getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
+    getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
     getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
     saveAssignedStatutory: saveAssignedStatutory,
-    submitAssignedStatutory: submitAssignedStatutory,
+    //submitAssignedStatutory: submitAssignedStatutory,
     getAssignedStatutories: getAssignedStatutories,
     getAssignedStatutoriesById: getAssignedStatutoriesById,
     changeAdminDisaleStatus: changeAdminDisaleStatus,
@@ -2353,7 +2445,12 @@ function initMirror() {
     getStatutoryNotifications: getStatutoryNotifications,
     updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
     getReassignUserDomainReportData: getReassignUserDomainReportData,
-    getStatutoryMappingsEdit: getStatutoryMappingsEdit
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit,
+    saveComplianceStatus: saveComplianceStatus,
+    getAssignedStatutoriesList: getAssignedStatutoriesList,
+    getComplianceStatutoriesList: getComplianceStatutoriesList,
+    getAssignedStatutoriesForApprove: getAssignedStatutoriesForApprove,
+    approveAssignedStatutory: approveAssignedStatutory
   };
 }
 var mirror = initMirror();

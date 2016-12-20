@@ -27,11 +27,11 @@ var ACStatutory = $('#ac-statutory');
 
 //Input field variable declaration
 var CountryVal = $('#countryval');
-var Country = $('#country-id');
-var OrgtypeVal = $('#orgtypeval');
-var Orgtype = $('#orgtypeid');
+var Country = $('#country');
+var OrgtypeVal = $('#industryval');
+var Orgtype = $('#industry');
 var DomainVal = $('#domainval');
-var Domain = $('#domainid');
+var Domain = $('#domain');
 var GroupVal = $('#groupsval');
 var Group = $('#group-id');
 var StatutoryNatureVal = $('#statutorynatureval');
@@ -53,7 +53,7 @@ function hideLoader() {
 function getStatutoryMappings() {
   function onSuccess(data) {
     industriesList = data.industries;
-    statutoriesList = data.level_1_statutories;
+    statutoriesList = data.level_one_statutories;
     countriesList = data.countries;
     domainsList = data.domains;
     statutoryNaturesList = data.statutory_natures;
@@ -301,11 +301,11 @@ $('#submit').click(function () {
     filterdata = {};
     filterdata.c_id = parseInt(country);
     filterdata.d_id = parseInt(domain);
-    filterdata.i_id = parseInt(industry);
-    filterdata.s_n_id = parseInt(statutorynature);
-    filterdata.g_id = parseInt(geography);
-    filterdata.level_1_s_id = parseInt(act);
-    filterdata.f_id = parseInt(c_frequency);
+    filterdata.a_i_id = parseInt(industry);
+    filterdata.a_s_n_id = parseInt(statutorynature);
+    filterdata.a_g_id = parseInt(geography);
+    filterdata.statutory_id_optional = parseInt(act);
+    filterdata.frequency_id = parseInt(c_frequency);
     filterdata.r_count = parseInt(s_endCount);
     function onSuccess(data) {
       statutoryMappingDataList = data.statutory_mappings;
@@ -396,7 +396,7 @@ DomainVal.keyup(function(e){
   var text_val = $(this).val();
   commonAutoComplete(
     e, ACDomain, Domain, text_val,
-    DomainList, "domain_name", "domain_id", function (val) {
+    domainsList, "domain_name", "domain_id", function (val) {
         onAutoCompleteSuccess(DomainVal, Domain, val);
     }, condition_fields, condition_values);
 });
@@ -429,9 +429,9 @@ $('#statutorynatureval').keyup(function (e) {
     condition_values.push(Country.val());
   }
   commonAutoComplete(
-    e, ACStatutory, Statutory, textval,
+    e, ACStatNature, StatutoryNature, textval,
     statutoryNaturesList, "statutory_nature_name", "statutory_nature_id", function (val) {
-      onAutoCompleteSuccess(StatutoryVal, Statutory, val);
+      onAutoCompleteSuccess(StatutoryNatureVal, StatutoryNature, val);
     }, condition_fields, condition_values);
 });
 
@@ -450,12 +450,20 @@ $('#geographyval').keyup(function (e) {
 //load statutory list in autocomplete textbox
 $('#statutoryval').keyup(function (e) {
   var textval = $(this).val();
+  var condition_fields = [];
+  var condition_values = [];
   if(Country.val() != '' && Domain.val() != ''){
+    condition_fields.push("country_id");
+    condition_values.push(Country.val());
+    condition_fields.push("domain_id");
+    condition_values.push(Domain.val());
+
     commonAutoComplete(
     e, ACStatutory, Statutory, textval,
-    statutoriesList[$('#country').val()][$('#domain').val()], "statutory_name", "statutory_id", function (val) {
+    //statutoriesList[$('#country').val()][$('#domain').val()], "statutory_name", "statutory_id", function (val) {
+    statutoriesList, "level_1_statutory_name", "level_1_statutory_id", function (val) {
       onAutoCompleteSuccess(StatutoryVal, Statutory, val);
-    });
+    }, condition_fields, condition_values);
   }
 });
 //Autocomplete Script ends

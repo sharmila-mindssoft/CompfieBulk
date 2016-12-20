@@ -196,6 +196,12 @@ $('#show-button').click(function () {
   } else {
     displayLoader();
     function onSuccess(data) {
+      $('.details').show();
+      $('#compliance_animation')
+        .removeClass().addClass('bounceInLeft animated')
+        .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+        $(this).removeClass();
+      });
       fullArrayList = [];
       hideLoader();
       clearMessage();

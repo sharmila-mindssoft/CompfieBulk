@@ -13,7 +13,7 @@ from server.emailcontroller import EmailHandler as email
 __all__ = [
     "get_categories_for_user", "return_assigned_compliances_by_id",
     "get_assigned_statutory_wizard_two_data", "save_assigned_statutory",
-    "get_assigned_statutories_list", "get_assigned_statutories_by_id",
+    "get_assigned_statutories_by_id",
     "update_assigned_statutory", "get_groupadmin_registration_grouplist",
     "get_groupadmin_registration_unitlist", "send_groupadmin_registration_mail",
     "resave_registraion_token", "get_LegalEntityClosureReportData", "save_legalentity_closure_data"
@@ -417,43 +417,6 @@ def save_assigned_statutory(
             )
     db.bulk_insert(tblClientCompliances, compliance_columns, compliance_values_list)
 
-
-def get_assigned_statutories_list(db):
-    client_statutories, unit_details  = db.call_proc_with_multiresult_set(
-        "sp_clientstatutories_list", None, 2
-    )
-    return return_assigned_statutories(client_statutories, unit_details)
-
-def return_assigned_statutories(client_statutories, unit_details):
-    unit_id_details_map = {}
-    for unit in unit_details:
-        unit_id_details_map[unit["unit_id"]] = unit
-    fn = technotransactions.AssignedStatutories
-    result = []
-    for x in client_statutories:
-        unit_details = unit_id_details_map[x["unit_id"]]
-        result.append(
-            fn(
-                submission_status=x["status"], client_statutory_id=x["client_statutory_id"],
-                country_id=unit_details["country_id"], country_name=unit_details["country_name"],
-                client_id=unit_details["client_id"], group_name=unit_details["group_name"],
-                business_group_id=unit_details["business_group_id"],
-                business_group_name=unit_details["business_group_name"],
-                legal_entity_id=unit_details["legal_entity_id"],
-                legal_entity_name=unit_details["legal_entity_name"],
-                division_id=unit_details["division_id"],
-                division_name=unit_details["division_name"], unit_id=x["unit_id"],
-                unit_code_with_name=unit_details["unit_name"], geography_id=unit_details["geography_id"],
-                geography_name=unit_details["geography_name"],
-                domain_ids=[int(x) for x in unit_details["domain_ids"].split(",")],
-                domain_names=[str(x) for x in unit_details["domain_name"].split(",")],
-                category_id=unit_details["category_id"],
-                category_name=unit_details["category_name"]
-            )
-        )
-    return result
-
-
 def get_assigned_statutories_by_id(db, client_statutory_id):
     client_statutories  = db.call_proc(
         "sp_clientstatutories_by_id", (client_statutory_id,), 2
@@ -500,7 +463,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         no_of_legal_entities = groups.get("no_of_legal_entities")
         ug_name = groups.get("ug_name")
         email_id = groups.get("email_id")
-        user_id = groups.get("user_id")
+        user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
         c_names = []
         for countries in groupslist[2]:
@@ -509,7 +472,7 @@ def return_groupadmin_registration_grouplist(groupslist):
 
         groupadmin_grouplist.append(technotransactions.GroupAdmin_GroupList(
                 client_id, group_name, no_of_legal_entities,
-                c_names, ug_name, email_id, user_id, emp_code_name
+                c_names, ug_name, email_id, user_id_search, emp_code_name
             ))
     return groupadmin_grouplist
 

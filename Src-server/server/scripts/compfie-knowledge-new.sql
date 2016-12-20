@@ -512,7 +512,7 @@ CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `group_admin_username` varchar(20) NULL,
+  `group_admin_username` varchar(20) DEFAULT NULL,
   `total_view_licence` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `remarks` varchar(500) DEFAULT NULL,
@@ -554,8 +554,8 @@ CREATE TABLE `tbl_legal_entities` (
   `file_space_limit` float DEFAULT '0',
   `used_file_space` float DEFAULT '0',
   `total_licence` int(11) DEFAULT '0',
-  `used_licencce` int(11) DEFAULT '0',
-  `is_closed` tinyint(4) DEFAULT '1',
+  `used_licence` int(11) DEFAULT '0',
+  `is_closed` tinyint(4) DEFAULT '0',
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
@@ -660,10 +660,8 @@ CREATE TABLE `tbl_categories` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`category_id`),
-  KEY `fk_tbl_categories_business_groups` (`business_group_id`),
   KEY `fk_tbl_categories_legal_entities` (`legal_entity_id`),
   KEY `fk_tbl_categories_cg_div` (`client_id`),
-  CONSTRAINT `fk_tbl_categories_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_tbl_categories_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_categories_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -696,7 +694,7 @@ CREATE TABLE `tbl_units` (
   `unit_name` varchar(50) NOT NULL,
   `address` varchar(250) NOT NULL,
   `postal_code` int(11) NOT NULL,
-  `is_closed` tinyint(4) DEFAULT '1',
+  `is_closed` tinyint(4) DEFAULT '0',
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
@@ -767,7 +765,7 @@ CREATE TABLE `tbl_client_compliances` (
   `client_opted_by` int(11) DEFAULT NULL,
   `client_opted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`,`compliance_id`),
-  UNIQUE KEY `client_compliance_id_UNIQUE` (`client_compliance_id`)
+  UNIQUE KEY (`unit_id`, `domain_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -1004,7 +1002,7 @@ CREATE TABLE `tbl_user_account_reassign_history` (
   `user_category_id` int(11) NOT NULL,
   `reassigned_from` int(11) DEFAULT NULL,
   `reassigned_to` int(11) DEFAULT NULL,
-  `reassinged_data` varchar(500) DEFAULT NULL,
+  `reassigned_data` varchar(500) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,

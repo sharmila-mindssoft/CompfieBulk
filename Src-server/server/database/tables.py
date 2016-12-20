@@ -62,3 +62,17 @@ tblUserLegalEntity = "tbl_user_legalentity"
 tblUserUnits = "tbl_user_units"
 tblUserClients = "tbl_user_clients"
 tblClientEmailVerification = "tbl_client_email_verification"
+
+
+#
+# User category
+#
+
+cat_compfie_admin = 1
+cat_console_admin = 2
+cat_knowledge_manager = 3
+cat_knowledge_executive = 4
+cat_techno_manager = 5
+cat_techno_executive = 6
+cat_domain_manager = 7
+cat_domain_executive = 8

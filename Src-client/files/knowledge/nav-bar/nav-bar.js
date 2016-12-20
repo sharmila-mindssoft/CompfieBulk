@@ -24,12 +24,13 @@ function initializeNavBar() {
     if (form_name == "Logout") {
       $('.menu-url', itemObject).append('<i class ="ti-power-off m-r-5"></i>');
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
-    }
-    else if (form_name == "Change Password") {
+    } else if (form_name == "Change Password") {
       $('.menu-url', itemObject).append('<i class ="ti-settings m-r-5"></i>')
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
-    }
-    else {
+    } else if (form_name == "View Profile") {
+      $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>')
+      $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
+    } else {
       $('.menu-url', itemObject).append('<span>'+ form_name +'</span>');
     }
     // $('.menu-item', itemObject).text(form_name);
@@ -48,7 +49,7 @@ function initializeNavBar() {
     'Report',
     'My Accounts'
   ];
-
+  
   // var homeMenu = $('.cssmenu .menu-ul .home-menu');
   // if ('Home' in navBarItems) {
   //   homeMenu.attr('href', '/dashboard');
@@ -112,14 +113,19 @@ function initializeNavBar() {
     }
   }
   var employee_name = mirror.getEmployeeName();
-  // profile_url = '/knowledge/profile';
+  profile_url = '/knowledge/profile';
+  if (employee_name != 'undefined' && employee_name != 'Administrator') {
+    var item = getItemObject(profile_url, 'View Profile');
+    $('ul', settingsMenuObject).append(item);
+  }
+
   // change_password_url = '/knowledge/change-password';
-  // if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
-  //   var item = getItemObject(profile_url, 'View Profile');
-  //   $('ul', settingsMenuObject).append(item);
-  // }
+  /*if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
+    var item = getItemObject(profile_url, 'View Profile');
+    $('ul', settingsMenuObject).append(item);
+  }*/
   // var item = getItemObject(change_password_url, 'Change Password');
-  // $('ul', settingsMenuObject).append(item);
+  //$('ul', settingsMenuObject).append(item);
 
   var item = getItemObject(null, 'Logout');
   item.on('click', function () {
@@ -138,7 +144,7 @@ function initializeNavBar() {
 
       var liObject = $('#nav-bar-templates .messages li').clone();
       $('.cssmenu .menu-ul').append(liObject);
-      
+
       var MESSAGES;
       $('.message-menu').on('click', function (event) {
         if($(event.target).find('i').hasClass("load-msg") || $(event.target).hasClass("load-msg")){
@@ -164,10 +170,12 @@ function initializeNavBar() {
                 var msgObject = $('#nav-bar-templates .messages-list li').clone();
                 $('.msg-heading', msgObject).text(partHeading);
                 $('.msg-content', msgObject).text(partText);
+                $('.mlink').attr('href', '/knowledge/messages');
                 $('.msg-items-ul').append(msgObject);
               }
               if(MESSAGES.length >= 2){
                 var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
+                $('.mlink').attr('href', '/knowledge/messages');
                 $('.msg-items-ul').append(msgObject1);
               }
 
@@ -179,10 +187,10 @@ function initializeNavBar() {
             }
           });
         }
-        
+
       });
 
-      
+
     }
     else if (form.form_name == "Statutory Notification") {
       var liObject = $('#nav-bar-templates .notifications li').clone();
@@ -208,20 +216,21 @@ function initializeNavBar() {
                 if (msgText != null && msgText.length > 25){
                   partText = msgText.substring(0,24)+'...';
                 }
-
                 var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                 //$('.statu-heading', msgObject).text(partHeading);
                 $('.statu-content', msgObject).text(partText);
+                $('.slink').attr('href', '/knowledge/statutory-notifications');
                 $('.notification-items-ul').append(msgObject);
               }
               if(NOTIFICATIONS.length >= 2){
                 var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
+                $('.slink').attr('href', '/knowledge/statutory-notifications');
                 $('.notification-items-ul').append(msgObject1);
               }
             }
           });
         }
-        
+
       });
     }
   }
