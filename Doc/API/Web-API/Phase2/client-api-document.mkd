@@ -2,6 +2,148 @@
 
 [TOC]
 
+# LOGIN
+
+## Login
+
+    [
+        "Login",
+        {
+            "username": USERNAME,
+            "password": String,
+            "shirtname": String
+        }
+    ]
+
+    On Success response will be of the form
+
+    [
+        "LoginSuccess",
+        {
+            "user_id": USER_ID,
+            "client_id": CLIENT_ID,
+            "le_id": Int,
+            "session_token": SESSION_TOKEN,
+            "email_id": EMAIL_ID,
+            "user_group_name": USER_GROUP_NAME,
+            "menu": Menu,
+            "employee_name": String,
+            "employee_code": EMPLOYEE_CODE,
+            "contact_no": CONTACT_NUMBER,
+            "address": ADDRESS,
+            "designation": String
+        }
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidCredentials",
+        {}
+    ]
+
+Note :
+  * Above data will be used for displaying menu and user details in "User Profile" page
+
+## Forgot Password
+
+    [
+        "ForgotPassword",
+        {
+            "username": USERNAME,
+            "shortname": String
+        }
+    ]
+
+    On Success
+
+    [
+        "ForgotPasswordSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidUsername",
+        {}
+    ]
+
+Note :
+    * On success Reset link should be sent to the user's email with unique token embeded in the url
+
+## Reset Token Validation
+
+    [
+        "ResetTokenValidation",
+        {
+          "reset_token": RESET_TOKEN
+        }
+    ]
+
+    On Success
+
+    [
+        "ResetTokenValidationSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidResetToken",
+        {}
+    ]
+
+## Reset Password
+
+    [
+        "ResetPassword",
+        {
+          "reset_token": RESET_TOKEN,
+          "new_password": String
+        }
+    ]
+
+    On Success
+
+    [
+        "ResetPasswordSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidResetToken",
+        {}
+    ]
+
+## Change Password
+
+    [
+        "ChangePassword",
+        {
+            "session_token": SESSION_TOKEN,
+            "current_password": String,
+            "new_password": String
+        }
+    ]
+
+    On Success
+
+    [
+        "ChangePasswordSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidCurrentPassword",
+        {}
+    ]
+
 
 # Request Format
 
@@ -1126,7 +1268,8 @@
                     approver: String,
                     due_date: String,
                     compliance_type: Int,
-                    u_id: Int
+                    u_id: Int,
+                    comp_history_id: optional value
                 },
             ]
         }
@@ -1371,7 +1514,8 @@
                     completion_date: String,
                     doc_info: file-string,
                     assignee: Int,
-                    comp_status: Int
+                    comp_status: Int,
+                    u_id: Int
                 },
             ]
         }
@@ -1381,4 +1525,249 @@
     [
         "SaveCurrentYearComplianceSuccess",
         {}
+    ]
+
+### ComplianceTaskDetails
+### GetCalendarView
+    [
+        "GetCalendarView",
+        {
+            le_id: Int,
+            u_id: optional value
+
+        }
+    ]
+
+    on success
+    [
+        "GetCalendarViewSuccess",
+        {
+            "Oct-2016": [
+                {
+                    1: {
+                        due_date: optional value compliance count,
+                        inprogress: optional value,
+                        over_due: optional value,
+                        upcoming: optional value
+                    },
+                    2: {
+                        .........
+                    }
+                },
+            ],
+            "Nov-2016": [
+                {
+                    ...........
+                }
+            ]
+        }
+    ]
+
+### GetCalendarCompliances
+    [
+        "GetCalendarCompliances",
+        {
+            le_id: Int,
+            u_id: optional value,
+            date: string,
+            compliance_type:  # 1: due_date, 2: inprogress, 3: over_due, 4: upcoming,
+            rcount: Int
+        }
+    ]
+
+    on success
+    [
+        "GetCurrentCompliancesSuccess",
+        {
+            total_compliances: Int,
+            compliance_type: Int,
+            comp_lists: [
+                {
+                    comp_id: Int,
+                    comp_history_id: Int,
+                    doc_name: String,
+                    comp_task: String,
+                    d_name: String,
+                    d_id: Int,
+                    start_date: String,
+                    due_date: String,
+                    days: String,
+                    status: String,
+                    f_f_url: String,
+
+                    u_id: Int,
+                    u_name: String,
+                    comp_frequency: String,
+                    doc_lists: [
+                        {
+                            "doc_name:" String,
+                            "doc_url": String
+                        },
+                    ],
+                    completion_date: String,
+                    approved_status: Int,
+                    approved_remarks: Srting,
+                },
+            ]
+
+        }
+    ]
+
+
+    [
+        "GetUpcomingCompliancesSuccess",
+        {
+            total_compliances: Int,
+            compliance_type: Int,
+            comp_lists: [
+                {
+                    comp_id: Int,
+                    doc_name: String,
+                    comp_task: String,
+                    d_name: String,
+                    d_id: Int,
+                    start_date: String,
+                    due_date: String,
+                    f_f_url: String,
+
+                    u_id: Int,
+                    u_name: String,
+                    comp_frequency: String,
+                },
+            ]
+
+        }
+    ]
+
+### SaveCurrentComplianceTask
+    [
+        "SaveCurrentcomplianceTask",
+        {
+            le_id: Int,
+            u_id: Int,
+            comp_history_id: Int,
+            doc_list: [
+                {
+                    .....
+                }
+            ],
+            completion_date: String,
+            remarks: String,
+        }
+    ]
+    on success
+    [
+        "SaveCurrentComplianceTaskSuccess",
+        {}
+    ]
+
+### GetOnoccurrenceComplianceList
+    [
+        "GetOnOccurrenceComplianceList",
+        {
+            le_id: Int,
+            u_id: optional value
+        }
+    ]
+    on success
+    [
+        "GetOnOccurrenceComplianceListSuccess",
+        {
+            comp_list: [
+                {
+                    comp_id: Int,
+                    comp_name,: String
+                    s_provition: String,
+                    comp_descrip: String,
+                    statu_date_summary: String,
+                    unit_name: String,
+                    occurrence_history: [
+                        {
+                            start_date: String,
+                            assignee: String,
+                            completed_on: String,
+                            concurr: String,
+                            concurred_on: String,
+                            approver: String,
+                            approved_on: String,
+                            status: String
+                        }
+                    ]
+                },
+                {.....}
+            ]
+
+        }
+    ]
+
+### StartOnOcurrenceCompliance
+    [
+        "StartOnOccurrenceCompliance",
+        {
+            comp_id: Int,
+            start_date: String,
+            remarks: String
+        }
+    ]
+
+    on success
+    [
+        "StartOnOccurrenceComplianceSuccess",
+        {}
+    ]
+
+-------------------------------------------------------
+## Widget List
+### GetWidgetList
+    [
+        "GetWidgetLists",
+        {}
+
+    ]
+
+    on success
+    [
+        "GetWidgetListsSuccess",
+        {
+            component_list: [
+                {
+                    component_name: String,
+                    component_id: Int,
+                    is_added: Boolean,
+                    component_order: Int,
+                    is_resized: boolean,
+                    pined_size: {
+                        height: Int, width: Int
+                    },
+                }
+            ]
+        }
+    ]
+
+
+### Component table
+    {
+        1: compliance_status_chart,
+        2: escalation,
+        3: not_complied,
+        4: trend_chart,
+        5: rik_chart,
+        6: user_score_card,
+        7: domain_score_card,
+        8: calendar_view
+    }
+
+### GetWidgetContent
+    [
+        "GetWidgetContent",
+        {
+            component_id: Int
+        }
+    ]
+    on success
+    [
+        "Get"
+        {
+
+        }
     ]
