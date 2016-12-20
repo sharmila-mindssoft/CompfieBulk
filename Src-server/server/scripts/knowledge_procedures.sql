@@ -1592,9 +1592,9 @@ DROP PROCEDURE IF EXISTS `sp_units_approval_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_units_approval_list`()
+CREATE PROCEDURE `sp_units_approval_list`(in userId INT(11))
 BEGIN
-    SELECT legal_entity_id, legal_entity_name,
+    SELECT tle.legal_entity_id, tle.legal_entity_name,
     (
         SELECT country_name FROM tbl_countries tc
         WHERE tc.country_id = tle.country_id
@@ -1607,14 +1607,17 @@ BEGIN
         SELECT group_name FROM tbl_client_groups tcg
         WHERE tcg.client_id = tle.client_id
     ) as group_name,
-    (
-        SELECT count(unit_id) FROM tbl_units tu
-        WHERE is_closed=0 and tu.legal_entity_id=tle.legal_entity_id
-        and is_approved=0
-    ) as unit_count FROM tbl_legal_entities tle;
+    count(unit_id) as unit_count
+    FROM tbl_legal_entities tle
+    inner join tbl_user_clients tuc on tuc.client_id = tle.client_id and tuc.user_id = userId
+    INNER JOIN tbl_units tu on tu.legal_entity_id=tle.legal_entity_id
+    WHERE tu.is_closed=0 and tu.is_approved=0 and tle.is_closed = 0
+    group by tle.legal_entity_id, tle.legal_entity_name
+    order by group_name;
 END //
 
 DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 --  Get list of Units to be approved by legal entity id
 -- --------------------------------------------------------------------------------
@@ -3422,12 +3425,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_assign_legal_entities_list`()
 BEGIN
-    select client_id, group_name,
+    select tcg.client_id, tcg.group_name,
     (
         select group_concat(country_name) from tbl_countries
         where country_id in (
             select country_id from tbl_legal_entities
-            where client_id=client_id
+            where client_id=tcg.client_id
         )
     ) as country_names,
     (
@@ -3439,7 +3442,8 @@ BEGIN
         WHERE tule.client_id=tcg.client_id group by tule.client_id
     ) as no_of_assigned_legal_entities
 
-    FROM tbl_client_groups tcg;
+    FROM tbl_client_groups tcg where tcg.is_approved = 1 and tcg.is_active = 1
+    order by tcg.group_name;
 
 END //
 
@@ -3479,7 +3483,8 @@ BEGIN
     SELECT t1.child_user_id as user_id, t2.is_active,
     concat(t2.employee_code," - ", t2.employee_name) as employee_name
     from tbl_user_mapping t1
-    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
+    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6 
+    AND t2.is_active = 1 AND t2.is_disable = 0
     WHERE t1.parent_user_id = session_user;
     SELECT user_id, country_id FROM tbl_user_countries;
     SELECT user_id, domain_id FROM tbl_user_domains;
@@ -3498,12 +3503,14 @@ CREATE PROCEDURE `sp_assigned_legal_entity_details_by_group_id`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT t1.legal_entity_id, t1.legal_entity_name,t2.business_group_name, t3.country_name, t3.country_id
+    SELECT t1.legal_entity_id, t1.legal_entity_name,t2.business_group_name, t3.country_name, t3.country_id,
+    (select concat(employee_code, '-' ,employee_name) from tbl_users where user_id = t4.user_id) as employee_name
     FROM tbl_legal_entities t1
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t4.legal_entity_id is not null;
+    WHERE t1.client_id=clientid and t4.legal_entity_id is not null
+    order by t4.user_id;
 END //
 
 DELIMITER ;

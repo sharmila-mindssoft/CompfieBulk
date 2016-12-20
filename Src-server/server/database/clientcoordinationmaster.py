@@ -18,14 +18,14 @@ __all__ = [
 # Parameters : Object of database
 # Return Type : List of Object of Unit Approval
 ###############################################################################
-def get_unit_approval_list(db):
+def get_unit_approval_list(db, session_user):
     #
     # sp_units_approval_list
     # Arguments : None
     # Results : List of legal entities with no of units to be approved
     #
     data = db.call_proc(
-        "sp_units_approval_list", None
+        "sp_units_approval_list", [session_user]
     )
     return return_unit_approval_list(data)
 
@@ -143,7 +143,7 @@ def approve_unit(db, request, session_user):
         approval_status = detail.approval_status
         reason = detail.reason
         value_tuple = (
-           1 if approval_status is True else 0,
+           1 if approval_status is True else 2,
            reason, session_user, current_time_stamp
         )
         values.append(value_tuple)

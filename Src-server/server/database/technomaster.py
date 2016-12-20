@@ -2432,12 +2432,13 @@ def return_assigned_legal_entities(legal_entities):
     results = []
     for legal_entity in legal_entities:
         results.append(
-            core.UnAssignLegalEntity(
+            core.AssignedLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
                 c_name=legal_entity["country_name"],
-                c_id=legal_entity["country_id"]
+                c_id=legal_entity["country_id"],
+                employee_name=legal_entity["employee_name"]
             )
         )
     return results
