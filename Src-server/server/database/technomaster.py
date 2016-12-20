@@ -233,7 +233,7 @@ def update_legal_entities(db, request, group_id, session_user):
         "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
         "file_space_limit", "total_licence",
-        'is_active', "created_by", "created_on", 'updated_by', "updated_on"
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on"
     ]
     values = []
     insert_values = []
@@ -284,7 +284,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
-                1, session_user, current_time_stamp,
+                0, session_user, current_time_stamp,
                 session_user, current_time_stamp
             )
             insert_values.append(insert_value_tuple)
@@ -2252,6 +2252,10 @@ def generate_unit_domain_industry_map(industry_details):
     return detail_map
 
 
+def get_user_category_id(db, session_user):
+    result = db.call_proc("sp_get_user_category_id_by_userid", (int(session_user),))
+    return result[0]["user_category_id"]
+
 def save_assigned_units(db, request, session_user):
     domain_manager_id = request.user_id
     client_id = request.client_id
@@ -2259,6 +2263,7 @@ def save_assigned_units(db, request, session_user):
     values_list = []
     current_time_stamp = get_date_time()
     domains = get_user_domains(db, session_user)
+    user_category_id = get_user_category_id(db, session_user)
     domain_name_id_map = {}
     for domain in domains:
         domain_name_id_map[domain.domain_name] = domain.domain_id
@@ -2268,7 +2273,7 @@ def save_assigned_units(db, request, session_user):
     ]
     for unit in active_units:
         value_tuple = (
-            domain_manager_id, 7, client_id,  unit.legal_entity_id,
+            domain_manager_id, user_category_id, client_id,  unit.legal_entity_id,
             unit.unit_id, domain_name_id_map[unit.domain_name],
             session_user, current_time_stamp
         )
@@ -2427,12 +2432,13 @@ def return_assigned_legal_entities(legal_entities):
     results = []
     for legal_entity in legal_entities:
         results.append(
-            core.UnAssignLegalEntity(
+            core.AssignedLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
                 c_name=legal_entity["country_name"],
-                c_id=legal_entity["country_id"]
+                c_id=legal_entity["country_id"],
+                employee_name=legal_entity["employee_name"]
             )
         )
     return results

@@ -256,7 +256,7 @@ var message = {
   "client_update_success": "Client updated successfully",
   "client_change_status_success": "Changed the status of client successfully",
   "unit_approve_success": "Unit approved successfully",
-  "approve_atleast_one": "Approve atleast one unit",
+  "approve_atleast_one": "Approve / Reject atleast one unit",
   "group_approve_success": "Client group approved successfully",
   "country_or_group_required": "Country or group required",
   "db_server_save_success": "Database server saved successfully",
@@ -296,7 +296,7 @@ var message = {
   "mapping_save_success": "User mapping saved successfully",
   "unit_saved": "Unit(s) Saved successfully",
   "unit_updated": "Units(s) Updated Successfully",
-  "no_legal_entity_selected" : "Atleast one legalentity should select",
+  "no_legal_entity_selected" : "Select atleast one legal entity",
   "no_user_selected" : "No user selected for assign",
   "save_success" : "Record Saved Successfully",
   "update_success" : "Record Updated Successfully",
@@ -307,6 +307,8 @@ var message = {
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
   "atleast_one_compliance_select": "Atleast one compliance should be select",
+  "assigncompliance_submit_failure": "All compliance should be select while submit",
+  "no_compliance_to_reject": "Atleast one compliance should be reject",
 };
 
 function clearMessage() {

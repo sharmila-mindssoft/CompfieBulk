@@ -1,4 +1,4 @@
-from flaskext.mysql import MySQL
+# from flaskext.mysql import MySQL
 import logger
 from server.common import (convert_to_dict, get_date_time)
 from server.exceptionmessage import fetch_error, process_procedure_error
@@ -15,7 +15,7 @@ class BaseDatabase(object):
         self._mysqlPassword = mysqlPassword
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
-        self._mysql = MySQL()
+        # self._mysql = MySQL()
         print self._mysql
 
     def dbConfig(self, app):
@@ -606,6 +606,7 @@ class Database(object):
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
+        print query
         return self.execute(query)
 
     ########################################################
@@ -865,3 +866,20 @@ class Database(object):
             print e
 
         return rows
+
+    def save_toast_messages(self, user_cat_id, message_head, message_text, link, user_id, created_on):
+        m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
+            "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
+
+        msg_id = self.execute_insert(m1, [
+            user_cat_id, message_head, message_text, link, user_id, created_on]
+        )
+
+        if msg_id is False or msg_id == 0 :
+            raise fetch_error()
+        return msg_id
+
+    def save_messages_users(self, msg_id, user_ids):
+        m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
+        for u in user_ids :
+            self.execute(m2 , [msg_id, u])
