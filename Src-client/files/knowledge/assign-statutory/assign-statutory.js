@@ -531,6 +531,7 @@ function subComplianceStatus(element){
 }
 
 function loadSingleUnitCompliances() {
+    alert('1');
     var ccount = 1;
     var count = 1;
     statutoriesCount = 1;
@@ -645,7 +646,7 @@ function loadSingleUnitCompliances() {
           this.value = isCommon($(this));
         });
     
-        $(' #collapse'+ccount+' .tbody-compliance-list').append(clone2);
+        $('#collapse'+ccount+' .tbody-compliance-list').append(clone2);
 
         if(value.comp_status > 0){
             if(value.comp_status == 1){
@@ -669,6 +670,7 @@ function loadSingleUnitCompliances() {
 }
 
 function loadMultipleUnitCompliances() {
+    alert('2');
     var applcount = 0;
     var ccount = 1;
     var count = 1;

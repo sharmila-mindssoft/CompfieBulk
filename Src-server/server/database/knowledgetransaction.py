@@ -1422,14 +1422,14 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by)
     msg_user_id = []
     if user_cat_id == 3 :
         # get reporting manager id to send executive actions
-        q = "select parent_user_id from tbl_user_mapping where child_user_id = %s"
+        q = "select parent_user_id as user_id from tbl_user_mapping where child_user_id = %s"
     else :
         # get executive id
-        q = "select child_user_id from tbl_user_mapping where parent_user_id = %s"
+        q = "select child_user_id as user_id from tbl_user_mapping where parent_user_id = %s"
 
     row = db.select_one(q, [created_by])
     if row :
-        msg_user_id.append(row["parent_user_id"])
+        msg_user_id.append(row["user_id"])
 
     if msg_user_id is not None :
         db.save_messages_users(msg_id, msg_user_id)

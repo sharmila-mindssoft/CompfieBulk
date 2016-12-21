@@ -20,6 +20,7 @@ CountryVal = $('#countryval');
 Country = $('#country')
 Category = $('#categoryName');
 Show_btn = $("#show");
+var msg = message;
 
 //Autocomplete variable declaration
 var ACCountry = $('#ac-country');
@@ -45,10 +46,10 @@ function Auditpage() {
     this._total_record = 0;
 }
 
-Auditpage.prototype.displayMessage = function(message){
+/*Auditpage.prototype.displayMessage = function(message){
     Msg_pan.text(message);
     Msg_pan.show();
-};
+};*/
 
 Auditpage.prototype.clearMessage = function(){
     Msg_pan.text('');
@@ -67,6 +68,9 @@ Auditpage.prototype.resetFields = function(){
     $('.tbody-audittrail-list').find('tr').remove();
     $('.grid-table').hide();
     this._sno = 0;
+    CountryVal.val('');
+    Form.val('');
+    User.val('');
     this.clearMessage();
 };
 
@@ -74,6 +78,7 @@ Auditpage.prototype.getValue = function(field_name, f_id){
     if (field_name == "category") {
         cg_id = Category.val();
         if (cg_id == '') {
+        console.log("cg_id:"+cg_id)
             return null;
         }
         return parseInt(cg_id);
@@ -122,6 +127,23 @@ Auditpage.prototype.getValue = function(field_name, f_id){
             return emp_name;
         }
     }
+    else if (field_name == "usercategory") {
+        if (f_id == 0) {
+            return 'Administrator';
+        }
+        else {
+            category_name = null
+            console.log("c len:"+f_id)
+            $.each(this._categoryList, function(k, v) {
+                if (v.user_category_id == f_id) {
+                    console.log("1:"+v.user_category_name)
+                    category_name = v.user_category_name;
+                    return category_name;
+                }
+            });
+            return category_name;
+        }
+    }
     else if (field_name == "formname") {
         frm_name = null;
         $.each(this._formList, function(k, v) {
@@ -136,20 +158,20 @@ Auditpage.prototype.getValue = function(field_name, f_id){
 
 Auditpage.prototype.validateMandatory = function(){
     is_valid = true;
-    if (this.getValue("category") == '') {
-        this.displayMessage(message.catgname_required);
+    if (this.getValue("category") == '' || this.getValue("category") == null) {
+        displayMessage(msg.catgname_required);
         is_valid = false;
     }
-    else if (this.getValue("country") == '') {
-        this.displayMessage(message.country_required);
+    else if (this.getValue("country") == '' || this.getValue("country") == null) {
+        displayMessage(msg.country_required);
         is_valid = false;
     }
-    else if (this.getValue("fromdate") == '') {
-        this.displayMessage(message.fromdate_required);
+    else if (this.getValue("fromdate") == '' || this.getValue("fromdate") == null) {
+        displayMessage(msg.fromdate_required);
         is_valid = false;
     }
-    else if (this.getValue("todate") == '') {
-        this.displayMessage(message.todate_required);
+    else if (this.getValue("todate") == ''  || this.getValue("todate") == null) {
+        displayMessage(msg.todate_required);
         is_valid = false;
     }
     return is_valid;
@@ -158,6 +180,8 @@ Auditpage.prototype.validateMandatory = function(){
 Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     $('.grid-table').show();
     $('.tbody-audittrail-list').find('tr').remove();
+    $('.countryval').text(CountryVal.val())
+    $('.typeval').text($('#categoryName option:selected').text());
     showFrom = a_page._sno + 1;
     var is_null = true;
     $.each(audit_data, function(k, v) {
@@ -175,10 +199,13 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
                 f_name = a_page.getValue("formname", v.form_id);
             }
             $('.snumber', rowClone).text(parseInt(a_page._sno));
-            $('.formname', rowClone).text(f_name);
             $('.username', rowClone).text(a_page.getValue('username', v.user_id));
-            $('.datetime', rowClone).text(v.date);
+            console.log("categ:"+a_page.getValue('usercategory', v.user_category_id))
+            $('.usertype', rowClone).text(a_page.getValue('usercategory', v.user_category_id));
+           //$('.usertype', rowClone).text("categoryName");
+            $('.formname', rowClone).text(f_name);
             $('.action', rowClone).text(v.action);
+            $('.datetime', rowClone).text(v.date);
             $('.tbody-audittrail-list').append(rowClone);
         }
     });
@@ -216,6 +243,7 @@ Auditpage.prototype.fetchData = function() {
             else {
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
+                console.log("a:"+response.audit_trail_details)
                 if (response.total_records == 0) {
                     t_this.hidePageView();
                     a_page.hidePagePan();
@@ -262,20 +290,32 @@ Auditpage.prototype.setControlValues = function(e) {
         {
             console.log(Category.val())
             var textval = $(this).val();
-
-            for(var i=0;i<a_page._userList.length;i++)
-            {
-              if(a_page._userList[i].user_category_id == Category.val())
-              {
-                newUserList.push({
-                  "user_category_id": Category.val(),
-                  "user_id": a_page._userList[i].user_id,
-                  "employee_name": a_page._userList[i].employee_name
-                });
-              }
+            if(Category.val() > 2){
+               for(var i=0;i<a_page._userList.length;i++)
+                {
+                    if(a_page._userList[i].user_category_id == Category.val())
+                    {
+                        newUserList.push({
+                            "user_category_id": Category.val(),
+                            "user_id": a_page._userList[i].user_id,
+                            "employee_name": a_page._userList[i].employee_name
+                        });
+                    }
+                }
             }
+            else{
+                for(var i=0;i<a_page._userList.length;i++)
+                {
+                    newUserList.push({
+                        "user_category_id": Category.val(),
+                        "user_id": a_page._userList[i].user_id,
+                        "employee_name": a_page._userList[i].employee_name
+                    });
+                }
+            }
+
             commonAutoComplete(
-                e, ACUser, User, textval,
+                e, ACUser, User_id, textval,
                 newUserList, "employee_name", "user_id", function (val) {
                 onAutoCompleteSuccess(User, User_id, val);
             });
@@ -292,37 +332,30 @@ Auditpage.prototype.setControlValues = function(e) {
         {
             var userId = User_id.val();
             var form_list = [];
-            for(var i=0;i<a_page._userList.length;i++)
-            {
-                var user_check = userId>0?(userId == a_page._userList[i].user_id):false;
-
-                if((a_page._userList[i].user_category_id == Category.val()) &&
-                    (user_check == true || user_check == false))
+            if(Category.val() > 2){
+                for(var i=0;i<a_page._auditData.length;i++)
                 {
-                    for(var j=0;j<a_page._auditData.length;j++)
+                    frm_user_id = a_page._auditData[i].user_id;
+                    if(userId > 0){
+                        if((a_page._auditData[i].user_category_id == Category.val()) &&
+                            (a_page._auditData[i].user_category_id == frm_user_id)){
+                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id);
+                        }
+                    }
+                    else
                     {
-                        if(a_page._auditData[j].user_id == a_page._userList[i].user_id)
-                        {
-                            console.log("inside audit_data")
-                            for(var k=0;k<a_page._formList.length;k++)
-                            {
-                                if(a_page._formList[k].form_id == a_page._auditData[j].form_id)
-                                {
-                                    console.log(a_page._formList[j].form_name)
-                                    form_list.push({
-                                        "form_id": a_page._formList[j].form_id,
-                                        "form_name": a_page._formList[j].form_name
-                                    });
-                                    break;
-                                }
-                            }
+                        if((a_page._auditData[i].user_category_id == Category.val())){
+                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id);
                         }
                     }
                 }
             }
-
+            else
+            {
+                form_list = a_page.pushForms("admin", 0);
+            }
             commonAutoComplete(
-                e, ACForm, Form, textval,
+                e, ACForm, Form_id, textval,
                 form_list, "form_name", "form_id", function (val) {
                 onAutoCompleteSuccess(Form, Form_id, val);
             });
@@ -340,29 +373,36 @@ Auditpage.prototype.setControlValues = function(e) {
         var textval = $(this).val();
         if(Category.val() != '')
         {
+            console.log("inside category not empty")
             var userId = User_id.val();
             var ctry_list = [];
-            for(var i=0;i<a_page._userList.length;i++)
-            {
-                var user_check = userId>0?(userId == a_page._userList[i].user_id):false;
-                console.log("user_check:"+user_check)
-                if((a_page._userList[i].user_category_id == Category.val()) &&
-                    (user_check == true || user_check == false))
+            if(Category.val() > 2){
+                console.log("categ:"+Category.val())
+                for(var i=0;i<a_page._userList.length;i++)
                 {
-                    for(var j=0;j<a_page._countryList.length;j++)
+                    console.log("0")
+                    db_user_id = a_page._userList[i].user_id;
+                    if(userId > 0){
+                        console.log("1")
+                        if((a_page._userList[i].user_category_id == Category.val()) &&
+                        (db_user_id == userId)){
+                            ctry_list = a_page.pushCountries("user",db_user_id);
+                        }
+                    }
+                    else
                     {
-                        console.log(a_page._countryList[j].user_id )
-                        if(a_page._countryList[j].user_id == a_page._userList[i].user_id)
-                        {
-                            ctry_list.push({
-                                "country_id": a_page._countryList[j].country_id,
-                                "country_name": a_page._countryList[j].country_name
-                            });
+                        console.log("2")
+                        if(a_page._userList[i].user_category_id == Category.val()){
+                            console.log("3")
+                            ctry_list = a_page.pushCountries("user",db_user_id);
                         }
                     }
                 }
             }
-            //var text_val = $(this).val();
+            else{
+                ctry_list = a_page.pushCountries("admin",0);
+            }
+            console.log("4:"+ctry_list.length)
             commonAutoComplete(
                 e, ACCountry, Country, textval,
                 ctry_list, "country_name", "country_id", function (val) {
@@ -371,6 +411,101 @@ Auditpage.prototype.setControlValues = function(e) {
         }
     });
 }
+
+Auditpage.prototype.pushCountries = function(u_type, user_id){
+    console.log("u_type:"+u_type);
+    console.log("user_id:"+user_id);
+    var a_page = this;
+    var userCheck = false;
+    var ctry_list = [];
+    for(var j=0;j<a_page._countryList.length;j++)
+    {
+        if(u_type == "user"){
+            userCheck = user_id>0?(user_id == a_page._countryList[j].user_id):false;
+        }
+        else if(u_type == "admin"){
+            userCheck = true;
+        }
+        console.log("userCheck:"+userCheck);
+        if(userCheck == true){
+            if(ctry_list.length > 0)
+            {
+                var arr_country = [];
+                element = a_page._countryList[j].country_id;
+                arr_country = ctry_list.reduce(function(arr, e, i) {
+                    if (e.country_id === element)
+                        arr.push(i);
+                    return arr;
+                }, []);
+
+
+                console.log("indx:"+arr_country.length)
+                if(arr_country.length == 0){
+                    ctry_list.push({
+                        "country_id": a_page._countryList[j].country_id,
+                        "country_name": a_page._countryList[j].country_name
+                    });
+                }
+            }
+            else
+            {
+                ctry_list.push({
+                    "country_id": a_page._countryList[j].country_id,
+                    "country_name": a_page._countryList[j].country_name
+                });
+            }
+        }
+    }
+    console.log("length:"+ctry_list.length);
+    return ctry_list;
+};
+
+Auditpage.prototype.pushForms = function(u_type, form_id){
+    console.log("u_type:"+form_id);
+    var a_page = this;
+    var userCheck = false;
+    var form_list = [];
+    for(var j=0;j<a_page._formList.length;j++)
+    {
+        if(u_type == "user"){
+            userCheck = form_id>0?(form_id == a_page._formList[j].form_id):false;
+        }
+        else if(u_type == "admin"){
+            userCheck = true;
+        }
+        console.log("userCheck:"+userCheck);
+        if(userCheck == true){
+            if(form_list.length > 0)
+            {
+                var arr_form = [];
+                element = a_page._formList[j].form_id;
+                arr_form = form_list.reduce(function(arr, e, i) {
+                    if (e.form_id === element)
+                        arr.push(i);
+                    return arr;
+                }, []);
+
+
+                console.log("indx:"+arr_form.length)
+                if(arr_form.length == 0){
+                    form_list.push({
+                        "form_id": a_page._formList[j].form_id,
+                        "form_name": a_page._formList[j].form_name
+                    });
+                }
+            }
+            else
+            {
+                form_list.push({
+                    "form_id": a_page._formList[j].form_id,
+                    "form_name": a_page._formList[j].form_name
+                });
+            }
+        }
+    }
+    console.log("length:"+form_list.length);
+    return form_list;
+};
 
 Auditpage.prototype.renderControl = function(){
     To_date.val(current_date());
@@ -430,8 +565,9 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 initializeControlEvents = function(a_page){
 
     Show_btn.click(function(e) {
-        a_page.resetFields();
+        //a_page.resetFields();
         is_valid = a_page.validateMandatory();
+        console.log(is_valid)
         if (is_valid == true) {
             a_page._on_current_page = 1;
             a_page._total_record = 0;
@@ -444,12 +580,7 @@ initializeControlEvents = function(a_page){
 
     on_page_load = function() {
         a_page.resetFields();
-        is_valid = a_page.validateMandatory();
-        console.log("is_valid:"+is_valid)
-        if (is_valid == true) {
-            a_page.fetchData();
-            a_page.renderPageControls();
-        }
+        a_page.renderPageControls();
     }
     on_page_load();
 

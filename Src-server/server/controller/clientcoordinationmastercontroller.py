@@ -45,7 +45,7 @@ def process_client_coordination_master_request(request, db):
     ):
         logger.logKnowledgeApi("GetClientUnitApprovalList", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_client_unit_approval_list(db)
+        result = process_get_client_unit_approval_list(db, session_user)
         logger.logKnowledgeApi("GetClientUnitApprovalList", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
@@ -99,8 +99,8 @@ def process_client_coordination_master_request(request, db):
 # parameter : None
 # return : GetClientUnitApprovalListSuccess Response
 ###############################################################################
-def process_get_client_unit_approval_list(db):
-    unit_approval_list = get_unit_approval_list(db)
+def process_get_client_unit_approval_list(db, session_user):
+    unit_approval_list = get_unit_approval_list(db, session_user)
     return clientcoordinationmaster.GetClientUnitApprovalListSuccess(
         unit_approval_list)
 

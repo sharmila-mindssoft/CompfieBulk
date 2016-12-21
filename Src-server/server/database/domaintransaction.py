@@ -217,9 +217,9 @@ def save_client_statutories(db, request, user_id):
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, status)" + \
         " values (%s, %s, %s)"
 
-    saved_unit = None
+    saved_unit = []
     for c in comps :
-        if saved_unit == c.unit_id :
+        if c.unit_id in saved_unit :
             continue
         if c.client_statutory_id is None :
             csid = db.execute_insert(q, [c.client_id, c.unit_id, status])
@@ -230,7 +230,7 @@ def save_client_statutories(db, request, user_id):
             db.execute(q1, [status, c.client_statutory_id])
             csid = c.client_statutory_id
 
-        saved_unit = c.unit_id
+        saved_unit.append(c.unit_id)
 
         save_statutory_compliances(
             db, comps,

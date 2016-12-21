@@ -2000,13 +2000,13 @@ def get_user_client_countries(db, session_user):
 #  Parameters : Object of database
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
-def get_assign_legalentities(db):
+def get_assign_legalentities(db, session_user):
     #
     # To get list of legal entities with no of unassigned units
     #  Parameters - None
     #
     legalentities = db.call_proc(
-        "sp_assign_legal_entities_list", None
+        "sp_assign_legal_entities_list", [session_user]
     )
     return return_assign_legalentities(legalentities)
 
@@ -2432,12 +2432,13 @@ def return_assigned_legal_entities(legal_entities):
     results = []
     for legal_entity in legal_entities:
         results.append(
-            core.UnAssignLegalEntity(
+            core.AssignedLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
                 c_name=legal_entity["country_name"],
-                c_id=legal_entity["country_id"]
+                c_id=legal_entity["country_id"],
+                employee_name=legal_entity["employee_name"]
             )
         )
     return results

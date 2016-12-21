@@ -93,7 +93,7 @@ api_params = {
     'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'reference': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'reference': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'refer': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'c_task': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -267,7 +267,7 @@ api_params = {
 
     "assign_le_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AssignLegalEntity"},
     "unassign_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnAssignLegalEntity"},
-    "view_assigned_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnAssignLegalEntity"},
+    "view_assigned_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AssignedLegalEntity"},
 
     'le_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "country_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
