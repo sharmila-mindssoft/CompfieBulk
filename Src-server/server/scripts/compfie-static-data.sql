@@ -26,7 +26,7 @@ INSERT INTO tbl_forms VALUES(2, 1, 'Domain', '/knowledge/domain-master', 2, null
 INSERT INTO tbl_forms VALUES(3, 1, 'User Privileges', '/knowledge/user-privileges', 3, null);
 INSERT INTO tbl_forms VALUES(4, 1, 'Geography Level Master', '/knowledge/geography-level-master', 4, 'Geography');
 INSERT INTO tbl_forms VALUES(5, 1, 'Geography Master', '/knowledge/geography-master', 5, 'Geography');
-INSERT INTO tbl_forms VALUES(6, 1, 'Organization Master', '/knowledge/organization', 6, null);
+INSERT INTO tbl_forms VALUES(6, 1, 'Organization', '/knowledge/organization', 6, null);
 INSERT INTO tbl_forms VALUES(7, 1, 'Statutory Nature Master', '/knowledge/statutory-nature', 7, 'Statutory');
 INSERT INTO tbl_forms VALUES(8, 1, 'Statutory Level Master', '/knowledge/statutory-level-master', 8, 'Statutory');
 INSERT INTO tbl_forms VALUES(9, 1, 'Validity Date Settings', '/knowledge/validity-date-settings', 9, null);
@@ -73,7 +73,7 @@ INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Report', '/knowledge/domain-agr
 INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-unit-details', 40, null);
 INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
-INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail', '/knowledge/audit-trail-login-trace', 43, null);
+INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail Login Trace', '/knowledge/audit-trail-login-trace', 43, null);
 INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
 INSERT INTO tbl_forms VALUES(49, 3, 'Reassign User Report', '/knowledge/reassign-user-report', 49, NULL);
 
