@@ -90,13 +90,13 @@ def return_industry(data):
     return results
 
 
-def check_duplicate_industry(db, industry_name, industry_id):
+def check_duplicate_industry(db, country_id, domain_id, industry_name, industry_id):
     isDuplicate = False
 
     if industry_id is not None:
-        param = [industry_id, industry_name]
+        param = [industry_id, industry_name, country_id, domain_id]
     else:
-        param = [0, industry_name]
+        param = [0, industry_name, country_id, domain_id]
 
     row = db.call_proc("sp_industry_master_checkduplicateindustry", param)
     for r in row:
@@ -254,12 +254,9 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
 
 
 def get_statutory_levels(db):
-    columns = [
-        "level_id", "level_position", "level_name",
-        "country_id", "domain_id"
-    ]
-    condition = " 1 ORDER BY level_position"
-    result = db.get_data("tbl_statutory_levels", columns, condition)
+    result = db.call_proc("sp_get_statutory_level_master", ())
+    print "sl"
+    print result
     return return_statutory_levels(result)
 
 
@@ -286,13 +283,12 @@ def return_statutory_levels(data):
 
 
 def delete_statutory_level(db, level_id):
-    q = "select count(*) from tbl_statutories where level_id = %s"
-    row = db.select_one(q, [level_id])
+    row = db.call_proc("sp_get_statutory_level_count", (level_id,))
     if row[0] > 0:
         return True
     else:
-        res = db.execute(
-            "delete from tbl_statutory_levels where level_id = %s ", [level_id]
+        res = db.call_proc(
+            "sp_delete_statutory_level", [level_id]
         )
         if res is False :
             raise process_error("E009")
@@ -326,23 +322,20 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
                 "level_position", "level_name",
                 "country_id", "domain_id", "created_by", "created_on"]
             values = [
-                position, name,
-                int(country_id),
-                int(domain_id), int(user_id), str(created_on)
+                int(country_id), int(domain_id),
+                position, name, int(user_id), str(created_on)
             ]
-            new_id = db.insert(table_name, columns, values)
+            new_id = db.call_insert_proc("sp_insert_statutory_level", values)
             if new_id is not False:
                 action = "New Statutory levels added"
                 db.save_activity(user_id, 9, action)
             else:
                 raise process_error("E007")
         else:
-            columns = ["level_position", "level_name", "updated_by"]
-            where_condition = "level_id = %s "
             values = [position, name, user_id, level.level_id]
             if (
-                db.update(
-                    table_name, columns, values, where_condition
+                db.call_update_proc(
+                    "sp_update_statutory_levels", values
                 )
             ):
                 action = "Statutory levels updated"
@@ -565,17 +558,21 @@ def update_geography(
         print len(parent_ids[:-1])
         if len(parent_ids[:-1]) == 1 :
             # p_ids = tuple([parent_ids[:-1], str(geography_id)])
-            p_ids = parent_ids[:-1] + "," + str(geography_id)
+            # p_ids = parent_ids[:-1] + "," + str(geography_id)
+            p_ids = parent_ids[:-1]
         else :
-            p_ids = parent_ids[:-1].split(',')
-            print "1"
-            print p_ids
-            p_ids.append(geography_id)
-            print "2"
-            print p_ids
-            p_ids = tuple(p_ids)
+            p_ids = None
+            i = 0
+            p_new_id = parent_ids[:-1].split(',')
+            for p_ids_len in p_new_id:
+                print p_ids_len[i]
+                if p_ids is None:
+                    p_ids = p_ids_len[i] + ","
+                else:
+                    p_ids = p_ids + p_ids_len[i]
+                i = i + 1
             print "p_ids"
-            print p_ids
+            print [geography_id, p_ids]
         result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
         print "result"
         print result
@@ -589,10 +586,16 @@ def update_geography(
             else:
                 map_name = ""
                 x = row["parent_ids"].strip().split(',')
+                print "x"
+                print x
                 for j in x[:-1]:
+                    print "j"
+                    print int(j)
                     if int(j) == int(geography_id) :
                         map_name += name + " >> "
                     else :
+                        print "1:"
+                        print int(j)
                         map_name += result[int(j)]["geography_name"] + " >> "
                 row["parent_ids"] = tuple(x[:-1])
 
