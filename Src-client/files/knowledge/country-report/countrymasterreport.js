@@ -136,6 +136,23 @@ function renderControls(){
       searchList = [];
       processSearch();
   });
+
+  $('input').on('keypress', function (e) {
+    /*var regex = new RegExp("^[a-zA-Z]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }*/
+    var k = e.which;
+      var ok = k >= 65 && k <= 90 || // A-Z
+          k >= 97 && k <= 122; // a-z
+          //k >= 48 && k <= 57; // 0-9
+
+      if (!ok){
+          e.preventDefault();
+      }
+  });
 }
 
 //pagination - functions
