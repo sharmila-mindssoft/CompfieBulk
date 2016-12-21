@@ -3446,7 +3446,7 @@ DROP PROCEDURE IF EXISTS `sp_assign_legal_entities_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_assign_legal_entities_list`()
+CREATE PROCEDURE `sp_assign_legal_entities_list`(in userId INT(11))
 BEGIN
     select tcg.client_id, tcg.group_name,
     (
@@ -3458,19 +3458,23 @@ BEGIN
     ) as country_names,
     (
         select count(legal_entity_id) from tbl_legal_entities tle
-        WHERE tle.client_id=tcg.client_id
+        WHERE tle.client_id=tcg.client_id and tle.is_closed = 0
     ) as no_of_legal_entities,
     (
-        select count(legal_entity_id) from tbl_user_legalentity tule
-        WHERE tule.client_id=tcg.client_id group by tule.client_id
+        select count(tule.legal_entity_id) from tbl_user_legalentity tule
+        inner join tbl_legal_entities tle on tle.legal_entity_id = tule.legal_entity_id
+        WHERE tule.client_id=tcg.client_id and tle.is_closed = 0 group by tule.client_id
     ) as no_of_assigned_legal_entities
 
-    FROM tbl_client_groups tcg where tcg.is_approved = 1 and tcg.is_active = 1
+    FROM tbl_client_groups tcg
+    inner join tbl_user_clients tuc on tuc.client_id = tcg.client_id and tuc.user_id = userId
+    where tcg.is_approved = 1 and tcg.is_active = 1
     order by tcg.group_name;
 
 END //
 
 DELIMITER ;
+
 
 
 -- ----------------------------------------------------
@@ -3489,7 +3493,7 @@ BEGIN
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t4.legal_entity_id is null;
+    WHERE t1.client_id=clientid and t1.is_closed = 0 and t4.legal_entity_id is null;
 END //
 
 DELIMITER ;
@@ -3532,7 +3536,7 @@ BEGIN
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t4.legal_entity_id is not null
+    WHERE t1.client_id=clientid and t1.is_closed = 0 and t4.legal_entity_id is not null
     order by t4.user_id;
 END //
 
