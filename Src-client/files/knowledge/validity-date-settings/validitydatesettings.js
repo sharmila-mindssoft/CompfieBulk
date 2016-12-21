@@ -111,8 +111,6 @@ function collect_and_validate_values(){
   values_to_save = []
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
-      console.log("domain_list.length;"+domain_list.length)
-      console.log(domain_list)
       domain_id = parseInt(domain_list[dcount])
       validity_days = $(".val-"+country_id+"-"+domain_id).val()
       console.log("validity_days:"+validity_days)
@@ -122,7 +120,8 @@ function collect_and_validate_values(){
           validity_days != "undefined" &&
           validity_days != null
       ){
-        if(parseInt(validity_days) > 365){
+        if (!(parseInt(validity_days) > 365)){
+          console.log("check:"+parseInt(validity_days) > 365)
           displayMessage(message.invalid_validity_days);
           return false;
           break;
