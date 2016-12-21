@@ -607,13 +607,13 @@ function loadusermappingdetails() {
     {
       displayMessage(message.country_required);
     }
-    if(client_id == 0 || client_id == '')
+    else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
     }
-    if(le_id  == 0 || le_id == '')
+    else if(le_id  == 0 || le_id == '')
     {
-      displayMessage(message.legal_entity_required);
+      displayMessage(message.legalentity_required);
     }
   }
 }
@@ -958,10 +958,15 @@ $('#businessgroupsval').keyup(function (e) {
   }
   else
   {
-    if($('#group-id').val() == 0)
+    if(country_id == 0 || country_id == '')
+    {
+      displayMessage(message.country_required);
+    }
+    else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
     }
+
   }
 });
 
@@ -1008,10 +1013,15 @@ $('#legalentityval').keyup(function (e) {
   }
   else
   {
-    if($('#group-id').val() == 0)
+    if(country_id == 0 || country_id == '')
+    {
+      displayMessage(message.country_required);
+    }
+    else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
     }
+
   }
 });
 
@@ -1061,13 +1071,13 @@ $('#divisionval').keyup(function (e) {
     {
       displayMessage(message.country_required);
     }
-    if(client_id == 0 || client_id == '')
+    else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
     }
-    if(le_id == 0 || le_id == '')
+    else if(le_id == 0 || le_id == '')
     {
-      displayMessage(message.legal_entity_required);
+      displayMessage(message.legalentity_required);
     }
   }
 });
@@ -1110,13 +1120,13 @@ $('#categoryval').keyup(function (e) {
     {
       displayMessage(message.country_required);
     }
-    if(client_id == 0 || client_id == '')
+    else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
     }
-    if(le_id == 0 || le_id == '')
+    else if(le_id == 0 || le_id == '')
     {
-      displayMessage(message.legal_entity_required);
+      displayMessage(message.legalentity_required);
     }
   }
 });
@@ -1161,13 +1171,13 @@ $('#unitval').keyup(function (e) {
     {
       displayMessage(message.country_required);
     }
-    if(client_id == 0 || client_id == '')
+    else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
     }
-    if(le_id == 0 || le_id == '')
+    else if(le_id == 0 || le_id == '')
     {
-      displayMessage(message.legal_entity_required);
+      displayMessage(message.legalentity_required);
     }
   }
 });
