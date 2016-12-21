@@ -84,7 +84,8 @@ def return_compliance(data):
     compalinaces = []
     for d in data:
         statutory_dates = d["statutory_dates"]
-        statutory_dates = json.loads(statutory_dates)
+        if statutory_dates is not None :
+            statutory_dates = json.loads(statutory_dates)
         date_list = []
         for date in statutory_dates:
             s_date = core.StatutoryDate(
@@ -1357,7 +1358,7 @@ def get_compliance_details(db, user_id, compliance_id):
 
     statutory_dates = c_info["statutory_dates"]
 
-    if statutory_dates is not None:
+    if statutory_dates is not None and statutory_dates != "":
         statutory_dates = json.loads(statutory_dates)
 
         for date in statutory_dates:
