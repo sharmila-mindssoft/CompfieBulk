@@ -1,113 +1,72 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
+
 <style>
-.paddingRight5Px {
-    padding-right: 5px
+.gt input[type="checkbox"] {
+display: none !important;
 }
-
-.padding10px {
-    padding-bottom: 10px;
-    padding-top: 10px;
-    padding-right: 10px;
+.gt input[type="radio"] {
+display: none !important;
 }
-
-.padding0px {
-    padding: 0px;
+.gt input[type="radio"]+label {
+background: url('images/tick1boldinactive.png') no-repeat;
+height:17px;
+padding-left: 18px;
+cursor: pointer;
 }
-
-.font08em {
-    font-size: 0.8em;
+.gt input[type="radio"]:checked + label {
+background: url('images/tick1bold.png') no-repeat;
+height:17px;
+cursor: pointer;
 }
-
-.width85Percent {
-    width: 85%;
-}
-
-.bold-text {
-    font-weight: bold;
-}
-
-.applicable-active-icon {
-    background: url(../images/tick1bold.png) no-repeat center;
-    border: none;
-    outline: none;
+.gt_blue input[type="radio"] + label {
+    background: url('images/tick1bold.png') no-repeat;
+    height:17px;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
 }
-
-.applicable-inactive-icon {
-    background: url(../images/deletebold.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
+.gt-cross input[type="radio"] {
+display: none !important;
 }
-
-.not-applicable-active-icon {
-    background: url(../images/deletebold.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
+.gt-cross input[type="radio"]+label {    
+background: url('images/deleteboldinactive.png') no-repeat;
+height:17px;
+padding-left: 18px;
+cursor: pointer;
 }
-
-.not-applicable-inactive-icon {
-    background: url(../images/deleteboldinactive.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
+.gt-cross input[type="radio"]:checked + label {
+background: url('images/deletebold.png') no-repeat;
+height:17px;
+cursor: pointer;
 }
-
-.not-atall-applicable-active-icon {
-    background: url(../images/iconminusactive.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
+.gt-minus input[type="radio"] {
+display: none !important;
 }
-
-.not-atall-applicable-inactive-icon {
-    background: url(../images/iconminusinactive.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
+.gt-minus input[type="radio"]+label {    
+background: url('images/iconminusinactive.png') no-repeat;
+height:17px;
+padding-left: 18px;
+cursor: pointer;
 }
-
-.saved-active-icon {
-    background: url(../images/icon-tag-active-16.png) no-repeat center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
+.gt-minus input[type="radio"]:checked + label {
+background: url('images/iconminusactive.png') no-repeat;
+height:17px;
+cursor: pointer;
 }
-
-.saved-inactive-icon {
-    background: url("") no-repeat center;
-    border: none;
-    outline: none;
+.gt-one input[type="checkbox"] {
+display: none !important;
+}
+.gt-one input[type="checkbox"]+label {    
+    background: url('images/deletebold.png') no-repeat;
+    height:17px;
+    padding-left: 18px;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
-    display:block;
+}
+.gt-one input[type="checkbox"]:checked + label {
+    background: url('images/tick1boldinactive.png') no-repeat;
+    height:17px;
+    cursor: pointer;
 }
 </style>
-
 <div class="container" id="assignstatutory-view">
   <div class="row">
     <div class="col-sm-12">
@@ -118,102 +77,102 @@
     </div>
   </div>
   <div class="row">
-  <div id="animationSandbox">
-    <div class="col-sm-12">
-      <div class="panel panel-default panel-info">
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-          <div class="dataTable_wrapper">
-            <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th align="center" width="2%">#</th>
-                  <th width="07%">Country</th>
-                  <th width="08%">Group</th>
-                  <th width="10%">Business Group</th>
-                  <th width="10%">Legal Entity</th>
-                  <th width="08%">Division</th>
-                  <th width="08%">Category</th>
-                  <th width="08%">Location</th>
-                  <th width="10%">Unit</th>
-                  <th width="08%">Domain</th>
-                  <th width="08%">Status</th>
-                  <th width="05%" class="text-center">Edit</th>
-                </tr>
-                <tr class="odd gradeX">
-                  <td align="center"></td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Country" id="filter1">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Group" id="filter2">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Business Group" id="filter3">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Legal Entity" id="filter4">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Division" id="filter5">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Category" id="filter6">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Location" id="filter7">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Unit" id="filter8">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Domain" id="filter9">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                        <input class="form-control input-sm listfilter" type="text" placeholder="Status" id="filter10">
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td align="center">&nbsp;</td>
-                </tr>
-                </thead>
-                <tbody class="tbody-assignstatutory-list">
-                </tbody>
-            </table>
+    <div id="animationSandbox">
+      <div class="col-sm-12">
+        <div class="panel panel-default panel-info">
+          <!-- /.panel-heading -->
+          <div class="panel-body">
+            <div class="dataTable_wrapper">
+              <table  class="table table-striped dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th align="center" width="2%">#</th>
+                    <th width="07%">Country</th>
+                    <th width="08%">Group</th>
+                    <th width="10%">Business Group</th>
+                    <th width="10%">Legal Entity</th>
+                    <th width="08%">Division</th>
+                    <th width="08%">Category</th>
+                    <th width="08%">Location</th>
+                    <th width="10%">Unit</th>
+                    <th width="08%">Domain</th>
+                    <th width="08%">Status</th>
+                    <th width="05%" class="text-center">Edit</th>
+                  </tr>
+                  <tr class="odd gradeX">
+                    <td align="center"></td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Country" id="filter1">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Group" id="filter2">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Business Group" id="filter3">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Legal Entity" id="filter4">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Division" id="filter5">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Category" id="filter6">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Location" id="filter7">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Unit" id="filter8">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Domain" id="filter9">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                          <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Status" id="filter10">
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td align="center">&nbsp;</td>
+                  </tr>
+                  </thead>
+                  <tbody class="tbody-assignstatutory-list">
+                  </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <div class="content-page default-display-none" id="assignstatutory-add">
@@ -224,7 +183,7 @@
                     <div class="portlet-heading bg-info">
                       <h3 class="portlet-title">Assign Statutory</h3>
                       <div class="portlet-widgets">
-                          <a href="#" onclick="location.href='/assign-statutory/list'">
+                          <a id="btn-user-cancel">
                               <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                           </a>
                       </div>
@@ -235,8 +194,8 @@
                     <div>
                         <div id="basicwizard" >
                             <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Select Unit & Domain</a></li>
-                                <li><a href="#tab2" data-toggle="tab">Select Statutory</a></li>
+                              <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Select Unit & Domain</a></li>
+                                <li class="tab-step-2 disabled"><a href="#tab2" data-toggle="tab">Select Statutory</a></li>
                             </ul>
                             <div class="tab-content b-0 m-b-0">
                                 <div class="tab-pane m-t-0 p-t-10 fade active in box-height-350" id="tab1">
@@ -248,7 +207,7 @@
                                                 <div class="col-sm-6 has-feedback no-padding-right">
                                                     <input class="form-control input-sm" type="text" value="" id="group_name">
                                                     <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="group_id">
+                                                    <input type="hidden" id="group_id" value="">
                                                     <div id="ac-group" class="ac-textbox default-display-none">
                                                         <ul class="width85Percent"></ul>
                                                     </div>
@@ -259,7 +218,7 @@
                                                 <div class="col-sm-6 has-feedback no-padding-right">
                                                     <input class="form-control input-sm" type="text" value="" id="legal_entity_name">
                                                     <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="legal_entity_id">
+                                                    <input type="hidden" id="legal_entity_id" value="">
                                                     <div id="ac-entity" class="ac-textbox default-display-none">
                                                         <ul class="width85Percent"></ul>
                                                     </div>
@@ -305,7 +264,7 @@
                                                 <div class="col-sm-6 has-feedback no-padding-right">
                                                     <input class="form-control input-sm" type="text" value="" id="domain_name">
                                                     <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="domain_id">
+                                                    <input type="hidden" id="domain_id" value="">
                                                     <div id="ac-domain" class="ac-textbox default-display-none">
                                                         <ul class="width85Percent"></ul>
                                                     </div>
@@ -320,40 +279,9 @@
                                             <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
                                         </div>
                                     </center>
-
                                     
                                     <div class="col-sm-12 scroll_box box-height-170 no-padding">
-                                        <!-- <table id="datatable-fixed-header" class="table table-striped dt-responsive table-list" width="100%" cellspacing="0">
-                                            <thead>
-                                                <th>Unit</th>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
-                                                            <input class="form-control input-sm" placeholder="Enter Unit" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <div class="form-group col-sm-6 m-b-0 no-padding">
-                                                            <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                                <input id="singleCheckbox2" value="option2" type="checkbox">
-                                                                <label></label>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <ul class="list-unstyled p-t-0">
-                                                            <li class="unit_name">VRM1001 - Corporate Office - 15/9, New Delhi, New Delhi, North Region, India</li>
-                                                            <li class="unit_name active"> VRM1003 - Regional Office - 12, KK nagar, Chennai, Tamil Nadu, South Region <i class="fa fa-check pull-right"></i> </li>
-                                                           
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table> -->
-
+                                      
                                         <table id="datatable-fixed-header" class="table table-striped dt-responsive table-list letable" width="100%" cellspacing="0">
                                             <thead>
                                                 <th>Unit<span class="mandatory">*</span></th>
@@ -368,7 +296,7 @@
                                                         </div>
                                                         <div class="form-group col-sm-6 m-b-0 no-padding">
                                                             <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                                <input id="singleCheckbox2" value="option2" type="checkbox">
+                                                                <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
                                                                 <label></label>
                                                             </div>
                                                         </div>
@@ -377,561 +305,300 @@
 
                                             <tr>
                                                 <td>
-                                                    <ul class="unit-list" height="100%">
-                                                       <!--  <li style="border-bottom:1px solid #ccc;">
-                                                            <input type="checkbox" class="select_all" style="float:right; margin-top:5px;">
-                                                            <input type="text" class="filter-text-box" style="width:300px;">
-                                                        </li> -->
+                                                    <ul class="list-unstyled p-t-0 unit-list" height="100%">
+                                                       
                                                     </ul>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
-                                    </div>
+                                      </div>
                                     <div class="selected_checkbox">
                                         <br>
                                         <br> Selected Unit: <span class="selected_checkbox_count">0</span>
                                     </div>
                                 </div>
                                 <div class="tab-pane m-t-0 p-t-10 fade box-height-350" id="tab2">
-                                    <!-- <div class="row">
-                                        <div class="singleunit">
-                                            <div class="col-lg-12">
-                                                <div class="card-box table-responsive no-padding b-0 ">
-                                                    <div class="col-lg-12 text-block p-5-px ">India <i class="fa fa-angle-double-right"></i> RG Groups <i class="fa fa-angle-double-right"></i> RG Business Group <i class="fa fa-angle-double-right"></i> RG Legal Entity 01 <i class="fa fa-angle-double-right"></i> RG Division <i class="fa fa-angle-double-right"></i> RG Category <i class="fa fa-angle-double-right"></i> Industrial Law </div>
-                                                    <div class="panel-group col-lg-12 no-padding" id="accordion" role="tablist" aria-multiselectable="true">
-                                                        <div class="panel panel-default bx-shadow-none">
-                                                            <div class="panel-heading p-10" role="tab" id="headingOne">
-                                                                <h4 class="panel-title">
-                                                                    <a role="button" data-toggle="collapse"
-                                                                        data-parent="#accordion" href="#collapseOne"
-                                                                        aria-expanded="true" aria-controls="collapseOne">
-                                                                    <i class="fa fa-check text-info fa-1x"></i> The Batteries Act
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                                                <div class="panel-body no-padding">
-                                                                    <div class="dataTable_wrapper">
-                                                                        <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th align="center" width="2%">#</th>
-                                                                                    <th width="15%">Statutory Provision</th>
-                                                                                    <th width="15%">Compliance Task</th>
-                                                                                    <th width="30%">Compliance Description</th>
-                                                                                    <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                                                                    <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                                                                    <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                                                                    <th width="1%">Saved</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td class="text-center">1</td>
-                                                                                    <td>Rule 4 (iii)</td>
-                                                                                    <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM I - Half yearly returns Submission</td>
-                                                                                    <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check c-pointer fa-1-3x text-info"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"><i class="fa fa-square c-pointer text-warning"></i></td>
-                                                                                </tr>                           </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="panel panel-default bx-shadow-none">
-                                                            <div class="panel-heading p-10" role="tab" id="headingTwo">
-                                                                <h4 class="panel-title">
-                                                                    <a class="collapsed" role="button" data-toggle="collapse"
-                                                                        data-parent="#accordion" href="#collapseTwo"
-                                                                        aria-expanded="false" aria-controls="collapseTwo">
-                                                                        <i class="fa fa-times "></i> Indian Partnership Act, 1932
-                                                                        <div class="col-sm-3 controls pull-right m-t-m-5">
-                                                                            <label class="col-sm-3 control-label p-t-5">Remarks:</label>
-                                                                            <div class="col-sm-9 no-padding">
-                                                                            <input type="text" class="form-control input-sm" id="elementRemarks" placeholder="Enter Remarks" />  
-                                                                            </div>
-                                                                        </div>
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                                                                <div class="panel-body no-padding">
-                                                                    <div class="dataTable_wrapper">
-                                                                        <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th align="center" width="2%">#</th>
-                                                                                    <th width="15%">Statutory Provision</th>
-                                                                                    <th width="15%">Compliance Task</th>
-                                                                                    <th width="30%">Compliance Description</th>
-                                                                                    <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                                                                    <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                                                                    <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                                                                    <th width="1%">Saved</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td class="text-center">1</td>
-                                                                                    <td>Rule 4 (iii)</td>
-                                                                                    <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM I - Half yearly returns Submission</td>
-                                                                                    <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check c-pointer fa-1-3x text-info"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"><i class="fa fa-square c-pointer text-warning"></i></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="text-center">2</td>
-                                                                                    <td>Rule 5 and Rule 6 (ii)</td>
-                                                                                    <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM II - Registration</td>
-                                                                                    <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times c-pointer fa-1-3x"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"><i class="fa fa-square text-muted c-pointer"></i></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="text-center">3</td>
-                                                                                    <td>Rule 6(iii)</td>
-                                                                                    <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM III - Undertaking submission</td>
-                                                                                    <td>Whether undertaking submitted by importer to authority.</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle c-pointer fa-1-3x text-danger"></i></td>
-                                                                                    <td class="text-center"><i class="fa fa-square c-pointer text-warning"></i></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="text-center">4</td>
-                                                                                    <td>Rule 7(iv)</td>
-                                                                                    <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
-                                                                                    <td>Whether half yearly returns submitted by dealer to manufacturer</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check c-pointer fa-1-3x text-info"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle c-pointer fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center"><i class="fa fa-square c-pointer text-warning"></i></td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                </div>
+                                  <div class="row">
+                                    <div class="singleunit">
+                                      <div class="col-lg-12">
+                                        <div class="card-box table-responsive no-padding b-0 ">
+                                            <div class="col-lg-12 text-block p-5-px breadcrumbs">
+                                            </div>
+
+                                            <div class="panel-group col-lg-12 no-padding tbody-assignstatutory" id="accordion" role="tablist" aria-multiselectable="true">
+                                              
                                             </div>
                                         </div>
-
-
-
-                                        <div class="multipleunit" style="display: none;">
-                                            <div class="col-lg-12">
-                                                <div class="card-box table-responsive no-padding b-0">
-                                                    <div class="panel-group col-lg-12 no-padding" id="accordion" role="tablist" aria-multiselectable="true">
-                                                        <div class="panel panel-default bx-shadow-none">
-                                                            <div class="panel-heading p-10" role="tab" id="headingOne">
-                                                                <h4 class="panel-title">
-                                                                    <a role="button" data-toggle="collapse"
-                                                                        data-parent="#accordion" href="#collapseOne"
-                                                                        aria-expanded="true" aria-controls="collapseOne">
-                                                                    <i class="fa fa-check text-info fa-1x"></i> The Batteries Act
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                                                <div class="panel-body no-padding">
-                                                                    <div class="dataTable_wrapper">
-                                                                        <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th align="center" width="2%">#</th>
-                                                                                    <th width="15%">Statutory Provision</th>
-                                                                                    <th width="15%">Compliance Task</th>
-                                                                                    <th width="30%">Compliance Description</th>
-                                                                                    <th width="04%" colspan="3">Applicable Units</th>
-                                                                                    <th width="1%">Saved</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td class="text-center">1</td>
-                                                                                    <td>Rule 4 (iii)</td>
-                                                                                    <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM I - Half yearly returns Submission</td>
-                                                                                    <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned </td>
-                                                                                    <td class="text-center" colspan="3"> <a href="#">2 / 3</a> </td>
-                                                                                    <td class="text-center"><i class="fa fa-square text-warning"></i></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <th align="center" width="2%"></th>
-                                                                                    <th width="15%">Location</th>
-                                                                                    <th width="15%" colspan="2">Unit Name</th>
-                                                                                    <th width="04%" class="text-center">
-                                                                                        <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                                                                                            <input id="singleCheckbox1" value="option2" type="checkbox">
-                                                                                            <label for="singleCheckbox1"></label>
-                                                                                        </div>
-                                                                                    </th>
-                                                                                    <th width="04%" class="text-center">
-                                                                                        <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                                                                                            <input id="singleCheckbox2" value="option2" type="checkbox">
-                                                                                            <label for="singleCheckbox2"></label>
-                                                                                        </div>
-                                                                                    </th>
-                                                                                    <th width="04%" class="text-center">
-                                                                                        <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                                                                                            <input id="singleCheckbox3" value="option2" type="checkbox">
-                                                                                            <label for="singleCheckbox3"></label>
-                                                                                        </div>
-                                                                                    </th>
-                                                                                    <th width="1%"></th>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="text-center"></td>
-                                                                                    <td>South</td>
-                                                                                    <td colspan="2">VRM1003 - Regional Office</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check fa-1-3x text-primary"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times fa-1-3x"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center">&nbsp;</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="text-center"></td>
-                                                                                    <td>Chennai</td>
-                                                                                    <td colspan="2">VRM1005 - Branch Office</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check fa-1-3x text-primary"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times fa-1-3x"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center">&nbsp;</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="text-center">2</td>
-                                                                                    <td>Rule 5 and Rule 6 (ii)</td>
-                                                                                    <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM II - Registration</td>
-                                                                                    <td>Whether registration for importers obtained for importing   </td>
-                                                                                    <td class="text-center" colspan="3"> <a href="#">2 / 3</a> </td>
-                                                                                    <td class="text-center"></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <th align="center" width="2%"></th>
-                                                                                    <th width="15%">Location</th>
-                                                                                    <th width="15%" colspan="2">Unit Name</th>
-                                                                                    <th width="04%" class="text-center">
-                                                                                        <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                                                                                            <input id="singleCheckbox1" value="option2" type="checkbox">
-                                                                                            <label for="singleCheckbox1"></label>
-                                                                                        </div>
-                                                                                    </th>
-                                                                                    <th width="04%" class="text-center">
-                                                                                        <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                                                                                            <input id="singleCheckbox2" value="option2" type="checkbox">
-                                                                                            <label for="singleCheckbox2"></label>
-                                                                                        </div>
-                                                                                    </th>
-                                                                                    <th width="04%" class="text-center">
-                                                                                        <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                                                                                            <input id="singleCheckbox3" value="option2" type="checkbox">
-                                                                                            <label for="singleCheckbox3"></label>
-                                                                                        </div>
-                                                                                    </th>
-                                                                                    <th width="1%"></th>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="text-center"></td>
-                                                                                    <td>South</td>
-                                                                                    <td colspan="2">VRM1003 - Regional Office</td>
-                                                                                    <td class="text-center"> <i class="fa fa-check fa-1-3x text-primary"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-times fa-1-3x"></i></td>
-                                                                                    <td class="text-center"> <i class="fa fa-minus-circle fa-1-3x text-muted"></i></td>
-                                                                                    <td class="text-center">&nbsp;</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                </div>
-                                            </div>
-                                     </div>
-                                    </div> -->
-                                </div>
-
-
-                                <ul class="pager wizard m-b-0 m-t-10">
-                                    <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
-                                    <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
-                                    <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
-                                    <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Save</a> &nbsp; </li>
-                                </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                              </div>
+                              <ul class="pager wizard m-b-0 m-t-10">
+                                  <li id="btn-previous" class="previous"><a class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                  <li id="btn-next" class="next"><a class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                  <li id="btn-submit" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                  <li id="btn-save" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Save</a> &nbsp; </li>
+                              </ul>
+                            </div>
+</div>
+</div>
+<div class="clearfix"></div>
+<br>
+</div>
+</div>
 </div>
 
-</div>
-<!-- <div class="content-container width100 default-display-none" id="assignstatutory-add">
-    <div class="content-area">
-        <h1>Assign Statutory</h1>
-        <div class="add-container completed-container">
-            <div class="form-container-outer">
-                <ul class="nav  nav-pills nav-justified setup-panel">
-                    <li class="active step1header" style="width: 49.5%;">
-                        <a href="#step-1">
-                            <h4 class="list-group-item-heading">1. Select Unit & Domain</h4>
-                        </a>
-                    </li>
-                    <li class="disabled step2header" style="width: 49.5%;">
-                        <a href="#step-2">
-                            <h4 class="list-group-item-heading">2. Select Statutory</h4>
-                        </a>
-                    </li>
-                </ul>
-                <div class="clearfix"></div>
-                <div class="setup-content" id="step-1">
-                    <div class="innercontent">
-                        <div class="form-container-grid-table">
-                            <div class="input-row-left" class="padding0px">
-                                <div class="input-row">
-                                    <div class="field-label">
-                                        Group:<span class="mandatory">*</span>
-                                    </div>
-                                    <div class="field-input">
-                                        <input type="text" class="input-box icon-autocomplete" id="group_name" value="" placeholder="Enter Group">
-                                        <input type="hidden" id="group_id">
-                                        <div id="ac-group" class="ac-textbox default-display-none">
-                                            <ul class="width85Percent"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-row">
-                                    <div class="field-label">
-                                        Legal Entity:<span class="mandatory">*</span>
-                                    </div>
-                                    <div class="field-input">
-                                        <input type="text" class="input-box icon-autocomplete" id="legal_entity_name" value="" placeholder="Enter Legal Entity">
-                                        <input type="hidden" id="legal_entity_id">
-                                        <div id="ac-entity" class="ac-textbox default-display-none">
-                                            <ul class="width85Percent"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-row">
-                                    <div class="field-label">
-                                        Category:
-                                    </div>
-                                    <div class="field-input">
-                                        <input type="text" class="input-box icon-autocomplete" id="category_name" value="" placeholder="Enter Category">
-                                        <input type="hidden" id="category_id">
-                                        <div id="ac-category" class="ac-textbox default-display-none">
-                                            <ul class="width85Percent"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-row-right" class="padding0px">
-                                <div class="input-row">
-                                    <div class="field-label">Business Group:</div>
-                                    <div class="field-input">
-                                        <input type="text" class="input-box icon-autocomplete" id="business_group_name" value="" placeholder="Enter Business Group">
-                                        <input type="hidden" id="business_group_id">
-                                        <div id="ac-business-group" class="ac-textbox default-display-none">
-                                            <ul class="width85Percent"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-row">
-                                    <div class="field-label">Division:</div>
-                                    <div class="field-input">
-                                        <input type="text" class="input-box icon-autocomplete" id="division_name" value="" placeholder="Enter Division">
-                                        <input type="hidden" id="division_id">
-                                        <div id="ac-division" class="ac-textbox default-display-none">
-                                            <ul class="width85Percent"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-row">
-                                    <div class="field-label">
-                                        Domain:
-                                    </div>
-                                    <div class="field-input">
-                                        <input type="text" class="input-box icon-autocomplete" id="domain_name" value="" placeholder="Enter Business Group">
-                                        <input type="hidden" id="domain_id">
-                                        <div id="ac-domain" class="ac-textbox default-display-none">
-                                            <ul class="width85Percent"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="submit-button-container">
-                                <input type="submit" name="cancel" value="Show" class="btn-submit btn-show">
-                            </div>
-                            <table class="letable">
-                                <tr align="left">
-                                    <th width="95%">Unit <span class="mandatory">*</span></th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <ul class="unit-list" height="100%">
-                                            <li style="border-bottom:1px solid #ccc;">
-                                                <input type="checkbox" class="select_all" style="float:right; margin-top:5px;">
-                                                <input type="text" class="filter-text-box" style="width:300px;">
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="selected_checkbox">
-                        <br>
-                        <br> Selected Unit: <span class="selected_checkbox_count">0</span>
-                    </div>
-                    <table width="100%">
-                        <tr>
-                            <td width="70%" valign="middle">
-                                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
-                            </td>
-                            <td align="right" width="30%">
-                                <button id="activate-step-2" class="btn-right">
-                                    Next
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="setup-content default-display-none" id="step-2">
-                    <div class="innercontent">
-                        <h2 style="font-size:0.813em;" class="breadcrumbs"> </h2>
-                        <div class="grid-table">
-                            <table class="tbody-assignstatutory" id="accordion">
-                            </table>
-                        </div>
-                    </div>
-                    <table width="100%">
-                        <tr>
-                            <td width="70%" valign="middle">
-                                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
-                            </td>
-                            <td align="right" width="30%">
-                                <button id="assign-statutory-submit" class="btn-right">
-                                    Submit
-                                </button>
-                                <button id="assign-statutory-save" class="btn-right">
-                                    Save
-                                </button>
-                                <button id="previous" class="btn-right">
-                                    Previous
-                                </button>
-                            </td>
-                        </tr>
+<div id="templates">
+  <table class="table-assignstatutory">
+      <tr class="table-row">
+          <td class="tbl_sno" align="center"></td>
+          <td class="tbl_country"></td>
+          <td class="tbl_group"></td>
+          <td class="tbl_businessgroup"></td>
+          <td class="tbl_legalentity"></td>
+          <td class="tbl_division"></td>
+          <td class="tbl_category"></td>
+          <td class="tbl_location"></td>
+          <td class="tbl_unit"></td>
+          <td class="tbl_domain"></td>
+          <td class="tbl_status">
+            
+          </td>
+          
+          <td class="icon-3x text-center">
+            <i class="edit-icon" data-toggle="tooltip" title="Click here to Edit"></i>
+          </td>
+              
+      </tr>
+  </table>
+  <div class="unit-row">
+      <ul>
+          <li></li>
+      </ul>
+  </div>
+
+  <div id="act-templates" class="default-display-none">
+    <div class="p-head">
+      <div class="panel panel-default bx-shadow-none">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="m-b-0 m-t-0">
+              <div class="gt" style="float:left; width:3%;">
+                <label class="change_status" for="1"> 
+                <img src="images/tick1bold.png">
+                </label> 
+              </div>
+              <div class="panel-title">
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion" 
+                    aria-expanded="true" >
+                    <span></span>
+                <div class="controls pull-right m-t-m-5">
+                  <div class="col-sm-12 no-padding">
+                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
+                  </div>
+              </div>
+                
+                </a>
+              </div>
+              
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th align="center" width="2%">#</th>
+                                <th width="15%">Statutory Provision</th>
+                                <th width="15%">Compliance Task</th>
+                                <th width="30%">Compliance Description</th>
+                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
+                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
+                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
+                                <th width="1%">Saved</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-compliance-list">                               
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
+      </div>
     </div>
-</div> -->
+  </div>
+  <div id="statutory-value">
+    <table class="table-statutory-values">
+      <tr class="sub-title-row">
+        <td colspan="100%">
+            <div class="col-sm-2 no-padding">
+                <mark class="p-l-10 p-r-10 sub-title"></mark>
+            </div>
+        </td>
+      </tr>
+      <tr class="compliance-details">
+          <input type="hidden" class="combineid-class" />
+          <td><span class="sno"> </span></td>
+          <td class="statutoryprovision"></td>
+          <td>
+            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
+            <span class="compliancetask"> </span>
+          </td>
+          <td class="compliancedescription"> 
 
+          </td>
+          <td align="center" class="gt">
+              <input type="radio" class="comp compliance-ck-box-1">
+              <label class="compliance-label-1"></label>
+          </td>
 
+          <td align="center" class="gt-cross">
+              <input type="radio" class="comp compliance-ck-box-2">
+              <label class="compliance-label-2"></label>
+          </td>
 
+          <td align="center" class="gt-minus">
+              <input type="radio" class="comp compliance-ck-box-3">
+              <label class="compliance-label-3"></label>
+          </td>
 
-<div id="templates">
-    <table class="table-assignstatutory">
-        <tr class="table-row">
-            <td class="tbl_sno" align="center"></td>
-            <td class="tbl_country"></td>
-            <td class="tbl_group"></td>
-            <td class="tbl_businessgroup"></td>
-            <td class="tbl_legalentity"></td>
-            <td class="tbl_division"></td>
-            <td class="tbl_category"></td>
-            <td class="tbl_location"></td>
-            <td class="tbl_unit"></td>
-            <td class="tbl_domain"></td>
-            <td class="tbl_status"></td>
-            <td align="center">
-                <span class="edit-icon" style="width: 16px; height: 16px; display:block"> </span>
-            </td>
-        </tr>
+          <td align="center">
+              <i class="fa c-pointer text-warning saved"></i>
+          </td>
+      </tr>
     </table>
-    <div class="unit-row">
-        <ul>
-            <li></li>
-        </ul>
-    </div>
-    <div class="bread-crum-img">
-        <img src="images/chevron_black_right.png">
-    </div>
-    <div class="compliances-accordian-header default-display-none">
-        <table class="font1">
-            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%" class="gt">
-                    <span class="change_status applicable-active-icon"></span>
-                   <!--  <label class="change_status" for="1" style="margin-top:10px;"><img src="images/tick1bold.png"></label> -->
-                </th>
-                <th style="background-color:#eae8e8; color:#000000; font-weight: bold;" class="actname" width="95%"><span><img src="/images/chevron_black_down.png"></span></th>
-            </tr>
-            <tr style="border:1px solid #cccccc;">
-                <td colspan="2" style="padding-left:0px;">
-                    <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">
+  </div>
+
+
+  <div id="multi-act-templates" class="default-display-none">
+    <div class="p-head">
+      <div class="panel panel-default bx-shadow-none">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="m-b-0 m-t-0">
+              <div class="gt" style="float:left; width:3%;">
+                <label class="change_status" for="1"> 
+                <img src="images/tick1bold.png">
+                </label> 
+              </div>
+              <div class="panel-title">
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion" 
+                    aria-expanded="true" >
+                    <span></span>
+                <div class="controls pull-right m-t-m-5">
+                  <div class="col-sm-12 no-padding">
+                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
+                  </div>
+              </div>
+                
+                </a>
+              </div>
+              
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th align="center" width="2%">#</th>
+                                <th width="15%">Statutory Provision</th>
+                                <th width="15%">Compliance Task</th>
+                                <th width="30%">Compliance Description</th>
+                                <th align="center" width="12%" colspan="3">Applicable Units</th>
+                                <th width="1%">Saved</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-compliance-list">                               
+                        </tbody>
                     </table>
-                </td>
-            </tr>
-        </table>
+                </div>
+            </div>
+        </div>
+      </div>
     </div>
-    <div id="statutory-header" class="default-display-none">
-        <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">
-            <tr align="left">
-                <td width="2%"><span class="bold-text">#</span></td>
-                <td width="13%"><span class="bold-text">Statutory Provision</span></td>
-                <td width="23%"><span class="bold-text">Compliance Task</span></td>
-                <td width="26%" colspan="3">
-                    <span class="bold-text">Compliance Description</span>
-                </td>
-                <td width="5%" align="center">
-                    <img src="/images/icon-client-comply.png" title="Applicable">
-                </td>
-                <td width="5%" align="center">
-                    <img src="/images/icon-client-comply.png" title="Not Applicable">
-                </td>
-                <td width="5%" align="center">
-                    <img src="/images/icon-client-comply.png" title="Not at all applicable">
-                </td>
-                <td width="5%" align="center">
-                    <span class="bold-text">Saved</span>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div id="statutory-value" class="default-display-none">
-        <table class="table-statutory-values">
-            <tr>
-                <td class="sno"></td>
-                <td class="statutoryprovision"></td>
-                <td>
-                    <abbr class="page-load tipso_style compliancetask" title="">
-                        <img src="/images/icon-info.png" style="padding-right: 3px;" />
-                    </abbr>
-                </td>
-                <td colspan="3" class="compliancedescription"></td>
-                <td align="center">
-                    <span class="applicable"> </span>
-                </td>
-                <td align="center">
-                    <span class="not-applicable"> </span>
-                </td>
-                <td align="center">
-                    <span class="not-at-all-applicable"> </span>
-                </td>
-                <td align="center">
-                    <span class="saved"> </span>
-                </td>
-            </tr>
-        </table>
-    </div>
+  </div>
+
+    <div id="multi-statutory-value">
+    <table class="table-statutory-values">
+      <tr class="compliance-details">
+          <td><span class="sno"> </span></td>
+          <td class="statutoryprovision"></td>
+          <td>
+            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
+            <span class="compliancetask"> </span>
+          </td>
+          <td class="compliancedescription"> 
+
+          </td>
+          <td colspan="3" align="center" class="applicablelocation"> 
+
+          </td>
+
+          <td align="center">
+              <i class="fa c-pointer text-warning saved"></i>
+          </td>
+      </tr>
+
+      <tr class="unit-head">
+        <th align="center" width="2%"></th>
+        <th width="15%">Location</th>
+        <th width="15%" colspan="2">Unit Name</th>
+        <th width="04%" class="text-center">
+            <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
+                <input class="sub-tick" value="1" type="checkbox">
+                <label></label>
+            </div>
+        </th>
+        <th width="04%" class="text-center">
+            <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
+                <input class="sub-untick" value="2" type="checkbox">
+                <label></label>
+            </div>
+        </th>
+        <th width="04%" class="text-center">
+            <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
+                <input  class="sub-minus" value="3" type="checkbox">
+                <label></label>
+
+                <!-- <input id="singleCheckbox3" value="option2" type="checkbox">
+                <label for="singleCheckbox3"></label> -->
+            </div>
+        </th>
+        <th width="1%"></th>
+      </tr>
+
+      <tr class="unit-row">
+        <td align="center" width="2%">
+          <input type="hidden" class="combineid-class" />
+        </td>
+        <td width="15%" class="unit-locatiion"></td>
+        <td width="15%" colspan="2" class="unit-name"></td>
+        <td align="center" class="gt">
+            <input type="radio" class="comp compliance-ck-box-1">
+            <label class="compliance-label-1"></label>
+        </td>
+
+        <td align="center" class="gt-cross">
+            <input type="radio" class="comp compliance-ck-box-2">
+            <label class="compliance-label-2"></label>
+        </td>
+
+        <td align="center" class="gt-minus">
+            <input type="radio" class="comp compliance-ck-box-3">
+            <label class="compliance-label-3"></label>
+        </td>
+        <td width="1%"></td>
+      </tr>
+
+    </table>
+
+  </div>
+
 </div>
 <script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
 {% endblock %}

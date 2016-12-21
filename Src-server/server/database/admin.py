@@ -939,16 +939,17 @@ def get_user_mappings(db):
 
 
 def return_user_mapping_users(data):
+    print data
     result = []
     for datum in data:
         fn = admin.UserMapping
-        result = [
-            fn(
+        mapping = fn(
                 user_mapping_id=datum["user_mapping_id"],
                 parent_user_id=datum["parent_user_id"],
                 child_user_id=datum["child_user_id"]
             )
-        ]
+        result.append(mapping)
+        
     return result
 
 

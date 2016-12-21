@@ -15,7 +15,7 @@
       <div class="panel panel-default panel-info">
         <div class="panel-body">
           <div class="dataTable_wrapper">
-            <table  class="table table-striped dt-responsive nowrap js-filterable-view" cellspacing="0" width="100%">
+            <table  class="table table-striped dt-responsive nowrap js-filtertable-view" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th align="center" width="2%">#</th>
@@ -23,7 +23,7 @@
                   <th width="20%">Group</th>
                   <th width="12%" class="text-center">Unassigned Unit(s)</th>
                   <th width="10%" class="text-center">Assign</th>
-                  <th width="12%" class="text-center">Domain Manager</th>
+                  <th width="12%" class="text-center category_title"></th>
                 </tr>
                 <tr class="odd gradeX">
                   <td align="center"></td>
@@ -125,7 +125,7 @@
             </div>
             </div>
             <div class="legalentity-view view_legal_entity default-display-none" id="edit-legal-entity">
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filterable" cellspacing="0" width="100%">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th width="1%"></th>
@@ -173,7 +173,7 @@
                 <div class="col-lg-12">
                   <form class="form-horizontal" role="form">
                     <div class="form-group has-feedback reassign-du" >
-                      <label class="col-md-5 control-label">Assign To Domain Manager:</label>
+                      <label class="col-md-5 control-label">Assign To <span class="category_title"></span>:</label>
                       <div class="col-md-3">
                         <input  class="form-control input-sm" id="assinee">
                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
@@ -301,11 +301,11 @@
         <div id="bg-primary1" class="panel-collapse collapse in">
             <div class="portlet-body">
           <div class="table-responsive">
-            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filterable-domain" cellspacing="0" width="100%">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable-domain" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th align="center" width="2%">#</th>
-                  <th width="10%">Domain Manager</th>
+                  <th width="10%" class="category_title"></th>
                   <th width="10%">Domain</th>
                   <th width="10%">Group</th>
                   <th width="12%">Business Group</th>

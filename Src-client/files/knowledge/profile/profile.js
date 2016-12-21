@@ -60,22 +60,22 @@ function validateMaxLength(key_name, value, show_name) {
 
 function validateMandatory() {
   if (EmailId.val().trim().length == 0) {
-    displayMessage(msg.emailid_required);
-    Email_id.focus();
+    displayMessage(message.emailid_required);
+    EmailId.focus();
     return false;
   }
   else {
     validateMaxLength('email_id', EmailId.val(), "Email id");
     var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
     if (reg.test(EmailId.val().trim()) == false) {
-      displayMessage(msg.invalid_emailid);
+      displayMessage(message.invalid_emailid);
       EmailId.focus();
       return false;
     }
   }
 
   if (MobileNo.val().trim().length == 0) {
-    displayMessage(msg.mobile_required);
+    displayMessage(message.mobile_required);
     MobileNo.focus();
     return false;
   }else{

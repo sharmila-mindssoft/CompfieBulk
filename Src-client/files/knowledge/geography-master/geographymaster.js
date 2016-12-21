@@ -365,7 +365,7 @@ function saverecord1(j, e) {
       for (k = 1; k < j; k++) {
         $('.list' + k + '.active').each(function (index, el) {
           map_gm_id.push(parseInt(el.id));
-          map_gm_name.push(el.innerHTML);
+          map_gm_name.push(el.innerHTML.replace(/<i class="fa fa-check pull-right"><\/i>/gi, ''));
           last_geography_id = el.id;
           last_level = k;
         });

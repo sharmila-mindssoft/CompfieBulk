@@ -1960,18 +1960,21 @@ class AssignedUnitDetails(object):
 
 
 class GetUnassignedUnitsSuccess(Response):
-    def __init__(self, unassigned_units_list):
+    def __init__(self, unassigned_units_list, user_category_id):
         self.unassigned_units_list = unassigned_units_list
+        self.user_category_id = user_category_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["unassigned_units_list"])
         unassigned_units_list = data.get("unassigned_units_list")
-        return GetUnassignedUnitsSuccess(unassigned_units_list)
+        user_category_id = data.get("user_category_id");
+        return GetUnassignedUnitsSuccess(unassigned_units_list, user_category_id)
 
     def to_inner_structure(self):
         return {
-            "unassigned_units_list": self.unassigned_units_list
+            "unassigned_units_list": self.unassigned_units_list,
+            "user_category_id": self.user_category_id
         }
 
 
