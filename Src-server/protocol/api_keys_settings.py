@@ -93,7 +93,7 @@ api_params = {
     'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'reference': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'reference': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'refer': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'c_task': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
