@@ -670,7 +670,6 @@ function loadSingleUnitCompliances() {
 }
 
 function loadMultipleUnitCompliances() {
-    alert('2');
     var applcount = 0;
     var ccount = 1;
     var count = 1;

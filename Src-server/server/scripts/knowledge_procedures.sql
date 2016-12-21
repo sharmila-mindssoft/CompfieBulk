@@ -2766,25 +2766,38 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_type_wise`()
 BEGIN
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=3;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=4;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=5;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=6;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=7;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=8;
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=3 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=4 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=5 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=6 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=7 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=8 and u.is_disable = 0;
+
     SELECT user_id, country_id FROM tbl_user_countries;
+    
     SELECT user_id, domain_id FROM tbl_user_domains;
 END //
 

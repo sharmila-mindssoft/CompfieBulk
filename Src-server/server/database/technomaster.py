@@ -590,8 +590,7 @@ def get_client_details(db, client_id):
     domain_map = return_organization_by_legalentity_domain(
         organizations
     )
-    print '----------'
-    print domain_map
+    
     legal_entities = return_legal_entities(
         legal_entities, domain_map
     )
@@ -610,7 +609,6 @@ def get_client_details(db, client_id):
 #  Return Type : List of object of Legal entities
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
-    print domains
     results = []
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
@@ -665,6 +663,9 @@ def return_organization_by_legalentity_domain(organizations):
                 legal_entity_id][domain_id][str(industry_id)] = no_of_units
         organization_map[
             legal_entity_id][domain_id][str(industry_id)] = no_of_units
+
+        if domain_id in [x.domain_id for x in domain_map[legal_entity_id]] :
+            continue
         domain_map[legal_entity_id].append(
             core.EntityDomainDetails(
                 domain_id=domain_id,

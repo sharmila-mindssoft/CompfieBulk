@@ -47,7 +47,7 @@ $("#save").click(function(){
 function initialize(){
     clearFields();
     clearMessage();
-    activateTab("know-mgr-exec-tab");
+    //activateTab("know-mgr-exec-tab");
     function onSuccess(data) {
         COUNTRIES = data.countries;
         DOMAINS = data.domains;
@@ -217,15 +217,24 @@ commonAutoComplete(
 
 
 function activateParentUser(element, user_id){
+
     var chkstatus = $(element).attr('class');
-    if (chkstatus == 'active') {
-        $(element).removeClass('active');
-        $(element).find('i').removeClass('fa fa-check pull-right');
-    }else{
+
+    $('.parent-user-list li').each(function () {
+        $(this).removeClass('active');
+        $(this).find('i').removeClass('fa fa-check pull-right');
+        ACTIVE_PARENT_USER = '';
+    });
+
+    if (chkstatus != 'active') {
         $(element).addClass('active');
         $(element).find('i').addClass('fa fa-check pull-right');
+        ACTIVE_PARENT_USER = user_id;
+    }else{
+        $(element).removeClass('active');
+        $(element).find('i').removeClass('fa fa-check pull-right');
+        ACTIVE_PARENT_USER = '';
     }
-    ACTIVE_PARENT_USER = user_id;
     activateChildUsers();
 }
 
@@ -236,28 +245,29 @@ function activateChildUsers(){
             ACTIVE_CHILD_USERS.push(value.child_user_id);
         }
     });
-    if(ACTIVE_CHILD_USERS.length > 0){
-        $(".child-user-list").empty();
-        if(validateFilters() == true){
-            var child_user_row = $("#templates .drop-down-option li");
-            $.each(CHILD_USERS, function(key, value){
-                index_of_selected_country = value.country_ids.indexOf(selected_country);
-                index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
-                if(index_of_selected_country != -1 && index_of_selected_domain != -1){
-                    var clone = child_user_row.clone();
-                    clone.html(value.employee_name + '<i> </i>');
-                    $(".child-user-list").append(clone);
-                    clone.click(function(){
-                        activateChildUser(this, value.user_id);
-                    });
-                    if(ACTIVE_CHILD_USERS.indexOf(value.user_id) != -1){
-                        clone.addClass('active');
-                        clone.find('i').addClass('fa fa-check pull-right');
-                    }
+    //if(ACTIVE_CHILD_USERS.length > 0){
+    $(".child-user-list").empty();
+    if(validateFilters() == true){
+        var child_user_row = $("#templates .drop-down-option li");
+        $.each(CHILD_USERS, function(key, value){
+            index_of_selected_country = value.country_ids.indexOf(selected_country);
+            index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
+            //index_of_mapped_user = MAPPED_CHILD_USERS.indexOf(value.user_id);
+            if(index_of_selected_country != -1 && index_of_selected_domain != -1){
+                var clone = child_user_row.clone();
+                clone.html(value.employee_name + '<i> </i>');
+                $(".child-user-list").append(clone);
+                clone.click(function(){
+                    activateChildUser(this, value.user_id);
+                });
+                if(ACTIVE_CHILD_USERS.indexOf(value.user_id) != -1){
+                    clone.addClass('active');
+                    clone.find('i').addClass('fa fa-check pull-right');
                 }
-            });
-        }   
-    }
+            }
+        });
+    }   
+    //}
     
 }
 
@@ -294,7 +304,7 @@ function validateUserMapping(){
 function saveUserMapping(){
     if(validateUserMapping() == true){
         function onSuccess(data) {
-            displayMessage(message.mapping_save_success);
+            displaySuccessMessage(message.mapping_save_success);
             initialize();
         }
         function onFailure(error) {
