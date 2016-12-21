@@ -2000,13 +2000,13 @@ def get_user_client_countries(db, session_user):
 #  Parameters : Object of database
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
-def get_assign_legalentities(db):
+def get_assign_legalentities(db, session_user):
     #
     # To get list of legal entities with no of unassigned units
     #  Parameters - None
     #
     legalentities = db.call_proc(
-        "sp_assign_legal_entities_list", None
+        "sp_assign_legal_entities_list", [session_user]
     )
     return return_assign_legalentities(legalentities)
 

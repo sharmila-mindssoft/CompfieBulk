@@ -534,7 +534,7 @@ def get_next_unit_code(db, request, session_user):
 # To Get list of all legal entity
 ########################################################
 def get_assign_legal_entity_list(db, request, session_user):
-    assign_le_list = get_assign_legalentities(db)
+    assign_le_list = get_assign_legalentities(db, session_user)
     return technomasters.GetAssignLegalEntityListSuccess(
         assign_le_list=assign_le_list
     )
