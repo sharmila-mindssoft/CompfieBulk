@@ -260,13 +260,13 @@ def parse_values(field_name, param, val, type="To"):
     #     val = parse_vector_type_record_type(val)
     #     continue
     if _type == 'STRING':
-        print field_name
-        print param
+        # print field_name
+        # print param
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
 
-            if len(val) == 0 :
+            if len(val) == 0:
                 raise expectation_error(
                     "a string with max length(%s) for %s" % (
                         _length, field_name
@@ -278,8 +278,8 @@ def parse_values(field_name, param, val, type="To"):
             val = parse_optional_custom_string(val, _length)
 
     elif _type == 'TEXT':
-        print field_name
-        print param
+        # print field_name
+        # print param
         if _is_optional is False:
             val = parse_string(val)
         else:
@@ -466,7 +466,7 @@ def to_structure_dictionary_values(x):
             _type != 'MAP_TYPE' and _type != 'MAP_TYPE_VECTOR_TYPE' and
             type(val) != list
         ):
-            print field_name
+            # print field_name
             val = _validation_method(val)
 
         x[field_name] = val
