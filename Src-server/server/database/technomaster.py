@@ -22,7 +22,7 @@ from server.database.validateclientuserrecord import ClientAdmin
 ##########################################################################
 def get_user_countries(db, session_user):
     result = db.call_proc_with_multiresult_set("sp_countries_for_user", (session_user,), 2)
-    if len(result) > 1 :
+    if len(result) > 1:
         result = result[1]
     return return_countries(result)
 
@@ -311,7 +311,7 @@ def return_business_group_id(
 ):
     if request.business_group is None:
         return None
-    elif request.business_group.business_group_id is not None:
+    elif request.business_group.business_group_id is not 0:
         return request.business_group.business_group_id
     else:
         business_group_name = request.business_group.business_group_name
@@ -320,6 +320,7 @@ def return_business_group_id(
         ):
             raise process_error("E066")
         else:
+            print business_group_name, group_id, request.country_id, session_user, current_time_stamp
             business_group_id = db.call_insert_proc(
                 "sp_business_group_save", (
                     business_group_name, group_id, request.country_id,

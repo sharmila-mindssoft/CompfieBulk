@@ -1028,7 +1028,7 @@ list-style-type:none; line-height:25px;
     z-index:100000000;
 }
 #file-space {
-  width: 60px;
+  width: 60px !important;
 }
 
 .loading-indicator-spin {
