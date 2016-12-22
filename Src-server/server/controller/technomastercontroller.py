@@ -104,7 +104,7 @@ def get_edit_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
     business_groups = get_client_business_groups(db, request.group_id)
     domains = get_user_domains(db, session_user)
-    industries = get_active_industries(db)
+    industries = get_industries(db)
     group_id = request.group_id
     (
         group_name, user_name, short_name, total_view_licence,
@@ -113,7 +113,7 @@ def get_edit_client_group_form_data(db, request, session_user):
     return technomasters.GetEditClientGroupFormDataSuccess(
         countries=countries, domains=domains,
         business_groups=business_groups,
-        industry_name_id=industries, group_name=group_name,
+        industries=industries, group_name=group_name,
         email_id=user_name, short_name=short_name,
         no_of_licence=total_view_licence,
         legal_entities=legal_entities,
