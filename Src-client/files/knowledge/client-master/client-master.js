@@ -825,11 +825,12 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
 function loadActions() {
     $(".actions select").empty();
     actions = [];
-    if (IS_APPROVED == 0) {
-        actions = ["Edit", "Renewal", "Amendment"]
-    } else {
-        actions = ["Renewal", "Amendment"]
-    }
+    actions = ["Edit", "Renewal", "Amendment"];
+    // if (IS_APPROVED == 0) {
+    //     actions = ["Edit", "Renewal", "Amendment"]
+    // } else {
+    //     actions = ["Renewal", "Amendment"]
+    // }
     $.each(actions, function(key, value) {
         var clone = $(".select-option option").clone();
         clone.text(value);
@@ -845,12 +846,12 @@ function loadActions() {
 }
 
 $(".actions select").change(function() {
-    SELECTED_ACTION = $(".actions select").val()
-    if (SELECTED_ACTION == 2) {
-        $(".remarks-div").hide();
-    } else {
-        $(".remarks-div").show();
-    }
+    // SELECTED_ACTION = $(".actions select").val()
+    // if (SELECTED_ACTION == 2) {
+    //     $(".remarks-div").hide();
+    // } else {
+    //     $(".remarks-div").show();
+    // }
     editClient();
 });
 
