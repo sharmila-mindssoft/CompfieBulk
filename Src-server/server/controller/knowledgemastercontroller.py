@@ -192,7 +192,7 @@ def process_save_industry(db, request_frame, user_id):
     country_ids = request_frame.country_id
     domain_ids = request_frame.domain_id
     industry_name = request_frame.industry_name
-    isDuplicate = check_duplicate_industry(db, industry_name, industry_id=None)
+    isDuplicate = check_duplicate_industry(db, country_ids, domain_ids, industry_name, industry_id=None)
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
@@ -213,7 +213,7 @@ def process_update_industry(db, request_frame, user_id):
     domain_ids = request_frame.domain_id
     industry_name = request_frame.industry_name
     industry_id = request_frame.industry_id
-    isDuplicate = check_duplicate_industry(db, industry_name, industry_id)
+    isDuplicate = check_duplicate_industry(db, country_ids, domain_ids, industry_name, industry_id)
     if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
@@ -320,6 +320,9 @@ def process_get_statutory_level(db, user_id):
     countries = get_countries_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
     statutory_levels = get_statutory_levels(db)
+    print countries
+    print domains
+    print statutory_levels
     return knowledgemaster.GetStatutoryLevelsSuccess(
         countries, domains, statutory_levels
     )

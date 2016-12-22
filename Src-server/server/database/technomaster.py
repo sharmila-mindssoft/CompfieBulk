@@ -22,7 +22,7 @@ from server.database.validateclientuserrecord import ClientAdmin
 ##########################################################################
 def get_user_countries(db, session_user):
     result = db.call_proc_with_multiresult_set("sp_countries_for_user", (session_user,), 2)
-    if len(result) > 1 :
+    if len(result) > 1:
         result = result[1]
     return return_countries(result)
 
@@ -311,7 +311,7 @@ def return_business_group_id(
 ):
     if request.business_group is None:
         return None
-    elif request.business_group.business_group_id is not None:
+    elif request.business_group.business_group_id is not 0:
         return request.business_group.business_group_id
     else:
         business_group_name = request.business_group.business_group_name
@@ -320,6 +320,7 @@ def return_business_group_id(
         ):
             raise process_error("E066")
         else:
+            print business_group_name, group_id, request.country_id, session_user, current_time_stamp
             business_group_id = db.call_insert_proc(
                 "sp_business_group_save", (
                     business_group_name, group_id, request.country_id,
@@ -590,8 +591,7 @@ def get_client_details(db, client_id):
     domain_map = return_organization_by_legalentity_domain(
         organizations
     )
-    print '----------'
-    print domain_map
+    
     legal_entities = return_legal_entities(
         legal_entities, domain_map
     )
@@ -610,7 +610,6 @@ def get_client_details(db, client_id):
 #  Return Type : List of object of Legal entities
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
-    print domains
     results = []
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
@@ -665,6 +664,9 @@ def return_organization_by_legalentity_domain(organizations):
                 legal_entity_id][domain_id][str(industry_id)] = no_of_units
         organization_map[
             legal_entity_id][domain_id][str(industry_id)] = no_of_units
+
+        if domain_id in [x.domain_id for x in domain_map[legal_entity_id]] :
+            continue
         domain_map[legal_entity_id].append(
             core.EntityDomainDetails(
                 domain_id=domain_id,
@@ -2000,13 +2002,13 @@ def get_user_client_countries(db, session_user):
 #  Parameters : Object of database
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
-def get_assign_legalentities(db):
+def get_assign_legalentities(db, session_user):
     #
     # To get list of legal entities with no of unassigned units
     #  Parameters - None
     #
     legalentities = db.call_proc(
-        "sp_assign_legal_entities_list", None
+        "sp_assign_legal_entities_list", [session_user]
     )
     return return_assign_legalentities(legalentities)
 

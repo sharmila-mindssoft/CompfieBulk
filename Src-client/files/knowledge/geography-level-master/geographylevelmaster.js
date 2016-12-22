@@ -243,7 +243,7 @@ $('#submit').click(function () {
 });
 //insert a new level in between levels
 $('#insert-record').click(function () {
-  var insertlvl = parseInt($('#insertlevel').val());
+  var insertlvl = parseInt($('#levelslist').val());
   console.log(insertlvl);
   var insertvalue = $('#insertvalue').val().trim();
   var inserlevelstatus = true;
@@ -258,7 +258,7 @@ $('#insert-record').click(function () {
         $('#levelid' + x).val($('#levelid' + s).val());
       }
     }
-    $('#insertlevel').val('2');
+    $('#levelslist').val('2');
     $('#insertvalue').val('');
     $('#view-insert-level').hide();
     $('#add').show();

@@ -17,34 +17,34 @@
             <div class="panel panel-default panel-info">
                 <div class="panel-body">
                     <div class="dataTable_wrapper">
-                        <table class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+                        <table class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th align="center" width="2%">#</th>
                                     <th width="20%">Country</th>
                                     <th width="20%">Group</th>
-                                    <th width="10%">No.of Legal Entity</th>
-                                    <th align="center" width="5%">Edit</th>
-                                    <th width="5%" align="center">Status</th>
+                                    <th width="10%">No. of Legal Entity</th>
+                                    <th width="5%" class="text-center">Edit</th>
+                                    <th width="5%" class="text-center">Status</th>
                                     <th width="10%">Approval Status</th>
                                 </tr>
-                                <tr class="filter-tr">
+                                <tr class="filter-tr client-master-filter">
                                     <td align="center"></td>
                                     <td>
                                         <div class="form-group has-feedback col-sm-12 no-padding">
-                                            <input class="form-control input-sm js-filter" placeholder="Country" type="text">
+                                            <input class="form-control input-sm filter-text-box" placeholder="Country" type="text" id="search-country">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group has-feedback col-sm-12 no-padding">
-                                            <input class="form-control input-sm js-filter" placeholder="Group" type="text">
+                                            <input class="form-control input-sm filter-text-box" placeholder="Group" type="text" id="search-group">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group has-feedback col-sm-12 no-padding">
-                                            <input class="form-control input-sm js-filter" placeholder="No.of Legal Entity" type="text">
+                                            <input class="form-control input-sm filter-text-box" placeholder="No.of Legal Entity" type="text" id="search-legalentity">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
@@ -52,27 +52,27 @@
                                     <td align="center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                                                All
+                                                <i id="search-status" class="fa">All</i>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="#">All</a></li>
-                                                <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
-                                                <li><a href="#"><i class="fa fa-times text-danger"></i> Deactive</a></li>
+                                            <ul class="dropdown-menu search-status-list" >
+                                                <li value="all" class="search-status-li active"><a>All</a></li>
+                                                <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                                                All
+                                               <i id="search-astatus" class="fa">All</i>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="#">All</a></li>
-                                                <li><a href="#">Pending</a></li>
-                                                <li><a href="#">Approved</a></li>
-                                                <li><a href="#">Rejected</a></li>
+                                            <ul class="dropdown-menu search-astatus-list">
+                                                <li value="all" class="search-astatus-li active"><a>All</a></li>
+                                                <li value="0" class="search-astatus-li"><a>Pending</a></li>
+                                                <li value="1" class="search-astatus-li"><a>Approved</a></li>
+                                                <li value="2" class="search-astatus-li"><a>Rejected</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -105,6 +105,8 @@
 <!-- Modal Start-->
 <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-sm">
+        <input type="hidden" class="popup-group-id">
+        <input type="hidden" class="popup-pass-value">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times text-primary c-pointer"></i></button>
@@ -112,10 +114,10 @@
             </div>
             <div class="modal-body p-b-0">
                 <div class="form-group">
-                    <input class="form-control input-sm" placeholder="Password" type="text">
+                    <input class="form-control input-sm popup-password" placeholder="Password" type="password">
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+                    <button class="btn btn-primary waves-effect waves-light status-submit" type="submit"> Submit </button>
                 </div>
             </div>
         </div>
@@ -150,32 +152,10 @@
                                 <div class="form-group">
                                     <label class=" col-sm-4 control-label">View Only Licence(s) <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" placeholder="Total Licence Number" tabindex="3">
+                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" maxlength="3" placeholder="Total Number of Licence(s)" tabindex="3">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="shortname" placeholder="Short Name" tabindex="2">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="username" placeholder="user@domain.com" tabindex="4">
-                                        <abbr class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small>
-                                        </abbr>
-                                    </div>
-                                    <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
-                                        <i class="fa fa-pencil text-primary c-pointer" onclick="chenge_edit(1)"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="col-sm-6">
-                                    <div class="form-group action-div">
+                                 <div class="form-group action-div">
                                         <label class="col-sm-4 control-label">Action:</label>
                                         <div class="col-sm-6 actions">
                                             <select class="form-control input-sm">
@@ -185,16 +165,40 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group remarks_text remarks-div">
-                                        <label class="col-sm-4 control-label">Remarks:</label>
-                                        <label class="col-sm-6">
-                                            <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" type="text">
-                                        </label>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="shortname" placeholder="Short Name" tabindex="2" maxlength="20">
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="username" placeholder="user@domain.com" tabindex="4" maxlength="100">
+                                        <abbr class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small>
+                                        </abbr>
+                                    </div>
+                                    <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
+                                        <i class="fa fa-pencil text-primary c-pointer" ></i><!--  onclick="chenge_edit(1)" -->
+                                    </div>
+                                </div> 
+                                <div class="form-group remarks_text remarks-div">
+                                    <label class="col-sm-4 control-label">Remarks:</label>
+                                    <label class="col-sm-6 p-l-10">
+                                        <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" type="text">
+                                    </label>
+                                </div>
                             </div>
+                           <!--  <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                   
+                                </div>
+                                <div class="col-sm-6">
+                                 
+                                </div>
+                            </div> -->
                             <div class="clear"></div>
                             <div class="col-sm-12">
                                 <div class="form-group pull-right p-t-7">
@@ -205,7 +209,12 @@
                             <div class="clear"></div>
                             <div class="le-body">
                             </div>
-                            <h4 class="page-title">Date Configuration</h4>
+                            <div class="col-sm-12">
+                                <div class="form-group pull-right m-b-0 p-t-7 edit-date-config default-display-none">
+                                    <a class="waves-effect waves-light c-pointer icon-3x" type="button"><i class="fa fa-pencil text-primary"></i></a>
+                                </div>
+                                <h4 class="page-title">Date Configuration</h4>
+                            </div>
                             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
@@ -274,11 +283,11 @@
             </td>
             <td>
                 <div class="form-group col-sm-6 m-b-0">
-                    <input class="form-control input-sm  no-of-units" type="text">
+                    <input class="form-control input-sm numeric no-of-units" maxlength="3" type="text">
                 </div>
             </td>
             <td class="icon-3x text-center">
-                <i class="fa fa-trash text-primary c-pointer"></i>
+                <i class="fa fa-trash text-primary c-pointer remove-organisation"></i>
             </td>
         </tr>
     </table>
@@ -290,14 +299,14 @@
         <div class="card-box p-10 letable">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">Country</label>
+                    <label class=" col-sm-4 p-t-5">Country<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
                         <select placeholder="Select Country" class="form-control country input-sm" tabindex="5">
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">Contract From</label>
+                    <label class=" col-sm-4 p-t-5">Contract From<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
                         <input class="form-control input-sm contract-from" readonly="readonly" placeholder="Select Contract From" tabindex="8" type="text">
                     </div>
@@ -307,7 +316,7 @@
                     <div class="col-sm-6 no-padding-right">
                         <input class="form-control input-sm" tabindex="11" id="upload-logo" type="file">
                         <span>
-                        <img  id="upload-logo-img"  width="25" height="30">
+                        <img  id="upload-logo-img"  width="25">
                     </span>
                     </div>
                 </div>
@@ -321,7 +330,8 @@
                             </select>
                         </div>
                         <div class="col-sm-2 p-t-7">
-                            <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add')"> <i class="fa fa-plus-circle text-primary addbg"></i> </a>
+                            <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add', this, 0)" > <i class="fa fa-plus-circle text-primary addbg"></i> </a>
+                            <!-- onclick="addOrSelectBusinessGroup('add', this)" -->
                         </div>
                     </div>
                     <div class="input_business_group default-display-none">
@@ -329,48 +339,49 @@
                             <input class="form-control input-sm business-group-text" placeholder="Enter Business Group" type="text">
                         </div>
                         <div class="col-sm-2 p-t-7">
-                            <a class="waves-effect waves-light c-pointer icon-3x cancel-add-business-group" type="button" onclick="addOrSelectBusinessGroup('cancel')"> <i class="fa fa-times text-primary"></i> </a>
+                            <a class="waves-effect waves-light c-pointer icon-3x cancel-add-business-group" type="button" onclick="addOrSelectBusinessGroup('cancel', this, 0)"> <i class="fa fa-times text-primary"></i> </a>
+                            <!-- onclick="addOrSelectBusinessGroup('cancel', this)" -->
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">Contract To</label>
+                    <label class=" col-sm-4 p-t-5">Contract To<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm contract-to" type="text" placeholder="Select Contract To" tabindex="9">
+                        <input class="form-control input-sm contract-to" type="text" readonly="readonly" placeholder="Select Contract To" tabindex="9">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">File Space</label>
-                    <div class="col-sm-2 no-padding-right">
-                        <input class="form-control input-sm" id="file-space" type="text" placeholder="Enter File Space" tabindex="12">
+                    <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
+                    <div class="col-sm-3 no-padding-right" id="file-space-div">
+                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex="12"><abbr class="l-h-34"> GB</abbr>
                     </div>
-                    <div class="col-sm-4">GB</div>
+                    <div class="col-sm-4 pull-left"></div>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-sm-4 p-t-5">Legal Entity</label>
-                    <div class="col-sm-4 no-padding-right">
+                    <label class="col-sm-4 p-t-5">Legal Entity<span class="mandatory">*</span></label>
+                    <div class="col-sm-6 no-padding-right">
                         <input class="form-control input-sm legal-entity-text" placeholder="Enter Legal Entity" id="legal_entity_text" tabindex="7" type="text">
                     </div>
-                    <label class="col-sm-2 icon-3x no-padding-right edit-right-icon">
+                    <label class="col-sm-1 icon-3x no-padding-right edit-right-icon pull-right">
                         <i class="fa fa-pencil text-primary c-pointer pull-right"></i>
                     </label>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-4 p-t-5">Total Licence(s)</label>
+                    <label class="col-sm-4 p-t-5">Total Licence(s)<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm" value="" id="no-of-user-licence" type="text" tabindex="10" placeholder="Enter No. of Licence">
+                        <input class="form-control input-sm numeric" value="" id="no-of-user-licence" type="text" tabindex="10" placeholder="Enter No. of Licence">
                     </div>
                 </div>
             </div>
-            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap domain-table" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th width="30%">Domain <span class="mandatory">*</span></th>
                         <th width="30%">Activation Date <span class="mandatory">*</span></th>
                         <th width="30%">Organization <span class="mandatory">*</span></th>
-                        <th width="10%" class="text-center">Remove</th>
+                        <th width="10%" class="text-center"><abbr class="remove-domain-heading">Remove</abbr></th>
                     </tr>
                 </thead>
                 <input type="hidden" class="domain-count" value='0' />
@@ -400,18 +411,18 @@
             </td>
             <td>
                 <div class="form-group col-sm-6 m-b-0">
-                    <input class="form-control input-sm activationdate" type="text" value="">
+                    <input class="form-control input-sm activationdate" readonly="readonly" type="text" value="">
                 </div>
             </td>
             <td>
-                <div class="form-group col-sm-6 m-b-0">
+                <div class="form-group col-sm-6 m-b-0 add-org">
                     <a class="c-pointer addOrganizationType" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
                         <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title=""></i> Add Organization
                     </a>
                 </div>
             </td>
             <td class="icon-3x text-center">
-                <i class="fa fa-trash text-primary c-pointer"></i>
+                <i class="fa fa-trash text-primary c-pointer remove-domain"></i>
             </td>
         </tr>
     </table>
@@ -420,7 +431,7 @@
     <table class="table-dconfig-list">
         <tr class="table-dconfig-countries-row">
             <td>
-                <mark class="dconfig-country-name"></mark>
+                <mark class="dconfig-country-name heading"></mark>
                 <input type="hidden" class="inputCountry" value="">
             </td>
             <td align="center">From</td>
@@ -468,21 +479,25 @@
             </td>
         </tr>
     </table>
+
 </div>
 <div class="user-list-drop-down default-display-none">
     <li></li>
 </div>
 <div class="text default-display-none">
-    <span class="p-t-7"></span>
+    <span class="l-h-34"></span>
 </div>
 <div class="logo-img default-display-none">
     <span>
         <img  id="upload-logo-img"  width="25" height="30">
     </span>
 </div>
-<div class="text-with-tooltip default-display-none">
-    <abbr title=""></abbr>
+<div class="tooltip-templates default-display-none">
+    <div class="text-with-tooltip"  data-toggle="tooltip" data-original-title="">
+        <abbr title=""></abbr>
+    </div>
 </div>
+
 <div class="select-option default-display-none">
     <select>
         <option></option>

@@ -81,6 +81,11 @@ DomainPage.prototype.showList = function() {
     Domain_id.val('');
     SearchDomain.val('');
     SearchCountry.val('');
+
+    this.fetchDomain();
+    Search_status.removeClass();
+    Search_status.addClass('fa');
+    Search_status.text('All');
 };
 DomainPage.prototype.showAddScreen = function() {
     ViewScreen.hide();
@@ -236,28 +241,47 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 
 DomainPage.prototype.changeStatus = function(d_id, status) {
     mirror.changeDomainStatus(d_id, status, function(error, response) {
+        console.log(error,response)
         if (error == null) {
             t_this.showList();
             t_this.fetchDomain();
         }
         else {
-            t_this.possibleFailures(error);
+            displayMessage(error);
         }
     });
 };
 
 DomainPage.prototype.validate = function() {
-    var checkLength = domainValidate();
-    if (checkLength) {
-        if (Domain_name.val().trim().length ==0) {
-            displayMessage(msg.domainname_required);
-        } else {
-            return true;
-        }
+
+    if (MultiSelect_Country.val() == null) {
+      displayMessage(msg.country_required);
+      MultiSelect_Country.focus();
+      return false;
     }
+    if (Domain_name.val().trim().length == 0) {
+      displayMessage(msg.domainname_required);
+      Domain_name.focus();
+      return false;
+    } else {
+      validateMaxLength('domainname', Domain_name.val(), "Domain name");
+    }
+    return true;
 };
 
+//length validation
+function validateMaxLength(key_name, value, show_name) {
+  console.log("inside length"+ show_name)
+  e_n_msg = validateLength(key_name, value.trim())
+  if (e_n_msg != true) {
+    displayMessage(show_name + e_n_msg);
+    return false;
+  }
+  return true;
+}
+
 function DomainValidate() {
+    alert("validation")
     if (MultiSelect_Country.val() == null) {
       displayMessage(msg.country_required);
       MultiSelect_Country.focus();
@@ -282,7 +306,9 @@ DomainPage.prototype.submitProcess = function() {
     t_this = this;
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
+            console.log(error,response)
             if (error == null) {
+
                 displaySuccessMessage(message.save_success);
                 t_this.showList();
                 t_this.fetchDomain();
@@ -482,7 +508,9 @@ function PageControls() {
     });
 
     SubmitButton.click(function() {
-        d_page.submitProcess();
+        if (d_page.validate()) {
+            d_page.submitProcess();
+        }
     });
 
     AddButton.click(function() {

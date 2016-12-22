@@ -1296,29 +1296,29 @@ class UnitDetails(object):
 
 class GetClientGroupFormDataSuccess(Response):
     def __init__(
-        self, countries, domains, industry_name_id
+        self, countries, domains, industries
     ):
         self.countries = countries
         self.domains = domains
-        self.industry_name_id = industry_name_id
+        self.industries = industries
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "domains", "industry_name_id"
+            "countries", "domains", "industries"
         ])
         countries = data.get("countries")
         domains = data.get("domains")
-        industry_name_id = data.get("industry_name_id")
+        industries = data.get("industries")
         return GetClientGroupFormDataSuccess(
-            countries, domains, industry_name_id
+            countries, domains, industries
         )
 
     def to_inner_structure(self):
         return {
             "countries": self.countries,
             "domains": self.domains,
-            "industry_name_id": self.industry_name_id
+            "industries": self.industries
         }
 
 
