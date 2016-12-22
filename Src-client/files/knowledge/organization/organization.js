@@ -50,7 +50,7 @@ function getIndustries() {
 		industriesList = data.industries;
 		domainList = data.domains;
 		countriesList = data.countries;
-		console.log("list:"+data)
+		console.log("list:"+data.domains)
 		loadIndustryList(industriesList);
 	}
 	function onFailure(error) {
@@ -490,16 +490,42 @@ function renderControls(){
   });
 
   domain_ac.keyup(function(e){
-    var condition_fields = ["is_active"];
-    var condition_values = [true];
     var text_val = $(this).val();
-    commonAutoComplete(
-      e, AcDomain, domain_val, text_val,
-      domainList, "domain_name", "domain_id", function (val) {
-          onAutoCompleteSuccess(domain_ac, domain_val, val);
-      }, condition_fields, condition_values);
+    var domain_list = [];
+    var c_ids = null;
+    var check_val = false;
+    if(country_val.val() != ''){
+      console.log("ctry:"+country_val.val())
+      for(var i=0;i<domainList.length;i++){
+        c_ids = domainList[i].country_ids;
 
+        for(var j=0;j<c_ids.length;j++){
+          if(c_ids[j] == country_val.val())
+          {
+            check_val = true;
+          }
+        }
+
+        if(check_val == true && domainList[i].is_active == true){
+          domain_list.push({
+            "domain_id": domainList[i].domain_id,
+            "domain_name": domainList[i].domain_name
+          });
+          check_val = false;
+          //break;
+        }
+      }
+      commonAutoComplete(
+        e, AcDomain, domain_val, text_val,
+        domain_list, "domain_name", "domain_id", function (val) {
+            onAutoCompleteSuccess(domain_ac, domain_val, val);
+        });
+    }
+    else{
+      displayMessage(message.country_required);
+    }
   });
+
 
 	FilterBox.keyup(function() {
 	    processSearch();

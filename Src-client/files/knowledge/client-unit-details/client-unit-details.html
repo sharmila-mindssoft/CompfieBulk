@@ -65,7 +65,7 @@
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Unit:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="5">
                                         <input type="hidden" id="unitid">
                                         <div id="ac-unit" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
@@ -79,7 +79,7 @@
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="domainid">
-                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="7">
+                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="6">
                                         <div id="ac-domain" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
                                         </div>
@@ -90,7 +90,7 @@
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Organisation Type: </label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="orgtypeid">
-                                        <input type="text" class="form-control input-sm" id="orgtypeval" value="" tabindex="8">
+                                        <input type="text" class="form-control input-sm" id="orgtypeval" value="" tabindex="7">
                                         <div id="ac-industry" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
                                         </div>
@@ -100,7 +100,7 @@
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Status: </label>
                                     <div class="col-sm-6">
-                                        <select class="form-control" id="unit-status">
+                                        <select class="form-control" id="unit-status" tabindex="8">
                                             <option value="-1">Select</option>
                                             <option value="false">Closed</option>
                                             <option value="true">Active</option>
@@ -110,14 +110,14 @@
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">From Date:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="from-date" value="">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="from-date" value="" tabindex="9">
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">To Date:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="to-date" value="">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="to-date" value="" tabindex="10">
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
@@ -125,8 +125,8 @@
                             <div class="col-sm-12">
                                 <center>
                                     <div class="form-group">
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show-button"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show-button" tabindex="11"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" tabindex="12"> Export </button>
                                     </div>
                                 </center>
                             </div>
@@ -143,13 +143,23 @@
                             <div class="col-sm-12 text-center"><h4>Client Unit Details</h4></div>
                             <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countrynameval"></span></h6></div>
                             <div class="col-sm-6 text-center"><h6>Business Group: <span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span></h6></div>
-                            <div class="col-sm-6 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span></h6></div>
+                            <div class="col-sm-6 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="groupval"> </span></h6></div>
                             <div class="col-sm-6 text-center"><h6>Legal Entity: <span style="margin-left:10px; font-weight:bold;" class="lentityval"></span></h6></div>
                         </div>
                         <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                           <thead>
                             <tr align="left" class="tr-heading">
-                              <th width="3%" align="center" class="header-bg">#</th>
+                              <th width="01%">#</th>
+                                <th width="06%">Unit Code</th>
+                                <th width="10%">Unit Name</th>
+                                <th width="07%">Division</th>
+                                <th width="08%">Category</th>
+                                <th width="13%">Domain - Organization Type</th>
+                                <th width="12%">Address</th>
+                                <th width="07%">Created By</th>
+                                <th width="07%">Created On</th>
+                                <th width="07%">Status</th>
+                              <!--<th width="3%" align="center" class="header-bg">#</th>
                               <th class="header-bg">Unit Code</th>
                               <th class="header-bg">Unit Name</th>
                               <th class="header-bg">Division</th>
@@ -158,7 +168,7 @@
                               <th width="20%" class="header-bg">Address</th>
                               <th class="header-bg">Created By</th>
                               <th class="header-bg">Created On</th>
-                              <th class="header-bg">Status</th>
+                              <th class="header-bg">Status</th>-->
                             </tr>
                           </thead>
                             <tbody class="tbody-clientdetails-list">

@@ -205,13 +205,15 @@ DROP PROCEDURE IF EXISTS `sp_industry_master_checkduplicateindustry`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_industry_master_checkduplicateindustry`(
-in industryid int(11), in industryname varchar(50))
+in industryid int(11), in industryname varchar(50), countryId int(11), domainId int(11))
 BEGIN
     if industryid = 0 then
-        SELECT count(1) FROM tbl_organisation WHERE organisation_name = industryname;
+        SELECT count(1) FROM tbl_organisation WHERE organisation_name = industryname and
+        country_id = countryId and domain_id = domainId;
     else
         SELECT count(1) FROM tbl_organisation WHERE organisation_name = industryname
-        and organisation_id != industryid;
+        and organisation_id != industryid  and
+        country_id = countryId and domain_id = domainId;
     end if;
 END //
 
@@ -1295,7 +1297,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_unit_getuserclients`(in userId INT(11))
 BEGIN
-    select client_id, short_name from tbl_client_groups
+    select client_id, group_name as short_name from tbl_client_groups
     where client_id in
     (select t1.client_id from tbl_client_groups t1
     inner join tbl_user_legalentity t2 on t1.client_id = t2.client_id
@@ -1489,7 +1491,7 @@ BEGIN
         where division_id = t2.division_id) as division,
     (select category_name from tbl_categories
         where category_id = t2.category_id) as category_name,
-    t9.short_name as group_name,
+    t9.group_name,
     t8.country_name, t2.category_id, t2.remarks
     from
     tbl_user_legalentity as t1,
@@ -2766,25 +2768,38 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_type_wise`()
 BEGIN
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=3;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=4;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=5;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=6;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=7;
-    SELECT user_id, is_active,
-    concat(employee_code," - ", employee_name) as employee_name
-    FROM tbl_users WHERE user_category_id=8;
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=3 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=4 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=5 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=6 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=7 and u.is_disable = 0;
+
+    SELECT u.user_id, u.is_active,
+    concat(u.employee_code," - ", u.employee_name) as employee_name
+    FROM tbl_users u inner join tbl_user_login_details ul on ul.user_id = u.user_id
+    WHERE u.user_category_id=8 and u.is_disable = 0;
+
     SELECT user_id, country_id FROM tbl_user_countries;
+    
     SELECT user_id, domain_id FROM tbl_user_domains;
 END //
 
@@ -5209,29 +5224,29 @@ in _user_id int(11))
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
     IF @u_cat_id = 1  THEN
-        select t1.client_id, t1.short_name, t1.is_active, t2.country_id
+        select t1.client_id, t1.group_name as short_name, t1.is_active, t2.country_id
         from tbl_client_groups as t1, tbl_legal_entities as t2
-        where t2.client_id = t1.client_id order by t1.short_name asc;
+        where t2.client_id = t1.client_id order by t1.group_name asc;
     end if;
     if @u_cat_id = 5  THEN
-        select t2.client_id, t2.short_name, t2.is_active, t3.country_id
+        select t2.client_id, t2.group_name as short_name, t2.is_active, t3.country_id
         from tbl_user_clients as t1, tbl_client_groups as t2,
         tbl_legal_entities as t3 where t3.client_id = t2.client_id and
         t2.client_id  = t1.client_id and t1.user_category_id = @u_cat_id and
         t1.user_id = _user_id;
     END IF;
     if @u_cat_id = 6  THEN
-        select t3.client_id,t3.short_name,t3.is_active, t2.country_id
+        select t3.client_id,t3.group_name as short_name,t3.is_active, t2.country_id
         from tbl_user_legalentity as t1, tbl_legal_entities as t2,
         tbl_client_groups as t3 where t3.client_id = t2.client_id and
-        t2.client_id = t1.client_id and t1.user_id = _user_id  order by t3.short_name asc;
+        t2.client_id = t1.client_id and t1.user_id = _user_id  order by t3.group_name asc;
     end if;
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
-        select t3.client_id,t3.short_name, t3.is_active, t2.country_id
+        select t3.client_id,t3.group_name as short_name, t3.is_active, t2.country_id
         from tbl_user_units as t1, tbl_legal_entities as t2,
         tbl_client_groups as t3 where t3.client_id = t2.client_id and
         t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
-        and t1.user_id = _user_id order by t3.short_name asc;
+        and t1.user_id = _user_id order by t3.group_name asc;
     end if;
 END //
 
@@ -5646,7 +5661,7 @@ BEGIN
     IF @u_cat_id = 1  THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
         t3.unit_id, t3.unit_code, t3.unit_name, t3.address, t3.postal_code, t3.is_closed
-        as is_active, date_format(t3.closed_on, '%d/%m/%Y') as closed_on,
+        as is_active, date_format(t3.closed_on, '%d-%b-%Y') as closed_on,
         date_format(t3.created_on, '%d-%b-%Y') as check_date,
         (select concat(employee_code,'-',employee_name) from tbl_users
         where user_id = t3.created_by)as emp_code_name,
@@ -5664,7 +5679,7 @@ BEGIN
     if @u_cat_id = 5  THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
         t3.unit_id, t3.unit_code, t3.unit_name, t3.address, t3.postal_code, t3.is_closed
-        as is_active, date_format(t3.closed_on, '%d/%m/%Y') as closed_on,
+        as is_active, date_format(t3.closed_on, '%d-%b-%Y') as closed_on,
         date_format(t3.created_on, '%d-%b-%Y') as check_date,
         (select concat(employee_code,'-',employee_name) from tbl_users
         where user_id = t3.created_by)as emp_code_name,
@@ -5683,7 +5698,7 @@ BEGIN
     if @u_cat_id = 6  THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
         t3.unit_id, t3.unit_code, t3.unit_name, t3.address, t3.postal_code, t3.is_closed
-        as is_active, date_format(t3.closed_on, '%d/%m/%Y') as closed_on,
+        as is_active, date_format(t3.closed_on, '%d-%b-%Y') as closed_on,
         date_format(t3.created_on, '%d-%b-%Y') as check_date,
         (select concat(employee_code,'-',employee_name) from tbl_users
         where user_id = t3.created_by)as emp_code_name,
@@ -5702,7 +5717,7 @@ BEGIN
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
         t3.unit_id, t3.unit_code, t3.unit_name, t3.address, t3.postal_code, t3.is_closed
-        as is_active, date_format(t3.closed_on, '%d/%m/%Y') as closed_on,
+        as is_active, date_format(t3.closed_on, '%d-%b-%Y') as closed_on,
         date_format(t3.created_on, '%d-%b-%Y') as check_date,
         (select concat(employee_code,'-',employee_name) from tbl_users
         where user_id = t3.created_by)as emp_code_name,
@@ -5742,12 +5757,12 @@ CREATE PROCEDURE `sp_group_admin_registration_email_report_data`(
 in _u_id int(11))
 BEGIN
     if _u_id = 1 then
-        select t2.client_id, t2.short_name as group_name, t2.is_active
+        select t2.client_id, t2.group_name, t2.is_active
         from
         tbl_user_clients as t1, tbl_client_groups as t2
         where
         t2.client_id = t1.client_id
-        order by t2.short_name;
+        order by t2.group_name;
 
         select t1.client_id, t3.country_id, t3.country_name, t3.is_active
         from
@@ -5808,7 +5823,7 @@ BEGIN
     where user_id in
     (select user_id from tbl_users));
 
-    select client_id, short_name, is_active
+    select client_id, group_name as short_name, is_active
     from tbl_client_groups;
 
     select t1.user_id, t1.client_id, t1.legal_entity_id, t1.domain_id,
@@ -5840,7 +5855,7 @@ CREATE PROCEDURE `sp_reassign_user_report_getdata`(
 in _u_id int(11), _u_cg_id int(11), _g_id int(11))
 BEGIN
     if _u_cg_id = 5 then
-        select t1.client_id, t2.short_name as group_name,
+        select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
         (select concat(employee_code,'-',employee_name)
         from tbl_users where user_id = t3.assigned_by) as emp_code_name,
@@ -5865,7 +5880,7 @@ BEGIN
         t1.user_id = _u_id;
     end if;
     if _u_cg_id =  6 then
-        select t1.client_id, t2.short_name as group_name,
+        select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
         (select concat(employee_code,'-',employee_name)
         from tbl_users where user_id = t3.assigned_by) as emp_code_name,
@@ -5890,7 +5905,7 @@ BEGIN
         t1.user_id = _u_id;
     end if;
     if _u_cg_id = 7 or _u_cg_id = 8 then
-        select t1.client_id, t2.short_name as group_name,
+        select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
         (select concat(employee_code,'-',employee_name)
         from tbl_users where user_id = t3.assigned_by) as emp_code_name,
@@ -6592,7 +6607,7 @@ BEGIN
         where division_id = t2.division_id) as division,
     (select category_name from tbl_categories
         where category_id = t2.category_id) as category_name,
-    t9.short_name as group_name,
+    t9.group_name,
     t8.country_name, t2.category_id, t2.remarks
     from
     tbl_user_legalentity as t1,
@@ -6676,7 +6691,8 @@ CREATE PROCEDURE `sp_get_geography_master`(
 in _g_id int(11), _p_ids text)
 BEGIN
     SELECT geography_id, geography_name, parent_ids, level_id
-    from tbl_geographies WHERE find_in_set(_p_ids, parent_ids) or
+    from tbl_geographies WHERE parent_ids regexp (_p_ids) or
+    -- find_in_set(_p_ids, parent_ids) or
     geography_id in (_g_id);
 END //
 
@@ -6896,7 +6912,7 @@ BEGIN
     END IF;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
@@ -6930,4 +6946,91 @@ BEGIN
     or user_category_id = 1;
 END //
 
-DELIMITER;
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_statutory_level_master`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_statutory_level_master`()
+BEGIN
+    select level_id, level_name, level_position, country_id, domain_id
+    from tbl_statutory_levels ORDER BY level_position;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_statutory_level_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_statutory_level_count`(
+in levelId int(11))
+BEGIN
+    select count(*) from tbl_statutories where
+    level_id = levelId;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_delete_statutory_level`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_delete_statutory_level`(
+in levelId int(11))
+BEGIN
+    delete from tbl_statutory_levels where level_id = levelId;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_insert_statutory_level`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_insert_statutory_level`(
+in _c_id int(11), _d_id int(11), _l_position int(11), _l_name varchar(50),
+_created_by int(11), _created_on timestamp)
+BEGIN
+    insert into tbl_statutory_levels
+    (country_id, domain_id, level_position, level_name, created_by, created_on)
+    values
+    (_c_id, _d_id, _l_position, _l_name, _created_by, _created_on);
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_update_statutory_levels`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_update_statutory_levels`(
+in _position_name int(11),  _l_name varchar(50), _s_l_id int(11), _u_id int(11))
+BEGIN
+    update tbl_statutory_levels
+    set level_position = _position_name,
+    level_name = _l_name,
+    updated_by = _u_id
+    where level_id = _s_l_id;
+END //
+
+DELIMITER ;

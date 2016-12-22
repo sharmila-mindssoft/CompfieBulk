@@ -26,6 +26,12 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 //get geography master data from api
 function getGeography() {
@@ -85,7 +91,9 @@ function loadGeographyList(geographyList) {
   var geography = '';
   var isActive = 0;
   var title;
-  $('.tbody-geography-report-list').find('tr').remove();
+  if($('.tbody-geography-report-list').find('tr').length > 0){
+    $('.tbody-geography-report-list').find('tr').remove();
+  }
   for (var list in geographyList) {
     geography = geographyList[list].geography_mapping;
     isActive = geographyList[list].is_active;
@@ -101,17 +109,12 @@ function loadGeographyList(geographyList) {
     $('.sno', clone).text(sno);
     $('.geography-name', clone).html(geography);
     if (isActive == true){
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
+      $('.status', clone).text("Active")
     }
     else{
-      $('.status', clone).removeClass('fa-check text-success');
-      $('.status', clone).addClass('fa-times text-danger');
+      $('.status', clone).text("In active")
     }
 
-    $('.status').hover(function(){
-      showTitle(this);
-    });
     $('.tbody-geography-report-list').append(clone);
   }
 }
@@ -165,6 +168,23 @@ function renderControls(){
   Search_status.change(function() {
       processSearch();
   });
+
+  $('input').on('keypress', function (e) {
+    /*var regex = new RegExp("^[a-zA-Z0-9]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }*/
+    var k = e.which;
+      var ok = k >= 65 && k <= 90 || // A-Z
+          k >= 97 && k <= 122; // a-z
+          //k >= 48 && k <= 57; // 0-9
+
+      if (!ok){
+          e.preventDefault();
+      }
+  });
 }
 
 //pagination - functions
@@ -210,17 +230,19 @@ function processPaging(){
   console.log("sno:"+sno)
   var geographyList = geographiesList;
 
-  totalRecord = geographyList.length;
-  ReportData = pageData(on_current_page);
+  //totalRecord = geographyList.length;
   if (totalRecord == 0) {
-    $('.table-geography-report').empty();
+    $('.tbody-geography-report-list').find('tr').remove();
+    //$('.table-geography-report').empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.table-geography-report').append(clone4);
+    $('.tbody-geography-report-list').append(clone4);
     PaginationView.hide();
-    hideLoader();
+    //hideLoader();
   } else {
+    ReportData = pageData(on_current_page);
+
     if(sno==0){
       createPageView(totalRecord);
     }
@@ -284,7 +306,14 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
   value_element.focus();
   var geographyList = geographiesList;
   $('#search-geography-name').val('');
-  totalRecord = geographyList.length;
+  var r_count = 0;
+  for(var i=0;i<geographiesList.length;i++){
+    if(val[0] == geographiesList[i].country_id){
+      r_count++;
+    }
+  }
+  console.log(r_count)
+  totalRecord = r_count;
   processPaging();
 }
 

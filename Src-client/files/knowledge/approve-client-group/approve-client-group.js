@@ -144,7 +144,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(group_approval_details.length > 0){
             function onSuccess(data) {
-                displayMessage(message.group_approve_success);
+                displaySuccessMessage(message.action_success);
                 initialize();
             }
             function onFailure(error) {
@@ -159,7 +159,7 @@ function submitApprovalForm(){
                     }
                 });
         }else{
-            displayMessage(message.approve_atleast_one);
+            displayMessage(message.approve_atleast_one_group);
         }
     }    
 }
@@ -199,13 +199,17 @@ function loadLegalEntities(group_name, short_name, group_admin, no_of_veiw_licen
         $(".overlay .tbody-le").append(clone);
         $(".overlay .tbody-le").append(clone1);
         $.each(value.domain_details, function(key, d_val){
+            var org = '';
+            var org_unit = '';
             $.each(d_val.org, function(key, org_val){
-                var clone2 = domain_row.clone();
-                $(".domain-name", clone2).text(domain_id_name_map[d_val.d_id]);
-                $(".org-name", clone2).text(industry_id_name_map[parseInt(key)]);
-                $(".no-of-units", clone2).text(org_val);
-                $(".tbody-domain", clone1).append(clone2);
+                org = org + industry_id_name_map[parseInt(key)] + ',' ;
+                org_unit = org_unit + org_val + ',';
             });
+            var clone2 = domain_row.clone();
+            $(".domain-name", clone2).text(domain_id_name_map[d_val.d_id]);
+            $(".org-name", clone2).text(org);
+            $(".no-of-units", clone2).text(org_unit);
+            $(".tbody-domain", clone1).append(clone2);
         });
         
     });
