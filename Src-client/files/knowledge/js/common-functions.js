@@ -49,12 +49,18 @@ function past_days(days){
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
+  if($('.toast-error').css('display') == "block"){
+    $('.toast').remove();
+  }
   var toastPan = import_toast();
   Command: toastPan["error"](message)
 
 }
 
 function displaySuccessMessage(message) {
+  if($('.toast-error').css('display') == "block"){
+    $('.toast').remove();
+  }
   var toastPan = import_toast();
   Command: toastPan["success"](message)
 
@@ -1071,4 +1077,10 @@ function confirm_alert(message, callback){
       callback(false);
     }
   });
+}
+function displayLoader() {
+  $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+  $(".loading-indicator-spin").hide();
 }

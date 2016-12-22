@@ -146,10 +146,10 @@ class API(object):
         try:
             data = request.get_json(force=True)
             # data = request.data
-            print data
-            print "\n"
-            print "\n"
-            print request_data_type
+            # print data
+            # print "\n"
+            # print "\n"
+            # print request_data_type
 
             request_data = request_data_type.parse_structure(
                 data
@@ -202,7 +202,7 @@ class API(object):
             response_data = unbound_method(self, request_data, _db)
 
             if response_data is None or type(response_data) is bool:
-                print response_data
+                # print response_data
                 _db.rollback()
                 raise fetch_error()
             elif type(response_data) != technomasters.ClientCreationFailed:

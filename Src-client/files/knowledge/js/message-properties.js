@@ -310,6 +310,7 @@ var message = {
   "atleast_one_compliance_select": "Atleast one compliance should be select",
   "assigncompliance_submit_failure": "All compliance should be select while submit",
   "no_compliance_to_reject": "Atleast one compliance should be reject",
+  "email_50": "Email are not allowed more than 50 characters",
 };
 
 function clearMessage() {

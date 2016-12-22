@@ -1015,3 +1015,45 @@ list-style-type:none; line-height:25px;
 .l-h-30{
   line-height: 30px;
 }
+.add-org span{
+  line-height: 10px !important;
+}
+.ac-textbox  ul{
+  text-align: left;
+}
+.client-master-filter div {
+  margin-bottom: 0px; 
+}
+.modal .popover, .modal .tooltip {
+    z-index:100000000;
+}
+#file-space {
+  width: 60px;
+}
+
+.loading-indicator-spin {
+  display: none;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  vertical-align: middle;
+  width: 100%;
+  z-index: 4;
+  background-color: #36404a;
+  opacity: 0.8;
+  transition-duration: 500ms;
+  z-index: 10001;
+}
+.loading-indicator-spin span {
+  width: 100%;
+  position: fixed;
+  top: 40%;
+  left: 0;
+  text-align: center;
+}
+.loading-indicator-spin i {
+  width: auto;
+  opacity: 100%;
+}
