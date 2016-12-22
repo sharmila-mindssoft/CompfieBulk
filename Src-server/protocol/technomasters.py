@@ -1324,14 +1324,14 @@ class GetClientGroupFormDataSuccess(Response):
 
 class GetEditClientGroupFormDataSuccess(Response):
     def __init__(
-        self, countries,  business_groups, domains, industry_name_id,
+        self, countries,  business_groups, domains, industries,
         group_name, email_id, short_name, no_of_licence,
         legal_entities, date_configurations
     ):
         self.countries = countries
         self.business_groups = business_groups
         self.domains = domains
-        self.industry_name_id = industry_name_id
+        self.industries = industries
         self.group_name = group_name
         self.email_id = email_id
         self.short_name = short_name
@@ -1342,14 +1342,14 @@ class GetEditClientGroupFormDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "business_groups", "domains", "industry_name_id",
+            "countries", "business_groups", "domains", "industries",
             "client_details", "group_name", "email_id", "legal_entities",
             "date_configurations", "short_name", "no_of_licence"
         ])
         countries = data.get("countries")
         business_groups = data.get("business_groups")
         domains = data.get("domains")
-        industry_name_id = data.get("industry_name_id")
+        industries = data.get("industries")
         group_name = data.get("group_name")
         short_name = data.get("short_name")
         email_id = data.get("email_id")
@@ -1357,7 +1357,7 @@ class GetEditClientGroupFormDataSuccess(Response):
         date_configurations = data.get("date_configurations")
         no_of_licence = data.get("no_of_licence")
         return GetEditClientGroupFormDataSuccess(
-            countries,  business_groups, domains, industry_name_id,
+            countries,  business_groups, domains, industries,
             group_name, email_id, short_name, no_of_licence,
             legal_entities, date_configurations
         )
@@ -1368,7 +1368,7 @@ class GetEditClientGroupFormDataSuccess(Response):
             "countries": self.countries,
             "business_groups": self.business_groups,
             "domains": self.domains,
-            "industry_name_id": self.industry_name_id,
+            "industries": self.industries,
             "group_name": self.group_name,
             "short_name": self.short_name,
             "email_id": self.email_id,
