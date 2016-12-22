@@ -119,6 +119,10 @@ function isNumbers(inputElm) {
   //allowed => only numbers
   return inputElm.val().replace(/[^0-9]/gi, '');
 }
+function isNonZeroNumbers(inputElm) {
+  //allowed => only numbers
+  return inputElm.val().replace(/[^1-9]/gi, '');
+}
 function isCommon_Name(inputElm) {
   //allowed => alphanumeric, dot
   return inputElm.val().replace(/[^ A-Za-z.]/gi, '');

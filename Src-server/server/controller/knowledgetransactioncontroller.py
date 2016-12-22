@@ -170,7 +170,7 @@ def process_change_statutory_mapping_status(db, request_frame, user_id):
         return knowledgetransaction.InvalidStatutoryMappingId()
 
 def process_get_approve_mapping_filters(db, user_id):
-    user_id = 4
+
     industry = get_industries(db)
     natures = get_statutory_nature(db)
     country = get_countries_for_user(db, user_id)

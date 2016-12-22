@@ -72,6 +72,7 @@ var message = {
   'industry_required': 'Organization Required',
   'statutorynature_required': 'Statutory Nature Required',
   'statutory_selection_required': 'Atleast one Statute should be selected',
+  'statutory_selection_exceed': 'At max three statutue can be selected',
   'compliance_selection_required': 'Atleast one Compliance should be added',
   'active_compliance_required': 'Atleast one Compliance should be Activate',
   'location_selection_required': 'Atleast one Location should be selected',

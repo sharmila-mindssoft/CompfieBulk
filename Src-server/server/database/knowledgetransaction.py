@@ -1246,15 +1246,17 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     def return_statutory(mapping_id, statutory_info):
         statutory = []
+
         for s in statutory_info :
             print s["statutory_mapping_id"], mapping_id
             if s["statutory_mapping_id"] == mapping_id :
                 if s["parent_names"] != '' and s["parent_names"] is not None:
-                    statutory.append(s["parent_names"])
-                statutory.append(s["statutory_name"])
+                    statutory.append("%s >> %s" % (s["parent_names"], s["statutory_name"]))
+                else :
+                    statutory.append(s["statutory_name"])
 
         print statutory
-        return [" >> ".join(statutory)]
+        return statutory
 
     fromcount = rcount
     tocount = rcount + RECORD_DISPLAY_COUNT
@@ -1351,7 +1353,7 @@ def get_compliance_details(db, user_id, compliance_id):
     geo_info = result[1]
     geo_names = []
     for g in geo_info:
-        geo_names.append(g["parent_names"] + ">>" + g["geography_name"])
+        geo_names.append(g["parent_names"])
 
     if c_info["document_name"] is None :
         c_name = c_info["compliance_task"]

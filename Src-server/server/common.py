@@ -296,15 +296,32 @@ def convert_base64_to_file(file_name, file_content, file_path=None):
             fn.write(file_content.decode('base64'))
 
 def make_summary(data, data_type, c):
+    string_months = {
+        1: "Jan",
+        2: "Feb",
+        3: "Mar",
+        4: "Apr",
+        5: "May",
+        6: "Jun",
+        7: "Jul",
+        8: "Aug",
+        9: "Sep",
+        10: "Oct",
+        11: "Nov",
+        12: "Dec",
+    }
     print c
+    summary = ""
     if data_type == 1 :
         if len(data) > 0:
             dat = data[0].statutory_date
             mon = data[0].statutory_month
             day = data[0].trigger_before_days
-            summary = "%s  %s" % (
-                mon, dat
-            )
+            if mon is not None :
+                summary += string_months.get(mon)
+            if dat is not None :
+                summary += " " + str(dat)
+
             if day is not None :
                 summary += " Trigger: %s days" % (day)
 
@@ -316,12 +333,16 @@ def make_summary(data, data_type, c):
         trigger = []
         if len(data) > 0:
             for d in data :
+                dat_summary = ""
                 dat = d.statutory_date
                 mon = d.statutory_month
                 day = d.trigger_before_days
-                dates.append("%s  %s" % (
-                    mon, dat
-                ))
+                if mon is not None :
+                    dat_summary += string_months.get(mon)
+                if dat is not None :
+                    dat_summary += " " + str(dat)
+
+                dates.append(dat_summary)
                 if day is not None :
                     trigger.append(" %s days, " % (day))
 
@@ -340,9 +361,13 @@ def make_summary(data, data_type, c):
                 dat = d.statutory_date
                 mon = d.statutory_month
                 day = d.trigger_before_days
-                dates.append("%s  %s" % (
-                    mon, dat
-                ))
+                if mon is not None :
+                    dat_summary += string_months.get(mon)
+                if dat is not None :
+                    dat_summary += " " + str(dat)
+
+                dates.append(dat_summary)
+
                 if day is not None :
                     trigger.append(" %s days, " % (day))
 

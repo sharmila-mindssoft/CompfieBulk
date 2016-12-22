@@ -235,7 +235,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Document</label>
                                             <div class="col-sm-7">
-                                                <input id="compliance_document" class="form-control input-sm" value="" type="text">
+                                                <input id="compliance_document" class="form-control input-sm" type="text">
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -281,7 +281,7 @@
                                                 <div class="form-group clearfix m-b-10">
                                                     <label class="col-sm-5 control-label">Trigger Before Day(s)</label>
                                                     <div class="col-sm-2">
-                                                        <input id="ottriggerbefore" class="form-control input-sm col-sm-3" type="text">
+                                                        <input id="ottriggerbefore" class="form-control input-sm col-sm-3" maxlength="3" type="text">
                                                     </div>
                                                     <div class="col-sm-2 p-t-7">Days</div>
                                                 </div>
@@ -291,7 +291,7 @@
                                                 <div class="form-group clearfix m-b-5">
                                                     <label class="col-sm-2 p-l-0 control-label">Repeats Every <span class="mandatory remove-manditory">*</span></label>
                                                     <div class="col-sm-2">
-                                                        <input type="text" value="2" id="repeats_every" class="form-control input-sm">
+                                                        <input type="text" maxlength="3"  id="repeats_every" class="form-control input-sm">
                                                     </div>
                                                     <div class="col-sm-2 no-padding-right">
                                                         <select id="repeats_type" class="form-control input-sm">
@@ -324,7 +324,7 @@
                                                     </div>
                                                     <div class="form-group clearfix m-b-10">
                                                         <label class="col-sm-3 control-label">Summary</label>
-                                                        <div class="col-sm-9 "> Repeats Every 6 Month(s)</div>
+                                                        <div class="col-sm-9 "></div>
                                                     </div>
                                                     </div>
                                                     <div class="col-sm-6">
@@ -344,9 +344,12 @@
                                             <div class="card-box p-10 occasional scroll_box max-height-150 m-b-0" id="Occasional" style="display: none;">
                                                 <h4 class="header-title m-t-0 m-b-10">On Occurrence</h4>
                                                 <div class="form-group clearfix m-b-10">
-                                                    <label class="col-sm-5 control-label">To Complete Within</label>
+                                                    <label class="col-sm-5 control-label">To Complete Within
+                                                    <span class="mandatory">*</span>
+                                                    </label>
+
                                                     <div class="col-sm-1 no-padding-right">
-                                                        <input id="duration" class="form-control input-sm" value="2" type="text">
+                                                        <input id="duration" class="form-control input-sm" type="text">
                                                     </div>
                                                     <div class="col-sm-2">
                                                         <select id="duration_type" class="form-control input-sm">
@@ -406,7 +409,7 @@
                                 <div class="clearfix"></div>
                             </div>
                             <ul class="pager wizard m-b-0">
-                                <li id="btn-previous" class="previous disabled"><a  class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                <li id="btn-previous" class="previous"><a  class="btn btn-custom waves-effect waves-light">Previous</a></li>
                                 <li id="btn-next" class="next"><a  class="btn btn-primary waves-effect waves-light">Next</a></li>
                                 <li id="btn-submit" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Submit</a></li>
                                 <li id="btn-save" class="finish pull-right"><a  class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
@@ -479,7 +482,7 @@
 
         </ul>
         <div class="input-group bottomfield">
-            <input class="form-control input-sm txtsname" placeholder="" >
+            <input class="form-control input-sm txtsname" maxlength="100" placeholder="" >
             <input type="hidden" class="form-control input-sm snameid" placeholder="" >
             <input type="hidden" class="form-control input-sm snamepid" placeholder="" >
             <span class="input-group-btn">
@@ -557,7 +560,7 @@
             </div>
         </div>
         <div class="col-sm-3 no-padding show-statutory-date-month-multiple-2">
-            <input type="text" class="form-control input-sm trigger-value">
+            <input type="text" maxlength="3" class="form-control input-sm trigger-value">
         </div>
     </div>
 
