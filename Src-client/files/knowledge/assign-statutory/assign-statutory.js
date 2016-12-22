@@ -134,7 +134,7 @@ function callAPI(api_type) {
     else if (api_type == API_Wizard2) {
         showBreadCrumbText();
         mirror.getAssignStatutoryWizardTwoData(
-            int(val_domain_id), ACTIVE_UNITS,
+            int(val_domain_id), ACTIVE_UNITS, 0,
             function(error, data) {
                 if (error == null) {
                     COMPLIANCES_LIST = data.statutories_for_assigning;
@@ -144,7 +144,7 @@ function callAPI(api_type) {
                     }else{
                         loadMultipleUnitCompliances();
                     }
-                    
+
                 } else {
                     custom_alert(error);
                 }
@@ -160,7 +160,7 @@ function callAPI(api_type) {
         }else{
             submission_status = 2;
         }
-        
+
         statutorysetting = [];
         var d_text = DomainName.val();
         var totalCompliance = 1;
@@ -190,7 +190,7 @@ function callAPI(api_type) {
                 var comp_id = parseInt(combineidVal[0]);
                 var level_1_s_id = parseInt(combineidVal[1]);
                 var u_id = parseInt(combineidVal[2]);
-                
+
 
                 if(CLIENT_STATUTORY_ID == null){
                     CLIENT_STATUTORY_ID = UNIT_CS_ID[u_id].client_statutory_id;
@@ -198,7 +198,7 @@ function callAPI(api_type) {
                     UNIT_TEXT = UNIT_CS_ID[u_id].unit_code+' - '+UNIT_CS_ID[u_id].u_name;
                 }
                 statutorysettingData = mirror.saveComplianceStatus(
-                    int(val_group_id), int(val_legal_entity_id), u_id, 
+                    int(val_group_id), int(val_legal_entity_id), u_id,
                     int(val_domain_id), comp_id, complianceStatusVal,
                     level_1_s_id, aStatus, remark, CLIENT_STATUTORY_ID, UNIT_TEXT, DOMAIN_TEXT
                 );
@@ -211,7 +211,7 @@ function callAPI(api_type) {
             displayMessage(message.assigncompliance_submit_failure);
             return false;
         }else{
-            mirror.saveAssignedStatutory(statutorysetting, submission_status, 
+            mirror.saveAssignedStatutory(statutorysetting, submission_status,
                 function(error, data) {
                     if (error == null) {
                         displaySuccessMessage(message.save_success);
@@ -223,7 +223,7 @@ function callAPI(api_type) {
                 }
             );
         }
-        
+
     }
 }
 
@@ -315,7 +315,7 @@ function pageControls() {
     SubmitButton.click(function(){
         callAPI(SUBMIT_API);
     });
-    
+
     SaveButton.click(function(){
         callAPI(SAVE_API);
     });
@@ -341,7 +341,7 @@ function pageControls() {
         });
         SelectedUnitCount.text(ACTIVE_UNITS.length);
     });
-    
+
 }
 
 function reset(){
@@ -409,7 +409,7 @@ function validateAndShow() {
     val_category_id = CategoryId.val();
     val_business_group_id = BusinessGroupId.val();
 
-    
+
     if (val_group_id.trim().length <= 0) {
         displayMessage(message.group_required);
         return false;
@@ -420,8 +420,8 @@ function validateAndShow() {
         displayMessage(message.domain_required);
         return false;
     } else {
-        mirror.getAssignStatutoryWizardOneDataUnits(int(val_group_id), int(val_business_group_id), 
-            int(val_legal_entity_id), int(val_division_id), int(val_category_id), int(val_domain_id), 
+        mirror.getAssignStatutoryWizardOneDataUnits(int(val_group_id), int(val_business_group_id),
+            int(val_legal_entity_id), int(val_division_id), int(val_category_id), int(val_domain_id),
             function(error, data) {
             if (error == null) {
                 UNITS = data.statu_units;
@@ -454,7 +454,7 @@ function activateUnit(element) {
     if(ACTIVE_UNITS.length > 10){
         displayMessage(message.maximum_units);
         return false;
-    }else{     
+    }else{
         var chkstatus = $(element).attr('class');
         var chkid = $(element).attr('id');
         if (chkstatus == 'active') {
@@ -513,7 +513,7 @@ function compliancestatus(element) {
         $('#act'+actSelect).html('<img src="images/deletebold.png">').attr('for','2');
         $('#remark' + actSelect).show();
       }*/
-  
+
 }
 
 function subComplianceStatus(element){
@@ -549,10 +549,10 @@ function loadSingleUnitCompliances() {
 
             $('.coll-title', clone).attr('id', 'collapse'+actCount);
             $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
-            
+
             $('.change_status', clone).attr('id', 'act'+actCount);
             $('.change_status', clone).val(actCount);
-            
+
             $('.remarks', clone).attr('id', 'remark'+actCount);
             $('.tbody-assignstatutory').append(clone);
 
@@ -593,7 +593,7 @@ function loadSingleUnitCompliances() {
             $(' #collapse'+ccount+' .tbody-compliance-list').append(clone3);
             LastSubAct = value.map_text;
         }
-        
+
         if(value.s_s == 4){
             var rclone = $("#statutory-value .table-statutory-values");
             $('.compliance-details', rclone).addClass('rejected_row');
@@ -640,11 +640,11 @@ function loadSingleUnitCompliances() {
         $('.comp', clone2).on('click', function () {
             compliancestatus(this);
         });
-        
+
         $('.remarks').on('input', function (e) {
           this.value = isCommon($(this));
         });
-    
+
         $('#collapse'+ccount+' .tbody-compliance-list').append(clone2);
 
         if(value.comp_status > 0){
@@ -688,10 +688,10 @@ function loadMultipleUnitCompliances() {
 
             $('.coll-title', clone).attr('id', 'collapse'+actCount);
             $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
-            
+
             $('.change_status', clone).attr('id', 'act'+actCount);
             $('.change_status', clone).val(actCount);
-            
+
             $('.remarks', clone).attr('id', 'remark'+actCount);
             $('.tbody-assignstatutory').append(clone);
 
@@ -723,7 +723,7 @@ function loadMultipleUnitCompliances() {
         LastSubAct = value.level_1_s_name;
         actCount = actCount + 1;
         }
-        
+
         if(LastSubAct != value.map_text){
             var subTitleRow = $('#multi-statutory-value .table-statutory-values .sub-title-row');
             var clone3 = subTitleRow.clone();
@@ -745,7 +745,7 @@ function loadMultipleUnitCompliances() {
             applcount = 0;
             var complianceDetailtableRow = $('#multi-statutory-value .table-statutory-values .compliance-details');
             var clone2 = complianceDetailtableRow.clone();
-            
+
             $('.sno', clone2).text(sno);
             $('.statutoryprovision', clone2).text(value.s_provision);
             $('.compliancetask', clone2).text(value.comp_name);
@@ -808,11 +808,11 @@ function loadMultipleUnitCompliances() {
         $('.compliance-ck-box-3', clone4).addClass('sub-minus' + sno);
         $('.compliance-label-3', clone4).attr('for', 'minus' + statutoriesCount);
 
-        
+
         $('.comp', clone2).on('click', function () {
             compliancestatus(this);
         });
-        
+
         $('.remarks').on('input', function (e) {
           this.value = isCommon($(this));
         });
@@ -878,13 +878,13 @@ function loadAssignedStatutories(){
         $(TblLoc, clone).text(value.g_name);
         $(TblUnit, clone).text(value.u_name);
         $(TblDomain, clone).text(value.d_name);
-        
+
         if(value.approval_status_text != 'Rejected'){
             $(TblStatus, clone).text(value.approval_status_text);
         }else{
             $(TblStatus, clone).html('<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+value.reason+'"></i>'+value.approval_status_text);
         }
-    
+
         $('.edit-icon', clone).addClass('fa fa-pencil text-primary c-pointer');
         $('.edit-icon', clone).on('click', function () {
             LastAct = '';
@@ -903,8 +903,8 @@ function loadAssignedStatutories(){
             DOMAIN_TEXT = value.d_name;
             EditAssignedStatutory(value.u_id, value.d_id);
         });
-        
-        AssignedStatutoryList.append(clone);       
+
+        AssignedStatutoryList.append(clone);
     });
 }
 
@@ -953,7 +953,7 @@ function showTab(){
         $('.tab-step-1').addClass('active')
         $('#tab1').addClass("active in");
         $('#tab1').show();
-        NextButton.show();        
+        NextButton.show();
     }
     else if (CURRENT_TAB == 2) {
         if(validateFirstTab() == false) {

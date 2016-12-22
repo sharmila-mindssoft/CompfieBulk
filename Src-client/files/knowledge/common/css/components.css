@@ -1349,6 +1349,14 @@ div.DTS tbody tr.even {
   margin-bottom: -2px;
   background-color: #fff !important;
 }
+.nav-tabs > li.visited > a,
+.nav-tabs > li.visited > a:focus,
+.nav-tabs > li.visited > a:hover {
+  border: 1px solid #e8e8e8;
+  border-bottom: transparent;
+  background-color: #73C4E9 !important;
+  color: #fff !important;
+}
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:focus,
 .nav-tabs > li.active > a:hover {

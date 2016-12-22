@@ -233,6 +233,7 @@ class API(object):
         DistributionRequest
     )
     def handle_server_list(self, request, db):
+        print "request"
         return CompanyServerDetails(
             gen.get_servers(db)
         )

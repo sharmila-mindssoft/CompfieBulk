@@ -361,6 +361,8 @@ def save_statutory_mapping(db, data, created_by):
     nature_id = data.statutory_nature_id
     compliances = data.compliances
     statutory_mapping = json.dumps(data.mappings)
+    print "statutory mapping"
+    print statutory_mapping
     created_on = get_date_time()
     is_active = 1
     if data.tr_type == 0 :
@@ -650,6 +652,8 @@ def update_statutory_mapping(db, data, updated_by):
     compliances = data.compliances
     # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = json.dumps(data.mappings)
+    print "update statu mapping"
+    print statutory_mapping
     if data.tr_type == 0:
         is_approve = 0
     else:
@@ -1334,7 +1338,7 @@ def approve_statutory_mapping_list(db, user_id, request):
             u_on = datetime_to_string_time(m["updated_on"])
 
         map_text = json.loads(m["statutory_mapping"])
-        map_text = " >> ".join(map_text)
+        map_text = ", ".join(map_text)
 
         data.append(knowledgetransaction.MappingApproveInfo(
             map_id, m["compliance_id"],

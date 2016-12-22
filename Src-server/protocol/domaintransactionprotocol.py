@@ -126,26 +126,30 @@ class GetAssignedStatutoryWizardOneUnits(Request):
 
 class GetAssignedStatutoryWizardTwoData(Request):
     def __init__(
-        self, unit_ids, domain_id
+        self, unit_ids, domain_id,
+        rcount
     ):
         self.unit_ids = unit_ids
         self.domain_id = domain_id
+        self.rcount = rcount
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "unit_ids", "d_id"
+            "unit_ids", "d_id", "rcount"
         ])
         domain_id = data.get("d_id")
         unit_ids = data.get("unit_ids")
+        rcount = data.get("rcount")
         return GetAssignedStatutoryWizardTwoData(
-            unit_ids, domain_id
+            unit_ids, domain_id, rcount
         )
 
     def to_inner_structure(self):
         return {
             "unit_ids": self.unit_ids,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "rcount": self.rcount
         }
 
 
@@ -510,22 +514,25 @@ class AssignStatutoryCompliance(object):
         }
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
-    def __init__(self, statutories_for_assigning):
+    def __init__(self, statutories_for_assigning, total):
         self.statutories_for_assigning = statutories_for_assigning
+        self.total = total
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "statutories_for_assigning"
+            "statutories_for_assigning", "total_records"
         ])
         statutories_for_assigning = data.get("statutories_for_assigning")
+        total = data.get("total")
         return GetAssignedStatutoryWizardTwoDataSuccess(
-            statutories_for_assigning
+            statutories_for_assigning, total
         )
 
     def to_inner_structure(self):
         return {
             "statutories_for_assigning": self.statutories_for_assigning,
+            "total_records": self.total
         }
 
 class SaveAssignedStatutorySuccess(Response):

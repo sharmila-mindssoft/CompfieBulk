@@ -1897,14 +1897,15 @@ function initMirror() {
   }
 
   function getAssignStatutoryWizardTwoData(
-    domain_id, unit_ids, callback
+    domain_id, unit_ids, rcount, callback
   ){
       callerName = 'domain_transaction';
       var request = [
         "GetAssignedStatutoryWizardTwoData",
         {
           "d_id": domain_id,
-          "unit_ids": unit_ids
+          "unit_ids": unit_ids,
+          "rcount": rcount
         }
       ];
       apiRequest(callerName, request, callback);

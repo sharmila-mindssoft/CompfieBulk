@@ -4256,7 +4256,7 @@ DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_new`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_clientstatutories_compliance_new`(
-    IN unitid INT(11), domainid INT(11)
+    IN unitid INT(11), domainid INT(11), fromcount INT(11), tocount INT(11)
 )
 BEGIN
     -- unit location
@@ -4280,11 +4280,14 @@ BEGIN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
     (select parent_ids from tbl_geographies where geography_id = @gid)));
 
-    -- new compliances
+    -- new and assigned compliance
     select distinct t1.statutory_mapping_id, t1.compliance_id,
     t1.compliance_task, t1.document_name,
     t1.compliance_description, t1.statutory_provision,
-    t.statutory_mapping
+    t.statutory_mapping,
+    t6.unit_id, t6.domain_id, t6.compliance_id as assigned_compid,
+    t6.statutory_id, t6.statutory_applicable_status, t6.remarks,
+    t6.compliance_applicable_status, t6.is_approved
     from tbl_compliances as t1
     inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
     inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
@@ -4292,32 +4295,36 @@ BEGIN
     inner join tbl_units as t4 on t4.country_id = t1.country_id
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
-     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid and
-     t3.geography_id IN
+    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
-    and t1.compliance_id not in
-    (select compliance_id from tbl_client_compliances where unit_id = unitid
-    and domain_id = domainid)
-    order by t.statutory_mapping;
+    order by t.statutory_mapping, t4.unit_id
+    limit fromcount, tocount;
+    -- total compliances
 
-    -- assigned compliances
-    select t2.statutory_mapping_id, t1.unit_id, t1.domain_id, t1.compliance_id, t2.statutory_mapping_id,
-    t2.statutory_provision, t2.compliance_task, t2.document_name,
-    t2.compliance_description,
-    t1.statutory_id, t1.statutory_applicable_status, t1.remarks,
-    t1.compliance_applicable_status, t1.is_approved
-    from tbl_client_compliances as t1
-    inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
-    inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
-    where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 4)
-    order by t.statutory_mapping;
+    select count(distinct t1.compliance_id) as total
+    from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and t3.geography_id IN
+     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+        (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by t.statutory_mapping, t4.unit_id
+    limit fromcount, tocount;
 
 END //
 
 DELIMITER ;
-
 
 
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_edit`;
@@ -4325,7 +4332,7 @@ DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_edit`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_clientstatutories_compliance_edit`(
-    IN unitid INT(11), domainid INT(11)
+    IN unitid INT(11), domainid INT(11), fromcount INT(11), tocount INT(11)
 )
 BEGIN
 
@@ -4352,25 +4359,15 @@ BEGIN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
     (select parent_ids from tbl_geographies where geography_id = @gid)));
 
-    -- assigned compliances
 
-    select t1.unit_id, t1.domain_id, t1.compliance_id, t2.statutory_mapping_id,
-    t2.statutory_provision, t2.compliance_task, t2.document_name,
-    t2.compliance_description,
-    t1.statutory_id, t1.statutory_applicable_status, t1.remarks,
-    t1.compliance_applicable_status, t1.is_approved
-    from tbl_client_compliances as t1
-    inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
-    inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
-    where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 4)
-    order by statutory_mapping;
-
-    -- new compliances
+    -- new and assigned compliance
     select distinct t1.statutory_mapping_id, t1.compliance_id,
     t1.compliance_task, t1.document_name,
     t1.compliance_description, t1.statutory_provision,
-    t.statutory_mapping
+    t.statutory_mapping,
+    t6.unit_id, t6.domain_id, t6.compliance_id as assigned_compid,
+    t6.statutory_id, t6.statutory_applicable_status, t6.remarks,
+    t6.compliance_applicable_status, t6.is_approved
     from tbl_compliances as t1
     inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
     inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
@@ -4378,14 +4375,32 @@ BEGIN
     inner join tbl_units as t4 on t4.country_id = t1.country_id
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
-     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid and
-     t3.geography_id IN
+    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
-    and t1.compliance_id not in
-    (select compliance_id from tbl_client_compliances where unit_id = unitid
-    and domain_id = domainid)
-    order by statutory_mapping;
+    order by t.statutory_mapping, t4.unit_id
+    limit fromcount, tocount;
+
+
+    select count(distinct t1.compliance_id) as total
+    from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and t3.geography_id IN
+     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+        (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by t.statutory_mapping, t4.unit_id
+    limit fromcount, tocount;
 
 
 END //
