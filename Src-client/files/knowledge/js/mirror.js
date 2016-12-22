@@ -171,7 +171,6 @@ function initMirror() {
           }
           callback(null, response);
         } else if (status == 'InvalidSessionToken') {
-          alert(status)
           window.sessionStorage.login_url = login_url;
           clearSession();
           window.location.href = login_url;

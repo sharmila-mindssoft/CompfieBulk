@@ -4181,32 +4181,32 @@ CREATE PROCEDURE `sp_clientstatutories_filters`(
     IN uid INT(11)
 )
 BEGIN
-
+    -- group details
     select distinct t1.client_id, t1.group_name, t1.short_name, t1.is_active
      from tbl_client_groups as t1
      inner join tbl_user_units as t2
      on t1.client_id = t2.client_id where t2.user_id = uid;
 
-
+    -- legal entity details
     select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id
      from tbl_legal_entities as t1
      inner join tbl_user_units as t2
      on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
 
-
+    -- business group details
     select distinct t1.client_id, t1.business_group_id, t1.business_group_name
      from tbl_business_groups as t1
      inner join tbl_units as t2 on t1.business_group_id = t2.business_group_id
      inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
      where t3.user_id = uid;
-
+    -- division
     select distinct t1.client_id, t1.division_id, t1.division_name, t1.legal_entity_id,
     t1.business_group_id
      from tbl_divisions as t1
      inner join tbl_units as t2 on t1.division_id = t2.division_id
      inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
      where t3.user_id = uid;
-
+    -- category
     select distinct t1.client_id, t1.category_id, t1.category_name, t1.legal_entity_id,
     t1.business_group_id, t1.division_id
      from tbl_categories as t1
@@ -4214,7 +4214,7 @@ BEGIN
      inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
      where t3.user_id = uid;
 
-
+    -- domains
     select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
      from tbl_domains as t1
      inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
@@ -4243,7 +4243,8 @@ BEGIN
     left join tbl_client_statutories as t4 on t1.unit_id = t4.unit_id
     where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
     IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
-    and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid;
+    and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid
+    order by t1.unit_code, t1.unit_name;
 
 END //
 
