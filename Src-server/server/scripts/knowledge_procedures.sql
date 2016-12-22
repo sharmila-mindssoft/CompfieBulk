@@ -4598,7 +4598,7 @@ BEGIN
     inner join tbl_statutory_levels as t2 on t2.level_id = t1.level_id
     inner join tbl_user_domains as t4 on t2.domain_id = t4.domain_id and
     t2.country_id = t4.country_id and t4.user_id = userid
-    order by t1.statutory_name;
+    order by t2.level_position, t1.statutory_name;
 
 
 END //
@@ -4614,7 +4614,7 @@ CREATE PROCEDURE `sp_tbl_statutory_mapping_list`(
     fromcount INT(11), tocount INT(11)
 )
 BEGIN
-    if approvestatus = 0 then
+    if approvestatus = 6 then
         set approvestatus = '%';
     end if;
     select t1.statutory_mapping_id, t1.country_id, t1.domain_id, t1.statutory_nature_id,
@@ -6433,7 +6433,7 @@ BEGIN
         t1.duration, t1.is_active,
         (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) as repeat_type,
-        (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration_type
     FROM tbl_compliances as t1 inner join tbl_statutory_mappings as t2
     on t1.statutory_mapping_id = t2.statutory_mapping_id
     where t1.compliance_id = compid;

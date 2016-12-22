@@ -93,8 +93,8 @@ api_params = {
     'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'reference': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'refer': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'reference': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    'refer': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'c_task': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'description': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
@@ -152,8 +152,8 @@ api_params = {
     "geography_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "geo_maps": {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'comp_approval_status': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
-    'approval_status_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
-    'a_s_id': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
+    'approval_status_id': {'type': 'INT', 'length': 7, 'validation_method': None, 'is_optional': False},
+    'a_s_id': {'type': 'INT', 'length': 7, 'validation_method': None, 'is_optional': False},
     'approval_status_text': {'type': 'TEXT', 'length': 100, 'validation_method': allow_specialchar, 'is_optional': False},
     'a_s_t': {'type': 'TEXT', 'length': 100, 'validation_method': allow_specialchar, 'is_optional': False},
 

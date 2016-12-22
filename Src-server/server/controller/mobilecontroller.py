@@ -24,7 +24,6 @@ __all__ = [
 
 
 def process_mobile_request(request, db, session_user_ip):
-    print type(request)
     if type(request) is login.Login:
         logger.logKnowledgeApi("Login", "process begin")
         result = process_mobile_login(db, request, session_user_ip)
@@ -105,7 +104,6 @@ def mobile_user_login_respone(db, login_type, ip, data, forms):
     employee_code = data["employee_code"]
 
     form_ids = [int(x["form_id"]) for x in forms]
-    print form_ids
     if frmApproveStatutoryMapping not in form_ids:
         return login.InvalidMobileCredentials()
 
@@ -158,7 +156,6 @@ def process_mobile_logout(db, request):
 
 def approve_statutory_mapping_list(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list", [user_id], 3)
-    print result
     mappings = result[0]
     orgs = result[1]
     geo_info = result[2]

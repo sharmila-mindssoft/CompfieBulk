@@ -663,6 +663,7 @@ function pageControls() {
             Search_status.addClass('fa');
             Search_status.text('All');
         }
+        // alert($(event.target).parent().val());
         processFilter();
     });
 

@@ -100,7 +100,7 @@
 }
 .height-250 {
   max-height: 300px;
-  overflow-y: auto; 
+  overflow-y: auto;
 }
 .table-list>tbody>tr:nth-of-type(odd) {
   background-color: #fff !important;
@@ -141,11 +141,11 @@
 .table-list tr td ul li i {
   padding: 2px 1px;
 }
-.table-list tr td ul li.active {
+.table-list ul li.active {
   background-color: #f1e9f6 !important;
   border-bottom: 1px solid #cccccc !important;
 }
-.table-list tr td ul li.active:hover {
+.table-list ul li.active:hover {
   background: #2EAFDB !important;color: #fff;
   -moz-transition: all 500ms ease-out;
   -webkit-transition: all 500ms ease-out;

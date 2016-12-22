@@ -1,7 +1,7 @@
 
 import os
 import json
-import datetime
+
 from server.database.tables import *
 from server.database.forms import *
 from protocol import (core, knowledgetransaction)
@@ -1274,12 +1274,16 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
     data = []
     for m in mapping:
         map_id = m["statutory_mapping_id"]
+        mapped_compliance = return_compliance(map_id, compliance)
+        if len(mapped_compliance) == 0 :
+            continue
+
         data.append(core.StatutoryMapping(
             m["country_name"], m["domain_name"],
             return_organisation(map_id, organisation),
             m["nature"],
             return_statutory(map_id, statutory),
-            return_compliance(map_id, compliance),
+            mapped_compliance,
             return_location(map_id, location),
             m["is_approved"],
             bool(m["is_active"]),

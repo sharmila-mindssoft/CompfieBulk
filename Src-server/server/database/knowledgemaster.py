@@ -3,7 +3,7 @@ from protocol import (
 )
 from server.exceptionmessage import *
 from server.common import (
-    convert_to_dict, get_date_time, convert_to_key_dict
+    get_date_time
 )
 from server.database.tables import *
 
@@ -647,14 +647,8 @@ def get_statutory_by_id(db, statutory_id):
     query = "SELECT statutory_id, statutory_name, " + \
         " level_id, parent_ids, parent_names " + \
         " FROM tbl_statutories WHERE statutory_id = %s"
-    rows = db.select_one(query, [statutory_id])
-    result = []
-    if rows:
-        columns = [
-            "statutory_id", "statutory_name",
-            "level_id", "parent_ids", "parent_names"
-        ]
-        result = convert_to_dict(rows, columns)
+    result = db.select_one(query, [statutory_id])
+
     return result
 
 
@@ -699,9 +693,8 @@ def update_statutory(
         qry = "SELECT statutory_id, statutory_name, parent_ids " + \
             " from tbl_statutories " + \
             " WHERE parent_ids like %s"
-        rows = db.select_all(qry, [str("%" + str(statutory_id) + ",%")])
-        columns = ["statutory_id", "statutory_name", "parent_ids"]
-        result = convert_to_dict(rows, columns)
+        result = db.select_all(qry, [str("%" + str(statutory_id) + ",%")])
+
         for row in result:
             if row["parent_ids"] == "0,":
                 row["parent_ids"] = statutory_id
@@ -831,6 +824,7 @@ def check_duplicate_statutory(
         where_qry += " AND domain_id = %s"
         param.append(domain_id)
 
+    print query + where_qry % (param)
     rows = db.select_all(query + where_qry, param)
     return rows
 

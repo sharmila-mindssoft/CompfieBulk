@@ -62,9 +62,7 @@ from protocol.to_structure import (
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
-        print name
         inner = self.to_inner_structure()
-        print inner
         if type(inner) is dict:
             inner = to_structure_dictionary_values(inner)
         return [name, inner]
