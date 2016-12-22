@@ -61,7 +61,7 @@ function initialize(type_of_initialization) {
         function onSuccess(data) {
             COUNTRIES = data.countries;
             DOMAINS = data.domains;
-            INDUSTRIES = data.industry_name_id;
+            INDUSTRIES = data.industries;
             $.each(INDUSTRIES, function(key, value) {
                 industry_id_map[value.industry_name] = parseInt(value.industry_id)
                 industry_name_map[parseInt(value.industry_id)] = value.industry_name
@@ -86,7 +86,7 @@ function initialize(type_of_initialization) {
         function onSuccess(data) {
             COUNTRIES = data.countries;
             DOMAINS = data.domains;
-            INDUSTRIES = data.industry_name_id;
+            INDUSTRIES = data.industries;
             BUSSINESSGROUPS = data.business_groups;
             GROUPNAME = data.group_name
             USERNAME = data.email_id
