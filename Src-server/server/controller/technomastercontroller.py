@@ -12,7 +12,7 @@ from server.database.admin import (
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
     get_geograhpy_levels_for_user,
-    get_geographies_for_user_with_mapping,
+    get_geographies_for_user_with_mapping, get_industries
 )
 
 from server.database.technomaster import *
@@ -62,10 +62,10 @@ def get_client_groups(db, request, session_user):
 def get_client_group_form_data(db, request, session_user):
     countries = get_user_countries(db, session_user)
     domains = get_user_domains(db, session_user)
-    industries = get_active_industries(db)
+    industries = get_industries(db)
     return technomasters.GetClientGroupFormDataSuccess(
         countries=countries, domains=domains,
-        industry_name_id=industries
+        industries=industries
     )
 
 
