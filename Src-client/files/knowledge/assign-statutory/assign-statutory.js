@@ -531,7 +531,6 @@ function subComplianceStatus(element){
 }
 
 function loadSingleUnitCompliances() {
-    alert('1');
     var ccount = 1;
     var count = 1;
     statutoriesCount = 1;
@@ -888,6 +887,8 @@ function loadAssignedStatutories(){
     
         $('.edit-icon', clone).addClass('fa fa-pencil text-primary c-pointer');
         $('.edit-icon', clone).on('click', function () {
+            LastAct = '';
+            LastSubAct = '';
             GroupName.val(value.grp_name);
             BusinessGroupName.val(value.b_grp_name);
             LegalEntityName.val(value.l_e_name);
@@ -912,6 +913,8 @@ function validateFirstTab()  {
         displayMessage(message.atleast_one_unit_required)
         return false;
     } else {
+        LastAct = '';
+        LastSubAct = '';
         callAPI(API_Wizard2);
         return true;
     }
@@ -975,7 +978,6 @@ function EditAssignedStatutory(u_id, d_id){
     mirror.getAssignedStatutoriesById(u_id, d_id, function(error, data) {
         if (error == null) {
             COMPLIANCES_LIST = data.statutories_for_assigning;
-
             $('.statutory_mapping_tab li').removeClass('active');
             $('.tab-pane').removeClass('active in');
             $('#tab1').hide();

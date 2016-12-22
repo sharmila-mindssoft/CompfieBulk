@@ -33,7 +33,7 @@
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Organization</label>
             <div class="col-sm-6 controls">
               <input type="hidden" id="organization" value="">
-              <input type="text" class="form-control input-sm" value="" id="organizationval" placeholder="Enter Organization" tabindex="1"/>
+              <input type="text" class="form-control input-sm" value="" id="organizationval" placeholder="Enter Organization" tabindex="3"/>
               <i class="fa-1-5x form-control-feedback fa fa-search"></i>
               <div id="ac-organization" class="ac-textbox default-display-none">
                 <ul style="width:85%;"></ul>
@@ -44,7 +44,7 @@
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">User</label>
             <div class="col-sm-6 controls">
               <input type="hidden" id="user" value="">
-              <input type="text" class="form-control input-sm" value="" id="userval" placeholder="Enter User" tabindex="1"/>
+              <input type="text" class="form-control input-sm" value="" id="userval" placeholder="Enter User" tabindex="5"/>
               <i class="fa-1-5x form-control-feedback fa fa-search"></i>
               <div id="ac-user" class="ac-textbox default-display-none">
                 <ul style="width:85%;"></ul>
@@ -57,7 +57,7 @@
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Domain Name<span class="mandatory">*</span></label>
             <div class="col-sm-6 controls">
               <input type="text" class="form-control input-sm" id="domainval" placeholder="Enter Domain Name"
-              tabindex="5">
+              tabindex="2">
               <i class="fa-1-5x form-control-feedback fa fa-search"></i>
               <input type="hidden" id="domain" value="">
               <div id="ac-domain" class="ac-textbox default-display-none">
@@ -69,7 +69,7 @@
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Statutory Nature</label>
             <div class="col-sm-6 controls">
               <input type="hidden" id="statutorynature" value="">
-              <input type="text" class="form-control input-sm" value="" id="statutorynatureval" placeholder="Enter Statutory Nature" tabindex="1"/>
+              <input type="text" class="form-control input-sm" value="" id="statutorynatureval" placeholder="Enter Statutory Nature" tabindex="4"/>
               <i class="fa-1-5x form-control-feedback fa fa-search"></i>
               <div id="ac-statutorynature" class="ac-textbox default-display-none">
                 <ul style="width:85%;"></ul>
@@ -87,7 +87,7 @@
         <div class="clear"></div>
         <center>
           <div class="form-group" id="add">
-            <button class="btn btn-primary waves-effect waves-light btn-show" type="submit"> Show</button>
+            <button class="btn btn-primary waves-effect waves-light btn-show" type="submit" tabindex="6"> Show</button>
           </div>
         </center>
       </div>
@@ -96,33 +96,33 @@
       <div class="card-box sm-grid default-display-none">
       <div class="table-responsive no-padding">
         <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th width="1%">#</th>
                     <th width="15%">Organization</th>
                     <th width="10%">Statutory Nature</th>
                     <th width="20%" colspan="2">Statutory Provision</th>
-                    <th width="10%">Action</th>
+                    <th width="10%">Action <span class="mandatory">*</span></th>
                     <th width="10%">Reason</th>
                   </tr>
                   <tr>
                     <td>&nbsp;</td>
                     <td>
                       <div class="form-group col-sm-12 no-padding m-b-0">
-                        <input type="text" class="form-control input-sm" />
+                        <input type="text" class="form-control input-sm js-filter" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group col-sm-12 no-padding m-b-0">
-                        <input type="text" class="form-control input-sm" />
+                        <input type="text" class="form-control input-sm js-filter" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td colspan="2">
                       <div class="form-group col-sm-12 no-padding m-b-0">
-                        <input type="text" class="form-control input-sm" />
+                        <input type="text" class="form-control input-sm js-filter" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>

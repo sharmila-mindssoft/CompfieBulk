@@ -24,10 +24,11 @@ var User = $('#user');
 
 var ShowBtn = $(".btn-show");
 var SubmitBtn = $(".btn-submit");
-var LastMapping;
+var LastMapping = 0;
 var approvalList = [];
 
 function initialize(){
+    CountryVal.focus();
     $(".client-group-grid").hide();
     $(".approve-group-div").hide();
     CountryVal.focus();
@@ -247,6 +248,7 @@ function getApprovalList (){
             }
             else {
                 ApproveMappingList = response.approv_mappings;
+                LastMapping = 0;
                 loadApprovalList();
             }
         }
@@ -305,7 +307,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(approvalList.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.statutory_mapping_approve_success);
+                displaySuccessMessage(message.action_success);
                 getApprovalList();
             }
             function onFailure(error) {
@@ -320,7 +322,7 @@ function submitApprovalForm(){
                 }
             });
         }else{
-            displayMessage(message.atleast_one_compliance_select);
+            displayMessage(message.approve_atleast_one_compliance);
         }
     }
 }
@@ -370,9 +372,8 @@ function pageControls() {
         var condition_fields = [];
         var condition_values = [];
         if(Country.val() != '' && Domain.val() != ''){
-            condition_fields["country_id", "domain_id"];
-            condition_values[Country.val(), Domain.val()];
-
+            condition_fields = ["country_id", "domain_id"];
+            condition_values = [Country.val(), Domain.val()];
             var text_val = $(this).val();
             commonAutoComplete(
             e, ACOrganization, Organization, text_val,
@@ -387,8 +388,8 @@ function pageControls() {
         var condition_fields = [];
         var condition_values = [];
         if(Country.val() != ''){
-            condition_fields["country_id"];
-            condition_values[Country.val()];
+            condition_fields = ["country_id"];
+            condition_values = [Country.val()];
 
             var text_val = $(this).val();
             commonAutoComplete(
@@ -423,4 +424,8 @@ function pageControls() {
 $(function () {
     initialize();
     pageControls();
+    $(document).find('.js-filtertable').each(function(){
+        $(this).filtertable().addFilter('.js-filter');
+    });
 });
+
