@@ -270,7 +270,8 @@ function RenderInput() {
     this.loadOrganisation = function(c_id, d_id) {
         // this.org_ids = [];
         // this.org_names = [];
-
+        $('.organisationlist', Organisation).removeClass('active');
+        $('.organisationlist i', Organisation).removeClass('fa-check');
         Organisation.empty();
         var first_li = 0;
 
@@ -874,7 +875,9 @@ function RenderInput() {
 
         this.clearSubLevel(l_position);
         $.each(data, function(k,v) {
-
+            if (v.is_active == false) {
+                return;
+            }
             liObject = $('#templates #list-template li').clone();
             liObject.attr('id', 'gid'+v.g_id);
             // liObject.addClass('glp'+v.l_position);

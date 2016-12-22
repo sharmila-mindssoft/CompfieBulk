@@ -128,13 +128,10 @@ function renderUserList(response) {
 
             if (v.is_active == true) {
                 statusmsg = message.deactive_message;
-                // alert(statusmsg);
-                // $('.status').attr('title', 'Click Here to Deactivate');
                 $('.status', rowClone).removeClass('fa-times text-danger');
                 $('.status', rowClone).addClass('fa-check text-success');
             } else {
                 statusmsg = message.active_message;
-                // $('.status').attr('title', 'Click Here to Activate');
                 $('.status', rowClone).removeClass('fa-check text-success');
                 $('.status', rowClone).addClass('fa-times text-danger');
             }

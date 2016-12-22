@@ -65,12 +65,13 @@ hideLoader = function() {
 };
 
 resetField = function() {
+    setCaptcha('');
     Uname.val('');
     Pword.val('');
     CPword.val('');
     Captcha.val('');
+    Captcha.hide();
     Status_msg.text('');
-    setCaptcha('');
     Status_check.removeClass()
 
 };
