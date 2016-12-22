@@ -31,6 +31,7 @@ $('#btnUserGroupAdd').click(function () {
   $('#categoryName').val('');
   $('#categoryName option:gt(0)').remove();
   $('.checkbox-full-check').prop('checked', false);
+  $('#groupName').focus();
   loadFormCategories();
 });
 
@@ -152,12 +153,18 @@ function loadUserGroupdata(userGroupList) {
 }
 $('#categoryName').on('change', function () {
   clearMessage();
-  $('.checkbox-full-check').prop('checked', false);
-  var groupNameVal = $('#groupName').val().trim();
-  var categoryNameVal = $('#categoryName').val().trim();
-  clearMessage();
-  $('#formList').show();
-  getFormsList(categoryNameVal)
+  if($('#categoryName').val().trim() > 0){
+    $('.checkbox-full-check').prop('checked', false);
+    var groupNameVal = $('#groupName').val().trim();
+    var categoryNameVal = $('#categoryName').val().trim();
+    clearMessage();
+    $('#formList').show();
+    getFormsList(categoryNameVal)
+  }
+  else{
+    clearMessage();
+    $('#formList').hide();
+  }
   // $("#tempcatgid").val(categoryNameVal);
 });
 
@@ -336,6 +343,12 @@ $('#btnUserGroupSubmit').click(function () {
     validateMaxLength('usergroupname', groupNameVal, "User Group Name");
   }
 
+  if(categoryNameVal == 0){
+    displayMessage(msg.catgname_required);
+    $('#categoryName').focus();
+    return false;
+  }
+
   if (groupIdVal == '') {
     $('.checkedFormId:checked').each(function () {
       chkArray.push($(this).val());
@@ -431,7 +444,12 @@ function userGroupEdit(userGroupId, userGroupName, catgid) {
 }
 function userGroupActive(userGroupId, userGroupName, isActive) {
   $('#userGroupId').val(userGroupId);
-
+  function onSuccess(data) {
+    initialize();
+  }
+  function onFailure(error) {
+    displayMessage(error);
+  }
   mirror.changeAdminUserGroupStatus(userGroupId, userGroupName, isActive, function (error, response) {
   if (error == null) {
     if (isActive) {
@@ -441,7 +459,6 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
     {
       displaySuccessMessage(message.status_success);
     }
-    initialize();
     onSuccess(response);
   } else {
     onFailure(error);

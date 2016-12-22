@@ -21,6 +21,9 @@ $('#btn-country-cancel').click(function () {
   $('#country-add').hide();
   $('#ctry-view').show();
   $('#search-country-name').val('');
+  Search_status.removeClass();
+  Search_status.addClass('fa');
+  Search_status.text('All');
   loadCountriesList(counList);
 });
 //get countries list from api
@@ -286,7 +289,9 @@ function processSearch(){
   loadCountriesList(searchList);
 }
 
-//status of the list
+function renderSearch() {
+  // body...
+  //status of the list
   Search_status_ul.click(function (event) {
     Search_status_li.each(function (index, el) {
       $(el).removeClass('active');
@@ -304,9 +309,13 @@ function processSearch(){
     }
     processSearch();
   });
+}
+
+
 
 $(function () {
   initialize();
+  renderSearch();
 });
 $('#country-name').on('input', function (e) {
   this.value = isAlphabetic($(this));
