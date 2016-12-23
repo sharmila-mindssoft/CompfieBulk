@@ -42,27 +42,27 @@ def process_techno_transaction_request(request, db):
     #     logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
     #     logger.logKnowledgeApi("------", str(time.time()))
 
-    if type(request_frame) is technotransactions.GetAssignedStatutoriesById:
-        logger.logKnowledgeApi("GetAssignedStatutoriesById", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutories_by_id(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetAssignedStatutoriesById", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+    #if type(request_frame) is technotransactions.GetAssignedStatutoriesById:
+    #    logger.logKnowledgeApi("GetAssignedStatutoriesById", "process begin")
+    #    logger.logKnowledgeApi("------", str(time.time()))
+    #    result = process_get_assigned_statutories_by_id(db, request_frame, user_id)
+    #    logger.logKnowledgeApi("GetAssignedStatutoriesById", "process end")
+    #    logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(
-        request_frame
-    ) is technotransactions.GetAssignedStatutoryWizardOneData:
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutory_wizard_one(
-            db, user_id
-        )
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
+    #elif type(
+    #    request_frame
+    #) is technotransactions.GetAssignedStatutoryWizardOneData:
+    #    logger.logKnowledgeApi(
+    #        "GetAssignedStatutoryWizardOneData", "process begin"
+    #    )
+    #    logger.logKnowledgeApi("------", str(time.time()))
+    #    result = process_get_assigned_statutory_wizard_one(
+    #        db, user_id
+    #    )
+    #    logger.logKnowledgeApi(
+    #        "GetAssignedStatutoryWizardOneData", "process end"
+    #    )
+    #    logger.logKnowledgeApi("------", str(time.time()))
 
     # elif(
     #     type(
@@ -79,12 +79,12 @@ def process_techno_transaction_request(request, db):
     #         "GetAssignedStatutoryWizardTwoData", "process end")
     #     logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technotransactions.SaveAssignedStatutory:
-        logger.logKnowledgeApi("SaveAssignedStatutory", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_save_assigned_statutory(db, request_frame, user_id)
-        logger.logKnowledgeApi("SaveAssignedStatutory", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+    #elif type(request_frame) is technotransactions.SaveAssignedStatutory:
+    #    logger.logKnowledgeApi("SaveAssignedStatutory", "process begin")
+    #    logger.logKnowledgeApi("------", str(time.time()))
+    #    result = process_save_assigned_statutory(db, request_frame, user_id)
+    #    logger.logKnowledgeApi("SaveAssignedStatutory", "process end")
+    #    logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.GetCountriesForGroup:
         logger.logKnowledgeApi("GetCountriesForGroup", "process begin")

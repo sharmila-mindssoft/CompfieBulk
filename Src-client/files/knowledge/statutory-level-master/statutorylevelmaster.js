@@ -46,7 +46,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     var current_id = id_element[0].id;
     if(current_id == 'country'){
       $('#domainval').focus();
-      loadstatutoryLevelsList();
+      //loadstatutoryLevelsList();
     }
     else if(current_id == 'domain'){
       $('#level1').focus();
