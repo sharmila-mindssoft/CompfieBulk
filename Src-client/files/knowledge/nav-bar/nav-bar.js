@@ -49,7 +49,7 @@ function initializeNavBar() {
     'Report',
     'My Accounts'
   ];
-  
+
   // var homeMenu = $('.cssmenu .menu-ul .home-menu');
   // if ('Home' in navBarItems) {
   //   homeMenu.attr('href', '/dashboard');
@@ -58,6 +58,7 @@ function initializeNavBar() {
   // }
 
   if (menus.length == 0) {
+    mirror.clearSession();
     window.location.href = '/knowledge/login';
   }
   for (var i = 0; i < menus.length; i++) {
@@ -248,8 +249,11 @@ function persistNavBar() {
   frms = window.location.href.split('/');
   ac_menu = mirror.getPageUrl();
   form_name = '/' + frms[frms.length - 2] + '/' + frms[frms.length - 1];
-  if (ac_menu.indexOf(form_name) == -1)
+  if (ac_menu.indexOf(form_name) == -1){
+    mirror.clearSession();
     window.location.href = '/knowledge/login';
+  }
+
 }
 $(document).ready(function () {
   initializeNavBar();

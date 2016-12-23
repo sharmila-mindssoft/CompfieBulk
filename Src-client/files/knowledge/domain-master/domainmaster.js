@@ -40,18 +40,8 @@ function DomainPage() {
     this._country_ids = [];
 }
 
-DomainPage.prototype.displayMessage = function(message){
-    Msg_pan.text(message);
-    Msg_pan.show();
-};
-
-DomainPage.prototype.clearMessage = function(){
-    Msg_pan.text('');
-    Msg_pan.hide();
-};
-
 DomainPage.prototype.possibleFailures = function(error) {
-    if (error == 'DomainNameAlreadyExists') {
+    if (error == "DomainNameAlreadyExists") {
         displayMessage(msg.domainname_exists);
     }
     else if (error == 'InvalidDomainId') {
@@ -91,6 +81,7 @@ DomainPage.prototype.showList = function() {
     Domain_id.val('');
     SearchDomain.val('');
     SearchCountry.val('');
+
     this.fetchDomain();
     Search_status.removeClass();
     Search_status.addClass('fa');
@@ -101,7 +92,6 @@ DomainPage.prototype.showAddScreen = function() {
     AddScreen.show();
     Domain_id.val('');
     Domain_name.val('');
-    this.displayMessage('');
     this._country_ids = [];
     this.fetchCountryMultiselect();
     MultiSelect_Country.focus();
@@ -195,7 +185,7 @@ DomainPage.prototype.validateAuthentication = function() {
     t_this = this;
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
-        this.displayMessage(msg.password_required);
+        displayMessage(msg.password_required);
         CurrentPassword.focus();
         return false;
     } else {
@@ -254,6 +244,7 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
         console.log(error,response)
         if (error == null) {
             t_this.showList();
+            t_this.fetchDomain();
         }
         else {
             displayMessage(error);
@@ -262,6 +253,7 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
 };
 
 DomainPage.prototype.validate = function() {
+
     if (MultiSelect_Country.val() == null) {
       displayMessage(msg.country_required);
       MultiSelect_Country.focus();
@@ -306,20 +298,22 @@ function DomainValidate() {
 }
 
 DomainPage.prototype.submitProcess = function() {
+    DomainValidate();
     d_id = parseInt(Domain_id.val());
     name = Domain_name.val().trim();
     c_ids = MultiSelect_Country.val().map(Number);
-    DomainValidate();
+
     t_this = this;
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
             console.log(error,response)
             if (error == null) {
-                //t_this.displayMessage(error);
+
                 displaySuccessMessage(message.save_success);
                 t_this.showList();
+                t_this.fetchDomain();
             } else {
-                displayMessage(error);
+                t_this.possibleFailures(error);
             }
         });
     } else {
@@ -327,8 +321,9 @@ DomainPage.prototype.submitProcess = function() {
             if (error == null) {
                 displaySuccessMessage(message.update_success);
                 t_this.showList();
+                t_this.fetchDomain();
             } else {
-                displayMessage(error);
+                t_this.possibleFailures(error);
             }
         });
     }
@@ -550,5 +545,6 @@ $(document).ready(function() {
     });
     PageControls();
     d_page.showList();
+    d_page.fetchDomain();
 });
 

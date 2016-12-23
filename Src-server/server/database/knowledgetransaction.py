@@ -1,7 +1,7 @@
 
 import os
 import json
-import datetime
+
 from server.database.tables import *
 from server.database.forms import *
 from protocol import (core, knowledgetransaction)
@@ -361,6 +361,8 @@ def save_statutory_mapping(db, data, created_by):
     nature_id = data.statutory_nature_id
     compliances = data.compliances
     statutory_mapping = json.dumps(data.mappings)
+    print "statutory mapping"
+    print statutory_mapping
     created_on = get_date_time()
     is_active = 1
     if data.tr_type == 0 :
@@ -650,6 +652,8 @@ def update_statutory_mapping(db, data, updated_by):
     compliances = data.compliances
     # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = json.dumps(data.mappings)
+    print "update statu mapping"
+    print statutory_mapping
     if data.tr_type == 0:
         is_approve = 0
     else:
@@ -1246,15 +1250,17 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     def return_statutory(mapping_id, statutory_info):
         statutory = []
+
         for s in statutory_info :
             print s["statutory_mapping_id"], mapping_id
             if s["statutory_mapping_id"] == mapping_id :
                 if s["parent_names"] != '' and s["parent_names"] is not None:
-                    statutory.append(s["parent_names"])
-                statutory.append(s["statutory_name"])
+                    statutory.append("%s >> %s" % (s["parent_names"], s["statutory_name"]))
+                else :
+                    statutory.append(s["statutory_name"])
 
         print statutory
-        return [" >> ".join(statutory)]
+        return statutory
 
     fromcount = rcount
     tocount = rcount + RECORD_DISPLAY_COUNT
@@ -1274,12 +1280,16 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
     data = []
     for m in mapping:
         map_id = m["statutory_mapping_id"]
+        mapped_compliance = return_compliance(map_id, compliance)
+        if len(mapped_compliance) == 0 :
+            continue
+
         data.append(core.StatutoryMapping(
             m["country_name"], m["domain_name"],
             return_organisation(map_id, organisation),
             m["nature"],
             return_statutory(map_id, statutory),
-            return_compliance(map_id, compliance),
+            mapped_compliance,
             return_location(map_id, location),
             m["is_approved"],
             bool(m["is_active"]),
@@ -1328,7 +1338,7 @@ def approve_statutory_mapping_list(db, user_id, request):
             u_on = datetime_to_string_time(m["updated_on"])
 
         map_text = json.loads(m["statutory_mapping"])
-        map_text = " >> ".join(map_text)
+        map_text = ", ".join(map_text)
 
         data.append(knowledgetransaction.MappingApproveInfo(
             map_id, m["compliance_id"],
@@ -1347,7 +1357,7 @@ def get_compliance_details(db, user_id, compliance_id):
     geo_info = result[1]
     geo_names = []
     for g in geo_info:
-        geo_names.append(g["parent_names"] + ">>" + g["geography_name"])
+        geo_names.append(g["parent_names"])
 
     if c_info["document_name"] is None :
         c_name = c_info["compliance_task"]

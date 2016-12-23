@@ -46,14 +46,8 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_updated1"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
 
-
-# KNOWLEDGE_DB_HOST = "45.118.182.49"
-# KNOWLEDGE_DB_PORT = 3306
-# KNOWLEDGE_DB_USERNAME = "compfieusr"
-# KNOWLEDGE_DB_PASSWORD = "mnd50ftadm1n"
-# KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
 
 URL = "http://localhost:8082/"
 CLIENT_URL = URL

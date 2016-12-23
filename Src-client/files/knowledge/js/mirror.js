@@ -148,6 +148,7 @@ function initMirror() {
     return r ? r[1] : undefined;
   }
   function apiRequest(callerName, request, callback) {
+    login_url = '/knowledge/login';
     var sessionToken = getSessionToken();
     var requestFrame = {
       'session_token': sessionToken,
@@ -170,7 +171,6 @@ function initMirror() {
           }
           callback(null, response);
         } else if (status == 'InvalidSessionToken') {
-          login_url = '/knowledge/login';
           window.sessionStorage.login_url = login_url;
           clearSession();
           window.location.href = login_url;
@@ -182,9 +182,15 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-
         console.log(textStatus, errorThrown);
-        console.log(jqXHR.responseText)
+        // alert(jqXHR.responseText.toLowerCase().indexOf("csrf"));
+        if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+          clearSession();
+          window.location.href = login_url;
+        }
+
+
+        // console.log(jqXHR.responseText)
         callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);
@@ -567,12 +573,14 @@ function initMirror() {
     ];
     apiRequest('knowledge_master', request, callback);
   }
-  function updateStatutory(sId, name, callback) {
+  function updateStatutory(sId, name, pIds, pNames, callback) {
     var request = [
       'UpdateStatutory',
       {
         's_id': sId,
         's_name': name,
+        "s_pids": pIds,
+        "s_pnames": pNames
       }
     ];
     apiRequest('knowledge_master', request, callback);
@@ -1889,14 +1897,15 @@ function initMirror() {
   }
 
   function getAssignStatutoryWizardTwoData(
-    domain_id, unit_ids, callback
+    domain_id, unit_ids, rcount, callback
   ){
       callerName = 'domain_transaction';
       var request = [
         "GetAssignedStatutoryWizardTwoData",
         {
           "d_id": domain_id,
-          "unit_ids": unit_ids
+          "unit_ids": unit_ids,
+          "rcount": rcount
         }
       ];
       apiRequest(callerName, request, callback);

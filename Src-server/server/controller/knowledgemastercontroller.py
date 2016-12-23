@@ -490,8 +490,11 @@ def process_update_statutory(db, request_frame, user_id):
     statutory_id = request_frame.statutory_id
     statutory_name = request_frame.statutory_name
     parent_ids_list = request_frame.parent_ids
-    parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
-    parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
+    if parent_ids_list :
+        parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
+    else :
+        parent_ids = ''
+    # parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
     saved_names = [
         row["statutory_name"].lower() for row in check_duplicate_statutory(
             db, parent_ids, statutory_id)
@@ -501,8 +504,8 @@ def process_update_statutory(db, request_frame, user_id):
     else:
         if (
             update_statutory(
-                db, statutory_id, statutory_name, parent_ids,
-                parent_names, user_id
+                db, statutory_id, statutory_name,
+                user_id
             )
         ):
             return knowledgemaster.SaveStatutorySuccess()

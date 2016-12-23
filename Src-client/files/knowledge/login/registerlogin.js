@@ -65,12 +65,13 @@ hideLoader = function() {
 };
 
 resetField = function() {
+    setCaptcha('');
     Uname.val('');
     Pword.val('');
     CPword.val('');
     Captcha.val('');
+    Captcha.hide();
     Status_msg.text('');
-    setCaptcha('');
     Status_check.removeClass()
 
 };
@@ -118,7 +119,7 @@ saveData = function() {
         hideLoader();
         if (status == null) {
             resetField();
-            displayMessage("Saved Successfully");
+            displaySuccessMessage("Saved Successfully");
         }
         else {
             displayMessage(status);
@@ -132,12 +133,11 @@ validateMandatory = function() {
         return false
     }
     if (Uname.val().trim().length == 0){
-        displayMessage("Username required");
+        displayMessage("User ID required");
         return false;
     }
 
     else if (Pword.val().trim().length == 0){
-        alert('req')
         displayMessage("Password required");
         return false;
     }
