@@ -143,6 +143,7 @@ function callAPI(api_type) {
     }
 
     else if (api_type == API_Wizard2) {
+        isShowMore = false;
         displayLoader();
         showBreadCrumbText();
         mirror.getAssignStatutoryWizardTwoData(
@@ -224,8 +225,8 @@ function callAPI(api_type) {
 
         if(submission_status == 2 && checkSubmit == false){
             displayMessage(message.assigncompliance_submit_failure);
-            return false;
             hideLoader();
+            return false;
         }else{
             mirror.saveAssignedStatutory(statutorysetting, submission_status,
                 function(error, data) {
@@ -549,7 +550,6 @@ function actstatus(element) {
             $(remarkbox).hide();
         }
     }
-
     var sname = $(this).attr('name');
     var sid = sname.substr(sname.lastIndexOf('y') + 1);
     $('#save'+sid).addClass('fa-square');
@@ -580,18 +580,25 @@ function compliancestatus(element) {
 
 }
 
+function compliancestatusMulti(element) {
+    var sname = $(element).attr('class');
+    var sid = sname.substr(sname.lastIndexOf('-') + 1);
+    $('#save'+sid).addClass('fa-square');
+}
+
 function subComplianceStatus(element){
     var id = $(element).attr('id');
+    var sid = id.substr(id.lastIndexOf('-') + 1);
+    var flag = true;
+    if(!$(element).is(':checked')){
+        flag = false;
+        $('#save'+sid).removeClass('fa-square');
+    }else{
+        $('#save'+sid).addClass('fa-square');
+    }
     $('.'+id).each(function () {
-        if(!$(element).is(':checked')){
-            $(this).prop("checked", false);
-        }else{
-            $(this).prop("checked", true);
-        }
-    /*var sname = $(this).attr('name');
-    var sid = sname.substr(sname.lastIndexOf('y') + 1);
-    $('#save'+sid).addClass('fa-square');*/
-  });
+        $(this).prop("checked", flag);
+    });
 }
 
 function loadSingleUnitCompliances() {
@@ -659,7 +666,9 @@ function loadSingleUnitCompliances() {
         $('.combineid-class', clone2).attr('id', 'combineid'+statutoriesCount);
         $('.combineid-class', clone2).val(combineId);
 
-        if(value.s_s == 4){
+        if(value.s_s == 0){
+            complianceDetailtableRow.addClass('new_row');
+        }else if(value.s_s == 4){
             complianceDetailtableRow.addClass('rejected_row');
         }
 
@@ -728,6 +737,7 @@ function loadSingleUnitCompliances() {
         $(".total_count_view").show();
     }
     hideLoader();
+    isShowMore = true;
 }
 
 function loadMultipleUnitCompliances() {
@@ -765,15 +775,18 @@ function loadMultipleUnitCompliances() {
             }
 
             $('#act'+actCount).click(function() {
-            if($(this).attr('for') == "1") {
-              $(this).html('<img src="images/deletebold.png">').attr('for','2');
-            } else if($(this).attr('for') == "2") {
-              $(this).html('<img src="images/iconminusactive.png">').attr('for','3');
-            } else {
-              $(this).html('<img src="images/tick1bold.png">').attr('for','1');
-            }
-            actstatus(this);
-        });
+                if($(this).attr('for') == "1") {
+                  $(this).html('<img src="images/deletebold.png">').attr('for','2');
+                } else if($(this).attr('for') == "2") {
+                  $(this).html('<img src="images/iconminusactive.png">').attr('for','3');
+                } else {
+                  $(this).html('<img src="images/tick1bold.png">').attr('for','1');
+                }
+                actstatus(this);
+            });
+
+            
+
         count = actCount;
         LastAct = value.level_1_s_name;
         LastSubAct = value.level_1_s_name;
@@ -801,7 +814,7 @@ function loadMultipleUnitCompliances() {
             $('.applicablelocation', clone2).attr('id', 'appl'+sno);
             //$('.applicablelocation', clone2).text(ACTIVE_UNITS.length +'/'+ACTIVE_UNITS.length);
 
-            $('.saved', clone2).attr('id', 'save'+statutoriesCount);
+            $('.saved', clone2).attr('id', 'save'+sno);
             if(value.comp_status > 0 && value.s_s == 1){
                 $('.saved', clone2).addClass('fa-square');
             }
@@ -810,19 +823,30 @@ function loadMultipleUnitCompliances() {
 
             var unitRow = $('#multi-statutory-value .table-statutory-values .unit-head');
             var clone5 = unitRow.clone();
-            $('.sub-tick', clone5).attr('id', 'sub-tick' + sno);
+            $('.sub-tick', clone5).attr('id', 'sub-tick-' + sno);
+            $('.sub-tick', clone5).attr('name','sub-check-' + sno);
             $('.sub-tick', clone5).on('click', function () {
                 subComplianceStatus(this);
             });
-            $('.sub-untick', clone5).attr('id', 'sub-untick' + sno);
+            $('.sub-untick', clone5).attr('id', 'sub-untick-' + sno);
+            $('.sub-untick', clone5).attr('name', 'sub-check-' + sno);
             $('.sub-untick', clone5).on('click', function () {
                 subComplianceStatus(this);
             });
-            $('.sub-minus', clone5).attr('id', 'sub-minus' + sno);
+            $('.sub-minus', clone5).attr('id', 'sub-minus-' + sno);
+            $('.sub-minus', clone5).attr('name','sub-check-' + sno);
             $('.sub-minus', clone5).on('click', function () {
                 subComplianceStatus(this);
             });
             $(' #collapse'+count+' .tbody-compliance-list').append(clone5);
+
+            $(':checkbox').on('change', function() {
+                var th = $(this), name = th.attr('name'); 
+                if(th.is(':checked')){
+                    $(':checkbox[name="'  + name + '"]').not(th).prop('checked',false);   
+                }
+            });
+
             sno++;
         }
 
@@ -832,7 +856,9 @@ function loadMultipleUnitCompliances() {
         $('.combineid-class', clone4).attr('id', 'combineid'+statutoriesCount);
         $('.combineid-class', clone4).val(combineId);
 
-        if(value.s_s == 4){
+        if(value.s_s == 0){
+            clone4.addClass('new_row');
+        }else if(value.s_s == 4){
             clone4.addClass('rejected_row');
         }
 
@@ -843,32 +869,32 @@ function loadMultipleUnitCompliances() {
         $('.compliance-ck-box-1', clone4).attr('id', 'tick' + statutoriesCount);
         $('.compliance-ck-box-1', clone4).val(1);
         $('.compliance-ck-box-1', clone4).addClass('statutoryclass' + count);
-        $('.compliance-ck-box-1', clone4).addClass('sub-tick' + sno);
+        $('.compliance-ck-box-1', clone4).addClass('sub-tick-' + (sno-1));
         $('.compliance-label-1', clone4).attr('for', 'tick' + statutoriesCount);
 
         $('.compliance-ck-box-2', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-2', clone4).attr('id', 'untick' + statutoriesCount);
         $('.compliance-ck-box-2', clone4).val(2);
         $('.compliance-ck-box-2', clone4).addClass('statutoryclass' + count);
-        $('.compliance-ck-box-2', clone4).addClass('sub-untick' + sno);
+        $('.compliance-ck-box-2', clone4).addClass('sub-untick-' + (sno-1));
         $('.compliance-label-2', clone4).attr('for', 'untick' + statutoriesCount);
 
         $('.compliance-ck-box-3', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-3', clone4).attr('id', 'minus' + statutoriesCount);
         $('.compliance-ck-box-3', clone4).val(3);
         $('.compliance-ck-box-3', clone4).addClass('statutoryclass' + count);
-        $('.compliance-ck-box-3', clone4).addClass('sub-minus' + sno);
+        $('.compliance-ck-box-3', clone4).addClass('sub-minus-' + (sno-1));
         $('.compliance-label-3', clone4).attr('for', 'minus' + statutoriesCount);
 
 
         $('.comp', clone2).on('click', function () {
-            compliancestatus(this);
+            compliancestatusMulti(this);
         });
 
         $('.remarks').on('input', function (e) {
           this.value = isCommon($(this));
         });
-        $('#appl'+sno).text(++applcount +'/'+ACTIVE_UNITS.length)
+        $('#appl'+(sno-1)).text(++applcount +'/'+ACTIVE_UNITS.length)
         $('#collapse'+count+' .tbody-compliance-list').append(clone4);
 
         if(value.comp_status > 0){
@@ -893,6 +919,7 @@ function loadMultipleUnitCompliances() {
         $(".total_count_view").show();
     }
     hideLoader();
+    isShowMore = true;
 }
 
 function showList(){
