@@ -1995,13 +1995,14 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function getAssignedStatutoriesById(u_id, d_id, callback){
+  function getAssignedStatutoriesById(u_id, d_id, rcount, callback){
     callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutoriesById",
         {
           "u_id": u_id,
-          "d_id": d_id
+          "d_id": d_id,
+          "rcount": rcount
         }
       ];
     apiRequest(callerName, request, callback);
