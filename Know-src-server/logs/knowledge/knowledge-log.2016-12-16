@@ -1,0 +1,226 @@
+2016-12-16 08:07:20,973 - knowledge_logger - main.py-parse-request : expected key "u_id" is missing in the dictionary, but received: {u'unit_id': 3, u'domain_id': 1} 
+
+2016-12-16 08:07:20,974 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 567, in parse_structure
+    request, "domaintransactionprotocol", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 484, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 41, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 69, in parse_inner_structure
+    data = parse_dictionary(data, ["u_id", "d_id"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "u_id" is missing in the dictionary, but received: {u'unit_id': 3, u'domain_id': 1}
+ 
+
+2016-12-16 08:07:20,974 - knowledge_logger - main.py-handle-api- : expected key "u_id" is missing in the dictionary, but received: {u'unit_id': 3, u'domain_id': 1} 
+
+2016-12-16 08:07:20,974 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected key "u_id" is missing in the dictionary, but received: {u'unit_id': 3, u'domain_id': 1}
+ 
+
+2016-12-16 08:07:36,381 - knowledge_logger - main.py-handle-api- : global name 'db' is not defined 
+
+2016-12-16 08:07:36,381 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 71, in process_domain_transaction_request
+    result = process_get_assigned_compliance_byid(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 100, in process_get_assigned_compliance_byid
+    data = get_assigned_compliance_by_id(db, request, user_id)
+NameError: global name 'db' is not defined
+ 
+
+2016-12-16 08:07:52,585 - knowledge_logger - main.py-handle-api- : __init__() takes exactly 3 arguments (2 given) 
+
+2016-12-16 08:07:52,585 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 71, in process_domain_transaction_request
+    result = process_get_assigned_compliance_byid(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 101, in process_get_assigned_compliance_byid
+    return domaintransactionprotocol.GetAssignedStatutoriesByIdSuccess(data)
+TypeError: __init__() takes exactly 3 arguments (2 given)
+ 
+
+2016-12-16 08:08:15,655 - knowledge_logger - main.py-handle-api- : 'AssignStatutoryCompliance' object has no attribute 'remarks' 
+
+2016-12-16 08:08:15,655 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 214, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 294, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 426, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 518, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 499, in to_RecordType
+    data = klass.to_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 499, in to_structure
+    "remarks": self.remarks,
+AttributeError: 'AssignStatutoryCompliance' object has no attribute 'remarks'
+ 
+
+2016-12-16 08:09:01,568 - knowledge_logger - main.py-handle-api- : level_1_s_name is not configured in settings 
+
+2016-12-16 08:09:01,568 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 214, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 294, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 426, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 518, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 500, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 410, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: level_1_s_name is not configured in settings
+ 
+
+2016-12-16 08:17:48,077 - knowledge_logger - main.py-handle-api- : expected a bool, but received: 0 
+
+2016-12-16 08:17:48,078 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 214, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 294, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 426, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 518, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 500, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 463, in to_structure_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 299, in parse_values
+    val = parse_bool(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 38, in parse_bool
+    raise expectation_error("a bool", x)
+ValueError: expected a bool, but received: 0
+ 
+
+2016-12-16 08:19:53,302 - knowledge_logger - main.py-parse-request : expected key "unit_ids" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 3} 
+
+2016-12-16 08:19:53,302 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 568, in parse_structure
+    request, "domaintransactionprotocol", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 484, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 41, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 139, in parse_inner_structure
+    "unit_ids", "d_id"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "unit_ids" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 3}
+ 
+
+2016-12-16 08:19:53,302 - knowledge_logger - main.py-handle-api- : expected key "unit_ids" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 3} 
+
+2016-12-16 08:19:53,302 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected key "unit_ids" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 3}
+ 
+
+2016-12-16 08:20:14,683 - knowledge_logger - main.py-parse-request : expected key "d_id" is missing in the dictionary, but received: {u'unit_ids': [3], u'domain_id': 1} 
+
+2016-12-16 08:20:14,684 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 568, in parse_structure
+    request, "domaintransactionprotocol", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 484, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 41, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 139, in parse_inner_structure
+    "unit_ids", "d_id"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "d_id" is missing in the dictionary, but received: {u'unit_ids': [3], u'domain_id': 1}
+ 
+
+2016-12-16 08:20:14,684 - knowledge_logger - main.py-handle-api- : expected key "d_id" is missing in the dictionary, but received: {u'unit_ids': [3], u'domain_id': 1} 
+
+2016-12-16 08:20:14,684 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected key "d_id" is missing in the dictionary, but received: {u'unit_ids': [3], u'domain_id': 1}
+ 
+
+2016-12-16 08:49:42,267 - knowledge_logger - main.py-handle-api- : global name 'client_statutory_id' is not defined 
+
+2016-12-16 08:49:42,267 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 68, in process_domain_transaction_request
+    result = process_save_assign_satutory(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 94, in process_save_assign_satutory
+    data = save_client_statutories(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 199, in save_client_statutories
+    csid = client_statutory_id
+NameError: global name 'client_statutory_id' is not defined
+ 
+
+2016-12-16 08:49:59,643 - knowledge_logger - main.py-handle-api- : global name 'client_statutory_id' is not defined 
+
+2016-12-16 08:49:59,643 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 68, in process_domain_transaction_request
+    result = process_save_assign_satutory(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 94, in process_save_assign_satutory
+    data = save_client_statutories(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 199, in save_client_statutories
+    csid = client_statutory_id
+NameError: global name 'client_statutory_id' is not defined
+ 
+
+2016-12-16 13:00:51,406 - knowledge_logger - main.py-handle-api- : Save process failed 
+
+2016-12-16 13:00:51,406 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 68, in process_domain_transaction_request
+    result = process_save_assign_satutory(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 94, in process_save_assign_satutory
+    data = save_client_statutories(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 205, in save_client_statutories
+    c.unit_id, status, user_id, csid
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 246, in save_statutory_compliances
+    raise process_error("E088")
+RuntimeError: Save process failed
+ 
+
