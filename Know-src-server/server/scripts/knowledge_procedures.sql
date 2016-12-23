@@ -4399,8 +4399,7 @@ BEGIN
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by t.statutory_mapping, t4.unit_id
-    limit fromcount, tocount;
+    order by t.statutory_mapping, t4.unit_id;
 
 
 END //

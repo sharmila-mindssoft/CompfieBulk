@@ -58,21 +58,24 @@ class GetAssignedStatutoriesForApprove(Request):
 
 
 class GetAssignedStatutoriesById(Request):
-    def __init__(self, unit_id, domain_id):
+    def __init__(self, unit_id, domain_id, rcount):
         self.unit_id = unit_id
         self.domain_id = domain_id
+        self.rcount = rcount
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_id", "d_id"])
+        data = parse_dictionary(data, ["u_id", "d_id", "rcount"])
         unit_id = data.get("u_id")
         domain_id = data.get("d_id")
-        return GetAssignedStatutoriesById(unit_id, domain_id)
+        rcount = data.get("rcount")
+        return GetAssignedStatutoriesById(unit_id, domain_id, rcount)
 
     def to_inner_structure(self):
         return {
             "u_id": self.unit_id,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "rcount": self.rcount
         }
 
 
