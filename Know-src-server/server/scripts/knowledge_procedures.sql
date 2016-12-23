@@ -4303,8 +4303,8 @@ BEGIN
         (select parent_ids from tbl_geographies where geography_id = @gid)))
     order by t.statutory_mapping, t4.unit_id
     limit fromcount, tocount;
-    -- total compliances
 
+    -- total compliances
     select count(distinct t1.compliance_id) as total
     from tbl_compliances as t1
     inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
@@ -4319,8 +4319,7 @@ BEGIN
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by t.statutory_mapping, t4.unit_id
-    limit fromcount, tocount;
+    order by t.statutory_mapping, t4.unit_id;
 
 END //
 

@@ -305,6 +305,7 @@ var message = {
   "no_legal_entity_selected" : "Select atleast one legal entity",
   "no_user_selected" : "No user selected for assign",
   "save_success" : "Record Saved Successfully",
+  "submit_success" : "Record Submitted Successfully",
   "update_success" : "Record Updated Successfully",
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',

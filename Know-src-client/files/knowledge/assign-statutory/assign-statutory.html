@@ -87,16 +87,16 @@ display: none !important;
                 <thead>
                   <tr>
                     <th align="center" width="2%">#</th>
-                    <th width="07%">Country</th>
-                    <th width="08%">Group</th>
-                    <th width="10%">Business Group</th>
+                    <th width="08%">Country</th>
+                    <th width="07%">Group</th>
+                    <th width="11%">Business Group</th>
                     <th width="10%">Legal Entity</th>
                     <th width="08%">Division</th>
                     <th width="08%">Category</th>
                     <th width="08%">Location</th>
                     <th width="10%">Unit</th>
                     <th width="08%">Domain</th>
-                    <th width="08%">Status</th>
+                    <th width="07%">Status</th>
                     <th width="05%" class="text-center">Edit</th>
                   </tr>
                   <tr class="odd gradeX">
@@ -198,127 +198,127 @@ display: none !important;
                                 <li class="tab-step-2 disabled"><a href="#tab2" data-toggle="tab">Select Statutory</a></li>
                             </ul>
                             <div class="tab-content b-0 m-b-0">
-                                <div class="tab-pane m-t-0 p-t-10 fade active in box-height-350" id="tab1">
-                                    <div class="row">
-                                     <div class="form-horizontal">
-                                        <div class="col-sm-6">
-                                            <div class="form-group  clearfix m-b-10">
-                                                <label class="col-sm-4 control-label">Group <span class="mandatory">*</span></label>
-                                                <div class="col-sm-6 has-feedback no-padding-right">
-                                                    <input class="form-control input-sm" type="text" value="" id="group_name">
-                                                    <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="group_id" value="">
-                                                    <div id="ac-group" class="ac-textbox default-display-none">
-                                                        <ul class="width85Percent"></ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group clearfix m-b-10 has-feedback">
-                                                <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
-                                                <div class="col-sm-6 has-feedback no-padding-right">
-                                                    <input class="form-control input-sm" type="text" value="" id="legal_entity_name">
-                                                    <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="legal_entity_id" value="">
-                                                    <div id="ac-entity" class="ac-textbox default-display-none">
-                                                        <ul class="width85Percent"></ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group clearfix m-b-10">
-                                                <label class="col-sm-4 control-label">Category </label>
-                                                <div class="col-sm-6 has-feedback no-padding-right">
-                                                    <input class="form-control input-sm" type="text" value="" id="category_name">
-                                                    <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="category_id">
-                                                    <div id="ac-category" class="ac-textbox default-display-none">
-                                                        <ul class="width85Percent"></ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group  clearfix m-b-10">
-                                                <label class="col-sm-4 control-label">Business Group</label>
-                                                <div class="col-sm-6 has-feedback no-padding-right">
-                                                    <input class="form-control input-sm" type="text" value="" id="business_group_name">
-                                                    <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="business_group_id">
-                                                    <div id="ac-business-group" class="ac-textbox default-display-none">
-                                                        <ul class="width85Percent"></ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group clearfix m-b-10 has-feedback">
-                                                <label class="col-sm-4 control-label">Division</label>
-                                                <div class="col-sm-6 has-feedback no-padding-right">
-                                                    <input class="form-control input-sm" type="text" value="" id="division_name"> 
-                                                    <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="division_id">
-                                                    <div id="ac-division" class="ac-textbox default-display-none">
-                                                        <ul class="width85Percent"></ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group clearfix m-b-10">
-                                                <label class="col-sm-4 control-label">Domain <span class="mandatory">*</span></label>
-                                                <div class="col-sm-6 has-feedback no-padding-right">
-                                                    <input class="form-control input-sm" type="text" value="" id="domain_name">
-                                                    <i class="form-control-feedback fa fa-search"></i>
-                                                    <input type="hidden" id="domain_id" value="">
-                                                    <div id="ac-domain" class="ac-textbox default-display-none">
-                                                        <ul class="width85Percent"></ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                       </div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <center>
-                                        <div class="form-group m-t-10">
-                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
-                                        </div>
-                                    </center>
-                                    
-                                    <div class="col-sm-12 scroll_box box-height-170 no-padding">
-                                      
-                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive table-list letable" width="100%" cellspacing="0">
-                                            <thead>
-                                                <th>Unit<span class="mandatory">*</span></th>
-                                            </thead>
-
-                                            <tbody>
-                                            <tr>
-                                                    <td>
-                                                        <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
-                                                            <input class="form-control input-sm" placeholder="Enter Unit" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <div class="form-group col-sm-6 m-b-0 no-padding">
-                                                            <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                                <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
-                                                                <label></label>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <ul class="list-unstyled p-t-0 unit-list" height="100%">
-                                                       
-                                                    </ul>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                              <div class="tab-pane m-t-0 p-t-10 fade active in box-height-350" id="tab1">
+                                  <div class="row">
+                                   <div class="form-horizontal">
+                                      <div class="col-sm-6">
+                                          <div class="form-group  clearfix m-b-10">
+                                              <label class="col-sm-4 control-label">Group <span class="mandatory">*</span></label>
+                                              <div class="col-sm-6 has-feedback no-padding-right">
+                                                  <input class="form-control input-sm" type="text" value="" id="group_name">
+                                                  <i class="form-control-feedback fa fa-search"></i>
+                                                  <input type="hidden" id="group_id" value="">
+                                                  <div id="ac-group" class="ac-textbox default-display-none">
+                                                      <ul class="width85Percent"></ul>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="form-group clearfix m-b-10 has-feedback">
+                                              <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
+                                              <div class="col-sm-6 has-feedback no-padding-right">
+                                                  <input class="form-control input-sm" type="text" value="" id="legal_entity_name">
+                                                  <i class="form-control-feedback fa fa-search"></i>
+                                                  <input type="hidden" id="legal_entity_id" value="">
+                                                  <div id="ac-entity" class="ac-textbox default-display-none">
+                                                      <ul class="width85Percent"></ul>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="form-group clearfix m-b-10">
+                                              <label class="col-sm-4 control-label">Category </label>
+                                              <div class="col-sm-6 has-feedback no-padding-right">
+                                                  <input class="form-control input-sm" type="text" value="" id="category_name">
+                                                  <i class="form-control-feedback fa fa-search"></i>
+                                                  <input type="hidden" id="category_id">
+                                                  <div id="ac-category" class="ac-textbox default-display-none">
+                                                      <ul class="width85Percent"></ul>
+                                                  </div>
+                                              </div>
+                                          </div>
                                       </div>
-                                    <div class="selected_checkbox">
-                                        <br>
-                                        <br> Selected Unit: <span class="selected_checkbox_count">0</span>
+                                      <div class="col-sm-6">
+                                          <div class="form-group  clearfix m-b-10">
+                                              <label class="col-sm-4 control-label">Business Group</label>
+                                              <div class="col-sm-6 has-feedback no-padding-right">
+                                                  <input class="form-control input-sm" type="text" value="" id="business_group_name">
+                                                  <i class="form-control-feedback fa fa-search"></i>
+                                                  <input type="hidden" id="business_group_id">
+                                                  <div id="ac-business-group" class="ac-textbox default-display-none">
+                                                      <ul class="width85Percent"></ul>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="form-group clearfix m-b-10 has-feedback">
+                                              <label class="col-sm-4 control-label">Division</label>
+                                              <div class="col-sm-6 has-feedback no-padding-right">
+                                                  <input class="form-control input-sm" type="text" value="" id="division_name"> 
+                                                  <i class="form-control-feedback fa fa-search"></i>
+                                                  <input type="hidden" id="division_id">
+                                                  <div id="ac-division" class="ac-textbox default-display-none">
+                                                      <ul class="width85Percent"></ul>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="form-group clearfix m-b-10">
+                                              <label class="col-sm-4 control-label">Domain <span class="mandatory">*</span></label>
+                                              <div class="col-sm-6 has-feedback no-padding-right">
+                                                  <input class="form-control input-sm" type="text" value="" id="domain_name">
+                                                  <i class="form-control-feedback fa fa-search"></i>
+                                                  <input type="hidden" id="domain_id" value="">
+                                                  <div id="ac-domain" class="ac-textbox default-display-none">
+                                                      <ul class="width85Percent"></ul>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                     </div>
+                                  </div>
+                                  <div class="clearfix"></div>
+                                  <center>
+                                      <div class="form-group m-t-10">
+                                          <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+                                      </div>
+                                  </center>
+                                  
+                                  <div class="col-sm-12 scroll_box box-height-170 no-padding">
+                                    
+                                      <table id="datatable-fixed-header" class="table table-striped dt-responsive table-list letable" width="100%" cellspacing="0">
+                                          <thead>
+                                              <th>Unit<span class="mandatory">*</span></th>
+                                          </thead>
+
+                                          <tbody>
+                                          <tr>
+                                                  <td>
+                                                      <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
+                                                          <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                      </div>
+                                                      <div class="form-group col-sm-6 m-b-0 no-padding">
+                                                          <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                                              <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
+                                                              <label></label>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                              </tr>
+
+                                          <tr>
+                                              <td>
+                                                  <ul class="list-unstyled p-t-0 unit-list" height="100%">
+                                                     
+                                                  </ul>
+                                              </td>
+                                          </tr>
+                                          </tbody>
+                                      </table>
                                     </div>
-                                </div>
-                                <div class="tab-pane m-t-0 p-t-10 fade box-height-350" id="tab2">
+                                  <div class="selected_checkbox">
+                                      <br>
+                                      <br> Selected Unit: <span class="selected_checkbox_count">0</span>
+                                  </div>
+                              </div>
+                              <div class="tab-pane m-t-0 p-t-10 fade box-height-350" id="tab2">
                                   <div class="row">
                                     <div class="singleunit">
                                       <div class="col-lg-12">
@@ -333,8 +333,12 @@ display: none !important;
                                       </div>
                                     </div>
                                   </div>
-                                  
                               </div>
+
+                              <div class="total_count_view default-display-none">
+                                <br> Total Records: <span class="total_count"></span>
+                              </div>
+
                               <ul class="pager wizard m-b-0 m-t-10">
                                   <li id="btn-previous" class="previous"><a class="btn btn-custom waves-effect waves-light">Previous</a></li>
                                   <li id="btn-next" class="next"><a class="btn btn-primary waves-effect waves-light">Next</a></li>
@@ -342,8 +346,8 @@ display: none !important;
                                   <li id="btn-save" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Save</a> &nbsp; </li>
                               </ul>
                             </div>
-</div>
-</div>
+                        </div>
+                    </div>
 <div class="clearfix"></div>
 <br>
 </div>
@@ -394,11 +398,13 @@ display: none !important;
                     data-parent="#accordion" 
                     aria-expanded="true" >
                     <span></span>
-                <div class="controls pull-right m-t-m-5">
-                  <div class="col-sm-12 no-padding">
-                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
-                  </div>
-              </div>
+                <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
+                      <label class="col-sm-3 control-label p-t-5">Remarks:</label>
+                      <div class="col-sm-9 no-padding">
+                      <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
+                      </div>
+
+                </div>
                 
                 </a>
               </div>
@@ -600,5 +606,22 @@ display: none !important;
   </div>
 
 </div>
-<script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
+
+<table class="table-no-record default-display-none">
+    <tr>
+    <td colspan="100%" align="center"> No Records Found</td>
+    </tr>
+</table>
+
+<!-- <script type="text/javascript" src="/js/wizard/jquery.bootstrap.wizard.js"></script>
+ -->
+ <script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#basicwizard .nav-tabs li a').click(function() {
+          return false;
+        });
+    });
+</script>
 {% endblock %}
