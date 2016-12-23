@@ -4298,8 +4298,9 @@ BEGIN
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved < 5
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and IFNULL(t6.is_approved, 0) != 5
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
@@ -4316,8 +4317,9 @@ BEGIN
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved < 5
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and IFNULL(t6.is_approved, 0) != 5
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
@@ -4377,7 +4379,7 @@ BEGIN
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved > 5
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
@@ -4395,7 +4397,7 @@ BEGIN
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved in (1, 2, 4)
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved > 5
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,

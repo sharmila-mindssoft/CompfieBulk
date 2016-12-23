@@ -198,3 +198,45 @@ BadRequest: 400: Bad Request
 ValueError: 400: Bad Request
  
 
+2016-12-23 19:06:42,353 - knowledge_logger - main.py-parse-request : expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1} 
+
+2016-12-23 19:06:42,354 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 598, in parse_structure
+    request, "domaintransactionprotocol", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 27, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 68, in parse_inner_structure
+    data = parse_dictionary(data, ["u_id", "d_id", "rcount"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1}
+ 
+
+2016-12-23 19:06:42,354 - knowledge_logger - main.py-handle-api- : expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1} 
+
+2016-12-23 19:06:42,354 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1}
+ 
+
+2016-12-23 19:09:32,057 - knowledge_logger - main.py-handle-api- : local variable 'c' referenced before assignment 
+
+2016-12-23 19:09:32,057 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 371, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/domaintransactioncontroller.py", line 57, in process_domain_transaction_request
+    result = process_approve_assigned_statutory(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/domaintransactioncontroller.py", line 95, in process_approve_assigned_statutory
+    data = save_approve_statutories(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/domaintransaction.py", line 410, in save_approve_statutories
+    db.execute(q1, [5, user_id, get_date_time(), unit_id, domain_id, c])
+UnboundLocalError: local variable 'c' referenced before assignment
+ 
+
