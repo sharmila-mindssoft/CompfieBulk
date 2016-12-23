@@ -20,7 +20,7 @@
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="country" value="">
-                                        <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1" />
+                                        <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1" autofocus="autofocus" />
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <div id="ac-country" class="ac-textbox default-display-none">
                                             <ul style="width:85%;"></ul>
@@ -76,14 +76,14 @@
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Contract From:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate" tabindex="6" readonly="readonly">
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Contract To::</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate" tabindex="7" readonly="readonly">
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
@@ -91,8 +91,8 @@
                             <div class="col-sm-12">
                                 <center>
                                     <div class="form-group m-b-0">
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export"> Export </button>
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit" tabindex="8"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="9"> Export </button>
                                     </div>
                                 </center>
                             </div>
