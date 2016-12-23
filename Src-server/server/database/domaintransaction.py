@@ -132,21 +132,24 @@ def get_statutories_units(db, request, user_id):
 def get_compliances_to_assign(db, request, user_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
+    rcount = request.rcount
+    show_count = 2
     results = []
+    totals = []
     for u in unit_ids :
-        data = get_compliances_to_assign_byid(db, u, domain_id, user_id)
+        data, total = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
         results.extend(data)
+        totals.append(total)
 
     results.sort(key=lambda x : (x.level_one_id, x.compliance_id))
-    return results
+    return results, max(totals)
 
-def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id):
-
-    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id], 5)
+def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, show_count):
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, from_count, show_count], 5)
     statu = result[1]
     organisation = result[2]
-    new_compliance = result[3]
-    assigned_compliance = result[4]
+    assigned_new_compliance = result[3]
+    total_comp_list = result[4]
 
     def organisation_list(map_id) :
         org_list = []
@@ -158,6 +161,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id):
     def status_list(map_id):
         level_1_id = None
         map_text = None
+        level_1_s_name = None
         for s in statu :
             if s["statutory_mapping_id"] == map_id :
                 if s["parent_ids"] == '' or s["parent_ids"] == 0 or s["parent_ids"] == '0,':
@@ -178,35 +182,35 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id):
         return level_1_id, level_1_s_name, map_text
 
     data_list = []
-    for r in new_compliance :
+    for r in assigned_new_compliance :
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
-        # before save rest of the field will be null before save in assignstatutorycompliance
-        data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
-            level_1, level_1_name, map_text,
-            r["statutory_provision"], r["compliance_id"], r["document_name"],
-            r["compliance_task"], r["compliance_description"], orgs,
-            None, None, None, None, unit_id
+        if r["assigned_compid"] is None :
+            # before save rest of the field will be null before save in assignstatutorycompliance
+            data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
+                level_1, level_1_name, map_text,
+                r["statutory_provision"], r["compliance_id"], r["document_name"],
+                r["compliance_task"], r["compliance_description"], orgs,
+                None, None, None, None, unit_id
 
-        ))
-
-    for r in assigned_compliance :
-        map_id = r["statutory_mapping_id"]
-        orgs = organisation_list(map_id)
-        level_1, level_1_name, map_text = status_list(map_id)
-        # before save rest of the field will be null before save in assignstatutorycompliance
-        data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
-            level_1, level_1_name, map_text,
-            r["statutory_provision"], r["compliance_id"], r["document_name"],
-            r["compliance_task"], r["compliance_description"], orgs,
-            r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
-            unit_id
-
-        ))
+            ))
+        else :
+            data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
+                level_1, level_1_name, map_text,
+                r["statutory_provision"], r["compliance_id"], r["document_name"],
+                r["compliance_task"], r["compliance_description"], orgs,
+                r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
+                unit_id
+            ))
 
     data_list.sort(key=lambda x : (x.level_one_id, x.compliance_id))
-    return data_list
+
+    total_comp = 0
+    for t in total_comp_list :
+        total_comp = t["total"]
+
+    return data_list, total_comp
 
 def save_client_statutories(db, request, user_id):
     status = request.submission_type
@@ -288,12 +292,14 @@ def get_assigned_compliance_by_id(db, request, user_id):
     # is_saved = 0 , is_submmitted = 1, is_rejected = 2, is_assigned = 3, is_new = 4
     unit_id = request.unit_id
     domain_id = request.domain_id
+    rcount = request.rcount
+    show_count = 2
 
-    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_edit", [unit_id, domain_id], 5)
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, rcount, show_count], 5)
     statu = result[1]
     organisation = result[2]
-    assigned_compliance = result[3]
-    new_compliance = result[4]
+    assigned_new_compliance = result[3]
+    total_comp_list = result[4]
 
     def organisation_list(map_id) :
         org_list = []
@@ -305,6 +311,7 @@ def get_assigned_compliance_by_id(db, request, user_id):
     def status_list(map_id):
         level_1_id = None
         map_text = None
+        level_1_s_name = None
         for s in statu :
             if s["statutory_mapping_id"] == map_id :
                 if s["parent_ids"] == '' or s["parent_ids"] == 0 or s["parent_ids"] == '0,':
@@ -325,35 +332,35 @@ def get_assigned_compliance_by_id(db, request, user_id):
         return level_1_id, level_1_s_name, map_text
 
     data_list = []
-    for r in assigned_compliance :
+    for r in assigned_new_compliance :
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
 
         level_1, level_1_s_name, map_text = status_list(map_id)
-        # before save rest of the field will be null before save in assignstatutorycompliance
-        data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
-            level_1, level_1_s_name, map_text,
-            r["statutory_provision"], r["compliance_id"], r["document_name"],
-            r["compliance_task"], r["compliance_description"], orgs,
-            r["statutory_applicable_status"], r["remarks"],
-            r["compliance_applicable_status"], r["is_approved"], unit_id
-        ))
-
-    for r in new_compliance :
-        map_id = r["statutory_mapping_id"]
-        orgs = organisation_list(map_id)
-
-        level_1, level_1_s_name, map_text = status_list(map_id)
-        # before save rest of the field will be null before save in assignstatutorycompliance
-        data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
-            level_1, level_1_s_name, map_text,
-            r["statutory_provision"], r["compliance_id"], r["document_name"],
-            r["compliance_task"], r["compliance_description"], orgs,
-            None, None, None, None, unit_id
-        ))
+        if r["assigned_compid"] is None :
+                data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
+                    level_1, level_1_s_name, map_text,
+                    r["statutory_provision"], r["compliance_id"], r["document_name"],
+                    r["compliance_task"], r["compliance_description"], orgs,
+                    None, None, None, None, unit_id
+                ))
+        else :
+            # before save rest of the field will be null before save in assignstatutorycompliance
+            data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
+                level_1, level_1_s_name, map_text,
+                r["statutory_provision"], r["compliance_id"], r["document_name"],
+                r["compliance_task"], r["compliance_description"], orgs,
+                r["statutory_applicable_status"], r["remarks"],
+                r["compliance_applicable_status"], r["is_approved"], unit_id
+            ))
 
     data_list.sort(key=lambda x : (x.level_one_id, x.compliance_id))
-    return data_list
+
+    total_comp = 0
+    for t in total_comp_list :
+        total_comp = t["total"]
+
+    return data_list, total_comp
 
 
 #

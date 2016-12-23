@@ -158,7 +158,7 @@ class Database(object):
         print "cursor " * 10
         assert self._connection is not None
         assert self._cursor is None
-        self._cursor = self._connection.cursor(dictionary=True)
+        self._cursor = self._connection.cursor(dictionary=True, buffered=True)
         print self._cursor
         return self._cursor
 

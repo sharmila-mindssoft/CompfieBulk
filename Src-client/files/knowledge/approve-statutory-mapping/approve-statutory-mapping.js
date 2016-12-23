@@ -24,12 +24,14 @@ var User = $('#user');
 
 var ShowBtn = $(".btn-show");
 var SubmitBtn = $(".btn-submit");
-var LastMapping;
+var LastMapping = 0;
 var approvalList = [];
 
 function initialize(){
+    CountryVal.focus();
     $(".client-group-grid").hide();
     $(".approve-group-div").hide();
+    CountryVal.focus();
     function onSuccess(data) {
         UserList = data.knowledgeusers;
         DomainList = data.domains;
@@ -47,7 +49,7 @@ function initialize(){
             onFailure(error);
         }
     });
-    
+
 }
 
 function getValue(field_name){
@@ -86,7 +88,7 @@ function getValue(field_name){
         }
         return parseInt(d_id);
     }
-    
+
 }
 
 function validateMandatory(){
@@ -105,7 +107,7 @@ function validateMandatory(){
 function loadApprovalList() {
     $(".tbody-sm-list").empty();
     $(".sm-grid").show();
-    
+
     var sno = 0;
     $.each(ApproveMappingList, function(key, value){
         if(LastMapping != value.m_id){
@@ -164,7 +166,7 @@ function loadApprovalList() {
         if(value.is_active == false){
             status = "Inactive";
         }
-       
+
         $(".status", clone2).text(status);
         $(".created_by", clone2).text(value.c_by);
         $(".updated_by", clone2).text(value.u_by);
@@ -201,10 +203,10 @@ function loadApprovalList() {
 function updateComplianceStatus(selectbox_id, reason_id){
     var selected_option = $("#"+selectbox_id).val();
     if(selected_option == 3 || selected_option == 4){
-        $("#"+reason_id).show();    
+        $("#"+reason_id).show();
     }else{
-        $("#"+reason_id).hide();   
-    } 
+        $("#"+reason_id).hide();
+    }
 }
 
 function updateMappingStatus(e){
@@ -215,10 +217,10 @@ function updateMappingStatus(e){
         $('.action-'+splitId).val(selected_option);
     });
     if(selected_option == 3 || selected_option == 4){
-        $("#reason-"+splitId).show();    
+        $("#reason-"+splitId).show();
     }else{
         $("#reason-"+splitId).hide();
-    } 
+    }
 }
 
 function updateMappingReason(e){
@@ -237,8 +239,8 @@ function getApprovalList (){
     _statutorynature = getValue("statutorynature");
     _organization = getValue("organization");
     _user = getValue("user");
-    
-    mirror.getApproveStatutoryMapings(_country, _domain, 
+
+    mirror.getApproveStatutoryMapings(_country, _domain,
     _organization, _statutorynature, _user,
         function(error, response) {
             if (error != null) {
@@ -246,6 +248,7 @@ function getApprovalList (){
             }
             else {
                 ApproveMappingList = response.approv_mappings;
+                LastMapping = 0;
                 loadApprovalList();
             }
         }
@@ -260,7 +263,7 @@ function validateForm(){
 
     var country_name = CountryVal.val();
     var domain_name = DomainVal.val();
-    
+
 
     $.each(ApproveMappingList, function(key, value){
         var map_text = value["map_text"];
@@ -282,19 +285,19 @@ function validateForm(){
                 result = false;
             }
             approvalList.push(
-                mirror.approveStatutoryList(country_name, domain_name, statutory_nature, 
+                mirror.approveStatutoryList(country_name, domain_name, statutory_nature,
                 map_text, c_task, selected_option, remarks, m_id, comp_id, is_common, u_by)
             )
         }else if(selected_option == 2){
             remarks = "";
             approvalList.push(
-                mirror.approveStatutoryList(country_name, domain_name, statutory_nature, 
+                mirror.approveStatutoryList(country_name, domain_name, statutory_nature,
                 map_text, c_task, selected_option, remarks, m_id, comp_id, is_common, u_by)
             )
         }
     });
     if(result == false){
-        return false;    
+        return false;
     }else{
         return true;
     }
@@ -304,7 +307,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(approvalList.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.statutory_mapping_approve_success);
+                displaySuccessMessage(message.action_success);
                 getApprovalList();
             }
             function onFailure(error) {
@@ -319,9 +322,9 @@ function submitApprovalForm(){
                 }
             });
         }else{
-            displayMessage(message.atleast_one_compliance_select);
+            displayMessage(message.approve_atleast_one_compliance);
         }
-    }    
+    }
 }
 
 //retrive  autocomplete value
@@ -342,7 +345,7 @@ function pageControls() {
     CountryVal.keyup(function(e){
         var text_val = $(this).val();
         commonAutoComplete(
-        e, ACCountry, Country, text_val, 
+        e, ACCountry, Country, text_val,
         CountryList, "country_name", "country_id", function (val) {
             onAutoCompleteSuccess(CountryVal, Country, val);
         });
@@ -369,9 +372,8 @@ function pageControls() {
         var condition_fields = [];
         var condition_values = [];
         if(Country.val() != '' && Domain.val() != ''){
-            condition_fields["country_id", "domain_id"];
-            condition_values[Country.val(), Domain.val()];
-
+            condition_fields = ["country_id", "domain_id"];
+            condition_values = [Country.val(), Domain.val()];
             var text_val = $(this).val();
             commonAutoComplete(
             e, ACOrganization, Organization, text_val,
@@ -386,8 +388,8 @@ function pageControls() {
         var condition_fields = [];
         var condition_values = [];
         if(Country.val() != ''){
-            condition_fields["country_id"];
-            condition_values[Country.val()];
+            condition_fields = ["country_id"];
+            condition_values = [Country.val()];
 
             var text_val = $(this).val();
             commonAutoComplete(
@@ -416,10 +418,14 @@ function pageControls() {
         $(".sm-grid").hide();
         getApprovalList();
     });
-    
+
 }
 //initialization
 $(function () {
     initialize();
     pageControls();
+    $(document).find('.js-filtertable').each(function(){
+        $(this).filtertable().addFilter('.js-filter');
+    });
 });
+

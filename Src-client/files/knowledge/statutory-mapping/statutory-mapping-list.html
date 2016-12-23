@@ -68,26 +68,26 @@
                                                 All
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a >All</a></li>
-                                                <li><a ><i class="fa fa-check text-success"></i> Active</a></li>
-                                                <!--li><a href="#"><i class="fa fa-times text-danger"></i> Inactive</a></li-->
+                                            <ul class="dropdown-menu search-status-list">
+                                                <li value="all" class="search-status-li active"><a>All</a></li>
+                                                <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                     <td align="center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                                                All
+                                                <span id="ap-status">Rejected</span>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a >All</a></li>
-                                                <li><a >Approved</a></li>
-                                                <li><a >Yet to Submit</a></li>
-                                                <li><a >Rejected</a></li>
-                                                <li><a >Pending</a></li>
-                                                <li><a >Approved & Notified</a></li>
+                                            <ul class="dropdown-menu" id="ap-status-list">
+                                                <li value="6" class="ap-status-li"><a >All</a></li>
+                                                <li value="4" class="ap-status-li active"><a >Rejected</a></li>
+                                                <li value="0" class="ap-status-li"><a >Yet to Submit</a></li>
+                                                <li value="1" class="ap-status-li"><a >Pending</a></li>
+                                                <li value="2" class="ap-status-li"><a >Approved</a></li>
+                                                <li value="3" class="ap-status-li"><a >Approved & Notified</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -235,7 +235,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Document</label>
                                             <div class="col-sm-7">
-                                                <input id="compliance_document" class="form-control input-sm" value="" type="text">
+                                                <input id="compliance_document" class="form-control input-sm" type="text">
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -279,9 +279,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group clearfix m-b-10">
-                                                    <label class="col-sm-5 control-label">Trigger Day(s)</label>
+                                                    <label class="col-sm-5 control-label">Trigger Before Day(s)</label>
                                                     <div class="col-sm-2">
-                                                        <input id="ottriggerbefore" class="form-control input-sm col-sm-3" value="15" type="text">
+                                                        <input id="ottriggerbefore" class="form-control input-sm col-sm-3" maxlength="3" type="text">
                                                     </div>
                                                     <div class="col-sm-2 p-t-7">Days</div>
                                                 </div>
@@ -291,7 +291,7 @@
                                                 <div class="form-group clearfix m-b-5">
                                                     <label class="col-sm-2 p-l-0 control-label">Repeats Every <span class="mandatory remove-manditory">*</span></label>
                                                     <div class="col-sm-2">
-                                                        <input type="text" value="2" id="repeats_every" class="form-control input-sm">
+                                                        <input type="text" maxlength="3"  id="repeats_every" class="form-control input-sm">
                                                     </div>
                                                     <div class="col-sm-2 no-padding-right">
                                                         <select id="repeats_type" class="form-control input-sm">
@@ -324,7 +324,7 @@
                                                     </div>
                                                     <div class="form-group clearfix m-b-10">
                                                         <label class="col-sm-3 control-label">Summary</label>
-                                                        <div class="col-sm-9 "> Repeats Every 6 Month(s)</div>
+                                                        <div class="col-sm-9 "></div>
                                                     </div>
                                                     </div>
                                                     <div class="col-sm-6">
@@ -344,9 +344,12 @@
                                             <div class="card-box p-10 occasional scroll_box max-height-150 m-b-0" id="Occasional" style="display: none;">
                                                 <h4 class="header-title m-t-0 m-b-10">On Occurrence</h4>
                                                 <div class="form-group clearfix m-b-10">
-                                                    <label class="col-sm-5 control-label">To Complete Within</label>
+                                                    <label class="col-sm-5 control-label">To Complete Within
+                                                    <span class="mandatory">*</span>
+                                                    </label>
+
                                                     <div class="col-sm-1 no-padding-right">
-                                                        <input id="duration" class="form-control input-sm" value="2" type="text">
+                                                        <input id="duration" class="form-control input-sm" type="text">
                                                     </div>
                                                     <div class="col-sm-2">
                                                         <select id="duration_type" class="form-control input-sm">
@@ -406,7 +409,7 @@
                                 <div class="clearfix"></div>
                             </div>
                             <ul class="pager wizard m-b-0">
-                                <li id="btn-previous" class="previous disabled"><a  class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                <li id="btn-previous" class="previous"><a  class="btn btn-custom waves-effect waves-light">Previous</a></li>
                                 <li id="btn-next" class="next"><a  class="btn btn-primary waves-effect waves-light">Next</a></li>
                                 <li id="btn-submit" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Submit</a></li>
                                 <li id="btn-save" class="finish pull-right"><a  class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
@@ -425,6 +428,12 @@
 
 
 <div id="templates">
+    <table >
+        <tr class="table-no-record">
+            <td colspan="10" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
   <div>
     <table>
       <tr class="success mapping-row">
@@ -473,7 +482,7 @@
 
         </ul>
         <div class="input-group bottomfield">
-            <input class="form-control input-sm txtsname" placeholder="" >
+            <input class="form-control input-sm txtsname" maxlength="100" placeholder="" >
             <input type="hidden" class="form-control input-sm snameid" placeholder="" >
             <input type="hidden" class="form-control input-sm snamepid" placeholder="" >
             <span class="input-group-btn">
@@ -551,33 +560,45 @@
             </div>
         </div>
         <div class="col-sm-3 no-padding show-statutory-date-month-multiple-2">
-            <input type="text" value="15" class="form-control input-sm trigger-value">
+            <input type="text" maxlength="3" class="form-control input-sm trigger-value">
         </div>
     </div>
 
 </div>
 
 
-
-<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times text-primary c-pointer"></i></button>
-                <h4 class="modal-title" id="mySmallModalLabel"> Enter Password</h4>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
             </div>
-            <div class="modal-body p-b-0">
-              <div class="form-group">
-                <input class="form-control input-sm" placeholder="Password" type="text">
-              </div>
-              <div class="form-group">
-                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
-              </div>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
-<script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/js/wizard/jquery.bootstrap.wizard.js"></script>
+
+<script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
+<!--
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        $('#basicwizard').bootstrapWizard({
+            onTabClick: function(tab, navigation, index) {
+                return false;
+            }
+        });
+    });
+</script> -->
+
 
 {% endblock %}

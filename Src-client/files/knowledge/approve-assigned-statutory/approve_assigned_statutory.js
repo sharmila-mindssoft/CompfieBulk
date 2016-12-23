@@ -105,7 +105,6 @@ function loadCompliances() {
         $('.org-name', clone2).attr('title', 'Organizations: ' + value.org_names);
         $('.compliancedescription', clone2).text(value.descrip);
         $('.rejected', clone2).on('click', function (event) {
-      
         	if($(event.target).hasClass("text-muted") || 
         		$(event.target).find('i').hasClass("text-muted")){
         		$(this).html('<i class="fa fa-square text-warning c-pointer"></i>');
@@ -156,7 +155,7 @@ function EditAssignedStatutory(u_id, d_id){
 function validateAuthentication() {
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
-        displayMessage(msg.password_required);
+        displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
     } else {
@@ -191,6 +190,8 @@ function loadAssignedStatutories(){
         $(TblDomain, clone).text(value.d_name);
         
         $('.view-icon', clone).on('click', function () {
+            LastAct='';
+            LastSubAct='';
         	REJ_COMP = [];
             DOMAIN_ID = value.d_id;
             UNIT_ID = value.u_id;

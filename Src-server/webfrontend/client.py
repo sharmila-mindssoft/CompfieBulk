@@ -33,7 +33,7 @@ class CompanyManager(object) :
         ip, port = self._knowledge_server_address
         self._first_time = True
         self._token = None
-        self.get_token(ip, port)
+        # self.get_token(ip, port)
         self._poll_url = "http://%s:%s/knowledge/server-list" % (ip, port)
         # print self._poll_url
 
