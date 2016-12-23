@@ -44,7 +44,6 @@ var BreadCrumbs = $(".breadcrumbs");
 var BreadCrumbImg = '<i class="fa fa-angle-double-right"></i>';
 
 var AssignStatutoryList = $(".tbody-assignstatutory");
-var SNo = ".sno";
 var StatutoryProvision = ".statutoryprovision";
 var ComplianceTask = ".compliancetask";
 var ComplianceDescription = ".compliancedescription";
@@ -102,21 +101,30 @@ var EDIT_API = "edit"
 var LastAct='';
 var LastSubAct='';
 var LastComp='';
-var statutoriesCount;
-var actCount;
+var isShowMore = false;
+var statutoriesCount = 1;
+var actCount = 1;
+var count = 1;
+var sno = 1;
+var totalRecord = 0;
+AssignStatutoryList.empty();
 
 function callAPI(api_type) {
     if (api_type == API_LIST){
+        displayLoader();
         mirror.getAssignedStatutories(function(error, data) {
             if (error == null) {
                 ASSIGNED_STATUTORIES = data.assigned_statutories;
                 loadAssignedStatutories();
+                hideLoader();
             } else {
-                custom_alert(error);
+                displayMessage(error);
+                hideLoader();
             }
         });
     }
     else if (api_type == API_Wizard1) {
+        displayLoader();
         mirror.getAssignStatutoryWizardOneData(function(error, data) {
             if (error == null) {
                 GroupName.focus();
@@ -126,19 +134,23 @@ function callAPI(api_type) {
                 DIVISIONS = data.divs;
                 CATEGORIES = data.cates;
                 DOMAINS = data.dms;
+                hideLoader();
             } else {
-                custom_alert(error);
+                displayMessage(error);
+                hideLoader();
             }
         });
     }
 
     else if (api_type == API_Wizard2) {
+        displayLoader();
         showBreadCrumbText();
         mirror.getAssignStatutoryWizardTwoData(
-            int(val_domain_id), ACTIVE_UNITS, 0,
+            int(val_domain_id), ACTIVE_UNITS, (sno-1),
             function(error, data) {
                 if (error == null) {
                     COMPLIANCES_LIST = data.statutories_for_assigning;
+                    totalRecord = data.total_records;
 
                     if(ACTIVE_UNITS.length == 1){
                         loadSingleUnitCompliances();
@@ -147,14 +159,15 @@ function callAPI(api_type) {
                     }
 
                 } else {
-                    custom_alert(error);
+                    displayMessage(error);
+                    hideLoader();
                 }
             }
         );
     }
 
     else if (api_type == SAVE_API || api_type == SUBMIT_API){
-
+        displayLoader();
         var submission_status;
         if(api_type == SAVE_API){
             submission_status = 1;
@@ -174,6 +187,7 @@ function callAPI(api_type) {
                 remark = $('#remark'+i).val().trim();
                 if(remark==''){
                     displayMessage(message.remarks_required);
+                    hideLoader();
                     return false;
                 }
             }
@@ -211,20 +225,25 @@ function callAPI(api_type) {
         if(submission_status == 2 && checkSubmit == false){
             displayMessage(message.assigncompliance_submit_failure);
             return false;
+            hideLoader();
         }else{
             mirror.saveAssignedStatutory(statutorysetting, submission_status,
                 function(error, data) {
                     if (error == null) {
                         if(submission_status == 1){
                             displaySuccessMessage(message.save_success);
+                            isShowMore = false;
                         }else{
                             displaySuccessMessage(message.submit_success);
+                            isShowMore = false;
                         }
                         
                         CLIENT_STATUTORY_ID = null;
                         showList();
+                        hideLoader();
                     } else {
-                        custom_alert(error);
+                        displayMessage(error);
+                        hideLoader();
                     }
                 }
             );
@@ -240,11 +259,13 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 function pageControls() {
     NextButton.click(function() {
+
         CURRENT_TAB += 1;
         showTab();
     });
     PreviousButton.click(function() {
         CURRENT_TAB = CURRENT_TAB - 1;
+        isShowMore = false;
         showTab();
     });
 
@@ -459,14 +480,17 @@ function validateAndShow() {
         displayMessage(message.domain_required);
         return false;
     } else {
+        displayLoader();
         mirror.getAssignStatutoryWizardOneDataUnits(int(val_group_id), int(val_business_group_id),
             int(val_legal_entity_id), int(val_division_id), int(val_category_id), int(val_domain_id),
             function(error, data) {
             if (error == null) {
                 UNITS = data.statu_units;
                 loadUnits();
+                hideLoader();
             } else {
-                custom_alert(error);
+                displayMessage(error);
+                hideLoader();
             }
         });
     }
@@ -570,12 +594,7 @@ function subComplianceStatus(element){
 }
 
 function loadSingleUnitCompliances() {
-    var ccount = 1;
-    var count = 1;
-    statutoriesCount = 1;
-    actCount = 1;
-    AssignStatutoryList.empty();
-    var sno = 0;
+   
     $.each(COMPLIANCES_LIST, function(key, value) {
         if(LastAct != value.level_1_s_name){
             var acttableRow = $('#act-templates .p-head');
@@ -619,29 +638,20 @@ function loadSingleUnitCompliances() {
             actstatus(this);
         });
 
-        ccount = actCount;
+        count = actCount;
         LastAct = value.level_1_s_name;
         LastSubAct = value.level_1_s_name;
         actCount = actCount + 1;
         }
-        ++sno;
-
+        
         if(LastSubAct != value.map_text){
             var subTitleRow = $('#statutory-value .table-statutory-values .sub-title-row');
             var clone3 = subTitleRow.clone();
             $('.sub-title', clone3).text(value.map_text);
-            $(' #collapse'+ccount+' .tbody-compliance-list').append(clone3);
+            $(' #collapse'+count+' .tbody-compliance-list').append(clone3);
             LastSubAct = value.map_text;
         }
         
-        /*if(value.s_s == 4){
-            var rclone = $("#statutory-value .table-statutory-values");
-            $('.compliance-details', rclone).addClass('rejected_row');
-        }else{
-            var rclone = $("#statutory-value .table-statutory-values");
-            $('.compliance-details', rclone).removeClass('rejected_row');
-        }*/
-
         var complianceDetailtableRow = $('#statutory-value .table-statutory-values .compliance-details');
         var clone2 = complianceDetailtableRow.clone();
         var combineId = value.comp_id + '#' + value.level_1_s_id + '#' + value.u_id;
@@ -661,19 +671,19 @@ function loadSingleUnitCompliances() {
         $('.compliance-ck-box-1', clone2).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-1', clone2).attr('id', 'tick' + statutoriesCount);
         $('.compliance-ck-box-1', clone2).val(1);
-        $('.compliance-ck-box-1', clone2).addClass('statutoryclass' + ccount);
+        $('.compliance-ck-box-1', clone2).addClass('statutoryclass' + count);
         $('.compliance-label-1', clone2).attr('for', 'tick' + statutoriesCount);
 
         $('.compliance-ck-box-2', clone2).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-2', clone2).attr('id', 'untick' + statutoriesCount);
         $('.compliance-ck-box-2', clone2).val(2);
-        $('.compliance-ck-box-2', clone2).addClass('statutoryclass' + ccount);
+        $('.compliance-ck-box-2', clone2).addClass('statutoryclass' + count);
         $('.compliance-label-2', clone2).attr('for', 'untick' + statutoriesCount);
 
         $('.compliance-ck-box-3', clone2).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-3', clone2).attr('id', 'minus' + statutoriesCount);
         $('.compliance-ck-box-3', clone2).val(3);
-        $('.compliance-ck-box-3', clone2).addClass('statutoryclass' + ccount);
+        $('.compliance-ck-box-3', clone2).addClass('statutoryclass' + count);
         $('.compliance-label-3', clone2).attr('for', 'minus' + statutoriesCount);
 
         $('.saved', clone2).attr('id', 'save'+statutoriesCount);
@@ -689,7 +699,7 @@ function loadSingleUnitCompliances() {
           this.value = isCommon($(this));
         });
 
-        $('#collapse'+ccount+' .tbody-compliance-list').append(clone2);
+        $('#collapse'+count+' .tbody-compliance-list').append(clone2);
 
         if(value.comp_status > 0){
             if(value.comp_status == 1){
@@ -701,7 +711,7 @@ function loadSingleUnitCompliances() {
             }
         }
         statutoriesCount++;
-        count++;
+        sno++;
     });
     if(sno <= 0){
         SubmitButton.hide();
@@ -709,20 +719,18 @@ function loadSingleUnitCompliances() {
         var no_record_row = $("#templates .table-no-record tr");
         var no_clone = no_record_row.clone();
         $(".tbody-compliance-list").append(no_clone);
+        (".total_count_view").hide();
     }else{
         SubmitButton.show();
         SaveButton.show();
+        $(".total_count").text(totalRecord);
+        $(".total_count_view").show();
     }
+    hideLoader();
 }
 
 function loadMultipleUnitCompliances() {
-    var applcount = 0;
-    var ccount = 1;
-    var count = 1;
-    statutoriesCount = 1;
-    actCount = 1;
-    AssignStatutoryList.empty();
-    var sno = 0;
+    
     $.each(COMPLIANCES_LIST, function(key, value) {
         if(LastAct != value.level_1_s_name){
             var acttableRow = $('#multi-act-templates .p-head');
@@ -765,8 +773,7 @@ function loadMultipleUnitCompliances() {
             }
             actstatus(this);
         });
-
-        ccount = actCount;
+        count = actCount;
         LastAct = value.level_1_s_name;
         LastSubAct = value.level_1_s_name;
         actCount = actCount + 1;
@@ -776,20 +783,11 @@ function loadMultipleUnitCompliances() {
             var subTitleRow = $('#multi-statutory-value .table-statutory-values .sub-title-row');
             var clone3 = subTitleRow.clone();
             $('.sub-title', clone3).text(value.map_text);
-            $(' #collapse'+ccount+' .tbody-compliance-list').append(clone3);
+            $(' #collapse'+count+' .tbody-compliance-list').append(clone3);
             LastSubAct = value.map_text;
         }
 
-        /*if(value.s_s == 4){
-            var rclone = $("#multi-statutory-value .table-statutory-values");
-            $('.compliance-details', rclone).addClass('rejected_row');
-        }else{
-            var rclone = $("#multi-statutory-value .table-statutory-values");
-            $('.compliance-details', rclone).removeClass('rejected_row');
-        }*/
-
         if(LastComp != value.comp_id){
-            sno++;
             applcount = 0;
             var complianceDetailtableRow = $('#multi-statutory-value .table-statutory-values .compliance-details');
             var clone2 = complianceDetailtableRow.clone();
@@ -806,7 +804,7 @@ function loadMultipleUnitCompliances() {
             if(value.comp_status > 0 && value.s_s == 1){
                 $('.saved', clone2).addClass('fa-square');
             }
-            $(' #collapse'+ccount+' .tbody-compliance-list').append(clone2);
+            $(' #collapse'+count+' .tbody-compliance-list').append(clone2);
             LastComp = value.comp_id;
 
             var unitRow = $('#multi-statutory-value .table-statutory-values .unit-head');
@@ -823,7 +821,8 @@ function loadMultipleUnitCompliances() {
             $('.sub-minus', clone5).on('click', function () {
                 subComplianceStatus(this);
             });
-            $(' #collapse'+ccount+' .tbody-compliance-list').append(clone5);
+            $(' #collapse'+count+' .tbody-compliance-list').append(clone5);
+            sno++;
         }
 
         var unitRow = $('#multi-statutory-value .table-statutory-values .unit-row');
@@ -842,21 +841,21 @@ function loadMultipleUnitCompliances() {
         $('.compliance-ck-box-1', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-1', clone4).attr('id', 'tick' + statutoriesCount);
         $('.compliance-ck-box-1', clone4).val(1);
-        $('.compliance-ck-box-1', clone4).addClass('statutoryclass' + ccount);
+        $('.compliance-ck-box-1', clone4).addClass('statutoryclass' + count);
         $('.compliance-ck-box-1', clone4).addClass('sub-tick' + sno);
         $('.compliance-label-1', clone4).attr('for', 'tick' + statutoriesCount);
 
         $('.compliance-ck-box-2', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-2', clone4).attr('id', 'untick' + statutoriesCount);
         $('.compliance-ck-box-2', clone4).val(2);
-        $('.compliance-ck-box-2', clone4).addClass('statutoryclass' + ccount);
+        $('.compliance-ck-box-2', clone4).addClass('statutoryclass' + count);
         $('.compliance-ck-box-2', clone4).addClass('sub-untick' + sno);
         $('.compliance-label-2', clone4).attr('for', 'untick' + statutoriesCount);
 
         $('.compliance-ck-box-3', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-3', clone4).attr('id', 'minus' + statutoriesCount);
         $('.compliance-ck-box-3', clone4).val(3);
-        $('.compliance-ck-box-3', clone4).addClass('statutoryclass' + ccount);
+        $('.compliance-ck-box-3', clone4).addClass('statutoryclass' + count);
         $('.compliance-ck-box-3', clone4).addClass('sub-minus' + sno);
         $('.compliance-label-3', clone4).attr('for', 'minus' + statutoriesCount);
 
@@ -869,7 +868,7 @@ function loadMultipleUnitCompliances() {
           this.value = isCommon($(this));
         });
         $('#appl'+sno).text(++applcount +'/'+ACTIVE_UNITS.length)
-        $('#collapse'+ccount+' .tbody-compliance-list').append(clone4);
+        $('#collapse'+count+' .tbody-compliance-list').append(clone4);
 
         if(value.comp_status > 0){
             if(value.comp_status == 1){
@@ -881,15 +880,18 @@ function loadMultipleUnitCompliances() {
             }
         }
         statutoriesCount++;
-        count++;
     });
     if(sno <= 0){
         SubmitButton.hide();
         SaveButton.hide();
+        $(".total_count_view").hide();
     }else{
         SubmitButton.show();
         SaveButton.show();
+        $(".total_count").text(totalRecord);
+        $(".total_count_view").show();
     }
+    hideLoader();
 }
 
 function showList(){
@@ -908,19 +910,19 @@ function ifNullReturnHyphen(value){
 }
 
 function loadAssignedStatutories(){
-    var sno = 0;
+    var sno_ = 0;
     ACTIVE_UNITS = [];
     UNIT_CS_ID = {};
 
     AssignedStatutoryList.empty();
     $.each(ASSIGNED_STATUTORIES, function(key, value){
-        ++ sno;
+        ++ sno_;
         
         var clone = AssignedStatutoryRow.clone();
         if(value.approval_status_text == 'Rejected'){
             clone.addClass('rejected_row');
         }
-        $(TblSno, clone).text(sno);
+        $(TblSno, clone).text(sno_);
         $(TblCountry, clone).text(value.c_name);
         $(TblGroup, clone).text(value.grp_name);
         $(TblBG, clone).text(value.b_grp_name);
@@ -967,7 +969,14 @@ function validateFirstTab()  {
     } else {
         LastAct = '';
         LastSubAct = '';
+        statutoriesCount = 1;
+        actCount = 1;
+        count = 1;
+        sno = 1;
+        totalRecord = 0;
+        AssignStatutoryList.empty();
         callAPI(API_Wizard2);
+        isShowMore = true;
         return true;
     }
 };
@@ -1025,11 +1034,24 @@ function showTab(){
 };
 
 function EditAssignedStatutory(u_id, d_id){
-    AssignStatutoryView.hide();
-    AssignStatutoryAdd.show();
+    displayLoader();
     mirror.getAssignedStatutoriesById(u_id, d_id, function(error, data) {
         if (error == null) {
+            AssignStatutoryView.hide();
+            AssignStatutoryAdd.show();
             COMPLIANCES_LIST = data.statutories_for_assigning;
+            totalRecord = data.total_records;
+
+            LastAct = '';
+            LastSubAct = '';
+            statutoriesCount = 1;
+            actCount = 1;
+            count = 1;
+            sno = 1;
+            totalRecord = 0;
+            AssignStatutoryList.empty();
+            isShowMore = true;
+
             $('.statutory_mapping_tab li').removeClass('active');
             $('.tab-pane').removeClass('active in');
             $('#tab1').hide();
@@ -1044,7 +1066,8 @@ function EditAssignedStatutory(u_id, d_id){
             showBreadCrumbText();
             loadSingleUnitCompliances();
         } else {
-            custom_alert(error);
+            displayMessage(error);
+            hideLoader();
         }
     });
 }
@@ -1054,11 +1077,24 @@ function initialize() {
     showList();
 }
 
+function showmoreRecord(){
+    if(sno <= totalRecord && isShowMore){
+        callAPI(API_Wizard2);
+    }
+}
+
 $(function() {
     initialize();
     $(document).find('.js-filtertable').each(function(){
         $(this).filtertable().addFilter('.js-filter');
     });
+
+    $(window).scroll(function(){
+        if ($(window).scrollTop() == $(document).height() - $(window).height()){
+            showmoreRecord();
+        }
+    });
+
 });
 
 
