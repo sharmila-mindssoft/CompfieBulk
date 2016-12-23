@@ -547,6 +547,7 @@ a:focus {
 }
 .dropdown-menu > li > a {
   padding: 6px 15px;
+  min-width: 175px;
 }
 .dropdown-menu > li > a:focus,
 .dropdown-menu > li > a:hover {

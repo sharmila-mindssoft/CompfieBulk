@@ -292,8 +292,10 @@ def get_assigned_compliance_by_id(db, request, user_id):
     # is_saved = 0 , is_submmitted = 1, is_rejected = 2, is_assigned = 3, is_new = 4
     unit_id = request.unit_id
     domain_id = request.domain_id
+    rcount = request.rcount
+    show_count = 2
 
-    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id], 5)
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, rcount, show_count], 5)
     statu = result[1]
     organisation = result[2]
     assigned_new_compliance = result[3]

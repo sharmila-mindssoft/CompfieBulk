@@ -955,6 +955,7 @@ function loadAssignedStatutories(){
             CLIENT_STATUTORY_ID = value.client_statutory_id;
             UNIT_TEXT = value.u_name;
             DOMAIN_TEXT = value.d_name;
+            ACTIVE_UNITS = [value.u_id];
             EditAssignedStatutory(value.u_id, value.d_id);
         });
 
@@ -1035,13 +1036,8 @@ function showTab(){
 
 function EditAssignedStatutory(u_id, d_id){
     displayLoader();
-    mirror.getAssignedStatutoriesById(u_id, d_id, function(error, data) {
+    mirror.getAssignedStatutoriesById(u_id, d_id, (sno-1),function(error, data) {
         if (error == null) {
-            AssignStatutoryView.hide();
-            AssignStatutoryAdd.show();
-            COMPLIANCES_LIST = data.statutories_for_assigning;
-            totalRecord = data.total_records;
-
             LastAct = '';
             LastSubAct = '';
             statutoriesCount = 1;
@@ -1051,6 +1047,11 @@ function EditAssignedStatutory(u_id, d_id){
             totalRecord = 0;
             AssignStatutoryList.empty();
             isShowMore = true;
+
+            AssignStatutoryView.hide();
+            AssignStatutoryAdd.show();
+            COMPLIANCES_LIST = data.statutories_for_assigning;
+            totalRecord = data.total_records;
 
             $('.statutory_mapping_tab li').removeClass('active');
             $('.tab-pane').removeClass('active in');

@@ -658,7 +658,8 @@ BEGIN
         WHERE tle.client_id=tcg.client_id
     ) as no_of_legal_entities,
     is_active, is_approved, remarks
-    FROM tbl_client_groups tcg;
+    FROM tbl_client_groups tcg
+    order by tcg.group_name;
 END //
 
 DELIMITER ;
@@ -742,12 +743,12 @@ DROP PROCEDURE IF EXISTS `sp_business_groups_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_business_groups_list`(
-    IN client_id INT(11)
+    IN clientid INT(11)
 )
 BEGIN
     SELECT business_group_id, business_group_name, client_id
     FROM tbl_business_groups
-    WHERE client_id=client_id;
+    WHERE client_id=clientid;
 
 END //
 
@@ -1393,24 +1394,25 @@ CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
     SELECT user_category_id INTO user_category
-    FROM tbl_user_login_details WHERE user_id = userId;
+    FROM tbl_users WHERE user_id = userid;
     IF user_category in (1,2) then
         select legal_entity_id, legal_entity_name, business_group_id,
         client_id, country_id from tbl_legal_entities
+        where is_closed = 0
         order by legal_entity_name ASC;
     ELSEIF user_category = 5 THEN
         select legal_entity_id, legal_entity_name, business_group_id,
         client_id, country_id from tbl_legal_entities
         WHERE client_id in (
             SELECT client_id FROM tbl_user_clients WHERE user_id=userid
-        ) order by legal_entity_name ASC;
+        ) and is_closed = 0 order by legal_entity_name ASC;
     ELSEIF user_category = 6 then
         select legal_entity_id, legal_entity_name, business_group_id,
         client_id, country_id from tbl_legal_entities
         WHERE legal_entity_id in (
             SELECT legal_entity_id FROM tbl_user_legalentity
             WHERE user_id=userid
-        ) order by legal_entity_name ASC;
+        ) and is_closed = 0 order by legal_entity_name ASC;
     ELSE
         select legal_entity_id, legal_entity_name, business_group_id,
         client_id, country_id from tbl_legal_entities
@@ -1419,7 +1421,7 @@ BEGIN
                 SELECT unit_id FROM tbl_user_units
                 WHERE user_id=userid
             )
-        ) order by legal_entity_name ASC;
+        ) and is_closed = 0 order by legal_entity_name ASC;
     END IF;
 END //
 
@@ -5972,8 +5974,8 @@ BEGIN
     from
     tbl_user_clients as t1, tbl_legal_entities as t2
     where
-    t2.client_id  = t1.client_id and t1.user_id = _u_id;
-
+    t2.client_id  = t1.client_id and t1.user_id = _u_id
+    order by group_name;
 END //
 
 DELIMITER ;
@@ -7048,4 +7050,3 @@ BEGIN
 END //
 
 DELIMITER ;
-
