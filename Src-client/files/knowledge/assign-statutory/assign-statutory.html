@@ -87,16 +87,16 @@ display: none !important;
                 <thead>
                   <tr>
                     <th align="center" width="2%">#</th>
-                    <th width="07%">Country</th>
-                    <th width="08%">Group</th>
-                    <th width="10%">Business Group</th>
+                    <th width="08%">Country</th>
+                    <th width="07%">Group</th>
+                    <th width="11%">Business Group</th>
                     <th width="10%">Legal Entity</th>
                     <th width="08%">Division</th>
                     <th width="08%">Category</th>
                     <th width="08%">Location</th>
                     <th width="10%">Unit</th>
                     <th width="08%">Domain</th>
-                    <th width="08%">Status</th>
+                    <th width="07%">Status</th>
                     <th width="05%" class="text-center">Edit</th>
                   </tr>
                   <tr class="odd gradeX">
@@ -342,8 +342,8 @@ display: none !important;
                                   <li id="btn-save" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Save</a> &nbsp; </li>
                               </ul>
                             </div>
-</div>
-</div>
+                        </div>
+                    </div>
 <div class="clearfix"></div>
 <br>
 </div>
@@ -394,11 +394,13 @@ display: none !important;
                     data-parent="#accordion" 
                     aria-expanded="true" >
                     <span></span>
-                <div class="controls pull-right m-t-m-5">
-                  <div class="col-sm-12 no-padding">
-                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
-                  </div>
-              </div>
+                <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
+                      <label class="col-sm-3 control-label p-t-5">Remarks:</label>
+                      <div class="col-sm-9 no-padding">
+                      <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
+                      </div>
+
+                </div>
                 
                 </a>
               </div>
@@ -600,5 +602,22 @@ display: none !important;
   </div>
 
 </div>
-<script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
+
+<table class="table-no-record">
+    <tr>
+    <td colspan="100%" align="center"> No Records Found</td>
+    </tr>
+</table>
+
+<!-- <script type="text/javascript" src="/js/wizard/jquery.bootstrap.wizard.js"></script>
+ -->
+ <script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#basicwizard .nav-tabs li a').click(function() {
+          return false;
+        });
+    });
+</script>
 {% endblock %}

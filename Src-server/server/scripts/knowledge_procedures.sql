@@ -4243,7 +4243,8 @@ BEGIN
     left join tbl_client_statutories as t4 on t1.unit_id = t4.unit_id
     where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
     IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
-    and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid;
+    and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid
+    order by t1.unit_code, t1.unit_name;
 
 END //
 
@@ -4310,7 +4311,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
     inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 4)
+    and t1.is_approved < 5
     order by t.statutory_mapping;
 
 END //
@@ -4362,7 +4363,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id
     inner join tbl_statutory_mappings as t on t2.statutory_mapping_id = t.statutory_mapping_id
     where t1.unit_id = unitid and t1.domain_id = domainid
-    and t1.is_approved in (1, 2, 4)
+    and t1.is_approved < 5
     order by statutory_mapping;
 
     -- new compliances
