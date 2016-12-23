@@ -272,6 +272,7 @@ function pageControls() {
     AddButton.click(function() {
         reset();
         showTab();
+        $(".total_count_view").hide();
         AssignStatutoryView.hide();
         AssignStatutoryAdd.show();
         callAPI(API_Wizard1);
@@ -719,7 +720,7 @@ function loadSingleUnitCompliances() {
         var no_record_row = $("#templates .table-no-record tr");
         var no_clone = no_record_row.clone();
         $(".tbody-compliance-list").append(no_clone);
-        (".total_count_view").hide();
+        $(".total_count_view").hide();
     }else{
         SubmitButton.show();
         SaveButton.show();
@@ -968,6 +969,7 @@ function validateFirstTab()  {
         displayMessage(message.atleast_one_unit_required)
         return false;
     } else {
+        $(".total_count_view").hide();
         LastAct = '';
         LastSubAct = '';
         statutoriesCount = 1;
@@ -1036,16 +1038,17 @@ function showTab(){
 
 function EditAssignedStatutory(u_id, d_id){
     displayLoader();
+    $(".total_count_view").hide();
+    LastAct = '';
+    LastSubAct = '';
+    statutoriesCount = 1;
+    actCount = 1;
+    count = 1;
+    sno = 1;
+    totalRecord = 0;
+    AssignStatutoryList.empty();
     mirror.getAssignedStatutoriesById(u_id, d_id, (sno-1),function(error, data) {
         if (error == null) {
-            LastAct = '';
-            LastSubAct = '';
-            statutoriesCount = 1;
-            actCount = 1;
-            count = 1;
-            sno = 1;
-            totalRecord = 0;
-            AssignStatutoryList.empty();
             isShowMore = true;
 
             AssignStatutoryView.hide();
