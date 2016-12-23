@@ -801,6 +801,15 @@ function loadClientGroups(groupsList) {
         clientSelect.append(clone);
     }
 }
+$("#group-select").on("change", function(){
+    if($(this).val() == ""){
+        $("#businessgroup-select option:gt(0)").remove();
+    }
+    else{
+        loadBusinessGroups();
+    }
+    
+});
 
 //Load Business Groups  ---------------------------------------------------------------------------------------------
 function loadBusinessGroups() {
@@ -996,19 +1005,21 @@ function addcountryrow() {
     var countryVal = $('#country-id').val();
     if (groupId == '' && $('#client-unit-id').val() == '') {
         displayMessage(message.group_required);
-        return;
+        return false;
     }
-    if (countryVal == '' && ($('.labelcountry').text() == '')) {
+    else if (countryVal == '' && ($('.labelcountry').text() == '')) {
         displayMessage(message.country_required);
-        return;
+        return false;
     }
-    if (lentityId == '' && ($('.labelentity').text() == '')) {
+    else if (lentityId == '' && ($('.labelentity').text() == '')) {
         displayMessage(message.legalentity_required);
-        return;
+        return false;
     }
-    $('.add-country-unit-list').show();
-
-    addcountryrownew();
+    else{
+        $('.add-country-unit-list').show();
+        addcountryrownew();    
+    }
+    
 }
 
 //Add Country Wise List ----------------------------------------------------------------------------------------
@@ -1618,7 +1629,7 @@ function divisionExistingChecking(str) {
         $('.division-name' + countval).val('');
         $('.division-id' + countval).val('');
         $('.division-id' + countval).find('option').not(':first').remove();
-        loadDivision(classval);
+        loadDivision('division-id'+countval);
     }
 }
 
@@ -1865,6 +1876,7 @@ function industrytype(classval) {
     } else {
         if (lentityId == 0 && $('#client-unit-id').val() == '') {
             displayMessage(message.legalentity_required);
+            return false;
         }
         if (domain_id == 0) {
             displayMessage(message.domain_required);
@@ -2050,7 +2062,7 @@ $('#btn-clientunit-submit').click(function() {
             div_arr = mirror.getDivisionDict(divIdValue, divNameValue, category, i, parseInt(unit_cnt));
             division_units.push(div_arr);
 
-
+            console.log("unit_cnt=="+unit_cnt);
             if (unit_cnt > 0) {
                 //alert("unit count:"+unit_cnt)
                 for (var j = 1; j <= unit_cnt; j++) {
@@ -2074,7 +2086,7 @@ $('#btn-clientunit-submit').click(function() {
                     unitdomain = $('.domainselected-' + i + '-' + j).val();
 
                     if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0) {
-                        if (unitcount == 1) {
+                        if (unitCountValue == 1) {
                             displayMessage(message.add_one_unit);
                             return;
                         }
