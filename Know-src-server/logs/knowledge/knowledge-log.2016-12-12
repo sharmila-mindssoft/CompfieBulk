@@ -1,0 +1,232 @@
+2016-12-12 10:56:55,729 - knowledge_logger - main.py-handle-api- : expected a alphanumerics, but received: Approved & Notified 
+
+2016-12-12 10:56:55,729 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 464, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/api_key_validation.py", line 37, in is_alpha_numeric
+    raise expectation_error('a alphanumerics', value)
+ValueError: expected a alphanumerics, but received: Approved & Notified
+ 
+
+2016-12-12 10:57:14,409 - knowledge_logger - main.py-handle-api- : expected a alphanumerics, but received: Approved & Notified 
+
+2016-12-12 10:57:14,410 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 464, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/api_key_validation.py", line 37, in is_alpha_numeric
+    raise expectation_error('a alphanumerics', value)
+ValueError: expected a alphanumerics, but received: Approved & Notified
+ 
+
+2016-12-12 10:58:17,988 - knowledge_logger - main.py-handle-api- : expected a alphanumerics, but received: Approved & Notified 
+
+2016-12-12 10:58:17,989 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 464, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/api_key_validation.py", line 37, in is_alpha_numeric
+    raise expectation_error('a alphanumerics', value)
+ValueError: expected a alphanumerics, but received: Approved & Notified
+ 
+
+2016-12-12 11:14:24,948 - knowledge_logger - main.py-handle-api- : expected a alphanumerics, but received: Approved & Notified 
+
+2016-12-12 11:14:24,948 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 464, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/api_key_validation.py", line 37, in is_alpha_numeric
+    raise expectation_error('a alphanumerics', value)
+ValueError: expected a alphanumerics, but received: Approved & Notified
+ 
+
+2016-12-12 11:17:28,333 - knowledge_logger - main.py-handle-api- : expected a alphanumerics, but received: Approved & Notified 
+
+2016-12-12 11:17:28,333 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 495, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 495, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 465, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/api_key_validation.py", line 37, in is_alpha_numeric
+    raise expectation_error('a alphanumerics', value)
+ValueError: expected a alphanumerics, but received: Approved & Notified
+ 
+
+2016-12-12 11:28:37,855 - knowledge_logger - main.py-handle-api- : 'function' object has no attribute '__getitem__' 
+
+2016-12-12 11:28:37,855 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 340, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 91, in process_knowledge_transaction_request
+    result = process_get_approve_statutory_mappings(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 184, in process_get_approve_statutory_mappings
+    statutory_mappings = approve_statutory_mapping_list(db, user_id, request_frame)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1324, in approve_statutory_mapping_list
+    map_text = json.load[m["statutory_mapping"]]
+TypeError: 'function' object has no attribute '__getitem__'
+ 
+
+2016-12-12 11:29:02,927 - knowledge_logger - main.py-handle-api- : 'unicode' object has no attribute 'read' 
+
+2016-12-12 11:29:02,927 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 340, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 91, in process_knowledge_transaction_request
+    result = process_get_approve_statutory_mappings(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 184, in process_get_approve_statutory_mappings
+    statutory_mappings = approve_statutory_mapping_list(db, user_id, request_frame)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1324, in approve_statutory_mapping_list
+    map_text = json.load(m["statutory_mapping"])
+  File "/usr/lib/python2.7/json/__init__.py", line 287, in load
+    return loads(fp.read(),
+AttributeError: 'unicode' object has no attribute 'read'
+ 
+
+2016-12-12 11:30:08,144 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-12 11:30:08,144 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 340, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 103, in process_knowledge_transaction_request
+    result = process_get_compliance_info(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 192, in process_get_compliance_info
+    comp_info = get_compliance_details(db, user_id, comp_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1340, in get_compliance_details
+    c_info = result[0][0]
+IndexError: list index out of range
+ 
+
+2016-12-12 11:31:37,374 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-12 11:31:37,375 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 340, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 103, in process_knowledge_transaction_request
+    result = process_get_compliance_info(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 192, in process_get_compliance_info
+    comp_info = get_compliance_details(db, user_id, comp_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1342, in get_compliance_details
+    c_info = result[0][0]
+IndexError: list index out of range
+ 
+
+2016-12-12 11:32:17,138 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-12 11:32:17,138 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 340, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 103, in process_knowledge_transaction_request
+    result = process_get_compliance_info(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 192, in process_get_compliance_info
+    comp_info = get_compliance_details(db, user_id, comp_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1343, in get_compliance_details
+    c_info = result[0][0]
+IndexError: list index out of range
+ 
+

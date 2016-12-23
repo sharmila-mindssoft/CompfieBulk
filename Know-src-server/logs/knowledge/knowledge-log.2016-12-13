@@ -1,0 +1,985 @@
+2016-12-13 07:05:06,530 - knowledge_logger - main.py-parse-request : 'int' object has no attribute 'find' 
+
+2016-12-13 07:05:06,531 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 180, in parse_inner_structure
+    "compliances", "g_ids", "mappings", "tr_type"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 1259, in parse_structure
+    "reference"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 2889, in parse_structure
+    data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 275, in parse_values
+    val = parse_optional_custom_string(val, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 136, in parse_optional_custom_string
+    return parse_custom_string(x, length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 109, in parse_custom_string
+    if (x.find('>>') < 0):
+AttributeError: 'int' object has no attribute 'find'
+ 
+
+2016-12-13 07:05:06,531 - knowledge_logger - main.py-handle-api- : 'int' object has no attribute 'find' 
+
+2016-12-13 07:05:06,532 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: 'int' object has no attribute 'find'
+ 
+
+2016-12-13 07:06:51,788 - knowledge_logger - main.py-parse-request : 'int' object has no attribute 'find' 
+
+2016-12-13 07:06:51,788 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 180, in parse_inner_structure
+    "compliances", "g_ids", "mappings", "tr_type"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 1259, in parse_structure
+    "reference"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 2897, in parse_structure
+    repeat_by = parse_structure_OptionalType_CustomTextType_20(repeat_by)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 632, in parse_structure_OptionalType_CustomTextType_20
+    return parse_structure_CustomTextType_20(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 389, in parse_structure_CustomTextType_20
+    return parse_custom_string(data, 20)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 109, in parse_custom_string
+    if (x.find('>>') < 0):
+AttributeError: 'int' object has no attribute 'find'
+ 
+
+2016-12-13 07:06:51,789 - knowledge_logger - main.py-handle-api- : 'int' object has no attribute 'find' 
+
+2016-12-13 07:06:51,789 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: 'int' object has no attribute 'find'
+ 
+
+2016-12-13 07:11:30,192 - knowledge_logger - main.py-parse-request : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:11:30,192 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 180, in parse_inner_structure
+    "compliances", "g_ids", "mappings", "tr_type"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 1259, in parse_structure
+    "reference"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 2889, in parse_structure
+    data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 288, in parse_values
+    val = parse_optional_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 66, in parse_optional_number
+    return parse_number(x, min_value, max_value)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 60, in parse_number
+    raise expectation_error(msg, x)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:11:30,193 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:11:30,193 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:12:05,919 - knowledge_logger - main.py-parse-request : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:12:05,920 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 180, in parse_inner_structure
+    "compliances", "g_ids", "mappings", "tr_type"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 1259, in parse_structure
+    "reference"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 2889, in parse_structure
+    data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 288, in parse_values
+    val = parse_optional_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 66, in parse_optional_number
+    return parse_number(x, min_value, max_value)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 60, in parse_number
+    raise expectation_error(msg, x)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:12:05,920 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:12:05,920 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:15:58,418 - knowledge_logger - main.py-parse-request : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:15:58,419 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 180, in parse_inner_structure
+    "compliances", "g_ids", "mappings", "tr_type"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 1259, in parse_structure
+    "reference"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 2889, in parse_structure
+    data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 288, in parse_values
+    val = parse_optional_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 66, in parse_optional_number
+    return parse_number(x, min_value, max_value)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 60, in parse_number
+    raise expectation_error(msg, x)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:15:58,419 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:15:58,419 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:17:06,316 - knowledge_logger - main.py-parse-request : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:17:06,317 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 180, in parse_inner_structure
+    "compliances", "g_ids", "mappings", "tr_type"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 1259, in parse_structure
+    "reference"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 2889, in parse_structure
+    data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 288, in parse_values
+    val = parse_optional_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 66, in parse_optional_number
+    return parse_number(x, min_value, max_value)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 60, in parse_number
+    raise expectation_error(msg, x)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:17:06,318 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 100, but received: 150 
+
+2016-12-13 07:17:06,318 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number between 0 and 100, but received: 150
+ 
+
+2016-12-13 07:28:42,569 - knowledge_logger - main.py-handle-api- : local variable 'map_id' referenced before assignment 
+
+2016-12-13 07:28:42,570 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 340, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 58, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id, request_frame)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 129, in process_get_statutory_mappings
+    statutory_mappings, total = statutory_mapping_list(db, user_id, a_status, rcount)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1270, in statutory_mapping_list
+    print return_statutory(map_id, statutory)
+UnboundLocalError: local variable 'map_id' referenced before assignment
+ 
+
+2016-12-13 07:32:39,472 - knowledge_logger - main.py-handle-api- : expected a list , but received: Map text 
+
+2016-12-13 07:32:39,472 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 495, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 458, in to_structure_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 302, in parse_values
+    val = parse_string_list(val, string_length=_length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 220, in parse_string_list
+    raise expectation_error("a list ", x)
+ValueError: expected a list , but received: Map text
+ 
+
+2016-12-13 08:05:17,525 - knowledge_logger - main.py-handle-api- : 'parent_name' 
+
+2016-12-13 08:05:17,525 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 340, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 58, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id, request_frame)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 129, in process_get_statutory_mappings
+    statutory_mappings, total = statutory_mapping_list(db, user_id, a_status, rcount)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1281, in statutory_mapping_list
+    return_statutory(map_id, statutory),
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1250, in return_statutory
+    if s["parent_names"] != '' or s["parent_name"] is not None:
+KeyError: 'parent_name'
+ 
+
+2016-12-13 08:23:34,770 - knowledge_logger - main.py-handle-api- : sp_client_group_save- (u'One Group', u'usha@mindssoft.com', u'one', 20, 8)- 1364 (HY000): Field 'group_admin_username' doesn't have a default value 
+
+2016-12-13 08:23:34,771 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 46, in process_techno_request
+    result = process_save_client_group(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 82, in process_save_client_group
+    request.short_name, request.no_of_view_licence, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 145, in save_client_group
+    (group_name, username, short_name, no_of_view_licence, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_group_save- (u'One Group', u'usha@mindssoft.com', u'one', 20, 8)- 1364 (HY000): Field 'group_admin_username' doesn't have a default value
+ 
+
+2016-12-13 08:26:04,575 - knowledge_logger - main.py-handle-api- : sp_client_group_save- (u'One Group', u'usha@mindssoft.com', u'one', 20, 8)- 1364 (HY000): Field 'group_admin_username' doesn't have a default value 
+
+2016-12-13 08:26:04,575 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 46, in process_techno_request
+    result = process_save_client_group(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 82, in process_save_client_group
+    request.short_name, request.no_of_view_licence, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 145, in save_client_group
+    (group_name, username, short_name, no_of_view_licence, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_group_save- (u'One Group', u'usha@mindssoft.com', u'one', 20, 8)- 1364 (HY000): Field 'group_admin_username' doesn't have a default value
+ 
+
+2016-12-13 08:27:09,144 - knowledge_logger - main.py-handle-api- : Client date configuration creation failed 
+
+2016-12-13 08:27:09,144 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 46, in process_techno_request
+    result = process_save_client_group(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 87, in process_save_client_group
+    db, group_id, request.date_configurations, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 362, in save_date_configurations
+    raise process_error("E047")
+RuntimeError: Client date configuration creation failed
+ 
+
+2016-12-13 08:27:49,550 - knowledge_logger - main.py-handle-api- : Client date configuration creation failed 
+
+2016-12-13 08:27:49,551 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 46, in process_techno_request
+    result = process_save_client_group(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 87, in process_save_client_group
+    db, group_id, request.date_configurations, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 362, in save_date_configurations
+    raise process_error("E047")
+RuntimeError: Client date configuration creation failed
+ 
+
+2016-12-13 11:10:11,446 - knowledge_logger - main.py-handle-api- : Client date configuration creation failed 
+
+2016-12-13 11:10:11,447 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 46, in process_techno_request
+    result = process_save_client_group(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 87, in process_save_client_group
+    db, group_id, request.date_configurations, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 362, in save_date_configurations
+    raise process_error("E047")
+RuntimeError: Client date configuration creation failed
+ 
+
+2016-12-13 11:34:36,395 - knowledge_logger - main.py-parse-request : expected a number between 0 and 1000000, but received: 6250045 
+
+2016-12-13 11:34:36,396 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 2107, in parse_structure
+    request, "technomasters", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 118, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 523, in parse_inner_structure
+    "cl_id", "bg_id", "le_id", "c_id", "division_units", "units"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 462, in parse_structure
+    "i_ids_list"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 60, in parse_number
+    raise expectation_error(msg, x)
+ValueError: expected a number between 0 and 1000000, but received: 6250045
+ 
+
+2016-12-13 11:34:36,396 - knowledge_logger - main.py-handle-api- : expected a number between 0 and 1000000, but received: 6250045 
+
+2016-12-13 11:34:36,396 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number between 0 and 1000000, but received: 6250045
+ 
+
+2016-12-13 11:34:53,225 - knowledge_logger - main.py-handle-api- : sp_tbl_units_check_unitgroupid- ['client_id', 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_check_unitgroupid does not exist 
+
+2016-12-13 11:34:53,226 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 288, in save_client
+    is_valid = validate_duplicate_data(db, request, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 184, in validate_duplicate_data
+    if not is_invalid_id(db, "client_id", client_id):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1157, in is_invalid_id
+    rows = db.call_proc("sp_tbl_units_check_unitgroupid", params)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_check_unitgroupid- ['client_id', 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_check_unitgroupid does not exist
+ 
+
+2016-12-13 11:34:59,730 - knowledge_logger - main.py-handle-api- : sp_tbl_units_check_unitgroupid- ['client_id', 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_check_unitgroupid does not exist 
+
+2016-12-13 11:34:59,730 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 288, in save_client
+    is_valid = validate_duplicate_data(db, request, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 184, in validate_duplicate_data
+    if not is_invalid_id(db, "client_id", client_id):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1157, in is_invalid_id
+    rows = db.call_proc("sp_tbl_units_check_unitgroupid", params)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_check_unitgroupid- ['client_id', 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_check_unitgroupid does not exist
+ 
+
+2016-12-13 11:35:06,180 - knowledge_logger - main.py-handle-api- : sp_tbl_units_check_unitgroupid- ['client_id', 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_check_unitgroupid does not exist 
+
+2016-12-13 11:35:06,180 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 288, in save_client
+    is_valid = validate_duplicate_data(db, request, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 184, in validate_duplicate_data
+    if not is_invalid_id(db, "client_id", client_id):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1157, in is_invalid_id
+    rows = db.call_proc("sp_tbl_units_check_unitgroupid", params)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_check_unitgroupid- ['client_id', 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_check_unitgroupid does not exist
+ 
+
+2016-12-13 11:37:02,230 - knowledge_logger - main.py-handle-api- : sp_tbl_units_checkduplication- [None, u'ON00001', None, 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_checkduplication does not exist 
+
+2016-12-13 11:37:02,230 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 333, in save_client
+    is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 246, in validate_unit_data
+    if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1126, in is_duplicate_unit_code
+    rows = db.call_proc("sp_tbl_units_checkduplication", params)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_checkduplication- [None, u'ON00001', None, 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_checkduplication does not exist
+ 
+
+2016-12-13 11:49:40,948 - knowledge_logger - main.py-handle-api- : sp_tbl_units_checkduplication- [None, u'ON00001', None, 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_checkduplication does not exist 
+
+2016-12-13 11:49:40,949 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 333, in save_client
+    is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 246, in validate_unit_data
+    if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1126, in is_duplicate_unit_code
+    rows = db.call_proc("sp_tbl_units_checkduplication", params)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_checkduplication- [None, u'ON00001', None, 4]- 1305 (42000): PROCEDURE compfie_knowledge_news.sp_tbl_units_checkduplication does not exist
+ 
+
+2016-12-13 11:52:27,867 - knowledge_logger - main.py-handle-api- : Unit creation failed 
+
+2016-12-13 11:52:27,868 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 345, in save_client
+    db, client_id, units, business_group_id, legal_entity_id, country_id, session_user
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1278, in save_unit
+    raise process_error("E056")
+RuntimeError: Unit creation failed
+ 
+
+2016-12-13 11:58:24,581 - knowledge_logger - main.py-handle-api- : 1 
+
+2016-12-13 11:58:24,581 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 360, in handle_techno_transaction
+    return controller.process_techno_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 41, in process_techno_transaction_request
+    result = process_get_assigned_statutories(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 181, in process_get_assigned_statutories
+    assigned_statutories = get_assigned_statutories_list(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 425, in get_assigned_statutories_list
+    return return_assigned_statutories(client_statutories, unit_details)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 434, in return_assigned_statutories
+    unit_details = unit_id_details_map[x["unit_id"]]
+KeyError: 1
+ 
+
+2016-12-13 11:58:29,179 - knowledge_logger - main.py-handle-api- : 1 
+
+2016-12-13 11:58:29,180 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 360, in handle_techno_transaction
+    return controller.process_techno_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 41, in process_techno_transaction_request
+    result = process_get_assigned_statutories(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 181, in process_get_assigned_statutories
+    assigned_statutories = get_assigned_statutories_list(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 425, in get_assigned_statutories_list
+    return return_assigned_statutories(client_statutories, unit_details)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 434, in return_assigned_statutories
+    unit_details = unit_id_details_map[x["unit_id"]]
+KeyError: 1
+ 
+
+2016-12-13 12:13:35,251 - knowledge_logger - main.py-handle-api- : 1 
+
+2016-12-13 12:13:35,251 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 360, in handle_techno_transaction
+    return controller.process_techno_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 41, in process_techno_transaction_request
+    result = process_get_assigned_statutories(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 181, in process_get_assigned_statutories
+    assigned_statutories = get_assigned_statutories_list(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 425, in get_assigned_statutories_list
+    return return_assigned_statutories(client_statutories, unit_details)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 434, in return_assigned_statutories
+    unit_details = unit_id_details_map[x["unit_id"]]
+KeyError: 1
+ 
+
+2016-12-13 12:18:57,267 - knowledge_logger - main.py-handle-api- : 'domain_ids' 
+
+2016-12-13 12:18:57,268 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 360, in handle_techno_transaction
+    return controller.process_techno_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 60, in process_techno_transaction_request
+    db, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 140, in process_get_assigned_statutory_wizard_one
+    units = get_units_for_user(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1614, in get_units_for_user
+    return return_units(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1620, in return_units
+    domain_ids = [int(x) for x in unit["domain_ids"].split(',') if x != '']
+KeyError: 'domain_ids'
+ 
+
+2016-12-13 12:46:44,118 - knowledge_logger - main.py-handle-api- : 1 
+
+2016-12-13 12:46:44,118 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 360, in handle_techno_transaction
+    return controller.process_techno_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 41, in process_techno_transaction_request
+    result = process_get_assigned_statutories(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technotransactioncontroller.py", line 181, in process_get_assigned_statutories
+    assigned_statutories = get_assigned_statutories_list(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 425, in get_assigned_statutories_list
+    return return_assigned_statutories(client_statutories, unit_details)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technotransaction.py", line 434, in return_assigned_statutories
+    unit_details = unit_id_details_map[x["unit_id"]]
+KeyError: 1
+ 
+
+2016-12-13 13:04:52,093 - knowledge_logger - main.py-parse-request : expected a bool, but received: India 
+
+2016-12-13 13:04:52,094 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/mobile.py", line 1302, in parse_structure
+    request = parse_structure_VariantType_mobile_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 2213, in parse_structure_VariantType_mobile_Request
+    return mobile.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/mobile.py", line 82, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/mobile.py", line 456, in parse_inner_structure
+    data = parse_dictionary(data, ["s_mappings"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 1114, in parse_structure
+    "comp_id", "is_common", "u_by"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 294, in parse_values
+    val = parse_bool(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 38, in parse_bool
+    raise expectation_error("a bool", x)
+ValueError: expected a bool, but received: India
+ 
+
+2016-12-13 13:04:52,094 - knowledge_logger - main.py-handle-api- : expected a bool, but received: India 
+
+2016-12-13 13:04:52,094 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a bool, but received: India
+ 
+
+2016-12-13 13:38:25,064 - knowledge_logger - main.py-parse-request : expected a alphabets, but received: level 6 
+
+2016-12-13 13:38:25,065 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 963, in parse_structure
+    request = parse_structure_VariantType_knowledgemaster_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 107, in parse_structure_VariantType_knowledgemaster_Request
+    return knowledgemaster.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 33, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 83, in parse_inner_structure
+    data = parse_dictionary(data, ["c_id", "levels"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 61, in parse_structure
+    data = parse_dictionary(data, ["l_id", "l_position", "l_name", "is_remove"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 384, in parse_dictionary_values
+    val = _validation_method(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/api_key_validation.py", line 21, in is_alphabet
+    raise expectation_error('a alphabets', value)
+ValueError: expected a alphabets, but received: level 6
+ 
+
+2016-12-13 13:38:25,065 - knowledge_logger - main.py-handle-api- : expected a alphabets, but received: level 6 
+
+2016-12-13 13:38:25,065 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a alphabets, but received: level 6
+ 
+
+2016-12-13 13:39:17,458 - knowledge_logger - main.py-parse-request : expected a alphabets, but received: panchayat 1 
+
+2016-12-13 13:39:17,459 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 963, in parse_structure
+    request = parse_structure_VariantType_knowledgemaster_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 107, in parse_structure_VariantType_knowledgemaster_Request
+    return knowledgemaster.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 33, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 117, in parse_inner_structure
+    data = parse_dictionary(data, ["g_l_id", "g_name", "p_ids", "p_names", "c_id"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 384, in parse_dictionary_values
+    val = _validation_method(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/api_key_validation.py", line 21, in is_alphabet
+    raise expectation_error('a alphabets', value)
+ValueError: expected a alphabets, but received: panchayat 1
+ 
+
+2016-12-13 13:39:17,459 - knowledge_logger - main.py-handle-api- : expected a alphabets, but received: panchayat 1 
+
+2016-12-13 13:39:17,459 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a alphabets, but received: panchayat 1
+ 
+
+2016-12-13 13:39:47,648 - knowledge_logger - main.py-handle-api- : sp_get_geography_master- [9, ('1', '5', 9)]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '5)' at line 1 
+
+2016-12-13 13:39:47,648 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 203, in handle_api_request
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgemaster.py", line 579, in update_geography
+    result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_get_geography_master- [9, ('1', '5', 9)]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '5)' at line 1
+ 
+
+2016-12-13 13:41:57,011 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string, int found 
+
+2016-12-13 13:41:57,011 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgemaster.py", line 576, in update_geography
+    p_ids = ", ".join(p_ids)
+TypeError: sequence item 2: expected string, int found
+ 
+
+2016-12-13 15:04:38,882 - knowledge_logger - main.py-parse-request : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:04:38,882 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technotransactions.py", line 300, in parse_structure
+    request, "technotransactions", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technotransactions.py", line 27, in parse_structure
+    raise ValueError(msg)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:04:38,883 - knowledge_logger - main.py-handle-api- : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:04:38,883 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:04:42,696 - knowledge_logger - main.py-parse-request : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:04:42,697 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technotransactions.py", line 300, in parse_structure
+    request, "technotransactions", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technotransactions.py", line 27, in parse_structure
+    raise ValueError(msg)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:04:42,697 - knowledge_logger - main.py-handle-api- : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:04:42,697 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:07:53,205 - knowledge_logger - main.py-parse-request : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:07:53,206 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 498, in parse_structure
+    request, "technotransactions", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technotransactions.py", line 27, in parse_structure
+    raise ValueError(msg)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:07:53,206 - knowledge_logger - main.py-handle-api- : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:07:53,206 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:09:23,314 - knowledge_logger - main.py-parse-request : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:09:23,315 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 498, in parse_structure
+    request, "technotransactions", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technotransactions.py", line 27, in parse_structure
+    raise ValueError(msg)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:09:23,315 - knowledge_logger - main.py-handle-api- : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:09:23,315 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:11:17,489 - knowledge_logger - main.py-parse-request : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:11:17,490 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 498, in parse_structure
+    request, "technotransactions", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technotransactions.py", line 27, in parse_structure
+    raise ValueError(msg)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:11:17,490 - knowledge_logger - main.py-handle-api- : invalid request: GetAssignedStatutories 
+
+2016-12-13 15:11:17,490 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: invalid request: GetAssignedStatutories
+ 
+
+2016-12-13 15:14:05,909 - knowledge_logger - main.py-handle-api- : global name 'unit_' is not defined 
+
+2016-12-13 15:14:05,909 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 360, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 25, in process_domain_transaction_request
+    result = process_get_approve_statutory_list(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 32, in process_get_approve_statutory_list
+    assigned_statutories = get_assigned_statutories_list(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 14, in get_assigned_statutories_list
+    return return_assigned_statutories(client_statutories, unit_details)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 23, in return_assigned_statutories
+    unit_details = unit_
+NameError: global name 'unit_' is not defined
+ 
+
