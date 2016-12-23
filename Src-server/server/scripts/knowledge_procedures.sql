@@ -658,7 +658,8 @@ BEGIN
         WHERE tle.client_id=tcg.client_id
     ) as no_of_legal_entities,
     is_active, is_approved, remarks
-    FROM tbl_client_groups tcg;
+    FROM tbl_client_groups tcg
+    order by tcg.group_name;
 END //
 
 DELIMITER ;
@@ -742,12 +743,12 @@ DROP PROCEDURE IF EXISTS `sp_business_groups_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_business_groups_list`(
-    IN client_id INT(11)
+    IN clientid INT(11)
 )
 BEGIN
     SELECT business_group_id, business_group_name, client_id
     FROM tbl_business_groups
-    WHERE client_id=client_id;
+    WHERE client_id=clientid;
 
 END //
 

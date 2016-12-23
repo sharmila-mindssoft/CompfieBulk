@@ -311,6 +311,8 @@ var message = {
   "assigncompliance_submit_failure": "All compliance should be select while submit",
   "no_compliance_to_reject": "Atleast one compliance should be reject",
   "email_50": "Email are not allowed more than 50 characters",
+  "activationdate_required": "Activation Date Required",
+  "logo_valid_file_format": "Only Valid file formats are jpeg, jpg, png, bmp and gif."
 };
 
 function clearMessage() {
