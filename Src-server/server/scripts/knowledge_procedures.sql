@@ -1333,7 +1333,7 @@ CREATE PROCEDURE `sp_tbl_unit_getunitcode`(in unit_code_start_letter varchar(50)
             clientId INT(11))
 BEGIN
     SELECT TRIM(LEADING unit_code_start_letter FROM unit_code) as code
-    FROM tbl_units WHERE unit_code like binary 'unit_code_start_letter%' and
+    FROM tbl_units WHERE unit_code like binary concat(unit_code_start_letter,'%') and
     CHAR_LENGTH(unit_code) = 7 and client_id=clientId;
 END //
 
@@ -2918,17 +2918,31 @@ CREATE PROCEDURE `sp_tbl_units_checkduplication`(in unitId int(11), unitCode var
         unitName varchar(50), clientId int(11))
 BEGIN
     if unitCode is not null then
-        select count(*) as unit_code_cnt from
-        tbl_units where
-        unit_code = unitCode and
-        client_id = clientId and
-        unit_id != unitId;
+        case when unitId is null then
+            select count(*) as unit_code_cnt from
+            tbl_units where
+            unit_code = unitCode and
+            client_id = clientId;
+        else
+            select count(*) as unit_code_cnt from
+            tbl_units where
+            unit_code = unitCode and
+            client_id = clientId
+            and unit_id != unitId;
+        end case;
     else
-        select count(*) as unit_name_cnt from
-        tbl_units where
-        unit_name = unitName and
-        client_id = clientId and
-        unit_id != unitId;
+        case when unitId is null then
+            select count(*) as unit_name_cnt from
+            tbl_units where
+            unit_name = unitName and
+            client_id = clientId;
+        else
+            select count(*) as unit_name_cnt from
+            tbl_units where
+            unit_name = unitName and
+            client_id = clientId and
+            unit_id != unitId;
+        end case;
     end if;
 
 END //
@@ -3267,7 +3281,8 @@ CREATE PROCEDURE `sp_legal_entities_by_client`(
 )
 BEGIN
     SELECT legal_entity_id, legal_entity_name, business_group_id,
-    client_id FROM tbl_legal_entities WHERE client_id=clientid;
+    client_id FROM tbl_legal_entities WHERE client_id=clientid and
+    is_closed = 0;
 END //
 
 DELIMITER ;
@@ -3806,24 +3821,25 @@ IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
 IN fromcount_ INT(11), IN pagecount_ INT(11))
 BEGIN
         SELECT
-        ts.statutory_name,
-        tc.compliance_task,
-        tsnl.notification_text,
-        tsnl.created_on
-    FROM
-        tbl_statutory_notifications tsnl
-            INNER JOIN
-        tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
-            INNER JOIN
-        tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
-            INNER JOIN
-        tbl_statutories ts ON ts.statutory_id = tms.statutory_id
-    WHERE
-        tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-        IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
-        IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
-        IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
-    limit fromcount_, pagecount_;
+    ts.statutory_name,
+    tc.compliance_task,
+    tc.compliance_description as description,
+    tsnl.notification_text,
+    tsnl.created_on
+FROM
+    tbl_statutory_notifications tsnl
+        INNER JOIN
+    tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
+        INNER JOIN
+    tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
+        INNER JOIN
+    tbl_statutories ts ON ts.statutory_id = tms.statutory_id
+WHERE
+    tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
+    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+    IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
+    IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+limit fromcount_, pagecount_;
 END //
 
 DELIMITER ;
