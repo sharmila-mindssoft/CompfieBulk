@@ -1123,7 +1123,9 @@ def update_division(db, client_id, division_id, division_name, session_user):
 
 
 def is_duplicate_unit_code(db, unit_id, unit_code, client_id):
-    params =[unit_id, unit_code, None, client_id]
+    params = [unit_id, unit_code, None, client_id]
+    print "unit code params"
+    print params
     rows = db.call_proc("sp_tbl_units_checkduplication", params)
     for d in rows:
         if(int(d["unit_code_cnt"]) > 0):
@@ -1133,7 +1135,7 @@ def is_duplicate_unit_code(db, unit_id, unit_code, client_id):
 
 
 def is_duplicate_unit_name(db, unit_id, unit_name, client_id):
-    params =[unit_id, None, unit_name, client_id]
+    params = [unit_id, None, unit_name, client_id]
     rows = db.call_proc("sp_tbl_units_checkduplication", params)
     for d in rows:
         if(int(d["unit_name_cnt"]) > 0):
@@ -1146,7 +1148,7 @@ def is_invalid_id(db, check_mode, val):
     print check_mode
 
     if check_mode == "unit_id":
-        params =[val,]
+        params = [val,]
         rows = db.call_proc("sp_tbl_units_check_unitId", params)
         for d in rows:
             if(int(d["unit_id_cnt"]) > 0):
@@ -1376,29 +1378,32 @@ def update_unit(db, client_id, units, session_user):
 
     if result is True:
         for i in unit_ids:
-            delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", i)
+            print "i"
+            print i
+            delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (i,))
             print delete_res
         columns = ["unit_id", "domain_id", "organisation_id"]
         values_list = []
-        unit_id = None
+        # unit_id = None
         j = 0
         if len(units) == 3:
             print"unit_id"
+            d_i_id = units[j].industry_ids
             print units[j].unit_id
-            domain_ids = ",".join(str(x) for x in units[j].domain_ids)
-            industry_ids = ",".join(str(x) for x in units[j].industry_ids)
 
-            vals = [units[j].unit_id, domain_ids, industry_ids]
-            values_list.append(vals)
+            for c in d_i_id:
+                vals = [units[j].unit_id, c.domain_id, c.industry_id]
+                values_list.append(vals)
+
         else:
             while j < len(units):
+                d_i_id = units[j].industry_ids
                 print"unit_id"
                 print units[j].unit_id
-                domain_ids = ",".join(str(x) for x in units[j].domain_ids)
-                industry_ids = ",".join(str(x) for x in units[j].industry_ids)
 
-                vals = [units[j].unit_id, domain_ids, industry_ids]
-                values_list.append(vals)
+                for c in d_i_id:
+                    vals = [units[j].unit_id, c.domain_id, c.industry_id]
+                    values_list.append(vals)
                 j = j + 3
         result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
     if result_1 is True:
@@ -1746,12 +1751,16 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
 
     for r in rows:
         no_of_units = r["units"]
+
+    print "units count"
+    print no_of_units
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
-    unit_code_start_letters = "%s%s" % (unit_code_start_letters, "%")
+    # unit_code_start_letters = "%s%s" % (unit_code_start_letters, "%")
     print "unit_code_start_letters--", unit_code_start_letters
     condition_val = [unit_code_start_letters, client_id]
+    print condition_val
     rows = db.call_proc("sp_tbl_unit_getunitcode", condition_val)
     auto_generated_unit_codes = []
     for row in rows:
@@ -1767,6 +1776,8 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
             next_auto_gen_no = no_of_units + 1
         else:
             next_auto_gen_no = existing_max_unit_code + 1
+    print "next"
+    print next_auto_gen_no
     return next_auto_gen_no
 
 
