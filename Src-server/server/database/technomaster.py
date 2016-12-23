@@ -590,7 +590,7 @@ def get_client_details(db, client_id):
     domain_map = return_organization_by_legalentity_domain(
         organizations
     )
-    
+
     legal_entities = return_legal_entities(
         legal_entities, domain_map
     )
@@ -1487,6 +1487,8 @@ def get_business_groups_for_user(db, user_id):
 
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientlegalentity", (user_id,))
+    print "unit legal entity"
+    print result
     return return_legal_entities_for_unit(result)
 
 
@@ -1494,10 +1496,11 @@ def return_legal_entities_for_unit(legal_entities):
     results = []
     for legal_entity in legal_entities:
         legal_entity_obj = core.UnitLegalEntity(
-            legal_entity_id = legal_entity["legal_entity_id"],
-            legal_entity_name = legal_entity["legal_entity_name"],
-            business_group_id = legal_entity["business_group_id"],
-            client_id = legal_entity["client_id"]
+            legal_entity_id=legal_entity["legal_entity_id"],
+            legal_entity_name=legal_entity["legal_entity_name"],
+            business_group_id=legal_entity["business_group_id"],
+            client_id=legal_entity["client_id"],
+            country_id=legal_entity["country_id"]
         )
         results.append(legal_entity_obj)
     return results
