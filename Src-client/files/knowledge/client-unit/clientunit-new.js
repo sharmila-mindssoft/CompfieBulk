@@ -1568,7 +1568,7 @@ function loadDivision(classval) {
     if ($('#client-unit-id').val() != '') {
         clientId = $('#client-unit-id').val();
         businessGroupId = $('#businessgroup-update-id').val();
-        lentityId = $('legalentity-update-id').val();
+        lentityId = $('#legalentity-update-id').val();
     } else {
         clientId = clientSelect.val();
         businessGroupId = bgrpSelect.val();
