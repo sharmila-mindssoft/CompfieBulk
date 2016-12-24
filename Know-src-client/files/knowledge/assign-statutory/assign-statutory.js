@@ -967,26 +967,28 @@ function loadAssignedStatutories(){
             $(TblStatus, clone).html('<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+value.reason+'"></i>'+value.approval_status_text);
         }
 
-        $('.edit-icon', clone).addClass('fa fa-pencil text-primary c-pointer');
-        $('.edit-icon', clone).on('click', function () {
-            LastAct = '';
-            LastSubAct = '';
-            GroupName.val(value.grp_name);
-            BusinessGroupName.val(value.b_grp_name);
-            LegalEntityName.val(value.l_e_name);
-            DivisionName.val(value.div_name);
-            CategoryName.val(value.cat_name);
-            DomainName.val(value.d_name);
-            val_group_id = value.ct_id.toString();
-            val_domain_id = value.d_id.toString();
-            val_legal_entity_id = value.le_id.toString();
-            CLIENT_STATUTORY_ID = value.client_statutory_id;
-            UNIT_TEXT = value.u_name;
-            DOMAIN_TEXT = value.d_name;
-            ACTIVE_UNITS = [value.u_id];
-            EditAssignedStatutory(value.u_id, value.d_id);
-        });
-
+        if(value.is_editable){
+            $('.edit-icon', clone).addClass('fa fa-pencil text-primary c-pointer');
+            $('.edit-icon', clone).on('click', function () {
+                LastAct = '';
+                LastSubAct = '';
+                GroupName.val(value.grp_name);
+                BusinessGroupName.val(value.b_grp_name);
+                LegalEntityName.val(value.l_e_name);
+                DivisionName.val(value.div_name);
+                CategoryName.val(value.cat_name);
+                DomainName.val(value.d_name);
+                val_group_id = value.ct_id.toString();
+                val_domain_id = value.d_id.toString();
+                val_legal_entity_id = value.le_id.toString();
+                CLIENT_STATUTORY_ID = value.client_statutory_id;
+                UNIT_TEXT = value.u_name;
+                DOMAIN_TEXT = value.d_name;
+                ACTIVE_UNITS = [value.u_id];
+                EditAssignedStatutory(value.u_id, value.d_id);
+            });
+        }
+        
         AssignedStatutoryList.append(clone);
     });
 }
