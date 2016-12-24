@@ -4240,15 +4240,39 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
 BEGIN
 
     select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t2.geography_name ,
-    t4.client_statutory_id
+    t4.client_statutory_id, nc.total
     from tbl_units as t1
     inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
+    inner join (
+        select t4.unit_id, count(distinct t1.compliance_id) as total
+            from tbl_compliances as t1
+            inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+            inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+            inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+            inner join tbl_units as t4 on t4.country_id = t1.country_id
+            inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+            and t5.organisation_id = t2.organisation_id
+            left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+            and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+             where t1.is_active = 1 and t1.is_approved in (2, 3)
+             and t6.compliance_id is null
+             and t3.geography_id IN
+             (select geography_id from tbl_geographies where geography_id =
+                (select geography_id from tbl_units where unit_id = t4.unit_id)
+             or find_in_set(geography_id,
+                (select parent_ids from tbl_geographies where geography_id =
+                    (select geography_id from tbl_units where unit_id = t4.unit_id)
+                )
+            ))
+            group by t4.unit_id
+    ) as nc on t1.unit_id = nc.unit_id
     left join tbl_client_statutories as t4 on t1.unit_id = t4.unit_id
-    where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
+    where nc.total > 0 and t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
     IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
     and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid
     order by t1.unit_code, t1.unit_name;
+
 
 END //
 

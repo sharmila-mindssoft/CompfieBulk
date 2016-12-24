@@ -136,7 +136,7 @@ def get_compliances_to_assign(db, request, user_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     rcount = request.rcount
-    show_count = 2
+    show_count = 10
     results = []
     totals = []
     for u in unit_ids :
