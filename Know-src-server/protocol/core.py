@@ -131,7 +131,7 @@ class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
     def __init__(self):
         self._value = {
             0 : "Is_new",
-            1 : "Is_saved",
+            1 : "Yet to submit",
             2 : "Pending",
             3 : "Approved",
             4 : "Rejected",
