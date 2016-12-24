@@ -30,6 +30,7 @@ def return_assigned_statutories(data):
     data_list = []
     for d in data :
         is_edit = True if d["is_edit"] > 0 else False
+        is_edit = True if d["status"] == 4 else is_edit
         c_name = "%s - %s" % (d["unit_code"], d["unit_name"])
         data_list.append(fn(
             d["country_name"], d["client_id"], d["group_name"],
