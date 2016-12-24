@@ -667,9 +667,9 @@ function loadSingleUnitCompliances() {
         $('.combineid-class', clone2).val(combineId);
 
         if(value.s_s == 0){
-            complianceDetailtableRow.addClass('new_row');
+            clone2.addClass('new_row');
         }else if(value.s_s == 4){
-            complianceDetailtableRow.addClass('rejected_row');
+            clone2.addClass('rejected_row');
         }
 
         $('.sno', clone2).text(statutoriesCount);
