@@ -29,6 +29,7 @@ def return_assigned_statutories(data):
     fn = domaintransactionprotocol.AssignedStatutories
     data_list = []
     for d in data :
+        is_edit = True if d["is_edit"] > 0 else False
         c_name = "%s - %s" % (d["unit_code"], d["unit_name"])
         data_list.append(fn(
             d["country_name"], d["client_id"], d["group_name"],
@@ -36,7 +37,8 @@ def return_assigned_statutories(data):
             d["division_name"], c_name, d["geography_name"],
             d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
             core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["status"]),
-            d["status"], d["client_statutory_id"], d["legal_entity_id"], d["reason"]
+            d["status"], d["client_statutory_id"], d["legal_entity_id"], d["reason"],
+            is_edit
         ))
 
     return data_list
@@ -407,11 +409,11 @@ def save_approve_statutories(db, request, user_id):
 
     else :
         # is_approve = 5 when the compliance is applicable or not applicable
-        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_opted_status != 3 and client_statutory_id = %s"
+        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_applicable_status != 3 and client_statutory_id = %s"
         db.execute(q1, [5, client_statutory_id])
 
         # is_approve = 3 when the compliance is not at all applicable because it has to reshow domain users
-        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_opted_status = 3 and client_statutory_id = %s"
+        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_applicable_status = 3 and client_statutory_id = %s"
         db.execute(q1, [3, client_statutory_id])
 
         msg = "Assgined statutories has been approved for unit %s in %s domain " % (
