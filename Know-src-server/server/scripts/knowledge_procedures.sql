@@ -645,12 +645,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_client_groups_list`()
 BEGIN
-    select client_id, group_name,
+    select tcg.client_id, tcg.group_name,
     (
         select group_concat(country_name) from tbl_countries
         where country_id in (
             select country_id from tbl_legal_entities
-            where client_id=client_id
+            where client_id=tcg.client_id
         )
     ) as country_names,
     (
