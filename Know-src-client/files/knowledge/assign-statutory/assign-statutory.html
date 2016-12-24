@@ -494,12 +494,13 @@ display: none !important;
                     data-parent="#accordion" 
                     aria-expanded="true" >
                     <span></span>
-                <div class="controls pull-right m-t-m-5">
-                  <div class="col-sm-12 no-padding">
-                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" style="display:none;" />  
-                  </div>
-              </div>
-                
+                  <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
+                      <label class="col-sm-3 control-label p-t-5">Remarks:</label>
+                      <div class="col-sm-9 no-padding">
+                      <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
+                      </div>
+
+                </div>
                 </a>
               </div>
               
@@ -531,6 +532,14 @@ display: none !important;
 
     <div id="multi-statutory-value">
     <table class="table-statutory-values">
+      <tr class="sub-title-row">
+        <td colspan="100%">
+            <div class="col-sm-2 no-padding">
+                <mark class="p-l-10 p-r-10 sub-title"></mark>
+            </div>
+        </td>
+      </tr>
+      
       <tr class="compliance-details">
           <td><span class="sno"> </span></td>
           <td class="statutoryprovision"></td>
