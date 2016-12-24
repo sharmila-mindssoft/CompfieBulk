@@ -280,7 +280,9 @@ function pageControls() {
     });
 
     CancelButton.click(function() {
-        showList();
+        CURRENT_TAB = 1;
+        AssignStatutoryView.show();
+        AssignStatutoryAdd.hide();
     });
 
     GroupName.keyup(function(e) {
@@ -383,7 +385,7 @@ function pageControls() {
     });
 
     SelectAll.click(function() {
-        ACTIVE_UNITS=[];
+        ACTIVE_UNITS = [];
         //UNIT_CS_ID = {};
         $('.unit-list li').each(function (index, el) {
             if(ACTIVE_UNITS.length > 10){
@@ -421,6 +423,8 @@ function reset(){
     DOMAIN_TEXT = null;
     AssignStatutoryList.empty();
     UnitList.empty();
+    ACTIVE_UNITS = [];
+
 }
 
 function showBreadCrumbText() {
@@ -516,7 +520,7 @@ function loadUnits() {
 }
 
 function activateUnit(element) {
-    if(ACTIVE_UNITS.length > 10){
+    if(ACTIVE_UNITS.length >= 10){
         displayMessage(message.maximum_units);
         return false;
     }else{
