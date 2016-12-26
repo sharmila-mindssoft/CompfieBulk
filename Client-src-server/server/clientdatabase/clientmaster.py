@@ -47,7 +47,6 @@ __all__ = [
     "is_duplicate_employee_name"
 ]
 
-
 ############################################################################
 # To get the details of all service providers
 # Parameter(s) - object of database

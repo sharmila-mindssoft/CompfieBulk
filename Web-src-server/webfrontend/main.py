@@ -79,6 +79,7 @@ class Controller(object):
         print request.header('X-Real_ip')
         try:
             data = json.loads(request.body())
+            print data
             if type(data) is not list:
                 send_bad_request(
                     response,
@@ -286,6 +287,7 @@ def run_web_front_end(port, knowledge_server_address):
         images_path = os.path.join(common_path, "images")
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
+        font_path = os.path.join(common_path, "fonts")
         script_path = client_path
         login_path = os.path.join(client_path, "login")
 
@@ -303,6 +305,11 @@ def run_web_front_end(port, knowledge_server_address):
             r"/js/(.*)",
             StaticFileHandler,
             dict(path=js_path)
+        )
+        web_server.low_level_url(
+            r"/fonts/(.*)",
+            StaticFileHandler,
+            dict(path=font_path)
         )
         web_server.low_level_url(
             r"/common/(.*)",
