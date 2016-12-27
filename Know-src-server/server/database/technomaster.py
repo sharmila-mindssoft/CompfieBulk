@@ -836,9 +836,9 @@ def return_group(groups):
             client_list.append(
                 fn(
                     group["client_id"], group["group_name"],
-                    group["country_names"], group["no_of_legal_entities"],
-                    True if group["is_active"] > 0 else False,
-                    int(group["is_approved"]), group["remarks"]
+                    group["country_name"], group["legal_entity_name"],
+                    True if group["is_closed"] > 0 else False,
+                    int(group["is_approved"]), group["reason"]
                 )
             )
     return client_list

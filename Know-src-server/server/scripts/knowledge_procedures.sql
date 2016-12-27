@@ -647,22 +647,27 @@ CREATE PROCEDURE `sp_client_groups_list`(
 in userId INT(11)
 )
 BEGIN
-    select tcg.client_id, tcg.group_name,
-    (
-        select group_concat(country_name) from tbl_countries
-        where country_id in (
-            select country_id from tbl_legal_entities
-            where client_id=tcg.client_id
-        )
-    ) as country_names,
-    (
-        select count(legal_entity_id) from tbl_legal_entities tle
-        WHERE tle.client_id=tcg.client_id
-    ) as no_of_legal_entities,
-    is_active, is_approved, remarks
-    FROM tbl_client_groups tcg
-    inner join tbl_user_clients tuc on tuc.client_id = tcg.client_id and tuc.user_id = userId
-    order by tcg.group_name;
+    SELECT 
+    tcg.client_id,
+    tcg.group_name,
+    tle.legal_entity_name,
+    (SELECT 
+            country_name
+        FROM
+            tbl_countries
+        WHERE
+            country_id = tle.country_id) AS country_name,
+    tle.is_closed,
+    tle.is_approved,
+    tle.reason
+    FROM
+        tbl_legal_entities tle
+            INNER JOIN
+        tbl_client_groups tcg ON tcg.client_id = tle.client_id
+            INNER JOIN
+        tbl_user_clients tuc ON tuc.client_id = tcg.client_id
+            AND tuc.user_id = userId
+    ORDER BY tcg.group_name;
 END //
 
 DELIMITER ;

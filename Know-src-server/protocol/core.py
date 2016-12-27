@@ -3251,47 +3251,47 @@ class ClientGroupMaster(object):
 #
 class ClientGroup(object):
     def __init__(
-        self, group_id, group_name, country_names,
-        no_of_legal_entities, is_active, is_approved, remarks
+        self, group_id, group_name, country_name,
+        legal_entity_name, is_closed, is_approved, reason
     ):
         self.group_id = group_id
         self.group_name = group_name
-        self.country_names = country_names
-        self.no_of_legal_entities = no_of_legal_entities
-        self.is_active = is_active
+        self.country_name = country_name
+        self.legal_entity_name = legal_entity_name
+        self.is_closed = is_closed
         self.is_approved = is_approved
-        self.remarks = remarks
+        self.reason = reason
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "group_id", "group_name", "country_names",
-                "no_of_legal_entities", "is_active", "is_approved",
-                "remarks"
+                "group_id", "group_name", "country_name",
+                "legal_entity_name", "is_closed", "is_approved",
+                "reason"
             ]
         )
         group_id = data.get("group_id")
         group_name = data.get("group_name")
-        country_names = data.get("country_names")
-        no_of_legal_entities = data.get("no_of_legal_entities")
-        is_active = data.get("is_active")
+        country_name = data.get("country_name")
+        legal_entity_name = data.get("legal_entity_name")
+        is_closed = data.get("is_closed")
         is_approved = data.get("is_approved")
-        remarks = data.get("remarks")
+        reason = data.get("reason")
         return ClientGroup(
-            group_id, group_name, country_names, no_of_legal_entities,
-            is_active, is_approved, remarks
+            group_id, group_name, country_name, legal_entity_name,
+            is_closed, is_approved, reason
         )
 
     def to_structure(self):
         return {
             "group_id": self.group_id,
             "group_name": self.group_name,
-            "country_names": self.country_names,
-            "no_of_legal_entities": self.no_of_legal_entities,
-            "is_active": self.is_active,
+            "country_name": self.country_name,
+            "legal_entity_name": self.legal_entity_name,
+            "is_closed": self.is_closed,
             "is_approved": self.is_approved,
-            "remarks": self.remarks
+            "remarks": self.reason
         }
 
 
