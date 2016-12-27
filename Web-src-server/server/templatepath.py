@@ -44,12 +44,12 @@ CLIENT_TEMPLATE_PATHS = [
     # client admin
     (
         "/service-provider",
-        "files/client/service-provider/serviceprovider.html",
+        "files/client/service-provider/service_provider_list.html",
         None, {}
     ),
     (
         "/client-user-privilege",
-        "files/client/client-user-privilege/clientuserprivilege.html",
+        "files/client/user-privileges/user_privileges.html",
         None, {}
     ),
     (

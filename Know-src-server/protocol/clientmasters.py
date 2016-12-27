@@ -723,15 +723,13 @@ class GetUserPrivilegesSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["forms", "user_groups"])
         forms = data.get("forms")
-        forms = parse_structure_RecordType_core_Menu(forms)
         user_groups = data.get("user_groups")
-        user_groups = parse_structure_VectorType_RecordType_client_masters_ClientUserGroup(user_groups)
         return GetUserPrivilegesSuccess(forms, user_groups)
 
     def to_inner_structure(self):
         return {
-            "forms": to_structure_RecordType_core_Menu(self.forms),
-            "user_groups": to_structure_VectorType_RecordType_client_masters_ClientUserGroup(self.user_groups),
+            "forms": self.forms
+            "user_groups": self.user_groups
         }
 
 class UserGroupNameAlreadyExists(Response):
