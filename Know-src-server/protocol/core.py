@@ -3358,7 +3358,7 @@ class LegalEntity(object):
         self, country_id, business_group, legal_entity_id,
         legal_entity_name, old_logo, new_logo,
         no_of_licence, file_space, contract_from,
-        contract_to, domain_details
+        contract_to, domain_details, is_closed
     ):
         self.country_id = country_id
         self.business_group = business_group
@@ -3371,6 +3371,8 @@ class LegalEntity(object):
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.domain_details = domain_details
+        self.is_closed = is_closed
+
 
     @staticmethod
     def parse_structure(data):
@@ -3378,7 +3380,8 @@ class LegalEntity(object):
             data, [
                 "country_id", "business_group", "legal_entity_id",
                 "legal_entity_name", "old_logo", "new_logo", "no_of_licence",
-                "file_space", "contract_from", "contract_to", "domain_details"
+                "file_space", "contract_from", "contract_to", "domain_details",
+                "is_closed"
             ]
         )
         country_id = data.get("country_id")
@@ -3392,10 +3395,12 @@ class LegalEntity(object):
         contract_from = data.get("contract_from")
         contract_to = data.get("contract_to")
         domain_details = data.get("domain_details")
+        is_closed = data.get("is_closed")
+        is_closed = parse_structure_Bool(is_closed)
         return LegalEntity(
             country_id, business_group, legal_entity_id, legal_entity_name,
             logo, new_logo, no_of_licence, file_space,
-            contract_from, contract_to, domain_details
+            contract_from, contract_to, domain_details, is_closed
         )
 
     def to_structure(self):
@@ -3410,7 +3415,8 @@ class LegalEntity(object):
             "file_space": self.file_space,
             "contract_from": self.contract_from,
             "contract_to": self.contract_to,
-            "domain_details": self.domain_details
+            "domain_details": self.domain_details,
+            "is_closed": self.is_closed
         }
 
 #

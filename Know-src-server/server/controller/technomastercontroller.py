@@ -50,7 +50,7 @@ __all__ = [
 # To Get list of all clients with details
 ########################################################
 def get_client_groups(db, request, session_user):
-    groups = get_groups(db)
+    groups = get_groups(db, session_user)
     return technomasters.GetClientGroupsSuccess(
         groups=groups
     )
@@ -134,7 +134,7 @@ def process_update_client_group(db, request, session_user):
         db, request.client_id, request.date_configurations, session_user
     )
     update_client_group(
-        db, request.group_name, request.client_id
+        db, request.client_id, request.email_id, request.no_of_view_licence, "remarks value"
     )
     legal_entity_names = update_legal_entities(
         db, request, request.client_id, session_user)

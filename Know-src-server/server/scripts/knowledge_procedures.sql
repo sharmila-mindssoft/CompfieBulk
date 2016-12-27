@@ -659,6 +659,7 @@ BEGIN
     ) as no_of_legal_entities,
     is_active, is_approved, remarks
     FROM tbl_client_groups tcg
+    
     order by tcg.group_name;
 END //
 
@@ -1091,7 +1092,7 @@ BEGIN
         WHERE tbg.business_group_id=tle.business_group_id
     ) as business_group_name,
     legal_entity_name, contract_from, contract_to, logo,
-    file_space_limit, total_licence
+    file_space_limit, total_licence, is_closed
     FROM tbl_legal_entities tle WHERE client_id=clientid;
 END //
 
@@ -1240,10 +1241,11 @@ DROP PROCEDURE IF EXISTS `sp_client_group_update`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_group_update` (
-    IN groupname VARCHAR(50), groupid INT(11)
+    groupid INT(11), emailid VARCHAR(100), no_of_view_licence int(11), IN remarks VARCHAR(500) 
 )
 BEGIN
-    UPDATE tbl_client_groups set group_name=groupname
+    UPDATE tbl_client_groups set total_view_licence = no_of_view_licence,
+    email_id = emailid, remarks = remarks
     WHERE client_id=groupid;
 
 END //
