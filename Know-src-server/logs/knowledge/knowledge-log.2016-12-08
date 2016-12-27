@@ -1,0 +1,666 @@
+2016-12-08 07:02:51,239 - knowledge_logger - main.py-parse-request : expected a number, but received: 40 
+
+2016-12-08 07:02:51,240 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 154, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 180, in parse_inner_structure
+    "compliances", "g_ids", "mappings", "tr_type"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 335, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 501, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 487, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/core.py", line 1259, in parse_structure
+    "reference"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 288, in parse_values
+    val = parse_optional_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 66, in parse_optional_number
+    return parse_number(x, min_value, max_value)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 52, in parse_number
+    raise expectation_error("a number", x)
+ValueError: expected a number, but received: 40
+ 
+
+2016-12-08 07:02:51,240 - knowledge_logger - main.py-handle-api- : expected a number, but received: 40 
+
+2016-12-08 07:02:51,240 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 195, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number, but received: 40
+ 
+
+2016-12-08 07:07:42,783 - knowledge_logger - main.py-parse-request : __init__() takes exactly 10 arguments (11 given) 
+
+2016-12-08 07:07:42,784 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 154, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 802, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 736, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 195, in parse_inner_structure
+    compliances, geography_ids, mappings, tr_type
+TypeError: __init__() takes exactly 10 arguments (11 given)
+ 
+
+2016-12-08 07:07:42,784 - knowledge_logger - main.py-handle-api- : __init__() takes exactly 10 arguments (11 given) 
+
+2016-12-08 07:07:42,784 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 195, in handle_api_request
+    raise ValueError(request_data)
+ValueError: __init__() takes exactly 10 arguments (11 given)
+ 
+
+2016-12-08 07:14:22,860 - knowledge_logger - main.py-handle-api- : 'UpdateStatutoryMapping' object has no attribute 'statutory_mapping_id' 
+
+2016-12-08 07:14:22,860 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 638, in update_statutory_mapping
+    statutory_mapping_id = data.statutory_mapping_id
+AttributeError: 'UpdateStatutoryMapping' object has no attribute 'statutory_mapping_id'
+ 
+
+2016-12-08 07:15:11,312 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-08 07:15:11,312 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 639, in update_statutory_mapping
+    is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 623, in get_statutory_mapping_by_id
+    rows = db.select_one(q, [mapping_id])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 340, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-08 07:45:53,008 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-08 07:45:53,008 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 640, in update_statutory_mapping
+    is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 624, in get_statutory_mapping_by_id
+    rows = db.select_one(q, [mapping_id])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 340, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-08 07:47:24,068 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-08 07:47:24,069 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 639, in update_statutory_mapping
+    is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 623, in get_statutory_mapping_by_id
+    rows = db.select_one(q, [mapping_id])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 340, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-08 07:50:31,050 - knowledge_logger - main.py-handle-api- :  
+
+2016-12-08 07:50:31,050 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 639, in update_statutory_mapping
+    is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 633, in get_statutory_mapping_by_id
+    result = convert_to_dict(rows, columns)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/common.py", line 104, in convert_to_dict
+    assert type(data_list) in (list, tuple)
+AssertionError
+ 
+
+2016-12-08 07:51:06,791 - knowledge_logger - main.py-handle-api- : Compliance updation failed 
+
+2016-12-08 07:51:06,791 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 675, in update_statutory_mapping
+    is_approve
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 806, in update_compliance
+    raise process_error("E021")
+RuntimeError: Compliance updation failed
+ 
+
+2016-12-08 07:53:45,059 - knowledge_logger - main.py-handle-api- : save_statutory_industry() takes exactly 5 arguments (4 given) 
+
+2016-12-08 07:53:45,059 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 679, in update_statutory_mapping
+    db, statutory_mapping_id, data.industry_ids, False
+TypeError: save_statutory_industry() takes exactly 5 arguments (4 given)
+ 
+
+2016-12-08 07:54:37,541 - knowledge_logger - main.py-handle-api- : global name 'action' is not defined 
+
+2016-12-08 07:54:37,542 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 689, in update_statutory_mapping
+    db.save_activity(updated_by, frmStatutoryMapping, action)
+NameError: global name 'action' is not defined
+ 
+
+2016-12-08 07:55:18,615 - knowledge_logger - main.py-handle-api- : Invalid statutory mapping 
+
+2016-12-08 07:55:18,615 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 113, in process_knowledge_transaction_request
+    result = process_get_compliance_Edit(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 208, in process_get_compliance_Edit
+    comp_info = get_statutory_mapping_edit(db, m_id, comp_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1436, in get_statutory_mapping_edit
+    raise process_error("E087")
+RuntimeError: Invalid statutory mapping
+ 
+
+2016-12-08 07:55:27,021 - knowledge_logger - main.py-handle-api- : Invalid statutory mapping 
+
+2016-12-08 07:55:27,022 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 113, in process_knowledge_transaction_request
+    result = process_get_compliance_Edit(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 208, in process_get_compliance_Edit
+    comp_info = get_statutory_mapping_edit(db, m_id, comp_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1436, in get_statutory_mapping_edit
+    raise process_error("E087")
+RuntimeError: Invalid statutory mapping
+ 
+
+2016-12-08 07:56:17,879 - knowledge_logger - main.py-handle-api- : Invalid statutory mapping 
+
+2016-12-08 07:56:17,880 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 113, in process_knowledge_transaction_request
+    result = process_get_compliance_Edit(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 208, in process_get_compliance_Edit
+    comp_info = get_statutory_mapping_edit(db, m_id, comp_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1436, in get_statutory_mapping_edit
+    raise process_error("E087")
+RuntimeError: Invalid statutory mapping
+ 
+
+2016-12-08 12:18:59,798 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-08 12:18:59,799 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 299, in handle_mobile_request
+    return controller.process_mobile_request(request, db, self._ip_addess)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/mobilecontroller.py", line 61, in process_mobile_request
+    result = process_get_approve_statutory_mappings(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/mobilecontroller.py", line 231, in process_get_approve_statutory_mappings
+    statutory_mappings = approve_statutory_mapping_list(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/mobilecontroller.py", line 162, in approve_statutory_mapping_list
+    mappings = result[0]
+IndexError: list index out of range
+ 
+
+2016-12-08 12:36:33,363 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-08 12:36:33,364 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 299, in handle_mobile_request
+    return controller.process_mobile_request(request, db, self._ip_addess)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/mobilecontroller.py", line 61, in process_mobile_request
+    result = process_get_approve_statutory_mappings(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/mobilecontroller.py", line 231, in process_get_approve_statutory_mappings
+    statutory_mappings = approve_statutory_mapping_list(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/mobilecontroller.py", line 162, in approve_statutory_mapping_list
+    mappings = result[0]
+IndexError: list index out of range
+ 
+
+2016-12-08 13:12:08,235 - knowledge_logger - main.py-handle-api- : string indices must be integers 
+
+2016-12-08 13:12:08,236 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 260, in get_countries_for_user
+    return return_countries(result[1])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 272, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: string indices must be integers
+ 
+
+2016-12-08 13:12:38,210 - knowledge_logger - main.py-handle-api- : string indices must be integers 
+
+2016-12-08 13:12:38,211 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 261, in get_countries_for_user
+    return return_countries(result[1])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 273, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: string indices must be integers
+ 
+
+2016-12-08 13:13:35,858 - knowledge_logger - main.py-handle-api- : string indices must be integers 
+
+2016-12-08 13:13:35,859 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 261, in get_countries_for_user
+    return return_countries(result[0])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 273, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: string indices must be integers
+ 
+
+2016-12-08 13:13:42,692 - knowledge_logger - main.py-handle-api- : string indices must be integers 
+
+2016-12-08 13:13:42,692 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 261, in get_countries_for_user
+    return return_countries(result[0])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 273, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: string indices must be integers
+ 
+
+2016-12-08 13:14:28,674 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-08 13:14:28,674 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 260, in get_countries_for_user
+    result = result[1]
+IndexError: list index out of range
+ 
+
+2016-12-08 13:15:09,341 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-08 13:15:09,342 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-08 13:16:18,212 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-08 13:16:18,212 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 275, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-08 13:16:51,655 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-08 13:16:51,656 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 276, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-08 13:17:20,514 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-08 13:17:20,514 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 319, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 277, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-08 15:34:47,590 - knowledge_logger - main.py-parse-request : expected a number, but received: 57 
+
+2016-12-08 15:34:47,591 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 154, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 963, in parse_structure
+    request = parse_structure_VariantType_knowledgemaster_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 107, in parse_structure_VariantType_knowledgemaster_Request
+    return knowledgemaster.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 33, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 421, in parse_inner_structure
+    data = parse_dictionary(data, ["s_id", "s_name"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 52, in parse_number
+    raise expectation_error("a number", x)
+ValueError: expected a number, but received: 57
+ 
+
+2016-12-08 15:34:47,591 - knowledge_logger - main.py-handle-api- : expected a number, but received: 57 
+
+2016-12-08 15:34:47,591 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 195, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number, but received: 57
+ 
+
+2016-12-08 15:35:18,983 - knowledge_logger - main.py-parse-request : expected a number, but received: 57 
+
+2016-12-08 15:35:18,983 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 154, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 963, in parse_structure
+    request = parse_structure_VariantType_knowledgemaster_Request(request)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 107, in parse_structure_VariantType_knowledgemaster_Request
+    return knowledgemaster.Request.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 33, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgemaster.py", line 421, in parse_inner_structure
+    data = parse_dictionary(data, ["s_id", "s_name"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 52, in parse_number
+    raise expectation_error("a number", x)
+ValueError: expected a number, but received: 57
+ 
+
+2016-12-08 15:35:18,983 - knowledge_logger - main.py-handle-api- : expected a number, but received: 57 
+
+2016-12-08 15:35:18,984 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 195, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a number, but received: 57
+ 
+
+2016-12-08 15:35:38,669 - knowledge_logger - main.py-handle-api- : 'UpdateStatutory' object has no attribute 'parent_ids' 
+
+2016-12-08 15:35:38,669 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 331, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgemastercontroller.py", line 161, in process_knowledge_master_request
+    result = process_update_statutory(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgemastercontroller.py", line 489, in process_update_statutory
+    parent_ids_list = request_frame.parent_ids
+AttributeError: 'UpdateStatutory' object has no attribute 'parent_ids'
+ 
+
+2016-12-08 15:58:57,611 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-08 15:58:57,611 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 72, in process_knowledge_transaction_request
+    result = process_save_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 149, in process_save_statutory_mapping
+    if (save_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 405, in save_statutory_mapping
+    save_messages(db, frmStatutoryMapping, "Statutory Mapping", text, link, created_by)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1414, in save_messages
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-08 15:59:08,292 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-08 15:59:08,292 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 72, in process_knowledge_transaction_request
+    result = process_save_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 149, in process_save_statutory_mapping
+    if (save_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 405, in save_statutory_mapping
+    save_messages(db, frmStatutoryMapping, "Statutory Mapping", text, link, created_by)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 1414, in save_messages
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-08 16:04:58,326 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-08 16:04:58,326 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 212, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 179, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 134, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 457, in to_structure_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-08 16:05:40,079 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-08 16:05:40,080 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 212, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 179, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 134, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 457, in to_structure_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-08 16:07:04,905 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-08 16:07:04,905 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 212, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 179, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 134, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 458, in to_structure_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-08 16:08:24,861 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-08 16:08:24,861 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 212, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 179, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 134, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/knowledgetransaction.py", line 357, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 458, in to_structure_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-08 16:21:11,632 - knowledge_logger - main.py-handle-api- : Compliance updation failed 
+
+2016-12-08 16:21:11,633 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 200, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 336, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 77, in process_knowledge_transaction_request
+    result = process_update_statutory_mapping(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/knowledgetransactioncontroller.py", line 158, in process_update_statutory_mapping
+    if (update_statutory_mapping(db, request_frame, user_id)):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 675, in update_statutory_mapping
+    is_approve
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/knowledgetransaction.py", line 806, in update_compliance
+    raise process_error("E021")
+RuntimeError: Compliance updation failed
+ 
+

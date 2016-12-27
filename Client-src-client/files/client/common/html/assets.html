@@ -1,0 +1,83 @@
+<!-- css -->
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/menu.css" rel="stylesheet" type="text/css" />
+<link href="/css/core.css" rel="stylesheet" type="text/css" />
+<link href="/css/components.css" rel="stylesheet" type="text/css" />
+<!-- <link href="/css/theme_two.css" rel="stylesheet" type="text/css" /> -->
+
+<link href="/css/icons.css" rel="stylesheet" type="text/css" />
+<link href="/css/pages.css" rel="stylesheet" type="text/css" />
+<link href="/css/responsive.css" rel="stylesheet" type="text/css" />
+<link href="/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+
+<link href="/css/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+<!-- js -->
+<script src="/js/modernizr.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/detect.js"></script>
+<script src="/js/jquery.fastclick.js"></script>
+<script src="/js/jquery.slimscroll.js"></script>
+<script src="/js/jquery.blockUI.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/wow.min.js"></script>
+<script src="/js/jquery.nicescroll.js"></script>
+<script src="/js/jquery.scrollTo.min.js"></script>
+
+<script src="/js/datatables/jquery.dataTables.min.js"></script>
+<script src="/js/datatables/dataTables.fixedHeader.min.js"></script>
+<script src="/js/datatables/dataTables.keyTable.min.js"></script>
+<script src="/js/datatables/dataTables.responsive.min.js"></script>
+<script src="/js/datatables/responsive.bootstrap.min.js"></script>
+<script src="/js/datatables/jquery.datatables.init.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  //Tooltip jquery
+    $('[data-toggle="tooltip"]').tooltip();
+
+    //-----------------------------//
+
+    function testAnim(x) {
+      $('#animationSandbox')
+      .removeClass().addClass(x + ' animated')
+      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+      $(this).removeClass();
+      });
+  };
+
+    //Form Animation start
+    $('.js--triggerAnimation').click(function(e) {
+      e.preventDefault();
+      var anim = $('.js--animations').val();
+      testAnim(anim);
+    });
+
+    $('.js--animations').change(function(){
+      var anim = $(this).val();
+      testAnim(anim);
+    });
+    
+    //setTimeout(function () {
+         //testAnim('fadeInDownBig');
+  //}, 1000);
+
+  //-----------------------------//
+
+  /*var pathName = $(location). attr("pathname");
+  if(pathName != "/home" && pathName != "/dashboard" ) ///dashboard/escalation
+    $(".content-page").css("margin-left", "0px");*/
+
+  $(".content-page").addClass('m-l-0');
+
+});
+
+</script>
+
+

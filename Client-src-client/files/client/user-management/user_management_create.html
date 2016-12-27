@@ -1,0 +1,311 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<link rel="stylesheet" href="/files/client/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
+<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-md-1"></div>
+        <div class="col-sm-10">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">
+                        User Management
+                    </h3>
+                    <div class="portlet-widgets">
+                        <a href="#" onclick="parent.location='/client-user-management/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div id="basicwizard" >
+                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
+                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. User Details</a></li>
+                                <li><a href="#tab2" data-toggle="tab">2. Select Unit</a></li>
+                            </ul>
+                            <div class="tab-content b-0 m-b-0">
+                                <div class="tab-pane fade active in" id="tab1">
+                                    <div class="row m-t-15">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Category <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control input-sm" id="categoryid">
+                                                      <option value="1">View Only</option>
+                                                      <option value="2">Legal Entity Admin</option>
+                                                      <option value="3">Domain Admin</option>
+                                                      <option value="4">Inhouse User</option>
+                                                      <option value="5">Service Provider User</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group has-feedback">
+                                                <label class="col-sm-4 control-label">User Group <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control input-sm" value="" placeholder="Enter User Group" value="Manager">
+                                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                    <!-- <select class="form-control input-sm">
+                                                      <option>Manager</option>
+                                                      <option>Asst. Manager</option>
+                                                      <option>Data Entry Operator</option>
+                                                    </select> -->
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Email ID <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" type="text" value="siva@domain.com">
+                                                    <span class="help-desk"><small>[We will use this email ID to contact you about your account.]</small></span>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Employee Name <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" value="Sivaraman" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="form-group clearfix m-b-10">
+                                                <label class="col-sm-4 control-label">Employee ID <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" value="EMP001" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="form-group clearfix m-b-10">
+                                                <label class="col-sm-4 control-label">Contact No</label>
+                                                <div class="col-sm-6">
+                                                    <div class="col-md-3 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+                                                    </div>
+                                                    <div class="col-md-3 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="000" value="452">
+                                                    </div>
+                                                    <div class="col-md-6 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="1234567" value="1234567">
+                                                    </div>
+                                                    <span class="help-desk"><small>[+91 452 1234567]</small></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group clearfix m-b-10">
+                                                <label class="col-sm-4 control-label">Mobile No <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <div class="col-md-3 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+                                                    </div>
+                                                    <div class="col-md-9 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="9876543210" value="9876543210">
+                                                    </div>
+                                                    <span class="help-desk"><small>[+91 9876543210]</small></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                    <hr class="m-t-5 m-b-10">
+                                    <!--h4 class="header-title m-t-10 m-b-30 p-l-10 p-t-10 p-b-10 bg-lightdark">Settings</h4-->
+                                    <h4 class="header-title p-l-10">Settings</h4>
+                                    
+                                    <div class="row">
+                                     <form class="form-horizontal" role="form">
+                                        <div class="col-sm-5">
+                                            <div class="form-group select-business-group">
+                                                <label class="col-sm-5 control-label">Business Group </label>
+                                                <div class="col-sm-7 controls">
+                                                    <select class="form-control input-sm example-multiple" multiple="multiple">
+                                                        <option value="1" selected="">RG Business Group 01</option>
+                                                        <option value="2" selected="">RG Business Group 02</option>
+                                                        <option value="3">RG Business Group 03</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group has-feedback select-legal-entity">
+                                                <label class="col-sm-5 control-label">Legal Entity <span class="mandatory">*</span></label>
+                                                <div class="col-sm-7">
+                                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                                        <optgroup label="RG Busness Group 01">
+                                                            <option value="4" selected="">RG Legal Entity 01</option>
+                                                            <option value="5" selected="">RG Legal Entity 02</option>
+                                                            <option value="6">RG Legal Entity 03</option>
+                                                        </optgroup>
+                                                        <optgroup label="RG Busness Group 02">
+                                                            <option value="1">RG Legal Entity 04</option>
+                                                            <option value="2">RG Legal Entity 05</option>
+                                                            <option value="3">RG Legal Entity 06</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group select-division">
+                                                <label class="col-sm-5 control-label">Division </label>
+                                                <div class="col-sm-7">
+                                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                                        <optgroup label="RG Legal Entity 01">
+                                                            <option value="4" selected="">RG Division 01</option>
+                                                            <option value="5">RG Division 02</option>
+                                                        </optgroup>
+                                                        <optgroup label="RG Legal Entity 02">
+                                                            <option value="1">RG Division 03</option>
+                                                            <option value="2">RG Division 04</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <div class="form-group select-category">
+                                                <label class="col-sm-5 control-label">Category</label>
+                                                <div class="col-sm-7">
+                                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                                        <optgroup label="RG Legal Entity 01">
+                                                            <option value="4" selected="">RG Category 01</option>
+                                                            <option value="5">RG Category 02</option>
+                                                        </optgroup>
+                                                        <optgroup label="RG Legal Entity 02">
+                                                            <option value="1">RG Category 03</option>
+                                                            <option value="2">RG Category 04</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group select-domain">
+                                                <label class="col-sm-5 control-label">Domain <span class="mandatory">*</span></label>
+                                                <div class="col-sm-7">
+                                                    <select class="example-multiple" multiple="multiple">
+                                                        <option value="Labour Law" selected="">Labour Law</option>
+                                                        <option value="Finance Law" selected="">Finance Law </option>
+                                                        <option value="Industrial Law">Industrial Law</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </form>
+
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                                 <div class="clear"></div>
+                                <div class="tab-pane m-t-0 fade box-height-350 b-0 m-b-0" id="tab2">
+                                    <div class="row">
+                                        <div class="col-sm-12 scroll_box">
+                                            <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="col-sm-6 no-padding-left">
+                                                                <div class="form-group has-feedback m-b-0">
+                                                                    <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 no-padding-right">
+                                                                <div class="checkbox checkbox-primary checkbox-white m-b-0 m-t-10 pull-right">
+                                                                    <input id="checkbox3" type="checkbox">
+                                                                    <label for="checkbox3"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                            <ul class="list-unstyled">
+                                                                <li class="heading">KG Autoparts </li>
+                                                                <li>VRM1001 - Corporate Office, 871, South street, Delhi</li>
+                                                                <li class="active">VRM1003 - Regional Office - South, 16, North Street, Mambalam, Chennai <i class="fa fa-check pull-right"></i></li>
+                                                                <li>VRM1004 - Branch Office - 1, 85, First Floor, Hani Complex, Bangalore</li>
+                                                                <li>VRM1005 - Branch Office - 2, KK nagar, Madurai</li>
+                                                                <li>VRM1006 - Branch Office - 3, 28,Ramnagar, Delhi</li>
+                                                                <li class="heading">KG Transports <i class="fa fa-check pull-right"></i> </li>
+                                                                <li class="active">VRM1007 - Branch Office - 4, 28 West Street, Hydrabad<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active">VRM1008 - Branch Office - 5, 12 RJ Complex, Main road, T.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active">VRM1008 - Branch Office - 6, 13 CRP Complex, Anna Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active">VRM1008 - Branch Office - 7, 14 CRM Complex, Main road, KK.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <ul class="pager wizard m-b-0">
+                                    <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                    <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                    <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                    <!-- <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Save</a> &nbsp; </li> -->
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<script src="/js/multiselect/bootstrap-multiselect.js"></script>
+<script src="/js/wizard/jquery.bootstrap.wizard.js"></script>
+
+<script type="text/javascript">
+var resizefunc = [];
+
+$(document).ready(function() {
+    $('#basicwizard').bootstrapWizard({'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'});
+});
+
+$(function(){
+  $('#categoryid').on('change', function (e) {
+    if($(this).val() == '1'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').show();
+      $('.select-category').show();
+      $('.select-domain').show();
+    }else if($(this).val() == '2'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').hide();
+      $('.select-category').hide();
+      $('.select-domain').hide();
+    }else if($(this).val() == '3'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').hide();
+      $('.select-category').hide();
+      $('.select-domain').show();
+    }else if($(this).val() == '4'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').show();
+      $('.select-category').show();
+      $('.select-domain').show();
+    }else if($(this).val() == '5'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').show();
+      $('.select-category').show();
+      $('.select-domain').show();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.example-multiple-optgroups').multiselect({
+            buttonWidth: '100%',
+            enableClickableOptGroups: true /*,
+            enableCollapsibleOptGroups: true*/
+        });
+        $('.example-multiple').multiselect({
+            buttonWidth: '100%'
+        });
+    });
+</script>
+{% endblock %}
