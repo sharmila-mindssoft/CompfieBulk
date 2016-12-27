@@ -1,0 +1,238 @@
+2016-12-17 12:39:34,191 - knowledge_logger - main.py-handle-api- : 'legal_entity_id' 
+
+2016-12-17 12:39:34,192 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 25, in process_domain_transaction_request
+    result = process_get_approve_statutory_list(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 76, in process_get_approve_statutory_list
+    assigned_statutories = get_assigned_statutories_list(db, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 21, in get_assigned_statutories_list
+    return return_assigned_statutories(result)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 35, in return_assigned_statutories
+    d["is_approved"], d["client_statutory_id"], d["legal_entity_id"]
+KeyError: 'legal_entity_id'
+ 
+
+2016-12-17 15:37:28,537 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-17 15:37:28,537 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 42, in process_domain_transaction_request
+    db, request_frame, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 67, in process_get_compliances_toassign
+    data = get_compliances_to_assign(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 134, in get_compliances_to_assign
+    statu = result[1]
+IndexError: list index out of range
+ 
+
+2016-12-17 15:38:10,315 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-17 15:38:10,315 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 42, in process_domain_transaction_request
+    db, request_frame, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 67, in process_get_compliances_toassign
+    data = get_compliances_to_assign(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 134, in get_compliances_to_assign
+    statu = result[1]
+IndexError: list index out of range
+ 
+
+2016-12-17 15:50:18,328 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-17 15:50:18,328 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 572, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 383, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 284, in parse_values
+    val = parse_string(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-17 15:50:18,328 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-17 15:50:18,329 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-17 15:51:04,271 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-17 15:51:04,271 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 49, in process_domain_transaction_request
+    result = process_get_assigned_compliance_byid(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 78, in process_get_assigned_compliance_byid
+    data = get_assigned_compliance_by_id(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 272, in get_assigned_compliance_by_id
+    statu = result[1]
+IndexError: list index out of range
+ 
+
+2016-12-17 15:57:53,783 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-17 15:57:53,784 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/domaintransactionprotocol.py", line 572, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 383, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 284, in parse_values
+    val = parse_string(val)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-17 15:57:53,784 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-17 15:57:53,784 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-17 16:03:22,660 - knowledge_logger - main.py-handle-api- : 'AssignStatutoryCompliance' object has no attribute 'legal_entity_id' 
+
+2016-12-17 16:03:22,661 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 42, in process_domain_transaction_request
+    db, request_frame, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 67, in process_get_compliances_toassign
+    data = get_compliances_to_assign(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 199, in get_compliances_to_assign
+    data_list.sort(key=lambda x : (x.legal_entity_id, x.compliance_id))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 199, in <lambda>
+    data_list.sort(key=lambda x : (x.legal_entity_id, x.compliance_id))
+AttributeError: 'AssignStatutoryCompliance' object has no attribute 'legal_entity_id'
+ 
+
+2016-12-17 16:03:36,623 - knowledge_logger - main.py-handle-api- : 'AssignStatutoryCompliance' object has no attribute 'legal_entity_id' 
+
+2016-12-17 16:03:36,623 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 42, in process_domain_transaction_request
+    db, request_frame, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 67, in process_get_compliances_toassign
+    data = get_compliances_to_assign(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 199, in get_compliances_to_assign
+    data_list.sort(key=lambda x : (x.legal_entity_id, x.compliance_id))
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 199, in <lambda>
+    data_list.sort(key=lambda x : (x.legal_entity_id, x.compliance_id))
+AttributeError: 'AssignStatutoryCompliance' object has no attribute 'legal_entity_id'
+ 
+
+2016-12-17 16:07:29,300 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-17 16:07:29,301 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 49, in process_domain_transaction_request
+    result = process_get_assigned_compliance_byid(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 78, in process_get_assigned_compliance_byid
+    data = get_assigned_compliance_by_id(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 328, in get_assigned_compliance_by_id
+    level_1, level_1_s_name, map_text = status_list(map_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 298, in status_list
+    level_1_id = ids[0]
+IndexError: list index out of range
+ 
+
+2016-12-17 16:07:36,381 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-17 16:07:36,381 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 49, in process_domain_transaction_request
+    result = process_get_assigned_compliance_byid(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 78, in process_get_assigned_compliance_byid
+    data = get_assigned_compliance_by_id(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 328, in get_assigned_compliance_by_id
+    level_1, level_1_s_name, map_text = status_list(map_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 298, in status_list
+    level_1_id = ids[0]
+IndexError: list index out of range
+ 
+
+2016-12-17 16:08:35,959 - knowledge_logger - main.py-handle-api- : 'statutory_applicable_status' 
+
+2016-12-17 16:08:35,959 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 49, in process_domain_transaction_request
+    result = process_get_assigned_compliance_byid(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 78, in process_get_assigned_compliance_byid
+    data = get_assigned_compliance_by_id(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 335, in get_assigned_compliance_by_id
+    r["statutory_applicable_status"], r["remarks"],
+KeyError: 'statutory_applicable_status'
+ 
+
+2016-12-17 16:14:39,406 - knowledge_logger - main.py-handle-api- : global name 'unit_ids' is not defined 
+
+2016-12-17 16:14:39,406 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 42, in process_domain_transaction_request
+    db, request_frame, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 67, in process_get_compliances_toassign
+    data = get_compliances_to_assign(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 132, in get_compliances_to_assign
+    for u in unit_ids :
+NameError: global name 'unit_ids' is not defined
+ 
+
+2016-12-17 16:15:06,278 - knowledge_logger - main.py-handle-api- : global name 'unit_id' is not defined 
+
+2016-12-17 16:15:06,278 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 361, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 42, in process_domain_transaction_request
+    db, request_frame, user_id
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/domaintransactioncontroller.py", line 67, in process_get_compliances_toassign
+    data = get_compliances_to_assign(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Src-server/server/database/domaintransaction.py", line 133, in get_compliances_to_assign
+    data = get_compliances_to_assign_byid(db, unit_id, domain_id, user_id)
+NameError: global name 'unit_id' is not defined
+ 
+
