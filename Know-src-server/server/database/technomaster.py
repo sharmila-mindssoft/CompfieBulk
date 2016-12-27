@@ -636,7 +636,7 @@ def return_legal_entities(legal_entities, domains):
                 business_group_name=legal_entity["business_group_name"]
             )
         results.append(
-            core.LegalEntity(
+            core.LegalEntityList(
                 country_id=legal_entity["country_id"],
                 business_group=business_group,
                 legal_entity_id=legal_entity["legal_entity_id"],

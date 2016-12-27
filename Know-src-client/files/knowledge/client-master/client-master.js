@@ -96,7 +96,7 @@ function initialize(type_of_initialization) {
             USERNAME = data.email_id
             SHORTNAME = data.short_name
             VIEW_LICENCE = data.no_of_licence
-            LEGALENTITIES = data.legal_entities
+            LEGALENTITIES = data.legal_entities_list
             DATECONFIGURATIONS = data.date_configurations
             generateMaps();
             editClient();
