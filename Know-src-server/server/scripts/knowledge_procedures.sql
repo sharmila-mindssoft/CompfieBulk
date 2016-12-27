@@ -643,7 +643,9 @@ DROP PROCEDURE IF EXISTS `sp_client_groups_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_client_groups_list`()
+CREATE PROCEDURE `sp_client_groups_list`(
+in userId INT(11)
+)
 BEGIN
     select tcg.client_id, tcg.group_name,
     (
@@ -659,7 +661,7 @@ BEGIN
     ) as no_of_legal_entities,
     is_active, is_approved, remarks
     FROM tbl_client_groups tcg
-    
+    inner join tbl_user_clients tuc on tuc.client_id = tcg.client_id and tuc.user_id = userId
     order by tcg.group_name;
 END //
 
