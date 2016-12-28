@@ -3025,38 +3025,62 @@ CREATE PROCEDURE `sp_userunits_list`( IN userid_ INT(11))
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
     IF @u_cat_id = 5 THEN
-        select count(tu.unit_id) as total_units, tu.client_id,
-        tu.legal_entity_id, tud.domain_id, (
+        select count(distinct t1.unit_id) as total_units,
+        t1.domain_id, t2.legal_entity_id, t2.client_id,
+        (
+            SELECT legal_entity_name from tbl_legal_entities as tle
+            WHERE tle.legal_entity_id = t2.legal_entity_id
+        ) as legal_entity_name,
+        (
+            SELECT business_group_name from tbl_business_groups as tbg
+            WHERE tbg.client_id = t2.client_id
+        ) as business_group_name,
+        (
             SELECT domain_name from tbl_domains td
-            WHERE td.domain_id=tud.domain_id
-        ) as domain_name,(
+            WHERE td.domain_id=t1.domain_id
+        ) as domain_name,
+        (
             SELECT group_name FROM tbl_client_groups tcg
-            WHERE tcg.client_id=tu.client_id
+            WHERE tcg.client_id=t2.client_id
         ) as client_name,(
             SELECT count(unit_id) FROM tbl_user_units tuu
-            WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
+            WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
+            and tuu.user_category_id = 5
         ) as assigned_units
-        from tbl_units tu inner join tbl_units_organizations tud
-        ON tu.unit_id = tud.unit_id
-        inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= tu.client_id
-        group by tu.client_id, tud.domain_id;
+        from tbl_units_organizations as t1
+        inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
+        group by t1.domain_id, t2.client_id;
+
+
     ELSE
-        select count(tu.unit_id) as total_units, tu.client_id,
-        tu.legal_entity_id, tud.domain_id, (
+        select count(distinct t1.unit_id) as total_units,
+        t1.domain_id, t2.legal_entity_id, t2.client_id, (
             SELECT domain_name from tbl_domains td
-            WHERE td.domain_id=tud.domain_id
-        ) as domain_name,(
+            WHERE td.domain_id=t1.domain_id
+        ) as domain_name,
+        (
             SELECT group_name FROM tbl_client_groups tcg
-            WHERE tcg.client_id=tu.client_id
-        ) as client_name,(
+            WHERE tcg.client_id=t2.client_id
+        ) as client_name,
+        (
+            SELECT legal_entity_name from tbl_legal_entities as tle
+            WHERE tle.legal_entity_id = t2.legal_entity_id
+        ) as legal_entity_name,
+        (
+            SELECT business_group_name from tbl_business_groups as tbg
+            WHERE tbg.client_id = t2.client_id
+        ) as business_group_name,
+        (
             SELECT count(unit_id) FROM tbl_user_units tuu
-            WHERE tuu.domain_id=tud.domain_id and tuu.client_id=tu.client_id
+            WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
+            and  tuu.user_id != userid_ and tuu.user_category_id = 7
         ) as assigned_units
-        from tbl_units tu inner join tbl_units_organizations tud
-        ON tu.unit_id = tud.unit_id
-        inner join tbl_user_units uu ON uu.user_id = userid_ and uu.client_id= tu.client_id
-        and uu.unit_id = tu.unit_id
-        group by tu.client_id, tud.domain_id;
+        from tbl_units_organizations as t1
+        inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id and
+        uc.unit_id = t2.unit_id
+        group by t1.domain_id, t2.client_id;
     END IF;
 
 END //
@@ -3071,22 +3095,39 @@ DROP PROCEDURE IF EXISTS `sp_userunits_assigned_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_userunits_assigned_list`(
-    IN clientid INT(11), domainid INT(11)
+    IN clientid INT(11), domainid INT(11), legal_entity_id int(11), _userid int(11)
 )
 BEGIN
-    SELECT tuu.user_id,
-    concat(employee_code,"-", employee_name) as employee_name,
-    tuu.legal_entity_id, legal_entity_name,
-    count(unit_id) as no_of_units,
-    (
-        SELECT business_group_name FROM tbl_business_groups tbg
-        WHERE tbg.business_group_id=tle.business_group_id
-    ) as business_group_name
-    FROM tbl_user_units tuu
-    INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
-    INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
-    WHERE tuu.client_id=clientid and domain_id=domainid
-    group by user_id;
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _userid;
+    IF @u_cat_id = 5 THEN
+        SELECT tuu.user_id,
+        concat(employee_code,"-", employee_name) as employee_name,
+        tuu.legal_entity_id, legal_entity_name,
+        count(unit_id) as no_of_units,
+        (
+            SELECT business_group_name FROM tbl_business_groups tbg
+            WHERE tbg.business_group_id=tle.business_group_id
+        ) as business_group_name, tuu.user_category_id
+        FROM tbl_user_units tuu
+        INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
+        INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
+        WHERE tuu.client_id=clientid and tuu.domain_id=domainid and tuu.legal_entity_id = legal_entity_id
+        and tuu.user_category_id = @u_cat_id group by user_id;
+    ELSE
+        SELECT tuu.user_id,
+        concat(employee_code,"-", employee_name) as employee_name,
+        tuu.legal_entity_id, legal_entity_name,
+        count(unit_id) as no_of_units,
+        (
+            SELECT business_group_name FROM tbl_business_groups tbg
+            WHERE tbg.business_group_id=tle.business_group_id
+        ) as business_group_name, tuu.user_category_id
+        FROM tbl_user_units tuu
+        INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
+        INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
+        WHERE tuu.client_id=clientid and tuu.domain_id=domainid and tuu.legal_entity_id = legal_entity_id
+        and tuu.user_category_id = @u_cat_id AND tuu.user_id != _userid group by user_id;
+    END IF;
 END //
 
 DELIMITER ;
@@ -3172,7 +3213,7 @@ DROP PROCEDURE IF EXISTS `sp_units_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_units_list`(
-    IN clientid INT(11), IN domainid INT(11), IN userid INT(11)
+    IN clientid INT(11), IN domainid INT(11), IN LegalEntityID int(11), IN userid INT(11)
 )
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid;
@@ -3195,10 +3236,12 @@ BEGIN
         FROM tbl_units tu
         INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
         inner join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
-        WHERE tu.client_id=clientid and tui.domain_id=domainid and
+        WHERE tu.client_id=clientid and tu.legal_entity_id = LegalEntityID
+        and tui.domain_id=domainid and
         tu.unit_id not in (
             SELECT unit_id FROM tbl_user_units WHERE client_id=clientid
         )
+        group by tu.unit_id
         order by unit_name ASC;
 
         SELECT tui.unit_id, (SELECT domain_name FROM tbl_domains td WHERE td.domain_id = tui.domain_id)
@@ -3207,14 +3250,14 @@ BEGIN
         FROM tbl_units tu
         INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
         inner join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
-        WHERE tu.client_id=clientid and tui.domain_id=domainid and
+        WHERE tu.client_id=clientid and tu.legal_entity_id = LegalEntityID and tui.domain_id=domainid and
         tu.unit_id not in (
             SELECT unit_id FROM tbl_user_units WHERE client_id=clientid
         );
 
     ELSE
-        SELECT tu.unit_id, unit_code, unit_name,
-        address, (
+        SELECT tu.unit_id, tu.unit_code, tu.unit_name,
+        tu.address, (
             SELECT division_name FROM tbl_divisions td
             WHERE td.division_id=tu.division_id
         ) as division_name, (
@@ -3228,25 +3271,28 @@ BEGIN
             SELECT geography_name FROM tbl_geographies tg
             WHERE tg.geography_id = tu.geography_id
         ) as geography_name
-        FROM tbl_units tu
-        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
-        inner join tbl_user_units uu ON uu.user_id = userid and uu.client_id= tu.client_id
-        and uu.unit_id = tu.unit_id
-        WHERE tu.client_id=clientid and tui.domain_id=domainid
-        order by unit_name ASC;
+        from tbl_user_units uu inner join tbl_units as tu on
+        tu.unit_id = uu.unit_id
+        WHERE uu.client_id=1 and uu.legal_entity_id = 1
+        and uu.domain_id=3 and user_id=13
+        and uu.unit_id not in (select unit_id from tbl_user_units where user_id != 13 and
+        user_category_id =7)
+        group by uu.unit_id
+        order by tu.unit_name ASC;
 
-        SELECT tui.unit_id, (
+        SELECT tu.unit_id, (
             SELECT domain_name FROM tbl_domains td
-            WHERE td.domain_id = tui.domain_id
+            WHERE td.domain_id = tu.domain_id
         ) as domain_name, (
             SELECT organisation_name FROM tbl_organisation ti
-            WHERE ti.organisation_id = tui.organisation_id
+            WHERE ti.organisation_id = tu.organisation_id
         ) as organisation_name
-        FROM tbl_units tu
-        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
-        inner join tbl_user_units uu ON uu.user_id = userid and uu.client_id= tu.client_id
-        and uu.unit_id = tu.unit_id
-        WHERE tu.client_id=clientid and tui.domain_id=domainid;
+        from tbl_user_units uu inner join tbl_units_organizations as tu on
+        tu.unit_id = uu.unit_id
+        WHERE uu.client_id=1 and uu.legal_entity_id = 1
+        and uu.domain_id=3 and user_id=13
+        and uu.unit_id not in (select unit_id from tbl_user_units where user_id != 13 and
+        user_category_id =7) group by uu.unit_id;
     END IF;
 
 END //
@@ -3282,7 +3328,7 @@ CREATE PROCEDURE `sp_legal_entities_by_client`(
 )
 BEGIN
     SELECT legal_entity_id, legal_entity_name, business_group_id,
-    client_id FROM tbl_legal_entities WHERE client_id=clientid and
+    client_id, country_id FROM tbl_legal_entities WHERE client_id=clientid and
     is_closed = 0;
 END //
 
