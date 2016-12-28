@@ -378,6 +378,7 @@ api_params = {
     "assigned_units_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnit"},
     "assigned_unit_details_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnitDetails"},
     "domain_manager_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "User"},
+    "mapped_domain_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "DomainUser"},
     "active_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ActiveUnit"},
     'division_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'dv_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
