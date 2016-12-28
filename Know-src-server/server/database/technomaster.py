@@ -190,11 +190,15 @@ def save_legal_entities(db, request, group_id, session_user):
     current_time_stamp = get_date_time()
     legal_entity_names = []
     for entity in request.legal_entity_details:
-        if is_logo_in_image_format(entity.logo):
-            file_name = save_client_logo(entity.logo)
-            file_size = entity.logo.file_size
+        if entity.logo is None:
+            file_name = None
+            file_size = 0
         else:
-            raise process_error("E067")
+            if is_logo_in_image_format(entity.logo):
+                file_name = save_client_logo(entity.logo)
+                file_size = entity.logo.file_size
+            else:
+                raise process_error("E067")
         business_group_id = return_business_group_id(
             db, entity, group_id, session_user, current_time_stamp
         )
@@ -246,7 +250,7 @@ def update_legal_entities(db, request, group_id, session_user):
             if is_logo_in_image_format(entity.new_logo):
                 file_name = save_client_logo(entity.new_logo)
                 file_size = entity.new_logo.file_size
-                #columns.append("logo_size")
+                columns.append("logo_size")
                 insert_columns.append("logo_size")
             else:
                 raise process_error("E067")
@@ -278,8 +282,8 @@ def update_legal_entities(db, request, group_id, session_user):
                 file_name, entity.file_space, entity.no_of_licence,
                 session_user, current_time_stamp
             ]
-            #if(entity.new_logo is not None):
-            #    value_list.append(file_size)
+            if(entity.new_logo is not None):
+               value_list.append(file_size)
 
             values.append(tuple(value_list))
 
@@ -300,7 +304,6 @@ def update_legal_entities(db, request, group_id, session_user):
             if(entity.new_logo is not None):
                 insert_value_list.append(file_size)
             insert_values.append(tuple(insert_value_list))
-
     if db.bulk_insert(
         tblLegalEntities, insert_columns, insert_values
     ) is False:
