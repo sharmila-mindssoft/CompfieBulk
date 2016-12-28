@@ -1,0 +1,496 @@
+2016-12-23 09:10:33,488 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:10:33,489 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:11:53,573 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:11:53,573 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:13:13,594 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:13:13,595 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:14:33,624 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:14:33,626 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:15:53,695 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:15:53,696 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:17:13,764 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:17:13,765 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:18:33,857 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:18:33,858 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:19:53,936 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:19:53,937 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    rows = db.select_all(query)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:21:14,034 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 09:21:14,035 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
+    " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 09:22:09,861 - knowledge_logger - main.py-handle-api- : 'database_name' 
+
+2016-12-23 09:22:09,861 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
+    gen.get_servers(db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 144, in get_servers
+    return return_companies(rows)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 163, in return_companies
+    d["database_name"],
+KeyError: 'database_name'
+ 
+
+2016-12-23 12:00:08,827 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
+
+2016-12-23 12:00:08,828 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 207, in handle_api_request
+    _db_con = self._con_pool.get_connection()
+  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
+    "Failed getting connection; pool exhausted")
+PoolError: Failed getting connection; pool exhausted
+ 
+
+2016-12-23 12:00:12,393 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
+
+2016-12-23 12:00:12,394 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 207, in handle_api_request
+    _db_con = self._con_pool.get_connection()
+  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
+    "Failed getting connection; pool exhausted")
+PoolError: Failed getting connection; pool exhausted
+ 
+
+2016-12-23 12:02:40,329 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
+
+2016-12-23 12:02:40,329 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 207, in handle_api_request
+    _db_con = self._con_pool.get_connection()
+  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
+    "Failed getting connection; pool exhausted")
+PoolError: Failed getting connection; pool exhausted
+ 
+
+2016-12-23 12:03:55,939 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
+
+2016-12-23 12:03:55,940 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 208, in handle_api_request
+    _db_con = self._con_pool.get_connection()
+  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
+    "Failed getting connection; pool exhausted")
+PoolError: Failed getting connection; pool exhausted
+ 
+
+2016-12-23 12:42:31,521 - knowledge_logger - main.py-parse-request : 400: Bad Request 
+
+2016-12-23 12:42:31,522 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 155, in _parse_request
+    data = request.get_json(force=True)
+  File "/home/ushadevi/.local/lib/python2.7/site-packages/flask/wrappers.py", line 161, in get_json
+    rv = self.on_json_loading_failed(e)
+  File "/home/ushadevi/.local/lib/python2.7/site-packages/flask/wrappers.py", line 181, in on_json_loading_failed
+    raise BadRequest()
+BadRequest: 400: Bad Request
+ 
+
+2016-12-23 12:42:31,522 - knowledge_logger - main.py-handle-api- : 400: Bad Request 
+
+2016-12-23 12:42:31,522 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: 400: Bad Request
+ 
+
+2016-12-23 19:06:42,353 - knowledge_logger - main.py-parse-request : expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1} 
+
+2016-12-23 19:06:42,354 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 598, in parse_structure
+    request, "domaintransactionprotocol", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 27, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 68, in parse_inner_structure
+    data = parse_dictionary(data, ["u_id", "d_id", "rcount"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1}
+ 
+
+2016-12-23 19:06:42,354 - knowledge_logger - main.py-handle-api- : expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1} 
+
+2016-12-23 19:06:42,354 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1}
+ 
+
+2016-12-23 19:09:32,057 - knowledge_logger - main.py-handle-api- : local variable 'c' referenced before assignment 
+
+2016-12-23 19:09:32,057 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 371, in handle_domain_transaction
+    return controller.process_domain_transaction_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/domaintransactioncontroller.py", line 57, in process_domain_transaction_request
+    result = process_approve_assigned_statutory(db, request_frame, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/domaintransactioncontroller.py", line 95, in process_approve_assigned_statutory
+    data = save_approve_statutories(db, request, user_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/domaintransaction.py", line 410, in save_approve_statutories
+    db.execute(q1, [5, user_id, get_date_time(), unit_id, domain_id, c])
+UnboundLocalError: local variable 'c' referenced before assignment
+ 
+
+2016-12-27 14:53:06,295 - knowledge_logger - main.py-handle-api- : sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1 
+
+2016-12-27 14:53:06,296 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 821, in get_groups
+    "sp_client_groups_list", (session_user,)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1
+ 
+
+2016-12-27 14:53:19,532 - knowledge_logger - main.py-handle-api- : sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1 
+
+2016-12-27 14:53:19,532 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 821, in get_groups
+    "sp_client_groups_list", (session_user,)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1
+ 
+
+2016-12-27 14:57:19,825 - knowledge_logger - main.py-handle-api- : sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1 
+
+2016-12-27 14:57:19,825 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 821, in get_groups
+    "sp_client_groups_list", (session_user,)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1
+ 
+
+2016-12-27 14:57:40,696 - knowledge_logger - main.py-handle-api- : sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1 
+
+2016-12-27 14:57:40,697 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 821, in get_groups
+    "sp_client_groups_list", (session_user,)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_groups_list- (5,)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_client_groups_list; expected 0, got 1
+ 
+
+2016-12-27 15:32:42,170 - knowledge_logger - main.py-handle-api- : 'NoneType' object has no attribute 'file_name' 
+
+2016-12-27 15:32:42,170 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 46, in process_techno_request
+    result = process_save_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 85, in process_save_client_group
+    db, request, group_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 193, in save_legal_entities
+    if is_logo_in_image_format(entity.logo):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 555, in is_logo_in_image_format
+    exten = logo.file_name.split('.')[1]
+AttributeError: 'NoneType' object has no attribute 'file_name'
+ 
+
+2016-12-27 17:07:11,264 - knowledge_logger - main.py-handle-api- : sp_client_group_update- (30, u'kodeeswaran@mindssoft.com', 50, u'legal entity name changed')- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_group_update; expected 2, got 4 
+
+2016-12-27 17:07:11,264 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 137, in process_update_client_group
+    db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 157, in update_client_group
+    "sp_client_group_update", (client_id, email_id, no_of_licence, remarks)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/dbase.py", line 820, in call_update_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_group_update- (30, u'kodeeswaran@mindssoft.com', 50, u'legal entity name changed')- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_group_update; expected 2, got 4
+ 
+
+2016-12-27 18:25:38,082 - knowledge_logger - main.py-handle-api- : 'tuple' object has no attribute 'append' 
+
+2016-12-27 18:25:38,082 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 302, in update_legal_entities
+    insert_value_list.append(file_size)
+AttributeError: 'tuple' object has no attribute 'append'
+ 
+
+2016-12-27 18:31:18,029 - knowledge_logger - main.py-handle-api- : Legal Entity name already exists 
+
+2016-12-27 18:31:18,030 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 262, in update_legal_entities
+    raise process_error("E068")
+RuntimeError: Legal Entity name already exists
+ 
+
+2016-12-27 18:31:29,949 - knowledge_logger - main.py-handle-api- : 'tuple' object has no attribute 'append' 
+
+2016-12-27 18:31:29,949 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 302, in update_legal_entities
+    insert_values.append(tuple(insert_value_list))
+AttributeError: 'tuple' object has no attribute 'append'
+ 
+
+2016-12-27 18:31:45,466 - knowledge_logger - main.py-handle-api- : Legal entity creation failed 
+
+2016-12-27 18:31:45,467 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 313, in update_legal_entities
+    raise process_error("E052")
+RuntimeError: Legal entity creation failed
+ 
+
+2016-12-27 18:38:16,323 - knowledge_logger - main.py-handle-api- : Legal entity creation failed 
+
+2016-12-27 18:38:16,324 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 313, in update_legal_entities
+    raise process_error("E052")
+RuntimeError: Legal entity creation failed
+ 
+
+2016-12-27 18:39:46,392 - knowledge_logger - main.py-handle-api- : Legal entity creation failed 
+
+2016-12-27 18:39:46,393 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 315, in update_legal_entities
+    raise process_error("E052")
+RuntimeError: Legal entity creation failed
+ 
+
+2016-12-27 18:41:44,917 - knowledge_logger - main.py-handle-api- : Legal entity creation failed 
+
+2016-12-27 18:41:44,918 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 318, in update_legal_entities
+    raise process_error("E052")
+RuntimeError: Legal entity creation failed
+ 
+
+2016-12-27 18:44:21,917 - knowledge_logger - main.py-handle-api- : Legal entity creation failed 
+
+2016-12-27 18:44:21,918 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 320, in update_legal_entities
+    raise process_error("E052")
+RuntimeError: Legal entity creation failed
+ 
+
+2016-12-27 18:56:24,174 - knowledge_logger - main.py-handle-api- : Business group name already exists 
+
+2016-12-27 18:56:24,175 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technocontroller.py", line 53, in process_techno_request
+    result = process_update_client_group(db, request_frame, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/controller/technomastercontroller.py", line 140, in process_update_client_group
+    db, request, request.client_id, session_user)
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 257, in update_legal_entities
+    db, entity, group_id, session_user, current_time_stamp
+  File "/home/knight/projects/aparajitha-saas/Know-src-server/server/database/technomaster.py", line 334, in return_business_group_id
+    raise process_error("E066")
+RuntimeError: Business group name already exists
+ 
+

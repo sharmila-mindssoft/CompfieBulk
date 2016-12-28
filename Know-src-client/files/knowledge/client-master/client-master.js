@@ -70,6 +70,7 @@ function initialize(type_of_initialization) {
                 industry_id_map[value.industry_name] = parseInt(value.industry_id)
                 industry_name_map[parseInt(value.industry_id)] = value.industry_name
             });
+            $(".edit-date-config").hide();
             addClient();
         }
 
@@ -613,8 +614,13 @@ function saveClient() {
                     legal_entities, date_configurations
                 );
             } else {
+                if($("#remarks-text").val() != ""){
+                    remarks = $("#remarks-text").val();
+                } else{
+                    remarks = null;
+                }
                 callUpdateClientApi(
-                    edit_id, group_name, username, short_name, parseInt(no_of_view_licence),
+                    edit_id, group_name, username, short_name, parseInt(no_of_view_licence), remarks,
                     legal_entities, date_configurations
                 );
             }
@@ -650,7 +656,7 @@ function callSaveClientApi(
 }
 
 function callUpdateClientApi(
-    group_id, group_name, username, short_name, no_of_view_licence,
+    group_id, group_name, username, short_name, no_of_view_licence, remarks, 
     legal_entities, date_configurations
 ) {
     clearMessage();
@@ -665,7 +671,7 @@ function callUpdateClientApi(
         hideLoader();
         displayMessage(error);
     }
-    mirror.updateClientGroup(group_id, group_name, username, short_name, no_of_view_licence,
+    mirror.updateClientGroup(group_id, group_name, username, short_name, no_of_view_licence, remarks,
         legal_entities, date_configurations,
         function(error, response) {
             if (error == null) {
@@ -758,7 +764,7 @@ function editClient() {
         legal_entity_id_map[parseInt(le_count)] = value.legal_entity_id;
         showNonEditableEntityDetails(le_count, value, value.domain_details, true)
     });
-    $(".date-config-edit").show();
+    $(".edit-date-config").show();
     generateDateConfigurationList();
     $.each(DATECONFIGURATIONS, function(key, value) {
         var country_id = value.country_id
@@ -871,9 +877,11 @@ function loadActions() {
     actions = [];
     actions = ["Edit", "Renewal", "Amendment"];
     // if (IS_APPROVED == 0) {
-    //     actions = ["Edit", "Renewal", "Amendment"]
-    // } else {
-    //     actions = ["Renewal", "Amendment"]
+    //     actions = ["Edit", "Renewal"];
+    // } else if (IS_APPROVED == 1) {
+    //     actions = ["Renewal", "Amendment"];
+    // } else if (IS_APPROVED == 2) {
+    //     actions = ["Edit", "Renewal", "Amendment"];
     // }
     $.each(actions, function(key, value) {
         var clone = $(".select-option option").clone();
@@ -924,11 +932,11 @@ function editEntity(le_count, value, domain_details) {
             le_table.find(".edit-right-icon i").addClass("fa-times");
         } else {
             //showEditable(le_table.find(".country"), value.country_id);
-            le_table.find(".addbg").show();
-            if (value.business_group) {
-                console.log("value.business_group.business_group_id--"+value.business_group.business_group_id);
-                showEditable(le_table.find(".business-group"), value.business_group.business_group_id);
-            }
+            //le_table.find(".addbg").show();
+            // if (value.business_group) {
+            //     console.log("value.business_group.business_group_id--"+value.business_group.business_group_id);
+            //     showEditable(le_table.find(".business-group"), value.business_group.business_group_id);
+            // }
             showEditable(le_table.find("#legal_entity_text"), value.legal_entity_name);
             showEditable(le_table.find("#no-of-user-licence"), value.no_of_licence);
             showEditable(le_table.find("#file-space"), value.file_space);
@@ -945,7 +953,7 @@ function editEntity(le_count, value, domain_details) {
             img_clone = $(".logo-img span").clone();
             le_table.find("#upload-logo").parent().append(img_clone);
             le_table.find("#upload-logo-img").attr("src", "http://" + window.location.host + "/knowledge/clientlogo/" + logoFile[le_count - 1]);
-            $(".add-domain").show();
+            $(".domain-"+le_count).show();
             var domain_list_class = "domain-list-" + le_count;
             var domain_count_class = "domain-count-" + le_count;
             $('.' + domain_list_class).empty();
@@ -1009,7 +1017,9 @@ $(".edit-date-config").click(function() {
                     $('.tl-to-' + country_id + '-' + domain_id), value.month_to
                 );
             });
-            // $(".edit-date-config").attr("src", "/images/delete-icon-black.png");
+            $(".edit-date-config").attr("src", "/images/delete-icon-black.png");            
+            $(".edit-date-config").find("i").addClass("fa-times");
+            $(".edit-date-config").find("i").removeClass("fa-pencil");
         } else {
             $.each(DATECONFIGURATIONS, function(key, value) {
                 var country_id = value.country_id
@@ -1023,7 +1033,9 @@ $(".edit-date-config").click(function() {
                     month_id_name_map[value.month_to]
                 );
             });
-            // $(".edit-date-config").attr("src", "/images/icon-edit.png");
+            $(".edit-date-config").attr("src", "/images/icon-edit.png");
+            $(".edit-date-config").find("i").removeClass("fa-times");
+            $(".edit-date-config").find("i").addClass("fa-pencil");
         }
     }
 });
@@ -1112,6 +1124,7 @@ function addClient() {
         addDomain(domain_list_class, domain_count_class, le_count)
     });
     $('.country', clone).on("change", function(){
+        loadBusinessGroups(bg_class);
         loadDomainsforcountry(parseInt($(this).val()), "domain-"+le_count, $("." +domain_count_class).val());    
     });
 
@@ -1240,7 +1253,6 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
         splitcontractfrom[1] = 0;
         splitcontractfrom[0] = 0;
     }    
-
     clone.find("."+activationdate_class)
         .removeClass('hasDatepicker')
         .removeAttr('id')
@@ -1252,7 +1264,7 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ],
-            minDate: new Date(splitcontractfrom[2], splitcontractfrom[1], splitcontractfrom[0]),
+            minDate: new Date(splitcontractfrom[2], splitcontractfrom[1]-1, splitcontractfrom[0]),
         });
     $(".addOrganizationType", clone).attr("id", le_count + "-" + domain_count); //addOrganizationType
     $(".addOrganizationType", clone).addClass("addOrganizationType-"+le_count + "-" + domain_count);
@@ -1374,12 +1386,12 @@ function loadDomainsforcountry(country_val, domain_class, countval){
 function loadBusinessGroups(bg_class) {
     $('.' + bg_class + " option:gt(0)").remove();
     bg_html = "<option value ='0'>(Select Business Group)</option>";
-    if (BUSSINESSGROUPS, length > 0) {
+    if (BUSSINESSGROUPS.length > 0) {
         $.each(BUSSINESSGROUPS, function(key, value) {
             bg_html += "<option value = " + parseInt(value.business_group_id) + ">" + value.business_group_name + "</option>";
         });
     }
-    $('.' + bg_class).html(bg_html);
+    $('.'+bg_class).html(bg_html);
 }
 
 
