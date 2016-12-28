@@ -296,6 +296,7 @@ var message = {
   "domain_manager_required": "Domain Manager required",
   "atleast_one_unit_required": "Select atleast one unit to assign",
   "assign_success": "Assigned successfully",
+  "unit_remove": "Already! reached unit count, kindly remove unit or change the organization.",
   "techno_executive_required": "Techno executive required",
   "domain_executive_required": "Domain executive required",
   "reassign_users_account_success": "User's account reassigned successfully",
