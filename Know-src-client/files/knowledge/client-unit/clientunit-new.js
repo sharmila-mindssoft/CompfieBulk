@@ -818,7 +818,7 @@ $("#group-select").on("change", function(){
     else{
         loadBusinessGroups();
     }
-    
+
 });
 
 //Load Business Groups  ---------------------------------------------------------------------------------------------
@@ -1055,9 +1055,9 @@ function addcountryrow() {
     }
     else{
         $('.add-country-unit-list').show();
-        addcountryrownew();    
+        addcountryrownew();
     }
-    
+
 }
 
 //Add Country Wise List ----------------------------------------------------------------------------------------
@@ -1205,57 +1205,70 @@ function addcountryrownew() {
     $('.postal-code', clone).on('input', function(e) {
         this.value = isNumbers($(this));
     });
+    $('.orgtypeselected',clone).on('change', function(e) {
+        log_units_count(e,division_cnt + '-' + 1);
+    });
 }
 //Add Unit for individual Rows---------------------------------------------------------------------------------
-function log_units_count(classval) {
-    var domain_id = $('.domainselected' + classval).val();
-    var org_id = $('.orgtypeselected' + classval).val();
+function log_units_count(e,classval) {
+    console.log(classval, units_count)
+    var domain_id = $('.domainselected-' + classval).val();
+    var org_id = $('.orgtypeselected-' + classval).val();
     if (units_count.length > 0) {
+        console.log("unit-1")
         for (var i = 0; i < units_count.length; i++) {
+            console.log("unit-2:"+units_count.length)
             var split_unit = units_count[i].split("-");
+            console.log("unit-3:",split_unit)
             if (domain_id == split_unit[0] && org_id == split_unit[1]) {
                 var assignedUnits = getOrgCount(domain_id, org_id);
+                console.log("unit-4:",assignedUnits);
                 if (assignedUnits <= parseInt(split_unit[2])) {
+                    console.log("unit-5-matched"+classval.split("-"));
                     //if(classval.split("-")[2] == "1")
                     //{
                     var msgstatus = message.unit_remove;
-                    $('.warning-confirm').dialog({
-                        title: 'Remove Unit',
-                        buttons: {
-                            Ok: function() {
-                                $(this).dialog('close');
-                                //var index = parseInt($('.tbody-unit-'+division_cnt+' tr').length)-1;
-                                var index = parseInt(classval.split("-")[2]);
-                                if (index == 1) {
-                                    var rowIndx = index - 1;
-                                    $('.tbody-unit-' + division_cnt + ' tr').eq(rowIndx).remove();
-                                } else {
-                                    index = parseInt(classval.split("-")[1]);
-                                    var rowIndx = 0;
-                                    if (parseInt($('.tbody-unit-' + index + ' tr').length) > 1) {
-                                        rowIndx = parseInt($('.tbody-unit-' + index + ' tr').length) - 1;
-                                    }
-                                    $('.tbody-unit-' + index + ' tr').eq(rowIndx).remove();
-                                }
-                            },
-                            /*Cancel: function () {
-                              $(this).dialog('close');
-                              prev_org_id = org_id;
-                              check_org = true;
-                            }*/
-                        },
-                        open: function() {
-                            $('.warning-message').html(msgstatus);
+
+                    confirm_alert(msgstatus, function(isConfirm){
+                    if(isConfirm){
+                        var index = parseInt(classval.split("-")[1]);
+                        if (index == 1) {
+                            console.log("index:"+index);
+                            var rowIndx = index - 1;
+                            $('.tbody-unit-' + division_cnt + ' tr').eq(rowIndx).remove();
+                        } else {
+                            index = parseInt(classval.split("-")[0]);
+                            console.log("index:"+index);
+                            var rowIndx = 0;
+                            if (parseInt($('.tbody-unit-' + index + ' tr').length) > 1) {
+                                //rowIndx = parseInt($('.tbody-unit-' + index + ' tr').length) - 1;
+                            }
+                            console.log("rowIndx:"+rowIndx)
+                            $('.tbody-unit-' + index + ' tr').eq(rowIndx).remove();
                         }
-                    });
+                        var countval =classval.split("-")[0];
+                        $('.unitcnt-' + countval + '-' + 1).val(parseInt($('.unitcnt-' + countval + '-' + 1).val()) -1);
+                      e.preventDefault();
+                    }
+                    else{
+                        //$(this).dialog('close');
+                        prev_org_id = org_id;
+                        check_org = true;
+                    }
+                  });
+
                     //}
                 } else if (parseInt(assignedUnits) > parseInt(split_unit[2])) {
+                    console.log("unit-6-pushed")
                     units_count[i] = domain_id + '-' + org_id + '-' + (parseInt(split_unit[2]) + 1);
+                    console.log("unit-6-"+units_count)
                 }
             }
         }
     } else {
+
         units_count.push(domain_id + '-' + org_id + '-' + 1);
+        console.log("unit-7-"+units_count)
     }
 }
 
@@ -1380,17 +1393,28 @@ function unitrow_close(evt) {
 }
 
 function check_previous_orgn(evt) {
+    console.log("check org:"+check_org,prev_org_id)
     /*var tableclassname = $(evt).parents('table').attr('class');
 
     var tableclass = tableclassname.split(' ');
     var tbodyclassname = $('.' + tableclass[1]).find('tbody:eq(1)').attr('class');
     var tbodyclasses = tbodyclassname.split(' ');*/
     if (check_org == true) {
+        var org_bool = false;
         var unitno = $('.unitcnt-' + division_cnt + '-' + 1).val();
         var org_id = $('.orgtypeselected-' + division_cnt + '-' + parseInt(unitno - 1)).val();
-        if (org_id == prev_org_id) {
+        for(var i=0;i<org_id.length;i++){
+            if(org_id[i] == prev_org_id){
+                org_bool = true;
+            }
+        }
+        if (org_bool == true) {
             var msgstatus = message.unit_remove;
-            $('.warning-confirm').dialog({
+            displayMessage(msgstatus);
+            var index = parseInt($('.tbody-unit-' + division_cnt + ' tr').parent().index())+1;
+            $('.tbody-unit-' + division_cnt + ' tr').eq(0).remove();
+            $('.unitcnt-' + division_cnt + '-' + 1).val(parseInt($('.unitcnt-' + division_cnt + '-' + 1).val()) -1);
+            /*$('.warning-confirm').dialog({
                 title: 'Remove Unit',
                 buttons: {
                     Ok: function() {
@@ -1403,11 +1427,11 @@ function check_previous_orgn(evt) {
                       prev_org_id = org_id;
                       check_org = true;
                     }*/
-                },
+                /*},
                 open: function() {
                     $('.warning-message').html(msgstatus);
                 }
-            });
+            });*/
         } else {
             check_org = false;
             addNewUnitRow(evt);
@@ -1471,8 +1495,12 @@ function addNewUnitRow(str) {
     $('.postal-code-' + division_cnt + '-' + unitval).on('input', function(e) {
         this.value = isNumbers($(this));
     });
+    $('.orgtypeselected-' + division_cnt + '-' + unitval).on('change', function(e) {
+        log_units_count(e,division_cnt + '-' + unitval);
+    });
     loadDomains();
     industrytype('industry-' + division_cnt + '-' + unitval, []);
+
 }
 
 function addNewUnitRow_edit(str) {
@@ -1531,6 +1559,9 @@ function addNewUnitRow_edit(str) {
         this.value = isNumbers($(this));
     });
 
+    $('.orgtypeselected-' + countval + '-' + unitval).on('change', function(e) {
+        log_units_count(e,countval + '-' + unitval);
+    });
     loadDomains();
     industrytype('industry-' + countval + '-' + unitval, []);
 
