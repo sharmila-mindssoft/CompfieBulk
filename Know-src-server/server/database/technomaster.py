@@ -246,7 +246,7 @@ def update_legal_entities(db, request, group_id, session_user):
             if is_logo_in_image_format(entity.new_logo):
                 file_name = save_client_logo(entity.new_logo)
                 file_size = entity.new_logo.file_size
-                columns.append("logo_size")
+                #columns.append("logo_size")
                 insert_columns.append("logo_size")
             else:
                 raise process_error("E067")
@@ -278,8 +278,8 @@ def update_legal_entities(db, request, group_id, session_user):
                 file_name, entity.file_space, entity.no_of_licence,
                 session_user, current_time_stamp
             ]
-            if(entity.new_logo is not None):
-                value_list.append(file_size)
+            #if(entity.new_logo is not None):
+            #    value_list.append(file_size)
 
             values.append(tuple(value_list))
 
