@@ -134,7 +134,7 @@ def process_update_client_group(db, request, session_user):
         db, request.client_id, request.date_configurations, session_user
     )
     update_client_group(
-        db, request.client_id, request.email_id, request.no_of_view_licence, "remarks value"
+        db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks
     )
     legal_entity_names = update_legal_entities(
         db, request, request.client_id, session_user)
