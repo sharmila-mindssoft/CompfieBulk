@@ -7,11 +7,10 @@
 from protocol import (admin, core, login)
 from corecontroller import process_user_menus
 from generalcontroller import validate_user_session, validate_user_forms
-from server import logger
 from server.database.tables import *
 from server.database.admin import *
 from server.database.technomaster import (
-    get_groups, get_business_groups_for_user, get_units
+    get_groups, get_business_groups_for_user
 )
 
 __all__ = [
@@ -39,90 +38,62 @@ def process_admin_request(request, db):
     if session_user is None:
         return login.InvalidSessionToken()
     if type(request_frame) is admin.GetUserGroups:
-        logger.logKnowledgeApi("GetUserGroups", " process begin")
         result = get_user_groups(db, request_frame, session_user)
-        logger.logKnowledgeApi("GetUserGroups", "process end")
 
     elif type(request_frame) is admin.SaveUserGroup:
-        logger.logKnowledgeApi("SaveUserGroup", "process begin")
         result = save_user_group_record(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveUserGroup", "process end")
 
     elif type(request_frame) is admin.UpdateUserGroup:
-        logger.logKnowledgeApi("UpdateUserGroup", "process begin")
         result = update_user_groups(db, request_frame, session_user)
-        logger.logKnowledgeApi("UpdateUserGroup", "process end")
 
     elif type(request_frame) is admin.ChangeUserGroupStatus:
-        logger.logKnowledgeApi("ChangeUserGroupStatus", "process begin")
         result = change_user_group_status(db, request_frame, session_user)
-        logger.logKnowledgeApi("ChangeUserGroupStatus", "process end")
 
     elif type(request_frame) is admin.GetUsers:
-        logger.logKnowledgeApi("GetUsers", "process begin")
         result = get_users(db, request_frame, session_user)
-        logger.logKnowledgeApi("ChangeUserGroupStatus", "process end")
 
     elif type(request_frame) is admin.SaveUser:
-        logger.logKnowledgeApi("SaveUser", "process begin")
         result = save_user_record(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveUser", "process end")
 
     elif type(request_frame) is admin.UpdateUser:
-        logger.logKnowledgeApi("UpdateUser", "process begin")
         result = update_user_record(db, request_frame, session_user)
-        logger.logKnowledgeApi("UpdateUser", "process end")
 
     elif type(request_frame) is admin.ChangeUserStatus:
-        logger.logKnowledgeApi("ChangeUserStatus", "process begin")
         result = change_user_status(db, request_frame, session_user)
-        logger.logKnowledgeApi("ChangeUserStatus", "process end")
 
     elif type(request_frame) is admin.ChangeDisableStatus:
-        logger.logKnowledgeApi("ChangeDisableStatus", "process begin")
         result = change_disable_status(db, request_frame, session_user)
-        logger.logKnowledgeApi("ChangeDisableStatus", "process end")
 
     elif type(request_frame) is admin.SendRegistraion:
-        logger.logKnowledgeApi("SendRegistraion", "process begin")
         result = send_user_registration_mail(db, request_frame, session_user)
-        logger.logKnowledgeApi("SendRegistraion", "process end")
 
     elif type(request_frame) is admin.GetValidityDateList:
-        logger.logKnowledgeApi("GetValidityDateList", "process begin")
         result = process_getvaliditydate_request(
             db, request_frame, session_user)
-        logger.logKnowledgeApi("GetValidityDateList", "process end")
 
     elif type(request_frame) is admin.SaveValidityDateSettings:
-        logger.logKnowledgeApi("SaveValidityDateSettings", "process begin")
         result = process_save_validity_date_settings(
             db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveValidityDateSettings", "process end")
 
     elif type(request_frame) is admin.GetUserMappings:
-        logger.logKnowledgeApi("GetUserMappings", "process begin")
         result = process_get_user_mappings(db, session_user)
-        logger.logKnowledgeApi("GetUserMappings", "process end")
 
     elif type(request_frame) is admin.SaveUserMappings:
-        logger.logKnowledgeApi("SaveUserMappings", "process begin")
         result = process_save_user_mappings(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveUserMappings", "process end")
+
     elif type(request_frame) is admin.GetReassignUserAccountFormdata:
-        logger.logKnowledgeApi(
-            "GetReassignUserAccountFormdata", "process begin")
         result = get_reassign_user_account_form_data(
             db, request_frame, session_user)
-        logger.logKnowledgeApi(
-            "GetReassignUserAccountFormdata", "process end")
+
     elif type(request_frame) is admin.SaveReassignUserAccount:
-        logger.logKnowledgeApi(
-            "SaveReassignUserAccount", "process begin")
         result = process_save_reassign_user_account_request(
             db, request_frame, session_user)
-        logger.logKnowledgeApi(
-            "SaveReassignUserAccount", "process end")
+
+    elif type(request_frame) is admin.GetTechnoUserData:
+        result = process_get_techno_user_info(db, request_frame)
+
+    elif type(request_frame) is admin.GetDomainUserData:
+        result = process_get_domain_user_info(db, request_frame)
 
     return result
 
@@ -311,7 +282,7 @@ def get_users(db, request_frame, session_user):
         domain_ids = []
         for r in data:
             if int(r["user_id"]) == user_id:
-                domain_ids.append(admin.CountryWiseDomain(int(r["country_id"]), int(r["domain_id"])) )
+                domain_ids.append(admin.CountryWiseDomain(int(r["country_id"]), int(r["domain_id"])))
         return domain_ids
 
     def get_user_country(user_id, data):
@@ -502,28 +473,37 @@ def process_save_user_mappings(db, request, session_user):
 
 
 def get_reassign_user_account_form_data(db, request, session_user):
-    countries = get_countries_for_user(db, session_user)
+
     domains = get_domains_for_user(db, session_user)
-    (
-        knowledge_managers, knowledge_users, techno_managers, techno_users,
-        domain_managers, domain_users
-    ) = get_all_user_types(db)
     groups = get_groups(db)
     business_groups = get_business_groups_for_user(db, session_user)
     legal_entities = get_legal_entities_for_user(db, session_user)
-    units = get_units(db)
-    assigned_legal_entities = get_assigned_legal_entities(db)
-    assigned_units = get_assigned_units(db)
-    assigned_clients = get_assigned_clients(db)
     user_categories = get_categories_for_user(db, session_user)
+    users = get_reassign_user_filters(db)
+    techno_manager = users[0]
+    techno_exe = users[1]
+    domain_manager = users[2]
+    domain_exe = users[3]
     return admin.GetReassignUserAccountFormdataSuccess(
-        techno_managers, techno_users, domain_managers,
-        domain_users, groups, business_groups, legal_entities,
-        domains, countries, units, assigned_legal_entities,
-        assigned_units, assigned_clients, user_categories
+        techno_manager, techno_exe, domain_manager,
+        domain_exe, groups, business_groups,
+        legal_entities, domains, user_categories
     )
 
 
 def process_save_reassign_user_account_request(db, request, session_user):
     save_reassigned_user_account(db, request, session_user)
     return admin.SaveReassignUserAccountSuccess()
+
+def process_get_techno_user_info(db, request):
+    user_id = request.user_id
+    data = get_techno_user_data(db, user_id)
+    return admin.GetTechnoUserDataSuccess(data)
+
+def process_get_domain_user_info(db, request):
+    user_id = request.domain_user_id
+    entity_id = request.entity_id
+    domain_id = request.domain_id
+    group_id = request.group_id
+    data = get_domain_user_data(db, user_id, group_id, entity_id, domain_id)
+    return admin.GetDomainUserDataSuccess(data)

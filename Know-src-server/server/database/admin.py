@@ -32,10 +32,14 @@ __all__ = [
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
     "save_validity_date_settings", "get_user_mapping_form_data",
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
-    "save_reassigned_user_account", "get_assigned_legal_entities",
+    "save_reassigned_user_account",
+    # "get_assigned_legal_entities",
     "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status",
     "get_countries_for_user_filter",
-    "get_child_users", "get_categories_for_user"
+    "get_child_users", "get_categories_for_user",
+    "get_reassign_user_filters",
+    "get_techno_user_data",
+    "get_domain_user_data"
 ]
 
 
@@ -1220,3 +1224,127 @@ def get_categories_for_user(db, user_id):
         data.append(core.UserCategory(r["user_category_id"], r["user_category_name"]))
 
     return data
+
+def get_reassign_user_filters(db):
+    techno_manag = db.call_proc_with_multiresult_set("sp_tbl_users_techno_managers", None, 2)
+    techno_execut = db.call_proc_with_multiresult_set("sp_tbl_users_techno_executive", None, 2)
+    domain_manag = db.call_proc_with_multiresult_set("sp_tbl_users_domain_managers", None, 4)
+    domain_execut = db.call_proc_with_multiresult_set("sp_tbl_users_domain_executive", None, 3)
+
+    techno_manag_users = []
+    for t in techno_manag[1] :
+        e_name = "%s - %s" % (t["employee_code"], t["employee_name"])
+        user_id = t["user_id"]
+        c_d_list = []
+        for x in techno_manag[0] :
+            if x["user_id"] == user_id :
+                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+        techno_manag_users.append(
+            admin.UserInfo(
+                t["user_id"], e_name, c_d_list, None, t["user_category_id"],
+                None, None
+            )
+        )
+
+    techno_exec_users = []
+    for t in techno_execut[1] :
+        user_id = t["user_id"]
+        e_name = "%s - %s" % (t["employee_code"], t["employee_name"])
+        c_d_list = []
+        for x in techno_execut[0] :
+            if x["user_id"] == user_id :
+                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+
+        techno_exec_users.append(admin.UserInfo(
+            user_id, e_name, c_d_list, [t["parent_user_id"]],
+            t["user_category_id"], None, None
+        ))
+
+    domain_exec_users = []
+    le_ids = []
+    grp_ids = []
+    for t in domain_execut[1] :
+        user_id = t["user_id"]
+        e_name = "%s - %s" % (t["employee_code"], t["employee_name"])
+        c_d_list = []
+        for x in domain_execut[0] :
+            if x["user_id"] == user_id :
+                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+
+        for z in domain_execut[2] :
+            if z["user_id"] == user_id :
+                le_ids.append(z["legal_entity_id"])
+                grp_ids.append(z["client_id"])
+
+        grp_ids = set(grp_ids)
+        grp_ids = list(grp_ids)
+        le_ids = set(le_ids)
+        le_ids = list(le_ids)
+        domain_exec_users.append(admin.UserInfo(
+            user_id, e_name, c_d_list, [t["parent_user_id"]],
+            t["user_category_id"], grp_ids, le_ids
+        ))
+
+    domain_manag_users = []
+    for t in domain_manag[2] :
+        user_id = t["user_id"]
+        e_name = "%s - %s" % (t["employee_code"], t["employee_name"])
+        c_d_list = []
+        p_ids = []
+        le_ids = []
+        grp_ids = []
+        for x in domain_manag[0] :
+            if x["user_id"] == user_id :
+                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+
+        for y in domain_manag[1] :
+            if y['user_id'] == user_id :
+                p_ids.append(y["parent_user_id"])
+
+        for z in domain_manag[3] :
+            if z["user_id"] == user_id :
+                le_ids.append(z["legal_entity_id"])
+                grp_ids.append(z["client_id"])
+
+        grp_ids = set(grp_ids)
+        grp_ids = list(grp_ids)
+        le_ids = set(le_ids)
+        le_ids = list(le_ids)
+        domain_manag_users.append(admin.UserInfo(
+            user_id, e_name, c_d_list, p_ids,
+            t["user_category_id"], grp_ids, le_ids
+        ))
+
+    return (techno_manag_users, techno_exec_users, domain_manag_users, domain_exec_users)
+
+def get_techno_user_data(db, techno_user):
+    techno_data = db.call_proc_with_multiresult_set("sp_tbl_users_techno_user_info", [techno_user], 3)
+
+    data_list = []
+    for r in techno_data[1] :
+        d_ids = []
+        d_names = []
+        for x in techno_data[2] :
+            if x["legal_entity_id"] == r["legal_entity_id"]:
+                d_ids.append(x["domain_id"])
+                d_names.append(x["domain_name"])
+
+        data_list.append(admin.TechnoEntity(
+            r["client_id"], r["group_name"], r["country_id"], r["country_name"],
+            d_ids, d_names,
+            r["legal_entity_id"], r["legal_entity_name"], r["bg_name"],
+        ))
+
+    return data_list
+
+def get_domain_user_data(db, domain_user, group_id, legal_entity_id, domain_id):
+    domain_data = db.call_proc("sp_tbl_users_domain_user_info", [group_id, legal_entity_id, domain_id, domain_user])
+    data_list = []
+    for r in domain_data :
+
+        data_list.append(admin.DomainUnit(
+            r["unit_id"], r["unit_code"], r["unit_name"], r["address"],
+            r["location"], r["legal_entity_id"], r["legal_entity_name"]
+        ))
+
+    return data_list

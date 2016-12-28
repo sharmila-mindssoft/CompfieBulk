@@ -1856,6 +1856,30 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function getTechnoUSerInfo(techno_user_id, callback){
+    callerName = "admin";
+    var request = [
+        "GetTechnoUserData",
+        {
+          "techno_id": techno_user_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getDomainUserInfo(domain_user_id, group_id, entity_id, domain_id, callback){
+    callerName = "admin";
+    var request = [
+        "GetDomainUserData",
+        {
+          "d_u_id": domain_user_id,
+          "gt_id": group_id,
+          "le_id": entity_id,
+          "d_id": domain_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
   function saveReassignUserAccount(
     user_type, old_user_id, new_user_id, assigned_ids, remarks, callback
   ){
@@ -2428,6 +2452,8 @@ function initMirror() {
     getAssignUnitFormData: getAssignUnitFormData,
     saveAssignedUnits: saveAssignedUnits,
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
+    getTechnoUSerInfo: getTechnoUSerInfo,
+    getDomainUserInfo: getDomainUserInfo,
     saveReassignUserAccount: saveReassignUserAccount,
     getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
     getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
