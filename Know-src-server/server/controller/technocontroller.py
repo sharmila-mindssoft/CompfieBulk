@@ -153,7 +153,7 @@ def process_techno_request(request, db):
     elif type(request_frame) is technomasters.GetAssignedUnits:
         logger.logKnowledgeApi("GetAssignedUnits", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = get_assigned_units(db, request_frame)
+        result = get_assigned_units(db, request_frame, session_user)
         logger.logKnowledgeApi("GetAssignedUnits", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
