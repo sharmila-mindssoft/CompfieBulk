@@ -2669,6 +2669,24 @@ class User(object):
             "is_active": self.is_active
         }
 
+class DomainUser(object):
+    def __init__(self, user_id, legal_entity_id):
+        self.user_id = user_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "legal_entity_id"])
+        user_id = data.get("user_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return DomainUser(user_id, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "legal_entity_id": self.legal_entity_id,
+        }
+
 #
 # Client Incharge Persons
 #
