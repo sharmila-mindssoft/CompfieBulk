@@ -2075,12 +2075,15 @@ def return_unassigned_units(data):
         fn(
             domain_name=datum["domain_name"],
             group_name=datum["client_name"],
+            legal_entity_name = datum["legal_entity_name"],
+            business_group_name = datum["business_group_name"],
             unassigned_units="%s / %s" % (
                 datum["total_units"] - datum["assigned_units"],
                 datum["total_units"]
             ),
             domain_id=datum["domain_id"],
-            client_id=datum["client_id"]
+            client_id=datum["client_id"],
+            legal_entity_id = datum["legal_entity_id"]
         ) for datum in data
     ]
     return result
@@ -2091,17 +2094,18 @@ def return_unassigned_units(data):
 #  Parameters : Object of database, Received request
 #  Return Type : Returns List of object of AssignedUnit
 ###############################################################################
-def get_assigned_units_list(db, request):
+def get_assigned_units_list(db, request, user_id):
     domain_id = request.domain_id
     client_id = request.client_id
+    legal_entity_id = request.legal_entity_id
     #
     # To get list of assigned units under a client and domain
     #  Parameters - client id, domain_id
     #
-    units = db.call_proc(
-        "sp_userunits_assigned_list", (client_id, domain_id)
+    units = db.call_proc_with_multiresult_set(
+        "sp_userunits_assigned_list", (client_id, domain_id, legal_entity_id, user_id), 2
     )
-    return return_assigned_units(units)
+    return return_assigned_units(units[1])
 
 
 ###############################################################################
@@ -2117,7 +2121,8 @@ def return_assigned_units(data):
             business_group_name=datum["business_group_name"],
             legal_entity_id=datum["legal_entity_id"],
             legal_entity_name=datum["legal_entity_name"],
-            unit_count=datum["no_of_units"]
+            unit_count=datum["no_of_units"],
+            user_category_id = datum["user_category_id"]
         ) for datum in data
     ]
     return result
@@ -2176,9 +2181,9 @@ def return_assigned_unit_details(units, unit_industry_name_map):
 def get_data_for_assign_unit(db, request, session_user):
     business_groups = get_business_groups_for_client(db, request.client_id)
     legal_entities = get_legal_entities_for_client(db, request.client_id)
-    units = get_units_of_client(db, request.client_id, request.domain_id, session_user)
-    domain_managers = get_domain_managers_for_user(db, session_user)
-    return business_groups, legal_entities, units, domain_managers
+    units = get_units_of_client(db, request.client_id, request.domain_id, request.legal_entity_id, session_user)
+    domain_managers, mapped_domain_users = get_domain_managers_for_user(db, request.client_id, request.domain_id, session_user)
+    return business_groups, legal_entities, units, domain_managers, mapped_domain_users
 
 
 ###############################################################################
@@ -2210,6 +2215,8 @@ def get_legal_entities_for_client(db, client_id):
     data = db.call_proc(
         "sp_legal_entities_by_client", (client_id,)
     )
+    print "le data"
+    print data
     return return_legal_entities_for_unit(data)
 
 
@@ -2218,35 +2225,48 @@ def get_legal_entities_for_client(db, client_id):
 #  Parameters : Object of database, client id
 #  Return Type : Returns List of object of Legal Entity
 ###############################################################################
-def get_domain_managers_for_user(db, session_user):
+def get_domain_managers_for_user(db, client_id, domain_id, session_user):
     #
     # To get list of domain managers assigned under a session user
     # Parameters - session user
     #
-    users = db.call_proc_with_multiresult_set(
-        "sp_users_domain_managers", [session_user], 2)
+    # users = db.call_proc_with_multiresult_set(
+    #     "sp_users_domain_managers", [session_user], 2
 
-    return return_domain_managers(users[1])
+    users = db.call_proc_with_multiresult_set(
+        "sp_users_domain_managers", [session_user, domain_id, client_id], 2)
+    print "users"
+    print users
+    return return_domain_managers(users)
 
 
 def return_domain_managers(data):
+    print len(data)
     fn = core.User
     result = [
         fn(
             user_id=datum["user_id"], user_category_id=datum["user_category_id"],
             employee_name=datum["employee_name"], is_active=bool(datum["is_active"])
-        ) for datum in data
+        ) for datum in data[0]
     ]
-    return result
+
+    fn = core.DomainUser
+    domain_user_list = [
+        fn(
+            user_id=datum["user_id"], legal_entity_id=datum["legal_entity_id"]
+        ) for datum in data[1]
+    ]
+    print domain_user_list
+    return result, domain_user_list
 
 
-def get_units_of_client(db, client_id, domain_id, session_user):
+def get_units_of_client(db, client_id, domain_id, legal_entity_id, session_user):
     #
     # To get list of units under a client and domain
     # Parameters - client id, domain id
     #
     result = db.call_proc_with_multiresult_set(
-        "sp_units_list", (client_id, domain_id, session_user), 3)
+        "sp_units_list", (client_id, domain_id, legal_entity_id, session_user), 3)
 
     units = result[1]
     industry_details = result[2]
@@ -2294,13 +2314,15 @@ def save_assigned_units(db, request, session_user):
             session_user, current_time_stamp
         )
         values_list.append(value_tuple)
+        print "assigned list"
+        print values_list
     #
     # To delete all the settings under the given domain manager
     # Parameters - domain manager id
     #
-    db.call_update_proc(
-        "sp_userunits_delete", (domain_manager_id, )
-    )
+    # db.call_update_proc(
+    #     "sp_userunits_delete", (domain_manager_id, )
+    # )
     res = db.bulk_insert(
         tblUserUnits, columns, values_list
     )
