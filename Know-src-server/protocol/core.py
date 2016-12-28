@@ -2013,25 +2013,27 @@ class UnitCountries(object):
 
 class UnitLegalEntity(object):
     def __init__(
-        self, legal_entity_id, legal_entity_name, business_group_id, client_id
+        self, legal_entity_id, legal_entity_name, business_group_id, client_id, country_id
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_id = business_group_id
         self.client_id = client_id
+        self.country_id = country_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id"
+                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id", "country_id"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_name = data.get("legal_entity_name")
         business_group_id = data.get("business_group_id")
         client_id = data.get("client_id")
-        return UnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
+        country_id = data.get("country_id")
+        return UnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id, country_id)
 
     def to_structure(self):
         return {
@@ -2039,6 +2041,7 @@ class UnitLegalEntity(object):
             "legal_entity_name": self.legal_entity_name,
             "business_group_id": self.business_group_id,
             "client_id": self.client_id,
+            "country_id": self.country_id,
         }
 
 #
@@ -2048,7 +2051,7 @@ class UnitLegalEntity(object):
 class UnitDomainOrganisation(object):
     def __init__(
         self, legal_entity_id, domain_id, domain_name, industry_id, industry_name, unit_count
-        ):
+    ):
         self.legal_entity_id = legal_entity_id
         self.domain_id = domain_id
         self.domain_name = domain_name
@@ -2663,6 +2666,24 @@ class User(object):
             "user_category_id": self.user_category_id,
             "employee_name": self.employee_name,
             "is_active": self.is_active
+        }
+
+class DomainUser(object):
+    def __init__(self, user_id, legal_entity_id):
+        self.user_id = user_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "legal_entity_id"])
+        user_id = data.get("user_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return DomainUser(user_id, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "legal_entity_id": self.legal_entity_id,
         }
 
 #
