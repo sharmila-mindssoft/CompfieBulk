@@ -1802,13 +1802,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignedUnitsList(domain_id, client_id, callback){
+  function getAssignedUnitsList(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignedUnits",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1824,13 +1825,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignUnitFormData(domain_id, client_id, callback){
+  function getAssignUnitFormData(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignUnitFormData",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
