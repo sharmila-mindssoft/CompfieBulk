@@ -818,10 +818,12 @@ def return_techno_users(users, user_country_map, user_domain_map):
 #  Return Type : Returns List of object of ClientGroup
 ##########################################################################
 def get_groups(db, session_user):
-    groups = db.call_proc(
-        "sp_client_groups_list", (session_user,)
-    )
-    return return_group(groups)
+
+    groups = db.call_proc_with_multiresult_set(
+        "sp_client_groups_list", (session_user,
+    ), 2)
+
+    return return_group(groups[1])
 
 
 ##########################################################################

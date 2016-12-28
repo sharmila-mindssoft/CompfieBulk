@@ -647,6 +647,8 @@ CREATE PROCEDURE `sp_client_groups_list`(
 in userId INT(11)
 )
 BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userId;
+    
     SELECT 
     tcg.client_id,
     tcg.group_name,
@@ -666,7 +668,9 @@ BEGIN
         tbl_client_groups tcg ON tcg.client_id = tle.client_id
             INNER JOIN
         tbl_user_clients tuc ON tuc.client_id = tcg.client_id
-            AND tuc.user_id = userId
+            AND
+        IF (@u_cat_id > 2,
+        tuc.user_id = userId, 1)
     ORDER BY tcg.group_name;
 END //
 
