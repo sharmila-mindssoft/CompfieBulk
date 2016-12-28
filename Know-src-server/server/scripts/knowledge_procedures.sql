@@ -7078,3 +7078,209 @@ BEGIN
 END //
 
 DELIMITER ;
+
+----------------------------------------------
+------ reassign user accout user lists
+---------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_techno_managers`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_techno_managers`()
+
+BEGIN
+    select t1.country_id, t1.domain_id, t1.user_id
+        from tbl_user_domains t1 inner join tbl_users as t
+        on t.user_id = t1.user_id
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 5;
+
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
+        from tbl_users as t1
+        inner join tbl_user_clients as t2
+        on t1.user_id = t2.user_id
+        where t1.is_active = 1
+        and t1.is_disable = 0
+        group by user_id;
+
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_techno_executive`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_techno_executive`()
+
+BEGIN
+    select t1.country_id, t1.domain_id, t1.user_id
+        from tbl_user_domains t1 inner join tbl_users as t
+        on t.user_id = t1.user_id
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 6;
+
+
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
+        t3.parent_user_id
+        from tbl_users as t1
+        inner join tbl_user_legalentity as t2
+        on t1.user_id = t2.user_id
+        inner join tbl_user_mapping as t3
+        on t1.user_id = t3.child_user_id
+        where t1.is_active = 1
+        and t1.is_disable = 0
+        group by user_id;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_domain_managers`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_domain_managers`()
+
+BEGIN
+    select t1.country_id, t1.domain_id, t1.user_id
+        from tbl_user_domains t1 inner join tbl_users as t
+        on t.user_id = t1.user_id
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 7;
+
+    select t2.user_id, t.parent_user_id from tbl_user_mapping as t
+        inner join tbl_users as t2 on t.child_user_id = t2.user_id
+        and t2.user_category_id = 7 and t2.is_active = 1 and
+        t2.is_disable = 0;
+
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
+        t3.parent_user_id
+        from tbl_users as t1
+        inner join tbl_user_units as t2
+        on t1.user_id = t2.user_id
+        inner join tbl_user_mapping as t3
+        on t1.user_id = t3.child_user_id
+        where t1.user_category_id = 7 and t1.is_active = 1
+        and t1.is_disable = 0
+        group by user_id;
+
+    select t1.client_id, t1.legal_entity_id, t1.user_id from tbl_user_units as t1
+        inner join tbl_users as t2 on t1.user_id = t2.user_id
+        where t2.is_active = 1 and t2.is_disable = 0
+        and t2.user_category_id = 7;
+
+END //
+
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_domain_executive`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_domain_executive`()
+
+BEGIN
+    select t1.country_id, t1.domain_id, t1.user_id
+        from tbl_user_domains t1 inner join tbl_users as t
+        on t.user_id = t1.user_id
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 8;
+
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
+        t3.parent_user_id
+        from tbl_users as t1
+        inner join tbl_user_units as t2
+        on t1.user_id = t2.user_id
+        inner join tbl_user_mapping as t3
+        on t1.user_id = t3.child_user_id
+        where t1.user_category_id = 8 and t1.is_active = 1
+        and t1.is_disable = 0
+        group by user_id;
+
+
+    select t1.client_id, t1.legal_entity_id, t1.user_id from tbl_user_units as t1
+        inner join tbl_users as t2 on t1.user_id = t2.user_id
+        where t2.is_active = 1 and t2.is_disable = 0
+        and t2.user_category_id = 8;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_techno_user_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_techno_user_info`(
+    IN uid INT(11)
+)
+BEGIN
+
+    select @cat_id := user_category_id from tbl_users where user_id = uid;
+    if @cat_id = 5 then
+        -- techno manager
+        select t1.client_id, t1.group_name,
+            t2.legal_entity_id, t2.legal_entity_name,
+            t2.country_id,
+            (select country_name from tbl_countries where country_id = t2.country_id)as country_name,
+            (select business_group_name from tbl_business_groups where IFNULL(business_group_id, 0) = t2.business_group_id) as bg_name
+            from tbl_client_groups as t1
+            inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
+            inner join tbl_user_clients as t3 on t1.client_id = t3.client_id
+            where user_id = uid;
+
+        select t1.legal_entity_id, t1.domain_id, t.domain_name
+        from tbl_legal_entity_domains as t1
+            inner join tbl_domains as t on t1.domain_id = t.domain_id
+            inner join tbl_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id
+            inner join tbl_user_clients as t3 on t3.client_id = t2.client_id
+            where t3.user_id = uid
+            group by t1.legal_entity_id, t1.domain_id;
+    else
+        -- techno executive
+        select t1.client_id, t1.group_name,
+            t2.legal_entity_id, t2.legal_entity_name, t2.country_id,
+            (select country_name from tbl_countries where country_id = t2.country_id)as country_name,
+            (select business_group_name from tbl_business_groups where IFNULL(business_group_id, 0) = t2.business_group_id) as bg_name
+            from tbl_client_groups as t1
+            inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
+            inner join tbl_user_legalentity as t3 on t2.legal_entity_id = t3.legal_entity_id
+            where t3.user_id = uid;
+
+        select t1.legal_entity_id, t1.domain_id, t.domain_name
+            from tbl_legal_entity_domains as t1
+            inner join tbl_domains as t on t1.domain_id = t.domain_id
+            inner join tbl_user_legalentity as t2 on t1.legal_entity_id = t2.legal_entity_id
+            where t2.user_id = uid
+            group by t1.legal_entity_id, t1.domain_id;
+
+    end if ;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_domain_user_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_domain_user_info`(
+    IN gt_id INT(11), le_id INT(11), did INT(11), uid INT(11)
+)
+BEGIN
+    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address,
+        t1.legal_entity_id, t3.legal_entity_name,
+        (select geography_name from tbl_geographies where geography_id = t1.geography_id) as location
+        from tbl_units as t1
+        inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id
+        where t2.user_id = uid and t2.domain_id = did and t1.legal_entity_id = le_id
+        and t1.client_id = gt_id;
+
+END //
+
+DELIMITER ;

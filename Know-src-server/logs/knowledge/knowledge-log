@@ -1,242 +1,284 @@
-2016-12-23 09:10:33,488 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+2016-12-28 13:15:31,913 - knowledge_logger - main.py-parse-request : d_u_id is not configured in settings 
 
-2016-12-23 09:10:33,489 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:11:53,573 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:11:53,573 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:13:13,594 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:13:13,595 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:14:33,624 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:14:33,626 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:15:53,695 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:15:53,696 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:17:13,764 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:17:13,765 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:18:33,857 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:18:33,858 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:19:53,936 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:19:53,937 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    rows = db.select_all(query)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:21:14,034 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
-
-2016-12-23 09:21:14,035 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 133, in get_servers
-    " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/dbase.py", line 298, in select_all
-    raise fetch_error()
-RuntimeError: Transaction failed while processing data.
- 
-
-2016-12-23 09:22:09,861 - knowledge_logger - main.py-handle-api- : 'database_name' 
-
-2016-12-23 09:22:09,861 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 201, in handle_api_request
-    response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 237, in handle_server_list
-    gen.get_servers(db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 144, in get_servers
-    return return_companies(rows)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/general.py", line 163, in return_companies
-    d["database_name"],
-KeyError: 'database_name'
- 
-
-2016-12-23 12:00:08,827 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
-
-2016-12-23 12:00:08,828 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 207, in handle_api_request
-    _db_con = self._con_pool.get_connection()
-  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
-    "Failed getting connection; pool exhausted")
-PoolError: Failed getting connection; pool exhausted
- 
-
-2016-12-23 12:00:12,393 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
-
-2016-12-23 12:00:12,394 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 207, in handle_api_request
-    _db_con = self._con_pool.get_connection()
-  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
-    "Failed getting connection; pool exhausted")
-PoolError: Failed getting connection; pool exhausted
- 
-
-2016-12-23 12:02:40,329 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
-
-2016-12-23 12:02:40,329 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 207, in handle_api_request
-    _db_con = self._con_pool.get_connection()
-  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
-    "Failed getting connection; pool exhausted")
-PoolError: Failed getting connection; pool exhausted
- 
-
-2016-12-23 12:03:55,939 - knowledge_logger - main.py-handle-api- : Failed getting connection; pool exhausted 
-
-2016-12-23 12:03:55,940 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 208, in handle_api_request
-    _db_con = self._con_pool.get_connection()
-  File "/home/ushadevi/.local/lib/python2.7/site-packages/mysql/connector/pooling.py", line 310, in get_connection
-    "Failed getting connection; pool exhausted")
-PoolError: Failed getting connection; pool exhausted
- 
-
-2016-12-23 12:42:31,521 - knowledge_logger - main.py-parse-request : 400: Bad Request 
-
-2016-12-23 12:42:31,522 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 155, in _parse_request
-    data = request.get_json(force=True)
-  File "/home/ushadevi/.local/lib/python2.7/site-packages/flask/wrappers.py", line 161, in get_json
-    rv = self.on_json_loading_failed(e)
-  File "/home/ushadevi/.local/lib/python2.7/site-packages/flask/wrappers.py", line 181, in on_json_loading_failed
-    raise BadRequest()
-BadRequest: 400: Bad Request
- 
-
-2016-12-23 12:42:31,522 - knowledge_logger - main.py-handle-api- : 400: Bad Request 
-
-2016-12-23 12:42:31,522 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
-    raise ValueError(request_data)
-ValueError: 400: Bad Request
- 
-
-2016-12-23 19:06:42,353 - knowledge_logger - main.py-parse-request : expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1} 
-
-2016-12-23 19:06:42,354 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-12-28 13:15:31,914 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
     data
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 598, in parse_structure
-    request, "domaintransactionprotocol", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1255, in parse_structure
+    request, "admin", "Request"
   File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
     return klass.parse_structure(data)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 27, in parse_structure
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/domaintransactionprotocol.py", line 68, in parse_inner_structure
-    data = parse_dictionary(data, ["u_id", "d_id", "rcount"])
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 187, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1}
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 430, in parse_inner_structure
+    data = parse_dictionary(data, ["d_u_id", "gt_id", "le_id", "d_id"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 327, in parse_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: d_u_id is not configured in settings
  
 
-2016-12-23 19:06:42,354 - knowledge_logger - main.py-handle-api- : expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1} 
+2016-12-28 13:15:31,914 - knowledge_logger - main.py-handle-api- : d_u_id is not configured in settings 
 
-2016-12-23 19:06:42,354 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-12-28 13:15:31,914 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
     raise ValueError(request_data)
-ValueError: expected key "rcount" is missing in the dictionary, but received: {u'd_id': 1, u'u_id': 1}
+ValueError: d_u_id is not configured in settings
  
 
-2016-12-23 19:09:32,057 - knowledge_logger - main.py-handle-api- : local variable 'c' referenced before assignment 
+2016-12-28 13:15:39,190 - knowledge_logger - main.py-parse-request : d_u_id is not configured in settings 
 
-2016-12-23 19:09:32,057 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-12-28 13:15:39,190 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1255, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 430, in parse_inner_structure
+    data = parse_dictionary(data, ["d_u_id", "gt_id", "le_id", "d_id"])
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 327, in parse_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: d_u_id is not configured in settings
+ 
+
+2016-12-28 13:15:39,191 - knowledge_logger - main.py-handle-api- : d_u_id is not configured in settings 
+
+2016-12-28 13:15:39,191 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: d_u_id is not configured in settings
+ 
+
+2016-12-28 13:16:55,780 - knowledge_logger - main.py-parse-request : object() takes no parameters 
+
+2016-12-28 13:16:55,780 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1255, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 433, in parse_inner_structure
+    data.get("d_id")
+TypeError: object() takes no parameters
+ 
+
+2016-12-28 13:16:55,783 - knowledge_logger - main.py-handle-api- : object() takes no parameters 
+
+2016-12-28 13:16:55,783 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: object() takes no parameters
+ 
+
+2016-12-28 13:18:31,061 - knowledge_logger - main.py-parse-request : object() takes no parameters 
+
+2016-12-28 13:18:31,062 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1255, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 433, in parse_inner_structure
+    data.get("d_id")
+TypeError: object() takes no parameters
+ 
+
+2016-12-28 13:18:31,064 - knowledge_logger - main.py-handle-api- : object() takes no parameters 
+
+2016-12-28 13:18:31,065 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: object() takes no parameters
+ 
+
+2016-12-28 13:19:16,448 - knowledge_logger - main.py-parse-request : object() takes no parameters 
+
+2016-12-28 13:19:16,450 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1254, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 432, in parse_inner_structure
+    data.get("d_u_id"), data.get("gt_id"), data.get("le_id"), data.get("d_id")
+TypeError: object() takes no parameters
+ 
+
+2016-12-28 13:19:16,451 - knowledge_logger - main.py-handle-api- : object() takes no parameters 
+
+2016-12-28 13:19:16,451 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: object() takes no parameters
+ 
+
+2016-12-28 13:20:49,356 - knowledge_logger - main.py-parse-request : object() takes no parameters 
+
+2016-12-28 13:20:49,357 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1258, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 436, in parse_inner_structure
+    user_id, group_id, entity_id, domain_id
+TypeError: object() takes no parameters
+ 
+
+2016-12-28 13:20:49,358 - knowledge_logger - main.py-handle-api- : object() takes no parameters 
+
+2016-12-28 13:20:49,359 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: object() takes no parameters
+ 
+
+2016-12-28 13:22:28,212 - knowledge_logger - main.py-parse-request : object() takes no parameters 
+
+2016-12-28 13:22:28,213 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1256, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 435, in parse_inner_structure
+    return GetDomainUserData(user_id, group_id, entity_id, domain_id)
+TypeError: object() takes no parameters
+ 
+
+2016-12-28 13:22:28,213 - knowledge_logger - main.py-handle-api- : object() takes no parameters 
+
+2016-12-28 13:22:28,214 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: object() takes no parameters
+ 
+
+2016-12-28 13:26:53,081 - knowledge_logger - main.py-parse-request : object() takes no parameters 
+
+2016-12-28 13:26:53,083 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 1256, in parse_structure
+    request, "admin", "Request"
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 482, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 435, in parse_inner_structure
+    return GetDomainUserData(user_id, group_id, entity_id, domain_id)
+TypeError: object() takes no parameters
+ 
+
+2016-12-28 13:26:53,084 - knowledge_logger - main.py-handle-api- : object() takes no parameters 
+
+2016-12-28 13:26:53,084 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: object() takes no parameters
+ 
+
+2016-12-28 13:27:18,131 - knowledge_logger - main.py-handle-api- : get_domain_user_data() takes exactly 5 arguments (4 given) 
+
+2016-12-28 13:27:18,131 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 210, in handle_api_request
     response_data = unbound_method(self, request_data, _db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 371, in handle_domain_transaction
-    return controller.process_domain_transaction_request(request, db)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/domaintransactioncontroller.py", line 57, in process_domain_transaction_request
-    result = process_approve_assigned_statutory(db, request_frame, user_id)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/domaintransactioncontroller.py", line 95, in process_approve_assigned_statutory
-    data = save_approve_statutories(db, request, user_id)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/domaintransaction.py", line 410, in save_approve_statutories
-    db.execute(q1, [5, user_id, get_date_time(), unit_id, domain_id, c])
-UnboundLocalError: local variable 'c' referenced before assignment
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/admincontroller.py", line 96, in process_admin_request
+    result = process_get_domain_user_info(db, request_frame)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/admincontroller.py", line 507, in process_get_domain_user_info
+    data = get_domain_user_data(db, user_id, entity_id, domain_id)
+TypeError: get_domain_user_data() takes exactly 5 arguments (4 given)
+ 
+
+2016-12-28 13:30:16,777 - knowledge_logger - main.py-handle-api- : string indices must be integers 
+
+2016-12-28 13:30:16,777 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/admincontroller.py", line 96, in process_admin_request
+    result = process_get_domain_user_info(db, request_frame)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/admincontroller.py", line 508, in process_get_domain_user_info
+    data = get_domain_user_data(db, user_id, group_id, entity_id, domain_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/admin.py", line 1346, in get_domain_user_data
+    r["unit_id"], r["unit_code"], r["unit_name"], r["address"],
+TypeError: string indices must be integers
+ 
+
+2016-12-28 13:30:40,076 - knowledge_logger - main.py-handle-api- : 'domain_id' 
+
+2016-12-28 13:30:40,076 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/admincontroller.py", line 96, in process_admin_request
+    result = process_get_domain_user_info(db, request_frame)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/controller/admincontroller.py", line 508, in process_get_domain_user_info
+    data = get_domain_user_data(db, user_id, group_id, entity_id, domain_id)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/database/admin.py", line 1347, in get_domain_user_data
+    r["location"], r["domain_id"], r["legal_entity_id"], r["legal_entity_name"]
+KeyError: 'domain_id'
+ 
+
+2016-12-28 13:30:57,336 - knowledge_logger - main.py-handle-api- : d_user_info is not configured in settings 
+
+2016-12-28 13:30:57,336 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 222, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 188, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 143, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 505, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 408, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: d_user_info is not configured in settings
+ 
+
+2016-12-28 13:31:48,237 - knowledge_logger - main.py-handle-api- : location is not configured in settings 
+
+2016-12-28 13:31:48,238 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 222, in handle_api_request
+    return respond(response_data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 188, in respond
+    response_data, 200
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/server/main.py", line 143, in _send_response
+    data = response_data.to_structure()
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/admin.py", line 505, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 516, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 498, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Know-src-server/protocol/jsonvalidators.py", line 408, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: location is not configured in settings
  
 
