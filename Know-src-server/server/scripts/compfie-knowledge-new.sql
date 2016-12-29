@@ -557,7 +557,7 @@ CREATE TABLE `tbl_legal_entities` (
   `used_licence` int(11) DEFAULT '0',
   `is_closed` tinyint(4) DEFAULT '0',
   `is_approved` tinyint(4) DEFAULT '0',
-  `reason` varchar(500) DEFAULT NULL,
+  `reason` Text DEFAULT NULL,
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,

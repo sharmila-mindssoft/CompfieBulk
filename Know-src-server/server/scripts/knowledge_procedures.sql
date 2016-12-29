@@ -648,12 +648,12 @@ in userId INT(11)
 )
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userId;
-    
-    SELECT 
+
+    SELECT
     tcg.client_id,
     tcg.group_name,
     tle.legal_entity_name,
-    (SELECT 
+    (SELECT
             country_name
         FROM
             tbl_countries
@@ -1252,7 +1252,7 @@ DROP PROCEDURE IF EXISTS `sp_client_group_update`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_group_update` (
-    groupid INT(11), emailid VARCHAR(100), no_of_view_licence int(11), IN remarks VARCHAR(500) 
+    groupid INT(11), emailid VARCHAR(100), no_of_view_licence int(11), IN remarks VARCHAR(500)
 )
 BEGIN
     UPDATE tbl_client_groups set total_view_licence = no_of_view_licence,
@@ -7092,9 +7092,9 @@ END //
 
 DELIMITER ;
 
-----------------------------------------------
------- reassign user accout user lists
----------------------------------------------
+-- --------------------------------------------
+-- ---- reassign user accout user lists
+-- -------------------------------------------
 
 DROP PROCEDURE IF EXISTS `sp_tbl_users_techno_managers`;
 
@@ -7310,7 +7310,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_users_replacement`(
     IN cat_id INT(11), u_from_id INT(11), u_to_id INT(11), remarks INT(11),
-    sessionuser INT(11),
+    sessionuser INT(11)
 )
 BEGIN
     UPDATE tbl_user_mapping set parent_userid = u_to_id
@@ -7320,7 +7320,6 @@ BEGIN
         user_category_id, repalced_from, repalced_by, remarks,
         created_by, created_on
     ) values (cat_id, u_from_id, u_to_id, remarks, sessionuser, current_ist_datetime());
-
 
 END //
 

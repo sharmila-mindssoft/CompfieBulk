@@ -40,7 +40,7 @@ __all__ = [
     "get_techno_user_data",
     "get_domain_user_data",
     "save_reassign_techno_manager", "save_reassign_techno_executive",
-    "save_reassign_domain_manager", "save_reassign_domain_executive"
+    "save_reassign_domain_manager", "save_reassign_domain_executive",
     "save_user_replacement"
 ]
 
