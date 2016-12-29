@@ -377,7 +377,17 @@ api_params = {
     'd_u_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'gt_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
+    'reassignn_from': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'reassignn_to': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    't_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'executive_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'old_t_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'd_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
+    't_manager_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignTechnoManager"},
+    't_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignTechnoExecutive"},
+    'd_manager_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignDomainManager"},
+    'd_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignDomainExecutive"},
 
     "user_mapping_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserMappingUsers"},
     "child_users": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},

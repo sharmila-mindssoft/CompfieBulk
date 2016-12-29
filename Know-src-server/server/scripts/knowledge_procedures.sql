@@ -7223,15 +7223,17 @@ BEGIN
     select @cat_id := user_category_id from tbl_users where user_id = uid;
     if @cat_id = 5 then
         -- techno manager
-        select t1.client_id, t1.group_name,
+        select distinct t1.client_id, t1.group_name,
             t2.legal_entity_id, t2.legal_entity_name,
             t2.country_id,
             (select country_name from tbl_countries where country_id = t2.country_id)as country_name,
-            (select business_group_name from tbl_business_groups where IFNULL(business_group_id, 0) = t2.business_group_id) as bg_name
+            (select business_group_name from tbl_business_groups where IFNULL(business_group_id, 0) = t2.business_group_id) as bg_name,
+            t4.user_id
             from tbl_client_groups as t1
             inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
             inner join tbl_user_clients as t3 on t1.client_id = t3.client_id
-            where user_id = uid;
+            inner join tbl_user_legalentity as t4 on t2.legal_entity_id = t4.legal_entity_id
+            where t3.user_id = uid;
 
         select t1.legal_entity_id, t1.domain_id, t.domain_name
         from tbl_legal_entity_domains as t1
@@ -7242,10 +7244,11 @@ BEGIN
             group by t1.legal_entity_id, t1.domain_id;
     else
         -- techno executive
-        select t1.client_id, t1.group_name,
+        select distinct t1.client_id, t1.group_name,
             t2.legal_entity_id, t2.legal_entity_name, t2.country_id,
             (select country_name from tbl_countries where country_id = t2.country_id)as country_name,
-            (select business_group_name from tbl_business_groups where IFNULL(business_group_id, 0) = t2.business_group_id) as bg_name
+            (select business_group_name from tbl_business_groups where IFNULL(business_group_id, 0) = t2.business_group_id) as bg_name,
+            t3.user_id
             from tbl_client_groups as t1
             inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
             inner join tbl_user_legalentity as t3 on t2.legal_entity_id = t3.legal_entity_id
@@ -7272,14 +7275,16 @@ CREATE PROCEDURE `sp_tbl_users_domain_user_info`(
     IN gt_id INT(11), le_id INT(11), did INT(11), uid INT(11)
 )
 BEGIN
-    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address,
+    select distinct t1.unit_id, t1.unit_code, t1.unit_name, t1.address,
         t1.legal_entity_id, t3.legal_entity_name,
-        (select geography_name from tbl_geographies where geography_id = t1.geography_id) as location
+        (select geography_name from tbl_geographies where geography_id = t1.geography_id) as location,
+        (select user_id from tbl_user_units where unit_id = t1.unit_id and user_category_id = 8)as child_user
         from tbl_units as t1
         inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id
         inner join tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id
         where t2.user_id = uid and t2.domain_id = did and t1.legal_entity_id = le_id
-        and t1.client_id = gt_id;
+        and t1.client_id = gt_id and
+        (select IFNULL(user_id, 0) from tbl_user_units where unit_id = t1.unit_id and user_category_id = 8) != 0;
 
 END //
 

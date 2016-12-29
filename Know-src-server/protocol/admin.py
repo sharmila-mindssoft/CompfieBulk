@@ -443,39 +443,217 @@ class GetDomainUserData(Request):
         }
 
 
-class SaveReassignUserAccount(Request):
+class SaveReassignTechnoManager(Request):
+    def __init__(self, reassign_from, manager_info, remarks):
+        self.reassign_from = reassign_from
+        self.manager_info = manager_info
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["reassign_from", "t_manager_info", "remarks"])
+        return SaveReassignTechnoManager(
+            data.get("reassign_from"),
+            data.get("t_manager_info"), data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "reassign_from": self.reassign_from,
+            "t_manager_info": self.manager_info,
+            "remarks": self.remarks
+        }
+
+class ReassignTechnoManager(object):
     def __init__(
-        self, user_type, old_user_id, new_user_id, assigned_ids, remarks
+        self, reassign_to, client_id, entity_id,
+        techno_executive, old_techno_executive
     ):
-        self.user_type = user_type
-        self.old_user_id = old_user_id
-        self.new_user_id = new_user_id
-        self.assigned_ids = assigned_ids
+        self.reassign_to = reassign_to
+        self.client_id = client_id
+        self.entity_id = entity_id
+        self.techno_executive = techno_executive
+        self.old_techno_executive = old_techno_executive
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "reassign_to", "gt_id",
+            "le_id", "t_e_id", "old_t_e_id"
+        ])
+        reassign_to = data.get("reassign_to")
+        client_id = data.get("gt_id")
+        entity_id = data.get("le_id")
+        techno_executive = data.get("t_e_id")
+        old_techno_executive = data.get("old_t_e_id")
+        return ReassignTechnoManager(
+            reassign_to,
+            client_id, entity_id, techno_executive,
+            old_techno_executive
+        )
+
+    def to_structure(self):
+        return {
+            "reassign_to": self.reassign_to,
+            "gt_id": self.client_id,
+            "le_id": self.entity_id,
+            "t_e_id": self.techno_executive,
+            "old_t_e_id": self.old_techno_executive
+        }
+
+class SaveReassignTechnoExecutive(Request):
+    def __init__(self, reassign_from, reassign_to, manager_info, remarks):
+        self.reassign_from = reassign_from
+        self.reassign_to = reassign_to
+        self.manager_info = manager_info
         self.remarks = remarks
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "user_type", "old_user_id", "new_user_id", "assigned_ids",
+            "reassign_from", "reassign_to", "t_executive_info",
             "remarks"
         ])
-        user_type = data.get("user_type")
-        old_user_id = data.get("old_user_id")
-        new_user_id = data.get("new_user_id")
-        assigned_ids = data.get("assigned_ids")
-        remarks = data.get("remarks")
-        return SaveReassignUserAccount(
-            user_type, old_user_id, new_user_id, assigned_ids, remarks)
+        return SaveReassignTechnoExecutive(
+            data.get("reassign_from"), data.get("reassign_to"),
+            data.get("t_executive_info"), data.get("remarks")
+        )
 
     def to_inner_structure(self):
         return {
-            "user_type": self.user_type,
-            "old_user_id": self.old_user_id,
-            "new_user_id": self.new_user_id,
-            "assigned_ids": self.assigned_ids,
+            "reassign_from": self.reassign_from,
+            "reassign_to": self.reassign_to,
+            "t_executive_info": self.manager_info,
             "remarks": self.remarks
         }
 
+class ReassignTechnoExecutive(Request):
+    def __init__(
+        self, client_id, entity_id
+    ):
+        self.client_id = client_id
+        self.entity_id = entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "gt_id",
+            "le_id",
+        ])
+        client_id = data.get("gt_id")
+        entity_id = data.get("le_id")
+        return ReassignTechnoExecutive(
+            client_id, entity_id
+        )
+
+    def to_inner_structure(self):
+        return {
+            "gt_id": self.client_id,
+            "le_id": self.entity_id
+        }
+
+class SaveReassignDomainManager(Request):
+    def __init__(
+        self, reassign_from, reassign_to, group_id, entity_id,
+        domain_id, manager_info, remarks
+    ):
+        self.reassign_from = reassign_from
+        self.reassign_to = reassign_to
+        self.group_id = group_id
+        self.entity_id = entity_id
+        self.domain_id = domain_id
+        self.manager_info = manager_info
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "reassign_from", "reassign_to", "gt_id", "le_id", "d_id",
+            "d_manager_info", "remarks"
+        ])
+        return SaveReassignDomainManager(
+            data.get("reassign_from"), data.get("reassign_to"),
+            data.get("gt_id"),
+            data.get("le_id"), data.get("d_id"),
+            data.get("d_manager_info"),
+            data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "reassign_from": self.reassign_from,
+            "reassign_to": self.reassign_to,
+            "gt_id": self.group_id,
+            "le_id": self.entity_id,
+            "d_id": self.domain_id,
+            "d_manager_info": self.manager_info,
+            "remarks": self.remarks
+        }
+
+class ReassignDomainManager(Request):
+    def __init__(
+        self, unit_id, domain_executive, old_domain_executive
+    ):
+        self.unit_id = unit_id
+        self.domain_executive = domain_executive
+        self.old_domain_executive = old_domain_executive
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "u_id", "d_e_id", "old_d_e_id"
+        ])
+        unit_id = data.get("u_id")
+        domain_executive = data.get("d_e_id")
+        old_domain_executive = data.get("old_d_e_id")
+        return ReassignDomainManager(
+            unit_id, domain_executive,
+            old_domain_executive
+        )
+
+    def to_inner_structure(self):
+        return {
+            "u_id": self.unit_id,
+            "d_e_id": self.domain_executive,
+            "old_d_e_id": self.old_domain_executive
+        }
+
+class SaveReassignDomainExecutive(Request):
+    def __init__(
+        self, reassign_from, reassign_to, client_id, entity_id, domain_id,
+        unit_ids, remarks
+    ):
+        self.reassign_from = reassign_from
+        self.reassign_to = reassign_to
+        self.client_id = client_id
+        self.entity_id = entity_id
+        self.domain_id = domain_id
+        self.unit_ids = unit_ids
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "reassign_from", "reassign_to", "client_id", "entity_id",
+            "domain_id", "unit_ids", "remarks"
+        ])
+        return SaveReassignDomainExecutive(
+            data.get("reassign_from"), data.get("reassign_to"),
+            data.get("client_id"), data.get("entity_id"),
+            data.get("unit_ids"),
+            data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "reassign_from": self.reassign_from,
+            "reassign_to": self.reassign_to,
+            "client_id": self.client_id,
+            "entity_id": self.entity_id,
+            "domain_id": self.domain_id,
+            "unit_ids": self.unit_ids,
+            "remarks": self.remarks
+        }
 
 def _init_Request_class_map():
     classes = [
@@ -483,7 +661,9 @@ def _init_Request_class_map():
         ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser,
         ChangeUserStatus, GetValidityDateList, SaveValidityDateSettings,
         GetUserMappings, SaveUserMappings, GetReassignUserAccountFormdata,
-        SaveReassignUserAccount, SendRegistraion, ChangeDisableStatus,
+        SaveReassignTechnoManager, SaveReassignTechnoExecutive,
+        SaveReassignDomainManager, SaveReassignDomainExecutive,
+        SendRegistraion, ChangeDisableStatus,
         GetTechnoUserData, GetDomainUserData
     ]
     class_map = {}
@@ -1315,7 +1495,7 @@ class UserInfo(object):
 class TechnoEntity(object):
     def __init__(
         self, client_id, client_name, c_id, c_name, d_ids, d_names, le_id, le_name,
-        bg_name
+        bg_name, executive_id
     ):
         self.client_id = client_id
         self.client_name = client_name
@@ -1326,12 +1506,13 @@ class TechnoEntity(object):
         self.le_id = le_id
         self.le_name = le_name
         self.bg_name = bg_name
+        self.executive_id = executive_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "ct_id", "ct_name", "c_id", "c_name", "d_ids", "d_names", "le_id", "le_name",
-            "bg_name"
+            "bg_name", "executive_id"
         ])
         client_id = data.get("ct_id")
         client_name = data.get("ct_name")
@@ -1342,9 +1523,10 @@ class TechnoEntity(object):
         entity_id = data.get("le_id")
         entity_name = data.get("le_name")
         bg_name = data.get("bg_name")
+        executive_id = data.get("executive_id")
         return TechnoEntity(
             client_id, client_name, country_ids, country_names, domain_ids,
-            domain_names, entity_id, entity_name, bg_name
+            domain_names, entity_id, entity_name, bg_name, executive_id
         )
 
     def to_structure(self):
@@ -1357,14 +1539,15 @@ class TechnoEntity(object):
             "d_names": self.d_names,
             "le_id": self.le_id,
             "le_name": self.le_name,
-            "bg_name": self.bg_name
+            "bg_name": self.bg_name,
+            "executive_id": self.executive_id
         }
 
 
 class DomainUnit(object):
     def __init__(
         self, unit_id, unit_code, unit_name, address,
-        location, le_id, le_name,
+        location, le_id, le_name, executive_id
     ):
         self.unit_id = unit_id
         self.unit_code = unit_code
@@ -1373,16 +1556,18 @@ class DomainUnit(object):
         self.location = location
         self.le_id = le_id
         self.le_name = le_name
+        self.executive_id = executive_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "u_id", "u_code", "u_name", "address",
-            "location", "le_id", "le_name"
+            "location", "le_id", "le_name", "executive_id"
         ])
         return DomainUnit(
             data.get("u_id"), data.get("u_code"), data.get("u_name"), data.get("address"),
-            data.get("location"), data.get("le_id"), data.get("le_name")
+            data.get("location"), data.get("le_id"), data.get("le_name"),
+            data.get("executive_id")
         )
 
     def to_structure(self):
@@ -1393,5 +1578,6 @@ class DomainUnit(object):
             "address" : self.address,
             "location": self.location,
             "le_id" : self.le_id,
-            "le_name" : self.le_name
+            "le_name" : self.le_name,
+            "executive_id": self.executive_id
         }
