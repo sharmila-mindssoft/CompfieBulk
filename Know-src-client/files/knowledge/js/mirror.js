@@ -1880,18 +1880,78 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function saveReassignUserAccount(
-    user_type, old_user_id, new_user_id, assigned_ids, remarks, callback
+
+  function ReassignTechnoManager(user_from, data, remarks, callback){
+      callerName = "admin";
+      var request = [
+        "SaveReassignTechnoManager",
+        {
+          "reassign_from": user_from,
+          "t_manager_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function ReassignTechnoExecutive(user_from, user_to, data, remarks){
+      callerName = "admin";
+      var request = [
+        "SaveReassignTechnoExecutive",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "t_executive_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function ReassignDomainManager(
+    user_from, user_to, client_id, entity_id, domain_id, data,
+    remarks, callback
   ){
       callerName = "admin";
       var request = [
-        "SaveReassignUserAccount",
+        "SaveReassignDomainManager",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "gt_id": client_id,
+          "le_id": entity_id,
+          "d_id": domain_id,
+          "d_manager_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function ReassignDomainExecutive(
+    user_from, user_to, client_id, entity_id, domain_id, unit_ids,
+    remarks, callback
+  ){
+      callerName = "admin";
+      var request = [
+        "SaveReassignDomainExecutive",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "gt_id": client_id,
+          "le_id": entity_id,
+          "d_id": domain_id,
+          "unit_ids": unit_ids,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function SaveUserReplacement(user_type, user_from, user_to, callback) {
+      callerName = "admin";
+      var request = [
+        "UserReplacement",
         {
           "user_type": user_type,
-          "old_user_id": old_user_id,
-          "new_user_id": new_user_id,
-          "assigned_ids": assigned_ids,
-          "remarks": remarks
+          "old_user_id": user_from,
+          "new_user_id": user_to
         }
       ];
       apiRequest(callerName, request, callback);
@@ -2454,7 +2514,11 @@ function initMirror() {
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
     getTechnoUSerInfo: getTechnoUSerInfo,
     getDomainUserInfo: getDomainUserInfo,
-    saveReassignUserAccount: saveReassignUserAccount,
+    ReassignTechnoManager: ReassignTechnoManager,
+    ReassignTechnoExecutive: ReassignTechnoExecutive,
+    ReassignDomainManager: ReassignDomainManager,
+    ReassignDomainExecutive: ReassignDomainExecutive,
+    SaveUserReplacement: SaveUserReplacement,
     getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
     getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
     getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,

@@ -557,7 +557,7 @@ CREATE TABLE `tbl_legal_entities` (
   `used_licence` int(11) DEFAULT '0',
   `is_closed` tinyint(4) DEFAULT '0',
   `is_approved` tinyint(4) DEFAULT '0',
-  `reason` varchar(500) DEFAULT NULL,
+  `reason` Text DEFAULT NULL,
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
@@ -1004,10 +1004,24 @@ CREATE TABLE `tbl_user_account_reassign_history` (
   `user_category_id` int(11) NOT NULL,
   `reassigned_from` int(11) DEFAULT NULL,
   `reassigned_to` int(11) DEFAULT NULL,
-  `reassigned_data` varchar(500) DEFAULT NULL,
+  `reassigned_data` int(11) DEFAULT NULL,
+  `domain_id` int(11) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `tbl_user_replacement_history`;
+CREATE TABLE `tbl_user_replacement_history` (
+  `user_replace_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_category_id` int(11) NOT NULL,
+  `replaced_from` int(11) DEFAULT NULL,
+  `replaced_by` int(11) DEFAULT NULL,
+  `remarks` varchar(500) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`user_account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

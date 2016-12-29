@@ -85,15 +85,26 @@ def process_admin_request(request, db):
         result = get_reassign_user_account_form_data(
             db, request_frame, session_user)
 
-    elif type(request_frame) is admin.SaveReassignUserAccount:
-        result = process_save_reassign_user_account_request(
-            db, request_frame, session_user)
-
     elif type(request_frame) is admin.GetTechnoUserData:
         result = process_get_techno_user_info(db, request_frame)
 
     elif type(request_frame) is admin.GetDomainUserData:
         result = process_get_domain_user_info(db, request_frame)
+
+    elif type(request_frame) is admin.SaveReassignTechnoManager:
+        result = process_reassign_techno_manager(db, request_frame, session_user)
+
+    elif type(request_frame) is admin.SaveReassignTechnoExecutive :
+        result = process_reassign_techno_executiive(db, request_frame, session_user)
+
+    elif type(request_frame) is admin.SaveReassignDomainManager:
+        result = process_reassign_domain_manager(db, request_frame, session_user)
+
+    elif type(request_frame) is admin.SaveReassignDomainExecutive :
+        result = process_reassign_domain_executive(db, request_frame, session_user)
+
+    elif type(request_frame) is admin.UserReplacement :
+        result = process_user_replacement(db, request_frame, session_user)
 
     return result
 
@@ -491,9 +502,9 @@ def get_reassign_user_account_form_data(db, request, session_user):
     )
 
 
-def process_save_reassign_user_account_request(db, request, session_user):
-    save_reassigned_user_account(db, request, session_user)
-    return admin.SaveReassignUserAccountSuccess()
+# def process_save_reassign_user_account_request(db, request, session_user):
+#     save_reassigned_user_account(db, request, session_user)
+#     return admin.SaveReassignUserAccountSuccess()
 
 def process_get_techno_user_info(db, request):
     user_id = request.user_id
@@ -507,3 +518,52 @@ def process_get_domain_user_info(db, request):
     group_id = request.group_id
     data = get_domain_user_data(db, user_id, group_id, entity_id, domain_id)
     return admin.GetDomainUserDataSuccess(data)
+
+def process_reassign_techno_manager(db, request, session_user):
+    user_from = request.reassign_from
+    data = request.manager_info
+    remarks = request.remarks
+    result = save_reassign_techno_manager(db, user_from, data, remarks, session_user)
+    if result :
+        return admin.SaveReassignUserAccountSuccess()
+
+def process_reassign_techno_executiive(db, request, session_user):
+    user_from = request.reassign_from
+    user_to = request.reassign_to
+    data = request.manager_info
+    remarks = request.remarks
+    result = save_reassign_techno_executive(db, user_from, user_to, data, remarks, session_user)
+    if result :
+        return admin.SaveReassignUserAccountSuccess()
+
+def process_reassign_domain_manager(db, request, session_user):
+    user_from = request.reassign_from
+    user_to = request.reassign_to
+    domain_id = request.domain_id
+    data = request.manager_info
+    remarks = request.remarks
+    result = save_reassign_domain_manager(
+        db, user_from, user_to, domain_id, data,
+        remarks, session_user
+    )
+    if result :
+        return admin.SaveReassignUserAccountSuccess()
+
+def process_reassign_domain_executive(db, request, session_user):
+    user_from = request.reassign_from
+    user_to = request.reassign_to
+    domain_id = request.domain_id
+    unit_ids = request.domain_ids
+    remarks = request.remarks
+    result = save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, remarks, session_user)
+    if result :
+        return admin.SaveReassignUserAccountSuccess()
+
+def process_user_replacement(db, request, session_user):
+    user_type = request.user_type,
+    user_from = request.user_from,
+    user_to = request.user_to
+    remarks = request.remarks
+    result = save_user_replacement(db, user_type, user_from, user_to, remarks, session_user)
+    if result :
+        return admin.UserReplacementSuccess()
