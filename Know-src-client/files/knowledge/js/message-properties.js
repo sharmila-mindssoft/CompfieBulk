@@ -247,6 +247,7 @@ var message = {
   'no_of_units_required': 'No. of units required',
   'duplicate_industry': 'Organization already exists',
   'organization_required': 'Organization Required',
+  'organization_invalid': 'Organization Invalid',
   'duplicate_domain': 'Duplicate domain',
   'organization_save_success': 'Organization Master Saved Successfully',
   'organization_update_success': 'Organization Master Updated Successfully',
@@ -318,7 +319,11 @@ var message = {
   "no_compliance_to_reject": "Atleast one compliance should be reject",
   "email_50": "Email are not allowed more than 50 characters",
   "activationdate_required": "Activation Date Required",
-  "logo_valid_file_format": "Only Valid file formats are jpeg, jpg, png, bmp and gif."
+  "logo_valid_file_format": "Only Valid file formats are jpeg, jpg, png, bmp and gif.",
+  "shortname_min3char": "Short Name: Minimum 3 Characters should be entered.",
+  "domain_select_first": "Before Add Organization, select Domain First",
+  "no_of_units_invalid": "No. Of Units are Invalid",
+  
 };
 
 function clearMessage() {

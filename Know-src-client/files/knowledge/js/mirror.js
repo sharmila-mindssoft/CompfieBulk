@@ -1087,7 +1087,7 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function updateClientGroup(g_id, g_name, u_name, short_name, no_of_view_licence,
+  function updateClientGroup(g_id, g_name, u_name, short_name, no_of_view_licence, remarks,
     les, d_cs, callback) {
     callerName = 'techno';
     var request = [
@@ -1099,7 +1099,8 @@ function initMirror() {
         "short_name": short_name,
         "no_of_view_licence": no_of_view_licence,
         "legal_entities": les,
-        "date_configurations": d_cs
+        "date_configurations": d_cs,
+        "remarks": remarks
       }
     ];
     apiRequest(callerName, request, callback);

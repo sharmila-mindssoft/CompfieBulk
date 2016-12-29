@@ -43,13 +43,13 @@ function LegalEntityClosureData(data) {
         $('.legal-entity', clone).text(val.legal_entity_name);
         $('.le_id', clone).text(val.legal_entity_id);
         if(val.validity_days < 90 && val.validity_days > 0){
-            $('.status', clone).text('Active');
+            $('.status', clone).html('<i class="fa fa-check text-success c-pointer"></i>');
         }
         else{
-            $('.status', clone).text('In active');
+            $('.status', clone).html('<i class="fa fa-times text-danger c-pointer"></i>');
         }
         if (val.is_active == false) {
-            $('#close', clone).show();
+            $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.legal_entity_id)
             $('#close', clone).on('click', function() {
                 Custombox.open({
@@ -62,20 +62,20 @@ function LegalEntityClosureData(data) {
 
             });
             //$('.modal')
-            $('#reactive', clone).hide();
-            $('.closed', clone).hide();
+            $('#reactive', clone).css("display", "none");
+            $('.closed', clone).css("display", "none");
             $('.closed', clone).text('');
             //break;
         } else {
             if (parseInt(val.validity_days) > 90) { //isclose=0=close
                 $('#close', clone).hide();
                 $('#reactive', clone).hide();
-                $('.closed', clone).show();
+                $('.closed', clone).css("display", "block");;
                 $('.closed', clone).text('Closed');
                 //break;
             } else {
                 $('#close', clone).hide();
-                $('#reactive', clone).show();
+                $('#reactive', clone).css("display", "block");
                 $('#reactive', clone).addClass('-' + val.legal_entity_id)
                 $('#reactive', clone).on('click', function() {
                     Custombox.open({
@@ -235,7 +235,13 @@ $('#update_status').click(function() {
         }
 
         function onFailure(error) {
-            displayMessage(error);
+            if(error == "InvalidPassword"){
+                displayMessage(message.invalid_password);
+                return false;
+            }
+            else{
+                displayMessage(error);
+            }
         }
         mirror.saveLegalEntityClosureData(txtpwd, txtRemarks, parseInt(le_id), action_mode, function(error, response) {
             if (error == null) {

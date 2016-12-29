@@ -591,6 +591,9 @@ api_params = {
     "typelistedit": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'a_g_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
+    "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
+    'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')

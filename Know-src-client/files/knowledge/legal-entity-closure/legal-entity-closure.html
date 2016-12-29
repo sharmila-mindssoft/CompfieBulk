@@ -102,7 +102,7 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason</label>
-                <textarea class="form-control input-sm" rows="2" placeholder="Enter Reason" id="remarks"></textarea>
+                <textarea class="form-control input-sm" rows="2" placeholder="Enter Reason" id="remarks" maxlength="500"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light" id="update_status">Submit</button>
         </form>
@@ -118,13 +118,13 @@
             <td class="legal-entity" id="le_id" align="center">
                 <span class="le_id" style="display: none;"></span>
             </td>
-            <td align="center">
+            <td align="center" class="icon-3x">
                 <span class="status"></span>
             </td>
             <td class="text-center closure-sel">
                 <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="close"> Close</a>
                 <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="reactive"> Reactivate</a>
-                <span class="closed" style="display: none;"></span>
+                <span class="closed default-display-none" ></span>
             </td>
         </tr>
     </table>

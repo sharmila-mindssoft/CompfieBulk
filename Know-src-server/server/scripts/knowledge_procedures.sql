@@ -643,23 +643,35 @@ DROP PROCEDURE IF EXISTS `sp_client_groups_list`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_client_groups_list`()
+CREATE PROCEDURE `sp_client_groups_list`(
+in userId INT(11)
+)
 BEGIN
-    select tcg.client_id, tcg.group_name,
-    (
-        select group_concat(country_name) from tbl_countries
-        where country_id in (
-            select country_id from tbl_legal_entities
-            where client_id=tcg.client_id
-        )
-    ) as country_names,
-    (
-        select count(legal_entity_id) from tbl_legal_entities tle
-        WHERE tle.client_id=tcg.client_id
-    ) as no_of_legal_entities,
-    is_active, is_approved, remarks
-    FROM tbl_client_groups tcg
-    order by tcg.group_name;
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userId;
+    
+    SELECT 
+    tcg.client_id,
+    tcg.group_name,
+    tle.legal_entity_name,
+    (SELECT 
+            country_name
+        FROM
+            tbl_countries
+        WHERE
+            country_id = tle.country_id) AS country_name,
+    tle.is_closed,
+    tle.is_approved,
+    tle.reason
+    FROM
+        tbl_legal_entities tle
+            INNER JOIN
+        tbl_client_groups tcg ON tcg.client_id = tle.client_id
+            INNER JOIN
+        tbl_user_clients tuc ON tuc.client_id = tcg.client_id
+            AND
+        IF (@u_cat_id > 2,
+        tuc.user_id = userId, 1)
+    ORDER BY tcg.group_name;
 END //
 
 DELIMITER ;
@@ -1091,7 +1103,7 @@ BEGIN
         WHERE tbg.business_group_id=tle.business_group_id
     ) as business_group_name,
     legal_entity_name, contract_from, contract_to, logo,
-    file_space_limit, total_licence
+    file_space_limit, total_licence, is_closed
     FROM tbl_legal_entities tle WHERE client_id=clientid;
 END //
 
@@ -1240,10 +1252,11 @@ DROP PROCEDURE IF EXISTS `sp_client_group_update`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_group_update` (
-    IN groupname VARCHAR(50), groupid INT(11)
+    groupid INT(11), emailid VARCHAR(100), no_of_view_licence int(11), IN remarks VARCHAR(500) 
 )
 BEGIN
-    UPDATE tbl_client_groups set group_name=groupname
+    UPDATE tbl_client_groups set total_view_licence = no_of_view_licence,
+    email_id = emailid, remarks = remarks
     WHERE client_id=groupid;
 
 END //
