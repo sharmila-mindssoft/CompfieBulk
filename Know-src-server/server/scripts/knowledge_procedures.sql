@@ -7289,3 +7289,26 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_users_replacement`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_users_replacement`(
+    IN cat_id INT(11), u_from_id INT(11), u_to_id INT(11), remarks INT(11),
+    sessionuser INT(11),
+)
+BEGIN
+    UPDATE tbl_user_mapping set parent_userid = u_to_id
+        where parent_userid = u_from_id;
+
+    INSERT INTO tbl_user_replacement_histor(
+        user_category_id, repalced_from, repalced_by, remarks,
+        created_by, created_on
+    ) values (cat_id, u_from_id, u_to_id, remarks, sessionuser, current_ist_datetime());
+
+
+END //
+
+DELIMITER ;

@@ -1010,6 +1010,19 @@ CREATE TABLE `tbl_user_account_reassign_history` (
   PRIMARY KEY (`user_account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+DROP TABLE IF EXISTS `tbl_user_replacement_history`;
+CREATE TABLE `tbl_user_replacement_history` (
+  `user_replace_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_category_id` int(11) NOT NULL,
+  `replaced_from` int(11) DEFAULT NULL,
+  `replaced_by` int(11) DEFAULT NULL,
+  `remarks` varchar(500) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_validity_date_settings`;
 CREATE TABLE `tbl_validity_date_settings` (
   `validity_date_id` int(11) NOT NULL AUTO_INCREMENT,

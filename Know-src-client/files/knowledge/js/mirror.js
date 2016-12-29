@@ -1943,6 +1943,18 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function SaveUserReplacement(user_type, user_from, user_to, callback) {
+      callerName = "admin";
+      var request = [
+        "UserReplacement",
+        {
+          "user_type": user_type,
+          "old_user_id": user_from,
+          "new_user_id": user_to
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
   function getAssignStatutoryWizardOneData(callback){
     callerName = 'domain_transaction';
     var request = [
@@ -2505,6 +2517,7 @@ function initMirror() {
     ReassignTechnoExecutive: ReassignTechnoExecutive,
     ReassignDomainManager: ReassignDomainManager,
     ReassignDomainExecutive: ReassignDomainExecutive,
+    SaveUserReplacement: SaveUserReplacement,
     getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
     getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
     getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,

@@ -41,6 +41,7 @@ __all__ = [
     "get_domain_user_data",
     "save_reassign_techno_manager", "save_reassign_techno_executive",
     "save_reassign_domain_manager", "save_reassign_domain_executive"
+    "save_user_replacement"
 ]
 
 
@@ -1459,4 +1460,10 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
         db.execute(reassign_history, [
             8, user_from, user_to, unit_id, domain_id, remarks, session_user, get_date_time()
         ])
+    return True
+
+def save_user_replacement(db, user_type, user_from, user_to, remarks, session_user):
+    db.call_update_proc("sp_tbl_users_replacement", [
+        user_type, user_from, user_to, remarks, session_user
+    ])
     return True

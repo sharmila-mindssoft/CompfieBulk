@@ -103,6 +103,9 @@ def process_admin_request(request, db):
     elif type(request_frame) is admin.SaveReassignDomainExecutive :
         result = process_reassign_domain_executive(db, request_frame, session_user)
 
+    elif type(request_frame) is admin.UserReplacement :
+        result = process_user_replacement(db, request_frame, session_user)
+
     return result
 
 
@@ -555,3 +558,12 @@ def process_reassign_domain_executive(db, request, session_user):
     result = save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, remarks, session_user)
     if result :
         return admin.SaveReassignUserAccountSuccess()
+
+def process_user_replacement(db, request, session_user):
+    user_type = request.user_type,
+    user_from = request.user_from,
+    user_to = request.user_to
+    remarks = request.remarks
+    result = save_user_replacement(db, user_type, user_from, user_to, remarks, session_user)
+    if result :
+        return admin.UserReplacementSuccess()

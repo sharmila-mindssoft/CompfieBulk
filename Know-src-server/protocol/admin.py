@@ -655,6 +655,31 @@ class SaveReassignDomainExecutive(Request):
             "remarks": self.remarks
         }
 
+class UserReplacement(Request):
+    def __init__(self, user_type, user_from, user_to, remarks):
+        self.user_type = user_type
+        self.user_from = user_from
+        self.user_to = user_to
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_type", "old_user_id", "new_user_id", "remarks"])
+        return UserReplacement(
+            data.get("user_type"),
+            data.get("old_user_id"),
+            data.get("new_user_id"),
+            data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "user_type": self.user_type,
+            "old_user_id": self.user_from,
+            "new_user_id": self.user_to,
+            "remarks": self.remarks
+        }
+
 def _init_Request_class_map():
     classes = [
         GetUserGroups, SaveUserGroup, UpdateUserGroup,
@@ -664,7 +689,8 @@ def _init_Request_class_map():
         SaveReassignTechnoManager, SaveReassignTechnoExecutive,
         SaveReassignDomainManager, SaveReassignDomainExecutive,
         SendRegistraion, ChangeDisableStatus,
-        GetTechnoUserData, GetDomainUserData
+        GetTechnoUserData, GetDomainUserData,
+        UserReplacement
     ]
     class_map = {}
     for c in classes:
@@ -1397,6 +1423,19 @@ class GetDomainUserDataSuccess(Response):
             "d_user_info": self.group_list
         }
 
+class UserReplacementSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UserReplacementSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         GetUserGroupsSuccess, SaveUserGroupSuccess,
@@ -1409,7 +1448,8 @@ def _init_Response_class_map():
         GetUserMappingsSuccess, GetUserMappingsSuccess,
         SaveUserMappingsSuccess, SaveReassignUserAccountSuccess,
         SendRegistraionSuccess,
-        GetTechnoUserDataSuccess, GetDomainUserDataSuccess
+        GetTechnoUserDataSuccess, GetDomainUserDataSuccess,
+        UserReplacementSuccess
     ]
     class_map = {}
     for c in classes:
