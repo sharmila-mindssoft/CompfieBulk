@@ -323,6 +323,11 @@ var message = {
   "shortname_min3char": "Short Name: Minimum 3 Characters should be entered.",
   "domain_select_first": "Before Add Organization, select Domain First",
   "no_of_units_invalid": "No. Of Units are Invalid",
+  "reassign_from_required": "Reassign from required",
+  "reassign_to_required": "Reassign to required",
+  "reassign_to_tm_required": "Reassign to Techno Manager required",
+  "reassign_to_te_required": "Reassign to Techno Executive required",
+  "no_records_selected_for_reassign": "No records selected for reassign",
   
 };
 

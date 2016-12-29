@@ -1,7 +1,7 @@
 /* Elements */
 var UserType = $("#usertype");
 var Show = $(".btn-show");
-
+var Submit = $(".save");
 
 // Group auto complete
 var GroupDiv = $(".filter-group-div");
@@ -17,6 +17,9 @@ var ACEntity = $("#ac-entity")
 
 // Techno manager autocomplete
 var TechnoManagerDiv = $(".techno-mgr-div");
+var TechnoManagerName = $("#techno_manager_name");
+var TechnoManagerId = $("#techno_manager_id");
+var ACTechnoManager = $("#ac-techno-manager");
 var RTTechnoManagerName = $("#rt_techno_manager_name");
 var RTTechnoManagerId = $("#rt_techno_manager_id");
 var ACRTTechnoManager = $("#ac-rt-techno-manager");
@@ -136,18 +139,6 @@ var GroupCheckBoxes = {};
 var EntityCheckBoxes = {};
 var UnitCheckBoxes = {};
 
-
-var selected_textbox = '';
-var selected_textid = '';
-
-var TechnoManagerName = $("#techno_manager_name");
-var TechnoManagerId = $("#techno_manager_id");
-var ACTechnoManager = $("#ac-techno-manager");
-var TMShow = $(".tm-show-btn");
-var Submit = $(".btn-submit-1");
-var TechnoDetailsList = '';
-var TMRemarks = $("#tm_remarks");
-
 //retrive businessgroup form autocomplete value
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
@@ -196,169 +187,22 @@ function usertypeselectionlist(){
     }
 }
 
-
-function loadTMList(){
-        var LastGroup = '';
-        $.each(TechnoDetailsList, function(key, value) {
-            if(LastGroup != value.ct_name){
-
-                var grouptableRow = $('#templates .tm-view-row .tm-view-group-row');
-                var clone = grouptableRow.clone();
-
-                $('.tm-group-checkbox', clone).val(value.ct_id);
-                $('.tm-group', clone).text(value.ct_name);
-                $('.tm-ac-view', clone).addClass('tm-ac-'+value.ct_id);
-
-                $('.tm-techno-manager-name', clone).attr('id', 'techno_manager_name_'+value.ct_id);
-                $('.techno_manager_id', clone).attr('id', 'techno_manager_id_'+value.ct_id);
-                $('.ac-techno-manager', clone).attr('id', 'ac-techno-manager-'+value.ct_id);
-
-                $('.tm-techno-manager-name', clone).keyup(function(e){
-                    var text_val = $(this).val();
-                    selected_textbox = $(this);
-                    selected_textid = $("#techno_manager_id_"+value.ct_id);
-
-                    commonAutoComplete(
-                        e, $("#ac-techno-manager-"+value.ct_id), $("#techno_manager_id_"+value.ct_id), text_val,
-                        TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
-                            onAutoCompleteSuccess(selected_textbox, selected_textid, val);
-                        });
-                });
-
-                $('.tbody-tm-view').append(clone);
-                LastGroup = value.ct_name;
-            }
-
-            var letableRow = $('#templates .tm-view-row .tm-view-le-row');
-            var clone = letableRow.clone();
-            $('.tm-country', clone).text(value.c_name);
-            $('.tm-le', clone).text(value.le_name);
-            $('.te-ac-view', clone).addClass('te-ac-'+value.ct_id);
-
-            $('.tm-techno-executive-name', clone).attr('id', 'techno_executive_name_'+value.le_id);
-            $('.techno_executive_id', clone).attr('id', 'techno_executive_id_'+value.le_id);
-            $('.ac-techno-executive', clone).attr('id', 'ac-techno-executive-'+value.le_id);
-            $('.techno_executive_id', clone).addClass('group_le_'+value.ct_id);
-
-            $('.tm-techno-executive-name', clone).keyup(function(e){
-                var text_val = $(this).val();
-                selected_textbox = $(this);
-                selected_textid = $("#techno_executive_id_"+value.le_id);
-
-                commonAutoComplete(
-                    e, $("#ac-techno-executive-"+value.le_id), $("#techno_executive_id_"+value.le_id), text_val,
-                    TECHNO_USERS, "employee_name", "user_id", function (val) {
-                        onAutoCompleteSuccess(selected_textbox, selected_textid, val);
-                    });
-            });
-        
-            $('.tbody-tm-view').append(clone);
-        });
-
-        $('.tm-group-checkbox').on('click', function(e) {
-            var tm_view = '.tm-ac-' + $(this).val();
-            var te_view = '.te-ac-' + $(this).val();
-            if($(this).prop("checked")){
-                $(tm_view).show();
-                $(te_view).show();
-            }else{
-                $(tm_view).hide();
-                $(te_view).hide();
-            }
-        });
-}
-
 function pageControls(){
+    UserType.change(function(){
+        usertypeselectionlist();
+    });
+
     TechnoManagerName.keyup(function(e){
         var text_val = $(this).val();
-        
-        /*var condition_fields = ["is_active"];
-        var condition_values = [true];*/
+        var condition_fields = ["is_active"];
+        var condition_values = [true];
         commonAutoComplete(
             e, ACTechnoManager, TechnoManagerId, text_val,
             TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
                 onAutoCompleteSuccess(TechnoManagerName, TechnoManagerId, val);
-            });
+            }, condition_fields, condition_values);
     });
-
-    TMShow.click(function(){
-
-        if(TechnoManagerId.val() == ''){
-            displayMessage(message.reassign_from_required)
-        }else{
-            mirror.getTechnoUSerInfo(parseInt(TechnoManagerId.val()), function(error, response) {
-                if (error == null) {
-                    TechnoDetailsList = response.t_user_info;
-                    loadTMList();
-                } else {
-                    displayMessage(error);
-                }
-
-            });
-        }
-        
-        //validateAndShowList();
-    });
-
-    Submit.click(function(){
-        var reassign_from = TechnoManagerId.val();
-        var tm_remarks = TMRemarks.val();
-
-        if(reassign_from == ''){
-            displayMessage(message.reassign_from_required);
-            return false;
-        }else{
-            if($('.tm-group-checkbox:checkbox:checked').length > 0){
-                $('.tm-group-checkbox:checkbox:checked').each(function (index, el) {
-                    var group_id = $(this).val();
-                    var reassign_to = $("#techno_manager_id_"+group_id).val();
-                    if(reassign_to == ''){
-                        displayMessage(message.reassign_to_tm_required)
-                        return false;
-                    }else{
-                        $('.group_le_'+group_id).each(function (i, element) {
-                            var selected_id = $(element).attr('id');
-                            var legal_entity_id = selected_id.substr(selected_id.lastIndexOf('_') + 1);
-                            var te_id = $(element).val();
-                            if(te_id == ''){
-                                displayMessage(message.reassign_to_te_required);
-                                return false;
-                            }else{
-                                if(tm_remarks == ''){
-                                    displayMessage(message.remarks_required);
-                                }else{
-                                    displaySuccessMessage(message.reassign_users_account_success);
-                                }
-                            }
-                        });
-
-                    }
-                });
-            }else{
-                displayMessage(message.no_records_selected_for_reassign);
-            }
-            
-        }
-
-        
-
-
-        /*mirror.getTechnoUSerInfo(parseInt(TechnoManagerId.val()), function(error, response) {
-            if (error == null) {
-                TechnoDetailsList = response.t_user_info;
-                loadTMList();
-            } else {
-                displayMessage(error);
-            }
-
-        });*/
-    });
-
-    
-
-    
-
-    /*RTTechnoManagerName.keyup(function(e){
+    RTTechnoManagerName.keyup(function(e){
         var text_val = $(this).val();
         var condition_fields = ["is_active"];
         var condition_values = [true];
@@ -497,10 +341,10 @@ function pageControls(){
     });
     GroupHeaderCheckBox.change(function(){
         activateOrDeactivateAllGroup();
-    });*/
+    });
 }
 
-/*function validateAndShowList(){
+function validateAndShowList(){
     val_user_type = UserType.val();
     val_techno_manager_id = TechnoManagerId.val();
     val_techno_executive_id = TechnoUserId.val();
@@ -658,7 +502,6 @@ function loadUserCategory(){
         UserType.append(clone);
     });
 }
-
 function activateOrDeactivateEntity(legal_entity_id){
     entity_status = $(".entity-"+legal_entity_id).prop("checked");
     EntityCheckBoxes[legal_entity_id] = entity_status;
@@ -668,11 +511,11 @@ function loadUnits(){
     UnitCheckBoxes = {};
     TBodyReassignListUnitView.empty();
     var assigned_units_of_selected_user = [];
-    if(val_domain_executive_id in user_wise_units){
+    /*if(val_domain_executive_id in user_wise_units){
         assigned_units_of_selected_user = user_wise_units[val_domain_executive_id][val_domain_id]
         if(val_user_type == 7)
             assigned_units_of_selected_user = user_wise_units[val_domain_manager_id][val_domain_id]
-    }
+    }*/
 
     if(val_user_type == 7 && val_domain_manager_id in user_wise_units && user_wise_units[val_domain_manager_id][val_domain_id] != undefined){
         assigned_units_of_selected_user = user_wise_units[val_domain_manager_id][val_domain_id]
@@ -829,19 +672,27 @@ function generateIdNameMaps(){
             user_wise_clients[value.user_id] = [];
         user_wise_clients[value.user_id].push(value.client_id);
     });
-}*/
+}
 
 function getFormData(){
     function onSuccess(data) {
-        TECHNO_MANAGERS = data.t_m_reassign;
-        TECHNO_USERS = data.t_e_reassign;
-        DOMAIN_MANAGERS = data.d_m_reassign;
-        DOMAIN_USERS = data.d_e_reassign;
+        TECHNO_MANAGERS = data.techno_managers;
+        TECHNO_USERS = data.techno_users;
+        DOMAIN_MANAGERS = data.domain_managers;
+        DOMAIN_USERS = data.domain_users;
         GROUPS = data.groups;
         BUSINESS_GROUPS = data.business_groups;
         LEGAL_ENTITIES = data.admin_legal_entity;
+        UNITS = data.unit_id_name;
+        COUNTRIES = data.countries;
         DOMAINS = data.domains;
+        ASSIGNED_ENTITIES = data.assigned_legal_entities;
+        ASSIGNED_UNITS = data.assigned_units;
+        ASSIGNED_CLIENTS = data.assigned_clients;
         USER_CATEGORIES = data.user_categories;
+        generateIdNameMaps();
+        loadUserCategory();
+        usertypeselectionlist();
     }
     function onFailure(error) {
         custom_alert(error);
@@ -863,12 +714,12 @@ function initialize(){
     $(document).ready(function () {
         pageControls();
         getFormData();
-        /*mirror.getTechnoUSerInfo(7, function(error, response) {
+        mirror.getTechnoUSerInfo(7, function(error, response) {
 
         });
         mirror.getDomainUserInfo(9, 1, 1, 1, function(error, response) {
 
-        });*/
+        });
     });
 }
 
