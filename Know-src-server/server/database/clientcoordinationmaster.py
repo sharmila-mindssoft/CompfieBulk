@@ -9,7 +9,7 @@ __all__ = [
     "get_unit_approval_list",
     "get_entity_units_list",
     "approve_unit", "approve_client_group",
-    "get_client_groups_approval_list"
+    "get_client_groups_approval_list", "get_legal_entity_info"
 ]
 
 
@@ -195,16 +195,35 @@ def return_client_groups_approval_list(groups):
     fn = clientcoordinationmaster.ClientGroupApproval
     result = [
         fn(
-            client_id=group["client_id"], group_name=group["group_name"],
-            username=group["email_id"], le_count=group["count"],
-            is_active=True if(group["count"] > 0) else False,
-            country_ids=[
-                int(x) for x in group["client_countries"].split(",")
-            ], short_name=group["short_name"]
+            group["client_id"], group["group_name"],
+            group["short_name"], group["email_id"],
+            group["legal_entity_name"], group["legal_entity_id"],
+            group["country_name"]
         ) for group in groups
     ]
     return result
 
+def get_legal_entity_info(db, entity_id):
+    data = db.call_proc_with_multiresult_set("sp_client_groups_legal_entity_info", None, 2)
+    org_list = []
+    result = None
+    for d in data[1] :
+        org_list.append(
+            clientcoordinationmaster.LegalEntityOrganisation(
+                d["legal_entity_id"], d["domain_id"],
+                d["domain_name"], d["organisation_id"],
+                d["organisation_name"], d["count"]
+            )
+        )
+    for d1 in data[0]:
+        result = clientcoordinationmaster.GetLegalEntityInfoSuccess(
+            d1["legal_entity_id"], d1["bg_name"], d1["contract_from"],
+            d1["contract_to"], d1["file_space_limit"],
+            d1["total_licence"], d1["total_view_licence"],
+            org_list
+        )
+
+    return result
 
 def approve_client_group(db, request, session_user):
     client_group_approval_details = request.client_group_approval_details

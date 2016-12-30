@@ -1096,29 +1096,29 @@ class GetAssignLegalEntityListSuccess(Response):
 
 class GetEditAssignLegalEntitySuccess(Response):
     def __init__(
-        self, 
+        self,
         unassign_legal_entities,
         techno_users
     ):
-        
+
         self.unassign_legal_entities = unassign_legal_entities
         self.techno_users = techno_users
-        
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "unassign_legal_entities", "techno_users"
         ])
-       
+
         unassign_legal_entities = data.get("unnssign_legal_entities")
         techno_users = data.get("techno_users")
-        
+
         return GetEditAssignLegalEntitySuccess(
             unassign_legal_entities, techno_users
         )
 
     def to_inner_structure(self):
-        
+
         return {
             "unassign_legal_entities": self.unassign_legal_entities,
             "techno_users": self.techno_users
@@ -1139,26 +1139,26 @@ class SaveAssignLegalEntitySuccess(Response):
 
 class ViewAssignLegalEntitySuccess(Response):
     def __init__(
-        self, 
+        self,
         assigned_legal_entities
     ):
-        
+
         self.assigned_legal_entities = assigned_legal_entities
-        
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "view_assigned_legal_entities"
         ])
-       
+
         assigned_legal_entities = data.get("view_assigned_legal_entities")
-        
+
         return ViewAssignLegalEntitySuccess(
             assigned_legal_entities
         )
 
     def to_inner_structure(self):
-        
+
         return {
             "view_assigned_legal_entities": self.assigned_legal_entities
         }
@@ -1272,8 +1272,11 @@ class UnitDetails(object):
         i_ids = data.get("industry_id")
         is_active = data.get("is_active")
         approve_status = data.get("approve_status")
-        return UnitDetails(unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name,
-                geography_id, unit_code, unit_name, unit_address, postal_code, domain_ids, i_ids, is_active, approve_status)
+        return UnitDetails(
+            unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name,
+            geography_id, unit_code, unit_name, unit_address, postal_code,
+            domain_ids, i_ids, is_active, approve_status
+        )
 
     def to_structure(self):
         data = {
