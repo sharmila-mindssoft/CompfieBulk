@@ -1881,6 +1881,16 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
 
+  function technoManagerInfo(reassign_to, client_id, entity_id, techno_executive, old_techno_executive) {
+    var userInfo = {};
+    userInfo.reassign_to = reassign_to;
+    userInfo.gt_id = client_id;
+    userInfo.le_id = entity_id;
+    userInfo.t_e_id = techno_executive;
+    userInfo.old_t_e_id = old_techno_executive;
+    return userInfo;
+  }
+
   function ReassignTechnoManager(user_from, data, remarks, callback){
       callerName = "admin";
       var request = [
@@ -1893,7 +1903,15 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function ReassignTechnoExecutive(user_from, user_to, data, remarks){
+
+  function technoExecutiveInfo(client_id, entity_id) {
+    var userInfo = {};
+    userInfo.gt_id = client_id;
+    userInfo.le_id = entity_id;
+    return userInfo;
+  }
+
+  function ReassignTechnoExecutive(user_from, user_to, data, remarks, callback){
       callerName = "admin";
       var request = [
         "SaveReassignTechnoExecutive",
@@ -2551,7 +2569,10 @@ function initMirror() {
     getAssignedStatutoriesList: getAssignedStatutoriesList,
     getComplianceStatutoriesList: getComplianceStatutoriesList,
     getAssignedStatutoriesForApprove: getAssignedStatutoriesForApprove,
-    approveAssignedStatutory: approveAssignedStatutory
+    approveAssignedStatutory: approveAssignedStatutory,
+    technoManagerInfo: technoManagerInfo,
+    technoExecutiveInfo: technoExecutiveInfo,
+
   };
 }
 var mirror = initMirror();

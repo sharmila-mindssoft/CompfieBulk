@@ -23,9 +23,7 @@ var ACRTTechnoManager = $("#ac-rt-techno-manager");
 
 // Techno User autocomplete
 var TechnoUserDiv = $(".techno-user-div");
-var TechnoUserName = $("#techno_user_name");
-var TechnoUserId = $("#techno_user_id");
-var ACTechnoUser = $("#ac-techno-user");
+
 var RTTechnoUserName = $("#rt_techno_user_name");
 var RTTechnoUserId = $("#rt_techno_user_id");
 var ACRTTechnoUser = $("#ac-rt-techno-user");
@@ -147,6 +145,19 @@ var TMShow = $(".tm-show-btn");
 var Submit = $(".btn-submit-1");
 var TechnoDetailsList = '';
 var TMRemarks = $("#tm_remarks");
+var TERemarks = $("#te_remarks");
+
+
+var TechnoExecutiveName = $("#techno_executive_name");
+var TechnoExecutiveId = $("#techno_executive_id");
+var ACTechnoExecutive = $("#ac-techno-executive");
+
+var RTechnoExecutiveName = $("#te-techno_executive_name");
+var RTechnoExecutiveId = $("#te-techno_executive_id");
+var RACTechnoExecutive = $("#te-ac-techno-executive");
+
+var TEShow = $(".te-show-btn");
+var TESubmit = $(".btn-submit-2");
 
 //retrive businessgroup form autocomplete value
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -199,8 +210,12 @@ function usertypeselectionlist(){
 
 function loadTMList(){
         var LastGroup = '';
+        var group_countries = {};
+        var group_domains = {};
+
         $.each(TechnoDetailsList, function(key, value) {
             if(LastGroup != value.ct_name){
+
 
                 var grouptableRow = $('#templates .tm-view-row .tm-view-group-row');
                 var clone = grouptableRow.clone();
@@ -214,20 +229,30 @@ function loadTMList(){
                 $('.ac-techno-manager', clone).attr('id', 'ac-techno-manager-'+value.ct_id);
 
                 $('.tm-techno-manager-name', clone).keyup(function(e){
+                    var condition_fields = ["country_domains"];
+                    var condition_values1 = [group_countries[value.ct_id]];
+                    var condition_values2 = group_domains[value.ct_id];
+
                     var text_val = $(this).val();
                     selected_textbox = $(this);
                     selected_textid = $("#techno_manager_id_"+value.ct_id);
 
-                    commonAutoComplete(
+                    commonAutoComplete1(
                         e, $("#ac-techno-manager-"+value.ct_id), $("#techno_manager_id_"+value.ct_id), text_val,
-                        TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
+                        TECHNO_MANAGERS, "employee_name", "user_id",  function (val) {
                             onAutoCompleteSuccess(selected_textbox, selected_textid, val);
-                        });
+                        }, condition_fields, condition_values1, condition_values2);
                 });
 
                 $('.tbody-tm-view').append(clone);
                 LastGroup = value.ct_name;
+
+                group_countries[value.ct_id] = [];
+                group_domains[value.ct_id] = [];
             }
+
+            group_countries[value.ct_id] = group_countries[value.ct_id].push(value.c_id);
+            group_domains[value.ct_id] = $.merge(group_domains[value.ct_id], value.d_ids);
 
             var letableRow = $('#templates .tm-view-row .tm-view-le-row');
             var clone = letableRow.clone();
@@ -239,22 +264,32 @@ function loadTMList(){
             $('.techno_executive_id', clone).attr('id', 'techno_executive_id_'+value.le_id);
             $('.ac-techno-executive', clone).attr('id', 'ac-techno-executive-'+value.le_id);
             $('.techno_executive_id', clone).addClass('group_le_'+value.ct_id);
+            $('.old_executive_id', clone).attr('id', 'old_executive_id_'+value.le_id);
+            $('.old_executive_id', clone).val(value.executive_id);
+
+            
 
             $('.tm-techno-executive-name', clone).keyup(function(e){
+                var condition_fields = ["country_domains"];
+                var condition_values1 = [value.c_id];
+                var condition_values2 = value.d_ids;
+
                 var text_val = $(this).val();
                 selected_textbox = $(this);
                 selected_textid = $("#techno_executive_id_"+value.le_id);
 
-                commonAutoComplete(
+                commonAutoComplete1(
                     e, $("#ac-techno-executive-"+value.le_id), $("#techno_executive_id_"+value.le_id), text_val,
                     TECHNO_USERS, "employee_name", "user_id", function (val) {
                         onAutoCompleteSuccess(selected_textbox, selected_textid, val);
-                    });
+                    }, condition_fields, condition_values1, condition_values2);
             });
         
             $('.tbody-tm-view').append(clone);
         });
 
+        console.log(group_countries)
+        console.log(group_domains)
         $('.tm-group-checkbox').on('click', function(e) {
             var tm_view = '.tm-ac-' + $(this).val();
             var te_view = '.te-ac-' + $(this).val();
@@ -268,12 +303,60 @@ function loadTMList(){
         });
 }
 
+function loadTEList(){
+        $.each(TechnoDetailsList, function(key, value) {
+            var letableRow = $('#templates .te-view-row .te-view-le-row');
+            var clone = letableRow.clone();
+
+            $('.te-group-checkbox', clone).val(value.ct_id + '-' + value.le_id);
+            $('.te-group', clone).text(value.ct_name);
+            var bg_name = '-';
+            if(value.bg_name != null){
+                bg_name = value.bg_name;
+            }
+            $('.te-businessgroup', clone).text(bg_name);
+            $('.te-country', clone).text(value.c_name);
+            $('.te-le', clone).text(value.le_name);
+
+            /*$('.old_executive_id', clone).attr('id', 'old_executive_id_'+value.le_id);
+            $('.old_executive_id', clone).val(value.executive_id);*/
+
+        
+            $('.tbody-te-view').append(clone);
+        });
+
+        /*$('.tm-group-checkbox').on('click', function(e) {
+            var tm_view = '.tm-ac-' + $(this).val();
+            var te_view = '.te-ac-' + $(this).val();
+            if($(this).prop("checked")){
+                $(tm_view).show();
+                $(te_view).show();
+            }else{
+                $(tm_view).hide();
+                $(te_view).hide();
+            }
+        });*/
+}
+
+function callTechnoUserInfo(userId, type){
+    mirror.getTechnoUSerInfo(userId, function(error, response) {
+        if (error == null) {
+            TechnoDetailsList = response.t_user_info;
+            if(type == 'TM'){
+                loadTMList();
+            }else{
+                loadTEList();
+            }
+        } else {
+            displayMessage(error);
+        }
+    });
+
+}
+
 function pageControls(){
     TechnoManagerName.keyup(function(e){
         var text_val = $(this).val();
-        
-        /*var condition_fields = ["is_active"];
-        var condition_values = [true];*/
         commonAutoComplete(
             e, ACTechnoManager, TechnoManagerId, text_val,
             TECHNO_MANAGERS, "employee_name", "user_id", function (val) {
@@ -281,28 +364,45 @@ function pageControls(){
             });
     });
 
-    TMShow.click(function(){
+    TechnoExecutiveName.keyup(function(e){
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, ACTechnoExecutive, TechnoExecutiveId, text_val,
+            TECHNO_USERS, "employee_name", "user_id", function (val) {
+                onAutoCompleteSuccess(TechnoExecutiveName, TechnoExecutiveId, val);
+            });
+    });
 
+    RTechnoExecutiveName.keyup(function(e){
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, RACTechnoExecutive, RTechnoExecutiveId, text_val,
+            TECHNO_USERS, "employee_name", "user_id", function (val) {
+                onAutoCompleteSuccess(RTechnoExecutiveName, RTechnoExecutiveId, val);
+            });
+    });
+
+    TMShow.click(function(){
         if(TechnoManagerId.val() == ''){
             displayMessage(message.reassign_from_required)
         }else{
-            mirror.getTechnoUSerInfo(parseInt(TechnoManagerId.val()), function(error, response) {
-                if (error == null) {
-                    TechnoDetailsList = response.t_user_info;
-                    loadTMList();
-                } else {
-                    displayMessage(error);
-                }
-
-            });
+            callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
         }
-        
-        //validateAndShowList();
+    });
+
+    TEShow.click(function(){
+        if(TechnoExecutiveId.val() == ''){
+            displayMessage(message.reassign_from_required)
+        }else{
+            callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
+        }
     });
 
     Submit.click(function(){
+        var reassignDetails = [];
         var reassign_from = TechnoManagerId.val();
         var tm_remarks = TMRemarks.val();
+        var isValidate = false;
 
         if(reassign_from == ''){
             displayMessage(message.reassign_from_required);
@@ -320,43 +420,95 @@ function pageControls(){
                             var selected_id = $(element).attr('id');
                             var legal_entity_id = selected_id.substr(selected_id.lastIndexOf('_') + 1);
                             var te_id = $(element).val();
+                            var old_executive_id = $('#old_executive_id_'+legal_entity_id).val();
+
                             if(te_id == ''){
                                 displayMessage(message.reassign_to_te_required);
                                 return false;
                             }else{
                                 if(tm_remarks == ''){
                                     displayMessage(message.remarks_required);
+                                    return false;
                                 }else{
-                                    displaySuccessMessage(message.reassign_users_account_success);
+                                    reassignDetailsData = mirror.technoManagerInfo(parseInt(reassign_to), parseInt(group_id),
+                                        parseInt(legal_entity_id), parseInt(te_id), parseInt(old_executive_id));
+                                    reassignDetails.push(reassignDetailsData);
+                                    isValidate = true;
+                                    
                                 }
                             }
                         });
-
                     }
                 });
+                if(isValidate){
+                    mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
+                        function(error, response) {
+                        if (error == null) {
+                            displaySuccessMessage(message.reassign_users_account_success);
+                        } else {
+                            displayMessage(error);
+                        }
+                    });
+                }
+                
             }else{
                 displayMessage(message.no_records_selected_for_reassign);
             }
             
         }
-
-        
-
-
-        /*mirror.getTechnoUSerInfo(parseInt(TechnoManagerId.val()), function(error, response) {
-            if (error == null) {
-                TechnoDetailsList = response.t_user_info;
-                loadTMList();
-            } else {
-                displayMessage(error);
-            }
-
-        });*/
     });
 
-    
+    TESubmit.click(function(){
+        var reassignDetails = [];
+        var reassign_from = TechnoExecutiveId.val();
+        var reassign_to = RTechnoExecutiveId.val();
+        var te_remarks = TERemarks.val();
+        var isValidate = false;
 
-    
+        if(reassign_from == ''){
+            displayMessage(message.reassign_from_required);
+            return false;
+        }else{
+            if($('.te-group-checkbox:checkbox:checked').length > 0){
+                $('.te-group-checkbox:checkbox:checked').each(function (index, el) {
+                    var combile_id = $(this).val().split('-');
+                    var group_id = combile_id[0];
+                    var le_id = combile_id[1];
+                    
+                    if(reassign_to == ''){
+                        displayMessage(message.reassign_to_te_required)
+                        return false;
+                    }else{
+                        if(te_remarks == ''){
+                            displayMessage(message.remarks_required);
+                            return false;
+                        }else{
+                            reassignDetailsData = mirror.technoExecutiveInfo(parseInt(group_id),
+                                parseInt(le_id));
+                            reassignDetails.push(reassignDetailsData);
+                            isValidate = true;
+                        }
+                    }
+                });
+                if(isValidate){
+                    mirror.ReassignTechnoExecutive(parseInt(reassign_from), parseInt(reassign_to), 
+                        reassignDetails, te_remarks, 
+                        function(error, response) {
+                        if (error == null) {
+                            displaySuccessMessage(message.reassign_users_account_success);
+                        } else {
+                            displayMessage(error);
+                        }
+                    });
+                }
+                
+            }else{
+                displayMessage(message.no_records_selected_for_reassign);
+            }
+            
+        }
+    });
+
 
     /*RTTechnoManagerName.keyup(function(e){
         var text_val = $(this).val();

@@ -377,8 +377,8 @@ api_params = {
     'd_u_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'gt_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
-    'reassignn_from': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'reassignn_to': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'reassign_from': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'reassign_to': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     't_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'executive_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'old_t_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},

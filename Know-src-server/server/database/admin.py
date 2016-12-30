@@ -1374,7 +1374,7 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
                 "INNER JOIN tbl_legal_entities as t2 " + \
                 "ON t1.legal_entity_id = t2.legal_entity_id " + \
                 "INNER JOIN tbl_user_mapping as t3 " + \
-                " ON t1.user_id = t3.user_id and t3.parent_user_id != %s " + \
+                " ON t1.user_id = t3.child_user_id and t1.domain_id = t3.domain_id and t3.parent_user_id != %s " + \
                 "WHERE t1.user_category_id = 7 and t1.client_id = %s"
 
             rows = db.select_all(qs, [d.reassign_to, d.client_id])
