@@ -1283,6 +1283,7 @@ def save_unit(
 
     action = "Created following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, 19, action)
+    db.call_insert_proc("sp_client_unit_messages_save", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
 
     max_unit_id = None
     # unit_length = 0
@@ -2299,7 +2300,7 @@ def save_assigned_units(db, request, session_user):
     values_list = []
     current_time_stamp = get_date_time()
     domains = get_user_domains(db, session_user)
-    user_category_id = get_user_category_id(db, session_user)
+    user_category_id = get_user_category_id(db, domain_manager_id)
     domain_name_id_map = {}
     for domain in domains:
         domain_name_id_map[domain.domain_name] = domain.domain_id
