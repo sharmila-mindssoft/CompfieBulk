@@ -398,27 +398,33 @@ class GetClientGroupApprovalListSuccess(Response):
 
 class ClientGroupApprovalDetails(object):
     def __init__(
-        self, client_id, approval_status, reason
+        self, client_id, entity_id, entity_name, approval_status, reason
     ):
         self.client_id = client_id
+        self.entity_id = entity_id
+        self.entity_name = entity_name
         self.approval_status = approval_status
         self.reason = reason
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "client_id", "approval_status", "reason"
+            "ct_id", "le_id", "le_name", "approval_status", "reason"
         ])
-        client_id = data.get("client_id")
+        client_id = data.get("ct_id")
+        entity_id = data.get("le_id")
+        entity_name = data.get("le_name")
         approval_status = data.get("approval_status")
         reason = data.get("reason")
         return ClientGroupApprovalDetails(
-            client_id, approval_status, reason
+            client_id, entity_id, entity_name, approval_status, reason
         )
 
     def to_structure(self):
         return {
-            "client_id": self.client_id,
+            "ct_id": self.client_id,
+            "le_id": self.entity_id,
+            "le_name": self.entity_name,
             "approval_status": self.approval_status,
             "reason": self.reason
         }

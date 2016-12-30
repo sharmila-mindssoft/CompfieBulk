@@ -527,7 +527,7 @@ class SaveReassignTechnoExecutive(Request):
             "remarks": self.remarks
         }
 
-class ReassignTechnoExecutive(Request):
+class ReassignTechnoExecutive(object):
     def __init__(
         self, client_id, entity_id
     ):
@@ -535,7 +535,7 @@ class ReassignTechnoExecutive(Request):
         self.entity_id = entity_id
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, [
             "gt_id",
             "le_id",
@@ -546,7 +546,7 @@ class ReassignTechnoExecutive(Request):
             client_id, entity_id
         )
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
             "gt_id": self.client_id,
             "le_id": self.entity_id
@@ -590,7 +590,7 @@ class SaveReassignDomainManager(Request):
             "remarks": self.remarks
         }
 
-class ReassignDomainManager(Request):
+class ReassignDomainManager(object):
     def __init__(
         self, unit_id, domain_executive, old_domain_executive
     ):
@@ -599,7 +599,7 @@ class ReassignDomainManager(Request):
         self.old_domain_executive = old_domain_executive
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, [
             "u_id", "d_e_id", "old_d_e_id"
         ])
@@ -611,7 +611,7 @@ class ReassignDomainManager(Request):
             old_domain_executive
         )
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
             "u_id": self.unit_id,
             "d_e_id": self.domain_executive,

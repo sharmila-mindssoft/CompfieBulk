@@ -1721,6 +1721,27 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_client_group_approve_message`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_approve_message`(
+    IN cat_id int(11), head TEXT, mtext TEXT, con int(11)
+)
+BEGIN
+    select @console_id := user_id from tbl_user_login_details where user_category_id = 2 limit 1;
+
+    INSERT INTO tbl_messages (user_category_id, message_head, message_text, created_by, created_on)
+    VALUES (cat_id, head, mtext, con, current_ist_datetime());
+
+    SET @msg_id := LAST_INSERT_ID();
+
+    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @console_id, 0);
+
+
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------

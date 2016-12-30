@@ -558,6 +558,8 @@ CREATE TABLE `tbl_legal_entities` (
   `is_closed` tinyint(4) DEFAULT '0',
   `is_approved` tinyint(4) DEFAULT '0',
   `reason` Text DEFAULT NULL,
+  `approved_by` int(11) DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,

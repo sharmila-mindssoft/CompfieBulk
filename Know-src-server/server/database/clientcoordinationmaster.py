@@ -228,12 +228,15 @@ def get_legal_entity_info(db, entity_id):
 def approve_client_group(db, request, session_user):
     client_group_approval_details = request.client_group_approval_details
     current_time_stamp = get_date_time()
-    columns = ["is_approved", "remarks", "approved_by", "approved_on"]
+    columns = ["is_approved", "reason", "approved_by", "approved_on"]
     values = []
     conditions = []
+    client_ids = []
     approval_status = False
     for detail in client_group_approval_details:
-        client_id = detail.client_id
+        client_ids.append(detail.client_id)
+        entity_id = detail.entity_id
+        entity_name = detail.entity_name
         approval_status = detail.approval_status
         reason = detail.reason
         value_tuple = (
@@ -241,23 +244,28 @@ def approve_client_group(db, request, session_user):
            reason, session_user, current_time_stamp
         )
         values.append(value_tuple)
-        condition = "client_id=%s" % (client_id)
+        condition = "legal_entity_id=%s" % (entity_id)
         conditions.append(condition)
     result = db.bulk_update(
-        tblClientGroups, columns, values, conditions
+        "tbl_legal_entities", columns, values, conditions
     )
+
+    text = entity_name + " Legal entity has been approved " if(approval_status is True) else "Legal entity has been rejected"
+
+    db.call_insert_proc("sp_client_group_approve_message", [1, "Approve Client Group", text, session_user])
+
     #
     # sp_activity_log_save
     # Arguments : user id, form id, action, time of action
     # Results : Returns activity log id
     #
+
     if result:
         db.call_insert_proc(
             "sp_activity_log_save",
             (
                 session_user, frmApproveClientGroup,
-                "Approved Client Group" if(
-                    approval_status is True) else "Rejected Client Group",
+                text,
                 current_time_stamp
             )
         )
