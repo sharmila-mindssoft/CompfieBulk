@@ -265,22 +265,34 @@
                                                 <div class="form-group has-feedback domain-mgr" style="">
                                                     <label class="col-sm-4 control-label">Domain Manager: <span class="mandatory">*</span></label>
                                                     <div class="col-md-6">
-                                                        <input class="form-control input-sm" value="EMP0010 - Rajkumar" type="text">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain Manager" id="domain_manager_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="domain_manager_id">
+                                                        <div id="ac-domain-manager" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group has-feedback filter-group-mandatory" style="">
                                                     <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
                                                     <div class="col-md-6">
-                                                        <input class="form-control input-sm" value="RG Group" type="text">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Group" id="dm_group_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_group_id">
+                                                        <div id="ac-dm-group" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group has-feedback filter-business" style="">
                                                     <label class="col-sm-4 control-label">Business Group:</label>
                                                     <div class="col-md-6">
-                                                        <input class="form-control input-sm" placeholder="Enter Business Group" type="text">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Business Group" id="dm_business_group_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_business_group_id">
+                                                        <div id="ac-dm-business-group" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 
@@ -291,20 +303,28 @@
                                                 <div class="form-group has-feedback filter-legal" style="">
                                                     <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                                     <div class="col-md-6">
-                                                        <input class="form-control input-sm" value="RG Legal Entity 01" placeholder="Enter Legal Entity Name" type="text">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Legal Entity" id="dm_legal_entity_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_legal_entity_id">
+                                                        <div id="ac-dm-legal-entity" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group has-feedback filter-domain" style="">
                                                     <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
                                                     <div class="col-md-6">
-                                                        <input class="form-control input-sm" value="Labour Law" type="text">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain" id="dm_domain_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_domain_id">
+                                                        <div id="ac-dm-domain" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-group text-center m-b-0">
-                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0" type="button" onclick="change_edit(category.value);"> Show </button>
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0 dm-show-btn" type="button"> Show </button>
                                             </div>
                                         </div>
                                         <div class="group-view">
@@ -445,14 +465,14 @@
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
                                                         <div class="col-md-6">
-                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here"></textarea>
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="dm_remarks"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group text-center m-b-15">
-                                            <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-3" type="button"> Submit </button>
                                         </div>
                                     </div>
                                 </div>
@@ -578,14 +598,14 @@
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
                                                         <div class="col-md-6">
-                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here"></textarea>
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="de_remarks"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group text-center m-b-15">
-                                            <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-4" type="button"> Submit </button>
                                         </div>
                                     </div>
                                 </div>
