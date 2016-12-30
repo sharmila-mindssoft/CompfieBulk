@@ -322,15 +322,20 @@ api_params = {
     "user_category_id": {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
     "user_category_name": {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': False},
 
+    "db_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "db_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "DBServer"},
-    "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
 
     "client_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "client_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientServer"},
+
+    "file_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "file_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "file_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "FileServerList"},
 
     "client_dbs": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientDatabase"},
     "client_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientGroup"},
