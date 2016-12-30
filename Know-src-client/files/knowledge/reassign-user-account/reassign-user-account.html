@@ -1,352 +1,772 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="portlet">
-        <!-- <h4 class="header-title m-t-0 m-b-30">Reassign User's Account</h4> -->
-        <div class="portlet-heading bg-info">
-            <h3 class="portlet-title">
-                Reassign User's Account
-            </h3>
-            
-            <div class="clearfix"></div>
-        </div>
-        <div id="bg-primary1" class="panel-collapse collapse in">
-          <div class="portlet-body">
-        <div class="row">
-          <div class="col-lg-12">
-             <div class="form-horizontal">
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group">
-                  <label class="col-md-4 control-label">Category: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <select class="form-control input-sm"  id="usertype"><!-- 
-                      <option value="1" selected="selected">Techno Manager</option>
-                      <option value="2">Techno Executive</option>
-                      <option value="3">Domain Manager</option>
-                      <option value="4">Domain Executive</option> -->
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group has-feedback filter-group-div" style="display: none;">
-                  <label class="col-sm-4 control-label">Group:<span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" placeholder="Enter Group" id="group_name">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="group_id">
-                    <div id="ac-group" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title"> Reassign User's Account </h3>
+                    <div class="portlet-widgets">
                     </div>
-                  </div>
+                    <div class="clearfix"></div>
                 </div>
-                <!-- <div class="form-group has-feedback filter-group-mandatory"  style="display: none;">
-                  <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" value="RG Group">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                  </div>
-                </div> -->
-                <div class="form-group has-feedback filter-legal-div"  style="display: none;">
-                  <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm"  value="" placeholder="Enter Legal Entity Name" id="legal_entity_name">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="legal_entity_id">
-                    <div id="ac-entity" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- end col -->
-              <div class="col-lg-6">
-                <div class="form-group has-feedback techno-mgr-div">
-                  <label class="col-sm-4 control-label">Techno Manager: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" value="" id="techno_manager_name" placeholder="Enter Techno Manager">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="techno_manager_id">
-                    <div id="ac-techno-manager" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group has-feedback techno-user-div" style="display: none;">
-                  <label class="col-sm-4 control-label">Techno Executive: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" id="techno_user_name" value="" placeholder="Enter Techno User">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="techno_user_id">
-                    <div id="ac-techno-user" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group has-feedback domain-mgr-div" style="display: none;">
-                  <label class="col-sm-4 control-label">Domain Manager: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" id="domain_manager_name" value="" placeholder="Enter Domain Manager">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="domain_manager_id">
-                    <div id="ac-domain-manager" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group has-feedback domain-user-div" style="display: none;">
-                  <label class="col-sm-4 control-label">Domain Executive: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" id="domain_executive_name" value="" placeholder="Enter Domain Executive">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="domain_executive_id">
-                    <div id="ac-domain-executive" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group has-feedback filter-business-div" style="display: none;">
-                  <label class="col-sm-4 control-label">Business Group:</label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" placeholder="Enter Business Group" id="business_group_name">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="business_group_id">
-                    <div id="ac-business-group" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group has-feedback filter-domain-div" style="display: none;">
-                  <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control input-sm" id="domain_name" value="" placeholder="Enter Domain">
-                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                    <input type="hidden" id="domain_id">
-                    <div id="ac-domain" class="ac-textbox default-display-none">
-                      <ul class="width85Percent"></ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- end col -->
-            </div>
-            <div class="form-group text-center">
-              <button class="btn btn-primary text-center waves-effect waves-light btn-show" type="submit"> Show </button>
-            </div>
-           
-            <div class="grid-table group-view default-display-none">
-                 <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-                    <thead>
-                  <tr>
-                        <th align="center" width="2%"><input type="checkbox" class="group-header-checkbox" /></th>
-                        <th width="15%">Country</th>
-                        <th width="20%">Group</th>
-                        <th width="15%">No.of Legal Entity</th>
-                    </tr>
-                    <tr>
-                        <td align="center"></td>
-                        <td>
-                          <div class="form-group col-sm-12 no-padding">
-                            <input type="text" class="form-control input-sm" />
-                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                          </div>
-                        </td>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div id="basicwizard">
+                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
+                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Techno Manager</a></li>
+                                <li><a href="#tab2" data-toggle="tab">Techno Executive</a></li>
+                                <li><a href="#tab3" data-toggle="tab">Domain Manager</a></li>
+                                <li><a href="#tab4" data-toggle="tab">Domain Executive</a></li>
+                                <li><a href="#tab5" data-toggle="tab">Manager Replacement</a></li>
+                            </ul>
+                            <div class="tab-content m-b-0">
+                                <div class="tab-pane fade active in" id="tab1">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-2">&nbsp;</div>
+                                            <div class="col-md-5">
+                                                <div class="form-group has-feedback techno-mgr">
+                                                    <label class="col-sm-4 control-label">Techno Manager: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Manager" id="techno_manager_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="techno_manager_id">
+                                                        <div id="ac-techno-manager" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0 tm-show-btn" type="button"> Show </button>
+                                            </div>
+                                        </div>
+                                        <div class="group-view">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th align="center" width="1%"></th>
+                                                        <th width="15%">Country</th>
+                                                        <th width="15%">Legal Entity Name</th>
+                                                        <th width="20%">Reassign To</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="tbody-tm-view">
+                                                </tbody>
 
-                        <td>
-                          <div class="form-group col-sm-12 no-padding">
-                            <input type="text" class="form-control input-sm" />
-                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                          </div>
-                        </td>
+                                                <!-- <tbody>
+                                                    <tr>
+                                                        <th style="vertical-align: middle;">
+                                                            <input type="checkbox" checked="checked" />
+                                                        </th>
+                                                        <th colspan="2" style="vertical-align: middle;">RG Group</th>
+                                                        <th>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Techno Manager</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0002 - Hariharan" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td>India, Singapore</td>
+                                                        <td>RG Legal Entity 01</td>
+                                                        <td>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Techno Executive</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0003 - Siva" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td>India</td>
+                                                        <td>RG Legal Entity 02</td>
+                                                        <td>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Techno Executive</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0004 - Kumar" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td>India</td>
+                                                        <td>RG Legal Entity 03</td>
+                                                        <td>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Techno Executive</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0005 - Prakash" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="vertical-align: middle;">
+                                                            <input type="checkbox" />
+                                                        </th>
+                                                        <th colspan="2" style="vertical-align: middle;">SM Group</th>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td>India</td>
+                                                        <td>SM Legal Entity 01</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td>India</td>
+                                                        <td>SM Legal Entity 02</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody> -->
+                                            </table>
+                                            <div class="form-group text-center m-t-15">
+                                                <div class="col-md-3">
+                                                    
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="tm_remarks"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15">
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-1" type="button"> Submit </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab2">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-2">&nbsp;</div>
+                                            <div class="col-md-5">
+                                                <div class="form-group has-feedback techno-user">
+                                                    <label class="col-sm-4 control-label">Techno Executive: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="techno_executive_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="techno_executive_id">
+                                                        <div id="ac-techno-executive" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0 te-show-btn" type="button"> Show </button>
+                                            </div>
+                                        </div>
+                                        <div class="group-view">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="2%">
+                                                            <input type="checkbox" />
+                                                        </th>
+                                                        <th width="15%">Group</th>
+                                                        <th width="15%">Business Group</th>
+                                                        <th width="15%">Country</th>
+                                                        <th width="15%">Legal Entity</th>
+                                                    </tr>
+                                            
+                                                </thead>
+                                                <tbody class="tbody-te-view">
+                                                </tbody>
+                                                <!-- <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" checked="checked" />
+                                                        </td>
+                                                        <td>RG Group</td>
+                                                        <td>RG Business Group</td>
+                                                        <td>India</td>
+                                                        <td>RG Legal Entity</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" checked="checked" />
+                                                        </td>
+                                                        <td>RG Group</td>
+                                                        <td>RG Business Group 01</td>
+                                                        <td>Singapore</td>
+                                                        <td>RG Legal Entity 01</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" />
+                                                        </td>
+                                                        <td>SM Group</td>
+                                                        <td>SM Business Group</td>
+                                                        <td>Singapore</td>
+                                                        <td>SM Legal Entity</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" />
+                                                        </td>
+                                                        <td>JKL Group</td>
+                                                        <td>JKL Business Group</td>
+                                                        <td>India</td>
+                                                        <td>JKL Legal Entity</td>
+                                                    </tr>
+                                                </tbody> -->
+                                            </table>
+                                            <div class="form-group text-center m-t-15">
+                                                <div class="col-md-6">
+                                                    <div class="form-group has-feedback reassign-tm">
+                                                        <label class="col-md-6 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                           <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="te-techno_executive_name">
+                                                          <i class="form-control-feedback fa fa-search"></i>
+                                                          <input type="hidden" id="te-techno_executive_id">
+                                                          <div id="te-ac-techno-executive" class="ac-textbox default-display-none">
+                                                            <ul class="width85Percent"></ul>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="te_remarks"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15">
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-2" type="button"> Submit </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab3">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback domain-mgr" style="">
+                                                    <label class="col-sm-4 control-label">Domain Manager: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="EMP0010 - Rajkumar" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-group-mandatory" style="">
+                                                    <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="RG Group" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-business" style="">
+                                                    <label class="col-sm-4 control-label">Business Group:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" placeholder="Enter Business Group" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                
+                                                <div class="form-group has-feedback filter-legal" style="">
+                                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="RG Legal Entity 01" placeholder="Enter Legal Entity Name" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-domain" style="">
+                                                    <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="Labour Law" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-center m-b-0">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0" type="button" onclick="change_edit(category.value);"> Show </button>
+                                            </div>
+                                        </div>
+                                        <div class="group-view">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="2%"></th>
+                                                        <th width="10%">Unit Code</th>
+                                                        <th width="10%">Unit Name</th>
+                                                        <th width="10%">Unit Location</th>
+                                                        <th width="15%">Reassign To</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="tbody-dm-view">
+                                                </tbody>
+                                                <!-- <tbody>
+                                                    <tr>
+                                                        <th style="vertical-align: middle;">
+                                                            <input type="checkbox" />
+                                                        </th>
+                                                        <th colspan="3" style="vertical-align: middle;">RG Legal Entity 01</th>
+                                                        <th>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Domain Manager</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0011 - Vigneswaran" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                          <input type="checkbox" class="form_checkbox">
+                                                        </td>
+                                                        <td>RG10001</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Corporate Office</td>
+                                                        <td>New Delhi</td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class=" form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG10002</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="24-1/4, South Delhi, 110001"></i> Regional Office - North</td>
+                                                        <td>South Delhi Municipal Corporation</td>
+                                                        <td>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Domain Executive</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0013 - Vikram" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG10003</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12, KK nagar, Chennai 600001"></i> Regional Office - South</td>
+                                                        <td>Chennai</td>
+                                                        <td>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Domain Executive</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0013 - Vikram" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG10009</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12, KK nagar, Chennai 600001"></i> Regional Office - South</td>
+                                                        <td>Madurai</td>
+                                                        <td>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Domain Executive</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0015 - Vijay" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG100010</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12, KK nagar, Chennai 600001"></i> Regional Office - South</td>
+                                                        <td>Salem</td>
+                                                        <td>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <label class="col-sm-4 p-t-7">Domain Executive</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control input-sm" value="EMP0016 - Ravi" type="text">
+                                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class=" form_checkbox">
+                                                        </td>
+                                                        <td>RG100011</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Branch Office</td>
+                                                        <td>Madurai</td>
+                                                        <td>
+                                                            
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox">
+                                                        </td>
+                                                        <td>RG100016</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Branch Office - North</td>
+                                                        <td>Madurai Corporation</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    
+                                                </tbody> -->
+                                            </table>
+                                            <div class="form-group text-center m-t-15">
+                                                <div class="col-md-3">
+                                            
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15">
+                                            <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab4">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback domain-mgr" style="">
+                                                    <label class="col-sm-4 control-label">Domain Executive: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="EMP0001 - Rajaram" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-group-mandatory" style="">
+                                                    <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="RG Group" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-business" style="">
+                                                    <label class="col-sm-4 control-label">Business Group:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" placeholder="Enter Business Group" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                
+                                                <div class="form-group has-feedback filter-legal" style="">
+                                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="RG Legal Entity 01" placeholder="Enter Legal Entity Name" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-domain" style="">
+                                                    <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="Labour Law" type="text">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-center m-b-0">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0" type="button" onclick="change_edit(category.value);"> Show </button>
+                                            </div>
+                                        </div>
+                                        <div class="group-view">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="2%">
+                                                            <input type="checkbox" class="form_checkbox">
+                                                        </th>
+                                                        <th width="15%">Unit Code</th>
+                                                        <th width="15%">Unit Name</th>
+                                                        <th width="12%">Unit Location</th>
+                                                    </tr>
+                                                    
+                                                </thead>
+                                                <!-- <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox">
+                                                        </td>
+                                                        <td>RG10001</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Corporate Office</td>
+                                                        <td>New Delhi</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class=" form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG10002</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Regional Office - North</td>
+                                                        <td>South Delhi Municipal Corporation</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG10003</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Regional Office - South</td>
+                                                        
+                                                        <td>Chennai</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG10009</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Regional Office - South</td>
+                                                        <td>Madurai</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" class="form_checkbox" checked="checked">
+                                                        </td>
+                                                        <td>RG100010</td>
+                                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> Regional Office - South</td>
+                                                        <td>Selam</td>
+                                                    </tr>
+                                                </tbody> -->
+                                                <tbody class="tbody-de-view">
+                                                </tbody>
+                                            </table>
+                                            <div class="form-group text-center m-t-15">
+                                                <div class="col-md-6">
+                                                    <div class="form-group has-feedback">
+                                                        <label class="col-md-6 control-label">Reassign To Domain Executive: <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="EMP0002 - Hariharan">
+                                                            <i class="form-control-feedback fa fa-search"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15">
+                                            <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab5">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-2">&nbsp;</div>
+                                            <div class="col-md-5">
+                                                <div class="form-group techno-user">
+                                                    <label class="col-sm-4 control-label">Category: <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <select id="category" class="form-control input-sm">
+                                                            <option value="1" selected="selected">Techno Manager</option>
+                                                            <option value="2">Domain Manager</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0" type="button"> Show </button>
+                                            </div>
+                                        </div>
+                                        <div class="group-view">  
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-list replace-tm" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-sm-6">Techno Manager</th>
+                                                    <th class="col-sm-6">Replaced By</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <ul class="list-unstyled">
+                                                            <li>EMP10019 - Hariharan</li>
+                                                            <li class="active">EMP10020 - Srinivasan<i class="fa fa-check pull-right"></i></li>
+                                                            <li>EMP10021 - Muthu Sundaram</li>
+                                                            <li>EMP10022 - Munesswaran</li>
+                                                            <li>EMP10023 - Saravanan</li>
+                                                            <li>EMP10024 - Sivaraman</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <ul class="list-unstyled">
+                                                            <li>EMP10019 - Hariharan</li>
+                                                            <li class="active">EMP10026 - Ragavan<i class="fa fa-check pull-right"></i></li>
+                                                            <li>EMP10021 - Muthu Sundaram</li>
+                                                            <li>EMP10022 - Munesswaran</li>
+                                                            <li>EMP10023 - Saravanan</li>
+                                                            <li>EMP10024 - Sivaraman</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <p class="p-l-5 replace-tm">*  note text goes here</p>
+                                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-list replace-dm" style="display: none;" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-sm-6">Domain Manager</th>
+                                                        <th class="col-sm-6">Replaced By</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <ul class="list-unstyled">
+                                                                <li>EMP10031 - Muthukumar</li>
+                                                                <li>EMP10032 - Subbiah</li>
+                                                                <li>EMP10033 - Sivaraman</li>
+                                                                <li class="active">EMP10034 - Mukesh<i class="fa fa-check pull-right"></i></li>
+                                                                <li>EMP10035 - Munesh</li>
+                                                                <li>EMP10036 - Arif</li>
+                                                            </ul>
+                                                        </td>
+                                                        <td>
+                                                            <ul class="list-unstyled">
+                                                                <li>EMP10031 - Muthukumar</li>
+                                                                <li class="active">EMP10032 - Subbiah<i class="fa fa-check pull-right"></i></li>
+                                                                <li>EMP10033 - Sivaraman</li>
+                                                                <li>EMP10035 - Munesh</li>
+                                                                <li>EMP10036 - Arif</li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <p class="p-l-5replace-dm" style="display: none;">*  note text goes here</p>
+                                            <div class="form-group text-center m-t-15">
+                                                <div class="col-md-3">
+                                                    <!-- <div class="form-group has-feedback reassign-tm">
+                                                        <label class="col-md-6 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="EMP0004 - Kumar">
+                                                            <i class="form-control-feedback fa fa-search"></i>
+                                                        </div>
+                                                    </div> -->
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-md-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15">
+                                            <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <td>
-                          <div class="form-group col-sm-12 no-padding">
-                            <input type="text" class="form-control input-sm" />
-                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                          </div>
-                        </td>
-                    </tr>
-                    </thead>
-                    <tbody class="tbody-reassign-list-group-view">
-                    </tbody>
-                </table>
-            </div>
-            <div class="grid-table legalentity-view default-display-none">
-                 <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-                <thead>
-                    <tr align="left">
-                        <th align="center" width="2%"><input type="checkbox"  class="entity-header-checkbox"/></th>
-                        <th width="15%">Group</th>
-                        <th width="15%">Business Group</th>
-                        <th width="15%">Country</th>
-                        <th width="15%">Legal Entity</th>
-                    </tr>
-                    <tr>
-                        <td align="center"></td>
-                        <td>
-                      <div class="form-group col-sm-12 no-padding">
-                          <input type="text" class="form-control input-sm" />
-                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                </ul>
+                            </div>
                         </div>
-                      </td>
-
-                    <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-
-                    <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                    <td>
-
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-
-                    
-                    </tr>
-                    </thead>
-                    <tbody class="tbody-reassign-list-legalentity-view">
-                    </tbody>
-                </table>
-            </div>
-            <div class="grid-table unit-view default-display-none">
-                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-                <thead>
-                    <tr align="left">
-                        <th width="2%" align="center"><input type="checkbox" class="unit-header-checkbox"></th>
-                        <th width="15%">Unit Code</th>
-                        <th width="15%">Unit Name</th>
-                        <th width="12%">Unit Location</th>
-                    </tr>
-                    <tr>
-                        <td align="center"></td>
-                        <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                        <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                        <td>
-                      <div class="form-group col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm" />
-                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                      </div>
-                    </td>
-                    </tr>
-                    </thead>
-                    <tbody class="tbody-reassign-list-unit-view">
-                    </tbody>
-                </table>
-            </div>
-
-
-            <div class="row view-note default-display-none">
-              <div class="col-lg-6">
-                <div class="form-horizontal" role="form">
-                  <div class="form-group has-feedback reassign-tm">
-                    <label class="col-md-5 control-label">Reassign To Techno Manager: <span class="mandatory">*</span></label>
-                    <div class="col-md-7">
-                      <input  class="form-control input-sm" value="" id="rt_techno_manager_name" placeholder="Enter Techno Manager">
-                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-
-                      <input type="hidden" id="rt_techno_manager_id">
-                                <div id="ac-rt-techno-manager" class="ac-textbox default-display-none">
-                                  <ul style="width:85%;"></ul>
-                                </div>
-
                     </div>
-                  </div>
-                  <div class="form-group has-feedback reassign-tu" style="display: none;">
-                    <label class="col-md-5 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
-                    <div class="col-md-7">
-                      <input  class="form-control input-sm" value="" id="rt_techno_user_name" placeholder="Enter Techno User">
-                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                      <input type="hidden" id="rt_techno_user_id">
-                                <div id="ac-rt-techno-user" class="ac-textbox default-display-none">
-                                  <ul style="width:85%;"></ul>
-                                </div>
-                    </div>
-                  </div>
-                  <div class="form-group has-feedback reassign-dm" style="display: none;">
-                    <label class="col-md-5 control-label">Reassign To Domain Manager: <span class="mandatory">*</span></label>
-                    <div class="col-md-7">
-                      <input  class="form-control input-sm" value="" id="rt_domain_manager_name" placeholder="Enter Domain Manager">
-                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                      <input type="hidden" id="rt_domain_manager_id">
-                      <div id="ac-rt-domain-manager" class="ac-textbox default-display-none">
-                        <ul style="width:85%;"></ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group has-feedback reassign-du" style="display: none;">
-                    <label class="col-md-5 control-label">Reassign To Domain Executive: <span class="mandatory">*</span></label>
-                    <div class="col-md-7">
-                      <input  class="form-control input-sm" value="" id="rt_domain_user_name" placeholder="Enter Domain User">
-                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                      <input type="hidden" id="rt_domain_user_id">
-                                <div id="ac-rt-domain-user" class="ac-textbox default-display-none">
-                                  <ul style="width:85%;"></ul>
-                                </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="form-group remarks-div">
-                  <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
-                  <div class="col-md-6">
-                    <textarea class="form-control remarks" placeholder="Enter Remarks here" maxlength="500"></textarea>
-                  </div>
-                </div>
-              </div>
-          
-            <div class="form-group text-center">
-              <button class="btn btn-primary text-center waves-effect waves-light save" type="submit"> Submit </button>
             </div>
-            </div>
-          </div>
         </div>
-        </div>
-        </div>
-      </div>
-      <!-- end col -->
     </div>
-    <!-- end row -->
-  </div>
 </div>
 
 <div id="templates" class="default-display-none">
-  <div class="usertype-drop-down">
-    <option value=""></option>
-  </div>
-    <div class="group-view-row">
+    <div class="tm-view-row">
         <table>
-            <tr>
-                <td class="middle-align">
-                    <input type="checkbox" class="group-checkbox form_checkbox" />
+            <tr class="tm-view-group-row">
+                <th class="middle-align">
+                    <input type="checkbox" class="tm-group-checkbox form_checkbox" />
+                </th>
+                <th colspan="2" class="tm-group middle-align"></th>
+                <th>
+                  <div class="form-group has-feedback m-b-0 default-display-none tm-ac-view">
+                      <label class="col-sm-4 p-t-7">Techno Manager</label>
+                      <div class="col-md-6">
+                          <input class="form-control input-sm tm-techno-manager-name" value="" type="text" placeholder="Enter Techno Manager">
+                          <i class="form-control-feedback fa fa-search"></i>
+                          <input type="hidden" class="techno_manager_id">
+                          <div class="ac-textbox default-display-none ac-techno-manager">
+                            <ul class="width85Percent"></ul>
+                          </div>
+                      </div>
+                  </div>
+                </th>
+            </tr>
+
+            <tr class="tm-view-le-row">
+                <td></td>
+                <td class="tm-country"></td>
+                <td class="tm-le"></td>
+                <td>
+                  <div class="form-group has-feedback m-b-0 default-display-none te-ac-view">
+                      <label class="col-sm-4 p-t-7">Techno Executive</label>
+                      <div class="col-md-6">
+                          <input class="form-control input-sm tm-techno-executive-name" value="" type="text" placeholder="Enter Techno Executive">
+                          <i class="form-control-feedback fa fa-search"></i>
+                          <input type="hidden" class="old_executive_id">
+                          <input type="hidden" class="techno_executive_id">
+                          <div class="ac-textbox default-display-none ac-techno-executive">
+                            <ul class="width85Percent"></ul>
+                          </div>
+                      </div>
+                  </div>
                 </td>
-                <td class="countries middle-align"></td>
-                <td class="group-name middle-align"></td>
-                <td class="le-count middle-align"></td>
             </tr>
         </table>     
     </div>
+
+    <div class="te-view-row">
+      <table>
+          <tr class="te-view-le-row">
+              <td><input type="checkbox" class="te-group-checkbox form_checkbox" /></td>
+              <td class="te-group"></td>
+              <td class="te-businessgroup"></td>
+              <td class="te-country"></td>
+              <td class="te-le"></td>
+          </tr>
+      </table>     
+    </div>
+
     <div class="legalentity-view-row">
         <table>
             <tr>
@@ -379,6 +799,13 @@
         </table>
     </div>
 </div>
+<!-- <script type="text/javascript">
+$(document).ready(function() {
+    $('#basicwizard').bootstrapWizard({
+        'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+    });
+});
+</script> -->
 
 <script type="text/javascript" src="/script/reassign-user-account/reassign-user-account.js"></script>
 {% endblock %}
