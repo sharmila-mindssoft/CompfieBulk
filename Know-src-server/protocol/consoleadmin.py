@@ -32,14 +32,14 @@ class Request(object):
         raise NotImplementedError
 
 
-class GetDbServerList(Request):
+class GetDatabaseServerList(Request):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data)
-        return GetDbServerList()
+        return GetDatabaseServerList()
 
     def to_structure(self):
         return {
@@ -47,7 +47,8 @@ class GetDbServerList(Request):
 
 
 class SaveDBServer(Request):
-    def __init__(self, db_server_name, ip, port, username, password):
+    def __init__(self, db_server_id, db_server_name, ip, port, username, password):
+        self.db_server_id = db_server_id
         self.db_server_name = db_server_name
         self.ip = ip
         self.port = port
@@ -57,16 +58,18 @@ class SaveDBServer(Request):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
-            data, ["db_server_name", "ip", "port", "username", "password"])
+            data, ["db_server_id", "db_server_name", "ip", "port", "username", "password"])
+        db_server_id = data.get("db_server_id")
         db_server_name = data.get("db_server_name")
         ip = data.get("ip")
         port = data.get("port")
         username = data.get("username")
         password = data.get("password")
-        return SaveDBServer(db_server_name, ip, port, username, password)
+        return SaveDBServer(db_server_id, db_server_name, ip, port, username, password)
 
     def to_structure(self):
         return {
+            "db_server_id": self.db_server_id,
             "db_server_name": self.db_server_name,
             "ip": self.ip,
             "port": self.port,
@@ -114,6 +117,43 @@ class SaveClientServer(Request):
             "port": self.port
         }
 
+class GetFileServerList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetFileServerList()
+
+    def to_structure(self):
+        return {
+        }
+
+class SaveFileServer(Request):
+    def __init__(self, file_server_id, file_server_name, ip, port):
+        self.file_server_id = file_server_id
+        self.file_server_name = file_server_name
+        self.ip = ip
+        self.port = port
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["file_server_id", "file_server_name", "ip", "port"])
+        file_server_id = data.get("file_server_id")
+        file_server_name = data.get("file_server_name")
+        ip = data.get("ip")
+        port = data.get("port")
+        return SaveFileServer(file_server_id, file_server_name, ip, port)
+
+    def to_structure(self):
+        return {
+            "file_server_id": self.file_server_id,
+            "file_server_name": self.file_server_name,
+            "ip": self.ip,
+            "port": self.port
+        }
 
 class GetAllocatedDBEnv(Request):
     def __init__(self):
@@ -265,9 +305,10 @@ class SaveAutoDeletion(Request):
 
 def _init_Request_class_map():
     classes = [
-        GetDbServerList, SaveDBServer, GetClientServerList, SaveClientServer,
+        GetDatabaseServerList, SaveDBServer, GetClientServerList, SaveClientServer,
         GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
-        GetAutoDeletionList, SaveAutoDeletion
+        GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
+        SaveFileServer
     ]
     class_map = {}
     for c in classes:
@@ -307,8 +348,9 @@ class Response(object):
 
 class DBServer(object):
     def __init__(
-        self, db_server_name, ip, port, username, password, no_of_clients
+        self, db_server_id, db_server_name, ip, port, username, password, no_of_clients
     ):
+        self.db_server_id = db_server_id
         self.db_server_name = db_server_name
         self.ip = ip
         self.port = port
@@ -319,9 +361,10 @@ class DBServer(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-                "db_server_name", "ip", "port", "username", "password",
-                "no_of_clients"
+                "db_server_id", "db_server_name", "ip", "port", "username",
+                "password", "no_of_clients"
             ])
+        db_server_id = data.get("db_server_id")
         db_server_name = data.get("db_server_name")
         ip = data.get("ip")
         port = data.get("port")
@@ -329,10 +372,11 @@ class DBServer(object):
         password = data.get("password")
         no_of_clients = data.get("no_of_clients")
         return DBServer(
-            db_server_name, ip, port, username, password, no_of_clients)
+            db_server_id, db_server_name, ip, port, username, password, no_of_clients)
 
     def to_structure(self):
         return {
+            "db_server_id": self.db_server_id,
             "db_server_name": self.db_server_name,
             "ip": self.ip,
             "port": self.port,
@@ -557,6 +601,35 @@ class ClientServerNameAndID(object):
             "machine_name": self.machine_name
         }
 
+
+class FileServerList(object):
+    def __init__(self, file_server_id, file_server_name, ip, port, no_of_clients):
+        self.file_server_id = file_server_id
+        self.file_server_name = file_server_name
+        self.ip = ip
+        self.port = port
+        self.no_of_clients = no_of_clients
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["file_server_id", "filer_server_name", "ip", "port", "no_of_clients"])
+        file_server_id = data.get("file_server_id")
+        file_server_name = data.get("file_server_name")
+        ip = data.get("ip")
+        port = data.get("port")
+        no_of_clients = data.get("no_of_clients")
+
+        return FileServerList(file_server_id, file_server_name, ip, port, no_of_clients)
+
+    def to_structure(self):
+        return {
+            "file_server_id": self.file_server_id,
+            "file_server_name": self.file_server_name,
+            "ip": self.ip,
+            "port": self.port,
+            "no_of_clients": self.no_of_clients
+        }
 
 class DBServerNameAndID(object):
     def __init__(self, db_server_name, ip):
@@ -827,6 +900,44 @@ class GetAutoDeletionListSuccess(Response):
             "auto_deletion_units": self.auto_deletion_units
         }
 
+class GetFileServerListSuccess(Response):
+    def __init__(self, file_servers):
+        self.file_servers = file_servers
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["file_servers"])
+        file_servers = data.get("file_servers")
+        return GetFileServerListSuccess(file_servers)
+
+    def to_inner_structure(self):
+        return {
+            "file_servers": self.file_servers
+        }
+
+class FileServerNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return FileServerNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {}
+
+class SaveFileServerSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveFileServerSuccess()
+
+    def to_inner_structure(self):
+        return {}
 
 class SaveAutoDeletionSuccess(Response):
     def __init__(self):
@@ -848,7 +959,8 @@ def _init_Response_class_map():
         ClientServerNameAlreadyExists, GetAllocatedDBEnvSuccess,
         GetAllocatedDBEnvSuccess, SaveAllocatedDBEnvSuccess,
         GetFileStorageSuccess, SaveFileStorageSuccess,
-        GetAutoDeletionListSuccess, SaveAutoDeletionSuccess
+        GetAutoDeletionListSuccess, SaveAutoDeletionSuccess,
+        GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists
     ]
     class_map = {}
     for c in classes:
