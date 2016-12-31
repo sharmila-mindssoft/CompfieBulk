@@ -1407,7 +1407,7 @@ CREATE PROCEDURE `sp_tbl_unit_getclientlegalentity`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
     SELECT user_category_id INTO user_category
-    FROM tbl_users WHERE user_id = userid;
+    FROM tbl_user_login_details WHERE user_id = userid;
     IF user_category in (1,2) then
         select legal_entity_id, legal_entity_name, business_group_id,
         client_id, country_id from tbl_legal_entities
