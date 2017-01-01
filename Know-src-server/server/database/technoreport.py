@@ -436,6 +436,7 @@ def return_statutory_notifications(
             technoreports.StatutoryNotificationList(
                 statutory_name=notification["statutory_name"],
                 compliance_task=notification["compliance_task"],
+                description=notification["description"],
                 notification_text=notification["notification_text"],
                 date=datetime_to_string(notification["created_on"])
             )

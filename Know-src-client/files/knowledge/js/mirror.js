@@ -1666,22 +1666,23 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getDbServerList(callback){
+  function getDatabaseServerList(callback){
     callerName = 'console_admin';
     var request = [
-      'GetDbServerList',
+      'GetDatabaseServerList',
       {
       }
     ];
     apiRequest(callerName, request, callback);
   }
   function saveDBServer(
-    db_server_name, ip, port, username, password, callback
+    db_server_id, db_server_name, ip, port, username, password, callback
   ){
     callerName = "console_admin"
     var request = [
       "SaveDBServer",
       {
+        "db_server_id": db_server_id,
         "db_server_name": db_server_name,
         "ip": ip,
         "port": port,
@@ -1709,6 +1710,30 @@ function initMirror() {
       {
         "client_server_id": client_server_id,
         "client_server_name": client_server_name,
+        "ip": ip,
+        "port": port
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getFileServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetFileServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function fileServerEntry(
+    file_server_id, file_server_name, ip, port, callback
+  ){
+    callerName = "console_admin";
+    var request = [
+      "SaveFileServer",
+      {
+        "file_server_id": file_server_id,
+        "file_server_name": file_server_name,
         "ip": ip,
         "port": port
       }
@@ -1803,13 +1828,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignedUnitsList(domain_id, client_id, callback){
+  function getAssignedUnitsList(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignedUnits",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1825,13 +1851,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignUnitFormData(domain_id, client_id, callback){
+  function getAssignUnitFormData(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignUnitFormData",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -2512,7 +2539,7 @@ function initMirror() {
     approveUnit: approveUnit,
     getClientGroupApprovalList: getClientGroupApprovalList,
     approveClientGroup: approveClientGroup,
-    getDbServerList: getDbServerList,
+    getDatabaseServerList: getDatabaseServerList,
     saveDBServer: saveDBServer,
     getClientServerList: getClientServerList,
     saveClientServer: saveClientServer,
@@ -2572,7 +2599,8 @@ function initMirror() {
     approveAssignedStatutory: approveAssignedStatutory,
     technoManagerInfo: technoManagerInfo,
     technoExecutiveInfo: technoExecutiveInfo,
-
+    getFileServerList: getFileServerList,
+    fileServerEntry: fileServerEntry
   };
 }
 var mirror = initMirror();
