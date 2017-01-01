@@ -1951,6 +1951,15 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+
+  function domainManagerInfo(unit_id, domain_executive, old_domain_executive) {
+    var userInfo = {};
+    userInfo.u_id = unit_id;
+    userInfo.d_e_id = domain_executive;
+    userInfo.old_d_e_id = old_domain_executive;
+    return userInfo;
+  }
+
   function ReassignDomainManager(
     user_from, user_to, client_id, entity_id, domain_id, data,
     remarks, callback
@@ -1989,14 +1998,15 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function SaveUserReplacement(user_type, user_from, user_to, callback) {
+  function SaveUserReplacement(user_type, user_from, user_to, remarks, callback) {
       callerName = "admin";
       var request = [
         "UserReplacement",
         {
           "user_type": user_type,
           "old_user_id": user_from,
-          "new_user_id": user_to
+          "new_user_id": user_to,
+          "remarks": remarks
         }
       ];
       apiRequest(callerName, request, callback);
@@ -2600,7 +2610,8 @@ function initMirror() {
     technoManagerInfo: technoManagerInfo,
     technoExecutiveInfo: technoExecutiveInfo,
     getFileServerList: getFileServerList,
-    fileServerEntry: fileServerEntry
+    fileServerEntry: fileServerEntry,
+    domainManagerInfo: domainManagerInfo,
   };
 }
 var mirror = initMirror();

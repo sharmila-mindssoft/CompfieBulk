@@ -335,6 +335,7 @@ var message = {
   "reassign_to_tm_required": "Reassign to Techno Manager required",
   "reassign_to_te_required": "Reassign to Techno Executive required",
   "no_records_selected_for_reassign": "No records selected for reassign",
+  "reassign_from_reassign_to_both_are_same": "Reaasign from user ans Reassign to user both should not be same",
   
 };
 
