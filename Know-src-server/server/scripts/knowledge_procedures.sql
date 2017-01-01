@@ -1721,6 +1721,27 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_client_group_approve_message`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_approve_message`(
+    IN cat_id int(11), head TEXT, mtext TEXT, con int(11)
+)
+BEGIN
+    select @console_id := user_id from tbl_user_login_details where user_category_id = 2 limit 1;
+
+    INSERT INTO tbl_messages (user_category_id, message_head, message_text, created_by, created_on)
+    VALUES (cat_id, head, mtext, con, current_ist_datetime());
+
+    SET @msg_id := LAST_INSERT_ID();
+
+    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @console_id, 0);
+
+
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
@@ -1732,27 +1753,45 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
     IN session_user INT(11)
 )
 BEGIN
-    SELECT client_id, group_name, email_id, count, client_countries, short_name
-    FROM (
-        SELECT client_id, group_name, email_id, short_name,
-        (
-            SELECT count(legal_entity_id) FROM tbl_legal_entities tle
-            WHERE tle.client_id = tcg.client_id and is_active=1
-        ) as count,
-        (
-            select group_concat(country_id) from tbl_countries
-            where country_id in (
-                select country_id from tbl_legal_entities
-                where client_id=client_id
-            )
-        ) as client_countries
-        FROM tbl_client_groups tcg
-        WHERE is_approved = 0
-    ) a WHERE count > 0;
+
+    SELECT t1.client_id, t1.group_name, t1.short_name, t1.email_id,
+        t2.legal_entity_id, t2.legal_entity_name, t3.country_name
+        from tbl_client_groups as t1
+        INNER JOIN tbl_legal_entities as t2 on t1.client_id = t2.client_id
+        INNER JOIN tbl_countries as t3 on t2.country_id = t3.country_id
+        where t2.is_approved = 0 and is_closed = 0
+        order by t1.group_name, t3.country_name, t2.legal_entity_name;
 END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_client_groups_legal_entity_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_groups_legal_entity_info`(
+    IN entity_id INT(11)
+)
+BEGIN
+
+    select t1.legal_entity_id, t1.legal_entity_name,
+        (select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id)bg_name,
+        t1.contract_from, t1.contract_to, t1.total_licence,
+        t1.file_space_limit, t2.total_view_licence
+        from tbl_legal_entities as t1
+        inner join tbl_client_groups as t2 on t1.client_id = t2.client_id
+        where t1.legal_entity_id = entity_id;
+
+    select t1.legal_entity_id, t1.domain_id, t1.activation_date, t1.organisation_id, t1.count,
+        t2.organisation_name, t3.domain_name
+        from tbl_legal_entity_domains as t1
+        inner join tbl_organisation as t2 on t1.organisation_id = t2.organisation_id
+        inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
+        where t1.legal_entity_id = entity_id ;
+
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To check whether the country name already exissts or not
 -- --------------------------------------------------------------------------------

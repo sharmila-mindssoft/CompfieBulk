@@ -558,6 +558,8 @@ CREATE TABLE `tbl_legal_entities` (
   `is_closed` tinyint(4) DEFAULT '0',
   `is_approved` tinyint(4) DEFAULT '0',
   `reason` Text DEFAULT NULL,
+  `approved_by` int(11) DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
@@ -1050,5 +1052,29 @@ CREATE TABLE `tbl_group_admin_email_notification` (
   `assign_statutory_informed` tinyint(1) DEFAULT 0,
   `statu_sent_by` int(11) DEFAULT NULL,
   `statu_sent_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`client_informed_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_ip_settings`;
+CREATE TABLE `tbl_ip_settings` (
+  `ip_settings_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `form_id` int(11) NOT NULL,
+  `ips` Text DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`client_informed_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_client_forms`;
+CREATE TABLE `tbl_client_forms` (
+  `form_id` int(11) NOT NULL AUTO_INCREMENT,
+  `form_name` varchar(200) NOT NULL,
+  `form_url` Text NOT NULL,
+  `form_type_id` int(11) NOT NULL,
+  `parent_menu` varchar(200) DEFAULT NULL,
+  `form_order` int(11) NOT NULL,
   PRIMARY KEY (`client_informed_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

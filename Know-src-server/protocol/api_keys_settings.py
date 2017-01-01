@@ -218,6 +218,7 @@ api_params = {
     "month_from": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "month_to": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "notification_type": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    "org_info": {},
 
     'unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApproval"},
     'unit_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitDetails"},

@@ -1278,8 +1278,11 @@ class UnitDetails(object):
         i_ids = data.get("industry_id")
         is_active = data.get("is_active")
         approve_status = data.get("approve_status")
-        return UnitDetails(unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name,
-                geography_id, unit_code, unit_name, unit_address, postal_code, domain_ids, i_ids, is_active, approve_status)
+        return UnitDetails(
+            unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name,
+            geography_id, unit_code, unit_name, unit_address, postal_code,
+            domain_ids, i_ids, is_active, approve_status
+        )
 
     def to_structure(self):
         data = {
