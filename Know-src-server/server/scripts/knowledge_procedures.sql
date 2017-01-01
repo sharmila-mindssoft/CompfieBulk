@@ -1731,7 +1731,7 @@ CREATE PROCEDURE `sp_client_group_approve_message`(
 BEGIN
     select @console_id := user_id from tbl_user_login_details where user_category_id = 2 limit 1;
 
-    INSERT INTO tbl_messages (user_category_id, message_head, message_text, created_by, created_on)
+    INSERT INTO tbl_messages (user_category_id, message_heading, message_text, created_by, created_on)
     VALUES (cat_id, head, mtext, con, current_ist_datetime());
 
     SET @msg_id := LAST_INSERT_ID();
@@ -3597,22 +3597,26 @@ BEGIN
         select group_concat(country_name) from tbl_countries
         where country_id in (
             select country_id from tbl_legal_entities
-            where client_id=tcg.client_id
+            where client_id=tcg.client_id and is_closed = 0 and is_approved = 1
         )
     ) as country_names,
     (
         select count(legal_entity_id) from tbl_legal_entities tle
-        WHERE tle.client_id=tcg.client_id and tle.is_closed = 0
+        WHERE tle.client_id=tcg.client_id and tle.is_closed = 0 and tle.is_approved = 1
     ) as no_of_legal_entities,
     (
         select count(tule.legal_entity_id) from tbl_user_legalentity tule
         inner join tbl_legal_entities tle on tle.legal_entity_id = tule.legal_entity_id
-        WHERE tule.client_id=tcg.client_id and tle.is_closed = 0 group by tule.client_id
+        WHERE tule.client_id=tcg.client_id and tle.is_closed = 0 and tle.is_approved = 1 
+        group by tule.client_id
     ) as no_of_assigned_legal_entities
 
     FROM tbl_client_groups tcg
     inner join tbl_user_clients tuc on tuc.client_id = tcg.client_id and tuc.user_id = userId
-    where tcg.is_approved = 1 and tcg.is_active = 1
+    where (
+        select count(legal_entity_id) from tbl_legal_entities tle
+        WHERE tle.client_id=tcg.client_id and tle.is_closed = 0 and tle.is_approved = 1
+    ) > 0
     order by tcg.group_name;
 
 END //
@@ -3637,7 +3641,7 @@ BEGIN
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t1.is_closed = 0 and t4.legal_entity_id is null;
+    WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null;
 END //
 
 DELIMITER ;
@@ -3680,7 +3684,7 @@ BEGIN
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t1.is_closed = 0 and t4.legal_entity_id is not null
+    WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is not null
     order by t4.user_id;
 END //
 

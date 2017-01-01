@@ -20,6 +20,7 @@ var GroupVal = $('#groupsval');
 var Group = $('#group-id');
 var ApproveBtn = $(".approve-group");
 var ShowBtn = $(".btn-show");
+var approvalList = [];
 
 function initialize(){
     $(".client-group-grid").hide();
@@ -40,117 +41,193 @@ function initialize(){
     });
     
 }
+
+function updateComplianceStatus(selectbox_id, reason_id){
+    var selected_option = $("#"+selectbox_id).val();
+    if(selected_option == 2){
+        $("#"+reason_id).show();
+    }else{
+        $("#"+reason_id).hide();
+    }
+}
+
+function updateMappingStatus(e){
+    var selected_class = $(e).attr('id');
+    var splitId = selected_class.split("-").pop();
+    var selected_option = $("#"+selected_class).val();
+    $('.action-'+splitId).each(function() {
+        $('.action-'+splitId).val(selected_option);
+    });
+    if(selected_option == 2){
+        $("#reason-"+splitId).show();
+    }else{
+        $("#reason-"+splitId).hide();
+    }
+}
+
+function updateMappingReason(e){
+    var selected_class = $(e).attr('id');
+    var splitId = selected_class.split("-").pop();
+    var selected_value = $(e).val();
+    $('.reason-'+splitId).each(function() {
+        $('.reason-'+splitId).val(selected_value);
+    });
+}
+
 function loadApprovalList() {
+
+    var LastGroup = '';
     $(".group-list").empty();
     $(".client-group-grid").hide();
     $(".approve-group-div").hide()
-    clearMessage();
-    var country_id = parseInt($("#country-id").val());
-    var group_id = parseInt($("#group-id").val());
-    if($("#country-id").val() == ''){
+    
+    var group_id = Group.val();
+    var c_name = CountryVal.val();
+
+    if(Country.val() == ''){
         displayMessage(message.country_required)
         return false;
     }
     $(".client-group-grid").show();
-    var group_row = $("#templates .group-row tr");
+
     var sno = 0;
     $.each(GROUPS, function(key, value){
-        if(
-            value.client_id == group_id ||
-            value.country_ids.indexOf(country_id) > -1
-        ){
-            ++ sno;
-            var clone = group_row.clone();
-            $(".sno", clone).text(sno);
-            $(".group_name a", clone).text(value.group_name);
-            $(".group_name a", clone).click(function(){
+        if(c_name == value.c_name && (group_id == '' || group_id == value.gt_id)){
+            if(LastGroup != value.gt_id){
+                ++ sno;
+                var group_row = $("#templates .table-group-list tr");
+                var clone = group_row.clone();
+                $(".sno", clone).text(sno);
+                $(".group_name", clone).text(value.group_name);
+                $(".email_id", clone).text(value.email_id);
+                
+                $('.sm-approve-control', clone).attr('id', 'action-'+value.gt_id);
+                $('.sm-approve-control', clone).on('change', function () {
+                    updateMappingStatus(this);
+                });
+                $(".sm-reason", clone).attr('id', 'reason-'+value.gt_id);
+                $('.sm-reason', clone).on('change', function () {
+                    updateMappingReason(this);
+                });
+                $(".group-list").append(clone);
+                LastGroup = value.gt_id;
+            }
+
+            var le_row = $("#templates .table-le-list tr");
+            var clone2 = le_row.clone();
+            $(".country_name", clone2).text(value.c_name);
+            $(".legal_entity_name a", clone2).text(value.le_name);
+            $(".legal_entity_name a", clone2).click(function(){
                 displayPopup(
-                    value.client_id
+                    value.le_id
                 );
             });
-            $(".short_name", clone).text(value.short_name);
-            $(".email_id", clone).text(value.username);
-            $(".le_count", clone).text(value.le_count);
-            var select_box_class = "action-"+value.client_id;
-            var reason_class = "reason-"+value.client_id;
-            $(".action select", clone).addClass(select_box_class);
-            $("."+select_box_class).val("0");
-            $(".reason", clone).addClass(reason_class);
-            $(".group-list").append(clone);
-            $("."+select_box_class).change(function(){
-                updateGroupStatus(select_box_class, reason_class)
+        
+            $('.compliance-approve-control', clone2).attr('id', 'caction-'+value.le_id);
+            $('.compliance-approve-control', clone2).addClass('action-'+value.gt_id);
+            $('.compliance-approve-control', clone2).on('change', function () {
+                updateComplianceStatus(
+                    "caction-"+value.le_id,
+                    "creason-"+value.le_id
+                )
+            });
+            $(".compliance-reason", clone2).attr('id', 'creason-'+value.le_id);
+            $(".compliance-reason", clone2).addClass("reason-"+value.gt_id);
+            $(".group-list").append(clone2);
+
+            $('.compliance-reason').on('input', function (e) {
+                this.value = isCommon($(this));
+            });
+            $('.sm-reason').on('input', function (e) {
+                this.value = isCommon($(this));
             });
         }
+
     });
+
     if(sno > 0){
         $(".approve-group-div").show()
     }else{
         $(".approve-group-div").hide()
-        var no_record_row = $("#templates .no-records tr");
+        var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
         $(".group-list").append(clone);
     }
 }
-function getApprovalRow(unit_id, approval_status, reason){
-    if(approval_status == 1){
-        approval_status = true;
-    }else{
-        approval_status = false;
-    }
-    return {
-        "client_id": unit_id,
-        "approval_status": approval_status,
-        "reason": reason
-    }
-}
+
 function validateForm(){
     var result = true;
-    var country_id = parseInt($("#country-id").val());
-    var group_id = parseInt($("#group-id").val());
+    approvalList = [];
+
     $.each(GROUPS, function(key, value){
-        if(
-            value.client_id == group_id ||
-            value.country_ids.indexOf(country_id) > -1
-        ){
-            var select_box_class = "action-"+value.client_id;
-            var reason_class = "reason-"+value.client_id;
-            var selected_option =   $("."+select_box_class).val();
-            var reason = $("."+reason_class).val().replace(/ /g,'');
+        if(CountryVal.val() == value.c_name && (GroupVal.val() == '' || GroupVal.val() == value.gt_id)){
+            var gt_id = value["gt_id"];
+            var le_id = value["le_id"];
+            var le_name = value["le_name"];
+            
+            var action_class = "caction-"+le_id;
+            var reason_class = "creason-"+le_id;
+            var selected_option = parseInt($("#"+action_class).val());
+            var remarks = $("#"+reason_class).val().replace(/ /g,'');
+            var approval_status = true;
+
             if(selected_option == 2){
-                if(reason.length == 0){
+                approval_status = false;
+                if(remarks.length == 0){
                     displayMessage(message.reason_required);
                     result = false;
-                }else{
-                    group_approval_details.push(
-                        getApprovalRow(value.client_id, selected_option, reason)
-                    )
                 }
+                approvalList.push(
+                    mirror.approveClientGroupList(gt_id, le_id, le_name,
+                    approval_status, remarks)
+                )
             }else if(selected_option == 1){
-                group_approval_details.push(
-                    getApprovalRow(value.client_id, selected_option, reason)
+                remarks = "";
+                approvalList.push(
+                    mirror.approveClientGroupList(gt_id, le_id, le_name,
+                    approval_status, remarks)
                 )
             }
         }
     });
     if(result == false){
-        return false;    
+        return false;
     }else{
         return true;
-    }
-    
+    } 
 }
+
 function submitApprovalForm(){
     validation_result = validateForm();
     if(validation_result){
-        if(group_approval_details.length > 0){
+        if(approvalList.length > 0){
             function onSuccess(data) {
                 displaySuccessMessage(message.action_success);
-                initialize();
+                
+                $(".client-group-grid").hide();
+                $(".approve-group-div").hide();
+                function onSuccess(data) {
+                    COUNTRIES = data.countries;
+                    GROUPS = data.group_approval_list;
+                    ShowBtn.trigger( "click" );
+                }
+                function onFailure(error) {
+                    custom_alert(error);
+                }
+                mirror.getClientGroupApprovalList(function (error, response) {
+                    if (error == null) {
+                        onSuccess(response);
+                    } else {
+                        onFailure(error);
+                    }
+                });
+
+                
             }
             function onFailure(error) {
                 custom_alert(error);
             }
-            mirror.approveClientGroup(group_approval_details,
+            mirror.approveClientGroup(approvalList,
                 function (error, response) {
                     if (error == null) {
                         onSuccess(response);
@@ -163,14 +240,7 @@ function submitApprovalForm(){
         }
     }    
 }
-function updateGroupStatus(select_box_class, reason_class){
-    var selected_option = $("."+select_box_class).val();
-    if(selected_option == 2){
-        $("."+reason_class).show();    
-    }else{
-        $("."+reason_class).hide();   
-    } 
-}
+
 function loadLegalEntities(group_name, short_name, group_admin, no_of_veiw_licence){
     $(".page-title").text("Client Group: "+group_name);
     $(".client_short_name").text("Short Name: "+short_name);
@@ -214,6 +284,7 @@ function loadLegalEntities(group_name, short_name, group_admin, no_of_veiw_licen
         
     });
 }
+
 function generateIdNameMaps(){
     $.each(INDUSTRIES, function(key, value){
         industry_id_name_map[value.industry_id] = value.industry_name;
@@ -228,6 +299,7 @@ function generateIdNameMaps(){
         bg_id_name_map[value.business_group_id] = value.business_group_name;
     });
 }
+
 /*function loadDateConfigurations(){
     var date_config_row = $("#templates .date-config-row tr");
     $(".date-configuration-rows").empty();
@@ -241,7 +313,7 @@ function generateIdNameMaps(){
     });
 }*/
 
-function displayPopup(client_id) {
+function displayPopup(le_id) {
     function onSuccess(data) {
         INDUSTRIES = data.industry_name_id;
         USERS = data.users;
@@ -257,7 +329,7 @@ function displayPopup(client_id) {
     function onFailure(error) {
         custom_alert(error);
     }
-    mirror.getEditClientGroupFormData(parseInt(client_id),
+    mirror.getLegalEntity(parseInt(le_id),
         function (error, response) {
         if (error == null) {
             onSuccess(response);
@@ -295,12 +367,13 @@ function pageControls() {
           var condition_fields = [];
           var condition_values = [];
 
-          condition_fields.push("country_ids");
-          condition_values.push(Country.val());
+          /*condition_fields.push("c_name");
+          condition_values.push(CountryVal.val());*/
+
           var text_val = $(this).val();
           commonAutoComplete(
             e, ACGroup, Group, text_val, 
-            GROUPS, "group_name", "group_id", function (val) {
+            GROUPS, "group_name", "gt_id", function (val) {
                 onAutoCompleteSuccess(GroupVal, Group, val);
             }, condition_fields, condition_values);
         }

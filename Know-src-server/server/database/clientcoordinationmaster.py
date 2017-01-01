@@ -204,7 +204,7 @@ def return_client_groups_approval_list(groups):
     return result
 
 def get_legal_entity_info(db, entity_id):
-    data = db.call_proc_with_multiresult_set("sp_client_groups_legal_entity_info", None, 2)
+    data = db.call_proc_with_multiresult_set("sp_client_groups_legal_entity_info", (entity_id,), 2)
     org_list = []
     result = None
     for d in data[1] :

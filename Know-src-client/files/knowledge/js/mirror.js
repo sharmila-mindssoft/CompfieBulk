@@ -1661,10 +1661,20 @@ function initMirror() {
     var request = [
       'GetLegalEntityInfo',
       {
-        "entity_id": entity_id
+        "le_id": entity_id
       }
     ];
     apiRequest(callerName, request, callback);
+  }
+  function approveClientGroupList(client_id, entity_id, entity_name, approval_status, reason) {
+    return {
+        "ct_id": client_id,
+        "le_id": entity_id,
+        "le_name": entity_name,
+        "approval_status": approval_status,
+        "reason": reason,
+    }
+
   }
   function approveClientGroup(group_approval_details, callback){
     callerName = 'client_coordination_master';
@@ -2559,6 +2569,7 @@ function initMirror() {
     approveUnit: approveUnit,
     getClientGroupApprovalList: getClientGroupApprovalList,
     getLegalEntity: getLegalEntity,
+    approveClientGroupList: approveClientGroupList,
     approveClientGroup: approveClientGroup,
     getDatabaseServerList: getDatabaseServerList,
     saveDBServer: saveDBServer,
