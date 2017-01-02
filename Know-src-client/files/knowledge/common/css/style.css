@@ -1080,30 +1080,7 @@ list-style-type:none; line-height:25px;
   width: auto;
   opacity: 100%;
 }
-@media only screen and (max-width: 767px){
-  .dropdown-menu{
-    right: 0;
-    left: auto;
-  }
-  .card-box{
-    padding-bottom: 8em;
-  }
-}
-@media only screen and (max-width: 991px){
-  .mob-p-r-0{
-    padding-right: 0;
-  }
-  .mob-p-b-15{
-    padding-bottom: 15px;
-  }
-}
-.fa{
-   font-family: "Arimo",sans-serif;
-}
-.left{
-  text-align: left !important;
-}
+
 .closure-sel a {
     width: 90px !important;
 }
-

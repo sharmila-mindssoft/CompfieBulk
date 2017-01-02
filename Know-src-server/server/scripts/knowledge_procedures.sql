@@ -7590,7 +7590,7 @@ in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
 BEGIN
     INSERT INTO tbl_messages
     SET
-    user_category_id = (select user_category_id from tbl_user_category
+    user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = _u_id),
     message_heading = 'Client Unit',
     message_text = (select concat('Client unit has been updated for',' ',group_name)
@@ -7646,7 +7646,7 @@ in _user_id int(11), _le_id int(11), _link text, _created_by int(11), _created_o
 BEGIN
     INSERT INTO tbl_messages
     SET
-    user_category_id = (select user_category_id from tbl_user_category
+    user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = _created_by),
     message_heading = 'Assign Legal Entity',
     message_text = (select concat(legal_entity_name,' ','has been assigned')
