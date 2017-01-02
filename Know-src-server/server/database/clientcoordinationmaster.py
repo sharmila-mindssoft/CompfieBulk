@@ -3,7 +3,7 @@ from server.common import get_date_time
 from forms import frmClientUnitApproval, frmApproveClientGroup
 from protocol import clientcoordinationmaster
 from server.exceptionmessage import process_error, return_Knowledge_message
-
+from server.common import datetime_to_string
 
 __all__ = [
     "get_unit_approval_list",
@@ -223,8 +223,8 @@ def get_legal_entity_info(db, entity_id):
         )
     for d1 in data[0]:
         result = clientcoordinationmaster.GetLegalEntityInfoSuccess(
-            d1["legal_entity_id"], d1["bg_name"], d1["contract_from"],
-            d1["contract_to"], d1["file_space_limit"],
+            d1["legal_entity_id"], d1["bg_name"], datetime_to_string(d1["contract_from"]),
+            datetime_to_string(d1["contract_to"]), int(d1["file_space_limit"]),
             d1["total_licence"], d1["total_view_licence"],
             org_list
         )

@@ -30,6 +30,7 @@ CREATE TABLE `tbl_client_activity_log` (
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
   `activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `user_category_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `user_category_id` int(11) NOT NULL,
   `form_id` int(11) NOT NULL,
@@ -558,6 +559,7 @@ CREATE TABLE `tbl_legal_entities` (
   `used_licence` int(11) DEFAULT '0',
   `is_closed` tinyint(4) DEFAULT '0',
   `is_approved` tinyint(4) DEFAULT '0',
+  `is_created` tinyint(4) DEFAULT '0',
   `reason` Text DEFAULT NULL,
   `approved_by` int(11) DEFAULT NULL,
   `approved_on` timestamp NULL DEFAULT NULL,

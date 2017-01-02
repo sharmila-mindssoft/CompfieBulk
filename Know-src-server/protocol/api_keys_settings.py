@@ -218,7 +218,7 @@ api_params = {
     "month_from": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "month_to": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "notification_type": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
-    "org_info": {},
+    "org_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "LegalEntityOrganisation"},
 
     'unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApproval"},
     'unit_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitDetails"},
@@ -658,3 +658,4 @@ api_params['d_names'] = api_params.get('mapping')
 api_params["org_id"] = api_params.get("industry_id")
 api_params["org_name"] = api_params.get("industry_name")
 api_params["rcount"] = api_params.get("total_records")
+api_params["count"] = api_params.get("total_records")

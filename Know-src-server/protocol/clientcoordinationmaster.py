@@ -471,7 +471,7 @@ class GetLegalEntityInfoSuccess(Response):
             data.get("no_of_licence"), data.get("org_info")
         )
 
-    def to_inner_strcture(self):
+    def to_inner_structure(self):
         return {
             "le_id": self.entity_id,
             "bg_name": self.business_group_name,
@@ -481,35 +481,6 @@ class GetLegalEntityInfoSuccess(Response):
             "no_of_licence": self.total_licence,
             "org_info": self.org_info
         }
-
-def LegalEntityOrganisation(object):
-    def __init__(self, entity_id, domain_id, domain_name, organisation_id, organisation_name, count):
-        self.entity_id = entity_id
-        self.domain_id = domain_id
-        self.domain_name = domain_name
-        self.organisation_id = organisation_name
-        self.organisation_name = organisation_name
-        self.count = count
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["le_id", "d_id", "d_name", "org_id", "org_name", "count"])
-        return LegalEntityOrganisation(
-            data.get("le_id"), data.get("d_id"), data.get("d_name"),
-            data.get("org_id"), data.get("org_name"),
-            data.get("count")
-        )
-
-    def to_structure(self):
-        return {
-            "le_id": self.legal_entity_id,
-            "d_id": self.domain_id,
-            "d_name": self.domain_name,
-            "org_id": self.organisation_id,
-            "org_name": self.organisation_name,
-            "count": self.count
-        }
-
 
 def _init_Response_class_map():
     classes = [
@@ -549,4 +520,33 @@ class RequestFormat(object):
             "request": to_VariantType(
                 self.request, "clientcoordinationmaster", "Response"
             )
+        }
+
+
+class LegalEntityOrganisation(object):
+    def __init__(self, entity_id, domain_id, domain_name, organisation_id, organisation_name, count):
+        self.entity_id = entity_id
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.organisation_id = organisation_id
+        self.organisation_name = organisation_name
+        self.count = count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "d_name", "org_id", "org_name", "count"])
+        return LegalEntityOrganisation(
+            data.get("le_id"), data.get("d_id"), data.get("d_name"),
+            data.get("org_id"), data.get("org_name"),
+            data.get("count")
+        )
+
+    def to_structure(self):
+        return {
+            "le_id": self.entity_id,
+            "d_id": self.domain_id,
+            "d_name": self.domain_name,
+            "org_id": self.organisation_id,
+            "org_name": self.organisation_name,
+            "count": self.count
         }
