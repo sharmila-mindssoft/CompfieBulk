@@ -1024,7 +1024,7 @@ CREATE TABLE `tbl_user_replacement_history` (
   `remarks` varchar(500) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`user_account_id`)
+  PRIMARY KEY (`user_replace_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_validity_date_settings`;
@@ -1065,7 +1065,7 @@ CREATE TABLE `tbl_ip_settings` (
   `updated_on` timestamp NULL DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`client_informed_id`)
+  PRIMARY KEY (`ip_settings_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_forms`;
@@ -1076,5 +1076,5 @@ CREATE TABLE `tbl_client_forms` (
   `form_type_id` int(11) NOT NULL,
   `parent_menu` varchar(200) DEFAULT NULL,
   `form_order` int(11) NOT NULL,
-  PRIMARY KEY (`client_informed_id`)
+  PRIMARY KEY (`form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
