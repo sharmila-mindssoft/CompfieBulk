@@ -243,7 +243,7 @@ class CreateNewAdmin(Request):
 class UpdateClientGroup(Request):
     def __init__(
         self, client_id, group_name, email_id, short_name, no_of_view_licence,
-        legal_entities, date_configurations
+        legal_entities, date_configurations, remarks
     ):
         self.client_id = client_id
         self.group_name = group_name
@@ -252,13 +252,14 @@ class UpdateClientGroup(Request):
         self.no_of_view_licence = no_of_view_licence
         self.legal_entities = legal_entities
         self.date_configurations = date_configurations
+        self.remarks = remarks
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
                "client_id", "group_name", "email_id", "short_name",
                "no_of_view_licence", "legal_entities",
-               "date_configurations"
+               "date_configurations", "remarks"
             ]
         )
         client_id = data.get("client_id")
@@ -268,9 +269,10 @@ class UpdateClientGroup(Request):
         no_of_view_licence = data.get("no_of_view_licence")
         legal_entities = data.get("legal_entities")
         date_configurations = data.get("date_configurations")
+        remarks = data.get("remarks")
         return UpdateClientGroup(
             client_id, group_name, email_id, short_name, no_of_view_licence,
-            legal_entities, date_configurations
+            legal_entities, date_configurations, remarks
         )
 
     def to_inner_structure(self):
@@ -281,7 +283,8 @@ class UpdateClientGroup(Request):
             "short_name": self.short_name,
             "no_of_view_licence": self.no_of_view_licence,
             "legal_entities": self.legal_entities,
-            "date_configurations": self.date_configurations
+            "date_configurations": self.date_configurations,
+            "remarks": self.remarks
         }
 
 
@@ -1275,8 +1278,11 @@ class UnitDetails(object):
         i_ids = data.get("industry_id")
         is_active = data.get("is_active")
         approve_status = data.get("approve_status")
-        return UnitDetails(unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name,
-                geography_id, unit_code, unit_name, unit_address, postal_code, domain_ids, i_ids, is_active, approve_status)
+        return UnitDetails(
+            unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id, category_name,
+            geography_id, unit_code, unit_name, unit_address, postal_code,
+            domain_ids, i_ids, is_active, approve_status
+        )
 
     def to_structure(self):
         data = {
@@ -1349,7 +1355,7 @@ class GetEditClientGroupFormDataSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "countries", "business_groups", "domains", "industries",
-            "client_details", "group_name", "email_id", "legal_entities",
+            "client_details", "group_name", "email_id", "legal_entities_list",
             "date_configurations", "short_name", "no_of_licence"
         ])
         countries = data.get("countries")
@@ -1359,7 +1365,7 @@ class GetEditClientGroupFormDataSuccess(Response):
         group_name = data.get("group_name")
         short_name = data.get("short_name")
         email_id = data.get("email_id")
-        legal_entities = data.get("legal_entity_details")
+        legal_entities = data.get("legal_entities_list")
         date_configurations = data.get("date_configurations")
         no_of_licence = data.get("no_of_licence")
         return GetEditClientGroupFormDataSuccess(
@@ -1369,7 +1375,7 @@ class GetEditClientGroupFormDataSuccess(Response):
         )
 
     def to_inner_structure(self):
-        print "self.business_groups: %s" % self.business_groups
+        #print "self.business_groups: %s" % self.business_groups
         return {
             "countries": self.countries,
             "business_groups": self.business_groups,
@@ -1379,7 +1385,7 @@ class GetEditClientGroupFormDataSuccess(Response):
             "short_name": self.short_name,
             "email_id": self.email_id,
             "no_of_licence": self.no_of_licence,
-            "legal_entities": self.legal_entities,
+            "legal_entities_list": self.legal_entities,
             "date_configurations": self.date_configurations
         }
 

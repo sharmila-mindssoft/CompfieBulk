@@ -3,10 +3,10 @@
 <link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <div class="container" id="user-view">
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-10 col-xs-10">
             <h4 class="page-title">User Management</h4>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 col-xs-2 m-t-5 m-b-25">
             <button type="submit" class="btn btn-success waves-effect waves-light m-l-10 btn-md pull-right" id="btn-user-add"> <i class="fa fa-plus-circle"></i> Add</button>
         </div>
     </div>
@@ -14,7 +14,8 @@
         <div class="col-lg-12">
             <div class="panel panel-default panel-info">
                 <!-- /.panel-heading -->
-                <div class="panel-body">
+               <!--<div class="panel-body">-->
+                <div class="card-box table-responsive m-b-0">
                     <div class="dataTable_wrapper">
                         <table class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
                             <thead>
@@ -91,7 +92,8 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                    </div>
+                <!--</div>-->
                 <!-- /.panel-body -->
             </div>
             <!-- /.panel -->
@@ -146,8 +148,8 @@
                             <div class="col-lg-6">
                                 <div class="form-horizontal">
                                     <div class="form-group">
-                                        <label class="col-sm-4 control-label">Category Name:<span class="mandatory">*</span></label>
-                                        <div class="col-sm-8">
+                                        <label class="col-md-4 control-label">Category Name:<span class="mandatory">*</span></label>
+                                        <div class="col-md-8">
                                             <select class="form-control input-sm" tabindex="1" id="usercatval">
                                                 <option>Select</option>
                                             </select>
@@ -178,8 +180,8 @@
                             <div class="col-lg-6">
                                 <div class="form-horizontal">
                                     <div class="form-group">
-                                        <label class="col-sm-4 control-label">Email ID:<span class="mandatory">*</span></label>
-                                        <div class="col-sm-8">
+                                        <label class="col-md-4 control-label">Email ID:<span class="mandatory">*</span></label>
+                                        <div class="col-md-8">
                                             <input type="text" class="form-control input-sm" value="" maxlength="100" id="emailid" placeholder="Email ID" tabindex="5">
                                             <span id="view_emailid" style="default-display-none"> </span>
                                             <span class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small></span> </div>
@@ -187,13 +189,13 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Contact No.:</label>
                                         <div class="col-md-8">
-                                            <div class="col-md-3 no-padding-left">
+                                            <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                 <input type="text" class="form-control input-sm col-md-3 countrycode" id="countrycode" maxlength="3" tabindex="6" value="+91">
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                 <input type="text" class="form-control input-sm col-md-3 areacode" id="areacode" maxlength="5" tabindex="7" value="" placeholder="">
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 no-padding-left p-r-0">
                                                 <input type="text" class="form-control input-sm col-md-6 mobile" id="contactno" maxlength="10" tabindex="8" value="" placeholder="Contact No">
                                             </div>
                                             <span class="help-block"><small><small>[+91 452 1234567]</small></small></span> </div>
@@ -201,12 +203,12 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Mobile No.:<span class="mandatory">*</span></label>
                                         <div class="col-md-8">
-                                            <div class="col-md-3 no-padding-left">
+                                            <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                 <input type="text" class="form-control input-sm col-md-3 countrycode" id="mcountrycode"
                                                 value="+91" tabindex="9"
                                                 maxlength="3">
                                             </div>
-                                            <div class="col-md-9">
+                                            <div class="col-md-9 no-padding-left p-r-0">
                                                 <input type="text" class="form-control input-sm col-md-9 mobile" value="" id="mobileno" tabindex="10" placeholder="Mobile No"
                                                 maxlength="10">
                                             </div>
@@ -214,7 +216,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group has-feedback">
-                                        <label class="col-sm-4 control-label">User Group:<span class="mandatory">*</span></label>
+                                        <label class="col-md-4 control-label">User Group:<span class="mandatory">*</span></label>
                                         <div class="col-md-8">
                                             <input type="text" class="form-control input-sm" value="" id="usergroupval" tabindex="11" placeholder="User Group">
                                             <i class="fa-1-5x form-control-feedback fa fa-search"></i>
@@ -225,7 +227,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-4 control-label">Designation:</label>
+                                        <label class="col-md-4 control-label">Designation:</label>
                                         <div class="col-md-8">
                                             <input type="text" class="form-control input-sm" value="" maxlength="50" id="designation" tabindex="12" placeholder="Designation">
                                         </div>
@@ -250,7 +252,7 @@
                                 <!-- end col -->
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4 control-label">Domains:<span class="mandatory">*</span></label>
+                                        <label class="col-md-4 control-label">Domains:<span class="mandatory">*</span></label>
                                         <div class="col-md-8">
                                             <select class="form-control input-sm example-multiple" tabindex="14" id="domains" multiple="multiple">
                                             </select>
@@ -261,7 +263,7 @@
                             </div>
                         </div>
                         <!-- end row -->
-                        <div class="form-group text-center m-b-0">
+                        <div class="form-group text-center m-b-0 m-t-5">
                             <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit"> Submit </button>
                         </div>
                     </div>

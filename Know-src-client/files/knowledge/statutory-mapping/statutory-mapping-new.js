@@ -48,6 +48,8 @@ Duration = $('#duration');
 
 RepeatsType = $('#repeats_type');
 RepeatsEvery = $('#repeats_every')
+MultiselectDate = $('.multi-date-box');
+
 ComplianceTask = $('#compliance_task');
 Provision = $('#statutory_provision');
 Description = $('#compliance_description');
@@ -402,6 +404,90 @@ function RenderInput() {
                 _renderinput.make_option(val.repeat_type, val.repeat_type_id)
             );
         });
+        RepeatsType.on('change', function(){
+            if (RepeatsType.val() == 2) {
+                if ((12 % parseInt(RepeatsEvery.val()) == 0 )  && (parseInt(RepeatsEvery.val()) < 12)){
+                    $('.multicheckbox', RecurringPan).show();
+                    _renderinput.loadMultipleDate();
+                }
+                else {
+                    $('.multicheckbox', RecurringPan).hide();
+                }
+            }
+            else{
+                $('.multicheckbox', RecurringPan).hide();
+            }
+            if (RepeatsType.val() != '') {
+                dat = RepeatsEvery.val();
+                mon = $('#repeats_type option:selected').text();
+                $('.recurr-summary', RecurringPan).text('Repeats every ' + dat + " " + mon );
+            }
+
+        });
+    };
+    this.loadDate = function(idx) {
+        date_pan = $("#templates #date-list-templates").clone();
+        date_pan.attr('id', 'dt'+ idx);
+        $('.month-select', date_pan).empty();
+        _renderinput.loadMonthAndData($('.month-select', date_pan));
+        $('.trigger-value', date_pan).on('input', function(e) {
+            this.value = isNonZeroNumbers($(this));
+        });
+        return date_pan;
+    };
+    this.loadDays = function(idx, key) {
+        $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
+            if (v.m_id == key) {
+                $('.date-select', '#dt'+idx).append(_renderinput.make_option("Select", ''));
+                for (var i=1; i<=v.range; i++) {
+                    dopt =_renderinput.make_option(i, i);
+                    $('.date-select', '#dt'+ idx).append(dopt);
+                }
+            }
+        });
+    }
+    this.loadedDateEvent = function(idx) {
+        $('.month-select', '#dt'+ idx).change(function(){
+            _renderinput.loadDays(idx, $('.month-select', '#dt'+idx).val());
+
+            if (idx == 0) {
+                // auto select month from first index value
+                every_val = parseInt(RepeatsEvery.val());
+                actual_len =  12 / every_val
+                first_month = $('.month-select', '#dt0').val();
+
+                if (first_month != '') {
+                    for (i = 1 ; i < actual_len ; i++) {
+                        next_val = parseInt(first_month) + ( i * parseInt(every_val));
+                        if (next_val > 12) {
+                            next_val = next_val - 12;
+                        }
+                        $('.month-select', '#dt'+i).val(next_val);
+                        _renderinput.loadDays(i, next_val);
+                    }
+                }
+            }
+        });
+
+    };
+    this.loadMultipleDate = function() {
+
+        MultiselectDate.on('click', function(e) {
+            $('.date-list').empty();
+            if (MultiselectDate.prop('checked')) {
+                if (12 % parseInt(RepeatsEvery.val()) == 0 ) {
+                    len = 12 / parseInt(RepeatsEvery.val());
+                    for (i=0; i < len ; i++) {
+                        $('.date-list').append(_renderinput.loadDate(i));
+                        _renderinput.loadedDateEvent(i);
+                    }
+                }
+            }
+            else {
+                $('.date-list').append(_renderinput.loadDate(0));
+                _renderinput.loadedDateEvent(0);
+            }
+        });
     };
 
     this.loadMonthAndData = function(mainMonObj) {
@@ -566,10 +652,10 @@ function RenderInput() {
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
-                    if (_renderinput.l_one_id == null) {
+                    /*if (_renderinput.l_one_id == null) {
                         displayMessage(msg.statutory_selection_required);
                         return false;
-                    }
+                    }*/
                     new_value = $('#dv'+ v.l_position).val();
                     _sid = $('#dvid'+v.l_position).val();
 
@@ -719,24 +805,23 @@ function RenderInput() {
             $('.date-list').empty();
             $.each(data.statu_dates, function(k, v) {
 
+                // date_pan = $("#templates #date-list-templates").clone();
 
-                date_pan = $("#templates #date-list-templates").clone();
+                // $('.month-select', date_pan).empty();
+                // _renderinput.loadMonthAndData($('.month-select', date_pan));
+                // $('.month-select', date_pan).change(function(){
+                //     $('.date-select', date_pan).empty();
+                //     $.each(_renderinput.getMonthAndDataSets(), function(kk, v1) {
+                //         if (v1.m_id == parseInt($('.month-select', date_pan).val())) {
+                //             for (var i=1; i<=v1.range; i++) {
+                //                 dopt =_renderinput.make_option(i, i);
+                //                 $('.date-select', date_pan).append(dopt);
+                //             }
+                //         }
+                //     });
+                // });
 
-                $('.month-select', date_pan).empty();
-                _renderinput.loadMonthAndData($('.month-select', date_pan));
-                $('.month-select', date_pan).change(function(){
-                    $('.date-select', date_pan).empty();
-                    $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
-                        if (v.m_id == parseInt($('.month-select', date_pan).val())) {
-                            for (var i=1; i<=v.range; i++) {
-                                dopt =_renderinput.make_option(i, i);
-                                $('.date-select', date_pan).append(dopt);
-                            }
-                        }
-                    });
-                });
-
-                $('.month-select', date_pan).val(v['statutory_month']);
+                //
                 $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
                     if (vv.m_id == v["statutory_month"]) {
                         for (var i=1; i<vv.range; i++) {
@@ -745,9 +830,12 @@ function RenderInput() {
                         }
                     }
                 });
+                date_pan = _renderinput.loadDate(0);
+                $('.month-select', date_pan).val(v['statutory_month']);
                 $('.date-select', date_pan).val(v['statutory_date']);
                 $('.trigger-value', date_pan).val(v['trigger_before_days']);
                 $('.date-list').append(date_pan);
+                _renderinput.loadedDateEvent(0);
             });
 
 
@@ -1016,29 +1104,45 @@ function RenderInput() {
             }
             else {
                 RecurringPan.show();
+                if (freq_val == 2){
+                    txt = "Periodical";
+                    $('.mandatory', RecurringPan).show();
+                }
+                else if (freq_val == 3) {
+                    txt = "Review";
+                    $('.mandatory', RecurringPan).show();
+                }
+                else{
+                    txt = "Flexi Review";
+                    $('.mandatory', RecurringPan).hide();
+                }
+                $('.header-title', RecurringPan).html(txt);
                 _renderinput.loadRepeats();
                 $('.date-list').empty();
-                date_pan = $("#templates #date-list-templates").clone();
+                // date_pan = $("#templates #date-list-templates").clone();
 
-                $('.month-select', date_pan).empty();
-                this.loadMonthAndData($('.month-select', date_pan));
-                $('.month-select', date_pan).change(function(){
-                    $('.date-select', date_pan).empty();
-                    $('.date-select', date_pan).append(_renderinput.make_option("Select", ''));
-                    $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
-                        if (v.m_id == parseInt($('.month-select', date_pan).val())) {
-                            for (var i=1; i<=v.range; i++) {
-                                dopt =_renderinput.make_option(i, i);
-                                $('.date-select', date_pan).append(dopt);
-                            }
-                        }
-                    });
-                });
+                // $('.month-select', date_pan).empty();
+                // this.loadMonthAndData($('.month-select', date_pan));
+                // $('.month-select', date_pan).change(function(){
+                //     $('.date-select', date_pan).empty();
+                //     $('.date-select', date_pan).append(_renderinput.make_option("Select", ''));
+                //     _renderinput.loadDays();
+                //     $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
+                //         if (v.m_id == parseInt($('.month-select', date_pan).val())) {
+                //             for (var i=1; i<=v.range; i++) {
+                //                 dopt =_renderinput.make_option(i, i);
+                //                 $('.date-select', date_pan).append(dopt);
+                //             }
+                //         }
+                //     });
+                // });
 
-                $('.trigger-value', date_pan).on('input', function(e) {
-                    this.value = isNonZeroNumbers($(this));
-                });
+                // $('.trigger-value', date_pan).on('input', function(e) {
+                //     this.value = isNonZeroNumbers($(this));
+                // });
+                _renderinput.loadDate(0)
                 $('.date-list').append(date_pan);
+                _renderinput.loadedDateEvent(0);
             }
 
         }
@@ -2061,6 +2165,18 @@ function pageControls() {
 
     $('#ottriggerbefore').on('input', function(e) {
         this.value = isNonZeroNumbers($(this));
+    });
+
+    RepeatsEvery.on('input', function(e) {
+        this.value = isNumbers($(this));
+        MultiselectDate.attr('checked', false);
+        $('.multicheckbox').hide();
+        $('.date-list').empty();
+        RepeatsType.val('');
+        date_pan = _renderinput.loadDate(0);
+        $('.date-list').append(date_pan);
+        _renderinput.loadedDateEvent(0);
+
     });
 
 }

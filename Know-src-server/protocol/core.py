@@ -130,10 +130,12 @@ class USER_TYPE(object):
 class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
     def __init__(self):
         self._value = {
+            0 : "Is_new",
             1 : "Yet to submit",
             2 : "Pending",
-            3 : "Assigned",
-            4 : "Rejected"
+            3 : "Approved",
+            4 : "Rejected",
+            5 : "Assigned"
         }
 
     @staticmethod
@@ -2044,6 +2046,37 @@ class UnitLegalEntity(object):
             "country_id": self.country_id,
         }
 
+class AssignUnitLegalEntity(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, business_group_id, client_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id"
+            ]
+        )
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_id = data.get("business_group_id")
+        client_id = data.get("client_id")
+        return AssignUnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id,
+            "client_id": self.client_id,
+        }
+
+
 #
 #   Units - Domain & organisation
 #
@@ -3270,47 +3303,47 @@ class ClientGroupMaster(object):
 #
 class ClientGroup(object):
     def __init__(
-        self, group_id, group_name, country_names,
-        no_of_legal_entities, is_active, is_approved, remarks
+        self, group_id, group_name, country_name,
+        legal_entity_name, is_closed, is_approved, reason
     ):
         self.group_id = group_id
         self.group_name = group_name
-        self.country_names = country_names
-        self.no_of_legal_entities = no_of_legal_entities
-        self.is_active = is_active
+        self.country_name = country_name
+        self.legal_entity_name = legal_entity_name
+        self.is_closed = is_closed
         self.is_approved = is_approved
-        self.remarks = remarks
+        self.reason = reason
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "group_id", "group_name", "country_names",
-                "no_of_legal_entities", "is_active", "is_approved",
-                "remarks"
+                "group_id", "group_name", "country_name",
+                "legal_entity_name", "is_closed", "is_approved",
+                "reason"
             ]
         )
         group_id = data.get("group_id")
         group_name = data.get("group_name")
-        country_names = data.get("country_names")
-        no_of_legal_entities = data.get("no_of_legal_entities")
-        is_active = data.get("is_active")
+        country_name = data.get("country_name")
+        legal_entity_name = data.get("legal_entity_name")
+        is_closed = data.get("is_closed")
         is_approved = data.get("is_approved")
-        remarks = data.get("remarks")
+        reason = data.get("reason")
         return ClientGroup(
-            group_id, group_name, country_names, no_of_legal_entities,
-            is_active, is_approved, remarks
+            group_id, group_name, country_name, legal_entity_name,
+            is_closed, is_approved, reason
         )
 
     def to_structure(self):
         return {
             "group_id": self.group_id,
             "group_name": self.group_name,
-            "country_names": self.country_names,
-            "no_of_legal_entities": self.no_of_legal_entities,
-            "is_active": self.is_active,
+            "country_name": self.country_name,
+            "legal_entity_name": self.legal_entity_name,
+            "is_closed": self.is_closed,
             "is_approved": self.is_approved,
-            "remarks": self.remarks
+            "remarks": self.reason
         }
 
 
@@ -3430,6 +3463,70 @@ class LegalEntity(object):
             "contract_from": self.contract_from,
             "contract_to": self.contract_to,
             "domain_details": self.domain_details
+        }
+
+class LegalEntityList(object):
+    def __init__(
+        self, country_id, business_group, legal_entity_id,
+        legal_entity_name, old_logo, new_logo,
+        no_of_licence, file_space, contract_from,
+        contract_to, domain_details, is_closed
+    ):
+        self.country_id = country_id
+        self.business_group = business_group
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.old_logo = old_logo
+        self.new_logo = new_logo
+        self.no_of_licence = no_of_licence
+        self.file_space = file_space
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.domain_details = domain_details
+        self.is_closed = is_closed
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "country_id", "business_group", "legal_entity_id",
+                "legal_entity_name", "old_logo", "new_logo", "no_of_licence",
+                "file_space", "contract_from", "contract_to", "domain_details", "is_closed"
+            ]
+        )
+        country_id = data.get("country_id")
+        business_group = data.get("business_group")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        logo = data.get("old_logo")
+        new_logo = data.get("new_logo")
+        no_of_licence = data.get("no_of_licence")
+        file_space = data.get("file_space")
+        contract_from = data.get("contract_from")
+        contract_to = data.get("contract_to")
+        domain_details = data.get("domain_details")
+        is_closed = data.get("is_closed")
+        is_closed = parse_structure_Bool(is_closed)
+        return LegalEntity(
+            country_id, business_group, legal_entity_id, legal_entity_name,
+            logo, new_logo, no_of_licence, file_space,
+            contract_from, contract_to, domain_details, is_closed
+        )
+
+    def to_structure(self):
+        return {
+            "country_id": self.country_id,
+            "business_group": self.business_group,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "old_logo": self.old_logo,
+            "new_logo": self.new_logo,
+            "no_of_licence": self.no_of_licence,
+            "file_space": self.file_space,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "domain_details": self.domain_details,
+            "is_closed": self.is_closed
         }
 
 #

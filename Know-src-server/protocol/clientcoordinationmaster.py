@@ -90,6 +90,20 @@ class GetClientGroupApprovalList(Request):
         return {}
 
 
+class GetLegalEntityInfo(Request):
+    def __init__(self, entity_id):
+        self.entity_id = entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        return GetLegalEntityInfo(data.get("le_id"))
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.entity_id
+        }
+
 class ApproveClientGroup(Request):
     def __init__(self, client_group_approval_details):
         self.client_group_approval_details = client_group_approval_details
@@ -109,7 +123,8 @@ class ApproveClientGroup(Request):
 def _init_Request_class_map():
     classes = [
         GetClientUnitApprovalList, GetEntityApprovalList, ApproveUnit,
-        GetClientGroupApprovalList, ApproveClientGroup
+        GetClientGroupApprovalList, ApproveClientGroup,
+        GetLegalEntityInfo
     ]
     class_map = {}
     for c in classes:
@@ -325,44 +340,39 @@ class ApproveUnitSuccess(Response):
 
 class ClientGroupApproval(object):
     def __init__(
-        self, client_id, group_name, username, le_count,
-        is_active, country_ids, short_name
+        self, client_id, group_name, short_name, email_id,
+        entity_name, entity_id, country_name
     ):
         self.client_id = client_id
         self.group_name = group_name
-        self.username = username
-        self.le_count = le_count
-        self.is_active = is_active
-        self.country_ids = country_ids
         self.short_name = short_name
+        self.email_id = email_id
+        self.entity_id = entity_id
+        self.entity_name = entity_name
+        self.country_name = country_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "client_id", "group_name", "username", "le_count",
-            "is_active", "country_ids", "short_name"
+            "gt_id", "group_name", "short_name",
+            "email_id", "le_name", "le_id", "c_name"
         ])
-        client_id = data.get("client_id")
-        group_name = data.get("group_name")
-        username = data.get("username")
-        le_count = data.get("le_count")
-        is_active = data.get("is_active")
-        country_ids = data.get("country_ids")
-        short_name = data.get("short_name")
         return UnitApprovalDetails(
-            client_id, group_name, username, le_count,
-            is_active, country_ids, short_name
+            data.get("gt_id"), data.get("group_name"),
+            data.get("short_name"), data.get("email_id"),
+            data.get("le_name"), data.get("le_id"),
+            data.get("c_name")
         )
 
     def to_structure(self):
         return {
-            "client_id": self.client_id,
+            "gt_id": self.client_id,
             "group_name": self.group_name,
-            "username": self.username,
-            "le_count": self.le_count,
-            "is_active": self.is_active,
-            "country_ids": self.country_ids,
-            "short_name": self.short_name
+            "short_name": self.short_name,
+            "email_id": self.email_id,
+            "le_name": self.entity_name,
+            "le_id": self.entity_id,
+            "c_name": self.country_name
         }
 
 
@@ -391,27 +401,33 @@ class GetClientGroupApprovalListSuccess(Response):
 
 class ClientGroupApprovalDetails(object):
     def __init__(
-        self, client_id, approval_status, reason
+        self, client_id, entity_id, entity_name, approval_status, reason
     ):
         self.client_id = client_id
+        self.entity_id = entity_id
+        self.entity_name = entity_name
         self.approval_status = approval_status
         self.reason = reason
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "client_id", "approval_status", "reason"
+            "ct_id", "le_id", "le_name", "approval_status", "reason"
         ])
-        client_id = data.get("client_id")
+        client_id = data.get("ct_id")
+        entity_id = data.get("le_id")
+        entity_name = data.get("le_name")
         approval_status = data.get("approval_status")
         reason = data.get("reason")
         return ClientGroupApprovalDetails(
-            client_id, approval_status, reason
+            client_id, entity_id, entity_name, approval_status, reason
         )
 
     def to_structure(self):
         return {
-            "client_id": self.client_id,
+            "ct_id": self.client_id,
+            "le_id": self.entity_id,
+            "le_name": self.entity_name,
             "approval_status": self.approval_status,
             "reason": self.reason
         }
@@ -429,12 +445,77 @@ class ApproveClientGroupSuccess(Response):
     def to_inner_structure(self):
         return {}
 
+class GetLegalEntityInfoSuccess(Response):
+    def __init__(
+        self, entity_id, business_group_name, contract_from, contract_to,
+        file_space, total_licence, view_licence, org_info
+    ):
+        self.entity_id = entity_id
+        self.business_group_name = business_group_name
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.file_space = file_space
+        self.total_licence = total_licence
+        self.view_licence = view_licence
+        self.org_info = org_info
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "le_id", "bg_name", "contract_from", "contract_to",
+            "file_space", "no_of_licence", "view_licence", "org_info"
+        ])
+        return GetLegalEntityInfoSuccess(
+            data.get("le_id"), data.get("bg_name"), data.get("contract_from"),
+            data.get("contract_to"), data.get("file_space"),
+            data.get("no_of_licence"), data.get("org_info")
+        )
+
+    def to_inner_strcture(self):
+        return {
+            "le_id": self.entity_id,
+            "bg_name": self.business_group_name,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "file_space": self.file_space,
+            "no_of_licence": self.total_licence,
+            "org_info": self.org_info
+        }
+
+def LegalEntityOrganisation(object):
+    def __init__(self, entity_id, domain_id, domain_name, organisation_id, organisation_name, count):
+        self.entity_id = entity_id
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.organisation_id = organisation_name
+        self.organisation_name = organisation_name
+        self.count = count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "d_name", "org_id", "org_name", "count"])
+        return LegalEntityOrganisation(
+            data.get("le_id"), data.get("d_id"), data.get("d_name"),
+            data.get("org_id"), data.get("org_name"),
+            data.get("count")
+        )
+
+    def to_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id,
+            "d_name": self.domain_name,
+            "org_id": self.organisation_id,
+            "org_name": self.organisation_name,
+            "count": self.count
+        }
+
 
 def _init_Response_class_map():
     classes = [
         GetClientUnitApprovalListSuccess, GetEntityApprovalListSuccess,
         ApproveUnitSuccess, GetClientGroupApprovalListSuccess,
-        ApproveClientGroupSuccess
+        ApproveClientGroupSuccess, GetLegalEntityInfoSuccess
     ]
     class_map = {}
     for c in classes:

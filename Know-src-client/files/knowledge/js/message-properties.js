@@ -247,6 +247,7 @@ var message = {
   'no_of_units_required': 'No. of units required',
   'duplicate_industry': 'Organization already exists',
   'organization_required': 'Organization Required',
+  'organization_invalid': 'Organization Invalid',
   'duplicate_domain': 'Duplicate domain',
   'organization_save_success': 'Organization Master Saved Successfully',
   'organization_update_success': 'Organization Master Updated Successfully',
@@ -325,7 +326,17 @@ var message = {
   "no_compliance_to_reject": "Atleast one compliance should be reject",
   "email_50": "Email are not allowed more than 50 characters",
   "activationdate_required": "Activation Date Required",
-  "logo_valid_file_format": "Only Valid file formats are jpeg, jpg, png, bmp and gif."
+  "logo_valid_file_format": "Only Valid file formats are jpeg, jpg, png, bmp and gif.",
+  "shortname_min3char": "Short Name: Minimum 3 Characters should be entered.",
+  "domain_select_first": "Before Add Organization, select Domain First",
+  "no_of_units_invalid": "No. Of Units are Invalid",
+  "reassign_from_required": "Reassign from required",
+  "reassign_to_required": "Reassign to required",
+  "reassign_to_tm_required": "Reassign to Techno Manager required",
+  "reassign_to_te_required": "Reassign to Techno Executive required",
+  "no_records_selected_for_reassign": "No records selected for reassign",
+  "reassign_from_reassign_to_both_are_same": "Reaasign from user ans Reassign to user both should not be same",
+  
 };
 
 function clearMessage() {
