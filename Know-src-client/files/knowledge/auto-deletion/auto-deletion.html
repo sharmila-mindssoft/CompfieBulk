@@ -36,39 +36,16 @@
                     <td>&nbsp;</td>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
+                <tbody class="tbody-auto-deletion-list">
+                  <!-- <tr>
                     <td>1</td>
                     <td>RG Group</td>
                     <td>RG Legal Entity 01</td>
                     <td>12</td>
                     <td>7</td>
                     <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top" onclick="parent.location='/auto-deletion/edit'"></i></td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>RG Group</td>
-                    <td>RG Legal Entity 02</td>
-                    <td>5</td>
-                    <td>6</td>
-                    <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top" ></i></td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>PRG Group</td>
-                    <td>PRG Legal Entity 01</td>
-                    <td>8</td>
-                    <td>7</td>
-                    <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top" ></i></td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td>JKL Group</td>
-                    <td>JKL Legal Entity 01</td>
-                    <td>2</td>
-                    <td>5</td>
-                    <td class="icon-3x text-center"><i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top" ></i></td>
-                  </tr>
+                  </tr> -->
+                  
                 </tbody>
               </table>
             </div>
@@ -79,5 +56,19 @@
   </div>
 </div>
 
+<div id="templates">
+    <table class="table-auto-deletion-list">
+        <tr class="table-row">
+            <td class="sno" align="center"></td>
+            <td class="group-name"></td>
+            <td class="le-name"></td>
+            <td class="unit-count"></td>
+            <td class="deletion-period"></td>
+            <td class="icon-3x text-center">
+                <i class="fa c-pointer edit"></i>
+            </td>
+        </tr>
+    </table>
+</div>
 <!-- <script type="text/javascript" src="/script/auto-deletion/auto-deletion.js"></script> -->
 {% endblock %}
