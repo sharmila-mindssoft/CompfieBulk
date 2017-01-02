@@ -251,6 +251,7 @@ function loadCompliances(data) {
     } else {
         showPagePan(showFrom, sno, totalRecord);
     }
+    hideLoader();
 }
 
 function processSubmit (csv){
@@ -307,6 +308,7 @@ function processSubmit (csv){
                   PaginationView.hide();
                   hideLoader();
                 } else {
+
                     if (sno == 0) {
                         createPageView(totalRecord);
                     }

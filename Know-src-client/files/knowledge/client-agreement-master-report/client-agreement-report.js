@@ -282,6 +282,7 @@ function loadCompliances(data) {
     else {
       showPagePan(showFrom, sno, totalRecord);
     }
+    hideLoader();
 }
 
 function tree_open_close(id) {
