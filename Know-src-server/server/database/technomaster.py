@@ -2303,7 +2303,7 @@ def save_assigned_units(db, request, session_user):
     user_category_id = get_user_category_id(db, domain_manager_id)
     domain_name_id_map = {}
     for domain in domains:
-        domain_name_id_map[domasavein.domain_name] = domain.domain_id
+        domain_name_id_map[domain.domain_name] = domain.domain_id
     columns = [
         "user_id", "user_category_id", "client_id", "legal_entity_id",
         "unit_id", "domain_id", "assigned_by", "assigned_on"
