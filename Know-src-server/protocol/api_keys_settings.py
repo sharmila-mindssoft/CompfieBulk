@@ -180,6 +180,7 @@ api_params = {
     'group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'grp_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'ct_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'ct_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     'country_names': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'next_unit_code': {'type': 'INT', 'length': 1000000, 'validation_method': None, "is_optional": False},
@@ -217,6 +218,7 @@ api_params = {
     "month_from": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "month_to": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "notification_type": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    "org_info": {},
 
     'unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApproval"},
     'unit_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitDetails"},
@@ -228,6 +230,7 @@ api_params = {
     'unit_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'u_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'u_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'unit_name': {'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
     'u_name': {'type': 'TEXT', 'length': 160, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
     'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
@@ -322,19 +325,25 @@ api_params = {
     "user_category_id": {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
     "user_category_name": {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': False},
 
+    "db_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "db_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "DBServer"},
-    "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
 
     "client_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "client_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientServer"},
 
+    "file_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "file_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "file_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "FileServerList"},
+
     "client_dbs": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientDatabase"},
     "client_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientGroup"},
     "client_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "LegalEntity"},
+
     "legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntity"},
     "business_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
     "bgrps": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
@@ -361,23 +370,55 @@ api_params = {
     "cc_manager_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "user_mapping_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
 
+    "t_m_reassign": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserInfo"},
+    "t_e_reassign": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserInfo"},
+    "d_m_reassign": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserInfo"},
+    "d_e_reassign": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserInfo"},
+    "country_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
+    "t_user_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "TechnoEntity"},
+    "d_user_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "DomainUnit"},
+
+    "techno_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    "location": {'type': 'TEXT', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'd_u_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'gt_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+
+    'reassign_from': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'reassign_to': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    't_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'executive_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'old_t_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'd_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+
+    't_manager_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignTechnoManager"},
+    't_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignTechnoExecutive"},
+    'd_manager_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignDomainManager"},
+    'd_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "ReassignDomainExecutive"},
+
     "user_mapping_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "UserMappingUsers"},
     "child_users": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     "parent_user_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "child_user_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "remarks": {'type': 'TEXT', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "p_user_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
 
     'bg_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'bg_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'dv_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'le_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statu_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "StatutoryUnits"},
+
+    'le_ids': {'type': 'VECTOR_TYPE_INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'grp_ids': {'type': 'VECTOR_TYPE_INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+
 
     "unassigned_units": {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     "unassigned_units_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UnassignedUnit"},
     "assigned_units_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnit"},
     "assigned_unit_details_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnitDetails"},
     "domain_manager_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "User"},
+    "mapped_domain_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "DomainUser"},
     "active_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ActiveUnit"},
     'division_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'dv_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -613,6 +654,7 @@ api_params['token'] = api_params.get('reset_token')
 api_params['uname'] = api_params.get('username')
 api_params['pword'] = api_params.get('password')
 api_params['c_names'] = api_params.get('mapping')
+api_params['d_names'] = api_params.get('mapping')
 api_params["org_id"] = api_params.get("industry_id")
 api_params["org_name"] = api_params.get("industry_name")
 api_params["rcount"] = api_params.get("total_records")

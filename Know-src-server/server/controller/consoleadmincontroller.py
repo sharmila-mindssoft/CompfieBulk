@@ -41,12 +41,12 @@ def process_console_admin_request(request, db):
         return login.InvalidSessionToken()
 
     if(
-        type(request_frame) is consoleadmin.GetDbServerList
+        type(request_frame) is consoleadmin.GetDatabaseServerList
     ):
-        logger.logKnowledgeApi("GetDbServerList", "process begin")
+        logger.logKnowledgeApi("GetDatabaseServerList", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_db_server_list(db)
-        logger.logKnowledgeApi("GetDbServerList", "process end")
+        logger.logKnowledgeApi("GetDatabaseServerList", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveDBServer):
@@ -70,6 +70,24 @@ def process_console_admin_request(request, db):
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_client_server(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveClientServer", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(
+        type(request_frame) is consoleadmin.GetFileServerList
+    ):
+        logger.logKnowledgeApi("GetFileServerList", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_get_file_server_list(db)
+        logger.logKnowledgeApi("GetFileServerList", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(
+        type(request_frame) is consoleadmin.SaveFileServer
+    ):
+        logger.logKnowledgeApi("SaveFileServer", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_file_server_entry(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveFileServer", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.GetAllocatedDBEnv):
@@ -138,7 +156,7 @@ def process_get_db_server_list(db):
 #               response
 ###############################################################################
 def process_save_db_server(db, request, session_user):
-    if is_duplicate_db_server_name(db, request.db_server_name, request.ip):
+    if is_duplicate_db_server_name(db, request.db_server_name, request.db_server_id):
         return consoleadmin.DBServerNameAlreadyExists()
     else:
         save_db_server(db, request, session_user)
@@ -250,3 +268,27 @@ def process_get_auto_deletion_list(db, request, session_user):
 def process_save_auto_deletion(db, request, session_user):
     save_auto_deletion_details(db, request, session_user)
     return consoleadmin.SaveAutoDeletionSuccess()
+
+
+###############################################################################
+# To GET configure file server details
+# parameter : Object of database, Get Request, session user
+# return type : Returns file server records
+###############################################################################
+def process_get_file_server_list(db):
+    file_server_list = get_file_server_list(db)
+    return consoleadmin.GetFileServerListSuccess(file_server_list)
+
+
+###############################################################################
+# To save configure file server details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_file_server_entry(db, request, session_user):
+    if is_duplicate_file_server_name(
+            db, request.file_server_name, request.file_server_id):
+        return consoleadmin.FileServerNameAlreadyExists()
+    else:
+        file_server_entry_process(db, request, session_user)
+        return consoleadmin.SaveFileServerSuccess()

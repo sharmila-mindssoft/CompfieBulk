@@ -2015,25 +2015,27 @@ class UnitCountries(object):
 
 class UnitLegalEntity(object):
     def __init__(
-        self, legal_entity_id, legal_entity_name, business_group_id, client_id
+        self, legal_entity_id, legal_entity_name, business_group_id, client_id, country_id
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_id = business_group_id
         self.client_id = client_id
+        self.country_id = country_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id"
+                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id", "country_id"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_name = data.get("legal_entity_name")
         business_group_id = data.get("business_group_id")
         client_id = data.get("client_id")
-        return UnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
+        country_id = data.get("country_id")
+        return UnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id, country_id)
 
     def to_structure(self):
         return {
@@ -2041,6 +2043,7 @@ class UnitLegalEntity(object):
             "legal_entity_name": self.legal_entity_name,
             "business_group_id": self.business_group_id,
             "client_id": self.client_id,
+            "country_id": self.country_id,
         }
 
 #
@@ -2050,7 +2053,7 @@ class UnitLegalEntity(object):
 class UnitDomainOrganisation(object):
     def __init__(
         self, legal_entity_id, domain_id, domain_name, industry_id, industry_name, unit_count
-        ):
+    ):
         self.legal_entity_id = legal_entity_id
         self.domain_id = domain_id
         self.domain_name = domain_name
@@ -2667,6 +2670,24 @@ class User(object):
             "is_active": self.is_active
         }
 
+class DomainUser(object):
+    def __init__(self, user_id, legal_entity_id):
+        self.user_id = user_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "legal_entity_id"])
+        user_id = data.get("user_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return DomainUser(user_id, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "legal_entity_id": self.legal_entity_id,
+        }
+
 #
 # Client Incharge Persons
 #
@@ -3251,47 +3272,47 @@ class ClientGroupMaster(object):
 #
 class ClientGroup(object):
     def __init__(
-        self, group_id, group_name, country_names,
-        no_of_legal_entities, is_active, is_approved, remarks
+        self, group_id, group_name, country_name,
+        legal_entity_name, is_closed, is_approved, reason
     ):
         self.group_id = group_id
         self.group_name = group_name
-        self.country_names = country_names
-        self.no_of_legal_entities = no_of_legal_entities
-        self.is_active = is_active
+        self.country_name = country_name
+        self.legal_entity_name = legal_entity_name
+        self.is_closed = is_closed
         self.is_approved = is_approved
-        self.remarks = remarks
+        self.reason = reason
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "group_id", "group_name", "country_names",
-                "no_of_legal_entities", "is_active", "is_approved",
-                "remarks"
+                "group_id", "group_name", "country_name",
+                "legal_entity_name", "is_closed", "is_approved",
+                "reason"
             ]
         )
         group_id = data.get("group_id")
         group_name = data.get("group_name")
-        country_names = data.get("country_names")
-        no_of_legal_entities = data.get("no_of_legal_entities")
-        is_active = data.get("is_active")
+        country_name = data.get("country_name")
+        legal_entity_name = data.get("legal_entity_name")
+        is_closed = data.get("is_closed")
         is_approved = data.get("is_approved")
-        remarks = data.get("remarks")
+        reason = data.get("reason")
         return ClientGroup(
-            group_id, group_name, country_names, no_of_legal_entities,
-            is_active, is_approved, remarks
+            group_id, group_name, country_name, legal_entity_name,
+            is_closed, is_approved, reason
         )
 
     def to_structure(self):
         return {
             "group_id": self.group_id,
             "group_name": self.group_name,
-            "country_names": self.country_names,
-            "no_of_legal_entities": self.no_of_legal_entities,
-            "is_active": self.is_active,
+            "country_name": self.country_name,
+            "legal_entity_name": self.legal_entity_name,
+            "is_closed": self.is_closed,
             "is_approved": self.is_approved,
-            "remarks": self.remarks
+            "remarks": self.reason
         }
 
 

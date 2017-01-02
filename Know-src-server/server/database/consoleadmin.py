@@ -2,6 +2,7 @@ from server.exceptionmessage import process_error
 from protocol import consoleadmin
 from forms import *
 from tables import *
+from server.common import get_date_time
 
 __all__ = [
     "get_db_server_list",
@@ -15,7 +16,10 @@ __all__ = [
     "get_file_storage_form_data",
     "save_file_storage",
     "get_auto_deletion_form_data",
-    "save_auto_deletion_details"
+    "save_auto_deletion_details",
+    "get_file_server_list",
+    "file_server_entry_process",
+    "is_duplicate_file_server_name"
 ]
 
 
@@ -33,6 +37,8 @@ def get_db_server_list(db):
     data = db.call_proc(
         "sp_databaseserver_list", None
     )
+    print "db data"
+    print data
     return return_database_servers(data)
 
 
@@ -45,9 +51,9 @@ def return_database_servers(data):
     fn = consoleadmin.DBServer
     result = [
         fn(
-            db_server_name=datum["database_server_name"], ip=datum["database_ip"],
-            port=datum["database_port"], username=datum["database_username"],
-            password=datum["database_password"],
+            db_server_id=datum["database_server_id"], db_server_name=datum["database_server_name"],
+            ip=datum["database_ip"], port=datum["database_port"],
+            username=datum["database_username"], password=datum["database_password"],
             no_of_clients=0 if(
                 datum["legal_entity_ids"] is None
             ) else len(datum["legal_entity_ids"].split(","))
@@ -62,14 +68,14 @@ def return_database_servers(data):
 # return type : Returns True if db server name already exists otherwise returns
 #               False
 ###############################################################################
-def is_duplicate_db_server_name(db, db_server_name, ip):
+def is_duplicate_db_server_name(db, db_server_name, db_server_id):
     #
     #  To check whether db server name already exists or not
     #  Parameters : Db server name, ip
     #  Return : returns count of db servers exists with the save name
     #
     result = db.call_proc(
-        "sp_databaseserver_is_duplicate", (db_server_name, ip))
+        "sp_databaseserver_is_duplicate", (db_server_name, db_server_id))
     if result[0]["count"] > 0:
         return True
     else:
@@ -91,12 +97,16 @@ def save_db_server(db, request, session_user):
     try:
         db.call_insert_proc(
             "sp_databaseserver_save", (
-                request.db_server_name, request.ip, request.port,
-                request.username, request.password
+                request.db_server_id, request.db_server_name, request.ip,
+                request.port, request.username, request.password, session_user,
+                get_date_time()
             )
         )
-        action = "New Database server %s added" % (request.db_server_name)
-        db.save_activity(session_user, frmConfigureDBServer, action)
+        if request.db_server_id is None:
+            action = "New Database server %s added" % (request.db_server_name)
+        else:
+            action = "Database server %s updated" % (request.db_server_name)
+        db.save_activity(session_user, frmConfigureDatabaseServer, action)
     except:
         raise process_error("E074")
 
@@ -128,8 +138,8 @@ def return_client_servers(data):
     result = []
     for datum in data:
         no_of_clients = []
-        if datum["legal_entity_ids"] is not None:
-            no_of_clients = datum["legal_entity_ids"].split(",")
+        if datum["client_ids"] is not None:
+            no_of_clients = datum["client_ids"].split(",")
         result.append(
             fn(
                 client_server_id=datum["machine_id"],
@@ -173,17 +183,23 @@ def save_client_server(db, request, session_user):
     #  Return : returns last inserted id
     #
     try:
-        db.call_insert_proc(
+        print "args"
+        print request.client_server_id, request.client_server_name, request.ip, request.port
+        new_id = db.call_insert_proc(
             "sp_machines_save", (
                 request.client_server_id, request.client_server_name,
-                request.ip, request.port
+                request.ip, request.port, session_user, get_date_time()
             )
         )
+        print "new_id"
+        print new_id
         action = "New Machine %s added" % (request.client_server_name)
+        print action
         if request.client_server_id is not None:
             action = "Machine %s updated" % (request.client_server_name)
-        db.save_activity(session_user,  frmConfigureClientServer, action)
-    except:
+        db.save_activity(session_user,  frmConfigureApplicationServer, action)
+    except Exception, e:
+        print e
         raise process_error("E075")
 
 
@@ -522,4 +538,91 @@ def save_auto_deletion_details(db, request, session_user):
             data[0]["legal_entity_name"])
         db.save_activity(session_user, frmAutoDeletion, action)
     else:
+        raise process_error("E078")
+
+
+###############################################################################
+# To Get list of file servers
+# parameter : Object of database
+# return type : Returns list of object of FileServer
+###############################################################################
+def get_file_server_list(db):
+    #
+    #  To get list of file servers
+    #  Parameters : None
+    #  Return : Returns all file servers
+    #
+    data = db.call_proc(
+        "sp_file_server_list", None
+    )
+    return return_file_servers(data)
+
+
+###############################################################################
+# Convert data fetched from database into List of object of File Servers
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of File server name and id
+###############################################################################
+def return_file_servers(data):
+    file_server_list = []
+    for datum in data:
+        no_of_clients = 0
+        if(datum["legal_entity_ids"] is not None and datum["legal_entity_ids"].find(",") > 0):
+            no_of_clients = len(datum["legal_entity_ids"].split(","))
+        file_server_list.append(consoleadmin.FileServerList(
+            datum["file_server_id"], datum["file_server_name"],
+            datum["ip"], datum["port"], no_of_clients
+        ))
+    return file_server_list
+
+
+###############################################################################
+# To check whether the file server name already exists or not
+# parameter : Object of database, file server name, file server id
+# return type : Returns True if a duplicate file server name already exists
+#               Otherwise returns False
+###############################################################################
+def is_duplicate_file_server_name(db, file_server_name, file_server_id):
+    #
+    #  To check whether the client server name already exists or not
+    #  Parameters : Client server name, client server id
+    #  Return : Returns count of client server with the same name
+    #
+    result = db.call_proc(
+        "sp_file_server_is_duplicate", (file_server_name, file_server_id))
+    if result[0]["count"] > 0:
+        return True
+    else:
+        return False
+
+###############################################################################
+# To save file server details
+# parameter : Object of databse, Save file server request, session user
+# return type : Returns True on success full save. Otherwise raises
+#   process error
+###############################################################################
+def file_server_entry_process(db, request, user_id):
+    #
+    #  To save client server
+    #  Parameters : Client server id, Client server name, ip, port
+    #  Return : returns last inserted id
+    #
+    try:
+        print "args"
+        print request.file_server_id, request.file_server_name, request.ip, request.port
+        new_id = db.call_insert_proc(
+            "sp_file_server_entry", (
+                request.file_server_id, request.file_server_name,
+                request.ip, request.port, user_id, get_date_time()
+            )
+        )
+        print "new_id"
+        print new_id
+        action = "New File Server %s added" % (request.file_server_name)
+        print action
+        if request.file_server_id is not None:
+            action = "File Server %s updated" % (request.file_server_name)
+        db.save_activity(user_id,  frmConfigureFileServer, action)
+    except Exception, e:
+        print e
         raise process_error("E078")

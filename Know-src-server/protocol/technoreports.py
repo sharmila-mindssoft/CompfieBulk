@@ -1873,10 +1873,11 @@ class ClientUnitDetailsReport(object):
 
 class StatutoryNotificationList(object):
     def __init__(
-        self, statutory_name, compliance_task, notification_text, date
+        self, statutory_name, compliance_task, description, notification_text, date
     ):
         self.statutory_name = statutory_name
         self.compliance_task = compliance_task
+        self.description = description
         self.notification_text = notification_text
         self.date = date
 
@@ -1886,6 +1887,7 @@ class StatutoryNotificationList(object):
             data, [
             "statutory_name",
             "compliance_task",
+            "description",
             "notification_text",
             "notification_date"
             ]
@@ -1893,11 +1895,12 @@ class StatutoryNotificationList(object):
 
         statutory_name = data.get("statutory_name"),
         compliance_task = data.get("compliance_task"),
+        description = data.get("description"),
         notification_text = data.get("notification_text"),
         date = data.get("notification_date")
 
         return StatutoryNotificationList(
-            statutory_name, compliance_task, notification_text,
+            statutory_name, compliance_task, description, notification_text,
             date
         )
 
@@ -1905,6 +1908,7 @@ class StatutoryNotificationList(object):
         return {
             "statutory_name": self.statutory_name,
             "compliance_task": self.compliance_task,
+            "description": self.description,
             "notification_text": self.notification_text,
             "notification_date": self.date
         }
