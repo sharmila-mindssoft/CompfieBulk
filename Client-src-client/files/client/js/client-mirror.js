@@ -1,4 +1,3 @@
-
 var CLIENT_BASE_URL = '/api/';
 var my_ip = null;
 
@@ -206,7 +205,7 @@ function initClientMirror() {
     function LoginApiRequest(callerName, request, callback) {
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            
+
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(request),
@@ -331,6 +330,17 @@ function initClientMirror() {
         ];
         LoginApiRequest('login', request, callback);
     }
+
+    //Verify Password
+    function verifyPassword(password, callback) {
+        var request = [
+            'VerifyPassword', {
+                'password': password
+            }
+        ];
+        apiRequest('general', request, callback);
+    }
+
     /* Compliance Approal */
     function getComplianceApprovalList(start_count, callback) {
         var request = [
@@ -1016,35 +1026,42 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getSaveClientUserGroupDict(ugName, fIds) {
+    /*function getSaveClientUserGroupDict(ugName, fIds) {
         return {
             'ug_name': ugName,
             'f_ids': fIds
         };
-    }
+    }*/
 
-    function saveClientUserGroup(userGroupDetail, callback) {
+    function saveClientUserGroup(u_g_name, f_cat_id, f_ids, callback) {
         callerName = 'client_masters';
         var request = [
-            'SaveUserPrivileges',
-            userGroupDetail
+            'SaveUserPrivileges', {
+                'u_g_name': u_g_name,
+                'u_c_id': f_cat_id,
+                'f_ids': f_ids
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpdateClientUserGroupDict(ugId, ugName, fIds) {
+    /*function getUpdateClientUserGroupDict(ugId, ugName, fIds) {
         return {
             'ug_id': ugId,
             'ug_name': ugName,
             'f_ids': fIds
         };
-    }
+    }*/
 
-    function updateClientUserGroup(userGroupDetail, callback) {
+    function updateClientUserGroup(u_g_id, u_g_name, f_cat_id, f_ids, callback) {
         callerName = 'client_masters';
         var request = [
-            'UpdateUserPrivileges',
-            userGroupDetail
+            'UpdateUserPrivileges', {
+                'u_g_id': u_g_id,
+                'u_g_name': u_g_name,
+                'u_c_id': f_cat_id,
+                'f_ids': f_ids
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -1916,9 +1933,10 @@ function initClientMirror() {
         forgotPassword: forgotPassword,
         validateResetToken: validateResetToken,
         resetPassword: resetPassword,
-        getSaveClientUserGroupDict: getSaveClientUserGroupDict,
+        verifyPassword: verifyPassword,
+        //getSaveClientUserGroupDict: getSaveClientUserGroupDict,
         saveClientUserGroup: saveClientUserGroup,
-        getUpdateClientUserGroupDict: getUpdateClientUserGroupDict,
+        //getUpdateClientUserGroupDict: getUpdateClientUserGroupDict,
         updateClientUserGroup: updateClientUserGroup,
         changeClientUserGroupStatus: changeClientUserGroupStatus,
         getClientUserGroups: getClientUserGroups,

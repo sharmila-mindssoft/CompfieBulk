@@ -8,11 +8,7 @@
             <div class="portlet">
                 <div class="portlet-heading bg-info">
                     <h3 class="portlet-title">Legal Entity Wise Report</h3>
-                    <div class="portlet-widgets">
-                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
-                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                        </a> -->
-                    </div>
+                    <div class="portlet-widgets"></div>
                     <div class="clearfix"></div>
                 </div>
                 <!-- <h4 class="page-title">Legal Entity Wise Report</h4> -->
@@ -22,21 +18,17 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <label class="col-sm-offset-1 col-sm-3 control-label">Country: </label>
+                            <p class="form-control-static">India</p>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">RG Legal Entity</p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                            <label class="col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -100,18 +92,18 @@
                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control input-sm" placeholder="DD-MM-YYYY" value="01-Jan-2016">
-                                <i class="fa-1-3x form-control-feedback fa fa-calendar-check-o"></i>
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control input-sm" placeholder="DD-MM-YYYY" value="31-Dec-2016">
-                                <i class="fa-1-3x form-control-feedback fa fa-calendar-check-o"></i>
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Status:</label>
+                            <label class="col-sm-4 control-label">Compliance Task Status:</label>
                             <div class="col-sm-6">
                                 <select class="form-control input-sm">
                                   <option>All</option>
@@ -125,9 +117,9 @@
                     </div>
                     <div class="col-sm-12">
                         <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit" onclick="show_div()"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            <div class="form-group m-b-0">
+                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()" > Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -150,7 +142,7 @@
                 <div class="card-box details" style="display: none;">
                 <div class="table-responsive ">
                     <div class="col-sm-12">
-                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo m-t-0"></div>
                         <div class="col-sm-12 text-center"><h4>Legal Entity Wise Report</h4></div>
                         <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
                         <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
@@ -178,11 +170,12 @@
                             <tr>
                                 <td colspan="100%" >
                                     <div class="col-sm-2 no-padding">
-                                        <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" />
+                                        <!-- <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" /> -->
+                                        <mark class="p-l-10 p-r-10">Test Act Central</mark>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="c-pointer" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                                 <td>1</td>
                                 <td>FORM I - Half yearly returns Submission</td>
                                 <td>One Time</td>
@@ -194,7 +187,7 @@
                                 <td>-</td>
                                 <td>-</td>
                             </tr>
-                            <tr>
+                            <tr class="collapse" id="collapseExample">
                                 <td colspan="5">&nbsp;</td>
                                 <td colspan="100%">
                                     <ul class="tree">
@@ -216,7 +209,7 @@
                                     </ul>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="c-pointer" data-toggle="collapse" href="#collapseExample-1" aria-expanded="false" aria-controls="collapseExample">
                                 <td>2</td>
                                 <td>FORM II - Submission</td>
                                 <td>Review</td>
@@ -228,7 +221,7 @@
                                 <td>-</td>
                                 <td>18-Aug-2016</td>
                             </tr>
-                            <tr>
+                            <tr class="collapse" id="collapseExample-1">
                                 <td colspan="5">&nbsp;</td>
                                 <td colspan="100%">
                                     <ul class="tree">
@@ -256,11 +249,12 @@
                             <tr>
                                 <td colspan="100%" >
                                     <div class="col-sm-2 no-padding">
-                                        <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" />
+                                        <!-- <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" /> -->
+                                        <mark class="p-l-10 p-r-10">Test Act Central</mark>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="c-pointer" data-toggle="collapse" href="#collapseExample-2" aria-expanded="false" aria-controls="collapseExample">
                                 <td>3</td>
                                 <td>FORM II - Registration</td>
                                 <td>On Occurrence</td>
@@ -270,9 +264,9 @@
                                 <td>Rejected</td>
                                 <td>19-Aug-2016</td>
                                 <td>-</td>
-                                <td>--/--/----</td>
+                                <td>-</td>
                             </tr>
-                            <tr>
+                            <tr class="collapse" id="collapseExample-2">
                                 <td colspan="5">&nbsp;</td>
                                 <td colspan="100%">
                                     <ul class="tree">
@@ -296,7 +290,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p class="rpt-count">Total : 3 record(s)</p>
+                    <p class="rpt-count m-b-0">Total : 3 record(s)</p>
                 </div>
             </div>
             </div>
@@ -306,4 +300,6 @@
 </div>
 </div>
 </div>
+
+
 {% endblock %}

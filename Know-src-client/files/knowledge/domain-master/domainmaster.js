@@ -475,7 +475,7 @@ function PageControls() {
 
         var currentClass = $(event.target).find('i').attr('class');
         Search_status.removeClass();
-        if(currentClass != undefined){
+        if(currentClass != undefined) {
           Search_status.addClass(currentClass);
           Search_status.text('');
         }else{

@@ -1,3 +1,4 @@
+import collections
 import time
 from protocol import (clientmasters, core, login)
 from server import logger
@@ -33,7 +34,7 @@ def process_client_master_requests(request, db):
         logger.logClientApi(
             "GetServiceProviders - " + str(client_id), "process begin"
         )
-        logger.logClientApi("------", str(time.time()))
+        logger.logClientApi("------", str(time.time())) 
         result = process_get_service_providers(
             db, request, session_user
         )
@@ -271,8 +272,8 @@ def process_change_service_provider_status(
 ########################################################
 # To get all client forms to load in User privilege form
 ########################################################
-def process_get_forms(db):
-    result_rows = get_forms(db)
+def process_get_forms(db, cat_id):
+    result_rows = get_forms(db, cat_id)
     forms = []
     for row in result_rows:
         parent_menu = None if (
@@ -289,22 +290,27 @@ def process_get_forms(db):
 
 
 ########################################################
+# To get all client Menu to load in User privilege form
+########################################################
+def process_get_user_category(db):
+    result_rows = get_user_category(db)
+    user_category_list = []
+    for row in result_rows:
+        user_category_id = int(row["user_category_id"])
+        user_category_name = row["user_category_name"]
+        user_category_list.append(
+            core.ClientUsercategory(user_category_id, user_category_name)
+        )
+    return user_category_list
+
+
+########################################################
 # To get all user groups with details
 ########################################################
 def process_get_user_privilege_details_list(db):
-    user_group_list = []
-    rows = get_user_privilege_details_list(db)
-    for row in rows:
-        user_group_id = int(row["user_group_id"])
-        user_group_name = row["user_group_name"]
-        form_ids = [int(x) for x in row["form_ids"].split(",")]
-        is_active = bool(row["is_active"])
-        user_group_list.append(
-            clientmasters.ClientUserGroup(
-                user_group_id,
-                user_group_name, form_ids, is_active
-            )
-        )
+    user_group_list = get_user_privilege_details_list(db)
+    
+    #print user_group_list
     return user_group_list
 
 
@@ -312,11 +318,20 @@ def process_get_user_privilege_details_list(db):
 # To get all user groups list
 ########################################################
 def process_get_user_privileges(db, request, session_user):
-    forms = process_get_forms(db)
+    # call form category
+    # loop user category
+    # process_get_forms --> process_get_menus -- > append to dictionary key
+    form_category = {}
+    user_category = {}
+    for cat_id in [2, 3, 4, 5, 6] :
+        category_wise_forms = process_get_forms(db, cat_id)
+        form_category[cat_id] = category_wise_forms
+    user_category = process_get_user_category(db)
     user_group_list = process_get_user_privilege_details_list(db)
     return clientmasters.GetUserPrivilegesSuccess(
-        forms=forms,
-        user_groups=user_group_list
+        forms=form_category,
+        user_groups=user_group_list,
+        user_category = user_category 
     )
 
 
@@ -324,9 +339,8 @@ def process_get_user_privileges(db, request, session_user):
 # To save User privileges
 ########################################################
 def process_save_user_privileges(db, request, session_user):
-    user_group_id = None
     if is_duplicate_user_privilege(
-        db, user_group_id, request.user_group_name
+        db, request.user_category_id, request.user_group_name
     ):
         return clientmasters.UserGroupNameAlreadyExists()
     user_group_id = save_user_privilege(
@@ -345,7 +359,7 @@ def process_update_user_privileges(db, request, session_user):
     ):
         return clientmasters.InvalidUserGroupId()
     elif is_duplicate_user_privilege(
-        db, request.user_group_id, request.user_group_name
+        db, request.user_category_id, request.user_group_name
     ):
         return clientmasters.UserGroupNameAlreadyExists()
     elif update_user_privilege(db, request, session_user):
@@ -580,7 +594,9 @@ def process_user_menus(form_list):
         _forms.append(form)
         menus[form_type] = _forms
     menus = reorder_menu(menus)
+    # print menus
     return core.Menu(menus)
+    # return menus
 
 
 def reorder_menu(menus):

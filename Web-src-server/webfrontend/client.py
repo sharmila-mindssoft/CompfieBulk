@@ -94,7 +94,7 @@ class CompanyManager(object) :
         )
 
     def _poll_response(self, response) :
-        print response.body
+        # print response.body
         err = "knowledge server poll error:"
         if not response.error :
             r = None

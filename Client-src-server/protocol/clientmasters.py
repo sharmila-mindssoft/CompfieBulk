@@ -224,47 +224,49 @@ class GetUserPrivileges(Request):
         }
 
 class SaveUserPrivileges(Request):
-    def __init__(self, user_group_name, form_ids):
+    def __init__(self, user_group_name, user_category_id, form_ids):
         self.user_group_name = user_group_name
+        self.user_category_id = user_category_id
         self.form_ids = form_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ug_name", "f_ids"])
-        user_group_name = data.get("ug_name")
-        user_group_name = parse_structure_CustomTextType_50(user_group_name)
+        data = parse_dictionary(data, ["u_g_name", "u_c_id", "f_ids"])
+        user_group_name = data.get("u_g_name")
+        form_category_id = data.get("u_c_id")
         form_ids = data.get("f_ids")
-        form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
-        return SaveUserPrivileges(user_group_name, form_ids)
+        return SaveUserPrivileges(user_group_name, form_category_id, form_ids)
 
     def to_inner_structure(self):
         return {
-            "ug_name": to_structure_CustomTextType_50(self.user_group_name),
-            "f_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
+            "u_g_name": self.user_group_name,
+            "u_c_id": self.form_category_id,
+            "f_ids": self.form_ids,
         }
 
 class UpdateUserPrivileges(Request):
-    def __init__(self, user_group_id, user_group_name, form_ids):
+    def __init__(self, user_group_id, user_category_id, user_group_name, form_ids):
         self.user_group_id = user_group_id
+        self.user_category_id = user_category_id
         self.user_group_name = user_group_name
         self.form_ids = form_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ug_id", "ug_name", "f_ids"])
-        user_group_id = data.get("ug_id")
-        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
-        user_group_name = data.get("ug_name")
-        user_group_name = parse_structure_CustomTextType_50(user_group_name)
+        data = parse_dictionary(data, ["u_g_id", "u_c_id", "u_g_name", "f_ids"])
+        user_group_id = data.get("u_g_id")
+        form_category_id = data.get("u_c_id")
+        user_group_name = data.get("u_g_name")
         form_ids = data.get("f_ids")
-        form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
-        return UpdateUserPrivileges(user_group_id, user_group_name, form_ids)
+        form_ids = form_ids
+        return UpdateUserPrivileges(user_group_id, form_category_id, user_group_name, form_ids)
 
     def to_inner_structure(self):
         return {
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
-            "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
-            "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
+            "u_g_id": self.user_group_id,
+            "u_c_id": self.form_category_id,
+            "u_g_name": self.user_group_name,
+            "f_ids": self.form_ids,
         }
 
 class ChangeUserPrivilegeStatus(Request):
@@ -700,52 +702,28 @@ class ChangeServiceProviderStatusSuccess(Response):
         return {
         }
 
-class ClientUserGroup(object):
-    def __init__(self, user_group_id, user_group_name, form_ids, is_active):
-        self.user_group_id = user_group_id
-        self.user_group_name = user_group_name
-        self.form_ids = form_ids
-        self.is_active = is_active
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["user_group_id", "user_group_name", "is_active"])
-        user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
-        user_group_name = data.get("user_group_name")
-        user_group_name = parse_structure_CustomTextType_50(user_group_name)
-        form_ids = data.get("form_ids")
-        form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
-        is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
-        return UserGroup(user_group_id, user_group_name, form_ids, is_active)
-
-    def to_structure(self):
-        return {
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
-            "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
-            "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
-            "is_active": to_structure_Bool(self.is_active),
-        }
-
 class GetUserPrivilegesSuccess(Response):
-    def __init__(self, forms, user_groups):
+    def __init__(self, forms, user_groups, user_category):
         self.forms = forms
         self.user_groups = user_groups
+        self.user_category = user_category
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["forms", "user_groups"])
+        data = parse_dictionary(data, ["forms", "user_groups", "user_category"])
         forms = data.get("forms")
-        forms = parse_structure_RecordType_core_Menu(forms)
+        forms = forms
         user_groups = data.get("user_groups")
-        user_groups = parse_structure_VectorType_RecordType_client_masters_ClientUserGroup(user_groups)
-        return GetUserPrivilegesSuccess(forms, user_groups)
+        user_groups = user_groups
+        user_category = data.get("user_category")
+        user_category = user_category
+        return GetUserPrivilegesSuccess(forms, user_groups, user_category)
 
     def to_inner_structure(self):
         return {
-            "forms": to_structure_RecordType_core_Menu(self.forms),
-            "user_groups": to_structure_VectorType_RecordType_client_masters_ClientUserGroup(self.user_groups),
+            "forms": self.forms,
+            "user_groups": self.user_groups,
+            "user_category": self.user_category,
         }
 
 class UserGroupNameAlreadyExists(Response):
@@ -1210,7 +1188,7 @@ def _init_Response_class_map():
         GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
         InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
         CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate,
-        CannotChangeStatusOfContractExpiredSP, CannotCloseUnit
+        CannotChangeStatusOfContractExpiredSP, CannotCloseUnit,
     ]
     class_map = {}
     for c in classes:
@@ -1249,8 +1227,6 @@ class AuditTrail(object):
             "action": to_structure_CustomTextType_500(self.action),
             "date": to_structure_CustomTextType_20(self.date)
         }
-
-
 #
 # RequestFormat
 #

@@ -143,6 +143,7 @@ class TemplateHandler(RequestHandler):
         self._company_manager = company_manager
 
     def update_static_urls(self, content):
+        data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
@@ -160,7 +161,7 @@ class TemplateHandler(RequestHandler):
                 if node.tag == "link":
                     url += "?v=%s" % (FILE_VERSION)
             node.set('href', url)
-        data = etree.tostring(tree, method="html")
+        data += etree.tostring(tree, method="html")
         return data
 
     def get(self, url=None, token=None):
@@ -288,7 +289,7 @@ def run_web_front_end(port, knowledge_server_address):
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
         font_path = os.path.join(common_path, "fonts")
-        script_path = client_path
+        script_path = os.path.join(files_path, "client")
         login_path = os.path.join(client_path, "login")
 
         web_server.low_level_url(
