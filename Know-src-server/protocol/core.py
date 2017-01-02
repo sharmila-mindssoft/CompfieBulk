@@ -2046,6 +2046,37 @@ class UnitLegalEntity(object):
             "country_id": self.country_id,
         }
 
+class AssignUnitLegalEntity(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, business_group_id, client_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id"
+            ]
+        )
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_id = data.get("business_group_id")
+        client_id = data.get("client_id")
+        return AssignUnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id,
+            "client_id": self.client_id,
+        }
+
+
 #
 #   Units - Domain & organisation
 #

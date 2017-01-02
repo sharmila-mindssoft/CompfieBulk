@@ -71,7 +71,7 @@ def return_statutories_filters(data):
     ]
 
     entity_list = [
-        core.UnitLegalEntity(
+        core.AssignUnitLegalEntity(
             datum["legal_entity_id"], datum["legal_entity_name"],
             datum["business_group_id"], datum["client_id"]
         ) for datum in entitys
