@@ -51,9 +51,9 @@ INSERT INTO tbl_forms VALUES(22, 2, 'Client Unit', '/knowledge/client-unit', 22,
 
 INSERT INTO tbl_forms VALUES(23, 2, 'Assign Statutory', '/knowledge/assign-statutory', 23, null);
 INSERT INTO tbl_forms VALUES(24, 2, 'Approve Assigned Statutory', '/knowledge/approve-assigned-statutory', 24, null);
-INSERT INTO tbl_forms VALUES(25, 2, 'Configure Database Server', '/knowledge/configure-db-server', 25, null);
-INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/configure-client-server', 26, null);
-INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-storage', 27, null);
+INSERT INTO tbl_forms VALUES(25, 2, 'Configure Database Server', '/knowledge/configure-database-server', 25, null);
+INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/application-server', 26, null);
+INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-server', 27, null);
 INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
 
@@ -65,9 +65,9 @@ INSERT INTO tbl_forms VALUES(33, 3, 'Geography Report', '/knowledge/geography-re
 INSERT INTO tbl_forms VALUES(34, 3, 'Organization Report', '/knowledge/organization-report', 34, 'Master');
 INSERT INTO tbl_forms VALUES(35, 3, 'Statutory Nature Report', '/knowledge/statutory-nature-report', 35, 'Master');
 INSERT INTO tbl_forms VALUES(36, 3, 'Statutory Mapping Report', '/knowledge/statutory-mapping-report', 36, null);
-INSERT INTO tbl_forms VALUES(37, 3, 'Statutory Notifications List', '/knowledge/statutory-notifications-list', 37, null);
+INSERT INTO tbl_forms VALUES(37, 3, 'Statutory Notification List', '/knowledge/statutory-notifications-list', 37, null);
 INSERT INTO tbl_forms VALUES(38, 3, 'Client Agreement Master Report', '/knowledge/client-agreement-report', 38, null);
-INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Report', '/knowledge/domain-agreement-master-report', 39, null);
+INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Agreement Master Report', '/knowledge/domain-agreement-master-report', 39, null);
 INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-unit-details', 40, null);
 INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);

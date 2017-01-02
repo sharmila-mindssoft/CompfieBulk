@@ -325,15 +325,20 @@ api_params = {
     "user_category_id": {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
     "user_category_name": {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': False},
 
+    "db_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
     "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "db_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "DBServer"},
-    "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
 
     "client_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "client_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientServer"},
+
+    "file_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "file_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "file_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "FileServerList"},
 
     "client_dbs": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientDatabase"},
     "client_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientGroup"},
@@ -413,6 +418,7 @@ api_params = {
     "assigned_units_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnit"},
     "assigned_unit_details_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnitDetails"},
     "domain_manager_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "User"},
+    "mapped_domain_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "DomainUser"},
     "active_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ActiveUnit"},
     'division_id': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'dv_name': {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},

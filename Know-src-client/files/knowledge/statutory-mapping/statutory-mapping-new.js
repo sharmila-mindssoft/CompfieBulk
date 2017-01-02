@@ -652,10 +652,10 @@ function RenderInput() {
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
-                    if (_renderinput.l_one_id == null) {
+                    /*if (_renderinput.l_one_id == null) {
                         displayMessage(msg.statutory_selection_required);
                         return false;
-                    }
+                    }*/
                     new_value = $('#dv'+ v.l_position).val();
                     _sid = $('#dvid'+v.l_position).val();
 

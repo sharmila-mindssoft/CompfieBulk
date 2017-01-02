@@ -296,8 +296,9 @@ class GetEntityApprovalListSuccess(Response):
 
 class UnitApprovalDetails(object):
     def __init__(
-        self, unit_id, approval_status, reason
+        self, legal_entity_name, unit_id, approval_status, reason
     ):
+        self.legal_entity_name = legal_entity_name
         self.unit_id = unit_id
         self.approval_status = approval_status
         self.reason = reason
@@ -305,17 +306,19 @@ class UnitApprovalDetails(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "unit_id", "approval_status", "reason"
+            "legal_entity_name", "unit_id", "approval_status", "reason"
         ])
+        legal_entity_name = data.get("legal_entity_name")
         unit_id = data.get("unit_id")
         approval_status = data.get("approval_status")
         reason = data.get("reason")
         return UnitApprovalDetails(
-            unit_id, approval_status, reason
+            legal_entity_name, unit_id, approval_status, reason
         )
 
     def to_structure(self):
         return {
+            "legal_entity_name": self.legal_entity_name,
             "unit_id": self.unit_id,
             "approval_status": self.approval_status,
             "reason": self.reason

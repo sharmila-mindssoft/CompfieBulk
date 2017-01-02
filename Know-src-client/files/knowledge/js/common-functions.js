@@ -1069,7 +1069,7 @@ function commonAutoComplete1(
                         dresult = true;
                       }
                     }
-    
+                    
                     if(cresult && dresult){
                       condition_result = true;
                     }else{
