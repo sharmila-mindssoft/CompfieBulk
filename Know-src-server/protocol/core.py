@@ -3413,6 +3413,70 @@ class LegalEntity(object):
             "domain_details": self.domain_details
         }
 
+class LegalEntityList(object):
+    def __init__(
+        self, country_id, business_group, legal_entity_id,
+        legal_entity_name, old_logo, new_logo,
+        no_of_licence, file_space, contract_from,
+        contract_to, domain_details, is_closed
+    ):
+        self.country_id = country_id
+        self.business_group = business_group
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.old_logo = old_logo
+        self.new_logo = new_logo
+        self.no_of_licence = no_of_licence
+        self.file_space = file_space
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.domain_details = domain_details
+        self.is_closed = is_closed
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "country_id", "business_group", "legal_entity_id",
+                "legal_entity_name", "old_logo", "new_logo", "no_of_licence",
+                "file_space", "contract_from", "contract_to", "domain_details", "is_closed"
+            ]
+        )
+        country_id = data.get("country_id")
+        business_group = data.get("business_group")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        logo = data.get("old_logo")
+        new_logo = data.get("new_logo")
+        no_of_licence = data.get("no_of_licence")
+        file_space = data.get("file_space")
+        contract_from = data.get("contract_from")
+        contract_to = data.get("contract_to")
+        domain_details = data.get("domain_details")
+        is_closed = data.get("is_closed")
+        is_closed = parse_structure_Bool(is_closed)
+        return LegalEntity(
+            country_id, business_group, legal_entity_id, legal_entity_name,
+            logo, new_logo, no_of_licence, file_space,
+            contract_from, contract_to, domain_details, is_closed
+        )
+
+    def to_structure(self):
+        return {
+            "country_id": self.country_id,
+            "business_group": self.business_group,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "old_logo": self.old_logo,
+            "new_logo": self.new_logo,
+            "no_of_licence": self.no_of_licence,
+            "file_space": self.file_space,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "domain_details": self.domain_details,
+            "is_closed": self.is_closed
+        }
+
 #
 # Entity Domain Details
 #

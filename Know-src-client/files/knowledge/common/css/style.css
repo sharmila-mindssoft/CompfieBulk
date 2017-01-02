@@ -1103,3 +1103,7 @@ list-style-type:none; line-height:25px;
 .left{
   text-align: left !important;
 }
+.closure-sel a {
+    width: 90px !important;
+}
+

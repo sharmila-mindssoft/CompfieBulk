@@ -152,9 +152,9 @@ def save_client_group(
 #  Parameters : Object of database, group name and client id
 #  Return Type : None
 ##########################################################################
-def update_client_group(db, group_name, client_id):
+def update_client_group(db, client_id, email_id, no_of_licence, remarks):
     db.call_update_proc(
-        "sp_client_group_update", (group_name, client_id)
+        "sp_client_group_update", (client_id, email_id, no_of_licence, remarks)
     )
 
 
@@ -184,7 +184,7 @@ def save_legal_entities(db, request, group_id, session_user):
         "client_id", "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
         "file_space_limit", "total_licence",
-        'is_closed', "created_by", "created_on", 'updated_by', "updated_on"
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on", "logo_size"
     ]
     values = []
     current_time_stamp = get_date_time()
@@ -192,6 +192,7 @@ def save_legal_entities(db, request, group_id, session_user):
     for entity in request.legal_entity_details:
         if is_logo_in_image_format(entity.logo):
             file_name = save_client_logo(entity.logo)
+            file_size = entity.logo.file_size
         else:
             raise process_error("E067")
         business_group_id = return_business_group_id(
@@ -208,8 +209,8 @@ def save_legal_entities(db, request, group_id, session_user):
             string_to_datetime(entity.contract_from),
             string_to_datetime(entity.contract_to),
             file_name, entity.file_space, entity.no_of_licence,
-            1, session_user, current_time_stamp,
-            session_user, current_time_stamp
+            0, session_user, current_time_stamp,
+            session_user, current_time_stamp, file_size
         )
         values.append(value_tuple)
     db.bulk_insert(
@@ -244,10 +245,14 @@ def update_legal_entities(db, request, group_id, session_user):
         if(entity.new_logo is not None):
             if is_logo_in_image_format(entity.new_logo):
                 file_name = save_client_logo(entity.new_logo)
+                file_size = entity.new_logo.file_size
+                columns.append("logo_size")
+                insert_columns.append("logo_size")
             else:
                 raise process_error("E067")
         else:
             file_name = entity.old_logo
+
         business_group_id = return_business_group_id(
             db, entity, group_id, session_user, current_time_stamp
         )
@@ -265,29 +270,39 @@ def update_legal_entities(db, request, group_id, session_user):
             raise process_error("E070")
         legal_entity_names.append(entity.legal_entity_name)
         if entity.legal_entity_id is not None:
-            value_tuple = (
+            value_list = [
                 entity.country_id, business_group_id,
                 entity.legal_entity_name,
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
                 session_user, current_time_stamp
-            )
-            values.append(value_tuple)
+            ]
+            if(entity.new_logo is not None):
+                value_list.append(file_size)
+
+            values.append(tuple(value_list))
+
             condition = "client_id=%s and legal_entity_id=%s" % (
                 group_id, entity.legal_entity_id)
             conditions.append(condition)
+            
+
         else:
-            insert_value_tuple = (
+            insert_value_list = (
                 group_id, entity.country_id, business_group_id,
                 entity.legal_entity_name,
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
                 0, session_user, current_time_stamp,
-                session_user, current_time_stamp
+                session_user, current_time_stamp 
             )
-            insert_values.append(insert_value_tuple)
+            if(entity.new_logo is not None):
+                insert_value_list.append(file_size)
+            insert_values.append(tuple(insert_value_list))
+            
+
     if db.bulk_insert(
         tblLegalEntities, insert_columns, insert_values
     ) is False:
@@ -458,10 +473,11 @@ def save_organization(
         for domain in domain_details:
             domain_id = domain.domain_id
             organization = domain.organization
+            activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
                 value_tuple = (
                     legal_entity_name_id_map[legal_entity_name],
-                    domain_id, org, current_time_stamp,
+                    domain_id, org, activation_date,
                     organization[org], session_user,
                     current_time_stamp
                 )
@@ -620,7 +636,7 @@ def return_legal_entities(legal_entities, domains):
                 business_group_name=legal_entity["business_group_name"]
             )
         results.append(
-            core.LegalEntity(
+            core.LegalEntityList(
                 country_id=legal_entity["country_id"],
                 business_group=business_group,
                 legal_entity_id=legal_entity["legal_entity_id"],
@@ -632,7 +648,8 @@ def return_legal_entities(legal_entities, domains):
                 contract_from=datetime_to_string(
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
-                domain_details=domains[legal_entity["legal_entity_id"]]
+                domain_details=domains[legal_entity["legal_entity_id"]],
+                is_closed=bool(legal_entity["is_closed"])
             )
         )
     return results
@@ -799,9 +816,9 @@ def return_techno_users(users, user_country_map, user_domain_map):
 #  Parameters : Object of database
 #  Return Type : Returns List of object of ClientGroup
 ##########################################################################
-def get_groups(db):
+def get_groups(db, session_user):
     groups = db.call_proc(
-        "sp_client_groups_list", None
+        "sp_client_groups_list", (session_user,)
     )
     return return_group(groups)
 
