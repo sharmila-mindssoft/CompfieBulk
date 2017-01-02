@@ -251,6 +251,7 @@ function loadCompliances(data) {
     } else {
         showPagePan(showFrom, sno, totalRecord);
     }
+    hideLoader();
 }
 
 function processSubmit (csv){
