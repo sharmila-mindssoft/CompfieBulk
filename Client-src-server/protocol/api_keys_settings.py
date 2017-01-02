@@ -8,7 +8,7 @@
     @is_optional: is True when it allows None values.
 
 ### value_type = [STRING, TEXT, INT, BOOL, VECTOR_TYPE_STRING, VECTOR_TYPE_INT, VECTOR_TYPE, ENUM_TYPE]
-### validation_method = [is_alphabet, is_alphanumeric, is_date, is_address ]
+### validation_method = [is_alphabet, is_alphanumeric, is_date, is_address, is_numeric ]
 '''
 
 from protocol.api_key_validation import *
@@ -47,4 +47,27 @@ api_params = {
     "forms":  {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name': 'core', "class_name": "Menu"},
     "menus":  {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False, 'module_name': 'core', "class_name": "Form"},
     "user_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserGroup"},
-    
+
+    "s_p_id": {'type': 'INT', 'length': 11, 'validation_method':None, 'is_optional': False},
+    "s_p_name": {'type': 'STRING', 'length': 50, 'validation_method':is_alpha_numeric, 'is_optional': False},
+    "s_p_short": {'type': 'STRING', 'length': 20, 'validation_method':is_alpha_numeric, 'is_optional': False},
+    "cont_from": {'type': 'TEXT', 'length': 20, 'validation_method':None, 'is_optional': False},
+    "cont_to": {'type': 'TEXT', 'length': 20, 'validation_method':None, 'is_optional': False},
+    "cont_person": {'type': 'STRING', 'length': 50, 'validation_method':is_alphabet, 'is_optional': False},
+    "cont_no": {'type': 'TEXT', 'length': 20, 'validation_method':None, 'is_optional': False},
+    "e_id": {'type': 'STRING', 'length': 100, 'validation_method':is_alpha_numeric, 'is_optional': False},
+    "mob_no": {'type': 'TEXT', 'length': 20, 'validation_method':None, 'is_optional': True},
+    "address": {'type': 'TEXT', 'length': 500, 'validation_method':None, 'is_optional': True},
+    "is_active": {'type': 'BOOL', 'length': None, 'validation_method':None, 'is_optional': True},
+    "status_changed_by": {'type': 'INT', 'length': 11, 'validation_method':is_numeric, 'is_optional': True},
+    "status_changed_on": {'type': 'TEXT', 'length': 20, 'validation_method':None, 'is_optional': True},
+    "is_blocked": {'type': 'BOOL', 'length': None, 'validation_method':None, 'is_optional': False},
+    "blocked_by": {'type': 'INT', 'length': 11, 'validation_method':is_numeric, 'is_optional': True},
+    "blocked_on": {'type': 'STRING', 'length': 20, 'validation_method':None, 'is_optional': True},
+    "remarks": {'type': 'TEXT', 'length': 500, 'validation_method':None, 'is_optional': False},
+    "created_by": {'type': 'INT', 'length': 11, 'validation_method':is_numeric, 'is_optional': True},
+    "created_on": {'type': 'TEXT', 'length': 20, 'validation_method':None, 'is_optional': True},
+    "updated_by": {'type': 'INT', 'length': 11, 'validation_method':is_numeric, 'is_optional': True},
+    "updated_on": {'type': 'TEXT', 'length': 20, 'validation_method':None, 'is_optional': True},
+    "service_providers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method':None, 'is_optional': False,'module_name': 'core', "class_name": "ServiceProviderDetails"},
+    }

@@ -1,5 +1,5 @@
 import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list, to_structure_dictionary_values)
 from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
@@ -61,6 +61,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -93,89 +95,99 @@ class GetServiceProviders(Request):
         }
 
 class SaveServiceProvider(Request):
-    def __init__(self, service_provider_name, address, contract_from, contract_to, contact_person, contact_no):
+    def __init__(self, service_provider_name, short_name, contract_from, contract_to, contact_person, 
+    contact_no, mobile_no, email_id, address):
         self.service_provider_name = service_provider_name
-        self.address = address
+        self.short_name = short_name
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.contact_person = contact_person
         self.contact_no = contact_no
+        self.mobile_no = mobile_no
+        self.email_id = email_id
+        self.address = address
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "s_name", "add", "c_from", "c_to",
-                "c_person", "c_no"
-            ]
+                "s_p_name", "s_p_short", "cont_from", "cont_to", "cont_person", "cont_no", "mob_no", "e_id", "address"
+                ]
         )
-        service_provider_name = data.get("s_name")
-        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
-        address = data.get("add")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
-        contract_from = data.get("c_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("c_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        contact_person = data.get("c_person")
-        contact_person = parse_structure_CustomTextType_50(contact_person)
-        contact_no = data.get("c_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
+        service_provider_name = data.get("s_p_name")
+        short_name = data.get("s_p_short")
+        contract_from = data.get("cont_from")
+        contract_to = data.get("cont_to")
+        contact_person = data.get("cont_person")
+        contact_no = data.get("cont_no")
+        mobile_no = data.get("mob_no")
+        email_id = data.get("e_id")
+        address = data.get("address")
         return SaveServiceProvider(
-            service_provider_name, address, contract_from, contract_to, contact_person,
-            contact_no
+            service_provider_name, short_name, contract_from, contract_to, contact_person,
+            contact_no, mobile_no, email_id, address
         )
 
     def to_inner_structure(self):
         return {
-            "service_provider_name": to_structure_CustomTextType_50(self.service_provider_name),
-            "address": to_structure_OptionalType_CustomTextType_250(self.address),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "contact_person": to_structure_CustomTextType_50(self.contact_person),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "service_provider_name": self.service_provider_name,
+            "short_name": self.short_name,
+            "contact_person": self.contact_person,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "contact_no": self.contact_no,
+            "mobile_no": self.mobile_no,
+            "email_id": self.email_id,
+            "address": self.address,
         }
 
 class UpdateServiceProvider(Request):
-    def __init__(self, service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no):
+    def __init__(self, service_provider_id, service_provider_name, short_name, contract_from, contract_to, contact_person, 
+    contact_no, mobile_no, email_id, address):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
-        self.address = address
+        self.short_name = short_name
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.contact_person = contact_person
         self.contact_no = contact_no
+        self.mobile_no = mobile_no
+        self.email_id = email_id
+        self.address = address
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "s_id", "s_name", "add", "c_from", "c_to", "c_person", "c_no"
+                "s_p_id", "s_p_name", "s_p_short", "cont_from", "cont_to", "cont_person", "cont_no", "mob_no", "e_id", "address"
             ]
         )
-        service_provider_id = data.get("s_id")
-        service_provider_id = parse_structure_UnsignedIntegerType_32(service_provider_id)
-        service_provider_name = data.get("s_name")
-        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
-        address = data.get("add")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
-        contract_from = data.get("c_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("c_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        contact_person = data.get("c_person")
-        contact_person = parse_structure_CustomTextType_50(contact_person)
-        contact_no = data.get("c_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
-        return UpdateServiceProvider(service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no)
+        service_provider_id = data.get("s_p_id")
+        service_provider_name = data.get("s_p_name")
+        short_name = data.get("s_p_short")
+        contract_from = data.get("cont_from")
+        contract_to = data.get("cont_to")
+        contact_person = data.get("cont_person")
+        contact_no = data.get("cont_no")
+        mobile_no = data.get("mob_no")
+        email_id = data.get("e_id")
+        address = data.get("address")
+                
+        return UpdateServiceProvider(
+            service_provider_id, service_provider_name, short_name, contract_from, contract_to, contact_person,
+            contact_no, mobile_no, email_id, address
+        )
 
     def to_inner_structure(self):
         return {
-            "service_provider_id": to_structure_SignedIntegerType_8(self.service_provider_id),
-            "service_provider_name": to_structure_CustomTextType_50(self.service_provider_name),
-            "address": to_structure_CustomTextType_250(self.address),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "contact_person": to_structure_CustomTextType_50(self.contact_person),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "service_provider_id": self.service_provider_id,
+            "service_provider_name": self.service_provider_name,
+            "short_name": self.short_name,
+            "contact_person": self.contact_person,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "contact_no": self.contact_no,
+            "mobile_no": self.mobile_no,
+            "email_id": self.email_id,
+            "address": self.address,
         }
 
 class ChangeServiceProviderStatus(Request):
@@ -587,6 +599,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -613,12 +627,12 @@ class GetServiceProvidersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["service_providers"])
         service_providers = data.get("service_providers")
-        service_providers = parse_structure_VectorType_RecordType_core_ServiceProviderDetails(service_providers)
+        
         return GetServiceProvidersSuccess(service_providers)
 
     def to_inner_structure(self):
         return {
-            "service_providers": to_structure_VectorType_RecordType_core_ServiceProviderDetails(self.service_providers),
+            "service_providers": self.service_providers,
         }
 
 class SaveServiceProviderSuccess(Response):

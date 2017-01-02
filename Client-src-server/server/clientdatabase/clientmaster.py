@@ -54,9 +54,9 @@ __all__ = [
 ############################################################################
 def get_service_provider_details_list(db):
     columns = [
-        "service_provider_id", "service_provider_name", "address",
-        "contract_from", "contract_to", "contact_person", "contact_no",
-        "is_active"
+        "service_provider_id", "service_provider_name", "short_name", "contract_from",
+        "contract_to", "contact_person", "contact_no", "email_id", "mobile_no",
+        "address", "is_active", "is_blocked", "remarks"
     ]
     condition = condition_val = None
     order = " ORDER BY service_provider_name"
@@ -79,15 +79,20 @@ def return_service_provider_details(service_providers):
         service_provider_obj = core.ServiceProviderDetails(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
-            service_provider["address"],
+            service_provider["short_name"],
             datetime_to_string(service_provider["contract_from"]),
             datetime_to_string(service_provider["contract_to"]),
             service_provider["contact_person"],
             service_provider["contact_no"],
-            bool(service_provider["is_active"]))
+            service_provider["email_id"],
+            service_provider["mobile_no"],
+            service_provider["address"],
+            bool(service_provider["is_active"]),
+            bool(service_provider["is_blocked"]),
+            service_provider["remarks"])
+
         results.append(service_provider_obj)
     return results
-
 
 ############################################################################
 # To Check whether the service provider name already exists
@@ -121,15 +126,15 @@ def save_service_provider(db, service_provider, session_user):
     contract_from = string_to_datetime(service_provider.contract_from)
     contract_to = string_to_datetime(service_provider.contract_to)
     columns = [
-        "service_provider_name", "address", "contract_from",
-        "contract_to", "contact_person", "contact_no",
-        "created_on", "created_by",
-        "updated_on", "updated_by"
+        "service_provider_name", "short_name", "contract_from", "contract_to",
+        "contact_person", "contact_no", "mobile_no", "email_id", "address",
+        "created_on", "created_by", "updated_on", "updated_by"
     ]
     values = [
-        service_provider.service_provider_name,
-        service_provider.address, contract_from, contract_to,
-        service_provider.contact_person, service_provider.contact_no,
+        service_provider.service_provider_name, service_provider.short_name,
+        contract_from, contract_to, service_provider.contact_person,
+        service_provider.contact_no, service_provider.mobile_no,
+        service_provider.email_id, service_provider.address,
         current_time_stamp, session_user, current_time_stamp, session_user
     ]
     service_provider_id = db.insert(tblServiceProviders, columns, values)
@@ -139,7 +144,7 @@ def save_service_provider(db, service_provider, session_user):
     action = "Created Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
-    db.save_activity(session_user, 2, action)
+    # db.save_activity(session_user, 2, action)
     return service_provider_id
 
 
@@ -181,13 +186,16 @@ def update_service_provider(db, service_provider, session_user):
     contract_from = string_to_datetime(service_provider.contract_from)
     contract_to = string_to_datetime(service_provider.contract_to)
     columns_list = [
-        "service_provider_name", "address", "contract_from", "contract_to",
-        "contact_person", "contact_no", "updated_on", "updated_by"
-    ]
+        "service_provider_id", "service_provider_name", "short_name", "contract_from", "contract_to",
+        "contact_person", "contact_no", "mobile_no", "email_id", "address",
+        "updated_on", "updated_by"
+    ]    
     values_list = [
-        service_provider.service_provider_name, service_provider.address,
-        contract_from, contract_to, service_provider. contact_person,
-        service_provider.contact_no, current_time_stamp, session_user
+        service_provider.service_provider_id, service_provider.service_provider_name, service_provider.short_name,
+        contract_from, contract_to, service_provider.contact_person,
+        service_provider.contact_no, service_provider.mobile_no,
+        service_provider.email_id, service_provider.address,
+        current_time_stamp, session_user
     ]
     condition = "service_provider_id= %s"
     values_list.append(service_provider.service_provider_id)
@@ -220,7 +228,7 @@ def update_service_provider(db, service_provider, session_user):
     action = "Updated Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
-    db.save_activity(session_user, 2, action)
+    # db.save_activity(session_user, 2, action)
     return result
 
 

@@ -209,7 +209,6 @@ def process_get_service_providers(db, request, session_user):
 ########################################################
 def process_save_service_provider(db, request, session_user):
     # create fail class for false res status
-
     service_provider_id = None
     if is_duplicate_service_provider(
         db, service_provider_id, request.service_provider_name

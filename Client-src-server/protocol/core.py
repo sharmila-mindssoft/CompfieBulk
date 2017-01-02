@@ -2090,6 +2090,7 @@ class ServiceProvider(object):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
         self.is_active = is_active
+        
 
     @staticmethod
     def parse_structure(data):
@@ -2110,47 +2111,61 @@ class ServiceProvider(object):
         }
 
 class ServiceProviderDetails(object):
-    def __init__(self, service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active):
+    def __init__(self, service_provider_id, service_provider_name, short_name, contract_from,  
+    contract_to, contact_person, contact_no, email_id, mobile_no, address, is_active, is_blocked, remarks):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
-        self.address = address
+        self.short_name = short_name
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.contact_person = contact_person
         self.contact_no = contact_no
+        self.email_id = email_id
+        self.mobile_no = mobile_no
+        self.address = address
         self.is_active = is_active
+        self.is_blocked = is_blocked
+        self.remarks = remarks
+        # self.blocked_on = blocked_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["service_provider_id", "service_provider_name", "address", "contract_from", "contract_to", "contact_person", "contact_no", "is_active"])
+        data = parse_dictionary(data, ["service_provider_id", "service_provider_name", "short_name", "contract_from",
+          "contact_person", "contact_no", "mobile_no",
+          "email_id", "address", "is_active", "is_blocked", "remarks"])
         service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
         service_provider_name = data.get("service_provider_name")
-        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
-        address = data.get("address")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
-        contract_from = data.get("contract_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("contract_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        contact_person = data.get("contact_person")
-        contact_person = parse_structure_CustomTextType_50(contact_person)
-        contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
-        is_active = data.get("is_active")
-        is_active = parse_structure_OptionalType_Bool(is_active)
-        return ServiceProviderDetails(service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active)
+        short_name =  data.get("short_name")
+        contract_from =  data.get("contract_from")
+        contract_to =  data.get("contract_to")
+        contact_person =  data.get("contact_person")
+        contact_no =  data.get("contact_no")
+        mobile_no =  data.get("mobile_no")
+        email_id =  data.get("email_id")
+        address =  data.get("address")
+        is_active =  data.get("is_active")
+        is_blocked =  data.get("is_blocked")
+        remarks = data.get("remarks")
+        # blocked_on =  data.get("blocked_on")
+        
+        return ServiceProviderDetails(service_provider_id, service_provider_name, short_name, contract_from,
+         contract_to, contact_person, contact_no, mobile_no, email_id, address, is_active, is_blocked, remarks )
 
     def to_structure(self):
         return {
-            "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
-            "service_provider_name": to_structure_CustomTextType_250(self.service_provider_name),
-            "address": to_structure_OptionalType_CustomTextType_250(self.address),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "contact_person": to_structure_CustomTextType_250(self.contact_person),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "is_active": to_structure_OptionalType_Bool(self.is_active),
+            "s_p_id": self.service_provider_id,
+            "s_p_name": self.service_provider_name,
+            "s_p_short": self.short_name,
+            "cont_from": self.contract_from,
+            "cont_to": self.contract_to,
+            "cont_person": self.contact_person,
+            "cont_no": self.contact_no,
+            "mob_no": self.mobile_no,
+            "e_id": self.email_id,
+            "address": self.address,
+            "is_active": self.is_active,
+            "is_blocked": self.is_blocked,
+            "remarks": self.remarks            
         }
 
 #
