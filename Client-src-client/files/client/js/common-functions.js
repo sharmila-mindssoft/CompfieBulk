@@ -46,6 +46,10 @@ function past_days(days){
   return date_format(dat);
 }
 
+function hideMessage() {
+  $('.toast').remove();
+}
+
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
@@ -113,7 +117,8 @@ function isCommon(inputElm) {
   //allowed => alphanumeric, dot, comma, Hyphen
   return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
 }
-function isAlphabetic(inputElm) {
+
+/*function isAlphabetic(inputElm) {
   //allowed => alphabetic
   return inputElm.val().replace(/[^ A-Za-z]/gi, '');
 }
@@ -124,7 +129,8 @@ function isAlphanumeric(inputElm) {
 function isNumbers(inputElm) {
   //allowed => only numbers
   return inputElm.val().replace(/[^0-9]/gi, '');
-}
+}*/
+
 function isNonZeroNumbers(inputElm) {
   //allowed => only numbers
   return inputElm.val().replace(/[^1-9]/gi, '');

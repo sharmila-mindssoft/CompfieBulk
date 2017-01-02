@@ -40,11 +40,18 @@ api_params = {
     'form_url': {'type': 'TEXT', 'length': 250, 'validation_method': is_url, 'is_optional': False},
     'parent_menu': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
-
-    'user_group_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
-    'user_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-
+    
+    'u_g_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
+    'u_g_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'is_active': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    'u_c_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
+    'f_ids': {'type': 'VECTOR_TYPE_INT', 'length': 1000, 'validation_method': None, 'is_optional': True},
+    'u_c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "forms":  {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name': 'core', "class_name": "Menu"},
     "menus":  {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False, 'module_name': 'core', "class_name": "Form"},
-    "user_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserGroup"},
+    "user_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUserGroup"},
+    "user_category": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUsercategory"},
     
+    'form_ids': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
+
+    }

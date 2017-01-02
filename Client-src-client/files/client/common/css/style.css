@@ -245,7 +245,7 @@
 .box-height-250 {
     height: 250px;
 }
-- .box-height-350 {
+.box-height-350 {
     height: 350px;
 }
 .box-height-150 {
@@ -577,6 +577,7 @@ li.sortable-placeholder {
     padding-left: 3px;
     /*background-color: #FAFAFA;*/
 }
+
 .min-table tr td.font-bold {
     font-size: 10px;
     font-weight: bold;
@@ -626,7 +627,6 @@ li.sortable-placeholder {
     float: left;
     width: 25px;
 }
-
 .sort {
     margin-top: 3px;
     cursor: pointer;
@@ -654,6 +654,7 @@ li.sortable-placeholder {
     resize: vertical;
     overflow: auto
 }
+
 .themes-settings {
     margin: 0px auto;
     padding-left: 15px;
@@ -668,4 +669,10 @@ li.sortable-placeholder {
     background-color: #FFFFCC !important;
     border: 1px solid #99996B !important;
     cursor: default;
+}
+#template {
+    display: none;
+}
+.custombox-modal {
+    width: 100%;
 }

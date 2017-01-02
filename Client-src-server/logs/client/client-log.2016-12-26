@@ -1,0 +1,308 @@
+2016-12-26 14:15:33,457 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 14:15:33,463 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:03:38,355 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:03:38,361 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:04:38,226 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:04:38,229 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:05:16,515 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:05:16,516 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:26:39,915 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:26:39,926 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:35:33,749 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:35:33,752 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:35:48,703 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:35:48,703 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:35:56,035 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:35:56,036 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:36:40,279 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:36:40,280 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:36:44,727 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:36:44,729 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:36:51,009 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:36:51,010 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 16:38:13,151 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 16:38:13,153 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 17:08:20,823 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 17:08:20,825 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-26 17:08:22,815 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-26 17:08:22,815 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 319, in get_forms
+    )
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+

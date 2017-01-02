@@ -1,317 +1,386 @@
-{% extends "files/client/common/html/container.html" %}
-{% block content %}
+{% extends "files/client/common/html/container.html" %} {% block content %}
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" />
-
+<link href="/files/client/common/css/resize/jquery-ui.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
-  $(function(){
+$(function() {
     $(".left-menu-button").show();
     $(".content-page").removeClass('m-l-0');
-  });
+});
 </script>
-
 <div class="left side-menu">
-  <div class="sidebar-inner slimscrollleft">
-    <div id="sidebar-menu">
-      <ul>
-        <li class="text-muted menu-title">Widgets List</li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item2"><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item3"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item4"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item5"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item6"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item7"><i class="zmdi zmdi-layers"></i> <span> User Scorecard</span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item8"><i class="zmdi zmdi-layers"></i> <span>Domain Scorecard</span> </a> </li>
-        <li class="has_sub"> <a href="#" class="waves-effect toggleWidget" data-target="#item9"><i class="zmdi zmdi-calendar"></i> <span> Calender view </span> </a> </li>
-      </ul>
-      <div class="clearfix"></div>
+    <div class="sidebar-inner slimscrollleft">
+        <div id="sidebar-menu">
+            <ul>
+                <li class="text-muted menu-title">Widgets List</li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item2"><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item3"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item4"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item5"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item6"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item7"><i class="zmdi zmdi-layers"></i> <span> User Scorecard</span> </a> </li>
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item8"><i class="zmdi zmdi-layers"></i> <span>Domain Scorecard</span> </a> </li>
+                {% if user != "viewOnlyAdmin" %}
+                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item9"><i class="zmdi zmdi-calendar"></i> <span> Calendar view </span> </a> </li>
+                {% endif %}
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
     </div>
-    <div class="clearfix"></div>
-  </div>
 </div>
-
-
-
 <div class="content-page">
-  <div class="content">
-    <div class="container">
-      <!-- Page-Title -->
-      <div class="row">
-        <div class="col-sm-12">
-          <h4 class="page-title">Widgets</h4>
+    <div class="content">
+        <div class="container">
+            <!-- Page-Title -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4 class="page-title">Widgets</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="dragdrophandles">
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
+                            <div class="dragbox" id="item1">
+                                <h2>
+                    <a href="/dashboard" >Compliance Status Graph</a> 
+                    <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> 
+                    <a href="#" class="pins"><i class="ti-pin2" title="pin"></i></a> 
+                    <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> 
+                </h2>
+                                <div class="dragbox-content">
+                                    <div id="compliance" style="width:100%; height:100%; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizablerisk">
+                            <div class="dragbox" id="item6">
+                                <h2><a href="/dashboard/risk-chart" >Risk Chart</a><a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin-alt " title="unpin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <div id="riskchart" style="width:100%; height:100%; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizableesc">
+                            <div class="dragbox" id="item2">
+                                <h2><a href="/dashboard/escalation" >Escalations Graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <div id="escalation" style="width:100%; height:100%; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizablecompappli">
+                            <div class="dragbox" id="item5">
+                                <h2><a href="/dashboard/compliance-applicability" >Compliance Applicability Status graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <div id="complianceappliability" style="width:100%; height:100%; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizabletrendchart">
+                            <div class="dragbox" id="item4">
+                                <h2><a href="/dashboard/trend-chart" >Trend Chart</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <div id="trendchart" style="width:100%; height:100%; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizablenotcomp">
+                            <div class="dragbox" id="item3">
+                                <h2><a href="/dashboard/not-complied" >Not Complied Graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <div id="notcomplied" style="width:100%; height:100%; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
+                            <div class="dragbox" id="item7">
+                                <h2><a href="/report/work-flow-score-card" >User Scorecard</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <table class="table min-table highlight" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th width="40%">Role</th>
+                                                <th class="text-center" width="20%">Assignee</th>
+                                                <th class="text-center" width="20%">Concur</th>
+                                                <th class="text-center" width="20%">Approve</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Labour Law</td>
+                                                <td class="text-center">50</td>
+                                                <td class="text-center">20</td>
+                                                <td class="text-center">35</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Finance Law</td>
+                                                <td class="text-center">20</td>
+                                                <td class="text-center">30</td>
+                                                <td class="text-center">20</td>
+                                            </tr>
+                                            <tr>
+                                                <td>ILS</td>
+                                                <td class="text-center">10</td>
+                                                <td class="text-center">40</td>
+                                                <td class="text-center">30</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-bold">Total</td>
+                                                <td class="font-bold text-center">80</td>
+                                                <td class="font-bold text-center">90</td>
+                                                <td class="font-bold text-center">85</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
+                            <div class="dragbox" id="item8">
+                                <h2><a href="/report/domain-score-card" >Domain Scorecard</a><a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a>  <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <select class="form-control input-sm m-b-5" style="">
+                                        <option>RG Legal Entity</option>
+                                        <option>RG Legal Entity 02</option>
+                                        <option>RG Legal Entity 03</option>
+                                        <option>RG Legal Entity 04</option>
+                                        <option>RG Legal Entity 05</option>
+                                    </select>
+                                    <table class="table min-table highlight" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Domain</th>
+                                                <th class="text-center">Assigned</th>
+                                                <th class="text-center">Unassigned</th>
+                                                <th class="text-center">Not&nbsp;Opted</th>
+                                                <th class="text-center"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Labour&nbsp;Law</td>
+                                                <td class="text-center">50</td>
+                                                <td class="text-center">20</td>
+                                                <td class="text-center">15</td>
+                                                <td class="text-center font-bold">85</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Finance&nbsp;Law</td>
+                                                <td class="text-center">43</td>
+                                                <td class="text-center">15</td>
+                                                <td class="text-center">30</td>
+                                                <td class="text-center font-bold">88</td>
+                                            </tr>
+                                            <tr>
+                                                <td>ILS</td>
+                                                <td class="text-center">35</td>
+                                                <td class="text-center">20</td>
+                                                <td class="text-center">15</td>
+                                                <td class="text-center font-bold">70</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-bold">Total</td>
+                                                <td class="font-bold text-center">128</td>
+                                                <td class="font-bold text-center">55</td>
+                                                <td class="font-bold text-center">60</td>
+                                                <td class="font-bold text-center">243</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </li>
+                        {% if user != "viewOnlyAdmin" %}
+                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
+                            <div class="dragbox" id="item9">
+                                <h2><a href="/compliance-task-details" >Calendar view</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
+                                <div class="dragbox-content">
+                                    <div class="cal table-responsive">
+                                        <select class="form-control input-sm m-b-5" style="">
+                                            <option>RG Legal Entity</option>
+                                            <option>RG Legal Entity 02</option>
+                                            <option>RG Legal Entity 03</option>
+                                            <option>RG Legal Entity 04</option>
+                                            <option>RG Legal Entity 05</option>
+                                        </select>
+                                        <table class="cal-table">
+                                            <caption class="cal-caption">
+                                                <a href="##" class="prev"><i class="ti-angle-double-left "></i></a>
+                                                <a href="##" class="next"><i class="ti-angle-double-right "></i></a> October - 2016
+                                            </caption>
+                                            <tbody class="cal-body">
+                                                <tr>
+                                                    <th><span>SUN</span></th>
+                                                    <th><span>MON</span></th>
+                                                    <th><span>TUE</span></th>
+                                                    <th><span>WED</span></th>
+                                                    <th><span>THU</span></th>
+                                                    <th><span>FRI</span></th>
+                                                    <th><span>SAT</span></th>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td>
+                                                        <div class="date">1</div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="date">2</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">3</div>
+                                                    </td>
+                                                    <td class="cal-selected">
+                                                        <div class="date">4</div>
+                                                        <div class="count-round due-date" data-toggle="tooltip" data-original-title="300+ Unassigned Compliances"></div>
+                                                        <div class="count-round inprogress" data-toggle="tooltip" data-original-title="5 Inprogress Compliances"></div>
+                                                        <div class="count-round over-due" data-toggle="tooltip" data-original-title="55 Not Complied"></div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">5</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">6</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">7</div>
+                                                        <div class="count-round due-date" data-toggle="tooltip" data-original-title="2 Inprogress Compliances"></div>
+                                                        <div class="count-round empty-space"></div>
+                                                        <div class="count-round upcomming" data-toggle="tooltip" data-original-title="3 Upcomming Compliances"></div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">8</div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="date">9</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">10</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">11</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">12</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">13</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">14</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">15</div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="date">16</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">17</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">18</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">19</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">20</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">21</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">22</div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="date">23</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">24</div>
+                                                        <div class="count-round empty-space"></div>
+                                                        <div class="count-round empty-space"></div>
+                                                        <div class="count-round upcomming" data-toggle="tooltip" data-original-title="2 Upcomming Compliances"></div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">25</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">26</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">27</div>
+                                                        <div class="count-round due-date" data-toggle="tooltip" data-original-title="2 Upcomming Compliances"></div>
+                                                        <div class="count-round empty-space"></div>
+                                                        <div class="count-round empty-space"></div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">28</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">29</div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="date">30</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="date">31</div>
+                                                    </td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                    <td class="cal-off">&nbsp;</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br>
+                                    <div style="font-size:10px; ">
+                                        <div style="display: inline-block; margin-right: 10px; ">
+                                            <div style="background: #c69ee2;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;  "></div>
+                                            <div style="float: left;">Due Date</div>
+                                        </div>
+                                        <div style="display: inline-block;margin-right: 10px; ">
+                                            <div style="background:  #f0f468;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;"></div>
+                                            <div style="float: left;">Inprogress</div>
+                                        </div>
+                                        <div style="display: inline-block; margin-right: 10px;">
+                                            <div style="background:  #f32d2b;height: 12px; width: 12px;border-radius: 25px;float: left;margin-right: 5px;"></div>
+                                            <div style="float: left;">Over Due</div>
+                                        </div>
+                                        <div style="display: inline-block;margin-right: 10px; ">
+                                            <div style="background:  #87ceeb;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;"></div>
+                                            <div style="float: left;">Upcoming</div>
+                                        </div> &nbsp;
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12" >
-          <ul class="dragdrophandles">
-
-            <li class="column col-xs-12 col-sm-6 col-lg-4 ">
-              <div class="dragbox" id="item1" >
-                <h2><a href="/dashboard" >Compliance Status Graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content">
-                  <div id="compliance" style="min-width: 310px; max-width: 800px; height: 300px; margin: 0 auto"></div>
-                </div>
-              </div>
-            </li>
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item6" >
-                <h2><a href="/dashboard/risk-chart" >Risk Chart</a><a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content">
-                  <div id="riskchart" style="min-width: 310px; max-width: 800px; height: 300px; margin: 0 auto"></div>
-                </div>
-              </div>
-            </li>
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item2" >
-                <h2><a href="/dashboard/escalation" >Escalations Graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content" >
-                  <div id="escalation" style="min-width: 310px; max-width: 800px; height: 300px; margin: 0 auto"></div>
-                </div>
-              </div>
-            </li>
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item5" >
-                <h2><a href="/dashboard/compliance-applicability" >Compliance Applicability Status graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content" >
-                  <div id="complianceappliability" style="min-width: 310px; max-width: 800px; height: 300px; margin: 0 auto"></div>
-                </div>
-              </div>
-            </li>
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item4">
-                <h2><a href="/dashboard/trend-chart" >Trend Chart</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content" >
-                  <div id="trendchart" style="min-width: 310px; max-width: 800px; height: 300px; margin: 0 auto"></div>
-                </div>
-              </div>
-            </li>
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item3" >
-                <h2><a href="/dashboard/not-complied" >Not Complied Graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content" >
-                  <div id="notcomplied" style="min-width: 310px; max-width: 800px; height: 300px; margin: 0 auto"></div>
-                </div>
-              </div>
-            </li>
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item7" >
-                <h2><a href="/report/work-flow-score-card" >User Scorecard</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content" >
-                  <table class="table min-table highlight" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th width="40%">Role</th>
-                            <th class="text-center" width="20%">Assignee</th>
-                            <th class="text-center" width="20%">Concur</th>
-                            <th class="text-center" width="20%">Approve</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Labour Law</td>
-                            <td class="text-center">50</td>
-                            <td class="text-center">20</td>
-                            <td class="text-center">35</td>
-                        </tr>
-                        <tr>
-                            <td>Finance Law</td>
-                            <td class="text-center">20</td>
-                            <td class="text-center">30</td>
-                            <td class="text-center">20</td>
-                        </tr>
-                        <tr>
-                            <td>ILS</td>
-                            <td class="text-center">10</td>
-                            <td class="text-center">40</td>
-                            <td class="text-center">30</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">Total</td>
-                            <td class="font-bold text-center">80</td>
-                            <td class="font-bold text-center">90</td>
-                            <td class="font-bold text-center">85</td>
-                        </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </li>
-
-
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item8" >
-                <h2><a href="/report/domain-score-card" >Domain Scorecard</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content">
-                  <select class="form-control input-sm m-b-5" style="">
-                    <option>RG Legal Entity 01</option>
-                    <option>RG Legal Entity 02</option>
-                    <option>RG Legal Entity 03</option>
-                    <option>RG Legal Entity 04</option>
-                    <option>RG Legal Entity 05</option>
-                  </select>
-                  <table class="table min-table highlight" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Domain</th>
-                            <th class="text-center">Assigned</th>
-                            <th class="text-center">Unassigned</th>
-                            <th class="text-center">Not&nbsp;Opted</th>
-                            <th class="text-center"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Labour&nbsp;Law</td>
-                            <td class="text-center">50</td>
-                            <td class="text-center">20</td>
-                            <td class="text-center">15</td>
-                            <td class="text-center font-bold">85</td>
-                        </tr>
-                        <tr>
-                            <td>Finance&nbsp;Law</td>
-                            <td class="text-center">43</td>
-                            <td class="text-center">15</td>
-                            <td class="text-center">30</td>
-                            <td class="text-center font-bold">88</td>
-                        </tr>
-                        <tr>
-                            <td>ILS</td>
-                            <td class="text-center">35</td>
-                            <td class="text-center">20</td>
-                            <td class="text-center">15</td>
-                            <td class="text-center font-bold">70</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">Total</td>
-                            <td class="font-bold text-center">128</td>
-                            <td class="font-bold text-center">55</td>
-                            <td class="font-bold text-center">60</td>
-                            <td class="font-bold text-center">243</td>
-                        </tr>
-                    </tbody>
-                  </table>
-
-                </div>
-              </div>
-            </li>
-
-            <li class="column col-xs-12 col-sm-6 col-lg-4">
-              <div class="dragbox" id="item9" >
-                <h2><a href="/compliance-task-details" >Calender view</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                <div class="dragbox-content" >
-                  <div class="cal table-responsive">
-
-                    <table class="cal-table">
-                        <caption class="cal-caption">
-                            <a href="##" class="prev"><i class="ti-angle-double-left "></i></a>
-                            <a href="##" class="next"><i class="ti-angle-double-right "></i></a>
-                            October - 2016
-                        </caption>
-                        <tbody class="cal-body">
-                            <tr>
-                                <th><span>SUN</span></th>
-                                <th><span>MON</span></th>
-                                <th><span>TUE</span></th>
-                                <th><span>WED</span></th>
-                                <th><span>THU</span></th>
-                                <th><span>FRI</span></th>
-                                <th><span>SAT</span></th>
-                            </tr>
-                            <tr>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td><div class="date">1</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="date">2</div></td>
-                                <td><div class="date">3</div></td>
-                                <td class="cal-selected">
-                                    <div class="date">4</div>
-                                    <div class="count-round due-date" data-toggle="tooltip" data-original-title="300+ Unassigned Compliances"></div> 
-                                    <div class="count-round inprogress" data-toggle="tooltip" data-original-title="5 Inprogress Compliances"></div>
-                                    <div class="count-round over-due" data-toggle="tooltip" data-original-title="55 Not Complied"></div>
-                                </td>
-                                <td><div class="date">5</div></td>
-                                <td><div class="date">6</div></td>
-                                <td>
-                                    <div class="date">7</div>
-                                    <div class="count-round due-date" data-toggle="tooltip" data-original-title="2 Inprogress Compliances"></div>
-                                    <div class="count-round empty-space"></div>
-                                    <div class="count-round upcomming" data-toggle="tooltip" data-original-title="3 Upcomming Compliances"></div>
-                                </td>
-                                <td><div class="date">8</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="date">9</div></td>
-                                <td><div class="date">10</div></td>
-                                <td><div class="date">11</div></td>
-                                <td><div class="date">12</div></td>
-                                <td><div class="date">13</div></td>
-                                <td><div class="date">14</div></td>
-                                <td><div class="date">15</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="date">16</div></td>
-                                <td><div class="date">17</div></td>
-                                <td><div class="date">18</div></td>
-                                <td><div class="date">19</div></td>
-                                <td><div class="date">20</div></td>
-                                <td><div class="date">21</div></td>
-                                <td><div class="date">22</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="date">23</div></td>
-                                <td>
-                                    <div class="date">24</div>
-                                    <div class="count-round empty-space"></div>
-                                    <div class="count-round empty-space"></div>
-                                    <div class="count-round upcomming" data-toggle="tooltip" data-original-title="2 Upcomming Compliances"></div>
-                                </td>
-                                <td><div class="date">25</div></td>
-                                <td><div class="date">26</div></td>
-                                <td>
-                                    <div class="date">27</div>
-                                    <div class="count-round due-date" data-toggle="tooltip" data-original-title="2 Upcomming Compliances"></div>
-                                    <div class="count-round empty-space"></div>
-                                    <div class="count-round empty-space"></div>
-                                </td>
-                                <td><div class="date">28</div></td>
-                                <td><div class="date">29</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="date">30</div></td>
-                                <td><div class="date">31</div></td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                                <td class="cal-off">&nbsp;</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                  </div>
-                  <br>
-                        <div style="font-size:10px; " >
-                            <div style="display: inline-block; margin-right: 10px; "><div style="background: #c69ee2;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;  "></div> <div style="float: left;">Due Date</div> </div>
-                            <div style="display: inline-block;margin-right: 10px; "><div style="background:  #f0f468;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;"></div> <div style="float: left;">Inprogress</div> </div>
-                            <div style="display: inline-block; margin-right: 10px;"><div style="background:  #f32d2b;height: 12px; width: 12px;border-radius: 25px;float: left;margin-right: 5px;"></div> <div style="float: left;">Over Due</div> </div>
-                            <div style="display: inline-block;margin-right: 10px; "><div style="background:  #87ceeb;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;"></div> <div style="float: left;">Upcoming</div> </div> &nbsp;
-                        </div>
-                </div>
-              </div>
-            </li>
-
-          </ul>
-        </div>
-      </div>
     </div>
-  </div>
-  <!-- content -->
+    <!-- content -->
 </div>
 </div>
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
@@ -320,665 +389,819 @@
 <script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
 <script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <script src="/files/client/common/js/sortable/jquery.sortable.js"></script>
+<script src="/files/client/common/js/resize/jquery-ui.js"></script>
 <style type="text/css">
-    .highcharts-legend-item text {
-        width: 200px !important!;
-        color: red !important!;
-    }
+.highcharts-legend-item text {
+    width: 200px !important!;
+    color: red !important!;
+}
 </style>
 <script type="text/javascript">
 $('#country').multiselect();
-$('#domain').multiselect();	
+$('#domain').multiselect();
 
-$(function () {
-	var inprogress_data = [10];
-	var pending_data = [10];
-	var completed_data = [10];
-	var not_Complied = [10];
-			
-	inprogress_data[0] = {name: 'India',y: 23,drilldown:"Inprogress"};
-	pending_data[0] = {name: 'India',y: 22,drilldown:"Delayed"};
-	completed_data[0] = {id:'fin',name: 'India',y: 19,drilldown:"Complied"};
-	not_Complied[0] = {name: 'India',y: 31,drilldown:"NotComplied"};
-	
-	inprogress_data[1] = {name: 'US',y: 19,};
-	pending_data[1] = {name: 'US',y: 27,};
-	completed_data[1] = {name: 'US',y: 28};
-	not_Complied[1] = {name:"US", y:15}
-	
-	inprogress_data[2] = {name: 'Singapore',y: 15};
-	pending_data[2] = {name: 'Singapore',y: 23};
-	completed_data[2] = {name: 'Singapore',y: 16};
-	not_Complied[2] = {name:"Singapore", y:23}
-	
-	inprogress_data[3] = {name: 'Malaysia',y: 25};
-	pending_data[3] = {name: 'Malaysia',y: 32};
-	completed_data[3] = {name: 'Malaysia',y: 13};
-	not_Complied[3] = {name:"Malaysia", y:24}
-	
-	inprogress_data[4] = {name: 'China',y: 12};
-	pending_data[4] = {name: 'China',y: 26};
-	completed_data[4] = {id:'fin',name: 'China',y: 33};
-	not_Complied[4] = {name:"China", y:14}
-		  
-	$('#compliance').highcharts({
-		colors:['#F32D2B','#fbca35','#fe6271','#3ec845',],
-		title: {
-			text: ''
-		},
-		xAxis: {
-			title: {
-				text: ''
-			},
-			categories: ['India', 'US', 'Singapore', 'Malaysia', 'China'],
-		},
-		yAxis: {
-			min: 0,
-				title: {
-					text: 'Total Compliances'
-				},
-				allowDecimals: false
-		},
-		plotOptions: {
-			series: {
-				stacking: 'normal'
-			}
-		},
+$(function() {
+    var inprogress_data = [10];
+    var pending_data = [10];
+    var completed_data = [10];
+    var not_Complied = [10];
+
+    inprogress_data[0] = {
+        name: 'India',
+        y: 23,
+        drilldown: "Inprogress"
+    };
+    pending_data[0] = {
+        name: 'India',
+        y: 22,
+        drilldown: "Delayed"
+    };
+    completed_data[0] = {
+        id: 'fin',
+        name: 'India',
+        y: 19,
+        drilldown: "Complied"
+    };
+    not_Complied[0] = {
+        name: 'India',
+        y: 31,
+        drilldown: "NotComplied"
+    };
+
+    inprogress_data[1] = {
+        name: 'US',
+        y: 19,
+    };
+    pending_data[1] = {
+        name: 'US',
+        y: 27,
+    };
+    completed_data[1] = {
+        name: 'US',
+        y: 28
+    };
+    not_Complied[1] = {
+        name: "US",
+        y: 15
+    }
+
+    inprogress_data[2] = {
+        name: 'Singapore',
+        y: 15
+    };
+    pending_data[2] = {
+        name: 'Singapore',
+        y: 23
+    };
+    completed_data[2] = {
+        name: 'Singapore',
+        y: 16
+    };
+    not_Complied[2] = {
+        name: "Singapore",
+        y: 23
+    }
+
+    inprogress_data[3] = {
+        name: 'Malaysia',
+        y: 25
+    };
+    pending_data[3] = {
+        name: 'Malaysia',
+        y: 32
+    };
+    completed_data[3] = {
+        name: 'Malaysia',
+        y: 13
+    };
+    not_Complied[3] = {
+        name: "Malaysia",
+        y: 24
+    }
+
+    inprogress_data[4] = {
+        name: 'China',
+        y: 12
+    };
+    pending_data[4] = {
+        name: 'China',
+        y: 26
+    };
+    completed_data[4] = {
+        id: 'fin',
+        name: 'China',
+        y: 33
+    };
+    not_Complied[4] = {
+        name: "China",
+        y: 14
+    }
+
+    var chartCompliance = new Highcharts.Chart({
+        //$('#compliance').highcharts({
+        colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
+        title: {
+            text: ''
+        },
+        xAxis: {
+            title: {
+                text: ''
+            },
+            categories: ['India', 'US', 'Singapore', 'Malaysia', 'China'],
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Total Compliances'
+            },
+            allowDecimals: false
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
         chart: {
+            renderTo: 'compliance',
             type: 'bar',
             marginBottom: 100
         },
         legend: {
             reversed: true,
             itemStyle: {
-                fontWeight:'normal',
-                fontSize:'11px'
+                fontWeight: 'normal',
+                fontSize: '11px'
             },
             width: 280,
             floating: true,
             align: 'left',
-            x: 20, 
+            x: 20,
             itemWidth: 100,
-            y:10
+            y: 10
         },
-		series: [{
-				name: 'Not Complied',
-					data : not_Complied
-			},  {
-				name: 'In Progress',
-					 data : inprogress_data
-			},{
-				name: 'Delayed compliance',
-					data : pending_data
-			},{
-				name: 'Complied',
-				data : completed_data
-			} ]
-		});
-		//--------------------------------------------------------------------Escalations-------------------------------
-		var not_complied = 0;
-    		var drill="";
-    		var delayed= 0;
-    		var title = "";
-            var total=0;
-            var data1=[5, 1, 3, 6, 7,];
-            var data2=[0, 0, 1, 1, 2, ];
-            colors:['#FF7700','#D10018'],
-            not_complied = 3;
-            drill = "unitesc";
-            delayed = 10;
-            title = "Branch Office - 1";
-            total = 28;
-            data1= [8, 8, 4, 1, 9,];
-            data2=[0, 1, 0, 2, 1, ];
-            
-            $('#escalation').highcharts({
+        series: [{
+            name: 'Not Complied',
+            data: not_Complied
+        }, {
+            name: 'In Progress',
+            data: inprogress_data
+        }, {
+            name: 'Delayed compliance',
+            data: pending_data
+        }, {
+            name: 'Complied',
+            data: completed_data
+        }]
+    });
+    //--------------------------------------------------------------------Escalations-------------------------------
+    var not_complied = 0;
+    var drill = "";
+    var delayed = 0;
+    var title = "";
+    var total = 0;
+    var data1 = [5, 1, 3, 6, 7, ];
+    var data2 = [0, 0, 1, 1, 2, ];
+    colors: ['#FF7700', '#D10018'],
+        not_complied = 3;
+    drill = "unitesc";
+    delayed = 10;
+    title = "Branch Office - 1";
+    total = 28;
+    data1 = [8, 8, 4, 1, 9, ];
+    data2 = [0, 1, 0, 2, 1, ];
+    var chartEscalation = new Highcharts.Chart({
+        //$('#escalation').highcharts({
 
-              colors:['#fe6271','#F32D2B',],
-                chart: {
-                    type: 'column',
-                    marginBottom: 100
-                },
-                title: {
-                    text: ''
-                },
-                subtitle: {
-                    text: ''
-                },
-                xAxis: {
-                    categories: [
-                        '2011',
-                        '2012',
-                        '2013',
-                        '2014',
-                        '2015',
-                    ],
-                    crosshair: true,
-                    labels: {
-                          useHTML: true,
-                          formatter: function() {
-                              var name=this.value;
-                              if($('#radio1').is(':checked')){
-                              if(name == "2012"){
-                                $("#hidden").val("Escalations of "+title);
-                                var link = '<a href="#"  id="'+name+'" onclick=loadDrillDownData()>'+
-                                    name +'</a>'
-                                return link;
-                              }else{
-                                var link = '<span  id="'+name+'" >'+
-                                    name +'</span>'
-                                return link;
-                              }}else{
-                                var link = '<span  id="'+name+'" >'+
-                                    name +'</span>'
-                                return link;
-                              }
-                         }
-                      },
+        colors: ['#fe6271', '#F32D2B', ],
+        chart: {
+            renderTo: 'escalation',
+            type: 'column',
+            marginBottom: 100
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: [
+                '2011',
+                '2012',
+                '2013',
+                '2014',
+                '2015',
+            ],
+            crosshair: true,
+            labels: {
+                useHTML: true,
+                formatter: function() {
+                    var name = this.value;
+                    if ($('#radio1').is(':checked')) {
+                        if (name == "2012") {
+                            $("#hidden").val("Escalations of " + title);
+                            var link = '<a href="#"  id="' + name + '" onclick=loadDrillDownData()>' +
+                                name + '</a>'
+                            return link;
+                        } else {
+                            var link = '<span  id="' + name + '" >' +
+                                name + '</span>'
+                            return link;
+                        }
+                    } else {
+                        var link = '<span  id="' + name + '" >' +
+                            name + '</span>'
+                        return link;
+                    }
+                }
+            },
 
-                },
-                yAxis: {
-                    min: 0,
-                    title: {
-                        text: 'Total Compliances'
-                    },
-                    allowDecimals: false
-                },
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Total Compliances'
+            },
+            allowDecimals: false
+        },
 
-                legend: {
-                    itemStyle: {
-                        fontWeight:'normal',
-                        fontSize:'11px'
-                    },
-                    width: 280,
-                    floating: true,
-                    align: 'left',
-                    x: 20, 
-                    itemWidth: 140,
-                    y:10
+        legend: {
+            itemStyle: {
+                fontWeight: 'normal',
+                fontSize: '11px'
+            },
+            width: 280,
+            floating: true,
+            align: 'left',
+            x: 20,
+            itemWidth: 140,
+            y: 10
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0,
+                groupPadding: 0.3,
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    textShadow: null,
+                    // format:'{point.percentage:.0f}%'
+                    format: '{point.y}'
                 },
-                tooltip: {
-                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                    pointFormat: '<tr><td style="padding:0">{series.name}: </td>' +
-                        '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
-                    footerFormat: '</table>',
-                    shared: true,
-                    useHTML: true
-                },
-                plotOptions: {
-                    column: {
-                        pointPadding: 0,
-                        groupPadding: 0.3,
-                        borderWidth: 0,
-                        dataLabels: {
-                        enabled: true,
-                        textShadow:null,
-                        // format:'{point.percentage:.0f}%'
-                        format:'{point.y}'
-                        },
-                      point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) { 
-                                        loadDrillDownData(drilldown);
-                                }
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown;
+                            if (drilldown) {
+                                loadDrillDownData(drilldown);
                             }
-                          }
                         }
                     }
+                }
+            }
+        },
+        series: [{
+            name: 'Delayed Compliance',
+            data: data1,
+        }, {
+            name: 'Not Complied',
+            data: data2,
+        }]
+
+    });
+
+    // --------------------------------------------------------Not Complied ---------------------------------------------------------------
+    var ztt = 0;
+    var drill = "";
+    var tts = 0;
+    var chartColor = ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'];
+    var stn = 0;
+    var above90 = 0;
+    var title = "";
+    var total = 0;
+    colors: chartColor;
+    // colors:['#a3d202','#e70808'],
+    drill = "unitesc";
+    var tts = 8;
+    var stn = 3;
+    var above90 = 2;
+    var ztt = 5;
+    total = 8 + 3 + 2 + 5;
+    title = "Branch Office - 1 ";
+    total = 28;
+    var chartNotComplied = new Highcharts.Chart({
+        //$('#notcomplied').highcharts({
+        // colors:['#a3d202','#e70808'], green, orange, yellow, red
+        colors: chartColor,
+        chart: {
+            renderTo: 'notcomplied',
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 30
+            },
+            marginBottom: 100
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: ''
+        },
+        plotOptions: {
+            pie: {
+                depth: 45,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage}%'
                 },
-                series: [{
-                    name: 'Delayed Compliance',
-                    data: data1,
-                }, {
-                    name: 'Not Complied',
-                    data: data2,
-                }]
-                
-	   });
-	
-	// --------------------------------------------------------Not Complied ---------------------------------------------------------------
-		var ztt = 0;
-		var drill="";
-		var tts= 0;
-		var chartColor = ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'];
-		var stn= 0;
-		var above90= 0;
-		var title = "";
-		var total=0;
-		colors: chartColor;
-		// colors:['#a3d202','#e70808'],
-		drill = "unitesc";
-		var tts = 8;
-		var stn= 3;
-		var above90= 2;
-		var ztt = 5;
-		total = 8+3+2+5;
-		title = "Branch Office - 1 ";
-		total = 28;
-		$('#notcomplied').highcharts({
-                  // colors:['#a3d202','#e70808'], green, orange, yellow, red
-                  colors: chartColor,
-                  chart: {
-                      type: 'pie',
-                      options3d: {
-                          enabled: true,
-                          alpha: 30
-                      },
-                      marginBottom: 100
-                  },
-                  title: {
-                      text: ''
-                  },
-                  subtitle: {
-                      text: ''
-                  },
-                  plotOptions: {
-                      pie: {                          
-                          depth: 45,
-                          dataLabels: {
-                              enabled: true,
-                              format: '{point.percentage}%'
-                          },
-                          showInLegend: true,
-                          point: {
-	                        events: {
-	                            click: function() {
-	                                var drilldown = this.drilldown;
-	                                if (drilldown) { 
-	                                	loadDrillDownData(drilldown);
-	                                }
-	                            }
-	                          }
+                showInLegend: true,
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown;
+                            if (drilldown) {
+                                loadDrillDownData(drilldown);
+                            }
                         }
-                      }
-                  },
-                  legend: {
-                    itemStyle: {
-                        fontWeight:'normal',
-                        fontSize:'11px'
-                    },
-                    width: 280,
-                    floating: true,
-                    align: 'left',
-                    x: 20, 
-                    itemWidth: 100,
-                    y:10
-                  },
-                  tooltip: {
-                    headerFormat: '',
-                    pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of '+total
-                  },
-                  series: [{
-                      name: 'Compliances',
-                       dataLabels: {
-                            enabled: true,
-                            format:'{point.percentage:.0f}%'
-                        },
-                      data: [
-                      	  {
-                      	  	name:"0-30 days",
-                      	  	y:ztt,
-                      	  	// drilldown:drill
-                      	  },{
-                      	  	name:"31-60 days",
-                      	  	y:tts,
-                      	  },{
-                      	  	name:"61-90 days",
-                      	  	y:stn,
-                      	  },{
-                      	  	name:"Above 90 days",
-                      	  	y:above90,
-                      	  }             
-                      ]
-                  }]
-              });
-		//--------------------------------------------------------------------Trend Chart-------------------------------
-		
-		    $('#trendchart').highcharts({
-		        title: {
-		            text: ''
-		        },
-		        subtitle: {
-		            text: ''
-		        },
-		        xAxis: {
-		            categories: ['2009', '2010', '2011', '2012', '2013', '2014'
-		                ],
-		                labels: {
-		                      useHTML: true,
-		                      formatter: function() {
-		                          var name=this.value;
-                              if(name == "Jan"){
-  		                          var link = '<a href="#"  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
-  		                              name +'</a>'
-  		                          return link;
-                              }else{
-                                var link = '<span  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
-                                    name +'</span>'
-                                return link;
-                              }
-		                      }
-		                  },
-                 title: {
-                    text: 'Year'
-                },
-		        },
-		        yAxis: {
-		            title: {
-		                text: 'Compliance (%)'
-		            },
-		            labels: {
-		                formatter: function () {
-		                    return this.value + '%';
-		                }
-		            },
-                allowDecimals: false
-		        },
-		        tooltip: {
-		            crosshairs: true,
-		            shared: true,
+                    }
+                }
+            }
+        },
+        legend: {
+            itemStyle: {
+                fontWeight: 'normal',
+                fontSize: '11px'
+            },
+            width: 280,
+            floating: true,
+            align: 'left',
+            x: 20,
+            itemWidth: 100,
+            y: 10
+        },
+        tooltip: {
+            headerFormat: '',
+            pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
+        },
+        series: [{
+            name: 'Compliances',
+            dataLabels: {
+                enabled: true,
+                format: '{point.percentage:.0f}%'
+            },
+            data: [{
+                name: "0-30 days",
+                y: ztt,
+                // drilldown:drill
+            }, {
+                name: "31-60 days",
+                y: tts,
+            }, {
+                name: "61-90 days",
+                y: stn,
+            }, {
+                name: "Above 90 days",
+                y: above90,
+            }]
+        }]
+    });
+    //--------------------------------------------------------------------Trend Chart-------------------------------
+    var chartTrendChart = new Highcharts.Chart({
+        //  $('#trendchart').highcharts({
+        chart: {
+            renderTo: 'trendchart',
+            marginBottom: 100
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: ['2009', '2010', '2011', '2012', '2013', '2014'],
+            labels: {
+                useHTML: true,
                 formatter: function() {
-                        var s = '<span style="font-size:11px;">'+ this.x +'</small>',
-                            sum = 0;
+                    var name = this.value;
+                    if (name == "Jan") {
+                        var link = '<a href="#"  id="' + name + '" onclick=loadDrillDownData(this.id) >' +
+                            name + '</a>'
+                        return link;
+                    } else {
+                        var link = '<span  id="' + name + '" onclick=loadDrillDownData(this.id) >' +
+                            name + '</span>'
+                        return link;
+                    }
+                }
+            },
+            title: {
+                text: 'Year'
+            },
+        },
+        yAxis: {
+            title: {
+                text: 'Compliance (%)'
+            },
+            labels: {
+                formatter: function() {
+                    return this.value + '%';
+                }
+            },
+            allowDecimals: false
+        },
+        tooltip: {
+            crosshairs: true,
+            shared: true,
+            formatter: function() {
+                var s = '<span style="font-size:11px;">' + this.x + '</small>',
+                    sum = 0;
 
-                        $.each(this.points, function(i, point) {
-                            total = point.y+240;
-                            tasks = (point.y/100)*total;
-                            color = point.color;
-                            s += '<br/><span style="color:'+color+';"><b>'+ point.series.name +'</b></span>: '+
-                                point.y +'% ('+Math.round(tasks)+' out of '+total+')';
-                            sum += point.y;
-                        });
-                        return s;
-                    },
-		        },
-		        plotOptions: {
-		            spline: {
-		                marker: {
-		                    radius: 4,
-		                    lineColor: '#666666',
-		                    lineWidth: 1
-		                }
-		            }
-		        },
-                /*legend: {
-                    itemStyle: {
-                        fontWeight: 'normal',
-                        fontSize:'10px'
-                    },
-                    width:'280px'
-                },*/
-                
-                legend: {
-                    itemStyle: {
-                        fontWeight:'normal',
-                        fontSize:'11px'
-                    },
-                    width: 280,
-                    floating: true,
-                    align: 'left',
-                    x: 20, 
-                    itemWidth: 100,
-                    y:10
-                },
-                chart: {
-                    marginBottom: 100
-                },
-		        series: [
-		        {
-                name: 'India',
+                $.each(this.points, function(i, point) {
+                    total = point.y + 240;
+                    tasks = (point.y / 100) * total;
+                    color = point.color;
+                    s += '<br/><span style="color:' + color + ';"><b>' + point.series.name + '</b></span>: ' +
+                        point.y + '% (' + Math.round(tasks) + ' out of ' + total + ')';
+                    sum += point.y;
+                });
+                return s;
+            },
+        },
+        plotOptions: {
+            spline: {
                 marker: {
-                    symbol: 'square'
+                    radius: 4,
+                    lineColor: '#666666',
+                    lineWidth: 1
+                }
+            }
+        },
+        /*legend: {
+            itemStyle: {
+                fontWeight: 'normal',
+                fontSize:'10px'
+            },
+            width:'280px'
+        },*/
+
+        legend: {
+            itemStyle: {
+                fontWeight: 'normal',
+                fontSize: '11px'
+            },
+            width: 280,
+            floating: true,
+            align: 'left',
+            x: 20,
+            itemWidth: 100,
+            y: 10
+        },
+        series: [{
+            name: 'India',
+            marker: {
+                symbol: 'square'
+            },
+            data: [93, 94, 95, 96, 97, 98]
+        }, {
+            name: 'US',
+            marker: {
+                symbol: 'diamond'
+            },
+            data: [90, 91, 93, 93, 95, 96]
+        }, {
+            name: 'Singapore',
+            marker: {
+                symbol: 'square'
+            },
+            data: [91, 92, 93, 94, 95, 97]
+
+        }, {
+            name: 'Malaysia',
+            marker: {
+                symbol: 'circle'
+            },
+            data: [90, 90, 92, 93, 95, 96]
+
+        }, ]
+
+    });
+    //--------------------------------------------------------------------Compliance applicability-------------------------------
+    var color = [6];
+    var applied = 0;
+    var not_opted = 0;
+    var not_applicable = 0;
+    var drill1 = "";
+    var drill2 = "";
+    var drill3 = "";
+    title = "";
+    color = [Highcharts.getOptions().colors[2], Highcharts.getOptions().colors[5], '#FFC0CB', '#00FF00', '#008000'];
+    applied = 179;
+    not_opted = 21;
+    not_applicable = 12
+    var dataSum = (179 + 21 + 12);
+    drill1 = "groupapp";
+    drill2 = "groupnotapp";
+    drill3 = "groupnotopt";
+    title = " - KG groups";
+    var chartComplianceApplicability = new Highcharts.Chart({
+        //$('#complianceappliability').highcharts({
+        colors: ['#66FF66', '#FFDC52', '#CE253C'],
+        chart: {
+            renderTo: 'complianceappliability',
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 45,
+                beta: 0
+            },
+            marginBottom: 100
+        },
+        title: {
+            text: ''
+        },
+        tooltip: {
+            headerFormat: '',
+            pointFormat: '{point.name}: <b>{point.y:.0f}</b> of ' + dataSum
+        },
+
+        legend: {
+            itemStyle: {
+                fontWeight: 'normal',
+                fontSize: '11px'
+            },
+            width: 280,
+            floating: true,
+            align: 'left',
+            x: 20,
+            itemWidth: 100,
+            y: 10
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage:.0f}%',
+                    formatter: function() {
+
+                        var pcnt = (this.y / dataSum) * 100;
+                        return Highcharts.numberFormat(pcnt, 0) + '%';
+                    }
                 },
-                data: [93, 94, 95,96, 97,98 ]
-            },{
-		            name: 'US',
-		            marker: {
-		                symbol: 'diamond'
-		            },
-		            data: [90, 91, 93,93, 95,96 ]
-		        },{
-		            name: 'Singapore',
-		            marker: {
-		                symbol: 'square'
-		            },
-		            data: [91, 92, 93,94, 95,97]
+                showInLegend: true,
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown;
+                            if (drilldown) {
+                                loadDrillDownData(drilldown);
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            name: "Compliance",
+            colorByPoint: true,
+            data: [{
+                name: "Applicable",
+                y: applied,
+                drilldown: drill1
+            }, {
+                name: "Not Applicable",
+                y: not_applicable,
+                drilldown: drill2
+            }, {
+                name: "Not opted",
+                y: not_opted,
+                drilldown: drill3
+            }]
+        }]
+    });
 
-		        }, {
-		            name: 'Malaysia',
-		            marker: {
-		                symbol: 'circle'
-		            },
-		            data: [90, 90, 92,93, 95,96]
+    //--------------------------------------------------------------------Risk Chart-------------------------------
+    var color = [6];
+    var applied = 0;
+    var not_opted = 0;
+    var not_applicable = 0;
+    var drill1 = "";
+    var drill2 = "";
+    var drill3 = "";
+    title = "";
+    color = [Highcharts.getOptions().colors[2], Highcharts.getOptions().colors[5], '#FFC0CB', '#00FF00', '#008000'];
+    applied = 179;
+    not_opted = 21;
+    not_applicable = 12
+    unassigned = 48
+    var dataSum = (179 + 21 + 12 + 48);
+    drill1 = "groupapp";
+    drill2 = "groupnotapp";
+    drill3 = "groupnotopt";
+    title = " - KG groups";
+    var chartRiskchart = new Highcharts.Chart({
+        //$('#riskchart').highcharts({
+        colors: [ /*'#66FF66','#FFDC52',*/ '#DD070C', '#F2746B'],
+        chart: {
+            renderTo: 'riskchart',
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 45,
+                beta: 0
+            },
+            marginBottom: 100
+        },
+        title: {
+            text: ''
+        },
+        tooltip: {
+            headerFormat: '',
+            pointFormat: '{point.name}: <b>{point.y:.0f}</b> of ' + dataSum
+        },
 
-		        },]
+        legend: {
+            itemStyle: {
+                fontWeight: 'normal',
+                fontSize: '11px'
+            },
+            width: 280,
+            floating: true,
+            align: 'left',
+            x: 20,
+            itemWidth: 100,
+            y: 10
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage:.0f}%',
+                    formatter: function() {
 
-		    });
-		//--------------------------------------------------------------------Compliance applicability-------------------------------
-			var color = [6];
-			var applied = 0;
-			var not_opted = 0;
-			var not_applicable = 0;
-			var drill1 = "";
-			var drill2 = "";
-			var drill3 = "";
-			title="";
-			color= [Highcharts.getOptions().colors[2],Highcharts.getOptions().colors[5] ,'#FFC0CB', '#00FF00','#008000' ]; 
-			applied = 179;
-			not_opted = 21;
-			not_applicable = 12
-			var dataSum = (179+21+12);
-			drill1="groupapp";
-			drill2="groupnotapp";
-			drill3="groupnotopt";
-			title=" - KG groups";
-			$('#complianceappliability').highcharts({
-              colors: ['#66FF66','#FFDC52','#CE253C'],
-              chart: {
-                  type: 'pie',
-                  options3d: {
-                      enabled: true,
-                      alpha: 45,
-                      beta: 0
-                  },
-                  marginBottom: 100
-              },
-              title: {
-                   text: ''
-              },
-              tooltip: {
-                  headerFormat:'',
-                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
-              },
-              
-              legend: {
-                    itemStyle: {
-                        fontWeight:'normal',
-                        fontSize:'11px'
-                    },
-                    width: 280,
-                    floating: true,
-                    align: 'left',
-                    x: 20, 
-                    itemWidth: 100,
-                    y:10
-              },
-             plotOptions: {
-                          pie: {
-                              allowPointSelect: true,
-                              cursor: 'pointer',
-                              depth: 35,
-                              dataLabels: {
-                                  enabled: true,
-                                  format:'{point.percentage:.0f}%',
-                    									formatter: function() {
-                    									
-                    									var pcnt = (this.y / dataSum) * 100;
-                    									return Highcharts.numberFormat(pcnt,0) + '%';
-                    									}
-                							},
-                              showInLegend: true,
-                              point: {
-                              events: {
-                                  click: function() {
-                                      var drilldown = this.drilldown;
-                                      if (drilldown) {
-                                       loadDrillDownData(drilldown); 
-                                      }
-                                  }
-                                }
-                              }
-                          }
-                      },
-              series: [{
-                      name: "Compliance",
-                      colorByPoint: true,
-                      data: [{
-                          name: "Applicable",
-                          y: applied,
-                          drilldown:drill1
-                      }, {
-                          name: "Not Applicable",
-                          y: not_applicable,
-                          drilldown:drill2
-                      }, {
-                          name: "Not opted",
-                          y: not_opted,
-                          drilldown:drill3
-                      }]
-                  }]
-          });
-		
-//--------------------------------------------------------------------Risk Chart-------------------------------
-		var color = [6];
-			var applied = 0;
-			var not_opted = 0;
-			var not_applicable = 0;
-			var drill1 = "";
-			var drill2 = "";
-			var drill3 = "";
-			title="";
-			color= [Highcharts.getOptions().colors[2],Highcharts.getOptions().colors[5] ,'#FFC0CB', '#00FF00','#008000' ]; 
-			applied = 179;
-			not_opted = 21;
-			not_applicable = 12
-			unassigned = 48
-			var dataSum = (179+21+12+48);
-			drill1="groupapp";
-			drill2="groupnotapp";
-			drill3="groupnotopt";
-			title=" - KG groups";
-			$('#riskchart').highcharts({
-              colors: ['#66FF66','#FFDC52','#CE253C', '#D868C3'],
-              chart: {
-                  type: 'pie',
-                  options3d: {
-                      enabled: true,
-                      alpha: 45,
-                      beta: 0
-                  },
-                  marginBottom: 100
-              },
-              title: {
-                   text: ''
-              },
-              tooltip: {
-                  headerFormat:'',
-                  pointFormat: '{point.name}: <b>{point.y:.0f}</b> of '+dataSum
-              },
-              
-              legend: {
-                    itemStyle: {
-                        fontWeight:'normal',
-                        fontSize:'11px'
-                    },
-                    width: 280,
-                    floating: true,
-                    align: 'left',
-                    x: 20, 
-                    itemWidth: 100,
-                    y:10
-             },
-             plotOptions: {
-                          pie: {
-                              allowPointSelect: true,
-                              cursor: 'pointer',
-                              depth: 35,
-                              dataLabels: {
-                                  enabled: true,
-                                  format:'{point.percentage:.0f}%',
-                    									formatter: function() {
-                    									
-                    									var pcnt = (this.y / dataSum) * 100;
-                    									return Highcharts.numberFormat(pcnt,0) + '%';
-                    									}
-                							},
-                              showInLegend: true,
-                              point: {
-                              events: {
-                                  click: function() {
-                                      var drilldown = this.drilldown;
-                                      if (drilldown) {
-                                       loadDrillDownData(drilldown); 
-                                      }
-                                  }
-                                }
-                              }
-                          }
-                      },
-              series: [{
-                      name: "Compliance",
-                      colorByPoint: true,
-                      data: [{
-                          name: "Applicable",
-                          y: applied,
-                          drilldown:drill1
-                      }, {
-                          name: "Not Applicable",
-                          y: not_applicable,
-                          drilldown:drill2
-                      }, {
-                          name: "Not opted",
-                          y: not_opted,
-                          drilldown:drill3
-                      },
-					   {
-                          name: "Unassigned",
-                          y: unassigned,
-                          drilldown:drill3
-                      }]
-                  }]
-          });
-        });
-        $('.toggleWidget').click(function(e) {
-                e.preventDefault();
-                console.log($(this).data('target'));
-                $($(this).data('target')).css({"display":"block"});
-            });
-            $('.closewidget').click(function(e){
-                e.preventDefault();
-                $(this).parent().parent().css({"display":"none"});
-            });
-		$(function(){
-			$('a.maxmin').click(
-			function(){
-				$(this).parent().siblings('.dragbox-content').toggle();
-			});
-			
-			$('a.delete').click(
-			function(){
-				var sel = confirm('do you want to delete the widget?');
-				if(sel)
-				{
-					//del code here
-				}
-			}
-		);
-		});
+                        var pcnt = (this.y / dataSum) * 100;
+                        return Highcharts.numberFormat(pcnt, 0) + '%';
+                    }
+                },
+                showInLegend: true,
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown;
+                            if (drilldown) {
+                                loadDrillDownData(drilldown);
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            name: "Compliance",
+            colorByPoint: true,
+            data: [
+                /*{
+                                          name: "Applicable",
+                                          y: applied,
+                                          drilldown:drill1
+                                      }, {
+                                          name: "Not Applicable",
+                                          y: not_applicable,
+                                          drilldown:drill2
+                                      },*/
+                {
+                    name: "Not opted",
+                    y: not_opted,
+                    drilldown: drill3
+                }, {
+                    name: "Unassigned",
+                    y: unassigned,
+                    drilldown: drill3
+                }
+            ]
+        }]
+    });
+
+    $('.resizable').resizable({
+        autoHide: true,
+        resize: function() {
+            chartCompliance.setSize(
+                this.offsetWidth - 40,
+                this.offsetHeight - 50,
+                false
+            );
+        }
+
+    });
+    $('.resizableesc').resizable({
+        autoHide: true,
+        resize: function() {
+            chartEscalation.setSize(
+                this.offsetWidth - 40,
+                this.offsetHeight - 50,
+                false
+            );
+        }
+    });
+    $('.resizablenotcomp').resizable({
+        autoHide: true,
+        resize: function() {
+            chartNotComplied.setSize(
+                this.offsetWidth - 40,
+                this.offsetHeight - 50,
+                false
+            );
+        }
+    });
+    $('.resizablecompappli').resizable({
+        autoHide: true,
+        resize: function() {
+            chartComplianceApplicability.setSize(
+                this.offsetWidth - 40,
+                this.offsetHeight - 50,
+                false
+            );
+        }
+    });
+    $('.resizabletrendchart').resizable({
+        autoHide: true,
+        resize: function() {
+            chartTrendChart.setSize(
+                this.offsetWidth - 40,
+                this.offsetHeight - 50,
+                false
+            );
+        }
+    });
+    $('.resizablerisk').resizable({
+        autoHide: true,
+        resize: function() {
+            chartRiskchart.setSize(
+                this.offsetWidth - 40,
+                this.offsetHeight - 50,
+                false
+            );
+        }
+    });
+
+
+});
+$('.toggleWidget').click(function(e) {
+    e.preventDefault();
+    console.log($(this).data('target'));
+    $($(this).data('target')).css({
+        "display": "block"
+    });
+    if ($(this).parent().hasClass("active_widgets") == false)
+        $(this).parent().addClass('active_widgets');
+});
+$('.closewidget').click(function(e) {
+    e.preventDefault();
+    var item = $(this).parent().parent();
+    var list = "#" + item.attr('id');
+    item.css({
+        "display": "none"
+    });
+
+    $(".has_sub").each(function(index) {
+        if ($(this).find('a').attr('data-target') === list) {
+            if ($(this).hasClass("active_widgets") == true)
+                $(this).removeClass('active_widgets');
+        }
+    });
+});
+$(function() {
+    $('a.maxmin').click(function() {
+        $(this).parent().siblings('.dragbox-content').toggle();
+    });
+
+    $('a.delete').click(
+        function() {
+            var sel = confirm('do you want to delete the widget?');
+            if (sel) {
+                //del code here
+            }
+        }
+    );
+
+});
 $('.dragdrophandles').sortable({
-	handle: 'h2'
+    handle: 'h2'
 });
 </script>
 {% endblock %}

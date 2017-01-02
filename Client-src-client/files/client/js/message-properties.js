@@ -1,4 +1,22 @@
 var message = {
+  //Common 
+  "save_success" : "Record Saved Successfully",
+  "update_success" : "Record Updated Successfully",
+  'enter_password': 'Please Enter password',
+  'enter_correct_password': 'Enter Correct password',
+  "password_required": "Password Required",
+  'invalid_password': 'Invalid Password',
+  
+  //User Privileges
+  'usergroupname_required': 'User Group Name Required',
+  'usergroupname_max': 'User Group Name is maximum 50 characters Allowed',
+  'usergroupname_str' : 'User Group Name Not Valid Characters',
+  'usergroupname_exists': 'User Group Name Already Exists',
+  'invalid_usergroupid': 'Invalid User Group Id',
+  'category_required' : 'Category Name Required',
+  'form_name_required' : 'Select atleast one form from list',
+
+
   'invalid_username_password': 'Unable to login. Incorrect username / password!',
   'contract_expired': 'Contract Expired',
   'accountconfiguration_underprogress': 'Please Wait...Your account configuration is under progress..',
@@ -92,8 +110,7 @@ var message = {
   'act_remarks_required': 'Remarks required for not applicable act',
   'act_remarks_opted_required': 'Remarks required for not opted act',
   'compliance_remarks_opted_required': 'Remarks required for not opted compliance',
-  'enter_password': 'Please Enter password',
-  'enter_correct_password': 'Enter Correct password',
+  
   'assignee_required': 'Assignee Required',
   'concurrence_required': 'Concurrence Required',
   'approval_required': 'Approval Required',
@@ -169,11 +186,12 @@ var message = {
   'cannot_deactivate_sp': 'User(s) Exists. Cannot Deactivate Service Provider.',
   'seatingunit_required': 'Seating Unit Required',
   'employeecode_required': 'Employee Code Required',
-  'usergroup_required': 'User Group Required',
+
+  
+
   'userlevel_required': 'User Level Required',
   'usertype_required': 'User Type Required',
   'add_one_form': 'Select atleast one form from list',
-  'usergroupname_exists': 'User Group Name Already Exists',
   'cannot_deactivate_usergroup': 'User(s) Exists. Cannot Deactivate User group.',
   'todate_required': 'To Date Required',
   'fromdate_required': 'From Date Required',
@@ -266,7 +284,7 @@ var message = {
   "group_approve_success": "Client group approved successfully",
   "country_or_group_required": "Country or group required",
   "db_server_save_success": "Database server saved successfully",
-  "password_required": "Password Required",
+  
   "port_required": "Port Required",
   "ip_required": "IP Required",
   "db_server_name_required": "DB Server name required",
@@ -304,12 +322,11 @@ var message = {
   "unit_updated": "Units(s) Updated Successfully",
   "no_legal_entity_selected" : "Select atleast one legal entity",
   "no_user_selected" : "No user selected for assign",
-  "save_success" : "Record Saved Successfully",
-  "update_success" : "Record Updated Successfully",
+  
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',
   'mobile_required': 'Mobile Number Required',
-  'invalid_password': 'Invalid Password',
+  
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
   "atleast_one_compliance_select": "Atleast one compliance should be select",
