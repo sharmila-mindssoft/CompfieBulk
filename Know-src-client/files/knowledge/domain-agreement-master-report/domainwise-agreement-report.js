@@ -307,13 +307,13 @@ function processSubmit (csv){
                   PaginationView.hide();
                   hideLoader();
                 } else {
+                    hideLoader();
                     if (sno == 0) {
                         createPageView(totalRecord);
                     }
                     PaginationView.show();
                     ReportView.show();
                     loadCompliances(ReportData);
-
                     }
                 }
             }
