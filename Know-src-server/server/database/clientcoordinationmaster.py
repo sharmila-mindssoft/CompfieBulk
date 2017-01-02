@@ -134,11 +134,13 @@ def return_unit_wise_industry_domain_map(industry_domain_data):
 ###############################################################################
 def approve_unit(db, request, session_user):
     unit_approval_details = request.unit_approval_details
+    legal_entity_name = None
     current_time_stamp = get_date_time()
     columns = ["is_approved", "remarks", "updated_by", "updated_on"]
     values = []
     conditions = []
     for detail in unit_approval_details:
+        legal_entity_name = detail.legal_entity_name
         unit_id = detail.unit_id
         approval_status = detail.approval_status
         reason = detail.reason
@@ -152,6 +154,9 @@ def approve_unit(db, request, session_user):
     result = db.bulk_update(
         tblUnits, columns, values, conditions
     )
+    db.call_insert_proc("sp_client_unit_apprival_messages_save", (
+        session_user, "/knowledge/client-unit-approval", legal_entity_name, current_time_stamp
+        ))
     #
     # sp_activity_log_save
     # Arguments : user id, form id, action, time of action
@@ -167,6 +172,7 @@ def approve_unit(db, request, session_user):
                 current_time_stamp
             )
         )
+
         return result
     else:
         db.call_insert_proc(
