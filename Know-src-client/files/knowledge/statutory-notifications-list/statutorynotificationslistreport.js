@@ -228,6 +228,7 @@ function processSubmit (){
                 ReportView.show();
                 hideLoader();
               } else {
+                hideLoader();
                 if(sno==0){
                   createPageView(totalRecord);
                 }
