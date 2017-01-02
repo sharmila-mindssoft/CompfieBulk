@@ -52,7 +52,6 @@ var DMSubmit = $(".btn-submit-3");
 var DomainDetailsList = '';
 var DMRemarks = $("#dm_remarks");
 
-
 var DomainExecutiveName = $("#domain_executive_name");
 var DomainExecutiveId = $("#domain_executive_id");
 var ACDomainExecutive = $("#ac-domain-executive");
