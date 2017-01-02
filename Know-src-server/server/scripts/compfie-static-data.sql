@@ -46,7 +46,7 @@ INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '/knowledge/assign-le
 INSERT INTO tbl_forms VALUES(19, 2, 'Assign Client Unit', '/knowledge/assign-client-unit', 19, null);
 
 INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit-approval', 20, null);
-INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '', 21, null);
+INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '/knowledge/legal-entity-closure', 21, null);
 INSERT INTO tbl_forms VALUES(22, 2, 'Client Unit', '/knowledge/client-unit', 22, null);
 
 INSERT INTO tbl_forms VALUES(23, 2, 'Assign Statutory', '/knowledge/assign-statutory', 23, null);
