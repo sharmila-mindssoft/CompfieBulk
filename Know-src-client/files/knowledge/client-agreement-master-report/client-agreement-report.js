@@ -340,6 +340,7 @@ function processSubmit(csv) {
                             $('.total-records').text('');
                             hideLoader();
                         } else {
+                            hideLoader();
                             if (sno == 0) {
                                 createPageView(totalRecord);
                             }
