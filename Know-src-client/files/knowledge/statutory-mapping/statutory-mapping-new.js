@@ -31,6 +31,10 @@ var CurrentPassword = $('#current-password');
 ApproveStatusUL = $('#ap-status-list');
 ApproveStatusLI = $('.ap-status-li');
 ApproveStatusText = $('#ap-status');
+FilterBox = $('.filter-box');
+Search_status_ui = $('.search-status-list');
+Search_status_li = $('.search-status-li');
+Search_status = $('#search-status');
 // Tab 1
 Country = $('#country');
 Domain = $("#domain");
@@ -278,7 +282,8 @@ function RenderInput() {
         var first_li = 0;
 
         // append select
-
+        _renderinput.org_ids = [];
+        _renderinput.org_names = [];
         $.each(ORGANISATION_INFO, function(ke, val) {
             if (val.is_active == false)
                 return;
@@ -286,7 +291,7 @@ function RenderInput() {
                 (parseInt(val.c_id) == parseInt(c_id)) &&
                 (parseInt(val.d_id) == parseInt(d_id))
             ){
-                if (first_li == 0) {
+                if (ke == 0) {
                     orgObject = list_template.clone();
                     orgObject.addClass("organisationlist");
                     orgObject.attr('id', 'o-1');
@@ -305,10 +310,10 @@ function RenderInput() {
                             $('.organisationlist').addClass('active');
                             $('.organisationlist i').addClass('fa-check');
                             $.each(ORGANISATION_INFO, function(k, v) {
-                                if ((v.c_id != c_id) && (v.d_id != d_id))
-                                    return;
-                                _renderinput.org_ids.push(v.org_id);
-                                _renderinput.org_names.push(v.org_name);
+                                if ((v.c_id == _renderinput.country_id) && (v.d_id == _renderinput.domain_id)) {
+                                    _renderinput.org_ids.push(v.org_id);
+                                    _renderinput.org_names.push(v.org_name);
+                                }
                             });
                         }
                     });
@@ -325,11 +330,11 @@ function RenderInput() {
                     if (sts == true) {
                         $('#o'+val.org_id).removeClass('active');
                         $('#o'+val.org_id+ ' i').removeClass('fa-check');
-                        _renderinput.org_id = _renderinput.remveItemFromList(
-                            val.org_id, this.org_id
+                        _renderinput.org_ids = _renderinput.remveItemFromList(
+                            val.org_id, _renderinput.org_ids
                         );
-                        _renderinput.org_name = _renderinput.remveItemFromList(
-                            val.org_name, this.org_name
+                        _renderinput.org_names = _renderinput.remveItemFromList(
+                            val.org_name, _renderinput.org_names
                         );
                     }
                     else {
@@ -1562,6 +1567,36 @@ function ListPage() {
     this.hide = function() {
         ListScreen.hide();
     };
+    this.listFilter = function() {
+        country_search = $('#country-search').val().toLowerCase();
+        domain_search = $('#domain-search').val().toLowerCase();
+        org_search = $('#org-search').val().toLowerCase();
+        nature_search = $('#nature-search').val().toLowerCase();
+        statu_search = $('#statu-search').val().toLowerCase();
+
+        map_status = $('.search-status-li.active').attr('value');
+        // usr_disable = $('#ap-status-list.active').attr('value');
+
+        filteredList = []
+        $.each(STATU_MAPPINGS, function(k, data){
+            c_name = data.c_name.toLowerCase();
+            d_name = data.d_name.toLowerCase();
+            org_name = data.i_names.join(' , ');
+            org_name = org_name.toLowerCase();
+            nature_name = data.s_n_name.toLowerCase();
+            map_name = data.s_maps.join(' , ');
+            map_name = map_name.toLowerCase();
+
+            if (
+                (~c_name.indexOf(country_search)) && (~d_name.indexOf(domain_search)) &&
+                (~org_name.indexOf(org_search)) && (~nature_name.indexOf(nature_search)) &&
+                (~map_name.indexOf(statu_search)) && ((map_status == 'all') || (parseInt(map_status) == data.is_active))
+            ) {
+                filteredList.push(data);
+            }
+        });
+        _listPage.renderList(filteredList, filteredList.length);
+    };
 
 }
 //
@@ -1577,10 +1612,6 @@ function ViewPage() {
         _renderinput.loadCounty();
     };
     this.validateFirstTab = function() {
-
-
-
-
         if (_renderinput.country_id == null) {
             displayMessage(msg.country_required);
             return false;
@@ -2177,6 +2208,30 @@ function pageControls() {
         $('.date-list').append(date_pan);
         _renderinput.loadedDateEvent(0);
 
+    });
+
+    FilterBox.keyup(function() {
+        _listPage.listFilter();
+    });
+
+
+    Search_status_ui.click(function(event) {
+        Search_status_li.each(function(index, el) {
+            $(el).removeClass('active');
+        });
+        $(event.target).parent().addClass('active');
+
+        var currentClass = $(event.target).find('i').attr('class');
+        Search_status.removeClass();
+        if (currentClass != undefined) {
+            Search_status.addClass(currentClass);
+            Search_status.text('');
+        } else {
+            Search_status.addClass('fa');
+            Search_status.text('All');
+        }
+        // alert($(event.target).parent().val());
+        _listPage.listFilter();
     });
 
 }
