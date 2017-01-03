@@ -1656,6 +1656,26 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getLegalEntity(entity_id, callback) {
+    callerName = 'client_coordination_master';
+    var request = [
+      'GetLegalEntityInfo',
+      {
+        "le_id": entity_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function approveClientGroupList(client_id, entity_id, entity_name, approval_status, reason) {
+    return {
+        "ct_id": client_id,
+        "le_id": entity_id,
+        "le_name": entity_name,
+        "approval_status": approval_status,
+        "reason": reason,
+    }
+
+  }
   function approveClientGroup(group_approval_details, callback){
     callerName = 'client_coordination_master';
     var request = [
@@ -1666,22 +1686,23 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getDbServerList(callback){
+  function getDatabaseServerList(callback){
     callerName = 'console_admin';
     var request = [
-      'GetDbServerList',
+      'GetDatabaseServerList',
       {
       }
     ];
     apiRequest(callerName, request, callback);
   }
   function saveDBServer(
-    db_server_name, ip, port, username, password, callback
+    db_server_id, db_server_name, ip, port, username, password, callback
   ){
     callerName = "console_admin"
     var request = [
       "SaveDBServer",
       {
+        "db_server_id": db_server_id,
         "db_server_name": db_server_name,
         "ip": ip,
         "port": port,
@@ -1709,6 +1730,30 @@ function initMirror() {
       {
         "client_server_id": client_server_id,
         "client_server_name": client_server_name,
+        "ip": ip,
+        "port": port
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getFileServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetFileServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function fileServerEntry(
+    file_server_id, file_server_name, ip, port, callback
+  ){
+    callerName = "console_admin";
+    var request = [
+      "SaveFileServer",
+      {
+        "file_server_id": file_server_id,
+        "file_server_name": file_server_name,
         "ip": ip,
         "port": port
       }
@@ -1803,13 +1848,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignedUnitsList(domain_id, client_id, callback){
+  function getAssignedUnitsList(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignedUnits",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1825,13 +1871,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignUnitFormData(domain_id, client_id, callback){
+  function getAssignUnitFormData(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignUnitFormData",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1856,17 +1903,129 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function saveReassignUserAccount(
-    user_type, old_user_id, new_user_id, assigned_ids, remarks, callback
+  function getTechnoUSerInfo(techno_user_id, callback){
+    callerName = "admin";
+    var request = [
+        "GetTechnoUserData",
+        {
+          "techno_id": techno_user_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getDomainUserInfo(domain_user_id, group_id, entity_id, domain_id, callback){
+    callerName = "admin";
+    var request = [
+        "GetDomainUserData",
+        {
+          "d_u_id": domain_user_id,
+          "gt_id": group_id,
+          "le_id": entity_id,
+          "d_id": domain_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function technoManagerInfo(reassign_to, client_id, entity_id, techno_executive, old_techno_executive) {
+    var userInfo = {};
+    userInfo.reassign_to = reassign_to;
+    userInfo.gt_id = client_id;
+    userInfo.le_id = entity_id;
+    userInfo.t_e_id = techno_executive;
+    userInfo.old_t_e_id = old_techno_executive;
+    return userInfo;
+  }
+
+  function ReassignTechnoManager(user_from, data, remarks, callback){
+      callerName = "admin";
+      var request = [
+        "SaveReassignTechnoManager",
+        {
+          "reassign_from": user_from,
+          "t_manager_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function technoExecutiveInfo(client_id, entity_id) {
+    var userInfo = {};
+    userInfo.gt_id = client_id;
+    userInfo.le_id = entity_id;
+    return userInfo;
+  }
+
+  function ReassignTechnoExecutive(user_from, user_to, data, remarks, callback){
+      callerName = "admin";
+      var request = [
+        "SaveReassignTechnoExecutive",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "t_executive_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function domainManagerInfo(unit_id, domain_executive, old_domain_executive) {
+    var userInfo = {};
+    userInfo.u_id = unit_id;
+    userInfo.d_e_id = domain_executive;
+    userInfo.old_d_e_id = old_domain_executive;
+    return userInfo;
+  }
+
+  function ReassignDomainManager(
+    user_from, user_to, client_id, entity_id, domain_id, data,
+    remarks, callback
   ){
       callerName = "admin";
       var request = [
-        "SaveReassignUserAccount",
+        "SaveReassignDomainManager",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "gt_id": client_id,
+          "le_id": entity_id,
+          "d_id": domain_id,
+          "d_manager_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function ReassignDomainExecutive(
+    user_from, user_to, client_id, entity_id, domain_id, unit_ids,
+    remarks, callback
+  ){
+      callerName = "admin";
+      var request = [
+        "SaveReassignDomainExecutive",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "gt_id": client_id,
+          "le_id": entity_id,
+          "d_id": domain_id,
+          "unit_ids": unit_ids,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function SaveUserReplacement(user_type, user_from, user_to, remarks, callback) {
+      callerName = "admin";
+      var request = [
+        "UserReplacement",
         {
           "user_type": user_type,
-          "old_user_id": old_user_id,
-          "new_user_id": new_user_id,
-          "assigned_ids": assigned_ids,
+          "old_user_id": user_from,
+          "new_user_id": user_to,
           "remarks": remarks
         }
       ];
@@ -2409,8 +2568,10 @@ function initMirror() {
     getEntityApprovalList: getEntityApprovalList,
     approveUnit: approveUnit,
     getClientGroupApprovalList: getClientGroupApprovalList,
+    getLegalEntity: getLegalEntity,
+    approveClientGroupList: approveClientGroupList,
     approveClientGroup: approveClientGroup,
-    getDbServerList: getDbServerList,
+    getDatabaseServerList: getDatabaseServerList,
     saveDBServer: saveDBServer,
     getClientServerList: getClientServerList,
     saveClientServer: saveClientServer,
@@ -2428,7 +2589,13 @@ function initMirror() {
     getAssignUnitFormData: getAssignUnitFormData,
     saveAssignedUnits: saveAssignedUnits,
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
-    saveReassignUserAccount: saveReassignUserAccount,
+    getTechnoUSerInfo: getTechnoUSerInfo,
+    getDomainUserInfo: getDomainUserInfo,
+    ReassignTechnoManager: ReassignTechnoManager,
+    ReassignTechnoExecutive: ReassignTechnoExecutive,
+    ReassignDomainManager: ReassignDomainManager,
+    ReassignDomainExecutive: ReassignDomainExecutive,
+    SaveUserReplacement: SaveUserReplacement,
     getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
     getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
     getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
@@ -2461,7 +2628,12 @@ function initMirror() {
     getAssignedStatutoriesList: getAssignedStatutoriesList,
     getComplianceStatutoriesList: getComplianceStatutoriesList,
     getAssignedStatutoriesForApprove: getAssignedStatutoriesForApprove,
-    approveAssignedStatutory: approveAssignedStatutory
+    approveAssignedStatutory: approveAssignedStatutory,
+    technoManagerInfo: technoManagerInfo,
+    technoExecutiveInfo: technoExecutiveInfo,
+    getFileServerList: getFileServerList,
+    fileServerEntry: fileServerEntry,
+    domainManagerInfo: domainManagerInfo,
   };
 }
 var mirror = initMirror();

@@ -33,31 +33,31 @@
                                     <td></td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Country" type="text">
+                                          <input id="country-search" class="form-control input-sm filter-box" placeholder="Country" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Domain" type="text">
+                                          <input id="domain-search" class="form-control input-sm filter-box" placeholder="Domain" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Organization" type="text">
+                                          <input id="org-search" class="form-control input-sm filter-box" placeholder="Organization" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Statutory Nature" type="text">
+                                          <input id="nature-search" class="form-control input-sm filter-box" placeholder="Statutory Nature" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Statutory" type="text">
+                                          <input id="statu-search" class="form-control input-sm filter-box" placeholder="Statutory" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
@@ -65,7 +65,7 @@
                                     <td align="center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                                                All
+                                                <i id="search-status" class="fa">All</i>
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu search-status-list">
@@ -297,9 +297,9 @@
                                                         <select id="repeats_type" class="form-control input-sm">
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-5" style="display: none;">
+                                                    <div class="col-sm-5 multicheckbox" style="display: none;" >
                                                         <div class="checkbox checkbox-primary" >
-                                                            <input id="multiselect" type="checkbox">
+                                                            <input id="multiselect" class="multi-date-box" type="checkbox">
                                                             <label for="multiselect" class="multiselect">
                                                             Multiple Input Selection
                                                             </label>
@@ -324,7 +324,7 @@
                                                     </div>
                                                     <div class="form-group clearfix m-b-10">
                                                         <label class="col-sm-3 control-label">Summary</label>
-                                                        <div class="col-sm-9 "></div>
+                                                        <div class="col-sm-9 recurr-summary"></div>
                                                     </div>
                                                     </div>
                                                     <div class="col-sm-6">
@@ -360,7 +360,6 @@
                                                 <div class="form-group clearfix m-b-10">
                                                     <label class="col-sm-5 control-label">Summary</label>
                                                     <div class="col-sm-7 occasional_summary">
-                                                        To Complete within 2 hours
                                                     </div>
                                                 </div>
                                             </div>

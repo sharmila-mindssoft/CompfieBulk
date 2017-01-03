@@ -201,64 +201,83 @@ function clearForm() {
 */
 
 function loadGroups(response) {
-    $('.tbody-clientgroup-list').find('tr').remove();
+    $('.tbody-clientgroup-list').empty();
     var sno = 0;
     if(response == ""){
         data = GROUPS;
     }else{
         data = response;
     }
+    var LastGroup = '';
+    var actCount = 1;
 
     $.each(data, function(key, value) {
         var clientId = value.group_id;
-        var isActive = value.is_active;
+        var isActive = value.is_closed;
         var passStatus = null;
-        var classValue = null;
+        var statusValue = null;
         if (isActive == true) {
-            passStatus = false;
-            classValue = 'active-icon';
+            statusValue = 'InActive';
         } else {
-            passStatus = true;
-            classValue = 'inactive-icon';
+            statusValue = 'Active';
         }
-        var tableRow = $('#templates .table-clientgroup-list .table-row');
-        var clone = tableRow.clone();
-        sno = sno + 1;
-        $('.sno', clone).text(sno);
-        $('.country_names', clone).text(value.country_names);
-        $('.group_name', clone).text(value.group_name);
-        $('.no_of_entities', clone).text(value.no_of_legal_entities);
-        $('.edit-icon', clone).attr('title', 'Edit');
-        $('.edit-icon', clone).attr('id', clientId);
-        $('.edit-icon', clone).on('click', function() {
-            edit_id = parseInt($(this).attr('id'));
-            IS_APPROVED = value.is_approved;
-            initialize("edit");
-        });
-        $('.status', clone).addClass(classValue);
-        $('.active-icon').attr('title', 'Deactivate');
-        $('.inactive-icon').attr('title', 'Activate');
-        $('.status', clone).attr('id', clientId);
-        $('.status', clone).on('click', function() {
-            $(".popup-group-id").val($(this).attr("id"));
-            $(".popup-pass-value").val(passStatus);
-        });
 
+        if(LastGroup != value.group_name){
+            sno = 0;
+            var acttableRow = $('#act-templates .p-head');
+            var clone = acttableRow.clone();
+
+            $('.acc-title', clone).attr('id', 'heading'+actCount);
+            $('.panel-title a span', clone).text(value.group_name);
+            $('.panel-title a', clone).attr('href', '#collapse'+actCount);
+            $('.panel-title a', clone).attr('aria-controls', 'collapse'+actCount);
+
+            $('.coll-title', clone).attr('id', 'collapse'+actCount);
+            $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
+
+            $('.edit-icon', clone).attr('title', 'Edit');
+            $('.edit-icon', clone).attr('id', clientId);
+            $('.edit-icon', clone).on('click', function() {
+                edit_id = parseInt($(this).attr('id'));
+                IS_APPROVED = value.is_approved;
+                initialize("edit");
+            });
+        
+            $('.tbody-clientgroup-list').append(clone);
+            LastGroup = value.group_name;
+            actCount = actCount + 1;
+
+            /*$('.filter-text-box').keyup(function() {
+                processFilter();
+            });*/
+        }
+
+        var le_tableRow = $('#le-value .table-le-values .le-details');
+        var clone_le = le_tableRow.clone();
+        sno = sno + 1;
+        $('.sno', clone_le).text(sno);
+        $('.countryname', clone_le).text(value.country_name);
+        $('.legalentityname', clone_le).text(value.legal_entity_name);
+        $('.status', clone_le).text(statusValue);
+        
         if (value.is_approved == 0) {
-            $('.approval-status', clone).text("Pending");
+            $('.approvalstatus', clone_le).text("Pending");
         } else if (value.is_approved == 1) {
-            $('.approval-status', clone).text("Approved");
+            $('.approvalstatus', clone_le).text("Approved");
         } else {
             var abbr_clone = $(".tooltip-templates .text-with-tooltip").clone();
             abbr_clone.attr("data-original-title", value.remarks);
             abbr_clone.attr("title", value.remarks);
-            clone.css("color", "#f00");
+            clone_le.css("color", "#f00");
             abbr_clone.html('<i class="fa fa-info-circle"></i> Rejected');
-            $('.approval-status', clone).html(abbr_clone);
+            $('.approvalstatus', clone_le).html(abbr_clone);
         }
-        $('.tbody-clientgroup-list').append(clone);
+        $(' #collapse'+(actCount-1)+' .tbody-le-list').append(clone_le);
+
+
     });
 }
+
 function validateAuthentication(){
   var password = $(".popup-password").val().trim();
   if (password.length == 0) {
@@ -805,9 +824,13 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     showNonEditable(le_table.find(".contract-to"), null, value.contract_to);
 
     le_table.find("#upload-logo-img").hide();
-    name_array = value.old_logo.split("-");
-    ext_array = name_array[1].split(".");
-    old_logo_name = name_array[0] + "." + ext_array[ext_array.length - 1]
+    if(value.old_logo != null){
+        name_array = value.old_logo.split("-");
+        ext_array = name_array[1].split(".");
+        old_logo_name = name_array[0] + "." + ext_array[ext_array.length - 1]
+    }else{
+        old_logo_name = null;
+    }
     showNonEditable(le_table.find("#upload-logo"), null, old_logo_name);
     if (push_in_array == true) {
         logoFile.push(value.old_logo);
@@ -948,7 +971,12 @@ function editEntity(le_count, value, domain_details) {
                 showEditable(le_table.find(".contract-to"), value.contract_to);
             }
             showEditable(le_table.find("#upload-logo"), value.old_logo);
-            le_table.find("#upload-logo-img").show();
+            if(value.old_logo != null){
+                le_table.find("#upload-logo-img").show();
+            }else{
+                le_table.find("#upload-logo-img").hide(); 
+            }
+            
             le_table.find("#upload-logo").show();
             img_clone = $(".logo-img span").clone();
             le_table.find("#upload-logo").parent().append(img_clone);
@@ -1490,7 +1518,7 @@ function changeClientStatus() {
 // List filter process
 function processFilter() {
     country_search = $('#search-country').val().toLowerCase();
-    group_search = $('#search-group').val().toLowerCase();
+    //group_search = $('#search-group').val().toLowerCase();
     le_search = $('#search-legalentity').val().toLowerCase();
     
     active_status = $('.search-status-li.active').attr('value');
@@ -1498,11 +1526,11 @@ function processFilter() {
     filteredList = []
     for (var g in GROUPS) {
         data = GROUPS[g]
-        cn = data.country_names.toLowerCase();
+        cn = data.country_name.toLowerCase();
         grp = data.group_name.toLowerCase();
-        legno = (data.no_of_legal_entities).toString();
+        legname = (data.legal_entity_name).toString();
         if (
-            (~cn.indexOf(country_search)) && (~grp.indexOf(group_search)) && (~legno.indexOf(le_search)) 
+            (~cn.indexOf(country_search)) && (~grp.indexOf(group_search)) && (~legname.indexOf(le_search)) 
         ) {
             if ((active_status == 'all' || parseInt(active_status) == data.is_active) &&
                 (grp_status == 'all' || parseInt(grp_status) == data.is_approved)) {
@@ -1514,7 +1542,7 @@ function processFilter() {
     loadGroups(filteredList);
 }
 
-Search_status_ul.click(function(event) {
+/*Search_status_ul.click(function(event) {
     Search_status_li.each(function(index, el) {
         $(el).removeClass('active');
     });
@@ -1532,9 +1560,9 @@ Search_status_ul.click(function(event) {
         Search_status.text('All');
     }
     processFilter();
-});
+});*/
 
-Search_astatus_ul.click(function(event) {
+/*Search_astatus_ul.click(function(event) {
     Search_astatus_li.each(function(index, el) {
         $(el).removeClass('active');
     });
@@ -1550,7 +1578,7 @@ Search_astatus_ul.click(function(event) {
         Search_astatus.text('All');
     }
     processFilter();
-});
+});*/
 
 
 $(document).ready(function() {
@@ -1570,6 +1598,3 @@ $('.status-submit').on("click", function(){
     validateAuthentication();  
 });
 
-FilterBox.keyup(function() {
-    processFilter();
-});

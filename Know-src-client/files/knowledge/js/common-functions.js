@@ -1043,6 +1043,75 @@ function onCommonArrowKey(e, ac_item, callback) {
   }
 }
 
+function commonAutoComplete1(
+    e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
+    condition_fields, condition_values1, condition_values2
+){
+    ac_div.show();
+    id_element.val('');
+    var suggestions = [];
+    ac_div.find('ul').empty();
+    if (text_val.length > 0) {
+        for (var i in list_val) {
+            validation_result = true;
+            if(condition_fields != undefined && condition_fields.length > 0){
+                validation_results = [];
+                $.each(condition_fields, function(key, value){
+                  var condition_result;
+                  if(list_val[i][value].length != undefined){
+                    var cresult = false;
+                    var dresult = false;
+                    for(var j=0; j<list_val[i][value].length; j++){
+                      if($.inArray(list_val[i][value][j]["c_id"], condition_values1) >= 0){
+                        cresult = true;
+                      }
+                      if($.inArray(list_val[i][value][j]["d_id"], condition_values2) >= 0){
+                        dresult = true;
+                      }
+                    }
+                    
+                    if(cresult && dresult){
+                      condition_result = true;
+                    }else{
+                      condition_result = false;
+                    }
+                    
+                  }else{
+                    condition_result = (list_val[i][value] == condition_values[key]);
+                  }
+                  validation_results.push(
+                    condition_result
+                  )
+                });
+                validation_result = null;
+                $.each(validation_results, function(key, value){
+                    if(key == 0){
+                        validation_result = value
+                    }else{
+                        validation_result = validation_result && value
+                    }
+                });
+            }
+            if(
+                ~list_val[i][field_name].toLowerCase().indexOf(
+                    text_val.toLowerCase()
+                ) && validation_result
+            )
+                suggestions.push([
+                    list_val[i][id_name],
+                    list_val[i][field_name]
+                ]);
+        }
+        var str = '';
+        for (var i in suggestions) {
+            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
+        }
+        ac_div.find('ul').append(str);
+    }else {
+        $('.ac-textbox').hide();
+    }
+    onCommonArrowKey(e, ac_div, callback);
+}
 
 function import_toast(){
   toastr.options = {
