@@ -1,6 +1,6 @@
 var country = $("#country");
 var legalEntity = $("#legal-entity");
-var domain = $("#domain");
+var domain = $("#domainval");
 var domainID = $("#domain");
 var acDomain = $("#ac-domain");
 var unit = $("#unit");
@@ -27,30 +27,31 @@ var reportTable = $("#report-table");
 var reportTable = $("#total-record");
 var REPORT = null;
 
-
-
 function PageControls() {
     showButton.click(function() {
         reportView.show();
         showAnimation(reportView);
         REPORT.loadReportValues();
     });
-
-
+    
     domain.keyup(function(e) {
-        //alert(REPORT.toSource());
         var domainList = REPORT._domains;
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, 1];
         var text_val = $(this).val();
         commonAutoComplete(e, acDomain, domainID, text_val, domainList, "d_name", "d_id", function(val) {
-            onAutoCompleteSuccess(domain, domainID, val);
+            onDomainAutoCompleteSuccess(domain, domainID, val);
         }, condition_fields, condition_values);
-
     });
 }
 
-function StatusReportConsolidated() {
+onDomainAutoCompleteSuccess = function(value_element, id_element, val) {
+    domain.val(val[1]);
+    domainID.val(val[0]);
+    domain.focus();
+}
+
+StatusReportConsolidated = function() {
     this._countries = [];
     this._entities = [];
     this._domains = [];

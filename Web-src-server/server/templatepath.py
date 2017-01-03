@@ -119,7 +119,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/status-report-consolidated",
-        "files/client/status-report-consolidated/status-report-consolidated.html",
+        "files/client/status-report-consolidated/status_report_consolidated.html",
         None, {}
     ),
     (
