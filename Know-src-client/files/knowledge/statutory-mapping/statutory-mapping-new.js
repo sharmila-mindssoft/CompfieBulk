@@ -844,7 +844,6 @@ function RenderInput() {
         else {
             Temp_id.val(data.comp_id);
         }
-        console.log(Temp_id.val());
 
     };
     this.clearCompliance = function(){
@@ -1045,7 +1044,6 @@ function RenderInput() {
         });
     };
 
-
     this.hideFrequencyAll = function() {
         Onetimepan.hide();
         RecurringPan.hide();
@@ -1240,8 +1238,6 @@ function FetchBack() {
                                 info["s_names"] = v.p_maps
                             else
                                 info["s_names"] = [];
-                            console.log(v.p_maps);
-                            console.log(info["s_names"]);
                             info["s_names"].push(v.s_name)
                             if (v.p_ids == null) {
                                 info["l_one_id"] = 0;
@@ -1253,7 +1249,6 @@ function FetchBack() {
                             _renderinput.mapped_statu.push(info);
                         }
                     });
-                    console.log(_renderinput.mapped_statu);
                     _renderinput.renderStatuGrid();
                     _renderinput.renderComplianceGrid();
 
@@ -1910,7 +1905,6 @@ function pageControls() {
         }
         else {
             if (add_new) {
-                console.log(_renderinput.mapped_statu)
                 _renderinput.mapped_statu.push(info)
                 _renderinput.renderStatuGrid();
             }
@@ -1988,14 +1982,12 @@ function pageControls() {
             info['comp_id'] = null;
         else
             info['comp_id'] = parseInt(Comp_id.val());
-        console.log(Temp_id.val());
         if (Temp_id.val() == '')
             info['temp_id'] = _renderinput.mapped_compliances.length + 1;
         else
             info['temp_id'] = Temp_id.val();
 
 
-        console.log(Temp_id.val());
         info['s_provision'] = Provision.val().trim();
         info['c_task'] = ComplianceTask.val().trim();
         info['description'] = Description.val().trim();
@@ -2085,27 +2077,19 @@ function pageControls() {
         info['summary'] = _renderinput.summary;
 
         is_duplidate = false
-        $.each(_renderinput.mapped_compliances, function(k, v) {
-            console.log(Temp_id.val(), Comp_id.val(), v.comp_id);
-            console.log(v.temp_id);
-            compid = v.comp_id;
-            if (compid == null)
-                compid = '';
-            console.log(((Temp_id.val() == Comp_id.val()) && (Comp_id.val() == compid)));
-            if ((Temp_id.val() == Comp_id.val()) && (Comp_id.val() == compid)) {
-                _renderinput.mapped_compliances.splice(k, 1);
-                return false;
-            }
-        });
-        console.log(_renderinput.mapped_compliances.length);
+        if (Temp_id.val() != '') {
+            $.each(_renderinput.mapped_compliances, function(k, v) {
+                compid = v.comp_id;
+                if (compid == null)
+                    compid = '';
+                if ((Temp_id.val() == Comp_id.val()) || (Temp_id.val() == v.temp_id)) {
+                    _renderinput.mapped_compliances.splice(k, 1);
+                    return false;
+                }
+            });
+        }
 
         $.each(_renderinput.mapped_compliances, function(k, v) {
-            console.log(Comp_id.val(), Temp_id.val());
-            console.log((
-                (v.s_provision == Provision.val().trim()) &&
-                (v.c_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
-                (Comp_id.val() == '') || (Temp_id.val() != Comp_id.val())
-            ));
             if (
                 (v.s_provision == Provision.val().trim()) &&
                 (v.c_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
