@@ -3618,7 +3618,7 @@ BEGIN
     (
         select count(tule.legal_entity_id) from tbl_user_legalentity tule
         inner join tbl_legal_entities tle on tle.legal_entity_id = tule.legal_entity_id
-        WHERE tule.client_id=tcg.client_id and tle.is_closed = 0 and tle.is_approved = 1 
+        WHERE tule.client_id=tcg.client_id and tle.is_closed = 0 and tle.is_approved = 1
         group by tule.client_id
     ) as no_of_assigned_legal_entities
 
