@@ -225,6 +225,13 @@ function RenderInput() {
                 _renderinput.country_name = val.c_name;
                 _renderinput.loadDomain(val.c_id);
                 _renderinput.loadNature(val.c_id);
+                _renderinput.domain_id = null;
+                _renderinput.org_ids = [];
+                _renderinput.org_names = [];
+                _renderinput.selected_iids = [];
+                _renderinput.nature_id = null;
+                Organisation.empty();
+                _renderinput.loadOrganisation(_renderinput.country_id, _renderinput.domain_id);
                 $('#c'+val.c_id).addClass('active');
                 $('#c'+val.c_id + ' i').addClass("fa-check");
             });
@@ -810,23 +817,7 @@ function RenderInput() {
             $('.date-list').empty();
             $.each(data.statu_dates, function(k, v) {
 
-                // date_pan = $("#templates #date-list-templates").clone();
 
-                // $('.month-select', date_pan).empty();
-                // _renderinput.loadMonthAndData($('.month-select', date_pan));
-                // $('.month-select', date_pan).change(function(){
-                //     $('.date-select', date_pan).empty();
-                //     $.each(_renderinput.getMonthAndDataSets(), function(kk, v1) {
-                //         if (v1.m_id == parseInt($('.month-select', date_pan).val())) {
-                //             for (var i=1; i<=v1.range; i++) {
-                //                 dopt =_renderinput.make_option(i, i);
-                //                 $('.date-select', date_pan).append(dopt);
-                //             }
-                //         }
-                //     });
-                // });
-
-                //
                 $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
                     if (vv.m_id == v["statutory_month"]) {
                         for (var i=1; i<vv.range; i++) {
@@ -853,6 +844,7 @@ function RenderInput() {
         else {
             Temp_id.val(data.comp_id);
         }
+        console.log(Temp_id.val());
 
     };
     this.clearCompliance = function(){
@@ -1996,12 +1988,14 @@ function pageControls() {
             info['comp_id'] = null;
         else
             info['comp_id'] = parseInt(Comp_id.val());
-
+        console.log(Temp_id.val());
         if (Temp_id.val() == '')
-            info['temp_id'] = null;
+            info['temp_id'] = _renderinput.mapped_compliances.length + 1;
         else
             info['temp_id'] = Temp_id.val();
 
+
+        console.log(Temp_id.val());
         info['s_provision'] = Provision.val().trim();
         info['c_task'] = ComplianceTask.val().trim();
         info['description'] = Description.val().trim();
@@ -2090,18 +2084,31 @@ function pageControls() {
         info['frequency'] = $('#compliance_frequency option:selected').text();
         info['summary'] = _renderinput.summary;
 
-        is_duplidate = false;
-
+        is_duplidate = false
         $.each(_renderinput.mapped_compliances, function(k, v) {
-            if ((Temp_id.val() == Comp_id.val()) && (Comp_id.val() == v.comp_id)) {
+            console.log(Temp_id.val(), Comp_id.val(), v.comp_id);
+            console.log(v.temp_id);
+            compid = v.comp_id;
+            if (compid == null)
+                compid = '';
+            console.log(((Temp_id.val() == Comp_id.val()) && (Comp_id.val() == compid)));
+            if ((Temp_id.val() == Comp_id.val()) && (Comp_id.val() == compid)) {
                 _renderinput.mapped_compliances.splice(k, 1);
                 return false;
             }
         });
+        console.log(_renderinput.mapped_compliances.length);
+
         $.each(_renderinput.mapped_compliances, function(k, v) {
+            console.log(Comp_id.val(), Temp_id.val());
+            console.log((
+                (v.s_provision == Provision.val().trim()) &&
+                (v.c_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
+                (Comp_id.val() == '') || (Temp_id.val() != Comp_id.val())
+            ));
             if (
                 (v.s_provision == Provision.val().trim()) &&
-                (v.c_task == ComplianceTask.val().trim()) &&
+                (v.c_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
                 ((Comp_id.val().trim() == '') || (Temp_id.val().trim() != Comp_id.val().trim()))
             ){
                 displayMessage(msg.compliancetask_duplicate);
@@ -2109,6 +2116,7 @@ function pageControls() {
                 return false;
             }
         });
+
         if (!is_duplidate) {
             _renderinput.mapped_compliances.push(info);
             _renderinput.renderComplianceGrid();
