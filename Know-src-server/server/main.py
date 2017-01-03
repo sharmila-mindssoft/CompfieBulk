@@ -49,6 +49,7 @@ app = Flask(__name__)
 
 csrf = CsrfProtect()
 app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
+app.config["WTF_CSRF_TIME_LIMIT"] = 200
 # app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
 csrf.init_app(app)
 

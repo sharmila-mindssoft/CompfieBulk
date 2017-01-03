@@ -54,6 +54,7 @@ var message = {
   'compliancetask_required': 'Compliance Task Required',
   'compliancedescription_required': 'Compliance Description Required',
   'compliancefrequency_required': 'Compliance Frequency Required',
+  'invalid_reference': 'Enter valid reference link',
   'repeatstype_required': 'Repeats Type Required',
   'repeatsevery_required': 'Repeats Every Required',
   'duration_required': 'Duration Required',
@@ -336,7 +337,6 @@ var message = {
   "reassign_to_te_required": "Reassign to Techno Executive required",
   "no_records_selected_for_reassign": "No records selected for reassign",
   "reassign_from_reassign_to_both_are_same": "Reaasign from user ans Reassign to user both should not be same",
-  
 };
 
 function clearMessage() {

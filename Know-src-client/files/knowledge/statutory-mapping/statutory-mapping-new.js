@@ -718,6 +718,16 @@ function RenderInput() {
                 // }
             });
 
+            $('#sf'+v.l_position, slObject).keyup(function(){
+                var searchText = $(this).val().toLowerCase();
+                $('#snl'+v.l_position+' > li').each(function(){
+                    var currentLiText = $(this).text().toLowerCase(),
+                        showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                    $(this).toggle(showCurrentLi);
+                });
+            });
+
+
             $('#tbody-statutory-level').append(slObject);
             if (v.l_position == 1){
                 _renderinput.renderStatuNames(
@@ -1039,6 +1049,17 @@ function RenderInput() {
             $('.gname-list', slObject).attr(
                 'id', 'gnl' + v.l_position
             );
+            $('.geo-name-filter', slObject).attr('id', 'gnf'+v.l_position);
+
+            $('#gnf'+v.l_position, slObject).keyup(function(){
+                var searchText = $(this).val().toLowerCase();
+                $('#gnl'+v.l_position+' > li').each(function(){
+                    var currentLiText = $(this).text().toLowerCase(),
+                        showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                    $(this).toggle(showCurrentLi);
+                });
+            });
+
             $('.tbody-geography-level').append(slObject);
 
         });
@@ -1649,6 +1670,14 @@ function ViewPage() {
             displayMessage(msg.compliancedescription_required);
             return false;
         }
+        else if (ReferenceLink.val().length > 0) {
+            isValid = isWebUrl(ReferenceLink);
+            console.log(isValid);
+            if (isValid == false) {
+                displayMessage(msg.invalid_reference);
+                return false;
+            }
+        }
         else if (Frequency.val() == '') {
             displayMessage(msg.compliancefrequency_required);
             return false;
@@ -1684,6 +1713,7 @@ function ViewPage() {
             }
             return true;
         }
+
 
     };
     this.showFouthTab = function(){
@@ -1911,12 +1941,16 @@ function pageControls() {
         }
     });
 
-
     Frequency.change(function() {
         _renderinput.hideFrequencyAll();
         _renderinput.showFrequencyVal();
     });
-
+    ComplianceTask.on('input', function(e) {
+        this.value = isCommon($(this));
+    });
+    Document.on('input', function(e) {
+        this.value = isCommon_Name($(this));
+    });
     Description.keyup(function(e) {
         countDown = $('#counter');
         var mxlength = 500;
@@ -1929,6 +1963,12 @@ function pageControls() {
         else {
             countDown.html(mxlength - txtlen + "characters");
         }
+    });
+    Description.on('input', function(e) {
+        this.value = isCommon($(this));
+    });
+    Provision.on('input', function(e) {
+        this.value = isCommon($(this));
     });
     Provision.keyup(function(e) {
         countDown = $('#counter1');
@@ -1943,6 +1983,9 @@ function pageControls() {
             countDown.html(mxlength - txtlen + "characters");
         }
     });
+    Penal.on('input', function(e) {
+        this.value = isCommon($(this));
+    });
     Penal.keyup(function(e) {
         countDown = $('#counter2');
         var mxlength = 500;
@@ -1956,6 +1999,7 @@ function pageControls() {
             countDown.html(mxlength - txtlen + "characters");
         }
     });
+
     ReferenceLink.keyup(function(e) {
         countDown = $('#counter3');
         var mxlength = 500;
@@ -2164,22 +2208,9 @@ function pageControls() {
         });
 
         $(event.target).parent().addClass('active');
-        // $(event.target)
-
-        // var currentClass = $(event.target).find('i').attr('class');
-        // Search_status.removeClass();
-        // if (currentClass != undefined) {
-        //     Search_status.addClass(currentClass);
-        //     Search_status.text('');
-        // } else {
-        //     Search_status.addClass('fa');
-        //     Search_status.text('All');
-        // }
         ApproveStatusText.text($(event.target).text());
         ap_status = $(event.target).parent().val();
         _fetchback.getMappedList(ap_status, 0);
-
-        // processFilter();
     });
 
     PasswordSubmitButton.click(function() {
@@ -2206,7 +2237,6 @@ function pageControls() {
         _listPage.listFilter();
     });
 
-
     Search_status_ui.click(function(event) {
         Search_status_li.each(function(index, el) {
             $(el).removeClass('active');
@@ -2222,8 +2252,43 @@ function pageControls() {
             Search_status.addClass('fa');
             Search_status.text('All');
         }
-        // alert($(event.target).parent().val());
         _listPage.listFilter();
+    });
+
+    $('#ct-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#country > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
+
+    $('#dt-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#domain > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
+
+    $('#orglist-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#industry > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
+
+    $('#naturelist-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#statutorynature > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
     });
 
 }
