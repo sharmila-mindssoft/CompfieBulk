@@ -1,0 +1,178 @@
+2016-12-30 16:36:13,342 - client_logger - clientmain.py-handle-api : global name 'get_user_category' is not defined 
+
+2016-12-30 16:36:13,359 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 347, in process_get_user_privileges
+    user_category = process_get_user_category(db, cat_id)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 297, in process_get_user_category
+    result_rows = get_user_category(db, cat_id)
+NameError: global name 'get_user_category' is not defined
+ 
+
+2016-12-30 16:52:30,194 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-30 16:52:30,196 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 347, in process_get_user_privileges
+    user_category = process_get_user_category(db, cat_id)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 297, in process_get_user_category
+    result_rows = get_user_category(db, cat_id)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 326, in get_user_category
+    row = db.select_all(q, [cat_id])
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-30 16:53:30,048 - client_logger - clientmain.py-handle-api : global name 'user_category_list' is not defined 
+
+2016-12-30 16:53:30,049 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 347, in process_get_user_privileges
+    user_category = process_get_user_category(db, cat_id)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 302, in process_get_user_category
+    user_category_list.append(
+NameError: global name 'user_category_list' is not defined
+ 
+
+2016-12-30 16:56:34,904 - client_logger - clientmain.py-handle-api : __init__() got an unexpected keyword argument 'category' 
+
+2016-12-30 16:56:34,905 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 353, in process_get_user_privileges
+    category = user_category
+TypeError: __init__() got an unexpected keyword argument 'category'
+ 
+
+2016-12-30 17:01:13,759 - client_logger - clientmain.py-handle-api : __init__() got an unexpected keyword argument 'category' 
+
+2016-12-30 17:01:13,759 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 347, in process_get_user_privileges
+    category = user_category
+TypeError: __init__() got an unexpected keyword argument 'category'
+ 
+
+2016-12-30 17:03:23,654 - client_logger - clientmain.py-handle-api : __init__() got an unexpected keyword argument 'user_category' 
+
+2016-12-30 17:03:23,654 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 347, in process_get_user_privileges
+    user_category = user_category
+TypeError: __init__() got an unexpected keyword argument 'user_category'
+ 
+
+2016-12-30 17:05:23,967 - client_logger - clientmain.py-handle-api : __init__() got an unexpected keyword argument 'user_category' 
+
+2016-12-30 17:05:23,969 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 347, in process_get_user_privileges
+    user_category = user_category
+TypeError: __init__() got an unexpected keyword argument 'user_category'
+ 
+
+2016-12-30 17:07:59,536 - client_logger - clientmain.py-handle-api : category is not configured in settings 
+
+2016-12-30 17:07:59,539 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 407, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: category is not configured in settings
+ 
+
+2016-12-30 17:09:25,670 - client_logger - clientmain.py-handle-api : user_category is not configured in settings 
+
+2016-12-30 17:09:25,671 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 407, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: user_category is not configured in settings
+ 
+
+2016-12-30 17:18:33,742 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-30 17:18:33,743 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 341, in process_get_user_privileges
+    user_category = process_get_user_category(db, cat_id)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 297, in process_get_user_category
+    result_rows = get_user_category(db, cat_id)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 325, in get_user_category
+    row = db.select_all(q, [cat_id])
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-30 17:20:04,165 - client_logger - clientmain.py-handle-api : global name 'cat_id' is not defined 
+
+2016-12-30 17:20:04,167 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 341, in process_get_user_privileges
+    user_category = process_get_user_category(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 297, in process_get_user_category
+    result_rows = get_user_category(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 325, in get_user_category
+    row = db.select_all(q, [cat_id])
+NameError: global name 'cat_id' is not defined
+ 
+

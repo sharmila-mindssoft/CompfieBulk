@@ -101,7 +101,6 @@ class API(object):
                 c_db.clear_session(SESSION_CUTOFF)
                 c_db.commit()
             except Exception, e :
-                print e
                 c_db.rollback()
 
         self._io_loop.add_timeout(
@@ -115,8 +114,6 @@ class API(object):
             pass
 
     def client_connection_pool(self, data, le_id):
-        print "%" * 50
-        print "connection process for le_id ", le_id
         return mysql.connector.pooling.MySQLConnectionPool(
             pool_name=str(le_id) + "con_pool",
             pool_size=32,
@@ -130,7 +127,6 @@ class API(object):
         )
 
     def server_added(self, servers):
-        # print "server_added called"
         self._databases = {}
         try:
             #
@@ -165,8 +161,6 @@ class API(object):
                         # if db._connection is not None :
                         #     self._databases[company_id] = db
                     except Exception, e:
-                        print e
-                        print str(traceback.format_exc())
                         logger.logClientApi(ip, port)
                         logger.logClientApi(e, "Server added")
                         logger.logClient("error", "exception", str(traceback.format_exc()))
@@ -223,7 +217,6 @@ class API(object):
             # _client_manager._start()
 
         except Exception, e :
-            print traceback.format_exc()
             logger.logClientApi(e, "Server added")
             logger.logClientApi(traceback.format_exc(), "")
             logger.logClient("error", "clientmain.py-server-added", e)
@@ -277,8 +270,6 @@ class API(object):
             )
 
         except Exception, e:
-            print e
-            print traceback
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
 
@@ -336,8 +327,6 @@ class API(object):
             _db_con.close()
             respond(response_data)
         except Exception, e:
-            print(traceback.format_exc())
-            print e
             logger.logClientApi(e, "handle_api_request")
             logger.logClientApi(traceback.format_exc(), "")
 

@@ -30,15 +30,13 @@
   </div>
 </div>
 
-
-
 <div class="content-page">
   <div class="content">
     <div class="container">
       <!-- Page-Title -->
       <div class="row">
         <div class="col-sm-12 h4-title">
-          <h4 class="page-title pull-left">Compliance Appplicability</h4>
+          <h4 class="page-title pull-left">Compliance Applicability</h4>
       <div class="pull-right">
         <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
           <i class="zmdi zmdi-sort"></i> <small>Filter</small>
@@ -67,8 +65,8 @@
               </p>
               <div class="clearfix"></div>
               <div id="container" ></div>
-              <input type="button" id="previous" class="btn btn-primary" value="<< Previous"/>
-              <input type="button" id="next" class="btn btn-primary pull-right" value="Next >>"/>
+              <!--input type="button" id="previous" class="btn btn-primary" value="<< Previous"/>
+              <input type="button" id="next" class="btn btn-primary pull-right" value="Next >>"/-->
             </div>
           </div>
         </div>
@@ -158,12 +156,12 @@
         <i class="fa-1-2x form-control-feedback fa fa-search"></i>
       </div>
     </div>
-    <div class="form-group col-sm-12">
+    <!-- <div class="form-group col-sm-12">
       <div class="checkbox checkbox-primary">
         <input id="radioConsolidated" type="checkbox">
         <label for="radioConsolidated"> Consolidated </label>
       </div>
-    </div>
+    </div> -->
     <div class="form-group col-sm-12">
       <button class="btn btn-primary" id="go">Go</button>
     </div>
@@ -462,18 +460,18 @@ function loadPieChart(){
             var drill4 = "";
             title="";
           
-                applied = 815;
-                not_opted = 20;
-                not_applicable = 12
-                unassigned = 80
-                var dataSum = (815+20+12+80);
-                drill1="unitapp";
-                drill2="unitnotapp";
-                drill3="unitnotopt";
-                drill4="unitunassigned";
-                title=" - Branch Office - 1";
+            applied = 815;
+            not_opted = 20;
+            not_applicable = 12
+            unassigned = 80
+            var dataSum = (815+20+12+80);
+            drill1="unitapp";
+            drill2="unitnotapp";
+            drill3="unitnotopt";
+            drill4="unitunassigned";
+            title=" - RG Groups";
           
-             $('#container').highcharts({
+            $('#container').highcharts({
               colors: ['#66FF66','#FFDC52','#CE253C', '#E244FF'],
               chart: {
                   type: 'pie',
@@ -484,7 +482,7 @@ function loadPieChart(){
                   }
               },
               title: {
-                   text: 'Compliance Appplicability Chart '+title
+                   text: 'Compliance Applicability Chart '+title
               },
               legend: {
                 reversed: true,
@@ -539,12 +537,12 @@ function loadPieChart(){
                           name: "Not opted",
                           y: not_opted,
                           drilldown:drill3
-                      },
+                      }/*,
                       {
                           name: "Unassigned",
                           y: unassigned,
                           drilldown:drill4
-                      }]
+                      }*/]
                   }]
           });
         });
@@ -590,7 +588,7 @@ function loadPieChart(){
                   }
               },
               title: {
-                   text: 'Compliance Appplicability Chart '+title
+                   text: 'Compliance Applicability Chart '+title
               },
               legend: {
                 reversed: true,
@@ -645,12 +643,12 @@ function loadPieChart(){
                           name: "Not opted",
                           y: not_opted,
                           drilldown:drill3
-                      },
+                      }/*,
                       {
                           name: "Unassigned",
                           y: unassigned,
                           drilldown:drill4
-                      }]
+                      }*/]
                   }]
           });
         });
@@ -699,7 +697,7 @@ function loadPieChartLegalEntity(title){
                   }
               },
               title: {
-                   text: 'Compliance Appplicability Chart '+title
+                   text: 'Compliance Applicability Chart '+title
               },
               legend: {
                 reversed: true,
@@ -754,12 +752,12 @@ function loadPieChartLegalEntity(title){
                           name: "Not opted",
                           y: not_opted,
                           drilldown:drill3
-                      },
+                      }/*,
                       {
                           name: "Unassigned",
                           y: unassigned,
                           drilldown:drill4
-                      }]
+                      }*/]
                   }]
           });
         });
@@ -808,7 +806,7 @@ function loadPieChartLegalEntity(title){
                   }
               },
               title: {
-                   text: 'Compliance Appplicability Chart '+title
+                   text: 'Compliance Applicability Chart '+title
               },
               legend: {
                 reversed: true,
@@ -863,12 +861,12 @@ function loadPieChartLegalEntity(title){
                           name: "Not opted",
                           y: not_opted,
                           drilldown:drill3
-                      },
+                      }/*,
                       {
                           name: "Unassigned",
                           y: unassigned,
                           drilldown:drill4
-                      }]
+                      }*/]
                   }]
           });
         });
@@ -916,7 +914,7 @@ function loadPieChartLegalEntity(title){
                   }
               },
               title: {
-                   text: 'Compliance Appplicability Chart '+title
+                   text: 'Compliance Applicability Chart '+title
               },
               legend: {
                 reversed: true,
@@ -971,15 +969,40 @@ function loadPieChartLegalEntity(title){
                           name: "Not opted",
                           y: not_opted,
                           drilldown:drill3
-                      },
+                      }/*,
                       {
                           name: "Unassigned",
                           y: unassigned,
                           drilldown:drill4
-                      }]
+                      }*/]
                   }]
           });
         });
+    }
+
+    function loadDrillDownData(name){
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#next").hide();
+      $("#previous").hide();
+      $("#back").hide();
+
+      var img_name="";
+      var margin_style="";
+      if (name == "drill1") {
+        // img_name = "/images/dash-list/task-entity-inprogress.png";
+        location.href="/dashboard/compliance-applicability-drilldown";
+        name = "Branch Office - 1";
+        com_name = "Applicable ";
+      } else
+      // img_name = "/images/dash-list/escalations.png";
+      location.href="/dashboard/compliance-applicability-drilldown";
+      name = $("#hidden").val();
+    
+      var htmlstr = '<div style="'+margin_style+'"><h2 style="margin-left:10px;font-size:20px">'+name+' for the year 2012</h2><br><img src='+img_name+' style="margin-left:3px;" ></div>';
+       $(function () {
+        $('#container').html(htmlstr);
+    });
     }
 
 
@@ -1024,7 +1047,7 @@ function loadPieChartLegalEntity(title){
                   }
               },
               title: {
-                   text: 'Compliance Appplicability Chart '+title
+                   text: 'Compliance Applicability Chart '+title
               },
               legend: {
                 reversed: true,
@@ -1079,12 +1102,12 @@ function loadPieChartLegalEntity(title){
                           name: "Not opted",
                           y: not_opted,
                           drilldown:drill3
-                      },
+                      }/*,
                       {
                           name: "Unassigned",
                           y: unassigned,
                           drilldown:drill4
-                      }]
+                      }*/]
                   }]
           });
         });

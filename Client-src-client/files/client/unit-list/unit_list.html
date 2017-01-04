@@ -22,24 +22,21 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">India</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group" >
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">RG Business Group</p>
                             </div>
                         </div>
                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">RG Legal Entity</p>
                             </div>
                         </div>
                         <div class="form-group">
@@ -93,9 +90,9 @@
                     </div>
                     <div class="col-sm-12">
                         <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            <div class="form-group m-b-0">
+                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -103,8 +100,19 @@
                 </form>
                 </div>
                 </div>
+                <script type="text/javascript">
+                    function show_div() {
+                        $('.details').show();
+                        $('#compliance_animation')
+                          .removeClass().addClass('bounceInLeft animated')
+                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                          $(this).removeClass();
+                        });
+                    }
+                </script>
                 </div>
-                <div class="card-box">
+                <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
                 <div class="table-responsive">
                     <div class="col-sm-12">
                         <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
@@ -170,7 +178,8 @@
                             <tr>
                                 <td colspan="100%" >
                                     <div class="col-sm-2 no-padding">
-                                        <input type="text" class="form-control input-sm text-center" value="Division: RG Division 01" readonly="true" />
+                                        <!-- <input type="text" class="form-control input-sm text-center" value="Division: RG Division 01" readonly="true" /> -->
+                                        <mark class="p-l-10 p-r-10">Division: RG Division 01</mark>
                                     </div>
                                 </td>
                             </tr>
@@ -186,8 +195,9 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p class="rpt-count">Total : 5 record(s)</p>
+                    <p class="rpt-count m-b-0">Total : 5 record(s)</p>
                 </div>
+            </div>
             </div>
         </div>
         <!-- end col -->

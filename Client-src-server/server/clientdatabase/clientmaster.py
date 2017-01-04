@@ -25,6 +25,7 @@ __all__ = [
     "is_user_exists_under_service_provider",
     "update_service_provider_status",
     "get_forms",
+    "get_user_category",
     "is_duplicate_user_privilege",
     "get_user_privilege_details_list",
     "get_user_privileges",
@@ -46,7 +47,6 @@ __all__ = [
     "get_audit_trails",
     "is_duplicate_employee_name"
 ]
-
 
 ############################################################################
 # To get the details of all service providers
@@ -87,6 +87,7 @@ def return_service_provider_details(service_providers):
             service_provider["contact_no"],
             bool(service_provider["is_active"]))
         results.append(service_provider_obj)
+    print results
     return results
 
 
@@ -305,20 +306,24 @@ def update_service_provider_status(
 # Parameter(s) - Object of database
 # Return Type - Tuple of form detail tuples
 ##############################################################################
-def get_forms(db):
-    columns = " tf.form_id, tf.form_type_id, tft.form_type, "
-    columns += "tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
-    tables = [tblForms, tblFormType]
-    aliases = ["tf",  "tft"]
-    joinConditions = ["tf.form_type_id = tft.form_type_id"]
-    whereCondition = " is_admin = 0 and tf.form_type_id " + \
-        " not in (5) order by tf.form_order, tf.form_name ASC"
-    joinType = "left join"
-    rows = db.get_data_from_multiple_tables(
-        columns, tables, aliases, joinType,
-        joinConditions, whereCondition
-    )
-    return rows
+def get_forms(db, cat_id):
+    q = "SELECT  t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, " + \
+        " t1.form_order, t2.form_type, t1.parent_menu FROM tbl_forms as t1 " + \
+        " INNER JOIN  tbl_form_type as t2 ON t2.form_type_id = t1.form_type_id" + \
+        " INNER JOIN tbl_form_category as t3 ON t1.form_id = t3.form_id " + \
+        " WHERE t3.user_category_id = %s"
+    row = db.select_all(q, [cat_id])
+    return row
+
+##############################################################################
+# To Get list of all Menus
+# Parameter(s) - Object of database
+# Return Type - Tuple of form detail tuples
+##############################################################################
+def get_user_category(db):
+    q = "SELECT user_category_id, user_category_name FROM tbl_user_category"
+    row = db.select_all(q, None)
+    return row
 
 
 ##############################################################################
@@ -329,13 +334,13 @@ def get_forms(db):
 #             - Returns False if a duplicate doen't exists
 ##############################################################################
 def is_duplicate_user_privilege(
-    db, user_group_id, user_privilege_name
+    db, user_category_id, user_privilege_name
 ):
     condition = "user_group_name = %s "
     condition_val = [user_privilege_name]
-    if user_group_id is not None:
-        condition += " AND user_group_id != %s "
-        condition_val.append(user_group_id)
+    if user_category_id is not None:
+        condition += " AND user_category_id != %s "
+        condition_val.append(user_category_id)
     return db.is_already_exists(tblUserGroups, condition, condition_val)
 
 
@@ -345,11 +350,49 @@ def is_duplicate_user_privilege(
 # Return Type - Tuple of user privilege detail tuples
 ##############################################################################
 def get_user_privilege_details_list(db):
-    columns = ["user_group_id", "user_group_name", "form_ids", "is_active"]
-    rows = db.get_data(
-        tblUserGroups, columns, "1 ORDER BY user_group_name"
+    q = "SELECT t1.user_group_id, t1.user_category_id, " + \
+        " group_concat(t3.form_id) form_ids, t1.user_group_name, " + \
+        " t2.user_category_name, t1.is_active " + \
+        " FROM tbl_user_groups as t1 " + \
+        " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id " + \
+        " INNER JOIN tbl_user_group_forms AS t3 ON t3.user_group_id = t1.user_group_id" + \
+        " group by t1.user_group_id"
+
+    # q = "SELECT t1.user_group_id, t1.user_category_id, t1.user_group_name, " + \
+    #    " t2.user_category_name, t1.is_active FROM tbl_user_groups as t1 " + \
+    #    " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id"
+    groups = db.select_all(q, None)
+
+    # columns = ["user_group_id", "user_category_id", "user_group_name", "user_category_name", "is_active"]
+    # groups = db.get_data(
+    #     "tbl_user_groups", columns, "1 ORDER BY user_group_name"
+    # )
+
+    columns = ["user_group_id", "form_id"]
+    group_forms = db.get_data(
+        "tbl_user_group_forms", columns, "1 ORDER BY user_group_id"
     )
-    return rows
+    #print groups, group_forms
+    # return groups, group_forms
+    return return_user_privilage_list(groups, group_forms)
+
+    
+
+def return_user_privilage_list(groups, group_forms):
+    user_group_list = []
+    for row in groups:
+        user_group_id = int(row["user_group_id"])
+        user_group_name = row["user_group_name"]
+        user_category_id = row["user_category_id"]
+        user_category_name = row["user_category_name"]
+        category_form_ids = row["form_ids"]
+        is_active = bool(row["is_active"])
+        user_group_list.append(
+            core.ClientUserGroup(
+                user_group_id, user_group_name, user_category_id, user_category_name, [int(x) for x in category_form_ids.split(",")],  is_active
+            )
+        )
+    return user_group_list
 
 
 ##############################################################################
@@ -392,18 +435,23 @@ def save_user_privilege(
     db, user_privilege, session_user
 ):
     columns = [
-        "user_group_name", "form_ids", "is_active",
+        "user_category_id", "user_group_name", "is_active",
         "created_on", "created_by", "updated_on", "updated_by"
     ]
     values_list = [
-        user_privilege.user_group_name,
-        ",".join(str(x) for x in user_privilege.form_ids), 1,
-        get_date_time(), session_user, get_date_time(),
-        session_user
+        user_privilege.user_category_id,
+        user_privilege.user_group_name, 1, get_date_time(), 
+        session_user, get_date_time(), session_user
     ]
     result = db.insert(tblUserGroups, columns, values_list)
     if result is False:
         raise client_process_error("E004")
+    if result:
+        for x in user_privilege.form_ids:
+            columns1 = ["user_group_id", "form_id"]
+            values1 = [result, x]
+            db.insert(tblUserGroupForms, columns1, values1)
+
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
     db.save_activity(session_user, 3, action)
     return result
@@ -417,20 +465,27 @@ def save_user_privilege(
 #             - Returns RuntimeError on updation failure
 ##############################################################################
 def update_user_privilege(db, user_privilege, session_user):
-    columns = ["user_group_name", "form_ids", "updated_on", "updated_by"]
+    columns = ["user_category_id", "user_group_name", "updated_on", "updated_by"]
     values = [
+        user_privilege.user_category_id,
         user_privilege.user_group_name,
-        ",".join(str(x) for x in user_privilege.form_ids),
         get_date_time(), session_user, user_privilege.user_group_id
     ]
     condition = "user_group_id=%s"
     result = db.update(tblUserGroups, columns, values, condition)
     if result is False:
         raise client_process_error("E005")
+    if result:
+        condition2 = "user_group_id=%s" % user_privilege.user_group_id
+        db.delete(tblUserGroupForms, condition2, user_privilege.user_group_id)
+        #db.execute("DELETE FROM ", condition_val)
+        for x in user_privilege.form_ids:
+            columns1 = ["user_group_id", "form_id"]
+            values1 = [user_privilege.user_group_id, x]
+            db.insert(tblUserGroupForms, columns1, values1)
     action = "Updated User Group \"%s\"" % user_privilege.user_group_name
     db.save_activity(session_user, 3, action)
     return result
-
 
 ##############################################################################
 # To check whether users exists under a user group
