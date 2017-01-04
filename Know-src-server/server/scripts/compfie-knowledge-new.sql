@@ -858,6 +858,7 @@ DROP TABLE IF EXISTS `tbl_client_database`;
 CREATE TABLE `tbl_client_database` (
   `client_database_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
+  `client_database_server_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `machine_id` int(11) NOT NULL,
   `file_server_id` int(11) NOT NULL,

@@ -7689,3 +7689,110 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------
+-- statutory mapping report data
+--- -------------
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_reportdata`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mappings_reportdata`(
+in cid int(11), did int(11), iid int(11), snid int(11), gid int(11),
+l1sid int(11), fid int(11),  uid int(11), fcount int(11), tcount int(11)
+)
+BEGIN
+    -- records count
+    SELECT  count(distinct t2.compliance_id) as count
+         FROM tbl_statutory_mappings t1
+         INNER JOIN tbl_compliances t2
+         ON t2.statutory_mapping_id = t1.statutory_mapping_id
+         INNER JOIN tbl_mapped_industries t3
+         ON t3.statutory_mapping_id = t1.statutory_mapping_id
+         INNER JOIN tbl_mapped_locations t4
+         ON t4.statutory_mapping_id = t1.statutory_mapping_id
+         inner join tbl_mapped_statutories as ts
+         on ts.statutory_mapping_id = t1.statutory_mapping_id
+         INNER JOIN tbl_user_domains t5
+         ON t5.domain_id = t1.domain_id and t5.country_id = t1.country_id
+         and t5.user_id = uid
+
+         WHERE t2.is_approved in (2, 3) AND t2.is_active = 1 AND
+         t1.country_id = cid
+         and t1.domain_id = did
+         and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
+         and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
+         and IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
+         and IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+         and IF(fid is not NULL, t2.frequency_id = fid, 1)
+         ORDER BY t1.statutory_mapping, t2.frequency_id;
+
+    -- records
+    SELECT distinct t1.statutory_mapping_id, t1.country_id,
+        (select country_name from tbl_countries
+        where country_id = t1.country_id)
+        country_name,  t1.domain_id,
+        (select domain_name from tbl_domains
+        where domain_id = t1.domain_id) domain_name,
+        -- t1.industry_ids,
+        t1.statutory_nature_id,
+        (select statutory_nature_name from tbl_statutory_natures
+        where statutory_nature_id = t1.statutory_nature_id)
+        statutory_nature_name,  -- t1.statutory_ids, t1.geography_ids,
+        t1.is_approved, t1.is_active, t1.statutory_mapping,
+        t2.compliance_id, t2.statutory_provision,
+        t2.compliance_task, t2.compliance_description,
+        t2.document_name, t2.format_file, t2.format_file_size,
+        t2.penal_consequences, t2.frequency_id,
+        t2.statutory_dates, t2.repeats_every,
+        t2.repeats_type_id, t2.duration, t2.duration_type_id
+        FROM tbl_statutory_mappings t1
+        INNER JOIN tbl_compliances t2
+        ON t2.statutory_mapping_id = t1.statutory_mapping_id
+        INNER JOIN tbl_mapped_industries t3
+        ON t3.statutory_mapping_id = t1.statutory_mapping_id
+        INNER JOIN tbl_mapped_locations t4
+        ON t4.statutory_mapping_id = t1.statutory_mapping_id
+        inner join tbl_mapped_statutories as ts
+        on ts.statutory_mapping_id = t1.statutory_mapping_id
+        INNER JOIN tbl_user_domains t5
+        ON t5.domain_id = t1.domain_id and t5.country_id = t1.country_id
+        and t5.user_id = uid
+        WHERE t2.is_approved in (2, 3)
+        AND t2.is_active = 1 AND t1.country_id = cid
+        and t1.domain_id = did
+        and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
+        and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
+        and  IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
+        and  IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+        and  IF(fid is not NULL, t2.frequency_id = fid, 1)
+        ORDER BY t1.statutory_mapping, t2.frequency_id
+        limit fcount, tcount;
+
+    -- organisation info
+    select distinct t.organisation_id, t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+         inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+         inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+         inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
+         where t2.is_approved in (2,3) and t3.user_id = uid
+         and t2.country_id = cid
+         and t2.domain_id = did
+         and  IF(iid IS NOT NULL, t1.organisation_id = iid, 1)
+        order by t1.statutory_mapping_id;
+
+    -- geography info
+    SELECT distinct t1.geography_id, t1.geography_name, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
+            inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
+            inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
+            inner join tbl_user_domains as t5 on t5.country_id = t3.country_id and t5.domain_id = t3.domain_id
+            where t3.is_approved in(2,3) and t5.user_id = uid
+            and t3.country_id = cid
+            and t3.domain_id = did
+            and  IF(gid IS NOT NULL, t2.geography_id = gid, 1)
+            order by t3.statutory_mapping_id;
+
+
+END //
+
+DELIMITER ;
+

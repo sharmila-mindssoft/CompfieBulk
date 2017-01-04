@@ -432,7 +432,9 @@ function RenderInput() {
             if (RepeatsType.val() != '') {
                 dat = RepeatsEvery.val();
                 mon = $('#repeats_type option:selected').text();
-                $('.recurr-summary', RecurringPan).text('Repeats every ' + dat + " " + mon );
+                summary = 'Repeats every ' + dat + " " + mon
+                $('.recurr-summary', RecurringPan).text(summary);
+                _renderinput.summary = summary
             }
 
         });
@@ -818,15 +820,20 @@ function RenderInput() {
             Duration.val(data.duration);
 
             DurationType.val(data.d_type_id);
+            $('.occasional_summary').text(data.summary);
         }
         else {
 
             RepeatsType.val(data.r_type_id);
             RepeatsEvery.val(data.r_every);
+            $('.recurr-summary').text(data.summary);
 
             $('.date-list').empty();
             $.each(data.statu_dates, function(k, v) {
 
+                date_pan = _renderinput.loadDate(k);
+                $('.month-select', date_pan).val(v['statutory_month']);
+                $('.trigger-value', date_pan).val(v['trigger_before_days']);
 
                 $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
                     if (vv.m_id == v["statutory_month"]) {
@@ -836,12 +843,9 @@ function RenderInput() {
                         }
                     }
                 });
-                date_pan = _renderinput.loadDate(0);
-                $('.month-select', date_pan).val(v['statutory_month']);
                 $('.date-select', date_pan).val(v['statutory_date']);
-                $('.trigger-value', date_pan).val(v['trigger_before_days']);
                 $('.date-list').append(date_pan);
-                _renderinput.loadedDateEvent(0);
+                _renderinput.loadedDateEvent(k);
             });
 
 
@@ -893,13 +897,13 @@ function RenderInput() {
         var j = 1;
         $.each(_renderinput.mapped_compliances, function(ke, v) {
             cObj = $('#templates #compliance-templates .table-row').clone();
-
+            console.log(v);
             $('.sno', cObj).text(j);
             $('.statutory-provision', cObj).text(v.s_provision);
             $('.task', cObj).text(v.c_task);
             $('.description', cObj).text(v.description);
             $('.frequency', cObj).text(v.frequency);
-            $('.repeats', cObj).val();
+            $('.summary-repeats', cObj).text(v.summary);
             $('#edit-icon', cObj).attr('title', 'Edit');
             $('#edit-icon', cObj).on('click', function () {
                 _renderinput.loadCompliance(v);
@@ -1099,7 +1103,7 @@ function RenderInput() {
                     e.preventDefault();
                     d_select = $('#duration_type option:selected');
                     if ((DurationType.val() != '') && (Duration.val() != '')) {
-                        _renderinput.summary =  "To complete with in " + this.value + " "+ d_select.text();
+                        _renderinput.summary =  "To complete with in " + Duration.val() + " "+ d_select.text();
                         $('.occasional_summary').text(_renderinput.summary);
                     }
 
@@ -1670,19 +1674,18 @@ function ViewPage() {
             displayMessage(msg.compliancedescription_required);
             return false;
         }
-        else if (ReferenceLink.val().length > 0) {
-            isValid = isWebUrl(ReferenceLink);
-            console.log(isValid);
-            if (isValid == false) {
-                displayMessage(msg.invalid_reference);
-                return false;
-            }
-        }
         else if (Frequency.val() == '') {
             displayMessage(msg.compliancefrequency_required);
             return false;
         }
         else {
+            if (ReferenceLink.val().length > 0) {
+                isValid = isWebUrl(ReferenceLink);
+                if (isValid == false) {
+                    displayMessage(msg.invalid_reference);
+                    return false;
+                }
+            }
             if (
                 (Frequency.val() == 2) ||
                 (Frequency.val() == 3)
@@ -2063,7 +2066,10 @@ function pageControls() {
             repeat_by = parseInt(repeat_by);
 
 
-            $(".date-list").each(function(){
+            $(".statu-date-pan").each(function(idx, val){
+                if ($('.date-select', '#dt'+idx).val() == undefined) {
+                    return false;
+                }
                 statu = {};
                 statu['statutory_date'] = null;
                 statu['statutory_month'] = null;
@@ -2144,7 +2150,7 @@ function pageControls() {
                 return false;
             }
         });
-
+        console.log(info);
         if (!is_duplidate) {
             _renderinput.mapped_compliances.push(info);
             _renderinput.renderComplianceGrid();

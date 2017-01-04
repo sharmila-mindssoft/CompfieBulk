@@ -86,13 +86,14 @@ api_params = {
     "document_name": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'compliance_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'compliance_name': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'url': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'url': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 
     "m_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'comp_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    's_pro_map': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
     'reference': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'refer': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
@@ -601,6 +602,8 @@ api_params = {
     "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
 
+    'statutory_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgereport', 'class_name': 'StatutoryMappingReport'},
+
 }
 
 api_params['domain_id'] = api_params.get('d_id')
@@ -631,6 +634,7 @@ api_params['level_1_statutory_id'] = api_params.get('statutory_id')
 api_params['level_1_s_id'] = api_params.get('statutory_id')
 api_params['level_1_statutory_name'] = api_params.get('statutory_name')
 api_params['level_1_s_name'] = api_params.get('statutory_name')
+api_params['act_name'] = api_params.get('statutory_name')
 api_params['g_l_id'] = api_params.get('level_id')
 api_params['g_name'] = api_params.get('geography_name')
 api_params['p_ids'] = api_params.get('s_pids')

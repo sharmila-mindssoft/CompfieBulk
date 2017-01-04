@@ -519,7 +519,7 @@
         <td class="task">FORM VIII - Notice of Opening</td>
         <td class="description">Within 30 days of opening a branch</td>
         <td class="frequency">One Time</td>
-        <td>-</td>
+        <td class="summary-repeats">-</td>
         <td class="icon-3x text-center"><i id="edit-icon" class="fa fa-pencil text-primary c-pointer"></i></td>
         <td class="icon-3x text-center"><i id="status" class="fa c-pointer"></i></td>
       </tr>
@@ -550,7 +550,7 @@
     </li>
   </div>
 
-    <div id="date-list-templates" class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1">
+    <div id="date-list-templates" class="statu-date-pan col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1">
         <div class="col-sm-8 no-padding-left">
             <div class="col-sm-6 no-padding-left show-statutory-date-month-multiple-1">
                 <select class="form-control input-sm month-select"></select>
@@ -588,17 +588,21 @@
 <script type="text/javascript" src="/js/wizard/jquery.bootstrap.wizard.js"></script>
 
 <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
-<!--
+
 <script type="text/javascript">
 
     $(document).ready(function(){
-        $('#basicwizard').bootstrapWizard({
-            onTabClick: function(tab, navigation, index) {
-                return false;
-            }
+        // $('#basicwizard').bootstrapWizard({
+        //     onTabClick: function(tab, navigation, index) {
+        //         return false;
+        //     }
+        // });
+        $('#basicwizard .nav-tabs li a').click(function() {
+          return false;
         });
+
     });
-</script> -->
+</script>
 
 
 {% endblock %}
