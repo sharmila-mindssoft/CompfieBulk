@@ -1,0 +1,134 @@
+2017-01-03 11:39:54,674 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:39:54,677 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 125, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 256, in process_get_auto_deletion_list
+    ) = get_auto_deletion_form_data(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 448, in get_auto_deletion_form_data
+    groups = data[0]
+IndexError: list index out of range
+ 
+
+2017-01-03 11:42:37,854 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:42:37,854 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 125, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 256, in process_get_auto_deletion_list
+    ) = get_auto_deletion_form_data(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 448, in get_auto_deletion_form_data
+    groups = data[0]
+IndexError: list index out of range
+ 
+
+2017-01-03 12:00:55,350 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 12:00:55,351 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 125, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 256, in process_get_auto_deletion_list
+    ) = get_auto_deletion_form_data(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 448, in get_auto_deletion_form_data
+    groups = data[0]
+IndexError: list index out of range
+ 
+
+2017-01-03 12:01:27,181 - knowledge_logger - main.py-handle-api- : 'deletion_year' 
+
+2017-01-03 12:01:27,182 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 125, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 256, in process_get_auto_deletion_list
+    ) = get_auto_deletion_form_data(db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 453, in get_auto_deletion_form_data
+    units_list = return_units(units)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 493, in return_units
+    ) for datum in data
+KeyError: 'deletion_year'
+ 
+
+2017-01-03 14:52:02,965 - knowledge_logger - main.py-handle-api- : sp_unitautodeletion_delete- (1,)- 1146 (42S02): Table 'compfie_knowledge_updated1.tbl_unit_autodeletion' doesn't exist 
+
+2017-01-03 14:52:02,966 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 133, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 269, in process_save_auto_deletion
+    save_auto_deletion_details(db, request, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 526, in save_auto_deletion_details
+    db.call_update_proc("sp_unitautodeletion_delete", (legal_entity_id,))
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/dbase.py", line 820, in call_update_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_unitautodeletion_delete- (1,)- 1146 (42S02): Table 'compfie_knowledge_updated1.tbl_unit_autodeletion' doesn't exist
+ 
+
+2017-01-03 14:54:28,716 - knowledge_logger - main.py-handle-api- : sp_unitautodeletion_delete- (1,)- 1146 (42S02): Table 'compfie_knowledge_updated1.tbl_unit_autodeletion' doesn't exist 
+
+2017-01-03 14:54:28,717 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 133, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 269, in process_save_auto_deletion
+    save_auto_deletion_details(db, request, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 526, in save_auto_deletion_details
+    db.call_update_proc("sp_unitautodeletion_delete", (legal_entity_id,))
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/dbase.py", line 820, in call_update_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_unitautodeletion_delete- (1,)- 1146 (42S02): Table 'compfie_knowledge_updated1.tbl_unit_autodeletion' doesn't exist
+ 
+
+2017-01-03 14:55:41,581 - knowledge_logger - main.py-handle-api- : Configuring auto deletion failed 
+
+2017-01-03 14:55:41,581 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 133, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 269, in process_save_auto_deletion
+    save_auto_deletion_details(db, request, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 541, in save_auto_deletion_details
+    raise process_error("E078")
+RuntimeError: Configuring auto deletion failed
+ 
+
+2017-01-03 15:07:32,762 - knowledge_logger - main.py-handle-api- : global name 'tblUnitAutoDeletion' is not defined 
+
+2017-01-03 15:07:32,762 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/main.py", line 321, in handle_console_admin
+    return controller.process_console_admin_request(request, db)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 133, in process_console_admin_request
+    db, request_frame, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/controller/consoleadmincontroller.py", line 269, in process_save_auto_deletion
+    save_auto_deletion_details(db, request, session_user)
+  File "/home/minds/projects/Aparajitha-SAAS/Know-src-server/server/database/consoleadmin.py", line 528, in save_auto_deletion_details
+    tblUnitAutoDeletion, insert_columns, insert_values
+NameError: global name 'tblUnitAutoDeletion' is not defined
+ 
+

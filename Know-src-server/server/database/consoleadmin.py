@@ -471,7 +471,7 @@ def return_auto_deletion_legal_entites(data):
             client_id=datum["client_id"],
             unit_count=datum["unit_count"],
             deletion_period=datum["deletion_period"],
-            is_active=bool(datum["is_active"])
+            is_closed=bool(datum["is_closed"])
         ) for datum in data
     ]
     return result
@@ -489,7 +489,7 @@ def return_units(data):
             unit_id=datum["unit_id"], client_id=datum["client_id"],
             legal_entity_id=datum["legal_entity_id"],
             unit_code=datum["unit_code"], address=datum["address"],
-            unit_name=datum["unit_name"], deletion_year=datum["deletion_year"]
+            unit_name=datum["unit_name"], deletion_period=datum["deletion_period"]
         ) for datum in data
     ]
     return result
@@ -505,7 +505,7 @@ def save_auto_deletion_details(db, request, session_user):
     auto_deletion_details = request.auto_deletion_details
     unit_ids = []
     insert_columns = [
-        "client_id", "legal_entity_id", "unit_id", "deletion_year"
+        "client_id", "legal_entity_id", "unit_id", "deletion_period"
     ]
     insert_values = []
     legal_entity_id = None
@@ -515,7 +515,7 @@ def save_auto_deletion_details(db, request, session_user):
         insert_values.append(
             (
                 detail.client_id, detail.legal_entity_id,
-                detail.unit_id, detail.deletion_year
+                detail.unit_id, detail.deletion_period
             )
         )
     #
@@ -525,7 +525,7 @@ def save_auto_deletion_details(db, request, session_user):
     #
     db.call_update_proc("sp_unitautodeletion_delete", (legal_entity_id,))
     result = db.bulk_insert(
-        tblUnitAutoDeletion, insert_columns, insert_values
+        tblAutoDeletion, insert_columns, insert_values
     )
     if result:
         #

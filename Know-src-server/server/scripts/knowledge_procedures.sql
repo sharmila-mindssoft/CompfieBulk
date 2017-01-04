@@ -2788,24 +2788,24 @@ CREATE PROCEDURE `sp_unit_autodeletion_list`()
 BEGIN
     SELECT client_id, group_name FROM tbl_client_groups;
 
-    SELECT legal_entity_id, legal_entity_name, client_id,
+    SELECT tl.legal_entity_id, tl.legal_entity_name, tl.client_id,
     (
         SELECT count(unit_id) FROM tbl_units tu
         WHERE tu.legal_entity_id=tl.legal_entity_id
     ) as unit_count,
     (
-        SELECT max(deletion_year) FROM tbl_unit_autodeletion tua
+        SELECT max(deletion_period) FROM tbl_auto_deletion tua
         WHERE tua.client_id=tl.client_id
         and tua.legal_entity_id = tl.legal_entity_id
-    ) as deletion_period, is_active
-    FROM tbl_legal_entities tl;
+    ) as deletion_period, tl.is_closed
+    FROM tbl_legal_entities tl where tl.is_approved = 1;
 
-    SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
+    SELECT tu.unit_id, tu.client_id, tu.legal_entity_id, tu.unit_code, tu.unit_name,
     (
-        SELECT deletion_year FROM tbl_unit_autodeletion tua
+        SELECT deletion_period FROM tbl_auto_deletion tua
         WHERE tua.client_id=tu.client_id
-        and tua.legal_entity_id = tu.legal_entity_id
-    ) as deletion_year, address FROM tbl_units tu;
+        and tua.legal_entity_id = tu.legal_entity_id and tua.unit_id = tu.unit_id
+    ) as deletion_period, address FROM tbl_units tu where tu.is_approved = 1;
 END //
 
 DELIMITER ;
@@ -2821,7 +2821,7 @@ CREATE PROCEDURE `sp_unitautodeletion_delete`(
     IN le_id INT(11)
 )
 BEGIN
-    DELETE FROM tbl_unit_autodeletion
+    DELETE FROM tbl_auto_deletion
     WHERE legal_entity_id=le_id;
 END //
 
