@@ -1,88 +1,86 @@
-{% extends "files/desktop/knowledge/home/container.html" %}
-{% block content %}
+{% extends "files/desktop/knowledge/home/container.html" %} {% block content %}
 <div class="content-container width80" id="client-unit-approve-view">
     <div class="content-area">
-      <h1>Client Unit Approval</h1>
-      <div class="clearfix"></div>
-      <div class="grid-table">
-        <table class="js-filtertable">
-          <thead>
-          <tr align="left">
-            <th align="center" style="width: 5%">#</th>
-            <th>Group</th>
-            <th>Business Group</th>
-            <th>Country</th>
-            <th>Legal Entity</th>
-            <th>No. of active units</th>
-            <th align="center" style="width: 15%">Approve</th>
-          </tr>
-          <tr>
-            <td align="center"></td>
-            <td>
-              <input type="text" class="filter-text-box js-filter" id="search-group-name">
-            </td>
-            <td>
-              <input type="text" class="filter-text-box js-filter" id="search-bg-name">
-            </td>
-            <td>
-              <input type="text" class="filter-text-box js-filter" id="search-country-name">
-            </td>
-            <td>
-              <input type="text" class="filter-text-box js-filter" id="search-le-name">
-            </td>
-            <td>
-              <input type="text" class="filter-text-box js-filter" id="search-no-of-u">
-            </td>
-            <td align="center"></td>
-          </tr>
-          </thead>
-          <tbody class="tbody-client-unit-list">
-          </tbody>
-        </table>
-      </div>
+        <h1>Client Unit Approval</h1>
+        <div class="clearfix"></div>
+        <div class="grid-table">
+            <table class="js-filtertable">
+                <thead>
+                    <tr align="left">
+                        <th align="center" style="width: 5%">#</th>
+                        <th>Group</th>
+                        <th>Business Group</th>
+                        <th>Country</th>
+                        <th>Legal Entity</th>
+                        <th>No. of active units</th>
+                        <th align="center" style="width: 15%">Approve</th>
+                    </tr>
+                    <tr>
+                        <td align="center"></td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="search-group-name">
+                        </td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="search-bg-name">
+                        </td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="search-country-name">
+                        </td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="search-le-name">
+                        </td>
+                        <td>
+                            <input type="text" class="filter-text-box js-filter" id="search-no-of-u">
+                        </td>
+                        <td align="center"></td>
+                    </tr>
+                </thead>
+                <tbody class="tbody-client-unit-list">
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-<div class="content-container default-display-none" id="clientunit-approve" >
-  <div class="content-area">
-    <div class="add-container">
-        <div class="add-container-heading">
-            Client Unit Approve<span class="error-message"></span>
-        </div>
-        <br>
-        <div class="input-row">
-            <table class="unit-approval-table-title">
-            <tbody>
-                <tr>
-                    <td width="25%" align="center" class="approve_group_name"></td>
-                    <td width="20%" align="center" class="approve_country_name"></td>
-                    <td width="30%" align="center" class="approve_bg_name"></td>
-                    <td width="25%" align="center" class="approve_le_name"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="tbody-approval-list">
-      </div>
-          <div class="submit-button-container">
-            <input type="reset" name="cancel" value="Cancel" class="btn-cancel cancel-approval-form" >
-            &nbsp;&nbsp;
-            <input type="submit" name="Submit" value="Submit" class="btn-submit submit-approval-form" >
+<div class="content-container default-display-none" id="clientunit-approve">
+    <div class="content-area">
+        <div class="add-container">
+            <div class="add-container-heading">
+                Client Unit Approve<span class="error-message"></span>
+            </div>
+            <br>
+            <div class="input-row">
+                <table class="unit-approval-table-title">
+                    <tbody>
+                        <tr>
+                            <td width="25%" align="center" class="approve_group_name"></td>
+                            <td width="20%" align="center" class="approve_country_name"></td>
+                            <td width="30%" align="center" class="approve_bg_name"></td>
+                            <td width="25%" align="center" class="approve_le_name"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tbody-approval-list">
+            </div>
+            <div class="submit-button-container">
+                <input type="reset" name="cancel" value="Cancel" class="btn-cancel cancel-approval-form"> &nbsp;&nbsp;
+                <input type="submit" name="Submit" value="Submit" class="btn-submit submit-approval-form">
+            </div>
         </div>
     </div>
-  </div>
 </div>
 <div id="templates">
     <table class="table-approval-list">
         <tr>
-          <td align="center" class="sno"></td>
-          <td class="group-name"></td>
-          <td class="bg-name"></td>
-          <td class="country-name"></td>
-          <td class="le-name"></td>
-          <td class="no-of-units"></td>
-          <td align="center">
-            <input type="submit" value="Approve" class="btn-save">
-          </td>
+            <td align="center" class="sno"></td>
+            <td class="group-name"></td>
+            <td class="bg-name"></td>
+            <td class="country-name"></td>
+            <td class="le-name"></td>
+            <td class="no-of-units"></td>
+            <td align="center">
+                <input type="submit" value="Approve" class="btn-save">
+            </td>
         </tr>
     </table>
     <div class="add-container view-divition" style="padding-left:0px; padding-right:0px;">
@@ -95,11 +93,11 @@
                 </tr>
                 <tr align="left">
                     <th width="3%">#</th>
-                    <th width="12%">Unit Location</th> 
+                    <th width="12%">Unit Location</th>
                     <th width="8%">Unit Code</th>
-                    <th width="10%">Unit Name</th> 
+                    <th width="10%">Unit Name</th>
                     <th width="13%">Unit Address</th>
-                    <th width="8%">Postal Code</th> 
+                    <th width="8%">Postal Code</th>
                     <th width="12%">Domain</th>
                     <th width="12%">Organization</th>
                     <th width="12%">Action</th>
@@ -110,8 +108,7 @@
             </table>
         </div>
     </div>
-
-    <div class="unit-row-template">            
+    <div class="unit-row-template">
         <table>
             <tr>
                 <td class="sno"></td>
@@ -124,8 +121,7 @@
                 <td class="orgs"></td>
                 <td class="approve-control"></td>
                 <td class="reason-box">
-                    <textarea class="input-box default-display-none reason" 
-                    placeholder="Reason text here"></textarea>
+                    <textarea class="input-box default-display-none reason" placeholder="Reason text here"></textarea>
                 </td>
             </tr>
         </table>
@@ -140,4 +136,3 @@
 </div>
 <script type="text/javascript" src="/script/client-unit-approval/clientunitapproval.js"></script>
 {% endblock %}
-

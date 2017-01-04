@@ -1,424 +1,54 @@
-2016-12-23 11:18:41,610 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    company.db_name
-TypeError: __init__() takes exactly 2 arguments (6 given)
+2017-01-02 10:57:07,878 - client_logger - clientmain.py-handle-api : 'ClientUserGroup' object has no attribute 'category_form_ids' 
+
+2017-01-02 10:57:07,894 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 595, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 496, in to_RecordType
+    data = klass.to_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\core.py", line 3848, in to_structure
+    "f_ids": self.category_form_ids,
+AttributeError: 'ClientUserGroup' object has no attribute 'category_form_ids'
  
 
-2016-12-23 11:18:41,611 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
+2017-01-02 10:59:40,151 - client_logger - clientmain.py-handle-api : __init__() takes exactly 7 arguments (6 given) 
 
-2016-12-23 11:18:41,611 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:18:41,611 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
+2017-01-02 10:59:40,154 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 343, in process_get_user_privileges
+    user_group_list = process_get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 322, in process_get_user_privilege_details_list
+    user_group_id, user_group_name, user_category_id, user_category_name, is_active
+TypeError: __init__() takes exactly 7 arguments (6 given)
  
 
-2016-12-23 11:20:21,727 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    company.db_name
-TypeError: __init__() takes exactly 2 arguments (6 given)
+2017-01-02 11:12:01,161 - client_logger - clientmain.py-handle-api : 'category_form_ids' 
+
+2017-01-02 11:12:01,164 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 344, in process_get_user_privileges
+    user_group_list = process_get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 319, in process_get_user_privilege_details_list
+    category_form_ids = row["category_form_ids"]
+KeyError: 'category_form_ids'
  
-
-2016-12-23 11:20:21,728 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:20:21,729 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:20:21,729 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:22:01,841 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    company.db_name
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:22:01,842 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:22:01,842 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:22:01,843 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:23:42,414 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    company.db_name
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:23:42,414 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:23:42,415 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:23:42,415 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:25:22,444 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    company.db_name
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:25:22,445 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:25:22,446 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:25:22,446 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:27:02,555 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    self._databases = {}
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:27:02,556 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:27:02,557 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:27:02,557 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    company.db_ip.port,
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:28:42,670 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    self._databases = {}
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:28:42,671 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:28:42,672 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:28:42,672 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    #     company.db_ip.ip_address,
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:30:22,780 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:30:22,780 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:30:22,781 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:30:22,782 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:32:02,888 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:32:02,888 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:32:02,889 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:32:02,890 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:33:42,959 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:33:42,960 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:33:42,961 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:33:42,961 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:35:23,062 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:35:23,062 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:35:23,063 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:35:23,063 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:37:03,094 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:37:03,094 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:37:03,095 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:37:03,095 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:38:43,210 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:38:43,211 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:38:43,212 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:38:43,212 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:40:23,277 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:40:23,278 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:40:23,279 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:40:23,279 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:42:03,338 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:42:03,338 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:42:03,339 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:42:03,340 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:43:43,442 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:43:43,443 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:43:43,444 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:43:43,444 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:45:23,549 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:45:23,550 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:45:23,551 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:45:23,551 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:47:03,654 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:47:03,654 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:47:03,655 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:47:03,656 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:48:43,732 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:48:43,733 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:48:43,733 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:48:43,733 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:50:23,827 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:50:23,828 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:50:23,829 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:50:23,830 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:52:03,862 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:52:03,863 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:52:03,864 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:52:03,864 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:53:43,972 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:53:43,972 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:53:43,972 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:53:43,973 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 11:55:24,019 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 141, in server_added
-    rep_man.stop()
-TypeError: __init__() takes exactly 2 arguments (6 given)
- 
-
-2016-12-23 11:55:24,021 - client_logger - clientmain.py-server-added : __init__() takes exactly 2 arguments (6 given) 
-
-2016-12-23 11:55:24,022 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 11:55:24,023 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 12:26:58,123 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 121, in client_connection_pool
-    pool_name=le_id + "con_pool",
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 12:26:58,123 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 12:26:58,123 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 12:26:58,123 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 174, in server_added
-    logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 12:27:37,919 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 121, in client_connection_pool
-    pool_name=le_id + "con_pool",
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 12:27:37,919 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 12:27:37,919 - client_logger - clientmain.py-server-added : cannot concatenate 'str' and 'dict' objects 
-
-2016-12-23 12:27:37,919 - client_logger - clientmain.py-server-added : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 174, in server_added
-    logger.logClientApi("Client database not available to connect ", str(company_id) + "-" + company.to_structure())
-TypeError: cannot concatenate 'str' and 'dict' objects
- 
-
-2016-12-23 12:27:58,646 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 121, in client_connection_pool
-    pool_name=le_id + "con_pool",
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
- 
-
-2016-12-23 12:27:58,646 - client_logger - clientmain.py-server-added : unsupported operand type(s) for +: 'int' and 'str' 
-
-2016-12-23 12:28:17,374 - client_logger - exception : Traceback (most recent call last):
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 154, in server_added
-    db_cons = self.client_connection_pool(company, company_id)
-  File "/home/ushadevi/Usha/Python/workspace/Compliance-Mirror/Client-src-server/server/clientmain.py", line 127, in client_connection_pool
-    host=data.db_ip_ip_address,
-AttributeError: 'Company' object has no attribute 'db_ip_ip_address'
- 
-
-2016-12-23 12:28:17,374 - client_logger - clientmain.py-server-added : 'Company' object has no attribute 'db_ip_ip_address' 
 

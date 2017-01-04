@@ -264,7 +264,6 @@ def parse_values(field_name, param, val, type="To"):
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
-            print field_name
             if len(val) == 0:
                 raise expectation_error(
                     "a string with max length(%s) for %s" % (

@@ -1,0 +1,326 @@
+2016-12-29 10:31:30,746 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-29 10:31:30,753 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 517, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    klass = return_import(module_name, class_name)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 477, in return_import
+    klass = getattr(mod, class_name)
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+
+2016-12-29 10:37:21,098 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead) 
+
+2016-12-29 10:37:21,101 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 517, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 498, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead)
+ 
+
+2016-12-29 10:39:00,858 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead) 
+
+2016-12-29 10:39:00,864 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 517, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 498, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead)
+ 
+
+2016-12-29 10:42:54,710 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-29 10:42:54,710 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 517, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    klass = return_import(module_name, class_name)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 477, in return_import
+    klass = getattr(mod, class_name)
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+
+2016-12-29 10:45:40,663 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-29 10:45:40,667 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 495, in to_RecordType
+    klass = return_import(module_name, class_name)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 475, in return_import
+    klass = getattr(mod, class_name)
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+
+2016-12-29 10:50:11,786 - client_logger - clientmain.py-handle-api : global name 'to_structure_dictionary_values' is not defined 
+
+2016-12-29 10:50:11,792 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+NameError: global name 'to_structure_dictionary_values' is not defined
+ 
+
+2016-12-29 10:52:38,703 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-29 10:52:38,710 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 495, in to_RecordType
+    klass = return_import(module_name, class_name)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 475, in return_import
+    klass = getattr(mod, class_name)
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+
+2016-12-29 10:55:11,657 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-29 10:55:11,661 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 495, in to_RecordType
+    klass = return_import(module_name, class_name)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 475, in return_import
+    klass = getattr(mod, class_name)
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+
+2016-12-29 10:57:23,744 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-29 10:57:23,755 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 495, in to_RecordType
+    klass = return_import(module_name, class_name)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 475, in return_import
+    klass = getattr(mod, class_name)
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+
+2016-12-29 11:02:18,959 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-29 11:02:18,966 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 351, in process_get_user_privileges
+    user_group_list = process_get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 330, in process_get_user_privilege_details_list
+    clientmasters.ClientUserGroup(
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+
+2016-12-29 11:04:49,380 - client_logger - clientmain.py-handle-api : is_active is not configured in settings 
+
+2016-12-29 11:04:49,384 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 407, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: is_active is not configured in settings
+ 
+
+2016-12-29 11:08:08,697 - client_logger - clientmain.py-handle-api : form_ids is not configured in settings 
+
+2016-12-29 11:08:08,700 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 407, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: form_ids is not configured in settings
+ 
+
+2016-12-29 11:46:09,335 - client_logger - clientmain.py-handle-api : expected a number, but received: [1] 
+
+2016-12-29 11:46:09,339 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 460, in to_structure_dictionary_values
+    val = parse_values(field_name, param, val)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 288, in parse_values
+    val = parse_number(val, 0, _length)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 52, in parse_number
+    raise expectation_error("a number", x)
+ValueError: expected a number, but received: [1]
+ 
+
+2016-12-29 16:01:52,789 - client_logger - clientmain.py-handle-api : u_g_id is not configured in settings 
+
+2016-12-29 16:01:52,805 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 423, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 515, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 407, in to_structure_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: u_g_id is not configured in settings
+ 
+
+2016-12-29 17:09:36,585 - client_logger - clientmain.py-handle-api : __init__() takes exactly 5 arguments (6 given) 
+
+2016-12-29 17:09:36,602 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 352, in process_get_user_privileges
+    user_group_list = process_get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 333, in process_get_user_privilege_details_list
+    user_group_id, user_group_name, user_category_id, user_category_name, is_active
+TypeError: __init__() takes exactly 5 arguments (6 given)
+ 
+
+2016-12-29 17:12:54,964 - client_logger - clientmain.py-handle-api : __init__() takes exactly 5 arguments (6 given) 
+
+2016-12-29 17:12:54,969 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 353, in process_get_user_privileges
+    user_group_list = process_get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 334, in process_get_user_privilege_details_list
+    user_group_id, user_group_name, user_category_id, user_category_name, is_active
+TypeError: __init__() takes exactly 5 arguments (6 given)
+ 
+

@@ -22,11 +22,22 @@
                     <div class="portlet-body">
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                        <div class="form-group ">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">India</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <p class="form-control-static">RG Business Group</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:</label>
+                            <div class="col-sm-6 has-feedback">
+                                <p class="form-control-static">RG Legal Entity</p>
                             </div>
                         </div>
                         <div class="form-group">
@@ -36,20 +47,7 @@
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group" >
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
+                        
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Division: </label>
                             <div class="col-sm-6 has-feedback">
@@ -88,7 +86,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Task Status:</label>
+                            <label class="col-sm-4 control-label">Compliance Task Status:</label>
                             <div class="col-sm-6">
                                 <select class="form-control input-sm">
                                   <option>All</option>
@@ -102,9 +100,9 @@
                     </div>
                     <div class="col-sm-12">
                         <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            <div class="form-group m-b-0">
+                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -112,8 +110,19 @@
                 </form>
                 </div>
                 </div>
+                <script type="text/javascript">
+                    function show_div() {
+                        $('.details').show();
+                        $('#compliance_animation')
+                          .removeClass().addClass('bounceInLeft animated')
+                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                          $(this).removeClass();
+                        });
+                    }
+                </script>
                 </div>
-                <div class="card-box">
+                <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
                 <div class="table-responsive">
                     <div class="col-sm-12">
                         <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
@@ -146,7 +155,8 @@
                             <tr>
                                 <td colspan="100%" >
                                     <div class="col-sm-2 no-padding">
-                                        <input type="text" class="form-control input-sm text-center" value="Test Act Central" readonly="true" />
+                                        <!-- <input type="text" class="form-control input-sm text-center" value="Test Act Central" readonly="true" /> -->
+                                        <mark class="p-l-10 p-r-10">Test Act Central</mark>
                                     </div>
                                 </td>
                             </tr>
@@ -158,7 +168,7 @@
                                 <td>Mr. Rajkumar</td>
                                 <td>Delayed Compliance</td>
                                 <td>Fine Rs.10000 or Imprisonment upto 3 yrs</td>
-                                <td><a class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg">View</a></td>
+                                <td><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">View</a></td>
                                 <td><a href="#">Form A</a></td>
                             </tr>
                             <tr>
@@ -174,8 +184,9 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p class="rpt-count">Total : 2 record(s)</p>
+                    <p class="rpt-count m-b-0">Total : 2 record(s)</p>
                 </div>
+            </div>
             </div>
         </div>
         <!-- end col -->
@@ -183,37 +194,45 @@
 </div>
 </div>
 </div>
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="page-title">Task History</h4>
-            <hr class="no-top-margin no-bottom-margin">
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                        <tbody>
-                          <tr class="table_bg_01">
-                            <td class="header-bg1" align="center">Start Date</td>
-                            <td class="header-bg1" align="center">Due Date</td>
-                            <td class="header-bg1" align="center">Assignee</td>
-                            <td class="header-bg1" align="center">Concurr</td>
-                            <td class="header-bg1" align="center">Approver</td>
-                            <td class="header-bg1" align="center">Remarks</td>
-                          </tr>
-                          <tr>
-                            <td align="center">01-Aug-2016</td>
-                            <td align="center">07-Aug-2016</td>
-                            <td align="center">Rajkumar<br/>(08-Aug-2016)</td>
-                            <td align="center">Rajaram<br/>(08-Aug-2016)</td>
-                            <td align="center">Sivaraman<br/>(09-Aug-2016)</td>
-                            <td align="center">Delayed Submission due to payment portal error</td>
-                          </tr>
-                        </tbody>
-                    </table>
-                </div>
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-700">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Task History</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="table-responsive">
+            <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" width="100%">
+                <tbody>
+                  <tr class="table_bg_01">
+                    <td class="header-bg1 text-center" width="09%" >Start Date</td>
+                    <td class="header-bg1 text-center" width="09%">Due Date</td>
+                    <td class="header-bg1 text-center" width="08%">Assignee</td>
+                    <td class="header-bg1 text-center" width="08%" >Concurr</td>
+                    <td class="header-bg1 text-center" width="08%">Approver</td>
+                    <td class="header-bg1" width="15%">Remarks</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">01-Aug-2016</td>
+                    <td class="text-center">07-Aug-2016</td>
+                    <td class="text-center">Rajkumar<br/>(08-Aug-2016)</td>
+                    <td class="text-center">Rajaram<br/>(08-Aug-2016)</td>
+                    <td class="text-center">Sivaraman<br/>(09-Aug-2016)</td>
+                    <td>Delayed Submission due to payment portal error</td>
+                  </tr>
+                </tbody>
+            </table>
             </div>
-        </div>
-    </div><!-- /.modal-dialog -->
+        </form>
+    </div>
 </div>
+<script src="/files/client/common/js/custombox/custombox.min.js"></script>
+
+<script>
+    var resizefunc = [];
+</script>
+
+
 {% endblock %}

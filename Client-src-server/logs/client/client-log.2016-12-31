@@ -1,0 +1,340 @@
+2016-12-31 12:40:44,325 - client_logger - clientmain.py-parse-request : expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [12, 13, 3, 4], u'f_cat_id': 3, u'u_g_name': u'sample'} 
+
+2016-12-31 12:40:44,706 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1233, in parse_structure
+    request = parse_structure_VariantType_clientmasters_Request(request)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 223, in parse_inner_structure
+    data = parse_dictionary(data, ["ug_name", "f_ids"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [12, 13, 3, 4], u'f_cat_id': 3, u'u_g_name': u'sample'}
+ 
+
+2016-12-31 12:59:46,989 - client_logger - clientmain.py-parse-request : expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'} 
+
+2016-12-31 12:59:46,989 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1233, in parse_structure
+    request = data.get("request")
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 223, in parse_inner_structure
+    def parse_inner_structure(data):
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'}
+ 
+
+2016-12-31 13:00:03,269 - client_logger - clientmain.py-parse-request : expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'} 
+
+2016-12-31 13:00:03,269 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1234, in parse_structure
+    request = parse_structure_VariantType_clientmasters_Request(request)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 224, in parse_inner_structure
+    data = parse_dictionary(data, ["ug_name", "f_cat_id", "f_ids"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'}
+ 
+
+2016-12-31 13:04:18,269 - client_logger - clientmain.py-parse-request : expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'} 
+
+2016-12-31 13:04:18,269 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1234, in parse_structure
+    request = parse_structure_VariantType_clientmasters_Request(request)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 224, in parse_inner_structure
+    data = parse_dictionary(data, ["u_g_name", "u_c_id", "f_ids"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "ug_name" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'}
+ 
+
+2016-12-31 13:04:29,029 - client_logger - clientmain.py-parse-request : expected key "u_c_id" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'} 
+
+2016-12-31 13:04:29,029 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1234, in parse_structure
+    request = parse_structure_VariantType_clientmasters_Request(request)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 224, in parse_inner_structure
+    data = parse_dictionary(data, ["u_g_name", "u_c_id", "f_ids"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "u_c_id" is missing in the dictionary, but received: {u'f_ids': [3], u'f_cat_id': 4, u'u_g_name': u'ga'}
+ 
+
+2016-12-31 13:06:16,309 - client_logger - clientmain.py-handle-api : 'NoneType' object has no attribute 'to_structure' 
+
+2016-12-31 13:06:16,309 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 328, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 315, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 230, in _send_response
+    data = response_data.to_structure()
+AttributeError: 'NoneType' object has no attribute 'to_structure'
+ 
+
+2016-12-31 13:34:13,276 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'int' objects 
+
+2016-12-31 13:34:13,278 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 94, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 359, in process_save_user_privileges
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 422, in save_user_privilege
+    print "----->" + result;
+TypeError: cannot concatenate 'str' and 'int' objects
+ 
+
+2016-12-31 13:59:10,611 - client_logger - clientmain.py-parse-request : ug_id is not configured in settings 
+
+2016-12-31 13:59:10,611 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1234, in parse_structure
+    request = parse_structure_VariantType_clientmasters_Request(request)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 245, in parse_inner_structure
+    data = parse_dictionary(data, ["ug_id", "ug_name", "f_ids"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 326, in parse_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: ug_id is not configured in settings
+ 
+
+2016-12-31 14:00:32,931 - client_logger - clientmain.py-parse-request : ug_id is not configured in settings 
+
+2016-12-31 14:00:32,931 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1234, in parse_structure
+    request = parse_structure_VariantType_clientmasters_Request(request)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 245, in parse_inner_structure
+    data = parse_dictionary(data, ["ug_id", "ug_name", "f_ids"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 326, in parse_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: ug_id is not configured in settings
+ 
+
+2016-12-31 15:13:19,559 - client_logger - clientmain.py-parse-request : ug_id is not configured in settings 
+
+2016-12-31 15:13:19,569 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1234, in parse_structure
+    request = data.get("request")
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 245, in parse_inner_structure
+    def parse_inner_structure(data):
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 326, in parse_dictionary_values
+    raise ValueError('%s is not configured in settings' % (field_name))
+ValueError: ug_id is not configured in settings
+ 
+
+2016-12-31 15:58:07,292 - client_logger - clientmain.py-parse-request : expected key "ug_id" is missing in the dictionary, but received: {u'u_c_id': 4, u'f_ids': [26, 28], u'u_g_id': 10, u'u_g_name': u'sfdsfsf'} 
+
+2016-12-31 15:58:07,302 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 269, in _parse_request
+    actual_data
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 1234, in parse_structure
+    request = data.get("request")
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\parse_structure.py", line 1047, in parse_structure_VariantType_clientmasters_Request
+    return clientmasters.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 78, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 245, in parse_inner_structure
+    def parse_inner_structure(data):
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "ug_id" is missing in the dictionary, but received: {u'u_c_id': 4, u'f_ids': [26, 28], u'u_g_id': 10, u'u_g_name': u'sfdsfsf'}
+ 
+
+2016-12-31 16:00:03,101 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'list' objects 
+
+2016-12-31 16:00:03,101 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 452, in update_user_privilege
+    db.delete(tblUserGroupForms, ["user_group_id"], "user_group_id=%s")
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'list' objects
+ 
+
+2016-12-31 16:21:00,144 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'tuple' objects 
+
+2016-12-31 16:21:00,144 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 453, in update_user_privilege
+    db.delete(tblUserGroupForms, condition2, ["user_group_id"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'tuple' objects
+ 
+
+2016-12-31 16:24:24,934 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'tuple' objects 
+
+2016-12-31 16:24:24,934 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 453, in update_user_privilege
+    db.delete(tblUserGroupForms, condition2, ["user_group_id"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'tuple' objects
+ 
+
+2016-12-31 16:25:20,075 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'tuple' objects 
+
+2016-12-31 16:25:20,075 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 453, in update_user_privilege
+    db.delete(tblUserGroupForms, condition2, ["user_group_id"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'tuple' objects
+ 
+
+2016-12-31 16:25:41,085 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'tuple' objects 
+
+2016-12-31 16:25:41,085 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 453, in update_user_privilege
+    db.delete(tblUserGroupForms, condition2, ["user_group_id"])
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'tuple' objects
+ 
+
+2016-12-31 16:54:07,588 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'tuple' objects 
+
+2016-12-31 16:54:07,588 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 453, in update_user_privilege
+    db.delete(tblUserGroupForms, condition2, None)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'tuple' objects
+ 
+
+2016-12-31 16:55:11,539 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'tuple' objects 
+
+2016-12-31 16:55:11,549 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 453, in update_user_privilege
+    db.delete(tblUserGroupForms, condition2, None)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'tuple' objects
+ 
+
+2016-12-31 16:55:43,338 - client_logger - clientmain.py-handle-api : cannot concatenate 'str' and 'tuple' objects 
+
+2016-12-31 16:55:43,338 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 325, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 351, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 377, in process_update_user_privileges
+    elif update_user_privilege(db, request, session_user):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 453, in update_user_privilege
+    db.delete(tblUserGroupForms, condition2, None)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 616, in delete
+    query = "DELETE from "+table+" WHERE "+condition
+TypeError: cannot concatenate 'str' and 'tuple' objects
+ 
+
