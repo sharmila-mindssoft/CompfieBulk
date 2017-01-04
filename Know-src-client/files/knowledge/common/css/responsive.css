@@ -13,6 +13,14 @@
   body {
     overflow-x: hidden;
   }
+  .table-responsive {
+        width: 100%;
+        margin-bottom: 15px;
+        overflow-y: hidden;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+        border: 1px solid #ddd;
+        overflow-x: auto;
+    }
 }
 @media (max-width: 767px) {
   body {
@@ -96,8 +104,11 @@
   div#datatable-buttons_info {
     float: none;
   }
-  .table-responsive{
+  /*.table-responsive{
     border: 0 none;
+  }*/
+  .nav-tabs > li > a{
+    margin-right: 0 !important;
   }
 }
 @media (max-width: 480px) {
