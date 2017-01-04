@@ -441,6 +441,11 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/knowledge/ip-settings",
+        "files/knowledge/ip-settings/ip-settings.html",
+        None, {}
+    ),
+    (
         "/knowledge/configure-file-server",
         "files/knowledge/configure-file-server/configure-file-server.html",
         None, {}

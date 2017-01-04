@@ -33,31 +33,31 @@
                                     <td></td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Country" type="text">
+                                          <input id="country-search" class="form-control input-sm filter-box" placeholder="Country" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Domain" type="text">
+                                          <input id="domain-search" class="form-control input-sm filter-box" placeholder="Domain" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Organization" type="text">
+                                          <input id="org-search" class="form-control input-sm filter-box" placeholder="Organization" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Statutory Nature" type="text">
+                                          <input id="nature-search" class="form-control input-sm filter-box" placeholder="Statutory Nature" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
                                     <td>
                                       <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
-                                          <input class="form-control input-sm" placeholder="Statutory" type="text">
+                                          <input id="statu-search" class="form-control input-sm filter-box" placeholder="Statutory" type="text">
                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                       </div>
                                     </td>
@@ -65,7 +65,7 @@
                                     <td align="center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                                                All
+                                                <i id="search-status" class="fa">All</i>
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu search-status-list">
@@ -215,13 +215,13 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Statutory Provision <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <textarea id="statutory_provision" class="form-control input-sm" rows="1" > </textarea>
+                                                <textarea id="statutory_provision" maxlength="500" class="form-control input-sm" rows="1" > </textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Task <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <input id="compliance_task" class="form-control input-sm" type="text" >
+                                                <input id="compliance_task" class="form-control input-sm" type="text" maxlength="100" >
                                                 <input id="comp_id" class="form-control input-sm" type="hidden" >
                                                 <input id="temp_id" class="form-control input-sm" type="hidden" >
                                             </div>
@@ -229,25 +229,25 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Description <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <textarea id='compliance_description' class="form-control input-sm" rows="1"></textarea>
+                                                <textarea maxlength="500" id='compliance_description' class="form-control input-sm" rows="1"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Document</label>
                                             <div class="col-sm-7">
-                                                <input id="compliance_document" class="form-control input-sm" type="text">
+                                                <input maxlength="50" id="compliance_document" class="form-control input-sm" type="text">
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Format</label>
                                             <div class="col-sm-7">
-                                                <input id="upload_file" class="form-control input-sm no-padding-top" type="file">
+                                                <input  id="upload_file" class="form-control input-sm no-padding-top" type="file">
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Penal Consequences</label>
                                             <div class="col-sm-7">
-                                                <textarea id="penal_consequences" class="form-control input-sm" rows="1"></textarea>
+                                                <textarea maxlength="500" id="penal_consequences" class="form-control input-sm" rows="1"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -255,7 +255,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Reference Link</label>
                                             <div class="col-sm-7">
-                                                <textarea id="reference_link" class="form-control input-sm" rows="1" ></textarea>
+                                                <textarea maxlength="500" id="reference_link" class="form-control input-sm" rows="1" ></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -349,7 +349,7 @@
                                                     </label>
 
                                                     <div class="col-sm-1 no-padding-right">
-                                                        <input id="duration" class="form-control input-sm" type="text">
+                                                        <input maxlength="3" id="duration" class="form-control input-sm" type="text">
                                                     </div>
                                                     <div class="col-sm-2">
                                                         <select id="duration_type" class="form-control input-sm">

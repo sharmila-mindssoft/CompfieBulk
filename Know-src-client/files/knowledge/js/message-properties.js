@@ -288,7 +288,7 @@ var message = {
   "allocated_db_env": "Allocated Database Environment",
   "file_storage_saved": "Configured File Storage",
   "save_auto_deletion_success": "Auto Deletion Saved Successfully",
-  "deletion_year_required": "Deletion year required",
+  "deletion_period_required": "Deletion period required",
   "parent_user_required": "Parent User Required",
   "child_user_required": "Select atleast one child user",
   "mapping_save_success": "User mapping saved successfully",
@@ -336,7 +336,9 @@ var message = {
   "reassign_to_te_required": "Reassign to Techno Executive required",
   "no_records_selected_for_reassign": "No records selected for reassign",
   "reassign_from_reassign_to_both_are_same": "Reaasign from user ans Reassign to user both should not be same",
-  
+  "save_ip_setting_success": "IP Settings Saved Successfully",
+  "delete_ip_setting_success": "IP Settings Deleted Successfully",
+  "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
 };
 
 function clearMessage() {

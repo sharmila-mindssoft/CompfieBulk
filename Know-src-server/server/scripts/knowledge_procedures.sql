@@ -2788,24 +2788,24 @@ CREATE PROCEDURE `sp_unit_autodeletion_list`()
 BEGIN
     SELECT client_id, group_name FROM tbl_client_groups;
 
-    SELECT legal_entity_id, legal_entity_name, client_id,
+    SELECT tl.legal_entity_id, tl.legal_entity_name, tl.client_id,
     (
         SELECT count(unit_id) FROM tbl_units tu
         WHERE tu.legal_entity_id=tl.legal_entity_id
     ) as unit_count,
     (
-        SELECT max(deletion_year) FROM tbl_unit_autodeletion tua
+        SELECT max(deletion_period) FROM tbl_auto_deletion tua
         WHERE tua.client_id=tl.client_id
         and tua.legal_entity_id = tl.legal_entity_id
-    ) as deletion_period, is_active
-    FROM tbl_legal_entities tl;
+    ) as deletion_period, tl.is_closed
+    FROM tbl_legal_entities tl where tl.is_approved = 1;
 
-    SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
+    SELECT tu.unit_id, tu.client_id, tu.legal_entity_id, tu.unit_code, tu.unit_name,
     (
-        SELECT deletion_year FROM tbl_unit_autodeletion tua
+        SELECT deletion_period FROM tbl_auto_deletion tua
         WHERE tua.client_id=tu.client_id
-        and tua.legal_entity_id = tu.legal_entity_id
-    ) as deletion_year, address FROM tbl_units tu;
+        and tua.legal_entity_id = tu.legal_entity_id and tua.unit_id = tu.unit_id
+    ) as deletion_period, address FROM tbl_units tu where tu.is_approved = 1;
 END //
 
 DELIMITER ;
@@ -2821,7 +2821,7 @@ CREATE PROCEDURE `sp_unitautodeletion_delete`(
     IN le_id INT(11)
 )
 BEGIN
-    DELETE FROM tbl_unit_autodeletion
+    DELETE FROM tbl_auto_deletion
     WHERE legal_entity_id=le_id;
 END //
 
@@ -3249,23 +3249,34 @@ DROP PROCEDURE IF EXISTS `sp_users_domain_managers`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_users_domain_managers`(
-    IN session_user INT(11)
+    IN session_user INT(11), _d_id int(11), _cl_id int(11)
 )
 BEGIN
-    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = session_user;
-    IF @u_cat_id = 7 THEN
+    select @catg_id:=user_category_id from tbl_users where user_id = session_user;
+
+    if @catg_id = 5 then
         SELECT user_id,
         concat(employee_code, "-", employee_name) as employee_name,
-        is_active, user_category_id FROM tbl_users WHERE user_category_id = 8 and
+        is_active, user_category_id FROM tbl_users WHERE
+        user_category_id = 7 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
         WHERE parent_user_id=session_user);
-    ELSE
+    else
         SELECT user_id,
         concat(employee_code, "-", employee_name) as employee_name,
-        is_active, user_category_id FROM tbl_users WHERE user_category_id = 7 and
+        is_active, user_category_id FROM tbl_users WHERE
+        user_category_id = 8 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
         WHERE parent_user_id=session_user);
-    END IF;
+    end if;
+
+
+    select t2.user_id, t1.legal_entity_id
+    from tbl_legal_entities as t1, tbl_user_domains as t2
+    where
+    t2.domain_id = _d_id and
+    t2.country_id  = t1.country_id and
+    t1.client_id = _cl_id;
 
 END //
 
@@ -3607,7 +3618,7 @@ BEGIN
     (
         select count(tule.legal_entity_id) from tbl_user_legalentity tule
         inner join tbl_legal_entities tle on tle.legal_entity_id = tule.legal_entity_id
-        WHERE tule.client_id=tcg.client_id and tle.is_closed = 0 and tle.is_approved = 1 
+        WHERE tule.client_id=tcg.client_id and tle.is_closed = 0 and tle.is_approved = 1
         group by tule.client_id
     ) as no_of_assigned_legal_entities
 
@@ -6156,10 +6167,10 @@ BEGIN
     closed_remarks = _rem where
     legal_entity_id = _le_id;
 
-    if is_cl = 0 then
+    if _is_cl = 0 then
         INSERT INTO tbl_messages
         SET
-        user_category_id = (select user_category_id from tbl_user_category
+        user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
         message_text = (select concat(legal_entity_name,' ','has been closed')
@@ -6168,7 +6179,7 @@ BEGIN
     else
         INSERT INTO tbl_messages
         SET
-        user_category_id = (select user_category_id from tbl_user_category
+        user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
         message_text = (select concat(legal_entity_name,' ','has been reactivated')
@@ -7551,7 +7562,7 @@ in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
 BEGIN
     INSERT INTO tbl_messages
     SET
-    user_category_id = (select user_category_id from tbl_user_category
+    user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = _u_id),
     message_heading = 'Client Unit',
     message_text = (select concat('Client unit has been created for',' ',group_name)
@@ -7562,6 +7573,194 @@ BEGIN
     SET
     message_id = (select LAST_INSERT_ID()),
     user_id = (select user_id from tbl_user_clients where client_id = _client_id);
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Update message for client unit
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_unit_messages_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_unit_messages_update`(
+in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+BEGIN
+    INSERT INTO tbl_messages
+    SET
+    user_category_id = (select user_category_id from tbl_user_login_details
+    where user_id = _u_id),
+    message_heading = 'Client Unit',
+    message_text = (select concat('Client unit has been updated for',' ',group_name)
+    from tbl_client_groups where client_id = _client_id),
+    link = _link, created_by = _u_id, created_on = _created_on;
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = (select user_id from tbl_user_clients where client_id = _client_id);
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Save message of unit assigned to user - assign client unit
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_assign_client_unit_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_client_unit_save`(
+in _user_id int(11), _unit_id int(11),_link text, _created_by int(11),
+    _created_on timestamp)
+BEGIN
+    INSERT INTO tbl_messages
+    SET
+    user_category_id = (select user_category_id from tbl_user_category
+    where user_id = _created_by),
+    message_heading = 'Assign Client Unit',
+    message_text = (select concat(unit_name,' ','unit has been assigned')
+    from tbl_units where unit_id = _unit_id),
+    link = _link, created_by = _created_on, created_on = _created_on;
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = _user_id;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Save Notification message  - assign legal entity
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_assign_legal_entity_save_message`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_legal_entity_save_message`(
+in _user_id int(11), _le_id int(11), _link text, _created_by int(11), _created_on timestamp)
+BEGIN
+    INSERT INTO tbl_messages
+    SET
+    user_category_id = (select user_category_id from tbl_user_login_details
+    where user_id = _created_by),
+    message_heading = 'Assign Legal Entity',
+    message_text = (select concat(legal_entity_name,' ','has been assigned')
+    from tbl_legal_entities where legal_entity_id = _le_id),
+    link = _link, created_by = _created_by, created_on = _created_on;
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = _user_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Client Unit Approval - save messages
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_unit_apprival_messages_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
+in _u_id int(11), _link text, _le_name varchar(50), _created_on timestamp)
+BEGIN
+    INSERT INTO tbl_messages
+    SET
+    user_category_id = (select user_category_id from tbl_user_login_details
+    where user_id = _u_id),
+    message_heading = 'Client Unit Approval',
+    message_text = concat('Client unit(s) has been approved for',' ',_le_name),
+    link = _link, created_by = _u_id, created_on = _created_on;
+
+    select @_client_id:=client_id from tbl_legal_entities where
+    legal_entity_name = _le_name;
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = (select max(created_by) from tbl_units where client_id = @_client_id);
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for IP Settings form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_list`()
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups;
+
+    SELECT form_id, form_name
+    FROM tbl_client_forms order by form_order;
+
+    SELECT distinct ips.client_id, ips.form_id,
+    (select group_name from tbl_client_groups where client_id = ips.client_id) as group_name
+    FROM tbl_ip_settings ips order by group_name;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Client IP Details
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_group_ip_details`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_group_ip_details`(
+    IN c_id INT(11)
+)
+BEGIN
+    SELECT form_id, ips, client_id FROM tbl_ip_settings where client_id = c_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To delete IP Setting details of particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_delete`(
+    IN c_id INT(11)
+)
+BEGIN
+    DELETE FROM tbl_ip_settings
+    WHERE client_id=c_id;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get name of group
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_group_name_by_id`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_group_name_by_id`(
+    IN c_id INT(11)
+)
+BEGIN
+    SELECT group_name
+    FROM tbl_client_groups
+    WHERE client_id=c_id;
 END //
 
 DELIMITER ;

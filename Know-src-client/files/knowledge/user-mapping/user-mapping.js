@@ -265,11 +265,11 @@ function activateChildUsers(){
                 if(ACTIVE_CHILD_USERS.indexOf(value.user_id) != -1){
                     clone.addClass('active');
                     clone.find('i').addClass('fa fa-check pull-right');
-                }else{
+                }/*else{
                     if(cTab != 'tech-mgr-mgr-tab'){
                         clone.remove();
                     }
-                }
+                }*/
             }
         });
     }   

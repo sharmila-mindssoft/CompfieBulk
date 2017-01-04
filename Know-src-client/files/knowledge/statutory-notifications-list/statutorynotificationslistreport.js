@@ -172,6 +172,7 @@ function loadCompliances(data){
     else {
       showPagePan(showFrom, sno, totalRecord);
     }
+    hideLoader();
 }
 //Status Title
 function showTitle(e, notf_text){

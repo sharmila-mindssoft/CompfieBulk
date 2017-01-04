@@ -1397,7 +1397,7 @@ def update_unit(db, client_id, units, session_user):
 
     action = "Updated following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, 19, action)
-
+    db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
     if result is True:
         for i in unit_ids:
             print "i"
@@ -2255,7 +2255,7 @@ def get_domain_managers_for_user(db, client_id, domain_id, session_user):
     #     "sp_users_domain_managers", [session_user], 2
 
     users = db.call_proc_with_multiresult_set(
-        "sp_users_domain_managers", [session_user, domain_id, client_id], 2)
+        "sp_users_domain_managers", [session_user, domain_id, client_id], 3)
     print "users"
     print users
     return return_domain_managers(users)
@@ -2268,14 +2268,14 @@ def return_domain_managers(data):
         fn(
             user_id=datum["user_id"], user_category_id=datum["user_category_id"],
             employee_name=datum["employee_name"], is_active=bool(datum["is_active"])
-        ) for datum in data[0]
+        ) for datum in data[1]
     ]
 
     fn = core.DomainUser
     domain_user_list = [
         fn(
             user_id=datum["user_id"], legal_entity_id=datum["legal_entity_id"]
-        ) for datum in data[1]
+        ) for datum in data[2]
     ]
     print domain_user_list
     return result, domain_user_list
@@ -2335,6 +2335,10 @@ def save_assigned_units(db, request, session_user):
             session_user, current_time_stamp
         )
         values_list.append(value_tuple)
+        db.call_insert_proc("sp_assign_client_unit_save", (
+            domain_manager_id, unit.unit_id, '/knowledge/assign-client-unit',
+            session_user, current_time_stamp)
+        )
         print "assigned list"
         print values_list
     #
@@ -2469,6 +2473,9 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
                 session_user, current_time_stamp
             )
             values_list.append(values_tuple)
+            db.call_insert_proc("sp_assign_legal_entity_save_message", (
+                user_id, legal_entity_id, '/knowledge/assign-legal-entity', session_user, current_time_stamp)
+            )
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
     if res is False:
         raise process_error("E041")

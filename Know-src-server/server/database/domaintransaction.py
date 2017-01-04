@@ -29,7 +29,7 @@ def return_assigned_statutories(data):
     fn = domaintransactionprotocol.AssignedStatutories
     data_list = []
     for d in data :
-        is_edit = True if d["is_edit"] > 0 else False
+        is_edit = True if d.get("is_edit") > 0 else False
         is_edit = True if d["status"] == 4 else is_edit
         c_name = "%s - %s" % (d["unit_code"], d["unit_name"])
         data_list.append(fn(
@@ -71,7 +71,7 @@ def return_statutories_filters(data):
     ]
 
     entity_list = [
-        core.UnitLegalEntity(
+        core.AssignUnitLegalEntity(
             datum["legal_entity_id"], datum["legal_entity_name"],
             datum["business_group_id"], datum["client_id"]
         ) for datum in entitys

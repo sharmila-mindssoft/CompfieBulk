@@ -30,7 +30,9 @@ CREATE TABLE `tbl_client_activity_log` (
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
   `activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `user_category_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `user_category_id` int(11) NOT NULL,
   `form_id` int(11) NOT NULL,
   `action` varchar(500) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL
@@ -557,6 +559,7 @@ CREATE TABLE `tbl_legal_entities` (
   `used_licence` int(11) DEFAULT '0',
   `is_closed` tinyint(4) DEFAULT '0',
   `is_approved` tinyint(4) DEFAULT '0',
+  `is_created` tinyint(4) DEFAULT '0',
   `reason` Text DEFAULT NULL,
   `approved_by` int(11) DEFAULT NULL,
   `approved_on` timestamp NULL DEFAULT NULL,
@@ -779,7 +782,7 @@ CREATE TABLE `tbl_application_server` (
   `machine_name` varchar(50) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
-  `legal_entity_ids` longtext,
+  `group_ids` longtext,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -1024,7 +1027,7 @@ CREATE TABLE `tbl_user_replacement_history` (
   `remarks` varchar(500) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`user_account_id`)
+  PRIMARY KEY (`user_replace_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_validity_date_settings`;
@@ -1065,7 +1068,7 @@ CREATE TABLE `tbl_ip_settings` (
   `updated_on` timestamp NULL DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`client_informed_id`)
+  PRIMARY KEY (`ip_settings_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_forms`;
@@ -1076,5 +1079,5 @@ CREATE TABLE `tbl_client_forms` (
   `form_type_id` int(11) NOT NULL,
   `parent_menu` varchar(200) DEFAULT NULL,
   `form_order` int(11) NOT NULL,
-  PRIMARY KEY (`client_informed_id`)
+  PRIMARY KEY (`form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

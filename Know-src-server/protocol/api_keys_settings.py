@@ -218,7 +218,7 @@ api_params = {
     "month_from": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "month_to": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "notification_type": {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
-    "org_info": {},
+    "org_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "LegalEntityOrganisation"},
 
     'unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApproval"},
     'unit_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitDetails"},
@@ -258,7 +258,7 @@ api_params = {
     "grps": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "Client"},
 
     "unit_legal_entity": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "UnitLegalEntity"},
-    "lety": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "UnitLegalEntity"},
+    "lety": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "AssignUnitLegalEntity"},
 
     "admin_legal_entity": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'admin', "class_name": "LegalEntity"},
     "group_company_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "GroupCompanyForUnitCreation"},
@@ -600,6 +600,10 @@ api_params = {
     "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
     "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    
+    "ip_setting_forms": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "Form"},
+    "ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "IPSettingsList"},
+    "group_ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "GroupIPDetails"},
 
 }
 
@@ -658,3 +662,4 @@ api_params['d_names'] = api_params.get('mapping')
 api_params["org_id"] = api_params.get("industry_id")
 api_params["org_name"] = api_params.get("industry_name")
 api_params["rcount"] = api_params.get("total_records")
+api_params["count"] = api_params.get("total_records")
