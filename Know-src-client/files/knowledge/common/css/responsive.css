@@ -32,7 +32,7 @@
     width: 70px !important;
   }
   .content-page .content {
-    margin-top: 84px;
+    margin-top: 60px;
   }
   .navbar-nav {
     margin: 0px;
@@ -95,9 +95,6 @@
   }
   div#datatable-buttons_info {
     float: none;
-  }
-  .table-responsive{
-    border: 0 none;
   }
 }
 @media (max-width: 480px) {

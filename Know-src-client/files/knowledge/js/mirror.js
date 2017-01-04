@@ -1814,6 +1814,14 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+  function getDeletionDetails(client_id, entity_id, unit_id, deletion_period) {
+    return {
+        "client_id": client_id,
+        "legal_entity_id": entity_id,
+        "unit_id": unit_id,
+        "deletion_period": deletion_period,
+    }
+  }
   function saveAutoDeletion(auto_deletion_details, callback){
       callerName = "console_admin";
       var request = [
@@ -2585,6 +2593,7 @@ function initMirror() {
     getFileStorage: getFileStorage,
     saveFileStorage: saveFileStorage,
     getAutoDeletionList: getAutoDeletionList,
+    getDeletionDetails: getDeletionDetails,
     saveAutoDeletion: saveAutoDeletion,
     getUserMappings: getUserMappings,
     saveUserMappings: saveUserMappings,

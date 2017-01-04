@@ -271,21 +271,21 @@ class GetAutoDeletionList(Request):
 
 class AutoDeletionDetail(Request):
     def __init__(
-        self, client_id, legal_entity_id, unit_id, deletion_year
+        self, client_id, legal_entity_id, unit_id, deletion_period
     ):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
-        self.deletion_year = deletion_year
+        self.deletion_period = deletion_period
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
-            data, ["client_id", "legal_entity_id", "unit_id", "deletion_year"]
+            data, ["client_id", "legal_entity_id", "unit_id", "deletion_period"]
         )
         return AutoDeletionDetail(
             data.get("client_id"), data.get("legal_entity_id"),
-            data.get("unit_id"), data.get("deletion_year")
+            data.get("unit_id"), data.get("deletion_period")
         )
 
     def to_structure(self):
@@ -293,7 +293,7 @@ class AutoDeletionDetail(Request):
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
             "unit_id": self.unit_id,
-            "deletion_year": self.deletion_year
+            "deletion_period": self.deletion_period
         }
 
 
@@ -878,21 +878,21 @@ class SaveFileStorageSuccess(Response):
 class EntitiesWithAutoDeletion(object):
     def __init__(
         self, legal_entity_id, legal_entity_name, client_id,
-        unit_count, deletion_period, is_active
+        unit_count, deletion_period, is_closed
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.client_id = client_id
         self.unit_count = unit_count
         self.deletion_period = deletion_period
-        self.is_active = is_active
+        self.is_closed = is_closed
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "legal_entity_id", "legal_entity_name", "client_id",
-                "unit_count", "deletion_period", "is_active"
+                "unit_count", "deletion_period", "is_closed"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
@@ -900,10 +900,10 @@ class EntitiesWithAutoDeletion(object):
         client_id = data.get("client_id")
         unit_count = data.get("unit_count")
         deletion_period = data.get("deletion_period")
-        is_active = data.get("is_active")
+        is_closed = data.get("is_closed")
         return EntitiesWithAutoDeletion(
             legal_entity_id, legal_entity_name, client_id,
-            unit_count, deletion_period, is_active
+            unit_count, deletion_period, is_closed
         )
 
     def to_structure(self):
@@ -913,21 +913,21 @@ class EntitiesWithAutoDeletion(object):
             "client_id": self.client_id,
             "unit_count": self.unit_count,
             "deletion_period": self.deletion_period,
-            "is_active": self.is_active
+            "is_closed": self.is_closed
         }
 
 
 class Unit(object):
     def __init__(
         self, unit_id, client_id, legal_entity_id, unit_code, unit_name,
-        deletion_year, address
+        deletion_period, address
     ):
         self.unit_id = unit_id
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.unit_code = unit_code
         self.unit_name = unit_name
-        self.deletion_year = deletion_year
+        self.deletion_period = deletion_period
         self.address = address
 
     @staticmethod
@@ -935,7 +935,7 @@ class Unit(object):
         data = parse_dictionary(
             data, [
                 "unit_id", "client_id", "legal_entity_id", "unit_code",
-                "unit_name", "deletion_year", "address"
+                "unit_name", "deletion_period", "address"
             ]
         )
         unit_id = data.get("unit_id")
@@ -943,11 +943,11 @@ class Unit(object):
         legal_entity_id = data.get("legal_entity_id")
         unit_code = data.get("unit_code")
         unit_name = data.get("unit_name")
-        deletion_year = data.get("deletion_year")
+        deletion_period = data.get("deletion_period")
         address = data.get("address")
         return Unit(
             unit_id, client_id, legal_entity_id, unit_code, unit_name,
-            deletion_year, address
+            deletion_period, address
         )
 
     def to_structure(self):
@@ -957,7 +957,7 @@ class Unit(object):
             "legal_entity_id": self.legal_entity_id,
             "unit_code": self.unit_code,
             "unit_name": self.unit_name,
-            "deletion_year": self.deletion_year,
+            "deletion_period": self.deletion_period,
             "address": self.address
         }
 
