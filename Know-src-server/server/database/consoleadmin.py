@@ -19,7 +19,11 @@ __all__ = [
     "save_auto_deletion_details",
     "get_file_server_list",
     "file_server_entry_process",
-    "is_duplicate_file_server_name"
+    "is_duplicate_file_server_name",
+    "get_ip_settings_form_data",
+    "get_group_ip_details_form_data",
+    "save_ip_setting_details",
+    "delete_ip_setting_details",
 ]
 
 
@@ -626,3 +630,123 @@ def file_server_entry_process(db, request, user_id):
     except Exception, e:
         print e
         raise process_error("E078")
+
+def get_ip_settings_form_data(db):
+    #
+    #  To get data required for ip settings form
+    #  Parameters : None
+    #  Return : Returns Client group details and
+    #   form details
+    #
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_settings_list", None, 3)
+    groups = data[0]
+    forms = data[1]
+    ipslist = data[2]
+    groups_list = return_client_groups(groups)
+    forms_list = return_forms(forms)
+    ips_list = return_ipslist(ipslist)
+    return (
+        groups_list, forms_list, ips_list
+    )
+
+###############################################################################
+# To convert data fetched from database into List of object of Unit
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of Form List
+###############################################################################
+def return_forms(data):
+    fn = consoleadmin.Form
+    result = [
+        fn(
+            form_id=datum["form_id"], form_name=datum["form_name"]
+        ) for datum in data
+    ]
+    return result
+
+def return_ipslist(data):
+    fn = consoleadmin.IPSettingsList
+    result = [
+        fn(
+            client_id=datum["client_id"], form_id=datum["form_id"], group_name=datum["group_name"]
+        ) for datum in data
+    ]
+    return result
+
+def get_group_ip_details_form_data(db, request):
+    #
+    #  To get data required for group ip details
+    #  Parameters : None
+    #  Return : Returns Client groupis IP details
+    #
+    data = db.call_proc(
+        "sp_group_ip_details", [request.client_id]
+    )
+    group_ips_list = return_group_ipslist(data)
+    return (
+        group_ips_list
+    )
+
+def return_group_ipslist(data):
+    fn = consoleadmin.GroupIPDetails
+    result = [
+        fn(
+            form_id=datum["form_id"], ip=datum["ips"], client_id=datum["client_id"]
+        ) for datum in data
+    ]
+    return result
+
+###############################################################################
+# To save ip setting details
+# parameter : Object of databse, Save Auto deletion request, session user
+# return type : Returns True on success full save. Otherwise raises
+#   process error
+###############################################################################
+def save_ip_setting_details(db, request, session_user):
+    ip_setting_details = request.group_ips_list
+    insert_columns = [
+        "client_id", "form_id", "ips"
+    ]
+    insert_values = []
+    client_id = None
+    for detail in ip_setting_details:
+        #unit_ids.append(detail.unit_id)
+        client_id = detail.client_id
+        insert_values.append(
+            (
+                detail.client_id, detail.form_id,
+                detail.ip
+            )
+        )
+    #
+    #  To delete all ip setting details under the legal entity
+    #  Parameters : client id
+    #  Return : True on successfull deletion otherwise returns False
+    #
+    db.call_update_proc("sp_ip_settings_delete", (client_id,))
+    result = db.bulk_insert(
+        tblIPSettings, insert_columns, insert_values
+    )
+    if result:
+        #
+        #  To get legal entity name by it's id to save activity
+        #  Parameters : legal entity id
+        #  Return : Returns legal entity name
+        #
+        data = db.call_proc("sp_group_name_by_id", (client_id,))
+        action = "Configured ip settings for %s " % (
+            data[0]["group_name"])
+        db.save_activity(session_user, frmIPSettings, action)
+    else:
+        raise process_error("E078")
+
+###############################################################################
+# To delete ip setting details
+# parameter : Object of databse, Save Auto deletion request, session user
+# return type : Returns True on success full save. Otherwise raises
+#   process error
+###############################################################################
+def delete_ip_setting_details(db, request, session_user):
+    client_id = request.client_id
+    db.call_update_proc("sp_ip_settings_delete", (client_id,))
+    

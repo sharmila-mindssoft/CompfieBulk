@@ -2435,6 +2435,56 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getIPSettingsList(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsList",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getGroupIPDetails(clientId, callback){
+      callerName = "console_admin";
+      var request = [
+        "GetGroupIPDetails",
+        {
+          "client_id": clientId
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsDetails(form_id, ip, client_id) {
+    return {
+        "form_id": form_id,
+        "ip": ip,
+        "client_id": client_id,
+      }
+  }
+
+  function saveIPSettings(ip_details, callback){
+      callerName = "console_admin";
+      var request = [
+        "SaveIPSettings",
+        {
+          "group_ips_list": ip_details
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function deleteIPSettings(clientId, callback){
+      callerName = "console_admin";
+      var request = [
+        "DeleteIPSettings",
+        {
+          "client_id": clientId
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2643,6 +2693,11 @@ function initMirror() {
     getFileServerList: getFileServerList,
     fileServerEntry: fileServerEntry,
     domainManagerInfo: domainManagerInfo,
+    getIPSettingsList: getIPSettingsList,
+    getGroupIPDetails: getGroupIPDetails,
+    getIPSettingsDetails: getIPSettingsDetails,
+    saveIPSettings: saveIPSettings,
+    deleteIPSettings:deleteIPSettings,
   };
 }
 var mirror = initMirror();

@@ -149,6 +149,10 @@ function isCommon_Unitcode(inputElm) {
   //allowed => alphanumeric
   return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
 }
+function isNumbers_Dot(inputElm) {
+  //allowed => only numbers and dot
+  return inputElm.val().replace(/[^0-9.]/gi, '');
+}
 //move to top function
 jQuery(document).ready(function () {
   var offset = 220;

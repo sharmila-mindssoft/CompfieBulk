@@ -303,12 +303,83 @@ class SaveAutoDeletion(Request):
         }
 
 
+class GetIPSettingsList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetIPSettingsList()
+
+    def to_structure(self):
+        return {
+        }
+
+class GetGroupIPDetails(Request):
+    def __init__(
+        self, client_id
+    ):
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["client_id"]
+        )
+        return GetGroupIPDetails(
+            data.get("client_id")
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+        }
+
+class SaveIPSettings(Request):
+    def __init__(
+        self, group_ips_list
+    ):
+        self.group_ips_list = group_ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["group_ips_list"]
+        )
+        return SaveIPSettings(data.get("group_ips_list"))
+
+    def to_structure(self):
+        return {
+            "group_ips_list": self.group_ips_list
+        }
+
+class DeleteIPSettings(Request):
+    def __init__(
+        self, client_id
+    ):
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["client_id"]
+        )
+        return DeleteIPSettings(
+            data.get("client_id")
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+        }
+
 def _init_Request_class_map():
     classes = [
         GetDatabaseServerList, SaveDBServer, GetClientServerList, SaveClientServer,
         GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
         GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
-        SaveFileServer
+        SaveFileServer, GetIPSettingsList, GetGroupIPDetails, SaveIPSettings, DeleteIPSettings
     ]
     class_map = {}
     for c in classes:
@@ -869,6 +940,92 @@ class Unit(object):
             "address": self.address
         }
 
+class Form(object):
+    def __init__(
+        self, form_id, form_name
+    ):
+        self.form_id = form_id
+        self.form_name = form_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "form_id", "form_name"
+            ]
+        )
+        form_id = data.get("form_id")
+        form_name = data.get("form_name")
+        
+        return Unit(
+            form_id, form_name
+        )
+
+    def to_structure(self):
+        return {
+            "form_id": self.form_id,
+            "form_name": self.form_name
+        }
+
+class IPSettingsList(object):
+    def __init__(
+        self, client_id, form_id, group_name
+    ):
+        self.client_id = client_id
+        self.form_id = form_id
+        self.group_name = group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "form_id", "group_name"
+            ]
+        )
+        client_id = data.get("client_id")
+        form_id = data.get("form_id")
+        group_name = data.get("group_name")
+        
+        return Unit(
+            client_id, form_id, group_name
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "form_id": self.form_id,
+            "group_name": self.group_name
+        }
+
+class GroupIPDetails(object):
+    def __init__(
+        self, form_id, ip, client_id
+    ):
+        self.form_id = form_id
+        self.ip = ip
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "form_id", "ip", "client_id"
+            ]
+        )
+        form_id = data.get("form_id")
+        ip = data.get("ip")
+        client_id = data.get("client_id")
+        
+        return GroupIPDetails(
+            form_id, ip, client_id
+        )
+
+    def to_structure(self):
+        return {
+            "form_id": self.form_id,
+            "ip": self.ip,
+            "client_id": self.client_id
+        }
 
 class GetAutoDeletionListSuccess(Response):
     def __init__(
@@ -952,6 +1109,82 @@ class SaveAutoDeletionSuccess(Response):
         return {}
 
 
+class GetIPSettingsListSuccess(Response):
+    def __init__(
+        self, client_groups, ip_setting_forms, ips_list
+    ):
+        self.client_groups = client_groups
+        self.ip_setting_forms = ip_setting_forms
+        self.ips_list = ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_groups", "ip_setting_forms", "ips_list"
+            ]
+        )
+        client_groups = data.get("client_groups")
+        ip_setting_forms = data.get("ip_setting_forms")
+        ips_list = data.get("ips_list")
+        return GetAutoDeletionListSuccess(
+            client_groups, ip_setting_forms, ips_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "client_groups": self.client_groups,
+            "ip_setting_forms": self.ip_setting_forms,
+            "ips_list": self.ips_list
+        }
+
+class GetGroupIPDetailsSuccess(Response):
+    def __init__(
+        self, group_ips_list
+    ):
+        self.group_ips_list = group_ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+               "group_ips_list"
+            ]
+        )
+        group_ips_list = data.get("group_ips_list")
+        return GetGroupIPDetailsSuccess(
+            group_ips_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "group_ips_list": self.group_ips_list
+        }
+
+class SaveIPSettingsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveIPSettingsSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+class DeleteIPSettingsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DeleteIPSettingsSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
 def _init_Response_class_map():
     classes = [
         GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
@@ -960,7 +1193,8 @@ def _init_Response_class_map():
         GetAllocatedDBEnvSuccess, SaveAllocatedDBEnvSuccess,
         GetFileStorageSuccess, SaveFileStorageSuccess,
         GetAutoDeletionListSuccess, SaveAutoDeletionSuccess,
-        GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists
+        GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists,
+        GetIPSettingsListSuccess, GetGroupIPDetailsSuccess, DeleteIPSettingsSuccess
     ]
     class_map = {}
     for c in classes:
