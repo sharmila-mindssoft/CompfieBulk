@@ -1,6 +1,5 @@
 import json
 from protocol import login, mobile, core
-from server import logger
 from server.database.tables import *
 from server.database.login import *
 from server.database.forms import *
@@ -25,19 +24,13 @@ __all__ = [
 
 def process_mobile_request(request, db, session_user_ip):
     if type(request) is login.Login:
-        logger.logKnowledgeApi("Login", "process begin")
         result = process_mobile_login(db, request, session_user_ip)
-        logger.logKnowledgeApi("Login", "process end")
 
     elif type(request) is login.ForgotPassword:
-        logger.logKnowledgeApi("ForgotPassword", "process begin")
         result = process_mforgot_password(db, request)
-        logger.logKnowledgeApi("ForgotPassword", "process end")
 
     elif type(request) is login.Logout:
-        logger.logKnowledgeApi("Logout", "process begin")
         result = process_mobile_logout(db, request)
-        logger.logKnowledgeApi("Logout", "process end")
 
     else :
         result = None
@@ -56,14 +49,10 @@ def process_mobile_request(request, db, session_user_ip):
             return login.InvalidSessionToken()
 
         if type(request_frame) is mobile.GetApproveStatutoryMappings:
-            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
             result = process_get_approve_statutory_mappings(db, user_id)
-            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
         elif type(request_frame) is mobile.ApproveStatutoryMapping:
-            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
             result = process_approve_statutory_mapping(db, request_frame, user_id)
-            logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     return result
 

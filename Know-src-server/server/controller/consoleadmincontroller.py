@@ -3,8 +3,6 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ###############################################################################
-import time
-from server import logger
 from protocol import login, consoleadmin
 from server.database.consoleadmin import *
 from generalcontroller import validate_user_session, validate_user_forms
@@ -43,96 +41,48 @@ def process_console_admin_request(request, db):
     if(
         type(request_frame) is consoleadmin.GetDatabaseServerList
     ):
-        logger.logKnowledgeApi("GetDatabaseServerList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_db_server_list(db)
-        logger.logKnowledgeApi("GetDatabaseServerList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveDBServer):
-        logger.logKnowledgeApi("SaveDBServer", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_db_server(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveDBServer", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(
         type(request_frame) is consoleadmin.GetClientServerList
     ):
-        logger.logKnowledgeApi("GetClientServerList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_server_list(db)
-        logger.logKnowledgeApi("GetClientServerList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveClientServer):
-        logger.logKnowledgeApi("SaveClientServer", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_client_server(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveClientServer", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(
         type(request_frame) is consoleadmin.GetFileServerList
     ):
-        logger.logKnowledgeApi("GetFileServerList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_file_server_list(db)
-        logger.logKnowledgeApi("GetFileServerList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(
         type(request_frame) is consoleadmin.SaveFileServer
     ):
-        logger.logKnowledgeApi("SaveFileServer", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_file_server_entry(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveFileServer", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.GetAllocatedDBEnv):
-        logger.logKnowledgeApi("GetAllocatedDBEnv", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_allocated_db_env(db)
-        logger.logKnowledgeApi("GetAllocatedDBEnv", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveAllocatedDBEnv):
-        logger.logKnowledgeApi("SaveAllocatedDBEnv", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_allocated_db_env(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveAllocatedDBEnv", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.GetFileStorage):
-        logger.logKnowledgeApi("GetFileStorage", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_file_storage(db)
-        logger.logKnowledgeApi("GetFileStorage", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveFileStorage):
-        logger.logKnowledgeApi("SaveFileStorage", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_file_storage(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveFileStorage", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.GetAutoDeletionList):
-        logger.logKnowledgeApi("GetAutoDeletionList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_auto_deletion_list(
             db, request_frame, session_user)
-        logger.logKnowledgeApi("GetAutoDeletionList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveAutoDeletion):
-        logger.logKnowledgeApi("SaveAutoDeletion", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_auto_deletion(
             db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveAutoDeletion", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 

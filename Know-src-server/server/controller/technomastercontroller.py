@@ -6,13 +6,9 @@
 ########################################################
 from protocol import technomasters
 
-from server.database.admin import (
-    get_domains_for_user
-)
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
-    get_geograhpy_levels_for_user,
-    get_geographies_for_user_with_mapping, get_industries
+    get_industries
 )
 
 from server.database.technomaster import *
