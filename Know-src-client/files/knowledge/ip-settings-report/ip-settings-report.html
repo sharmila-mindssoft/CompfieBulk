@@ -1,0 +1,181 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-3"> </div>
+        <div class="col-sm-6">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Form  Authorization - IP Settings Report</h3>
+                    <div class="portlet-widgets">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+    
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback" >
+                          <label class="col-sm-3 control-label">Group:</label>
+                          <div class="col-md-9">
+                            <input type="text" class="form-control input-sm" placeholder="Enter Group Name">
+                            <i class="form-control-feedback fa fa-search"></i>
+                          </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                          <label class="col-sm-3 control-label">IP:</label>
+                          <div class="col-md-9">
+                            <input type="text" data-mask="999.999.999.9999" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="" value="">
+                            <span class="font-13 text-muted">e.g: "192.168.110.310"</span>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="form-group text-center m-b-0">
+                        <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                        <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                    </div>
+                       
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                <script type="text/javascript">
+                    function show_div() {
+                        $('.details').show();
+                        $('#compliance_animation')
+                          .removeClass().addClass('bounceInLeft animated')
+                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                          $(this).removeClass();
+                        });
+                    }
+
+                    function showRecord() {
+                        alert('hi');
+                    }
+                </script>
+                </div>
+                <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4 class="m-t-0">Form  Authorization - IP Settings Report</h4></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="15%">Group Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><a class="waves-effect waves-light c-pointer" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="showRecord()">RG Group</a></td>
+                            </tr>
+                            <tr class="collapse" id="collapseExample">
+                                <td colspan="100%">
+                                    <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th width="15%">Form Name</th>
+                                            <th width="15%">IP Details</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Settings</td>
+                                                <td>192.168.110.310</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Statutory Settings</td>
+                                                <td>192.168.110.310</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Review Settings</td>
+                                                <td>-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Assign Compliances</td>
+                                                <td>192.168.110.210</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Reassign Compliances</td>
+                                                <td>192.168.110.310</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Compliance Task Details</td>
+                                                <td>-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Compliance Approval</td>
+                                                <td>192.168.110.210</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><a class="waves-effect waves-light c-pointer" role="button" data-toggle="collapse" href="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">MRG Group</a></td>
+                            </tr>
+                            <tr class="collapse" id="collapseExample1">
+                                <td colspan="100%">
+                                    <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th width="15%">Form Name</th>
+                                            <th width="15%">IP Details</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Settings</td>
+                                                <td>192.168.110.310</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Statutory Settings</td>
+                                                <td>192.168.110.310</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Review Settings</td>
+                                                <td>-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Assign Compliances</td>
+                                                <td>192.168.110.210</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Reassign Compliances</td>
+                                                <td>192.168.110.310</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Compliance Task Details</td>
+                                                <td>-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Compliance Approval</td>
+                                                <td>192.168.110.210</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <p class="rpt-count m-b-0">Total : 4 record(s)</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+<script type="text/javascript" src="/script/ip-settings-report/ip-settings-report.js"></script>
+{% endblock %}

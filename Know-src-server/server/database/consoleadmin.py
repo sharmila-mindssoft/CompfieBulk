@@ -24,6 +24,7 @@ __all__ = [
     "get_group_ip_details_form_data",
     "save_ip_setting_details",
     "delete_ip_setting_details",
+    "ip_setting_report_data",
 ]
 
 
@@ -790,4 +791,24 @@ def save_ip_setting_details(db, request, session_user):
 def delete_ip_setting_details(db, request, session_user):
     client_id = request.client_id
     db.call_update_proc("sp_ip_settings_delete", (client_id,))
+    
+
+###############################################################################
+# To get ip setting report details
+# parameter : Object of databse, report request, session user
+# return type : Returns report data.
+###############################################################################
+def ip_setting_report_data(db, request, session_user):
+    client_id = request.client_id
+    ip = request.ip
+    
+    data = db.call_proc(
+        "sp_ip_setting_details_report", (client_id, ip,)
+    )
+    ips_list = return_group_ipslist(data)
+    return (
+        ips_list
+    )
+
+
     

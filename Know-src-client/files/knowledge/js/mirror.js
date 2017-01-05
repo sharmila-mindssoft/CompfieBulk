@@ -2490,6 +2490,18 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
 
+  function getIPSettingsReport(clientId, IP, callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsReport",
+        {
+          "client_id": clientId,
+          "ip": IP
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2703,6 +2715,7 @@ function initMirror() {
     getIPSettingsDetails: getIPSettingsDetails,
     saveIPSettings: saveIPSettings,
     deleteIPSettings:deleteIPSettings,
+    getIPSettingsReport: getIPSettingsReport,
   };
 }
 var mirror = initMirror();

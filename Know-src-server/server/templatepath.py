@@ -484,5 +484,10 @@ TEMPLATE_PATHS = [
         "/knowledge/statutory-notifications",
         "files/knowledge/statutorynotifications/statutorynotifications.html",
         None, {}
-    )
+    ),
+    (
+        "/knowledge/ip-settings-report",
+        "files/knowledge/ip-settings-report/ip-settings-report.html",
+        None, {}
+    ),
 ]

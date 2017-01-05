@@ -166,6 +166,14 @@ def process_console_admin_request(request, db):
         logger.logKnowledgeApi("DeleteIPSettings", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif(type(request_frame) is consoleadmin.GetIPSettingsReport):
+        logger.logKnowledgeApi("GetIPSettingsReport", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_ip_setting_report(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("GetIPSettingsReport", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
@@ -366,3 +374,13 @@ def process_save_ip_settings(db, request, session_user):
 def process_delete_ip_settings(db, request, session_user):
     delete_ip_setting_details(db, request, session_user)
     return consoleadmin.DeleteIPSettingsSuccess()
+
+###############################################################################
+# To get ip settings report details
+# parameter : Object of database, Get Request, session user
+# return type : Returns success response
+###############################################################################
+def process_ip_setting_report(db, request, session_user):
+    ip_setting_report_data(db, request, session_user)
+    return consoleadmin.GetIPSettingsReportSuccess(
+        group_ips_list=group_ips_list)

@@ -387,12 +387,36 @@ class DeleteIPSettings(Request):
             "client_id": self.client_id,
         }
 
+class GetIPSettingsReport(Request):
+    def __init__(
+        self, client_id, ip
+    ):
+        self.client_id = client_id
+        self.ip = ip
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["client_id", "ip"]
+        )
+        return GetIPSettingsReport(
+            data.get("client_id"),
+            data.get("ip")
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "ip": self.ip,
+        }
+
 def _init_Request_class_map():
     classes = [
         GetDatabaseServerList, SaveDBServer, GetClientServerList, SaveClientServer,
         GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
         GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
-        SaveFileServer, GetIPSettingsList, GetGroupIPDetails, SaveIPSettings, DeleteIPSettings
+        SaveFileServer, GetIPSettingsList, GetGroupIPDetails, SaveIPSettings, DeleteIPSettings,
+        GetIPSettingsReport
     ]
     class_map = {}
     for c in classes:
@@ -1277,6 +1301,29 @@ class DeleteIPSettingsSuccess(Response):
     def to_inner_structure(self):
         return {}
 
+class GetIPSettingsReportSuccess(Response):
+    def __init__(
+        self, group_ips_list
+    ):
+        self.group_ips_list = group_ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+               "group_ips_list"
+            ]
+        )
+        group_ips_list = data.get("group_ips_list")
+        return GetIPSettingsReportSuccess(
+            group_ips_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "group_ips_list": self.group_ips_list
+        }
+
 def _init_Response_class_map():
     classes = [
         GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
@@ -1286,7 +1333,8 @@ def _init_Response_class_map():
         GetFileStorageSuccess, SaveFileStorageSuccess,
         GetAutoDeletionListSuccess, SaveAutoDeletionSuccess,
         GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists,
-        GetIPSettingsListSuccess, GetGroupIPDetailsSuccess, DeleteIPSettingsSuccess
+        GetIPSettingsListSuccess, GetGroupIPDetailsSuccess, DeleteIPSettingsSuccess,
+        GetIPSettingsReportSuccess
     ]
     class_map = {}
     for c in classes:
