@@ -20,9 +20,6 @@ var FormRowList = $('#tbody-form-list');
 var CheckAll = $('#checkAll');
 
 var isAuthenticate;
-
-var Msg_pan = $(".error-message");
-var msg = message;
 var u_p_page = null;
 
 var Search_status = $('#search-status');
@@ -63,11 +60,11 @@ UserPrivilegesPage.prototype.fetchUserPrivileges = function() {
 
 UserPrivilegesPage.prototype.possibleFailures = function(error) {
     if (error == "UserGroupNameAlreadyExists") {
-        displayMessage(msg.usergroupname_exists);
+        displayMessage(message.domainname_required);
     } else if (error == 'InvalidUserGroupId') {
-        displayMessage(msg.invalid_usergroupid);
+        displayMessage(message.invalid_usergroupid);
     } else if (error == 'InvalidPassword') {
-        displayMessage(msg.invalid_password);
+        displayMessage(message.invalid_password);
     } else {
         displayMessage(error);
     }
@@ -173,15 +170,15 @@ select_checkbox = function() {
 
 UserPrivilegesPage.prototype.validate = function() {
     if (UserGroupName) {
-        if (isNotEmpty(UserGroupName, msg.usergroupname_required) == false)
+        if (isNotEmpty(UserGroupName, message.usergroupname_required) == false)
             return false;
-        else if (isLengthMinMax(UserGroupName, 1, 50, msg.usergroupname_max) == false)
+        else if (isLengthMinMax(UserGroupName, 1, 50, message.usergroupname_max) == false)
             return false;
-        else if (isCommonName(UserGroupName, msg.usergroupname_str) == false)
+        else if (isCommonName(UserGroupName, message.usergroupname_str) == false)
             return false;
     }
     if (Category) {
-        if (isNotEmpty(Category, msg.category_required) == false)
+        if (isNotEmpty(Category, message.category_required) == false)
             return false;
     }
     if ($('.form-id')) {
@@ -269,7 +266,7 @@ UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive
 UserPrivilegesPage.prototype.validateAuthentication = function() {
     t_this = this;
     if (CurrentPassword) {
-        if (isNotEmpty(CurrentPassword, msg.password_required) == false)
+        if (isNotEmpty(CurrentPassword, message.password_required) == false)
             return false;
     }
     var password = CurrentPassword.val().trim();
