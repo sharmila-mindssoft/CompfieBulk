@@ -2,13 +2,15 @@ import os
 import json
 import time
 import traceback
-from tornado.web import StaticFileHandler
-from tornado.httpclient import AsyncHTTPClient
+# from tornado.web import StaticFileHandler
+# from tornado.httpclient import AsyncHTTPClient
 import mysql.connector.pooling
+from flask import Flask, request, Response
 
+from functools import wraps
 
-from basics.webserver import WebServer
-from basics.ioloop import IOLoop
+# from basics.webserver import WebServer
+# from basics.ioloop import IOLoop
 from protocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
@@ -18,8 +20,8 @@ from protocol import (
 from server.dbase import Database
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
-from webfrontend.client import CompanyManager
-from server.client import (
+from server.client import CompanyManager
+from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
     DomainReplicationManager
 )
@@ -27,12 +29,12 @@ from server.constants import SESSION_CUTOFF
 import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
-
+app = Flask(__name__)
 
 #
 # cors_handler
 #
-def cors_handler(request, response):
+def cors_handler(response):
     response.set_header("Access-Control-Allow-Origin", "*")
     response.set_header("Access-Control-Allow-Headers", "Content-Type")
     response.set_header("Access-Control-Allow-Methods", "POST")
@@ -45,17 +47,23 @@ def cors_handler(request, response):
 #
 
 def api_request(
-    request_data_type, need_client_id=False
+    request_data_type, need_client_id=False, is_group=False,
 ):
     def wrapper(f):
-        def wrapped(self, request, response):
-            self.handle_api_request(
-                f, request, response,
-                request_data_type, need_client_id
+        @wraps(f)
+        def wrapped(self):
+            return self.handle_api_request(
+                f, request_data_type, need_client_id, is_group
             )
         return wrapped
     return wrapper
-
+'''
+    as of now group db has connected for all the request, as per the LE db base operation
+    method decorator will have flag which define either group db call or legal entity db call.
+    when group db call will be processed as per the currennt code flow
+    For LE db call either the hable_api_will be looped or intermediate contrller will be added to
+    perform multi legalentity request parlally
+'''
 
 #
 # API
@@ -64,24 +72,23 @@ def api_request(
 class API(object):
     def __init__(
         self,
-        io_loop,
         address,
         knowledge_server_address,
-        http_client
     ):
-        self._io_loop = io_loop
+        # self._io_loop = io_loop
         self._address = address
         self._knowledge_server_address = knowledge_server_address
-        self._http_client = http_client
+        # self._http_client = http_client
+        print self._knowledge_server_address
+        self._databases = {}
+        self._replication_managers = {}
         self._company_manager = CompanyManager(
-            io_loop,
             knowledge_server_address,
-            http_client,
             100,
             self.server_added
         )
-        self._databases = {}
-        self._replication_managers = {}
+        print "Databases initialize"
+
         self._ip_address = None
         # self._remove_old_session()
 
@@ -101,6 +108,7 @@ class API(object):
                 c_db.clear_session(SESSION_CUTOFF)
                 c_db.commit()
             except Exception, e :
+                print e
                 c_db.rollback()
 
         self._io_loop.add_timeout(
@@ -127,17 +135,11 @@ class API(object):
         )
 
     def server_added(self, servers):
+        print self.__class__
         self._databases = {}
+        self._replication_managers = {}
         try:
-            #
-            # for company_id, db in self._databases.iteritems():
-            #     db.close()
 
-            # for company_id, rep_man in self._replication_managers.iteritems():
-            #     rep_man.stop()
-
-            self._databases = {}
-            self._replication_managers = {}
             for company_id, company in servers.iteritems():
 
                 company_server_ip = company.company_server_ip
@@ -149,17 +151,7 @@ class API(object):
                     try:
                         db_cons = self.client_connection_pool(company, company_id)
                         self._databases[company_id] = db_cons
-                        # db = Database(
-                        #     company.db_ip.ip_address,
-                        #     company.db_ip.port,
-                        #     company.db_username,
-                        #     company.db_password,
-                        #     company.db_name
-                        # )
-                        # db._for_client = True
-                        # db.connect()
-                        # if db._connection is not None :
-                        #     self._databases[company_id] = db
+                        print " %s added in connection pool" % company_id
                     except Exception, e:
                         logger.logClientApi(ip, port)
                         logger.logClientApi(e, "Server added")
@@ -168,7 +160,8 @@ class API(object):
                         logger.logClientApi("Client database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                         continue
 
-            # print self._databases
+            print self._databases
+            print "after connection created"
             # After database connection client poll for replication
 
             def client_added(clients):
@@ -177,6 +170,7 @@ class API(object):
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     _domain_id = client.domain_id
+                    print "client added"
                     client_db = self._databases.get(_client_id)
                     if client_db is not None :
                         if is_new_data is True and is_new_domain is False :
@@ -224,12 +218,15 @@ class API(object):
             return
 
     def _send_response(
-        self, response_data, response
+        self, response_data, status_code
     ):
-        assert response is not None
-        data = response_data.to_structure()
-        s = json.dumps(data, indent=2)
-        response.send(s)
+        if type(response_data) is not str :
+            data = response_data.to_structure()
+            s = json.dumps(data, indent=2)
+        else:
+            s = response_data
+        resp = Response(s, status=status_code, mimetype="application/json")
+        return resp
 
     def expectation_error(self, expected, received) :
         msg = "expected %s, but received: %s"
@@ -243,26 +240,19 @@ class API(object):
             response.send(custom_text)
 
     def _parse_request(
-        self, request_data_type, request, response
+        self, request_data_type
     ):
         request_data = None
         # _db = None
         company_id = None
         try:
-            data = json.loads(request.body())
+            data = request.get_json(force=True)
             if type(data) is not list:
-                self.send_bad_request(
-                    response,
-                    self.expectation_error(
-                        "a list", type(data)
-                    )
-                )
-                return None
+                self._send_response(self.expectation_error("a list", type(data)), 400)
+
             if len(data) != 2:
-                self.send_invalid_json_format(
-                    response
-                )
-                return None
+                self._send_response("Invalid json format", 300)
+
             company_id = int(data[0])
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
@@ -276,43 +266,40 @@ class API(object):
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
-            response.set_status(400)
-            response.send(str(e))
-            return None
-        return (request_data, company_id)
-        # return (_db, request_data, company_id)
+            return str(e)
+        print request_data, company_id
+        return request_data, company_id
 
     def handle_api_request(
-        self, unbound_method, request, response,
-        request_data_type, need_client_id
+        self, unbound_method,
+        request_data_type, need_client_id, is_group
     ):
-        ip_address = str(request.remote_ip())
+        ip_address = request.remote_addr
         self._ip_address = ip_address
-        response.set_default_header("Access-Control-Allow-Origin", "*")
+        # response.set_default_header("Access-Control-Allow-Origin", "*")
         request_data, company_id = self._parse_request(
-            request_data_type, request, response
+            request_data_type
         )
         if request_data is None:
             return
 
+        print "in handle api"
+        print self._databases
         db_cons = self._databases.get(company_id)
+
+        print company_id
         if db_cons is None:
-            response.set_status(404)
-            response.send("Company not found")
-            return None
             print 'connection pool is none'
-            # return
+            self._send_response("Company not found", 404)
 
         _db_con = db_cons.get_connection()
         _db = Database(_db_con)
         if _db_con is None:
-            response.set_status(404)
-            response.send("Company not found")
-            return None
+            self._send_response("Company not found", 404)
 
         def respond(response_data):
-            self._send_response(
-                response_data, response
+            return self._send_response(
+                response_data, 200
             )
 
         _db.begin()
@@ -325,21 +312,22 @@ class API(object):
                 response_data = unbound_method(self, request_data, _db)
             _db.commit()
             _db_con.close()
-            respond(response_data)
+            return respond(response_data)
         except Exception, e:
             logger.logClientApi(e, "handle_api_request")
             logger.logClientApi(traceback.format_exc(), "")
-
+            print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-handle-api", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
+            if str(e).find("expected a") is False :
+                _db.rollback()
+                _db_con.close()
 
-            _db.rollback()
-            _db_con.close()
-            response.set_status(400)
-            response.send(str(e))
-            return
+            return self._send_response(str(e), 400)
+            # response.set_status(400)
+            # response.send(str(e))
 
-    @api_request(login.Request, need_client_id=True)
+    @api_request(login.Request, need_client_id=True, is_group=True)
     def handle_login(self, request, db, client_id, user_ip):
         print self._ip_address
 
@@ -384,25 +372,25 @@ class API(object):
 #
 def run_server(address, knowledge_server_address):
     ip, port = address
-    io_loop = IOLoop()
+    # io_loop = IOLoop()
 
     def delay_initialize():
-        http_client = AsyncHTTPClient(
-            io_loop.inner(),
-            max_clients=1000
-        )
+        # http_client = AsyncHTTPClient(
+        #     io_loop.inner(),
+        #     max_clients=1000
+        # )
 
-        web_server = WebServer(io_loop)
-        src_server_path = os.path.join(ROOT_PATH, "Src-server")
-        server_path = os.path.join(src_server_path, "server")
-        client_docs_path = os.path.join(server_path, "clientdocuments")
-        exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
+        # web_server = WebServer(io_loop)
+        # src_server_path = os.path.join(ROOT_PATH, "Src-server")
+        # server_path = os.path.join(src_server_path, "server")
+        # client_docs_path = os.path.join(server_path, "clientdocuments")
+        # exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
 
         api = API(
-            io_loop,
+            # io_loop,
             address,
             knowledge_server_address,
-            http_client
+            # http_client
         )
 
         api_urls_and_handlers = [
@@ -418,20 +406,26 @@ def run_server(address, knowledge_server_address):
             # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
-            web_server.url(url, POST=handler, OPTIONS=cors_handler)
+            # web_server.url(url, POST=handler, OPTIONS=cors_handler)
+            app.add_url_rule(url, view_func=handler, methods=['POST'])
 
-        web_server.low_level_url(
-            r"/client/client_documents/(.*)",
-            StaticFileHandler,
-            dict(path=client_docs_path)
-        )
+        # web_server.low_level_url(
+        #     r"/client/client_documents/(.*)",
+        #     StaticFileHandler,
+        #     dict(path=client_docs_path)
+        # )
 
-        web_server.low_level_url(
-            r"/download/csv/(.*)", StaticFileHandler,
-            dict(path=exported_reports_path)
-        )
+        # web_server.low_level_url(
+        #     r"/download/csv/(.*)", StaticFileHandler,
+        #     dict(path=exported_reports_path)
+        # )
         print "Listening at: %s:%s" % (ip, port)
-        web_server.start(port, backlog=1000)
+        # web_server.start(port, backlog=1000)
 
-    io_loop.add_callback(delay_initialize)
-    io_loop.run()
+    # io_loop.add_callback(delay_initialize)
+    # io_loop.run()
+    delay_initialize()
+    settings = {
+        "threaded": True
+    }
+    app.run(host="0.0.0.0", port=port, **settings)
