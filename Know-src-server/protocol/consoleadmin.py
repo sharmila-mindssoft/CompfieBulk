@@ -171,32 +171,45 @@ class GetAllocatedDBEnv(Request):
 
 class SaveAllocatedDBEnv(Request):
     def __init__(
-        self, client_id, legal_entity_id, database_server_ip, machine_id
+        self, client_database_id, client_id, legal_entity_id, machine_id, db_server_id,
+        le_db_server_id, file_server_id, console_cl_ids, console_le_ids
     ):
+        self.client_database_id = client_database_id
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
-        self.database_server_ip = database_server_ip
         self.machine_id = machine_id
+        self.db_server_id = db_server_id
+        self.le_db_server_id = le_db_server_id
+        self.file_server_id = file_server_id
+        self.console_cl_ids = console_cl_ids
+        self.console_le_ids = console_le_ids
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "client_id", "legal_entity_id",
-                "database_server_ip", "machine_id"
+                "client_database_id", "client_id", "legal_entity_id", "machine_id",
+                "db_server_id", "le_db_server_id", "file_server_id", "console_cl_ids",
+                "console_le_ids"
             ]
         )
         return SaveAllocatedDBEnv(
-            data.get("client_id"), data.get("legal_entity_id"),
-            data.get("database_server_ip"), data.get("machine_id")
+            data.get("client_database_id"), data.get("client_id"), data.get("legal_entity_id"),
+            data.get("machine_id"), data.get("db_server_id"), data.get("le_db_server_id"),
+            data.get("file_server_id"), data.get("console_cl_ids"), data.get("console_le_ids")
         )
 
     def to_structure(self):
         return {
+            "client_database_id": self.client_database_id,
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
-            "database_server_ip": self.database_server_ip,
-            "machine_id": self.machine_id
+            "machine_id": self.machine_id,
+            "db_server_id": self.db_server_id,
+            "le_db_server_id": self.le_db_server_id,
+            "file_server_id": self.file_server_id,
+            "console_cl_ids": self.console_cl_ids,
+            "console_le_ids": self.console_le_ids
         }
 
 
@@ -578,36 +591,73 @@ class ClientServerNameAlreadyExists(Response):
 
 class ClientDatabase(object):
     def __init__(
-        self, client_id, legal_entity_id, machine_id, database_server_ip
+        self, client_database_id, client_id, group_name, legal_entity_id,
+        legal_entity_name, machine_id, machine_name, client_db_server_id,
+        client_db_server_name, db_server_id, db_server_name, file_server_id,
+        file_server_name, is_created
     ):
+        self.client_database_id = client_database_id
         self.client_id = client_id
+        self.group_name = group_name
         self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
         self.machine_id = machine_id
-        self.database_server_ip = database_server_ip
+        self.machine_name = machine_name
+        self.client_db_server_id = client_db_server_id
+        self.client_db_server_name = client_db_server_name
+        self.db_server_id = db_server_id
+        self.db_server_name = db_server_name
+        self.file_server_id = file_server_id
+        self.file_server_name = file_server_name
+        self.is_created = is_created
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data,
             [
-                "client_id", "legal_entity_id",
-                "machine_id", "database_server_ip"
+                "client_database_id", "client_id", "group_name", "legal_entity_id",
+                "legal_entity_name", "machine_id", "machine_name", "client_db_server_id",
+                "client_db_server_name", "db_server_id", "db_server_name", "file_server_id",
+                "file_server_name", "is_created"
             ]
         )
+        client_database_id = data.get("client_database_id")
         client_id = data.get("client_id")
+        group_name = data.get("group_name")
         legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
         machine_id = data.get("machine_id")
-        database_server_ip = data.get("database_server_ip")
+        machine_name = data.get("machine_name")
+        client_db_server_id = data.get("client_db_server_id")
+        client_db_server_name = data.get("client_db_server_name")
+        db_server_id = data.get("db_server_id")
+        db_server_name = data.get("db_server_name")
+        file_server_id = data.get("file_server_id")
+        file_server_name = data.get("file_server_name")
+        is_created = data.get("is_created")
         return ClientDatabase(
-            client_id, legal_entity_id, machine_id, database_server_ip
+            client_database_id, client_id, group_name, legal_entity_id, legal_entity_name,
+            machine_id, machine_name, client_db_server_id, client_db_server_name,
+            db_server_id, db_server_name, file_server_id, file_server_name, is_created
         )
 
     def to_structure(self):
         return {
+            "client_database_id": self.client_database_id,
             "client_id": self.client_id,
+            "group_name": self.group_name,
             "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
             "machine_id": self.machine_id,
-            "database_server_ip": self.database_server_ip
+            "machine_name": self.machine_name,
+            "client_db_server_id": self.client_db_server_id,
+            "client_db_server_name": self.client_db_server_name,
+            "db_server_id": self.db_server_id,
+            "db_server_name": self.db_server_name,
+            "file_server_id": self.file_server_id,
+            "file_server_name": self.file_server_name,
+            "is_created": self.is_created,
         }
 
 
@@ -654,22 +704,31 @@ class LegalEntity(object):
 
 
 class ClientServerNameAndID(object):
-    def __init__(self, machine_id, machine_name):
+    def __init__(self, machine_id, machine_name, ip, port, console_cl_ids):
         self.machine_id = machine_id
         self.machine_name = machine_name
+        self.ip = ip
+        self.port = port
+        self.console_cl_ids = console_cl_ids
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
-            data, ["machine_id", "machine_name"])
+            data, ["machine_id", "machine_name", "ip", "port", "console_cl_ids"])
         machine_id = data.get("machine_id")
         machine_name = data.get("machine_name")
-        return ClientServerNameAndID(machine_id, machine_name)
+        ip = data.get("ip")
+        port = data.get("port")
+        console_cl_ids = data.get("console_cl_ids")
+        return ClientServerNameAndID(machine_id, machine_name, ip, port, console_cl_ids)
 
     def to_structure(self):
         return {
             "machine_id": self.machine_id,
-            "machine_name": self.machine_name
+            "machine_name": self.machine_name,
+            "ip": self.ip,
+            "port": self.port,
+            "console_cl_ids": self.console_cl_ids,
         }
 
 
@@ -703,61 +762,94 @@ class FileServerList(object):
         }
 
 class DBServerNameAndID(object):
-    def __init__(self, db_server_name, ip):
+    def __init__(self, db_server_id, db_server_name, database_server_ip, port, console_le_ids):
+        self.db_server_id = db_server_id
         self.db_server_name = db_server_name
-        self.ip = ip
+        self.database_server_ip = database_server_ip
+        self.port = port
+        self.console_le_ids = console_le_ids
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
-            data, ["db_server_name", "ip"])
+            data, ["db_server_id", "db_server_name", "database_server_ip", "port", "console_le_ids"])
+        db_server_id = data.get("db_server_id")
         db_server_name = data.get("db_server_name")
-        ip = data.get("ip")
-        return DBServerNameAndID(db_server_name, ip)
+        database_server_ip = data.get("database_server_ip")
+        port = data.get("port")
+        console_le_ids = data.get("console_le_ids")
+        return DBServerNameAndID(db_server_id, db_server_name, database_server_ip, port, console_le_ids)
 
     def to_structure(self):
         return {
+            "db_server_id": self.db_server_id,
             "db_server_name": self.db_server_name,
-            "ip": self.ip
+            "database_server_ip": self.database_server_ip,
+            "port": self.port,
+            "console_le_ids": self.console_le_ids
         }
 
+class AllocateFileServerList(object):
+    def __init__(self, file_server_id, file_server_name, ip, port, console_le_ids):
+        self.file_server_id = file_server_id
+        self.file_server_name = file_server_name
+        self.ip = ip
+        self.port = port
+        self.console_le_ids = console_le_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["file_server_id", "filer_server_name", "ip", "port", "console_le_ids"])
+        file_server_id = data.get("file_server_id")
+        file_server_name = data.get("file_server_name")
+        ip = data.get("ip")
+        port = data.get("port")
+        console_le_ids = data.get("console_le_ids")
+
+        return FileServerList(file_server_id, file_server_name, ip, port, console_le_ids)
+
+    def to_structure(self):
+        return {
+            "file_server_id": self.file_server_id,
+            "file_server_name": self.file_server_name,
+            "ip": self.ip,
+            "port": self.port,
+            "console_le_ids": self.console_le_ids
+        }
 
 class GetAllocatedDBEnvSuccess(Response):
     def __init__(
-        self, client_dbs, client_groups, client_legal_entities,
-        client_server_name_and_id, db_server_name_and_id
+        self, client_dbs, client_server_name_and_id, db_server_name_and_id, file_server_list
     ):
         self.client_dbs = client_dbs
-        self.client_groups = client_groups
-        self.client_legal_entities = client_legal_entities
         self.client_server_name_and_id = client_server_name_and_id
         self.db_server_name_and_id = db_server_name_and_id
+        self.file_server_list = file_server_list
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "client_dbs", "client_groups", "client_legal_entities",
-                "client_server_name_and_id", "db_server_name_and_id"
+                "client_dbs", "client_server_name_and_id",
+                "db_server_name_and_id", "FileServerList"
             ]
         )
         client_dbs = data.get("client_dbs")
-        client_groups = data.get("client_groups")
-        client_legal_entities = data.get("client_legal_entities")
         client_server_name_and_id = data.get("client_server_name_and_id")
         db_server_name_and_id = data.get("db_server_name_and_id")
+        file_server_list = data.get("file_server_list")
         return GetAllocatedDBEnvSuccess(
-            client_dbs, client_groups, client_legal_entities,
-            client_server_name_and_id, db_server_name_and_id
+            client_dbs, client_server_name_and_id, db_server_name_and_id,
+            file_server_list
         )
 
     def to_inner_structure(self):
         return {
             "client_dbs": self.client_dbs,
-            "client_groups": self.client_groups,
-            "client_legal_entities": self.client_legal_entities,
             "client_server_name_and_id": self.client_server_name_and_id,
-            "db_server_name_and_id": self.db_server_name_and_id
+            "db_server_name_and_id": self.db_server_name_and_id,
+            "file_server_list": self.file_server_list
         }
 
 

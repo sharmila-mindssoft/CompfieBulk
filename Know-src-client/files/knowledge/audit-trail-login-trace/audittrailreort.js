@@ -241,9 +241,10 @@ Auditpage.prototype.fetchData = function() {
                 this.displayMessage(error);
             }
             else {
+                this.hideLoader();
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
-                console.log("a:"+response.audit_trail_details)
+                console.log("a:"+response.total_records)
                 if (response.total_records == 0) {
                     t_this.hidePageView();
                     a_page.hidePagePan();

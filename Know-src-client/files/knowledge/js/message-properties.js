@@ -273,6 +273,7 @@ var message = {
   "port_required": "Port Required",
   "ip_required": "IP Required",
   "db_server_name_required": "DB Server name required",
+  "le_db_server_name_required": "Legal Entity DB Server name required",
   "db_server_name_length_error": "DB Server name - Only 50 characters are allowed",
   "not_a_valid_ip": "Invalid IP address",
   "username_length_error": "Username - Only 50 characters are allowed",
@@ -282,6 +283,7 @@ var message = {
   "client_server_save_success": "Application server saved successfully",
   "client_server_update_success": "Application server updated successfully",
   "file_server_name_required": "File server name required",
+  "le_file_server_name_required": "Legal Entity File server name required",
   "file_server_name_length_error": "File Server name - Only 50 characters are allowed",
   "file_server_save_success": "File server saved successfully",
   "file_server_update_success": "File server updated successfully",
@@ -341,6 +343,7 @@ var message = {
   "delete_ip_setting_success": "IP Settings Deleted Successfully",
   "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
 }
+
 function clearMessage() {
   $('.error-message').hide();
   $('.error-message').text('');

@@ -229,14 +229,13 @@ def process_save_client_server(db, request, session_user):
 ###############################################################################
 def process_get_allocated_db_env(db):
     (
-        client_dbs_list, groups_list, les_list,
-        machines_list, db_servers_list
+        client_dbs_list, machines_list, db_servers_list, file_server_list
     ) = get_client_database_form_data(db)
     return consoleadmin.GetAllocatedDBEnvSuccess(
-        client_dbs=client_dbs_list, client_groups=groups_list,
-        client_legal_entities=les_list,
+        client_dbs=client_dbs_list,
         client_server_name_and_id=machines_list,
-        db_server_name_and_id=db_servers_list
+        db_server_name_and_id=db_servers_list,
+        file_server_list=file_server_list
     )
 
 
