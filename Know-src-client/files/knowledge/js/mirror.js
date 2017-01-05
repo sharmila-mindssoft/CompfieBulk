@@ -2440,6 +2440,15 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getAllocateServerReportData(callback){
+    callerName = 'console_admin';
+    var request = [
+        "GetAllocateServerReportData",
+        {}
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2648,6 +2657,7 @@ function initMirror() {
     getFileServerList: getFileServerList,
     fileServerEntry: fileServerEntry,
     domainManagerInfo: domainManagerInfo,
+    getAllocateServerReportData: getAllocateServerReportData,
   };
 }
 var mirror = initMirror();
