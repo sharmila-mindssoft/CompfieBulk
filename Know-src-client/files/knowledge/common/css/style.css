@@ -1103,14 +1103,14 @@ list-style-type:none; line-height:25px;
   .mob-p-b-15{
     padding-bottom: 15px;
   }
-  
-    .dropdown-menu{
+  .dropdown-menu{
     right: 0;
     left: auto;
     height: 115px;
     overflow-y: auto;
   }
-  .navbar-right .dropdown-menu{
+
+.navbar-right .dropdown-menu{
 height: auto;
 overflow:visible;
   }
@@ -1118,9 +1118,7 @@ overflow:visible;
     padding-bottom: 8em;
   }
 }
-.fa{
-   font-family: "Arimo",sans-serif;
-}
+
 .left{
   text-align: left !important;
 }

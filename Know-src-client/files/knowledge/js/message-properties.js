@@ -340,7 +340,7 @@ var message = {
   "save_ip_setting_success": "IP Settings Saved Successfully",
   "delete_ip_setting_success": "IP Settings Deleted Successfully",
   "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
-
+}
 function clearMessage() {
   $('.error-message').hide();
   $('.error-message').text('');
