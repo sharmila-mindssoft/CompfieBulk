@@ -22,10 +22,9 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Country Name" value="India">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">India</p>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
@@ -47,23 +46,23 @@
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date:</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MON-YYYY">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY">
                                 <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">To Date:</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MON-YYYY">
+                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY">
                                 <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Export </button>
+                            <div class="form-group m-b-0">
+                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                <!-- <button class="btn btn-info waves-effect waves-light" type="button"> Export </button> -->
                             </div>
                         </center>
                     </div>
@@ -71,12 +70,22 @@
                 </form>
                 </div>
                 </div>
+                <script type="text/javascript">
+                    function show_div() {
+                        $('.details').show();
+                        $('#compliance_animation')
+                          .removeClass().addClass('bounceInLeft animated')
+                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                          $(this).removeClass();
+                        });
+                    }
+                </script>
                 </div>
-                <div class="card-box">
+                <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
                 <div class="table-responsive">
                   <div class="col-sm-12">
-                    <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
-                    <div class="col-sm-12 text-center"><h4>Statutory Notification List</h4></div>
+                    <div class="col-sm-12 text-center"><h4 class="m-t-0">Statutory Notification List</h4></div>
                     <div class="col-sm-6 text-center"><h6>Country: India</h6></div>
                     <div class="col-sm-6 text-center"><h6>Domain: Labour Law</h6></div>
                   </div>
@@ -94,33 +103,32 @@
                             <tr>
                                 <td>1</td>
                                 <td>POG Act</td>
-                                <td>Form A - Notice of Opening</td>
+                                <td><i class="zmdi zmdi-info c-pointer" data-toggle="tooltip" title="FORM VII -has been added to Batteries act under Rule 8 (Whether half yearly returns submitted by recyclers)" ></i> Form A - Notice of Opening</td>
                                 <td>26-Aug-2016</td>
                                 <td>**Content - as given by CAS Team **</td>
                             </tr>
                             <tr>
                                 <td>2</td>
                                 <td>EPF Act</td>
-                                <td>Form 1 - Registration</td>
-                                <td>30-Aug-2016</td>
+                                <td><i class="zmdi zmdi-info c-pointer" data-toggle="tooltip" title="Compliance Form IX - Half yearly returns for auctioneer has added to Rule 11 (II)" ></i> Form 1 - Registration</td>
+                                <td>20-Aug-2016</td>
                                 <td>**Content - as given by CAS Team **</td>
                             </tr>
                             <tr>
                                 <td>3</td>
                                 <td>S & E Act</td>
-                                <td>Opening & Closing Hours</td>
+                                <td><i class="zmdi zmdi-info c-pointer" data-toggle="tooltip" title="Compliance Form III - undertaking submission will be inactive" ></i> Opening & Closing Hours</td>
                                 <td>18-Aug-2016</td>
                                 <td>**Content - as given by CAS Team **</td>
                             </tr>
                         </tbody>
                     </table>
-                    <p class="rpt-count">Total : 3 record(s)</p>
+                    <p class="rpt-count m-b-0">Total : 3 record(s)</p>
                 </div>
+            </div>
             </div>
         </div>
         <!-- end col -->
     </div>
-</div>
-</div>
 </div>
 {% endblock %}

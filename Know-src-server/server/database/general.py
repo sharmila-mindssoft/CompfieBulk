@@ -133,6 +133,7 @@ def get_servers(db):
         " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
+    print query
 
     # query = "SELECT client_id, machine_id, database_ip, "
     # query += "database_port, database_username, "

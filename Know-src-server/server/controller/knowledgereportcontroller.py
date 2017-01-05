@@ -14,7 +14,7 @@ from server.database.general import (
 )
 from server.database.knowledgemaster import (
     get_industries, get_statutory_nature,
-    get_geographies, get_country_wise_level_1_statutoy
+    get_geographies
 )
 from server.database.admin import (
     get_level_1_statutories
@@ -40,49 +40,23 @@ def process_knowledge_report_request(request, db):
         return login.InvalidSessionToken()
 
     if type(request_frame) is knowledgereport.GetStatutoryMappingReportFilters:
-        logger.logKnowledgeApi(
-            "GetStatutoryMappingReportFilters", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_mapping_filters(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi(
-            "GetStatutoryMappingReportFilters", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetStatutoryMappingReportData:
-        logger.logKnowledgeApi(
-            "GetStatutoryMappingReportData", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_mapping_report_data(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetStatutoryMappingReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetGeographyReport:
-        logger.logKnowledgeApi("GetGeographyReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_geography_report(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetGeographyReport", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetDomainsReport:
-        logger.logKnowledgeApi("GetDomainsReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_domain_report(db, user_id)
-        logger.logKnowledgeApi("GetDomainsReport", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetCountriesReport:
-        logger.logKnowledgeApi("GetCountriesReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_country_report(db, user_id)
-        logger.logKnowledgeApi("GetCountriesReport", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 

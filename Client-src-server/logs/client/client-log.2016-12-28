@@ -1,0 +1,604 @@
+2016-12-28 12:43:05,529 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-28 12:43:05,532 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 318, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-28 12:43:18,736 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-28 12:43:18,739 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 318, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-28 13:10:12,578 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-28 13:10:12,581 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 318, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-28 13:10:21,117 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-28 13:10:21,118 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 318, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-28 15:17:31,318 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-28 15:17:31,418 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 316, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 318, in get_forms
+    joinConditions, whereCondition
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 475, in get_data_from_multiple_tables
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-28 18:10:51,599 - client_logger - clientmain.py-handle-api : global name 'rows' is not defined 
+
+2016-12-28 18:10:51,615 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 336, in process_get_user_privileges
+    forms = process_get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 276, in process_get_forms
+    result_rows = get_forms(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 329, in get_forms
+    return rows
+NameError: global name 'rows' is not defined
+ 
+
+2016-12-28 18:23:56,987 - client_logger - clientmain.py-handle-api : 'parent_menu' 
+
+2016-12-28 18:23:56,990 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 341, in process_get_user_privileges
+    category_wise_forms = process_get_forms(db, cat_id) # cat_id = 1
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 280, in process_get_forms
+    row["parent_menu"] == None) else row["parent_menu"]
+KeyError: 'parent_menu'
+ 
+
+2016-12-28 18:28:06,635 - client_logger - clientmain.py-handle-api : global name 'collections' is not defined 
+
+2016-12-28 18:28:06,638 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 82, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 341, in process_get_user_privileges
+    category_wise_forms = process_get_forms(db, cat_id) # cat_id = 1
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 289, in process_get_forms
+    return process_user_menus(forms)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 610, in process_user_menus
+    menus = reorder_menu(menus)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 615, in reorder_menu
+    new_menu = collections.OrderedDict()
+NameError: global name 'collections' is not defined
+ 
+
+2016-12-28 18:31:44,697 - client_logger - clientmain.py-handle-api : global name 'get_menus' is not defined 
+
+2016-12-28 18:31:44,700 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 344, in process_get_user_privileges
+    menus = process_get_menus(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 297, in process_get_menus
+    result_rows = get_menus(db)
+NameError: global name 'get_menus' is not defined
+ 
+
+2016-12-28 18:32:32,809 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2016-12-28 18:32:32,811 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 345, in process_get_user_privileges
+    user_group_list = process_get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 318, in process_get_user_privilege_details_list
+    rows = get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientdatabase\clientmaster.py", line 378, in get_user_privilege_details_list
+    tblUserGroups, columns, "1 ORDER BY user_group_name"
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 383, in get_data
+    rows = self.select_all(query)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\dbase.py", line 298, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-28 18:37:36,385 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with Menu instance as first argument (got dict instance instead) 
+
+2016-12-28 18:37:36,388 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 589, in to_structure
+    inner = self.to_inner_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 733, in to_inner_structure
+    "forms": to_structure_RecordType_core_Menu(self.forms),
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\to_structure.py", line 1158, in to_structure_RecordType_core_Menu
+    return core.Menu.to_structure(data)
+TypeError: unbound method to_structure() must be called with Menu instance as first argument (got dict instance instead)
+ 
+
+2016-12-28 18:38:56,526 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with Menu instance as first argument (got dict instance instead) 
+
+2016-12-28 18:38:56,529 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 591, in to_structure
+    inner = self.to_inner_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 737, in to_inner_structure
+    "forms": to_structure_RecordType_core_Menu(self.forms),
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\to_structure.py", line 1158, in to_structure_RecordType_core_Menu
+    return core.Menu.to_structure(data)
+TypeError: unbound method to_structure() must be called with Menu instance as first argument (got dict instance instead)
+ 
+
+2016-12-28 18:40:09,931 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with Menu instance as first argument (got dict instance instead) 
+
+2016-12-28 18:40:09,934 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 591, in to_structure
+    inner = self.to_inner_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 737, in to_inner_structure
+    "forms": to_structure_RecordType_core_Menu(self.forms),
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\to_structure.py", line 1158, in to_structure_RecordType_core_Menu
+    return core.Menu.to_structure(data)
+TypeError: unbound method to_structure() must be called with Menu instance as first argument (got dict instance instead)
+ 
+
+2016-12-28 18:41:39,726 - client_logger - clientmain.py-handle-api : global name 'to_structure_dictionary_values' is not defined 
+
+2016-12-28 18:41:39,727 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+NameError: global name 'to_structure_dictionary_values' is not defined
+ 
+
+2016-12-28 18:42:13,214 - client_logger - clientmain.py-handle-api : expected a url, but received: /View Profile 
+
+2016-12-28 18:42:13,217 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 433, in to_structure_dictionary_values
+    _validation_method, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 550, in to_MapType
+    dict_value = to_RecordType(module_name, class_name, value)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 498, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 440, in to_structure_dictionary_values
+    vals = to_VectorType(_module_name, _class_name, value)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 516, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 498, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 468, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\api_key_validation.py", line 54, in is_url
+    raise expectation_error('a url', value)
+ValueError: expected a url, but received: /View Profile
+ 
+
+2016-12-28 18:45:33,657 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with Form instance as first argument (got Menu instance instead) 
+
+2016-12-28 18:45:33,658 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 433, in to_structure_dictionary_values
+    _validation_method, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 550, in to_MapType
+    dict_value = to_RecordType(module_name, class_name, value)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with Form instance as first argument (got Menu instance instead)
+ 
+
+2016-12-28 18:48:36,535 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with Form instance as first argument (got OrderedDict instance instead) 
+
+2016-12-28 18:48:36,536 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 433, in to_structure_dictionary_values
+    _validation_method, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 550, in to_MapType
+    dict_value = to_RecordType(module_name, class_name, value)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with Form instance as first argument (got OrderedDict instance instead)
+ 
+
+2016-12-28 18:49:20,180 - client_logger - clientmain.py-handle-api : expected string or buffer 
+
+2016-12-28 18:49:20,183 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 438, in to_structure_dictionary_values
+    key = _validation_method(key)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\api_key_validation.py", line 18, in is_alphabet
+    if r.match(value):
+TypeError: expected string or buffer
+ 
+
+2016-12-28 18:50:01,763 - client_logger - clientmain.py-handle-api : 'NoneType' object is not callable 
+
+2016-12-28 18:50:01,763 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 438, in to_structure_dictionary_values
+    key = _validation_method(key)
+TypeError: 'NoneType' object is not callable
+ 
+
+2016-12-28 18:50:35,822 - client_logger - clientmain.py-handle-api : expected string or buffer 
+
+2016-12-28 18:50:35,823 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 438, in to_structure_dictionary_values
+    key = _validation_method(key)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\api_key_validation.py", line 34, in is_alpha_numeric
+    if r.match(value):
+TypeError: expected string or buffer
+ 
+
+2016-12-28 18:51:39,691 - client_logger - clientmain.py-handle-api : expected string or buffer 
+
+2016-12-28 18:51:39,694 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 439, in to_structure_dictionary_values
+    key = _validation_method(key)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\api_key_validation.py", line 34, in is_alpha_numeric
+    if r.match(value):
+TypeError: expected string or buffer
+ 
+
+2016-12-28 18:53:23,207 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with Menu instance as first argument (got OrderedDict instance instead) 
+
+2016-12-28 18:53:23,210 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 433, in to_structure_dictionary_values
+    _validation_method, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 551, in to_MapType
+    dict_value = to_RecordType(module_name, class_name, value)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 498, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with Menu instance as first argument (got OrderedDict instance instead)
+ 
+
+2016-12-28 18:58:45,868 - client_logger - clientmain.py-handle-api : <protocol.core.Form object at 0x030A8D10> is not JSON serializable 
+
+2016-12-28 18:58:45,871 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 238, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Form object at 0x030A8D10> is not JSON serializable
+ 
+
+2016-12-28 19:01:30,650 - client_logger - clientmain.py-handle-api : <protocol.core.Form object at 0x02F79910> is not JSON serializable 
+
+2016-12-28 19:01:30,654 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 238, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Form object at 0x02F79910> is not JSON serializable
+ 
+
+2016-12-28 19:03:13,480 - client_logger - clientmain.py-handle-api : <protocol.core.Form object at 0x0303ED10> is not JSON serializable 
+
+2016-12-28 19:03:13,483 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 238, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Form object at 0x0303ED10> is not JSON serializable
+ 
+
+2016-12-28 19:25:18,730 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead) 
+
+2016-12-28 19:25:18,730 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 517, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 498, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead)
+ 
+
+2016-12-28 19:31:34,890 - client_logger - clientmain.py-handle-api : unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead) 
+
+2016-12-28 19:31:34,900 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 517, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 498, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with UserGroup instance as first argument (got ClientUserGroup instance instead)
+ 
+
+2016-12-28 19:35:21,924 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'UserGroup' 
+
+2016-12-28 19:35:21,927 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 334, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 362, in handle_client_masters
+    return controller.process_client_master_requests(request, db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 83, in process_client_master_requests
+    db, request, session_user
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 351, in process_get_user_privileges
+    user_group_list = process_get_user_privilege_details_list(db)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 330, in process_get_user_privilege_details_list
+    clientmasters.UserGroup(
+AttributeError: 'module' object has no attribute 'UserGroup'
+ 
+
+2016-12-28 21:56:50,431 - client_logger - clientmain.py-handle-api : 'module' object has no attribute 'ClientUserGroup' 
+
+2016-12-28 21:56:50,433 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 337, in handle_api_request
+    respond(response_data)
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 324, in respond
+    response_data, response
+  File "D:\Bogi\Project\Compfie\Client-src-server\server\clientmain.py", line 237, in _send_response
+    data = response_data.to_structure()
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\clientmasters.py", line 593, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 424, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 517, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 497, in to_RecordType
+    klass = return_import(module_name, class_name)
+  File "D:\Bogi\Project\Compfie\Client-src-server\protocol\jsonvalidators.py", line 477, in return_import
+    klass = getattr(mod, class_name)
+AttributeError: 'module' object has no attribute 'ClientUserGroup'
+ 
+

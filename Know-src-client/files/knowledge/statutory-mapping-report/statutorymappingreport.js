@@ -98,8 +98,8 @@ function loadCountwiseResult(filterList) {
     var frequency_id = filterList[entity].frequency_id;
     var industry_names = filterList[entity].industry_names;
     var statutory_nature_name = filterList[entity].statutory_nature_name;
-    var statutory_provision = filterList[entity].statutory_provision;
-    var compliance_name = filterList[entity].compliance_task;
+    var statutory_provision = filterList[entity].s_pro_map;
+    var compliance_name = filterList[entity].c_task;
     var download_url = filterList[entity].url;
     if (actname != lastActName) {
       var tableRow = $('#act-templates .table-act-list .table-row-act-list');
@@ -147,10 +147,10 @@ function loadCountwiseResult(filterList) {
     }
     var sdateDesc = '';
     var duration = filterList[entity].duration;
-    var duration_type_id = filterList[entity].duration_type_id;
-    var repeats_every = filterList[entity].repeats_every;
-    var repeats_type_id = filterList[entity].repeats_type_id;
-    var statutory_date = filterList[entity].statutory_dates;
+    var duration_type_id = filterList[entity].d_type_id;
+    var repeats_every = filterList[entity].r_every;
+    var repeats_type_id = filterList[entity].r_type_id;
+    var statutory_date = filterList[entity].statu_dates;
     var statutorydate = '';
     var duration_type = '';
     var repeats_type = '';
@@ -182,7 +182,7 @@ function loadCountwiseResult(filterList) {
         if (statutory_date[z].statutory_month != null)
           sMonth = statutory_date[z].statutory_month;
         if (sMonth != '')
-          sMonth = getMonth_IntegettoString(sMonth);
+          sMonth = getMonth_IntegertoString(sMonth);
         statutorydate += sMonth + ' ' + sDay + ' ';
         if (statutorydate.trim() != '')
           statutorydate += ', ';
@@ -201,11 +201,11 @@ function loadCountwiseResult(filterList) {
       statutorydate = sdateDesc;
     }
     $('.tbl_description', clone1).text(filterList[entity].description);
-    $('.tbl_penalconsequences', clone1).text(filterList[entity].penal_consequences);
+    $('.tbl_penalconsequences', clone1).text(filterList[entity].p_consequences);
     $('.tbl_occurance', clone1).text(statutorydate);
     var applicableLocation = '';
-    for (var i = 0; i < filterList[entity].geography_mappings.length; i++) {
-      applicableLocation = applicableLocation + filterList[entity].geography_mappings[i] + '<br>';
+    for (var i = 0; i < filterList[entity].geo_maps.length; i++) {
+      applicableLocation = applicableLocation + filterList[entity].geo_maps[i] + '<br>';
     }
     $('.tbl_applicablelocation', clone1).html(applicableLocation);
     $('.accordion-content' + (count - 1)).append(clone1);
@@ -296,7 +296,7 @@ $('#submit').click(function () {
     lastActName = '';
     lastOccuranceid = 0;
     displayLoader();
-    displayMessage('');
+
     s_endCount = 0;
     filterdata = {};
     filterdata.c_id = parseInt(country);

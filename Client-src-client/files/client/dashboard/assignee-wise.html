@@ -2,7 +2,6 @@
 {% block content %}
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-<link href="/files/client/common/css/custombox/custombox.min.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
   $(function(){
@@ -10,7 +9,6 @@
     $(".content-page").removeClass('m-l-0');
   });
 </script>
-
 
 <div class="left side-menu">
   <div class="sidebar-inner slimscrollleft">
@@ -22,7 +20,7 @@
         <li class="has_sub"> <a href="/dashboard/not-complied" class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
         <li class="has_sub active"> <a href="/dashboard/assignee-wise" class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
         <li class="has_sub"> <a href="/dashboard/trend-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
-        <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
+        <!-- <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li> -->
         <li class="has_sub"> <a href="/dashboard/risk-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
       </ul>
       <div class="clearfix"></div>
@@ -100,7 +98,7 @@
                         <center>
                             <div class="form-group">
                                 <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()" > Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -163,7 +161,7 @@
                                     <td>04</td>
                                     <td>03(+2)</td>
                                     <td>01</td>
-                                    <td>01</td>
+                                    <td>01(+3)</td>
                                     <td><i class="fa fa-chevron-right pull-right c-pointer"></i></td>
                                 </tr>
                                 <tr>

@@ -26,26 +26,22 @@
                                 <li><a href="#tab3" data-toggle="tab">3. Select Assignee</a></li>
                             </ul>
                             <div class="tab-content b-0 m-b-0">
-                                <div class="tab-pane m-t-10 fade active in " id="tab1">
-                                        <div class="col-sm-12 scroll_box p-t-10">
+                                <div class="tab-pane m-t-0 fade active in " id="tab1">
+                                        <div class="col-sm-12 scroll_box no-padding">
                                             <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader" width="100%" cellspacing="0">
                                                 <tbody>
                                                     <tr>
-                                                        <td width="33%">
+                                                        <td class="width-31">
                                                             <h6 class="m-t-0">Legal Entity <span class="mandatory">*</span></h6>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Enter Legal Entity" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled  box-height-150">
-                                                                <li class="active">RG Legal Entity 01<i class="fa fa-check pull-right"></i></li>
-                                                                <li>RG Legal Entity 02</li>
-                                                                <li>RG Legal Entity 03</li>
-                                                                <li>RG Legal Entity 04</li>
-                                                                <li>RG Legal Entity 05</li>
+                                                                <li class="active">RG Legal Entity<i class="fa fa-check pull-right"></i></li>
                                                             </ul>
                                                         </td>
-                                                        <td width="33%">
+                                                        <td class="width-34">
                                                             <h6 class="m-t-0">Division</h6>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Enter Division" type="text">
@@ -59,7 +55,7 @@
                                                                 <li>RG Division 05</li>
                                                             </ul>
                                                         </td>
-                                                        <td width="34%">
+                                                        <td class="width-33">
                                                             <h6 class="m-t-0">Category</h6>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Enter Category" type="text">
@@ -77,11 +73,11 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="col-sm-12 scroll_box">
-                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader" width="100%" cellspacing="0">
+                                        <div class="col-sm-12 scroll_box no-padding">
+                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader m-b-0" width="100%" cellspacing="0">
                                                 <tbody>
                                                     <tr>
-                                                        <td width="33%">
+                                                        <td class="width-31">
                                                             <h6 class="m-t-0">Domain <span class="mandatory">*</span></h6>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Enter Domain" type="text">
@@ -93,7 +89,7 @@
                                                                 <li>Industial Law</li>
                                                             </ul>
                                                         </td>
-                                                        <td width="33%">
+                                                        <td class="width-34">
                                                             <h6 class="m-t-0">Unit <span class="mandatory">*</span></h6>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Enter Unit" type="text">
@@ -111,8 +107,8 @@
                                                                 <li class="active"><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 7<i class="fa fa-check pull-right"></i></li>
                                                             </ul>
                                                         </td>
-                                                        <td width="34%">
-                                                            <h6 class="m-t-0">Compliance Frequency <span class="mandatory">*</span></h6>
+                                                        <td class="width-33">
+                                                            <h6 class="m-t-0">Compliance Frequency</h6>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Enter Compliance Frequency" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -133,7 +129,7 @@
                                 </div>
                                 <div class="tab-pane m-t-0 fade box-height-350" id="tab2">
                                     <div class="row">
-                                        <div class="panel-group col-lg-12" id="accordion" role="tablist" aria-multiselectable="true">
+                                        <div class="panel-group col-lg-12 m-b-0" id="accordion" role="tablist" aria-multiselectable="true">
                                             <div class="panel panel-default bx-shadow-none">
                                                 <div class="panel-heading p-0" role="tab" id="headingOne">
                                                     <h4 class="panel-title">
@@ -154,12 +150,11 @@
                                                               <th width="1%">&nbsp;</th>
                                                               <th width="15%">Compliance Task</th>
                                                               <th width="06%" class="text-center">Applicable Units</th>
-                                                              <th width="12%">Compliance Frequency</th>
+                                                              <th width="10%">Compliance Frequency</th>
                                                               <th width="12%">Statutory Date/Schedule</th>
-                                                              <th width="08%">Trigger Before (Days)</th>
-                                                              <th width="06%">Due Date</th>
-                                                              <th width="06%" class="text-center">Validity Date</th>
-                                                              
+                                                              <th width="08%">Trigger Before (Days) <span class="mandatory">*</span></th>
+                                                              <th width="06%">Due Date <span class="mandatory">*</span></th>
+                                                              <th width="06%">Validity Date</th>
                                                             </tr>
                                                           </thead>
                                                           <tbody>
@@ -171,7 +166,7 @@
                                                                 </div>
                                                               </td>
                                                               <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned"></i> FORM I - Half yearly returns Submission</td>
-                                                              <td class="text-center"><a href="#" data-toggle="modal" data-target=".bs-example-modal-sm">3 / 3</a></td>
+                                                              <td class="text-center"><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">3 / 3</a></td>
                                                               <td>Periodical</td>
                                                               <td>Every Year 1st January</td>
                                                               <td>20 Days<i class="fa fa-pencil pull-right"></i></td>
@@ -182,7 +177,7 @@
                                                             <tr>
                                                               <td>
                                                                 <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                                                                    <input id="checkbox2" type="checkbox" class="text-center">
+                                                                    <input id="checkbox2" type="checkbox" class="text-center" checked="checked">
                                                                     <label for="checkbox2"></label>
                                                                 </div>
                                                               </td>
@@ -197,7 +192,7 @@
                                                             <tr>
                                                               <td>
                                                                 <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                                                                    <input id="checkbox3" type="checkbox" class="text-center">
+                                                                    <input id="checkbox3" type="checkbox" class="text-center" checked="checked">
                                                                     <label for="checkbox3"></label>
                                                                 </div>
                                                               </td>
@@ -207,7 +202,7 @@
                                                               <td>Repeats Every 1 Month(s)</td>
                                                               <td>10 Days<i class="fa fa-pencil pull-right"></i></td>
                                                               <td><input class="form-control input-sm" value="10-Dec-2016" type="text"></td>
-                                                              <td>&nbsp;</td>
+                                                              <td><input class="form-control input-sm" value="01-Dec-2016" type="text"></td>
                                                             </tr>
                                                             <tr>
                                                               <td>
@@ -224,6 +219,11 @@
                                                               <td>&nbsp;</td>
                                                               <td>&nbsp;</td>
                                                             </tr>
+                                                             <tr>
+                                                              <td colspan="100%">
+                                                                <mark class="p-l-10 p-r-10">Tamilnadu State Act</mark>
+                                                              </td>
+                                                            </tr>
                                                             <tr>
                                                               <td>
                                                                 <div class="checkbox checkbox-primary m-b-0 m-t-0">
@@ -237,11 +237,24 @@
                                                               <td>Every 31st March, 30th June, 20th September, 31th December</td>
                                                               <td class="view-trigger-days">20 Days, 20 Days, 20 Days, 15 Days <i class="fa fa-pencil pull-right edit-trigger c-pointer" onclick="trigger_change('1')"></i></td>
                                                               <td style="display:none;" class="edit-trigger-days">20 Days, 20 Days, 20 Days, 15 Days 
-                                                                <div class="input-group"><input class="form-control input-sm" value="20" type="text"><span class="input-group-addon bg-info">Days</span></div>
-                                                                <div class="input-group"><input class="form-control input-sm" value="20" type="text"><span class="input-group-addon bg-info">Days</span></div>
-                                                                <div class="input-group"><input class="form-control input-sm" value="20" type="text"><span class="input-group-addon bg-info">Days</span></div>
-                                                                <div class="input-group"><input class="form-control input-sm" value="15" type="text"><span class="input-group-addon bg-info">Days</span></div>
-                                                                <i class="fa fa-times text-muted pull-right close-tigger c-pointer" onclick="trigger_change('2')"></i></td>
+                                                              <i class="fa fa-times text-muted pull-right close-tigger c-pointer" onclick="trigger_change('2')"></i>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="20" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="20" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="20" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="15" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                </td>
                                                               <td><input class="form-control input-sm" value="31-Dec-2016" type="text"></td>
                                                               <td><input class="form-control input-sm" value="31-Dec-2016" type="text"></td>
                                                             </tr>
@@ -471,16 +484,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+                                    <p class="rpt-count">Selected Compliance: 3</p>
                                 </div>
                                 <div class="tab-pane m-t-0 fade box-height-350" id="tab3">
                                     <div class="row">
                                         <div class="col-sm-12 scroll_box">
-                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader" width="100%" cellspacing="0">
+                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader m-b-0" width="100%" cellspacing="0">
                                                 <tbody>
                                                     <tr>
-                                                        <td>
-                                                            <h6 class="m-t-0">Assignee</h6>
+                                                        <td class="width-31">
+                                                            <h6 class="m-t-0 text-center">Assignee <span class="mandatory">*</span></h6>
                                                             <select class="form-control input-sm m-b-10">
                                                               <option>All</option>
                                                               <option>RG0001 - Corporate Office</option>
@@ -502,8 +515,8 @@
                                                                 <li>EMP10018 - Vivek - L5</li>
                                                             </ul>
                                                         </td>
-                                                        <td>
-                                                            <h6 class="m-t-0">Concurrence</h6>
+                                                        <td class="width-34">
+                                                            <h6 class="m-t-0 text-center">Concurrence</h6>
                                                             <select class="form-control input-sm m-b-10">
                                                               <option>All</option>
                                                               <option>RG0001 - Corporate Office</option>
@@ -526,8 +539,8 @@
                                                                 <li>EMP10018 - Vivek - L5</li>
                                                             </ul>
                                                         </td>
-                                                        <td>
-                                                            <h6 class="m-t-0">Approval</h6>
+                                                        <td class="width-33">
+                                                            <h6 class="m-t-0 text-center">Approval</h6>
                                                             <select class="form-control input-sm m-b-10">
                                                               <option>All</option>
                                                               <option selected="selected">RG0001 - Corporate Office</option>
@@ -561,7 +574,7 @@
                                     <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
                                     <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
                                     <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
-                                    <li class="finish pull-right"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
+                                    <!-- <li class="finish pull-right"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li> -->
                                 </ul>
                             </div>
                         </div>
@@ -575,7 +588,7 @@
 </div>
 </div>
 </div>
-<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
+<!--div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -591,12 +604,27 @@
                   </div>
               </form>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div-->
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Applicable Units</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <p class="form-control-static text-left">RG1001 - Corporate Office - 15/9, New Delhi, New Delhi, North Region, India</p>
+            <p class="form-control-static text-left">RG1002 - Regional Office - 24-1/4, South Delhi Municipal Corporation, Delhi</p>
+            <p class="form-control-static text-left">RG1003 - Branch Office - 12, KK nagar, Chennai, Tamil Nadu, South Region</p>
+        </form>
+    </div>
+</div>
+<script src="/files/client/common/js/custombox/custombox.min.js"></script>
 
 <script>
-    var resizefunc = [];
 </script>
 <script src="/files/knowledge/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script type="text/javascript">

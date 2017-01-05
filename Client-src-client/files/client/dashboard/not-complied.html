@@ -21,7 +21,7 @@
         <li class="has_sub active"> <a href="/dashboard/not-complied" class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
         <li class="has_sub"> <a href="/dashboard/assignee-wise" class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
         <li class="has_sub"> <a href="/dashboard/trend-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
-        <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
+        <!-- <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li> -->
         <li class="has_sub"> <a href="/dashboard/risk-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
       </ul>
       <div class="clearfix"></div>
@@ -40,6 +40,9 @@
         <div class="col-sm-12 h4-title">
           <h4 class="page-title pull-left">Not complied</h4>
 		  <div class="pull-right">
+        <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-primary btn-trans" title="Filter">
+          <i class="fa fa-upload"></i> <small>Export</small>
+               </a>
 			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
 					<i class="zmdi zmdi-sort"></i> <small>Filter</small>
                </a>
@@ -538,6 +541,31 @@
         });
     }
 
+    function loadDrillDownData(name){
+      $("#viewaspie").hide();
+      $("#viewasbar").hide();
+      $("#next").hide();
+      $("#previous").hide();
+      $("#back").hide();
+
+      var img_name="";
+      var margin_style="";
+      if (name == "0-30 days") {
+        // img_name = "/images/dash-list/task-entity-inprogress.png";
+        location.href="/dashboard/not-complied-drilldown";
+        name = "Branch Office - 1";
+        com_name = "0 - 30 days ";
+      } else
+      // img_name = "/images/dash-list/escalations.png";
+      location.href="/dashboard/not-complied-drilldown";
+      name = $("#hidden").val();
+    
+      var htmlstr = '<div style="'+margin_style+'"><h2 style="margin-left:10px;font-size:20px">'+name+' for the year 2012</h2><br><img src='+img_name+' style="margin-left:3px;" ></div>';
+       $(function () {
+        $('#container').html(htmlstr);
+    });
+    }
+
     function loadEscalations(){
       $("#viewasbar").hide();
       $("#viewaspie").hide();
@@ -560,7 +588,7 @@
                   var above90= 2;
                   var ztt = 5;
                   total = 8+3+2+5;
-                  title = "Branch Office - 1 ";
+                  title = "RG Groups";
                   total = 28;
               
               $('#container').highcharts({
@@ -618,19 +646,20 @@
                         },
                       data: [
                           {
-                            name:"0-30 days",
-                            y:ztt,
-                            // drilldown:drill
-                          },{
-                            name:"31-60 days",
-                            y:tts,
+                            name:"Above 90 days",
+                            y:above90,
                           },{
                             name:"61-90 days",
                             y:stn,
                           },{
-                            name:"Above 90 days",
-                            y:above90,
-                          }             
+                            name:"31-60 days",
+                            y:tts,
+                          },{
+                            
+                            name:"0-30 days",
+                            y:ztt,
+                            drilldown:'0-30 days'
+                          }
                       ]
                   }]
               });
