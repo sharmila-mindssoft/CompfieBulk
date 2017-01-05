@@ -2756,6 +2756,9 @@ BEGIN
     client_database_server_id = db_server_id, updated_by = _created_by
     where client_database_id = client_db_id;
 
+    update tbl_client_database set client_database_server_id = db_server_id
+    where client_id = clientid;
+
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
 
