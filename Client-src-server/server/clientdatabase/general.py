@@ -5,7 +5,7 @@ import json
 from dateutil import relativedelta
 from server.clientdatabase.tables import *
 from server.constants import (CLIENT_DOCS_BASE_PATH)
-from protocol import (core, dashboard, clientreport)
+from clientprotocol import (clientcore, dashboard, clientreport)
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
     remove_uploaded_file, convert_to_key_dict
@@ -114,7 +114,7 @@ def get_countries_for_user(db, user_id):
 def return_countries(data):
     results = []
     for d in data:
-        results.append(core.Country(
+        results.append(clientcore.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
         ))
     return results
@@ -138,7 +138,7 @@ def get_domains_for_user(db, user_id):
 def return_domains(data):
     results = []
     for d in data:
-        results.append(core.Domain(
+        results.append(clientcore.Domain(
             d["domain_id"], d["domain_name"], bool(d["is_active"])
         ))
     return results
@@ -161,7 +161,7 @@ def get_business_groups_for_user(db, business_group_ids):
 def return_business_groups(business_groups):
     results = []
     for business_group in business_groups:
-        results.append(core.ClientBusinessGroup(
+        results.append(clientcore.ClientBusinessGroup(
             business_group["business_group_id"],
             business_group["business_group_name"]
         ))
@@ -188,7 +188,7 @@ def return_legal_entities(legal_entities):
         b_group_id = None
         if legal_entity["business_group_id"] > 0:
             b_group_id = int(legal_entity["business_group_id"])
-        results.append(core.ClientLegalEntity(
+        results.append(clientcore.ClientLegalEntity(
             legal_entity["legal_entity_id"],
             legal_entity["legal_entity_name"],
             b_group_id
@@ -213,7 +213,7 @@ def get_divisions_for_user(db, division_ids):
 def return_divisions(divisions):
     results = []
     for division in divisions:
-        division_obj = core.ClientDivision(
+        division_obj = clientcore.ClientDivision(
             division["division_id"], division["division_name"],
             division["legal_entity_id"], division["business_group_id"]
         )
@@ -296,7 +296,7 @@ def return_units(units):
                 division_id = unit["division_id"]
             if unit["business_group_id"] > 0:
                 b_group_id = unit["business_group_id"]
-            results.append(core.ClientUnit(
+            results.append(clientcore.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"], bool(unit["is_active"]),
@@ -334,7 +334,7 @@ def return_units_assign(units):
                 division_id = unit["division_id"]
             if unit["business_group_id"] > 0:
                 b_group_id = unit["business_group_id"]
-            results.append(core.ClientUnit(
+            results.append(clientcore.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"], bool(unit["is_active"]),
@@ -635,7 +635,7 @@ def get_service_providers(db):
 def return_service_providers(service_providers):
     results = []
     for service_provider in service_providers:
-        service_provider_obj = core.ServiceProvider(
+        service_provider_obj = clientcore.ServiceProvider(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
             bool(service_provider["is_active"]))
@@ -658,7 +658,7 @@ def return_client_compliances(data):
         compliance_name = d["compliance_name"]
         if d["document_name"] not in ["None", None, ""]:
             compliance_name = "%s - %s" % (d["document_name"], compliance_name)
-        results.append(core.ComplianceFilter(
+        results.append(clientcore.ComplianceFilter(
             d["compliance_id"], compliance_name
         ))
     return results
@@ -672,7 +672,7 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
     current_year = now.year
     current_month = now.month
     for date in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
                 date["trigger_before_days"],
@@ -971,9 +971,9 @@ def get_compliance_frequency(db, condition="1"):
     compliance_frequency = []
     for row in rows:
         compliance_frequency.append(
-            core.ComplianceFrequency(
+            clientcore.ComplianceFrequency(
                 row["frequency_id"],
-                core.COMPLIANCE_FREQUENCY(row["frequency"])
+                clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
                 )
             )
     return compliance_frequency
@@ -1062,7 +1062,7 @@ def return_users(users):
             )
         else:
             employee_name = "Administrator"
-        results.append(core.User(
+        results.append(clientcore.User(
             user["user_id"], employee_name, bool(user["is_active"])
         ))
     return results

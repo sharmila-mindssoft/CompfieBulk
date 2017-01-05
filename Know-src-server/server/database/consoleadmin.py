@@ -1,8 +1,10 @@
-from server.exceptionmessage import process_error
+from server.exceptionmessage import process_error, fetch_error
 from protocol import consoleadmin
 from forms import *
 from tables import *
 from server.common import get_date_time
+from server.database.validateEnvironment import ServerValidation
+from server.database.createclientdatabase import ClientDBCreate
 
 __all__ = [
     "get_db_server_list",
@@ -354,7 +356,26 @@ def return_File_servers_List(data):
 # parameter : Object of database, Save Allocated database environment request
 # return type : Raises process error if save fails otherwise returns None
 ###############################################################################
+def validated_env_before_save(db, request):
+    db_server_id = request.db_server_id
+    machine_id = request.machine_id
+    file_server_id = request.file_server_id
+    vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
+    is_valid = vobj.perform_validation()
+    if is_valid[0] is not True :
+        return is_valid[0]
+    elif is_valid[1] is not True :
+        return is_valid[1]
+    elif is_valid[2] is not True :
+        return is_valid[2]
+    else :
+        return True
+
 def save_allocated_db_env(db, request, session_user):
+    is_valid = validated_env_before_save(db, request)
+    if is_valid is not True:
+        raise fetch_error(is_valid)
+
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     client_db_id = request.client_database_id
@@ -371,11 +392,16 @@ def save_allocated_db_env(db, request, session_user):
     #
     # try:
     if client_db_id is None:
-        db.call_insert_proc(
-            "sp_clientdatabase_save",
-            (client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
-                client_ids, legal_entity_ids, session_user, get_date_time())
-        )
+        try :
+            client_id = db.call_insert_proc(
+                "sp_clientdatabase_save",
+                (client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
+                    client_ids, legal_entity_ids, session_user, get_date_time())
+            )
+
+        except Exception :
+            print "Environment allocation failed"
+
     else:
         db.call_insert_proc(
             "sp_clientdatabase_update",
@@ -393,6 +419,8 @@ def save_allocated_db_env(db, request, session_user):
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
+    # perform db creation
+
     # except Exception, e:
     #     print e
     #     raise process_error("E076")

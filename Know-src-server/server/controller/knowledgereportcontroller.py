@@ -1,10 +1,8 @@
-import time
 from protocol import login, knowledgereport
 from generalcontroller import (
     validate_user_session, validate_user_forms,
     process_get_domains, process_get_countries
 )
-from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 from server.database.admin import (
     get_countries_for_user, get_domains_for_user

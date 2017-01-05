@@ -1,7 +1,7 @@
-from protocol.jsonvalidators import (
+from clientprotocol.jsonvalidators_client import (
     parse_enum, parse_dictionary, to_structure_dictionary_values
 )
-from protocol.parse_structure import (
+from clientprotocol.parse_structure import (
     parse_structure_EnumType_core_DURATION_TYPE,
     parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_ComplianceShortDescription,
@@ -36,7 +36,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
 
 )
-from protocol.to_structure import (
+from clientprotocol.to_structure import (
     to_structure_EnumType_core_DURATION_TYPE,
     to_structure_UnsignedIntegerType_32, to_structure_Bool,
     to_structure_VectorType_RecordType_core_ComplianceShortDescription,

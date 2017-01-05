@@ -1,5 +1,5 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
-from protocol.parse_structure import (
+from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list)
+from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
@@ -59,7 +59,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32,
     parse_structure_OptionalType_Smallvalue
 )
-from protocol.to_structure import (
+from clientprotocol.to_structure import (
     to_structure_SignedIntegerType_8,
     to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,

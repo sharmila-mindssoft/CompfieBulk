@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (
+from clientprotocol.jsonvalidators_client import (
     parse_bool,
     parse_number,
     parse_point_numbers,
@@ -103,12 +103,12 @@ def parse_structure_OptionalType_CustomTextType_50(data):
 
 
 def parse_structure_VariantType_knowledgemaster_Request(data):
-    from protocol import knowledgemaster
+    from clientprotocol import knowledgemaster
     return knowledgemaster.Request.parse_structure(data)
 
 
 def parse_structure_VariantType_clientcoordinationmaster_Request(data):
-    from protocol import clientcoordinationmaster
+    from clientprotocol import clientcoordinationmaster
     return clientcoordinationmaster.Request.parse_structure(data)
 
 
@@ -125,23 +125,23 @@ def parse_structure_OptionalType_UnsignedIntegerType_32(data):
 
 
 def parse_structure_RecordType_clientreport_ReassignHistory(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ReassignHistory.parse_structure(data)
 
 def parse_structure_RecordType_general_Notification(data):
-    from protocol import general
+    from clientprotocol import general
     return general.Notification.parse_structure(data)
 
 def parse_structure_RecordType_general_User(data):
-    from protocol import core
+    from clientprotocol import core
     return core.User.parse_structure(data)
 
 def parse_structure_RecordType_general_AuditTrail(data):
-    from protocol import general
+    from clientprotocol import general
     return general.AuditTrail.parse_structure(data)
 
 def parse_structure_RecordType_general_AuditTrailForm(data):
-    from protocol import general
+    from clientprotocol import general
     return general.AuditTrailForm.parse_structure(data)
 
 def parse_structure_VectorType_SignedIntegerType_8(data):
@@ -182,11 +182,11 @@ def parse_structure_VectorType_RecordType_clientreport_ReassignHistory(data):
     return lst
 
 def parse_structure_RecordType_dashboard_TrendData(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.TrendData.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_ReassignCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ReassignCompliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_ReassignCompliance(data):
@@ -286,7 +286,7 @@ def parse_structure_VectorType_RecordType_core_Industry(data):
     return lst
 
 def parse_structure_VariantType_technomasters_Request(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.Request.parse_structure(data)
 
 def parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography(data):
@@ -299,7 +299,7 @@ def parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Ge
     return d
 
 def parse_structure_RecordType_dashboard_CompliedMap(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.CompliedMap.parse_structure(data)
 
 def parse_structure_Float(data):
@@ -313,7 +313,7 @@ def parse_structure_VectorType_RecordType_core_Geography(data):
     return lst
 
 def parse_structure_RecordType_clientreport_ComplianceList(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ComplianceList.parse_structure(data)
 
 def parse_structure_VectorType_CustomTextType_20(data):
@@ -345,7 +345,7 @@ def parse_structure_VectorType_RecordType_clientreport_ComplianceList(data):
     return lst
 
 def parse_structure_RecordType_clientreport_ApplicabilityCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ApplicabilityCompliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_ApplicabilityCompliance(data):
@@ -389,11 +389,11 @@ def parse_structure_CustomTextType_20(data):
     return parse_custom_string(data, 20)
 
 def parse_structure_RecordType_clienttransactions_REASSIGNED_COMPLIANCE(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.REASSIGNED_COMPLIANCE.parse_structure(data)
 
 def parse_structure_RecordType_technotransactions_ASSIGNED_STATUTORIES(data):
-    from protocol import technotransactions
+    from clientprotocol import technotransactions
     return technotransactions.ASSIGNED_STATUTORIES.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_GroupCompany(data):
@@ -431,19 +431,19 @@ def parse_structure_OptionalType_Bool(data):
     return parse_structure_Bool(data)
 
 def parse_structure_RecordType_core_ServiceProvider(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ServiceProvider.parse_structure(data)
 
 def parse_structure_RecordType_core_ServiceProviderDetails(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ServiceProviderDetails.parse_structure(data)
 
 def parse_structure_RecordType_technomasters_LICENCE_HOLDER_DETAILS(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.LICENCE_HOLDER_DETAILS.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.PAST_RECORD_COMPLIANCE.parse_structure(data)
 
 def parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(data):
@@ -459,14 +459,14 @@ def parse_structure_CustomTextType_50(data):
     return parse_custom_string(data, 50)
 
 def parse_structure_VariantType_clienttransactions_Request(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.Request.parse_structure(data)
 
 def parse_structure_CustomTextType_500(data):
     return parse_custom_string(data, 500)
 
 def parse_structure_RecordType_technomasters_PROFILE_DETAIL(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.PROFILE_DETAIL.parse_structure(data)
 
 def parse_structure_CustomIntegerType_1_10(data):
@@ -487,27 +487,27 @@ def parse_structure_VectorType_RecordType_technotransactions_ASSIGNED_STATUTORIE
     return lst
 
 def parse_structure_RecordType_core_UserDetails(data):
-    from protocol import core
+    from clientprotocol import core
     return core.UserDetails.parse_structure(data)
 
 def parse_structure_RecordType_technomasters_PROFILES(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.PROFILES.parse_structure(data)
 
 def parse_structure_EnumType_core_SESSION_TYPE(data):
-    from protocol import core
+    from clientprotocol import core
     return core.SESSION_TYPE.parse_structure(data)
 
 def parse_structure_EnumType_core_USER_TYPE(data):
-    from protocol import core
+    from clientprotocol import core
     return core.USER_TYPE.parse_structure(data)
 
 def parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(data):
-    from protocol import core
+    from clientprotocol import core
     return core.COMPLIANCE_APPROVAL_STATUS.parse_structure(data)
 
 def parse_structure_EnumType_core_COMPLIANCE_ACTIVITY_STATUS(data):
-    from protocol import core
+    from clientprotocol import core
     return core.COMPLIANCE_ACTIVITY_STATUS.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_Unit(data):
@@ -525,23 +525,23 @@ def parse_structure_OptionalType_CustomIntegerType_1_12(data):
     return parse_structure_CustomIntegerType_1_12(data)
 
 def parse_structure_EnumType_core_COMPLIANCE_STATUS(data):
-    from protocol import core
+    from clientprotocol import core
     return core.COMPLIANCE_STATUS.parse_structure(data)
 
 def parse_structure_EnumType_core_APPLICABILITY_STATUS(data):
-    from protocol import core
+    from clientprotocol import core
     return core.APPLICABILITY_STATUS.parse_structure(data)
 
 def parse_structure_EnumType_core_REPEATS_TYPE(data):
-    from protocol import core
+    from clientprotocol import core
     return core.REPEATS_TYPE.parse_structure(data)
 
 def parse_structure_EnumType_core_DURATION_TYPE(data):
-    from protocol import core
+    from clientprotocol import core
     return core.DURATION_TYPE.parse_structure(data)
 
 def parse_structure_RecordType_core_ActiveCompliance(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ActiveCompliance.parse_structure(data)
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(data):
@@ -554,7 +554,7 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level
     return d
 
 def parse_structure_RecordType_core_User(data):
-    from protocol import core
+    from clientprotocol import core
     return core.User.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_ActiveCompliance(data):
@@ -579,7 +579,7 @@ def parse_structure_VectorType_RecordType_dashboard_DomainWise(data):
     return lst
 
 def parse_structure_EnumType_core_APPROVAL_STATUS(data):
-    from protocol import core
+    from clientprotocol import core
     return core.APPROVAL_STATUS.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_knowledgereport_GeographyMapping(data):
@@ -590,15 +590,15 @@ def parse_structure_VectorType_RecordType_knowledgereport_GeographyMapping(data)
     return lst
 
 def parse_structure_RecordType_clientreport_UserWiseCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.UserWiseCompliance.parse_structure(data)
 
 def parse_structure_VariantType_clientadminsettings_Request(data):
-    from protocol import clientadminsettings
+    from clientprotocol import clientadminsettings
     return clientadminsettings.Request.parse_structure(data)
 
 def parse_structure_RecordType_clientuser_ComplianceOnOccurrence(data):
-    from protocol import clientuser
+    from clientprotocol import clientuser
     return clientuser.ComplianceOnOccurrence.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(data):
@@ -643,15 +643,15 @@ def parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(data):
     return lst
 
 def parse_structure_RecordType_clientadminsettings_LICENCE_HOLDER(data):
-    from protocol import clientadminsettings
+    from clientprotocol import clientadminsettings
     return clientadminsettings.LICENCE_HOLDER.parse_structure(data)
 
 def parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ASSIGN_STATUTORY_SUBMISSION_TYPE.parse_structure(data)
 
 def parse_structure_VariantType_technotransactions_Request(data):
-    from protocol import technotransactions
+    from clientprotocol import technotransactions
     return technotransactions.Request.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_Compliance(data):
@@ -662,7 +662,7 @@ def parse_structure_VectorType_RecordType_core_Compliance(data):
     return lst
 
 def parse_structure_RecordType_dashboard_Compliance(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.Compliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_Compliance(data):
@@ -690,7 +690,7 @@ def parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(dat
     return lst
 
 def parse_structure_RecordType_clientadminsettings_PROFILE_DETAIL(data):
-    from protocol import clientadminsettings
+    from clientprotocol import clientadminsettings
     return clientadminsettings.PROFILE_DETAIL.parse_structure(data)
 
 def parse_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(data):
@@ -705,7 +705,7 @@ def parse_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL(dat
     return lst
 
 def parse_structure_EnumType_core_FILTER_TYPE(data):
-    from protocol import core
+    from clientprotocol import core
     return core.FILTER_TYPE.parse_structure(data)
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(data):
@@ -732,11 +732,11 @@ def parse_structure_VectorType_RecordType_knowledgemaster_Level(data):
     return lst
 
 def parse_structure_VariantType_knowledgetransaction_Request(data):
-    from protocol import knowledgetransaction
+    from clientprotocol import knowledgetransaction
     return knowledgetransaction.Request.parse_structure(data)
 
 def parse_structure_RecordType_core_StatutoryMapping(data):
-    from protocol import core
+    from clientprotocol import core
     return core.StatutoryMapping.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_DrillDownData(data):
@@ -747,15 +747,15 @@ def parse_structure_VectorType_RecordType_dashboard_DrillDownData(data):
     return lst
 
 def parse_structure_RecordType_core_LegalEntity(data):
-    from protocol import core
+    from clientprotocol import core
     return core.LegalEntity.parse_structure(data)
 
 def parse_structure_RecordType_core_GroupCompany(data):
-    from protocol import core
+    from clientprotocol import core
     return core.GroupCompany.parse_structure(data)
 
 def parse_structure_RecordType_dashboard_AssigneeChartData(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.AssigneeChartData.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_AssigneeChartData(data):
@@ -766,11 +766,11 @@ def parse_structure_VectorType_RecordType_dashboard_AssigneeChartData(data):
     return lst
 
 def parse_structure_RecordType_dashboard_Level1Compliance(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.Level1Compliance.parse_structure(data)
 
 def parse_structure_RecordType_core_GroupCompanyDetail(data):
-    from protocol import core
+    from clientprotocol import core
     return core.GroupCompanyDetail.parse_structure(data)
 
 def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(data):
@@ -790,7 +790,7 @@ def parse_structure_VectorType_RecordType_clientreport_ComplianceUnit(data):
     return lst
 
 def parse_structure_VariantType_general_Request(data):
-    from protocol import general
+    from clientprotocol import general
     return general.Request.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance(data):
@@ -821,7 +821,7 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport
     return d
 
 def parse_structure_VariantType_knowledgereport_Request(data):
-    from protocol import knowledgereport
+    from clientprotocol import knowledgereport
     return knowledgereport.Request.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_UnitDetails(data):
@@ -867,7 +867,7 @@ def parse_structure_VectorType_RecordType_technotransactions_UNIT(data):
     return lst
 
 def parse_structure_RecordType_clientreport_ServiceProviderCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ServiceProviderCompliance.parse_structure(data)
 
 def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit(data):
@@ -889,7 +889,7 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport
     return d
 
 def parse_structure_RecordType_dashboard_ApplicableDrillDown(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.ApplicableDrillDown.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_ApplicableDrillDown(data):
@@ -904,19 +904,19 @@ def parse_structure_OptionalType_VectorType_RecordType_core_Division(data):
     return parse_structure_VectorType_RecordType_core_Division(data)
 
 def parse_structure_RecordType_core_UnitDetails(data):
-    from protocol import core
+    from clientprotocol import core
     return core.UnitDetails.parse_structure(data)
 
 def parse_structure_RecordType_techno_report_UnitDetails(data):
-    from protocol import technoreports
+    from clientprotocol import technoreports
     return technoreports.UnitDetails.parse_structure(data)
 
 def parse_structure_VariantType_clientreport_Request(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.Request.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_LoginTrace(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.LoginTrace.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_LoginTrace(data):
@@ -934,11 +934,11 @@ def parse_structure_VectorType_RecordType_clientreport_ServiceProviderCompliance
     return lst
 
 def parse_structure_RecordType_core_UserGroup(data):
-    from protocol import core
+    from clientprotocol import core
     return core.UserGroup.parse_structure(data)
 
 def parse_structure_RecordType_client_masters_ClientUserGroup(data):
-    from protocol import clientmasters
+    from clientprotocol import clientmasters
     return clientmasters.ClientUserGroup.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_StatutoryNature(data):
@@ -949,7 +949,7 @@ def parse_structure_VectorType_RecordType_core_StatutoryNature(data):
     return lst
 
 def parse_structure_RecordType_clientreport_FormName(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.FormName.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_AssignedStatutory(data):
@@ -978,7 +978,7 @@ def parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
     return parse_structure_VectorType_RecordType_core_StatutoryDate(data)
 
 def parse_structure_RecordType_core_FileList(data):
-    from protocol import core
+    from clientprotocol import core
     return core.FileList.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_FileLst(data):
@@ -1007,47 +1007,47 @@ def parse_structure_VectorType_RecordType_core_GroupCompanyDetail(data):
     return lst
 
 def parse_structure_RecordType_core_BusinessGroup(data):
-    from protocol import core
+    from clientprotocol import core
     return core.BusinessGroup.parse_structure(data)
 
 def parse_structure_RecordType_techno_master_BUSINESSGROUP(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.BUSINESS_GROUP.parse_inner_structure(data)
 
 def parse_structure_RecordType_techno_master_LEGALENTITY(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.LEGAL_ENTITY.parse_inner_structure(data)
 
 def parse_structure_RecordType_techno_master_DIVISION(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.DIVISION.parse_inner_structure(data)
 
 def parse_structure_RecordType_techno_master_UNIT(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.UNIT.parse_structure(data)
 
 def parse_structure_RecordType_technomasters_Unit(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.Unit.parse_structure(data)
 
 def parse_structure_RecordType_technomasters_CountryWiseUnits(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.CountryWiseUnits.parse_structure(data)
 
 def parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
-    from protocol import core
+    from clientprotocol import core
     return core.COMPLIANCE_FREQUENCY.parse_structure(data)
 
 def parse_structure_RecordType_knowledgereport_GeographyMapping(data):
-    from protocol import knowledgereport
+    from clientprotocol import knowledgereport
     return knowledgereport.GeographyMapping.parse_structure(data)
 
 def parse_structure_VariantType_clientmasters_Request(data):
-    from protocol import clientmasters
+    from clientprotocol import clientmasters
     return clientmasters.Request.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_ASSINGED_COMPLIANCE(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.ASSINGED_COMPLIANCE.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(data):
@@ -1081,15 +1081,15 @@ def parse_structure_VectorType_RecordType_core_UserDetails(data):
     return lst
 
 def parse_structure_RecordType_dashboard_ChartDataMap(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.ChartDataMap.parse_structure(data)
 
 def parse_structure_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS(data):
-    from protocol import technoreports
+    from clientprotocol import technoreports
     return technoreports.COUNTRY_WISE_NOTIFICATIONS.parse_structure(data)
 
 def parse_structure_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(data):
-    from protocol import technoreports
+    from clientprotocol import technoreports
     return technoreports.UNIT_WISE_ASSIGNED_STATUTORIES.parse_structure(data)
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_knowledgereport_GeographyMapping(data):
@@ -1109,11 +1109,11 @@ def parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCEL
     return lst
 
 def parse_structure_RecordType_dashboard_EscalationData(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.EscalationData.parse_structure(data)
 
 def parse_structure_RecordType_core_Menu(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Menu.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_EscalationData(data):
@@ -1124,11 +1124,11 @@ def parse_structure_VectorType_RecordType_dashboard_EscalationData(data):
     return lst
 
 def parse_structure_RecordType_techno_master_COUNTRYWISEUNITS(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.COUNTRYWISEUNITS.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_UnitName(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.UnitName.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_Form(data):
@@ -1146,15 +1146,15 @@ def parse_structure_VectorType_RecordType_dashboard_TrendData(data):
     return lst
 
 def parse_structure_RecordType_core_ClientConfiguration(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ClientConfiguration.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_AssigneeCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.AssigneeCompliance.parse_structure(data)
 
 def parse_structure_RecordType_core_Domain(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Domain.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS(data):
@@ -1172,11 +1172,11 @@ def parse_structure_VectorType_RecordType_clientreport_AssigneeCompliance(data):
     return lst
 
 def parse_structure_VariantType_admin_Request(data):
-    from protocol import admin
+    from clientprotocol import admin
     return admin.Request.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_ComplianceForUnit(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ComplianceForUnit.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_FormCategory(data):
@@ -1187,7 +1187,7 @@ def parse_structure_VectorType_RecordType_core_FormCategory(data):
     return lst
 
 def parse_structure_RecordType_dashboard_DrillDownData(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.DrillDownData.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_RessignedCompliance(data):
@@ -1198,11 +1198,11 @@ def parse_structure_VectorType_RecordType_dashboard_RessignedCompliance(data):
     return lst
 
 def parse_structure_RecordType_dashboard_DelayedCompliance(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.DelayedCompliance.parse_structure(data)
 
 def parse_structure_RecordType_core_Geography(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Geography.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_FormName(data):
@@ -1213,35 +1213,35 @@ def parse_structure_VectorType_RecordType_clientreport_FormName(data):
     return lst
 
 def parse_structure_RecordType_dashboard_DomainWise(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.DomainWise.parse_structure(data)
 
 def parse_structure_VariantType_clientuser_Request(data):
-    from protocol import clientuser
+    from clientprotocol import clientuser
     return clientuser.Request.parse_structure(data)
 
 def parse_structure_RecordType_core_Industry(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Industry.parse_structure(data)
 
 def parse_structure_RecordType_core_AssignedStatutory(data):
-    from protocol import core
+    from clientprotocol import core
     return core.AssignedStatutory.parse_structure(data)
 
 def parse_structure_RecordType_core_StatutoryNature(data):
-    from protocol import core
+    from clientprotocol import core
     return core.StatutoryNature.parse_structure(data)
 
 def parse_structure_VariantType_technoreports_Request(data):
-    from protocol import technoreports
+    from clientprotocol import technoreports
     return technoreports.Request.parse_structure(data)
 
 def parse_structure_RecordType_core_Division(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Division.parse_structure(data)
 
 def parse_structure_RecordType_core_Country(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Country.parse_structure(data)
 
 def parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(data):
@@ -1254,15 +1254,15 @@ def parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(data):
     return d
 
 def parse_structure_RecordType_core_Statutory(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Statutory.parse_structure(data)
 
 def parse_structure_RecordType_core_Unit(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Unit.parse_structure(data)
 
 def parse_structure_RecordType_core_UpcomingCompliance(data):
-    from protocol import core
+    from clientprotocol import core
     return core.UpcomingCompliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_ComplianceFrequency(data):
@@ -1280,7 +1280,7 @@ def parse_structure_VectorType_RecordType_core_ComplianceRepeatType(data):
     return lst
 
 def parse_structure_RecordType_core_NumberOfCompliances(data):
-    from protocol import core
+    from clientprotocol import core
     return core.NumberOfCompliances.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_NumberOfCompliances(data):
@@ -1312,15 +1312,15 @@ def parse_structure_VectorType_RecordType_clientreport_ComplianceForUnit(data):
     return lst
 
 def parse_structure_RecordType_clientreport_UnitCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.UnitCompliance.parse_structure(data)
 
 def parse_structure_RecordType_core_ComplianceShortDescription(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ComplianceShortDescription.parse_structure(data)
 
 def parse_structure_RecordType_core_ComplianceApplicability(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ComplianceApplicability.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_ComplianceApplicability(data):
@@ -1358,11 +1358,11 @@ def parse_structure_VectorType_RecordType_clientreport_UnitCompliance(data):
     return lst
 
 def parse_structure_RecordType_core_ComplianceRepeatType(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ComplianceRepeatType.parse_structure(data)
 
 def parse_structure_RecordType_core_ComplianceFrequency(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ComplianceFrequency.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_technomasters_PROFILES(data):
@@ -1373,7 +1373,7 @@ def parse_structure_VectorType_RecordType_technomasters_PROFILES(data):
     return lst
 
 def parse_structure_RecordType_dashboard_AssigneeWiseDetails(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.AssigneeWiseDetails.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE(data):
@@ -1384,19 +1384,19 @@ def parse_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE(
     return lst
 
 def parse_structure_RecordType_core_ComplianceDurationType(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ComplianceDurationType.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_UserName(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.UserName.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_APPROVALCOMPLIANCE(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.APPROVALCOMPLIANCE.parse_structure(data)
 
 def parse_structure_RecordType_core_Compliance(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Compliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(data):
@@ -1407,15 +1407,15 @@ def parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_U
     return lst
 
 def parse_structure_RecordType_core_StatutoryDate(data):
-    from protocol import core
+    from clientprotocol import core
     return core.StatutoryDate.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_Activities(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.Activities.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.ASSIGN_COMPLIANCE_USER.parse_structure(data)
 
 def parse_structure_CustomIntegerType_1_31(data):
@@ -1426,19 +1426,19 @@ def parse_structure_OptionalType_CustomIntegerType_1_31(data):
     return parse_structure_CustomIntegerType_1_31(data)
 
 def parse_structure_RecordType_clientreport_ActivityCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ActivityCompliance.parse_structure(data)
 
 def parse_structure_RecordType_core_Form(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Form.parse_structure(data)
 
 def parse_structure_RecordType_core_Level(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Level.parse_structure(data)
 
 def parse_structure_RecordType_knowledgemaster_Level(data):
-    from protocol import knowledgemaster
+    from clientprotocol import knowledgemaster
     return knowledgemaster.Level.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_ActivityCompliance(data):
@@ -1478,11 +1478,11 @@ def parse_structure_VectorType_RecordType_clientreport_Activities(data):
     return lst
 
 def parse_structure_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.UNIT_WISE_COMPLIANCE.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.APPORVALCOMPLIANCELIST.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE(data):
@@ -1493,19 +1493,19 @@ def parse_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIA
     return lst
 
 def parse_structure_RecordType_clientreport_User(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.User.parse_structure(data)
 
 def parse_structure_RecordType_technotransactions_UNIT(data):
-    from protocol import technotransactions
+    from clientprotocol import technotransactions
     return technotransactions.UNIT.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_ComplianceName(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ComplianceName.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.STATUTORYWISECOMPLIANCE.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(data):
@@ -1535,19 +1535,19 @@ def parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
     return d
 
 def parse_structure_RecordType_clientreport_ComplianceUnit(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ComplianceUnit.parse_structure(data)
 
 def parse_structure_RecordType_core_FormCategory(data):
-    from protocol import core
+    from clientprotocol import core
     return core.FormCategory.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_USER_WISE_UNITS(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.USER_WISE_UNITS.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_StatutoryReassignCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.StatutoryReassignCompliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_StatutoryReassignCompliance(data):
@@ -1565,11 +1565,11 @@ def parse_structure_VectorType_RecordType_clienttransactions_USER_WISE_UNITS(dat
     return lst
 
 def parse_structure_VariantType_dashboard_Request(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.Request.parse_structure(data)
 
 def parse_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.USER_WISE_COMPLIANCE.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_Level1Compliance(data):
@@ -1580,15 +1580,15 @@ def parse_structure_VectorType_RecordType_dashboard_Level1Compliance(data):
     return lst
 
 def parse_structure_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.STATUTORY_WISE_COMPLIANCES.parse_structure(data)
 
 def parse_structure_RecordType_dashboard_RessignedCompliance(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.RessignedCompliance.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_ComplianceDetails(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ComplianceDetails.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_ComplianceDetails(data):
@@ -1599,7 +1599,7 @@ def parse_structure_VectorType_RecordType_clientreport_ComplianceDetails(data):
     return lst
 
 def parse_structure_RecordType_clientreport_ActivityLog(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ActivityLog.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_ActivityLog(data):
@@ -1610,11 +1610,11 @@ def parse_structure_VectorType_RecordType_clientreport_ActivityLog(data):
     return lst
 
 def parse_structure_RecordType_clientreport_Level1Statutory(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.Level1Statutory.parse_structure(data)
 
 def parse_structure_RecordType_admin_UserGroup(data):
-    from protocol import admin
+    from clientprotocol import admin
     return admin.UserGroup.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_admin_UserGroup(data):
@@ -1625,7 +1625,7 @@ def parse_structure_VectorType_RecordType_admin_UserGroup(data):
     return lst
 
 def parse_structure_RecordType_knowledgetransaction_ApproveMapping(data):
-    from protocol import knowledgetransaction
+    from clientprotocol import knowledgetransaction
     return knowledgetransaction.ApproveMapping.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(data):
@@ -1654,7 +1654,7 @@ def parse_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32(data):
     return d
 
 def parse_structure_RecordType_technotransactions_AssignedStatutoryCompliance(data):
-    from protocol import technotransactions
+    from clientprotocol import technotransactions
     return technotransactions.AssignedStatutoryCompliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(data):
@@ -1666,7 +1666,7 @@ def parse_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCo
 
 # clienttransactions ComplianceApplicability
 def parse_structure_RecordType_clienttransactions_ComplianceApplicability(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.ComplianceApplicability.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(data):
@@ -1678,7 +1678,7 @@ def parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicabi
 
 # UnitStatutoryCompliances
 def parse_structure_RecordType_clienttransactions_UnitStatutoryCompliances(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.UnitStatutoryCompliances.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances(data):
@@ -1690,7 +1690,7 @@ def parse_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompli
 
 # clienttransaction UpdateStatutoryCompliance
 def parse_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.UpdateStatutoryCompliance.parse_structure(data)
 
 
@@ -1703,7 +1703,7 @@ def parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComp
 
 #clienttransaction getcompliancforunit
 def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.UNIT_WISE_STATUTORIES.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
@@ -1743,13 +1743,13 @@ def parse_structure_VectorType_RecordType_core_GeographyWithMapping(data):
     return lst
 
 def parse_structure_RecordType_core_GeographyWithMapping(data):
-    from protocol import core
+    from clientprotocol import core
     return core.GeographyWithMapping.parse_structure(data)
 
 # Client Business Group
 
 def parse_structure_RecordType_core_ClientBusinessGroup(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ClientBusinessGroup.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_ClientBusinessGroup(data):
@@ -1761,7 +1761,7 @@ def parse_structure_VectorType_RecordType_core_ClientBusinessGroup(data):
 
 # client Legal Entity
 def parse_structure_RecordType_core_ClientLegalEntity(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ClientLegalEntity.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_ClientLegalEntity(data):
@@ -1773,7 +1773,7 @@ def parse_structure_VectorType_RecordType_core_ClientLegalEntity(data):
 
 #client Division
 def parse_structure_RecordType_core_ClientDivision(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ClientDivision.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_ClientDivision(data):
@@ -1813,7 +1813,7 @@ def parse_structure_VectorType_RecordType_dashboard_TrendCompliance(data):
     return lst
 
 def parse_structure_RecordType_dashboard_TrendCompliance(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.TrendCompliance.parse_structure(data)
 
 def parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(data):
@@ -1833,11 +1833,11 @@ def parse_structure_VectorType_RecordType_dashboard_TrendDrillDownData(data):
     return lst
 
 def parse_structure_RecordType_dashboard_TrendDrillDownData(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.TrendDrillDownData.parse_structure(data)
 
 def parse_structure_RecordType_technoreports_NOTIFICATIONS(data):
-    from protocol import technoreports
+    from clientprotocol import technoreports
     return technoreports.NOTIFICATIONS.parse_structure(data)
 
 # Complaince details report
@@ -1849,7 +1849,7 @@ def parse_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise
     return lst
 
 def parse_structure_RecordType_clientreport_ComplianceDetailsUnitWise(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ComplianceDetailsUnitWise.parse_structure(data)
 
 
@@ -1865,7 +1865,7 @@ def parse_structure_VectorType_RecordType_core_ComplianceFilter(data):
 # not complied enum type
 
 def parse_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
-    from protocol import core
+    from clientprotocol import core
     return core.NOT_COMPLIED_TYPE.parse_structure(data)
 
 def parse_structure_OptionalType_CustomTextType_250(data):
@@ -1889,7 +1889,7 @@ def parse_structure_VectorType_RecordType_clientreport_RiskData(data):
     return lst
 
 def parse_structure_RecordType_clientreport_RiskData(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.RiskData.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
@@ -1900,7 +1900,7 @@ def parse_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
     return lst
 
 def parse_structure_RecordType_clientreport_Level1Compliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.Level1Compliance.parse_structure(data)
 
 # Client Notifications
@@ -1913,12 +1913,12 @@ def parse_structure_VectorType_RecordType_dashboard_Notification(data):
     return lst
 
 def parse_structure_RecordType_dashboard_Notification(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.Notification.parse_structure(data)
 
 
 def parse_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.STATUTORY_WISE_NOTIFICATIONS.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(data):
@@ -1931,7 +1931,7 @@ def parse_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATI
 # ReassignUnitCompliance
 
 def parse_structure_RecordType_clientreport_ReassignUnitCompliance(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ReassignUnitCompliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(data):
@@ -1949,7 +1949,7 @@ def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORI
     return lst
 
 def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS.parse_structure(data)
 
 def parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(data):
@@ -1966,7 +1966,7 @@ def parse_structure_VectorType_RecordType_clientreport_ActivityData(data):
     return lst
 
 def parse_structure_RecordType_clientreport_ActivityData(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.ActivityData.parse_structure(data)
 
 def parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(data):
@@ -1981,11 +1981,11 @@ def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
     return lst
 
 def parse_structure_RecordType_client_report_UnitDetails(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.UnitDetails.parse_structure(data)
 
 def parse_structure_RecordType_core_Compliance_Download(data):
-    from protocol import core
+    from clientprotocol import core
     return core.Compliance_Download.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_Compliance_Download(data):
@@ -2014,7 +2014,7 @@ def parse_structure_OptionalType_VectorType_CustomTextType_500(data):
     return parse_structure_VectorType_CustomTextType_500(data)
 
 def parse_structure_RecordType_core_StatutoryApprovalStatus(data):
-    from protocol import core
+    from clientprotocol import core
     return core.StatutoryApprovalStatus.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus(data):
@@ -2032,7 +2032,7 @@ def parse_structure_VectorType_RecordType_clienttransactions_PastRecordUnits(dat
     return lst
 
 def parse_structure_RecordType_clienttransactions_PastRecordUnits(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.PastRecordUnits.parse_structure(data)
 
 def parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data):
@@ -2052,7 +2052,7 @@ def parse_structure_VectorType_RecordType_technomasters_UnitDetails(data):
     return lst
 
 def parse_structure_RecordType_technomasters_UnitDetails(data):
-    from protocol import technomasters
+    from clientprotocol import technomasters
     return technomasters.UnitDetails.parse_structure(data)
 
 def parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
@@ -2072,7 +2072,7 @@ def parse_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance
     return lst
 
 def parse_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.AssigneeWiseLevel1Compliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_YearWise(data):
@@ -2083,11 +2083,11 @@ def parse_structure_VectorType_RecordType_dashboard_YearWise(data):
     return lst
 
 def parse_structure_RecordType_dashboard_YearWise(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.YearWise.parse_structure(data)
 
 def parse_structure_RecordType_dashboard_AssigneeWiseCompliance(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.AssigneeWiseCompliance.parse_inner_structure(data)
 
 def parse_structure_VectorType_RecordType_core_ClientInchargePersons(data):
@@ -2098,11 +2098,11 @@ def parse_structure_VectorType_RecordType_core_ClientInchargePersons(data):
     return lst
 
 def parse_structure_RecordType_core_ClientInchargePersons(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ClientInchargePersons.parse_structure(data)
 
 def parse_structure_RecordType_dashboard_DomainWiseYearConfiguration(data):
-    from protocol import dashboard
+    from clientprotocol import dashboard
     return dashboard.DomainWiseYearConfiguration.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(data):
@@ -2150,7 +2150,7 @@ def parse_structure_OptionalType_VectorType_CustomTextType_250(data):
     return parse_structure_VectorType_CustomTextType_250(data)
 
 def parse_structure_RecordType_clienttransactions_NewUnitSettings(data):
-    from protocol import clienttransactions
+    from clientprotocol import clienttransactions
     return clienttransactions.NewUnitSettings.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
@@ -2165,7 +2165,7 @@ def parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUni
     return parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)
 
 def parse_structure_RecordType_mobile_GetUSersList(data):
-    from protocol import mobile
+    from clientprotocol import mobile
     return mobile.GetUsersList.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_mobile_GetUsersList(data):
@@ -2176,7 +2176,7 @@ def parse_structure_VectorType_RecordType_mobile_GetUsersList(data):
     return lst
 
 def parse_structure_RecordType_mobile_ComplianceApplicability(data):
-    from protocol import mobile
+    from clientprotocol import mobile
     return mobile.ComplianceApplicability.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_mobile_ComplianceApplicability(data):
@@ -2187,7 +2187,7 @@ def parse_structure_VectorType_RecordType_mobile_ComplianceApplicability(data):
     return lst
 
 def parse_structure_RecordType_mobile_DomainWiseCount(data):
-    from protocol import mobile
+    from clientprotocol import mobile
     return mobile.DomainWiseCount.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_mobile_DomainWiseCount(data):
@@ -2198,7 +2198,7 @@ def parse_structure_VectorType_RecordType_mobile_DomainWiseCount(data):
     return lst
 
 def parse_structure_RecordType_mobile_UnitWiseCount(data):
-    from protocol import mobile
+    from clientprotocol import mobile
     return mobile.UnitWiseCount.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_mobile_UnitWiseCount(data):
@@ -2209,11 +2209,11 @@ def parse_structure_VectorType_RecordType_mobile_UnitWiseCount(data):
     return lst
 
 def parse_structure_VariantType_mobile_Request(data):
-    from protocol import mobile
+    from clientprotocol import mobile
     return mobile.Request.parse_structure(data)
 
 def parse_structure_RecordType_mobile_ComplianceHistory(data):
-    from protocol import mobile
+    from clientprotocol import mobile
     return mobile.ComplianceHistory.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_mobile_ComplianceHistory(data):
@@ -2231,11 +2231,11 @@ def parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicab
     return lst
 
 def parse_structure_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.GetComplianceTaskApplicabilityStatusReportData.parse_structure(data)
 
 def parse_structure_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
-    from protocol import clientreport
+    from clientprotocol import clientreport
     return clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
@@ -2264,7 +2264,7 @@ def parse_structure_VectorType_RecordType_core_ValidityDates(data):
 
 
 def parse_structure_RecordType_core_ValidityDates(data):
-    from protocol import core
+    from clientprotocol import core
     return core.ValidityDates.parse_structure(data)
 
 
@@ -2279,7 +2279,7 @@ def parse_structure_MapType_UnsignedInteger_32_VectorType_UnsignedInteger_32(dat
 
 
 def return_import(module, class_name):
-    mod = __import__('protocol.'+module, fromlist=[class_name])
+    mod = __import__('clientprotocol.'+module, fromlist=[class_name])
     klass = getattr(mod, class_name)
     return klass
 

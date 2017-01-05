@@ -1,7 +1,5 @@
 import os
-import time
 from protocol import core, login, general, possiblefailure
-from server import logger
 from server.constants import (
     FILE_TYPES,
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
@@ -10,7 +8,7 @@ from server.constants import (
 from server.common import (save_file_in_path, encrypt)
 from server.database.admin import *
 from server.database.general import (
-    get_user_form_ids,
+    # get_user_form_ids,
     get_notifications, get_audit_trails,
     update_profile,
     verify_password,
@@ -50,93 +48,58 @@ def process_general_request(request, db):
         return login.InvalidSessionToken()
 
     if type(request_frame) is general.UpdateUserProfile:
-        logger.logKnowledgeApi("UpdateUserProfile", "process begin")
         result = procees_update_user_profile(db, request_frame, user_id)
-        logger.logKnowledgeApi("UpdateUserProfile", "process end")
 
     elif type(request_frame) is general.GetDomains:
-        logger.logKnowledgeApi("GetDomains", "process begin")
         result = process_get_domains(db, user_id)
-        logger.logKnowledgeApi("GetDomains", "process end")
 
     elif type(request_frame) is general.SaveDomain:
-        logger.logKnowledgeApi("SaveDomain", "process begin")
         result = process_save_domain(db, request_frame, user_id)
-        logger.logKnowledgeApi("SaveDomain", "process end")
 
     elif type(request_frame) is general.UpdateDomain:
-        logger.logKnowledgeApi("UpdateDomain", "process begin")
         result = process_update_domain(db, request_frame, user_id)
-        logger.logKnowledgeApi("UpdateDomain", "process end")
 
     elif type(request_frame) is general.ChangeDomainStatus:
-        logger.logKnowledgeApi("ChangeDomainStatus", "process begin")
         result = process_change_domain_status(db, request_frame, user_id)
-        logger.logKnowledgeApi("ChangeDomainStatus", "process end")
 
     elif type(request_frame) is general.GetCountriesForUser:
-        logger.logKnowledgeApi("GetCountriesForUser", "process begin")
         result = process_get_countries_for_user(db, user_id)
-        logger.logKnowledgeApi("GetCountriesForUser", "process end")
 
     elif type(request_frame) is general.GetCountries:
-        logger.logKnowledgeApi("GetCountries", "process begin")
         result = process_get_countries(db, user_id)
-        logger.logKnowledgeApi("GetCountries", "process end")
 
     elif type(request_frame) is general.SaveCountry:
-        logger.logKnowledgeApi("SaveCountry", "process begin")
         result = process_save_country(db, request_frame, user_id)
-        logger.logKnowledgeApi("SaveCountry", "process end")
 
     elif type(request_frame) is general.UpdateCountry:
-        logger.logKnowledgeApi("UpdateCountry", "process begin")
         result = process_update_country(db, request_frame, user_id)
-        logger.logKnowledgeApi("UpdateCountry", "process end")
 
     elif type(request_frame) is general.ChangeCountryStatus:
-        logger.logKnowledgeApi("ChangeCountryStatus", "process begin")
         result = process_change_country_status(db, request_frame, user_id)
-        logger.logKnowledgeApi("ChangeCountryStatus", "process end")
 
     elif type(request_frame) is general.GetAuditTrails:
-        logger.logKnowledgeApi("GetAuditTrails", "process begin")
         result = process_get_audit_trails(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetAuditTrails", "process end")
 
     elif type(request_frame) is general.GetAuditTrailsFilter:
-        logger.logKnowledgeApi("GetAuditTrailsFilter", "process begin")
         result = process_get_audit_trails_filter(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetAuditTrailsFilter", "process end")
 
     elif type(request_frame) is general.UpdateNotificationStatus:
-        logger.logKnowledgeApi("UpdateNotificationStatus", "process begin")
         result = process_update_notification_status(db, request_frame, user_id)
-        logger.logKnowledgeApi("UpdateNotificationStatus", "process end")
 
     elif type(request_frame) is general.GetNotifications:
-        logger.logKnowledgeApi("GetNotifications", "process begin")
         result = process_get_notifications(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetNotifications", "process end")
 
     elif type(request_frame) is general.VerifyPassword:
-        logger.logKnowledgeApi("VerifyPassword", "process begin")
         result = process_verify_password(db, request_frame, user_id)
-        logger.logKnowledgeApi("VerifyPassword", "process end")
 
     elif type(request_frame) is general.GetMessages:
-        logger.logKnowledgeApi("GetMessages", "process begin")
         result = process_get_messages(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetMessages", "process end")
 
     elif type(request_frame) is general.GetStatutoryNotifications:
-        logger.logKnowledgeApi("GetStatutoryNotifications", "process begin")
         result = process_get_statutory_notifications(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetStatutoryNotifications", "process end")
+
     elif type(request_frame) is general.UpdateStatutoryNotificationStatus:
-        logger.logKnowledgeApi("UpdateStatutoryNotificationStatus", "process begin")
         result = process_update_statutory_notification_status(db, request_frame, user_id)
-        logger.logKnowledgeApi("UpdateStatutoryNotificationStatus", "process end")
     return result
 
 

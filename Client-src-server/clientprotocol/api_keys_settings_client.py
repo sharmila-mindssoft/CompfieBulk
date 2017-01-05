@@ -11,7 +11,7 @@
 ### validation_method = [is_alphabet, is_alphanumeric, is_date, is_address ]
 '''
 
-from protocol.api_key_validation import *
+from clientprotocol.api_key_validation_client import *
 from server.constants import CAPTCHA_LENGTH
 
 __all__ = [

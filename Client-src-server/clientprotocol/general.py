@@ -1,10 +1,10 @@
-from protocol.jsonvalidators import (
+from clientprotocol.jsonvalidators_client import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values
 )
-from protocol.parse_structure import (
+from clientprotocol.parse_structure import (
     parse_structure_VariantType_general_Request,
 )
-from protocol.to_structure import (
+from clientprotocol.to_structure import (
     to_structure_VariantType_general_Request,
 )
 

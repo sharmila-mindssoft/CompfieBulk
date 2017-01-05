@@ -1,8 +1,8 @@
-import json
-from protocol.jsonvalidators import (
-    parse_enum, parse_dictionary, parse_static_list, parse_list, parse_bool
+
+from clientprotocol.jsonvalidators_client import (
+    parse_dictionary, parse_static_list
 )
-from protocol.parse_structure import (
+from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_VectorType_RecordType_clientreport_LoginTrace,
@@ -83,7 +83,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS
 
 )
-from protocol.to_structure import (
+from clientprotocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_core_Compliance,
     to_structure_VectorType_RecordType_clientreport_LoginTrace,

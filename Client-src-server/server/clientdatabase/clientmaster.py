@@ -1,7 +1,7 @@
 import threading
 from server.emailcontroller import EmailHandler
 from server import logger
-from protocol import (core, general)
+from clientprotocol import (clientcore, general)
 from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, generate_and_return_password, datetime_to_string_time
@@ -77,7 +77,7 @@ def get_service_provider_details_list(db):
 def return_service_provider_details(service_providers):
     results = []
     for service_provider in service_providers:
-        service_provider_obj = core.ServiceProviderDetails(
+        service_provider_obj = clientcore.ServiceProviderDetails(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
             service_provider["address"],
@@ -376,7 +376,7 @@ def get_user_privilege_details_list(db):
     # return groups, group_forms
     return return_user_privilage_list(groups, group_forms)
 
-    
+
 
 def return_user_privilage_list(groups, group_forms):
     user_group_list = []
@@ -388,7 +388,7 @@ def return_user_privilage_list(groups, group_forms):
         category_form_ids = row["form_ids"]
         is_active = bool(row["is_active"])
         user_group_list.append(
-            core.ClientUserGroup(
+            clientcore.ClientUserGroup(
                 user_group_id, user_group_name, user_category_id, user_category_name, [int(x) for x in category_form_ids.split(",")],  is_active
             )
         )
@@ -416,7 +416,7 @@ def get_user_privileges(db):
 def return_user_privileges(user_privileges):
     results = []
     for user_privilege in user_privileges:
-        results.append(core.UserGroup(
+        results.append(clientcore.UserGroup(
             user_privilege["user_group_id"],
             user_privilege["user_group_name"],
             bool(user_privilege["is_active"])
@@ -440,7 +440,7 @@ def save_user_privilege(
     ]
     values_list = [
         user_privilege.user_category_id,
-        user_privilege.user_group_name, 1, get_date_time(), 
+        user_privilege.user_group_name, 1, get_date_time(),
         session_user, get_date_time(), session_user
     ]
     result = db.insert(tblUserGroups, columns, values_list)
@@ -620,7 +620,7 @@ def return_user_details(
             user_domain_mapping[user_id] = get_user_domains(db, user_id)
             user_unit_mapping[user_id] = get_user_unit_ids(db, user_id)
         results.append(
-            core.ClientUser(
+            clientcore.ClientUser(
                 user["user_id"], user["email_id"],
                 user["user_group_id"], user["employee_name"],
                 user["employee_code"], user["contact_no"],
@@ -660,7 +660,7 @@ def get_service_providers(db):
 def return_service_providers(service_providers):
     results = []
     for service_provider in service_providers:
-        service_provider_obj = core.ServiceProvider(
+        service_provider_obj = clientcore.ServiceProvider(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
             bool(service_provider["is_active"]))
@@ -1020,7 +1020,7 @@ def return_units(units):
         if unit["business_group_id"] > 0:
             b_group_id = unit["business_group_id"]
         results.append(
-            core.ClientUnit(
+            clientcore.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"], bool(unit["is_active"]),

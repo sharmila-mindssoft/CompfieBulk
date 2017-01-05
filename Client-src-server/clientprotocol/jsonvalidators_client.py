@@ -1,6 +1,6 @@
 import datetime
 from collections import OrderedDict
-from protocol.api_keys_settings import api_params
+from clientprotocol.api_keys_settings_client import api_params
 
 __all__ = [
     "parse_bool",

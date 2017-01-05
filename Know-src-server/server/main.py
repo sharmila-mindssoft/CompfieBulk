@@ -492,7 +492,8 @@ def run_server(port):
             ("/knowledge/api/files", api.handle_format_file),
             ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
             ("/knowledge/api/mobile/login", api.handle_mobile_login_request),
-            ("/knowledge/api/mobile", api.handle_mobile_request)
+            ("/knowledge/api/mobile", api.handle_mobile_request),
+            ("/knowledge/api/upload", api.handle_mobile_request)
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):

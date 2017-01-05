@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `tbl_user_category`;
 CREATE TABLE `tbl_user_category` (
-  `user_category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_category_id` int(11) NOT NULL,
   `user_category_name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -29,7 +29,7 @@ CREATE TABLE `tbl_compliance_duration_type` (
 
 DROP TABLE IF EXISTS `tbl_countries`;
 CREATE TABLE `tbl_countries` (
-  `country_id` int(11) NOT NULL AUTO_INCREMENT,
+  `country_id` int(11) NOT NULL,
   `country_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`country_id`)
@@ -37,7 +37,7 @@ CREATE TABLE `tbl_countries` (
 
 DROP TABLE IF EXISTS `tbl_domains`;
 CREATE TABLE `tbl_domains` (
-  `domain_id` int(11) NOT NULL AUTO_INCREMENT,
+  `domain_id` int(11) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`domain_id`)
@@ -51,16 +51,27 @@ CREATE TABLE `tbl_domain_countries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `tbl_organisation`;
+CREATE TABLE `tbl_organisation` (
+  `organisation_id` int(11) NOT NULL AUTO_INCREMENT,
+  `country_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `organisation_name` varchar(50) NOT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
+  PRIMARY KEY (`organisation_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
-  `client_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
   `group_admin_username` varchar(20) NOT NULL,
   `total_view_licence` int(11) DEFAULT NULL,
   `licence_used` int(11) DEFAULT NULL,
   PRIMARY KEY (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_business_groups`;
 CREATE TABLE `tbl_business_groups` (
@@ -73,7 +84,7 @@ CREATE TABLE `tbl_business_groups` (
 
 DROP TABLE IF EXISTS `tbl_legal_entity`;
 CREATE TABLE `tbl_legal_entity` (
-  `legal_entity_id` int(11) NOT NULL AUTO_INCREMENT,
+  `legal_entity_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
@@ -109,7 +120,7 @@ CREATE TABLE `tbl_legal_entity_domains` (
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
   `client_id` int(11) NOT NULL,
-  `division_id` int(11) NOT NULL AUTO_INCREMENT,
+  `division_id` int(11) NOT NULL,
   `division_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
@@ -119,7 +130,7 @@ CREATE TABLE `tbl_divisions` (
 
 DROP TABLE IF EXISTS `tbl_categories`;
 CREATE TABLE `tbl_categories` (
-  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `category_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -141,7 +152,7 @@ CREATE TABLE `tbl_client_configuration` (
 
 DROP TABLE IF EXISTS `tbl_units`;
 CREATE TABLE `tbl_units` (
-  `unit_id` int(11) NOT NULL AUTO_INCREMENT,
+  `unit_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -175,7 +186,7 @@ CREATE TABLE `tbl_units_organizations` (
 # client tables starts
 DROP TABLE IF EXISTS `tbl_verification_type`;
 CREATE TABLE `tbl_verification_type` (
-  `verification_type_id` int(11) NOT NULL AUTO_INCREMENT,
+  `verification_type_id` int(11) NOT NULL,
   `verification_type` varchar(50) NOT NULL,
   PRIMARY KEY (`verification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -183,7 +194,7 @@ CREATE TABLE `tbl_verification_type` (
 
 DROP TABLE IF EXISTS `tbl_form_category`;
 CREATE TABLE `tbl_form_category` (
-  `form_category_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `form_category_id` int(11) PRIMARY KEY NOT NULL,
   `form_id` int(11) NOT NULL,
   `user_category_id` int(11) NOT NULL,
   UNIQUE KEY(`form_id`,  `user_category_id`)
@@ -218,7 +229,7 @@ CREATE TABLE `tbl_session_types` (
 
 DROP TABLE IF EXISTS `tbl_user_groups`;
 CREATE TABLE `tbl_user_groups` (
-  `user_group_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_group_id` int(11) NOT NULL,
   `user_category_id` int(11) DEFAULT NULL,
   `user_group_name` varchar(50) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
@@ -242,7 +253,7 @@ CREATE TABLE `tbl_user_group_forms` (
 
 DROP TABLE IF EXISTS `tbl_service_providers`;
 CREATE TABLE `tbl_service_providers` (
-  `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
+  `service_provider_id` int(11) NOT NULL ,
   `service_provider_name` varchar(50) NOT NULL,
   `address` varchar(500) DEFAULT NULL,
   `short_name` varchar(20) DEFAULT NULL,
@@ -268,7 +279,7 @@ CREATE TABLE `tbl_service_providers` (
 
 DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `user_category_id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `user_group_id` int(11) DEFAULT NULL,
@@ -344,7 +355,7 @@ CREATE TABLE `tbl_email_verification` (
 
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
-  `activity_log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `activity_log_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,

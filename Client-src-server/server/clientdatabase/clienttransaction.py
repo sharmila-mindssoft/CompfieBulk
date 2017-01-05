@@ -4,8 +4,8 @@ import json
 from server.emailcontroller import EmailHandler
 from server import logger
 from server.clientdatabase.tables import *
-from protocol import (
-    clienttransactions, core
+from clientprotocol import (
+    clienttransactions, clientcore
 )
 from server.common import (
    get_date_time, string_to_datetime, datetime_to_string,
@@ -692,7 +692,7 @@ def return_assign_compliance_data(result, applicable_units, total):
             c_id,
             name,
             r["compliance_description"],
-            core.COMPLIANCE_FREQUENCY(r["frequency"]),
+            clientcore.COMPLIANCE_FREQUENCY(r["frequency"]),
             date_list,
             due_date_list,
             unit_ids,
@@ -1048,7 +1048,7 @@ def get_statutory_wise_compliances(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
                         compliance["compliance_description"],
-                        core.COMPLIANCE_FREQUENCY(compliance["frequency"]),
+                        clientcore.COMPLIANCE_FREQUENCY(compliance["frequency"]),
                         summary, datetime_to_string(due_date),
                         assingee_name, compliance["assignee"]
                     )
@@ -1397,7 +1397,7 @@ def get_compliance_approval_list(
             compliance_name = "%s - %s" % (
                 row["document_name"], compliance_name
             )
-        frequency = core.COMPLIANCE_FREQUENCY(row["frequency"])
+        frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
         description = row["compliance_description"]
         concurrence_status = None if (
                 row["concurrence_status"] in [None, "None", ""]
@@ -1411,7 +1411,7 @@ def get_compliance_approval_list(
         unit_name = row["unit_name"]
         date_list = []
         for date in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
                 date["trigger_before_days"],
@@ -2053,7 +2053,7 @@ def return_compliance_to_reassign(data):
         address = "%s- %s " % (
             d["address"], d["postal_code"]
         )
-        frequency = core.COMPLIANCE_FREQUENCY(d["frequency"])
+        frequency = clientcore.COMPLIANCE_FREQUENCY(d["frequency"])
         compliance_history_id = d["compliance_history_id"]
         if compliance_history_id is not None and d["approve_status"] == "0":
             compliance_history_id = int(compliance_history_id)
@@ -2073,7 +2073,7 @@ def return_compliance_to_reassign(data):
         statutory_dates = json.loads(d["statutory_dates"])
         date_list = []
         for date in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
                 date["trigger_before_days"],

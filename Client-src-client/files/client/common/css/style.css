@@ -670,11 +670,11 @@ li.sortable-placeholder {
     cursor: pointer;
 }
 .themes-settings:hover {
-    background-color: #FFFFCC;
+    background-color: #dcdcdc;
     border: 1px solid #555555;
 }
 .theme-active {
-    background-color: #FFFFCC !important;
+    background-color: #dcdcdc !important;
     border: 1px solid #99996B !important;
     cursor: default;
 }
@@ -684,3 +684,38 @@ li.sortable-placeholder {
 .custombox-modal {
     width: 100%;
 }
+
+
+.default-display-none {
+    display: none;
+}
+
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+
+}
+.ac-textbox ul {
+  background: #FFFFFF none repeat scroll 0 0;
+  border: 1px solid #DDDDDD;
+  line-height: 30px;
+  list-style: outside none none;
+  max-height: 200px;
+  overflow-y: scroll;
+  padding-left: 0px;
+  position: absolute;
+  width: 94%;
+  z-index: 999;
+}
+.ac-textbox ul li {
+  /*font-size: 0.8em;*/
+  padding-right:5px;
+  padding-left:5px;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;
+}
+
+/* Autocomplete selectbox Style */
