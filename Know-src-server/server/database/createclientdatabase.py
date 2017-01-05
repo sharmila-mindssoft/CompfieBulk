@@ -15,9 +15,17 @@ from server.database.technomaster import (
 )
 
 
-CLIENT_DB_PREFIX = "compfie"
+CLIENT_LE_DB_PREFIX = "compfie_le"
+CLIENT_GROUP_PREFIX = "compfie_group"
 
-
+'''
+    these are the process will be performed in this class
+    create database user,
+    grand privileges,
+    database creation,
+    creation of tables, procedures and trigger
+    and client specific knowledge data to created db
+'''
 class ClientDBCreate(object):
     def __init__(
         self, db, client_id, short_name, email_id, country_ids, domain_ids

@@ -7829,3 +7829,25 @@ END //
 
 DELIMITER ;
 
+-- -------------------
+-- database server info
+-- -------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_database_server_byid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_environment_byid`(
+in dsid int(11), asid int(11), fsid int(11)
+BEGIN
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port, database_username, database_password
+    FROM tbl_database_server WHERE database_server_id = dsid;
+
+    SELECT machine_id, machine_name, ip, port
+    FROM tbl_application_server where machine_id = asid;
+
+    SELECT file_server_id, file_server_name, ip, port
+    FROM tbl_file_server WHERE file_server_id = fsid;
+END //
+
+DELIMITER ;

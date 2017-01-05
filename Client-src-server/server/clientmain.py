@@ -367,6 +367,9 @@ class API(object):
         return mobilecontroller.process_client_mobile_request(request, db)
 
 
+def handle_isalive():
+    return Response("Application is alive", status=200, mimetype="application/json")
+
 #
 # run_server
 #
@@ -394,6 +397,7 @@ def run_server(address, knowledge_server_address):
         )
 
         api_urls_and_handlers = [
+            ("/api/isalive", handle_isalive),
             ("/api/login", api.handle_login),
             ("/api/client_masters", api.handle_client_masters),
             ("/api/client_transaction", api.handle_client_transaction),

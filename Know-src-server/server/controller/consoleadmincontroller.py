@@ -38,9 +38,7 @@ def process_console_admin_request(request, db):
     if session_user is None:
         return login.InvalidSessionToken()
 
-    if(
-        type(request_frame) is consoleadmin.GetDatabaseServerList
-    ):
+    if(type(request_frame) is consoleadmin.GetDatabaseServerList):
         result = process_get_db_server_list(db)
 
     elif(type(request_frame) is consoleadmin.SaveDBServer):
