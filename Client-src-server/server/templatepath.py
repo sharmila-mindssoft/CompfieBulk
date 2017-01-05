@@ -64,7 +64,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/unit-closure",
-        "files/desktop/client/unit-closure/unit-closure.html",
+        "files/desktop/client/unit-closure/unit_closure.html",
         None, {}
     ),
     (
