@@ -3,7 +3,7 @@ import datetime
 import threading
 from server import logger
 from dateutil import relativedelta
-from protocol import (core, clientuser, clienttransactions)
+from clientprotocol import (clientcore, clientuser, clienttransactions)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
@@ -148,9 +148,9 @@ def get_current_compliances_list(
             frequency_type=compliance["frequency"],
             duration_type=compliance["duration_type_id"]
         )
-        compliance_status = core.COMPLIANCE_STATUS("Inprogress")
+        compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress")
         if "Overdue" in ageing:
-            compliance_status = core.COMPLIANCE_STATUS("Not Complied")
+            compliance_status = clientcore.COMPLIANCE_STATUS("Not Complied")
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -187,10 +187,10 @@ def get_current_compliances_list(
                     else:
                         file_name.append(file_name_part)
         current_compliances_list.append(
-            core.ActiveCompliance(
+            clientcore.ActiveCompliance(
                 compliance_history_id=compliance["compliance_history_id"],
                 compliance_name=compliance_name,
-                compliance_frequency=core.COMPLIANCE_FREQUENCY(
+                compliance_frequency=clientcore.COMPLIANCE_FREQUENCY(
                     compliance["frequency"]
                 ),
                 domain_name=compliance["domain_name"],
@@ -299,7 +299,7 @@ def get_upcoming_compliances_list(
                     FORMAT_DOWNLOAD_URL, x
                 ) for x in compliance["format_file"].split(",")]
         upcoming_compliances_list.append(
-            core.UpcomingCompliance(
+            clientcore.UpcomingCompliance(
                 compliance_name=compliance_name,
                 domain_name=compliance["domain_name"],
                 start_date=datetime_to_string(start_date),

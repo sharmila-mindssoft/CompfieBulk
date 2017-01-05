@@ -1,5 +1,5 @@
-from protocol import (
-    clientadminsettings, login
+from clientprotocol import (
+    clientadminsettings, clientlogin
 )
 from server.clientdatabase.clientadminsettings import *
 
@@ -18,7 +18,7 @@ def process_client_admin_settings_requests(request, db):
     request = request.request
     session_user = db.validate_session_token(session_token)
     if session_user is None:
-        return login.InvalidSessionToken()
+        return clientlogin.InvalidSessionToken()
     if type(request) is clientadminsettings.GetSettings:
         return process_get_settings(db, request)
     elif type(request) is clientadminsettings.UpdateSettings:

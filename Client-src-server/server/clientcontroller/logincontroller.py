@@ -1,6 +1,6 @@
 from server.clientdatabase.tables import *
 from server.emailcontroller import EmailHandler as email
-from protocol import login, mobile
+from clientprotocol import clientlogin, clientmobile
 from server.constants import (
     CLIENT_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS
 )
@@ -32,36 +32,36 @@ __all__ = [
 def process_login_request(
     request, db, company_id, session_user_ip
 ):
-    if type(request) is login.Login:
+    if type(request) is clientlogin.Login:
         logger.logClientApi("Login", "begin")
         result = process_login(db, request, company_id, session_user_ip)
         logger.logClientApi("Login", "end")
-    elif type(request) is login.ForgotPassword:
+    elif type(request) is clientlogin.ForgotPassword:
         logger.logClientApi("ForgotPassword", "begin")
         result = process_forgot_password(db, request)
         logger.logClientApi("ForgotPassword", "end")
 
-    elif type(request) is login.ResetTokenValidation:
+    elif type(request) is clientlogin.ResetTokenValidation:
         logger.logClientApi("ResetTokenValidation", "begin")
         result = process_reset_token(db, request)
         logger.logClientApi("ResetTokenValidation", "end")
 
-    elif type(request) is login.ResetPassword:
+    elif type(request) is clientlogin.ResetPassword:
         logger.logClientApi("ResetPassword", "begin")
         result = process_reset_password(db, request)
         logger.logClientApi("ResetPassword", "end")
 
-    elif type(request) is login.ChangePassword:
+    elif type(request) is clientlogin.ChangePassword:
         logger.logClientApi("ResetPassword", "begin")
         result = process_change_password(db, request)
         logger.logClientApi("ResetPassword", "end")
 
-    elif type(request) is login.Logout:
+    elif type(request) is clientlogin.Logout:
         logger.logClientApi("Logout", "begin")
         result = process_logout(db, request)
         logger.logClientApi("Logout", "end")
 
-    elif type(request) is login.UpdateUserProfile:
+    elif type(request) is clientlogin.UpdateUserProfile:
         logger.logClientApi("UpdateUserProfile", "begin")
         result = process_update_profile(db, request)
         logger.logClientApi("UpdateUserProfile", "end")
@@ -79,7 +79,7 @@ def invalid_credentials(db, user_id, session_user_ip):
         captcha_text = generate_random(CAPTCHA_LENGTH)
     else:
         captcha_text = None
-    return login.InvalidCredentials(captcha_text)
+    return clientlogin.InvalidCredentials(captcha_text)
 
 
 def process_login(db, request, client_id, session_user_ip):
@@ -91,15 +91,15 @@ def process_login(db, request, client_id, session_user_ip):
     logger.logLogin("info", user_ip, username, "Login process begin")
     user_id = verify_username(db, username)
     if user_id is None:
-        return login.InvalidUserName()
+        return clientlogin.InvalidUserName()
     elif is_contract_not_started(db):
-        return login.ContractNotYetStarted()
+        return clientlogin.ContractNotYetStarted()
     elif not is_configured(db):
         logger.logLogin("info", user_ip, username, "NotConfigured")
-        return login.NotConfigured()
+        return clientlogin.NotConfigured()
     elif not is_in_contract(db):
         logger.logLogin("info", user_ip, username, "ContractExpired")
-        return login.ContractExpired()
+        return clientlogin.ContractExpired()
     elif not is_client_active(client_id):
         logger.logLogin("info", user_ip, username, "InvalidCredentials")
         return invalid_credentials(db, user_id, session_user_ip)
@@ -113,7 +113,7 @@ def process_login(db, request, client_id, session_user_ip):
         else:
             if response is "ContractExpired":
                 logger.logLogin("info", user_ip, username, "ContractExpired")
-                return login.ContractExpired()
+                return clientlogin.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return invalid_credentials(db, user_id, session_user_ip)
@@ -132,7 +132,7 @@ def process_login(db, request, client_id, session_user_ip):
         else:
             if response is "ContractExpired":
                 logger.logLogin("info", user_ip, username, "ContractExpired")
-                return login.ContractExpired()
+                return clientlogin.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return invalid_credentials(db, user_id, session_user_ip)
@@ -168,7 +168,7 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
     group_id = client_info["client_id"]
     configuration = get_client_configuration(db)
 
-    return mobile.ClientUserLoginResponseSuccess(
+    return clientmobile.ClientUserLoginResponseSuccess(
         user_id,
         employee_name,
         session_token,
@@ -220,7 +220,7 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
     if 9 in form_ids :
         compliance_approve = True
     # menu = process_user_forms(db, form_ids, client_id, 0)
-    return mobile.ClientUserLoginResponseSuccess(
+    return clientmobile.ClientUserLoginResponseSuccess(
         data["user_id"],
         data["employee_name"],
         session_token,
@@ -262,7 +262,7 @@ def user_login_response(db, data, client_id, ip):
     menu = process_user_forms(
         db, ",".join(str(x) for x in form_ids_list), client_id, 0
     )
-    return login.UserLoginSuccess(
+    return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, None, None,
         client_id, bool(is_promoted_admin)
@@ -282,7 +282,7 @@ def admin_login_response(db, client_id, ip):
     form_ids = get_form_ids_for_admin(db)
     menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
-    return login.AdminLoginSuccess(
+    return clientlogin.AdminLoginSuccess(
         user_id, session_token, email_id, menu, employee_name, client_id
     )
 
@@ -291,9 +291,9 @@ def process_forgot_password(db, request):
     user_id = verify_username(db, request.username)
     if user_id is not None:
         send_reset_link(db, user_id, request.username, request.short_name)
-        return login.ForgotPasswordSuccess()
+        return clientlogin.ForgotPasswordSuccess()
     else:
-        return login.InvalidUserName()
+        return clientlogin.InvalidUserName()
 
 
 def send_reset_link(db, user_id, username, short_name):
@@ -322,9 +322,9 @@ def send_reset_link(db, user_id, username, short_name):
 def process_reset_token(db, request):
     user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
-        return login.ResetSessionTokenValidationSuccess()
+        return clientlogin.ResetSessionTokenValidationSuccess()
     else:
-        return login.InvalidResetToken()
+        return clientlogin.InvalidResetToken()
 
 
 def process_reset_password(db, request):
@@ -332,9 +332,9 @@ def process_reset_password(db, request):
     if user_id is not None:
         update_password(db, request.new_password, user_id)
         delete_used_token(db, request.reset_token)
-        return login.ResetPasswordSuccess()
+        return clientlogin.ResetPasswordSuccess()
     else:
-        return login.InvalidResetToken()
+        return clientlogin.InvalidResetToken()
 
 
 def process_change_password(db, request):
@@ -346,16 +346,16 @@ def process_change_password(db, request):
     session_user = db.validate_session_token(session_token)
     if verify_password(db, request.current_password, session_user):
         update_password(db, request.new_password, session_user)
-        return login.ChangePasswordSuccess()
+        return clientlogin.ChangePasswordSuccess()
     else:
-        return login.InvalidCurrentPassword()
+        return clientlogin.InvalidCurrentPassword()
 
 
 def process_logout(db, request):
     # save logout time
     session = request.session_token
     remove_session(db, session)
-    return login.LogoutSuccess()
+    return clientlogin.LogoutSuccess()
 
 
 def process_update_profile(db, request):
@@ -365,4 +365,4 @@ def process_update_profile(db, request):
     )
     session_user = db.validate_session_token(session_token)
     update_profile(db, request.contact_no, request.address, session_user)
-    return login.UpdateUserProfileSuccess(request.contact_no, request.address)
+    return clientlogin.UpdateUserProfileSuccess(request.contact_no, request.address)

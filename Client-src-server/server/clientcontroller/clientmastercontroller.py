@@ -1,6 +1,6 @@
 import collections
 import time
-from protocol import (clientmasters, core, login)
+from clientprotocol import (clientmasters, clientcore, clientlogin)
 from server import logger
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
@@ -28,13 +28,13 @@ def process_client_master_requests(request, db):
     client_id = int(client_info[0])
     session_user = db.validate_session_token(session_token)
     if session_user is None:
-        return login.InvalidSessionToken()
+        return clientlogin.InvalidSessionToken()
 
     if type(request) is clientmasters.GetServiceProviders:
         logger.logClientApi(
             "GetServiceProviders - " + str(client_id), "process begin"
         )
-        logger.logClientApi("------", str(time.time())) 
+        logger.logClientApi("------", str(time.time()))
         result = process_get_service_providers(
             db, request, session_user
         )
@@ -279,7 +279,7 @@ def process_get_forms(db, cat_id):
     for row in result_rows:
         parent_menu = None if (
             row["parent_menu"] == None) else row["parent_menu"]
-        form = core.Form(
+        form = clientcore.Form(
             form_id=row["form_id"],
             form_name=row["form_name"],
             form_url=row["form_url"],
@@ -300,7 +300,7 @@ def process_get_user_category(db):
         user_category_id = int(row["user_category_id"])
         user_category_name = row["user_category_name"]
         user_category_list.append(
-            core.ClientUsercategory(user_category_id, user_category_name)
+            clientcore.ClientUsercategory(user_category_id, user_category_name)
         )
     return user_category_list
 
@@ -310,7 +310,7 @@ def process_get_user_category(db):
 ########################################################
 def process_get_user_privilege_details_list(db):
     user_group_list = get_user_privilege_details_list(db)
-    
+
     #print user_group_list
     return user_group_list
 
@@ -332,7 +332,7 @@ def process_get_user_privileges(db, request, session_user):
     return clientmasters.GetUserPrivilegesSuccess(
         forms=form_category,
         user_groups=user_group_list,
-        user_category = user_category 
+        user_category = user_category
     )
 
 
@@ -596,7 +596,7 @@ def process_user_menus(form_list):
         menus[form_type] = _forms
     menus = reorder_menu(menus)
     # print menus
-    return core.Menu(menus)
+    return clientcore.Menu(menus)
     # return menus
 
 

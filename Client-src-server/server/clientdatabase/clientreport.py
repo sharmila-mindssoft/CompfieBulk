@@ -1,7 +1,7 @@
 import datetime
 from server.clientdatabase.tables import *
-from protocol import (
-    core, clientreport
+from clientprotocol import (
+    clientcore, clientreport
 )
 import json
 from server.common import (
@@ -204,7 +204,7 @@ def return_unitwise_report(data):
         statutory_dates = json.loads(d["statutory_dates"])
         date_list = []
         for date in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
                 date["trigger_before_days"],
@@ -212,7 +212,7 @@ def return_unitwise_report(data):
             )
             date_list.append(s_date)
 
-        compliance_frequency = core.COMPLIANCE_FREQUENCY(
+        compliance_frequency = clientcore.COMPLIANCE_FREQUENCY(
             d["frequency"]
         )
 
@@ -280,7 +280,7 @@ def return_assignee_report_data(data):
         statutory_dates = json.loads(d["statutory_dates"])
         date_list = []
         for date in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
                 date["trigger_before_days"],
@@ -288,7 +288,7 @@ def return_assignee_report_data(data):
             )
             date_list.append(s_date)
 
-        compliance_frequency = core.COMPLIANCE_FREQUENCY(
+        compliance_frequency = clientcore.COMPLIANCE_FREQUENCY(
             d["frequency"]
         )
 
@@ -467,7 +467,7 @@ def return_serviceprovider_report_data(data):
         statutory_dates = json.loads(d["statutory_dates"])
         date_list = []
         for date in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
                 date["trigger_before_days"],
@@ -475,7 +475,7 @@ def return_serviceprovider_report_data(data):
             )
             date_list.append(s_date)
 
-        compliance_frequency = core.COMPLIANCE_FREQUENCY(
+        compliance_frequency = clientcore.COMPLIANCE_FREQUENCY(
             d["frequency"]
         )
 
@@ -2070,10 +2070,10 @@ def return_compliance_activity_report(
         ][level_1_statutory][compliance_name].append(
             clientreport.ActivityData(
                 activity_date=datetime_to_string(row["activity_date"]),
-                activity_status=core.COMPLIANCE_ACTIVITY_STATUS(
+                activity_status=clientcore.COMPLIANCE_ACTIVITY_STATUS(
                     row["activity_status"]
                 ),
-                compliance_status=core.COMPLIANCE_STATUS(
+                compliance_status=clientcore.COMPLIANCE_STATUS(
                     row["compliance_status"]
                 ),
                 remarks=row["remarks"],
@@ -2294,7 +2294,7 @@ def get_compliance_task_applicability(db, request, session_user):
             compliance_name_list,
             r["compliance_description"],
             r["penal_consequences"],
-            core.COMPLIANCE_FREQUENCY(r["frequency"]),
+            clientcore.COMPLIANCE_FREQUENCY(r["frequency"]),
             repeat_text
         )
         unit_data = clientreport.ApplicabilityCompliance(
@@ -2374,7 +2374,7 @@ def get_client_details_report(
         query += condition
         param.extend(condition_val)
     param.extend([from_count, page_count])
-    
+
     rows = db.select_all(query + order, param)
 
     columns_list = columns.replace(" ", "").split(",")

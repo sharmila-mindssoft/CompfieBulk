@@ -11,10 +11,10 @@ from functools import wraps
 
 # from basics.webserver import WebServer
 # from basics.ioloop import IOLoop
-from protocol import (
+from clientprotocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
-    login, general, clientuser, mobile
+    clientlogin, general, clientuser, clientmobile
 )
 # from server.clientdatabase import ClientDatabase
 from server.dbase import Database
@@ -327,7 +327,7 @@ class API(object):
             # response.set_status(400)
             # response.send(str(e))
 
-    @api_request(login.Request, need_client_id=True, is_group=True)
+    @api_request(clientlogin.Request, need_client_id=True, is_group=True)
     def handle_login(self, request, db, client_id, user_ip):
         print self._ip_address
 
@@ -362,7 +362,7 @@ class API(object):
     def handle_client_user(self, request, db):
         return controller.process_client_user_request(request, db)
 
-    @api_request(mobile.RequestFormat)
+    @api_request(clientmobile.RequestFormat)
     def handle_mobile_request(self, request, db):
         return mobilecontroller.process_client_mobile_request(request, db)
 

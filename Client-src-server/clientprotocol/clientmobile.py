@@ -1,5 +1,5 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
-from protocol.parse_structure import (
+from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
+from clientprotocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomTextType_20,
@@ -26,7 +26,7 @@ from protocol.parse_structure import (
     parse_structure_Text,
     parse_structure_EnumType_core_SESSION_TYPE
 )
-from protocol.to_structure import (
+from clientprotocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
     to_structure_OptionalType_CustomTextType_20,

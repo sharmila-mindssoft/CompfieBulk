@@ -1,5 +1,5 @@
 import time
-from protocol import (clienttransactions, clientmasters, login, core)
+from clientprotocol import (clienttransactions, clientmasters, clientlogin, clientcore)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 
@@ -31,7 +31,7 @@ def process_client_transaction_requests(request, db):
     client_id = int(client_info[0])
     session_user = db.validate_session_token(session_token)
     if session_user is None:
-        return login.InvalidSessionToken()
+        return clientlogin.InvalidSessionToken()
 
     if type(request) is clienttransactions.GetStatutorySettings:
         logger.logClientApi(
@@ -364,10 +364,10 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
     )
     total_count = get_compliance_approval_count(db, session_user)
     approval_status = [
-        core.COMPLIANCE_APPROVAL_STATUS("Concur"),
-        core.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
-        core.COMPLIANCE_APPROVAL_STATUS("Approve"),
-        core.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Concur"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Approve"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
     ]
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,

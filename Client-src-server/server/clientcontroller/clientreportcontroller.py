@@ -1,6 +1,6 @@
 import time
 from server.jsontocsvconverter import ConvertJsonToCSV
-from protocol import (core, clientreport, login)
+from clientprotocol import (clientcore, clientreport, clientlogin)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 
@@ -27,7 +27,7 @@ def process_client_report_requests(request, db):
     client_id = int(client_info[0])
     session_user = db.validate_session_token(session_token)
     if session_user is None:
-        return login.InvalidSessionToken()
+        return clientlogin.InvalidSessionToken()
 
     if type(request) is clientreport.GetClientReportFilters:
         logger.logClientApi(
@@ -686,7 +686,7 @@ def process_get_task_applicability_status_filters(db, request, session_user):
     divisions = get_divisions_for_user(db, division_ids)
     units = get_units_for_user(db, unit_ids)
     level1_statutories = get_client_level_1_statutoy(db, session_user)
-    applicable_status = core.APPLICABILITY_STATUS.values()
+    applicable_status = clientcore.APPLICABILITY_STATUS.values()
     return clientreport.GetTaskApplicabilityStatusFiltersSuccess(
         countries, domains, business_groups, legal_entities,
         divisions, units, level1_statutories, applicable_status

@@ -1,6 +1,6 @@
 import datetime
-from protocol import (
-    core, clienttransactions, mobile
+from clientprotocol import (
+    clientcore, clienttransactions, clientmobile
 )
 from server.clientdatabase.tables import *
 from server.common import (
@@ -71,7 +71,7 @@ def get_users_for_mobile(db, session_user):
             name = "%s - %s" % (r["service_provider"], r["employee_name"])
 
         user_id = r["user_id"]
-        user_list.append(mobile.GetUsersList(user_id, name))
+        user_list.append(clientmobile.GetUsersList(user_id, name))
     return user_list
 
 
@@ -94,7 +94,7 @@ def get_countries_for_user(db, user_id, client_id=None):
 def return_countries(data):
     results = []
     for d in data:
-        results.append(core.Country(
+        results.append(clientcore.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
         ))
     return results
@@ -119,7 +119,7 @@ def get_domains_for_user(db, user_id, client_id=None):
 def return_domains(data):
     results = []
     for d in data:
-        results.append(core.Domain(
+        results.append(clientcore.Domain(
             d["domain_id"], d["domain_name"], bool(d["is_active"])
         ))
     return results
@@ -134,7 +134,7 @@ def get_business_groups_for_mobile(db):
         business_group_list = []
         for r in result:
             business_group_list.append(
-                core.ClientBusinessGroup(
+                clientcore.ClientBusinessGroup(
                     r["business_group_id"],
                     r["business_group_name"]
                 )
@@ -152,7 +152,7 @@ def get_legal_entities_for_mobile(db):
     legal_entity_list = []
     for r in result:
         legal_entity_list.append(
-            core.ClientLegalEntity(
+            clientcore.ClientLegalEntity(
                 r["legal_entity_id"],
                 r["legal_entity_name"],
                 r["business_group_id"]
@@ -169,7 +169,7 @@ def get_divisions_for_mobile(db):
     )
     division_list = []
     for r in result:
-        division_list.append(core.ClientDivision(
+        division_list.append(clientcore.ClientDivision(
             r["division_id"],
             r["division_name"],
             r["legal_entity_id"],
@@ -268,7 +268,7 @@ def get_compliance_applicability_for_mobile(db, session_user):
             name = "%s - %s" % (r["document_name"], r["compliance_task"])
         else:
             name = r["compliance_task"]
-        applicability.append(mobile.ComplianceApplicability(
+        applicability.append(clientmobile.ComplianceApplicability(
             r["country_id"],
             r["domain_id"],
             r["unit_id"],
@@ -387,14 +387,14 @@ def get_trend_chart_for_mobile(db, session_user):
 
                     for index, count_of_year in enumerate(year_wise_count):
                         domain_wise_details.append(
-                            mobile.DomainWiseCount(
+                            clientmobile.DomainWiseCount(
                                 domain_id=domain_id,
                                 year=years[index],
                                 total_compliances=int(count_of_year[0]),
                                 complied_compliances_count=int(
                                     count_of_year[1])
                             ))
-        unit_wise_details.append(mobile.UnitWiseCount(
+        unit_wise_details.append(clientmobile.UnitWiseCount(
             unit_id=unit_id,
             domain_wise_count=domain_wise_details
         ))
@@ -442,14 +442,14 @@ def get_compliance_history_for_mobile(db, user_id, request):
                 document_list = []
                 for d in documents:
                     document_list.append(
-                        core.FileList(
+                        clientcore.FileList(
                             r["document_size"],
                             d,
                             None
                         )
                     )
 
-        history_list.append(mobile.ComplianceHistory(
+        history_list.append(clientmobile.ComplianceHistory(
             r["compliance_history_id"],
             r["unit_id"],
             r["compliance_id"],
