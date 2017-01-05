@@ -1263,9 +1263,9 @@ def get_reassign_user_filters(db):
         ))
 
     domain_exec_users = []
-    le_ids = []
-    grp_ids = []
     for t in domain_execut[1] :
+        le_ids = []
+        grp_ids = []
         user_id = t["user_id"]
         e_name = "%s - %s" % (t["employee_code"], t["employee_name"])
         c_d_list = []
@@ -1274,7 +1274,7 @@ def get_reassign_user_filters(db):
                 c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
 
         for z in domain_execut[2] :
-            if z["user_id"] == user_id :
+            if z["user_id"] == user_id and z["legal_entity_id"] is not None :
                 le_ids.append(z["legal_entity_id"])
                 grp_ids.append(z["client_id"])
 
@@ -1304,7 +1304,7 @@ def get_reassign_user_filters(db):
                 p_ids.append(y["parent_user_id"])
 
         for z in domain_manag[3] :
-            if z["user_id"] == user_id :
+            if z["user_id"] == user_id and z["legal_entity_id"] is not None :
                 le_ids.append(z["legal_entity_id"])
                 grp_ids.append(z["client_id"])
 

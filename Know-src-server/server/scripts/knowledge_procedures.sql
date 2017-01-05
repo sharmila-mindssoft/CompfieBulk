@@ -4307,7 +4307,9 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
-    (select count(compliance_id) from tbl_client_compliances where compliance_applicable_status = 3 and client_statutory_id = t1.client_statutory_id)
+    (select count(compliance_id) from tbl_client_compliances where
+     (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 )
+     and client_statutory_id = t1.client_statutory_id)
     as is_edit
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
