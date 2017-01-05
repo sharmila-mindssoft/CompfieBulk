@@ -559,7 +559,7 @@ class Form(object):
             "parent_menu": self.parent_menu,
             "form_type": self.form_type
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 #
 # Menu
@@ -3841,4 +3841,52 @@ class DomainIndustryList(object):
         return {
             "domain_id": self.domain_id,
             "industry_id": self.industry_id,
+        }
+
+class ClientUserGroup(object):
+    def __init__(self, user_group_id, user_group_name, user_category_id, user_category_name, category_form_ids, is_active):
+        self.user_group_id = user_group_id
+        self.user_group_name = user_group_name
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
+        self.category_form_ids = category_form_ids
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_group_id", "user_group_name", "user_category_id", "user_category_name", "category_form_ids", "is_active"])
+        user_group_id = data.get("user_group_id")
+        user_group_name = data.get("user_group_name")
+        user_category_id = data.get("user_category_id")
+        user_category_name = data.get("user_category_name")
+        category_form_ids = data.get("category_form_ids")
+        is_active = data.get("is_active")
+        return ClientUserGroup(user_group_id, user_group_name, user_category_id, user_category_name, category_form_ids, is_active)
+
+    def to_structure(self):
+        return {
+            "u_g_id": self.user_group_id,
+            "u_g_name": self.user_group_name,
+            "u_c_id": self.user_category_id,
+            "u_c_name": self.user_category_name,
+            "f_ids": self.category_form_ids,
+            "is_active": self.is_active,
+        }
+
+class ClientUsercategory(object):
+    def __init__(self, user_category_id, user_category_name):
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
+        user_category_id = data.get("user_category_id")
+        user_category_name = data.get("user_category_name")
+        return ClientUserGroup(user_category_id, user_category_name)
+
+    def to_structure(self):
+        return {
+            "u_c_id": self.user_category_id,
+            "u_c_name": self.user_category_name,
         }

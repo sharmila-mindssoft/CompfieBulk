@@ -327,7 +327,7 @@ $(document).ready(function() {
         }
     })
 
-    /*$("#radioGroup").click(function() {
+    $("#radioGroup").click(function() {
         loadGroup();
     })
 
@@ -345,7 +345,7 @@ $(document).ready(function() {
 
     $("#radioBusinessGroup").click(function() {
         loadBusinessGroup();
-    })*/
+    })
 
     $(".task-status-tab").click(function() {
         $("#year-para").hide();
@@ -371,7 +371,7 @@ $(document).ready(function() {
     })
 })
 
-/*function loadLegalEntitySingleSelectionPie() {
+function loadLegalEntitySingleSelectionPie() {
     $("#viewaspie").hide();
     $("#viewasbar").show();
     $("#container").show();
@@ -382,12 +382,12 @@ $(document).ready(function() {
 
             colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B'],
             chart: {
-                type: 'pie',
+                type: 'pie' /*,
                 options3d: {
                     enabled: true,
                     alpha: 45,
                     beta: 0
-                }
+                }*/
             },
             title: {
                 text: name
@@ -1814,7 +1814,8 @@ function loadDrillDownData(name) {
         name = "India";
         com_name = "Not Complied ";
     } else if (name == "Complied") {
-        img_name = "/images/dash-list/task-group-complied.png";
+        location.href="/dashboard/group-complied";
+        // img_name = "/images/dash-list/task-group-complied.png";
         name = "India";
         com_name = "Complied ";
     } else if (name == "busInprogress") {
@@ -2004,7 +2005,7 @@ function loadCountrySpecific(value) {
         $('#container').highcharts({
             colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B'],
             chart: {
-                type: 'pie',
+                type: 'pie' ,
                 options3d: {
                     enabled: true,
                     alpha: 45,
@@ -2065,7 +2066,7 @@ function loadCountrySpecific(value) {
             }]
         });
     });
-}*/
+}
 
 
 function loadGroup() {
@@ -2189,16 +2190,16 @@ function loadGroup() {
     $(function() {
         var chart = new Highcharts.Chart({
         //$('#container').highcharts({
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
+            colors: ['#F32D2B', '#fbca35', '#F2746B', '#3ec845', ], /*fe6271*/
             chart: {
                 renderTo: 'container',
-                type: 'bar',
+                type: 'bar' /*,
                 options3d: { 
                     enabled: true,
                     alpha: 20,
-                    beta: 0,
+                    beta: 10,
                     depth: 31
-                }
+                }*/
             },
             title: {
                 text: 'Country wise Compliances'
@@ -2282,20 +2283,20 @@ function loadGroup() {
                 data: completed_data
             }]
         });
-        // function showValues() {
-        //     $('#alpha-value').html(chart.options.chart.options3d.alpha);
-        //     $('#beta-value').html(chart.options.chart.options3d.beta);
-        //     $('#depth-value').html(chart.options.chart.options3d.depth);
-        // }
+        function showValues() {
+            $('#alpha-value').html(chart.options.chart.options3d.alpha);
+            $('#beta-value').html(chart.options.chart.options3d.beta);
+            $('#depth-value').html(chart.options.chart.options3d.depth);
+        }
 
-        // // Activate the sliders
-        // $('#sliders input').on('input change', function () {
-        //     chart.options.chart.options3d[this.id] = this.value;
-        //     showValues();
-        //     chart.redraw(false);
-        // });
+        // Activate the sliders
+        $('#sliders input').on('input change', function () {
+            chart.options.chart.options3d[this.id] = this.value;
+            showValues();
+            chart.redraw(false);
+        });
 
-        // showValues();
+        showValues();
     });
 }
 
@@ -3051,7 +3052,7 @@ function loadConsolidated(value) {
         $('#container').highcharts({
             colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B'],
             chart: {
-                type: 'pie',
+                type: 'pie' ,
                 options3d: {
                     enabled: true,
                     alpha: 45,

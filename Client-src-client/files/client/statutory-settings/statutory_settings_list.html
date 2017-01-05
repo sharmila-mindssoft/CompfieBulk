@@ -6,14 +6,22 @@
     <div class="row">
         <div id="animationSandbox">
             <div class="col-sm-12">
-            <button type="button" class="btn btn-success btn-sm waves-effect waves-light pull-right m-t-5" onclick="parent.location='/statutory-settings'"><span><i class="fa fa-mail-reply"></i></span> Back </button>
-                    <h4 class="page-title">Statutory Settings </h4>
-                <div class="card-box">
-                
-                    <!-- <hr class="no-top-margin"> -->
-
-                    <div class="col-sm-12">
-                        <div class="card-box table-responsive no-padding b-0">
+            <!-- <button type="button" class="btn btn-success btn-sm waves-effect waves-light pull-right m-t-5" onclick="parent.location='/statutory-settings'"><span><i class="fa fa-mail-reply"></i></span> Back </button>
+                    <h4 class="page-title">Statutory Settings </h4> -->
+                <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">
+                        Statutory Settings
+                    </h3>
+                    <div class="portlet-widgets">
+                        <a href="#" onclick="parent.location='/statutory-settings'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                    <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body p-b-0">
                         <!--  -->
                             <div class="panel-group col-lg-12 no-padding singleunit" id="accordion" role="tablist" aria-multiselectable="true">
                                 <div class="panel panel-default bx-shadow-none">
@@ -29,7 +37,7 @@
                                     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                         <div class="panel-body no-padding">
                                             <div class="dataTable_wrapper">
-                                                <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th align="center" width="2%">#</th>
@@ -53,14 +61,14 @@
                                                         </tr>
                                                         <tr class="view-two-unit">
                                                           <td colspan="100%" class="no-padding">
-                                                            <table width="100%" class="table table-striped dt-responsive nowrap no-margin">
+                                                            <table width="100%" class="table table-striped dt-responsive nowrap no-margin no-bgheader">
                                                             <thead>
                                                               <tr>
                                                                 <th width="15%">Location</th>
                                                                 <th width="25%">Unit Name</th>
                                                                 <th></th>
-                                                                <th width="06%" class="text-center"><i class="fa fa-edit fa-1-3x"></i></th>
-                                                                <th width="06%" class="text-center"><i class="fa fa-user-plus fa-1-3x"></i></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-edit fa-1-3x text-inverse"></i></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-user-plus fa-1-3x text-inverse"></i></th>
                                                                 <th width="20%">Remarks</th>
                                                               </tr>
                                                               </thead>
@@ -96,14 +104,14 @@
                                                         </tr>
                                                         <tr class="view-three-unit" style="display:none;">
                                                           <td colspan="100%" class="no-padding">
-                                                            <table width="100%" class="table table-striped dt-responsive nowrap no-margin">
+                                                            <table width="100%" class="table table-striped dt-responsive nowrap no-margin no-bgheader">
                                                             <thead>
                                                               <tr>
                                                                 <th width="15%">Location</th>
                                                                 <th width="25%">Unit Name</th>
                                                                 <th></th>
-                                                                <th width="06%" class="text-center"><i class="fa fa-edit fa-1-3x"></i></th>
-                                                                <th width="06%" class="text-center"><i class="fa fa-user-plus fa-1-3x"></i></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-edit fa-1-3x text-inverse"></i></th>
+                                                                <th width="06%" class="text-center"><i class="fa fa-user-plus fa-1-3x text-inverse"></i></th>
                                                                 <th width="20%">Remarks</th>
                                                               </tr>
                                                               </thead>
@@ -139,14 +147,15 @@
                                                         <tr >
                                                             <td colspan="100%" class="bg-white" >
                                                                 <div class="col-sm-2 no-padding">
-                                                                    <input type="text" class="form-control input-sm text-center" value="Tamilnadu State Act" readonly="true" />
+                                                                    <!-- <input type="text" class="form-control input-sm text-center" value="Tamilnadu State Act" readonly="true" /> -->
+                                                                    <mark class="p-l-10 p-r-10">Tamilnadu State Act</mark>
                                                                 </div>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td class="text-center">3</td>
                                                             <td>Rule 6(iii)</td>
-                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM III - Undertaking submission</td>
                                                             <td>Review</td>
                                                             <td>Whether undertaking submitted by importer to authority.</td>
                                                             <td class="text-center"><a>2 / 3</a></td>
@@ -155,7 +164,7 @@
                                                         <tr>
                                                             <td class="text-center">4</td>
                                                             <td>Rule 7(iv)</td>
-                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
                                                             <td>Periodical</td>
                                                             <td>Whether half yearly returns submitted by dealer to manufacturer</td>
                                                             <td class="text-center"><a>2 / 3</a></td>
@@ -174,8 +183,11 @@
                                                 data-parent="#accordion" href="#collapseTwo"
                                                 aria-expanded="false" aria-controls="collapseTwo">
                                                 <i class="fa fa-times "></i> Indian Partnership Act, 1932
-                                                <div class="col-sm-3 pull-right m-t-m-5">
+                                                <div class="col-sm-3 controls pull-right m-t-m-5">
+                                                    <label class="col-sm-3 control-label p-t-5">Remarks:</label>
+                                                    <div class="col-sm-9 no-padding">
                                                     <input type="text" class="form-control input-sm" id="elementRemarks" placeholder="Enter Remarks" />  
+                                                    </div>
                                                 </div>
                                             </a>
                                         </h4>
@@ -217,7 +229,7 @@
                                                         <tr>
                                                             <td class="text-center">3</td>
                                                             <td>Rule 6(iii)</td>
-                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM III - Undertaking submission</td>
                                                             <td>Review</td>
                                                             <td>Whether undertaking submitted by importer to authority.</td>
                                                             <td class="text-center"><a>2 / 3</a></td>
@@ -226,7 +238,7 @@
                                                         <tr>
                                                             <td class="text-center">4</td>
                                                             <td>Rule 7(iv)</td>
-                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
                                                             <td>Periodical</td>
                                                             <td>Whether half yearly returns submitted by dealer to manufacturer</td>
                                                            <td class="text-center"><a>2 / 3</a></td>
@@ -288,7 +300,7 @@
                                                         <tr>
                                                             <td class="text-center">3</td>
                                                             <td>Rule 6(iii)</td>
-                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM III - Undertaking submission</td>
                                                             <td>Review</td>
                                                             <td>Whether undertaking submitted by importer to authority.</td>
                                                             <td class="text-center"><a>2 / 3</a></td>
@@ -297,7 +309,7 @@
                                                         <tr>
                                                             <td class="text-center">4</td>
                                                             <td>Rule 7(iv)</td>
-                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organisation: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
                                                             <td>Periodical</td>
                                                             <td>Whether half yearly returns submitted by dealer to manufacturer</td>
                                                            <td class="text-center"><a>2 / 3</a></td>
@@ -313,9 +325,9 @@
 
                             </div>
                             <!-- end single unit -->
-                             <div class="form-group text-center">
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Save </button>
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit</button>
+                             <div class="form-group text-center m-b-0">
+                                <button class="btn btn-info waves-effect waves-light" type="button"> Save </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button"> Submit</button>
                             </div>
                         </div>
                     </div>
@@ -337,7 +349,7 @@
                 <input class="form-control input-sm" placeholder="Password" type="text">
               </div>
               <div class="form-group">
-                <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
+                <button class="btn btn-primary waves-effect waves-light" type="button"> Submit </button>
               </div>
             </div>
         </div><!-- /.modal-content -->

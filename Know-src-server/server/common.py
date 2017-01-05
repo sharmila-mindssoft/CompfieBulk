@@ -310,8 +310,8 @@ def make_summary(data, data_type, c):
         11: "Nov",
         12: "Dec",
     }
-    print c
     summary = ""
+    sdates = ""
     if data_type == 1 :
         if len(data) > 0:
             dat = data[0].statutory_date
@@ -325,9 +325,9 @@ def make_summary(data, data_type, c):
             if day is not None :
                 summary += " Trigger: %s days" % (day)
 
-            return summary
+            return summary, None
         else:
-            return None
+            return None, None
     elif data_type in (2, 3) :
         dates = []
         trigger = []
@@ -344,14 +344,14 @@ def make_summary(data, data_type, c):
 
                 dates.append(dat_summary)
                 if day is not None :
-                    trigger.append(" %s days, " % (day))
+                    trigger.append(" %s days " % (day))
 
             summary = "Repeats every %s - %s. " % (
                 c["repeats_every"], c["repeat_type"]
             )
-            summary += ", ".join(dates)
+            sdates = ", ".join(dates)
             if len(trigger) > 0 :
-                summary += " Trigger : " + ", ".join(trigger)
+                sdates += " Trigger : " + ", ".join(trigger)
 
     elif data_type == 4:
         dates = []
@@ -369,18 +369,18 @@ def make_summary(data, data_type, c):
                 dates.append(dat_summary)
 
                 if day is not None :
-                    trigger.append(" %s days, " % (day))
+                    trigger.append(" %s days " % (day))
 
             summary = "Repeats every %s - %s. " % (
                 c["repeats_every"], c["repeat_type"]
             )
-            summary += ", ".join(dates)
+            sdates = ", ".join(dates)
             if len(trigger) > 0 :
-                summary += " Trigger : " + ", ".join(trigger)
+                sdates += " Trigger : " + ", ".join(trigger)
 
     elif data_type == 5 :
         summary = "To complete within %s - %s" % (
             c["duration"], c["duration_type"]
         )
 
-    return summary
+    return summary, sdates

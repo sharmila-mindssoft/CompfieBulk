@@ -135,7 +135,7 @@
                                                 <td>
                                                     <h6 class="m-t-0">Country</h6>
                                                     <div class="form-group has-feedback m-b-0">
-                                                        <input class="form-control input-sm" placeholder="Country" type="text">
+                                                        <input id = "ct-search" class="form-control input-sm" placeholder="Country" type="text">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                     <ul id="country" class="list-unstyled box-height-250">
@@ -146,7 +146,8 @@
                                                     <h6 class="m-t-0">Domain</h6>
                                                     <div class="form-group has-feedback m-b-0">
 
-                                                        <input class="form-control input-sm" placeholder="Domain" type="text">
+                                                        <input id="dt-search" class="form-control input-sm" placeholder="Domain"
+                                                        type="text">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                     <ul id="domain" class="list-unstyled box-height-250">
@@ -156,7 +157,7 @@
                                                     <h6 class="m-t-0">Organization</h6>
                                                     <div class="form-group has-feedback m-b-0">
 
-                                                        <input class="form-control input-sm" placeholder="Organization" type="text">
+                                                        <input id="orglist-search" class="form-control input-sm" placeholder="Organization" type="text">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                     <ul id="industry" class="list-unstyled box-height-250">
@@ -166,7 +167,7 @@
                                                     <h6 class="m-t-0">Statutory Nature</h6>
                                                     <div class="form-group has-feedback m-b-0">
 
-                                                        <input class="form-control input-sm" placeholder="Statutory Nature" type="text">
+                                                        <input id="naturelist-search" class="form-control input-sm" placeholder="Statutory Nature" type="text">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                     <ul id="statutorynature" class="list-unstyled box-height-250">
@@ -215,13 +216,13 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Statutory Provision <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <textarea id="statutory_provision" maxlength="500" class="form-control input-sm" rows="1" > </textarea>
+                                                <textarea placeholder="Statutory Provision" id="statutory_provision" maxlength="500" class="form-control input-sm" rows="1" > </textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Task <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <input id="compliance_task" class="form-control input-sm" type="text" maxlength="100" >
+                                                <input placeholder="Compliance Task" id="compliance_task" class="form-control input-sm" type="text" maxlength="100" >
                                                 <input id="comp_id" class="form-control input-sm" type="hidden" >
                                                 <input id="temp_id" class="form-control input-sm" type="hidden" >
                                             </div>
@@ -229,13 +230,13 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Description <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <textarea maxlength="500" id='compliance_description' class="form-control input-sm" rows="1"></textarea>
+                                                <textarea placeholder="Compliance Description" maxlength="500" id='compliance_description' class="form-control input-sm" rows="1"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Document</label>
                                             <div class="col-sm-7">
-                                                <input maxlength="50" id="compliance_document" class="form-control input-sm" type="text">
+                                                <input placeholder="Compliance Document" maxlength="50" id="compliance_document" class="form-control input-sm" type="text">
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -247,7 +248,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Penal Consequences</label>
                                             <div class="col-sm-7">
-                                                <textarea maxlength="500" id="penal_consequences" class="form-control input-sm" rows="1"></textarea>
+                                                <textarea placeholder="Penal Consequences" maxlength="500" id="penal_consequences" class="form-control input-sm" rows="1"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -255,7 +256,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Reference Link</label>
                                             <div class="col-sm-7">
-                                                <textarea maxlength="500" id="reference_link" class="form-control input-sm" rows="1" ></textarea>
+                                                <textarea placeholder="http://www.domain.com" maxlength="500" id="reference_link" class="form-control input-sm" rows="1" ></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -518,7 +519,7 @@
         <td class="task">FORM VIII - Notice of Opening</td>
         <td class="description">Within 30 days of opening a branch</td>
         <td class="frequency">One Time</td>
-        <td>-</td>
+        <td class="summary-repeats">-</td>
         <td class="icon-3x text-center"><i id="edit-icon" class="fa fa-pencil text-primary c-pointer"></i></td>
         <td class="icon-3x text-center"><i id="status" class="fa c-pointer"></i></td>
       </tr>
@@ -531,7 +532,7 @@
         <td>
             <h6 class="m-t-0 title">Region</h6>
             <div class="form-group has-feedback m-b-0">
-                <input class="form-control input-sm" placeholder="Region" type="text">
+                <input class="form-control input-sm geo-name-filter" placeholder="Region" type="text">
                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
             </div>
             <ul class="list-unstyled box-height-100 gname-list">
@@ -549,7 +550,7 @@
     </li>
   </div>
 
-    <div id="date-list-templates" class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1">
+    <div id="date-list-templates" class="statu-date-pan col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1">
         <div class="col-sm-8 no-padding-left">
             <div class="col-sm-6 no-padding-left show-statutory-date-month-multiple-1">
                 <select class="form-control input-sm month-select"></select>
@@ -587,17 +588,21 @@
 <script type="text/javascript" src="/js/wizard/jquery.bootstrap.wizard.js"></script>
 
 <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
-<!--
+
 <script type="text/javascript">
 
     $(document).ready(function(){
-        $('#basicwizard').bootstrapWizard({
-            onTabClick: function(tab, navigation, index) {
-                return false;
-            }
+        // $('#basicwizard').bootstrapWizard({
+        //     onTabClick: function(tab, navigation, index) {
+        //         return false;
+        //     }
+        // });
+        $('#basicwizard .nav-tabs li a').click(function() {
+          return false;
         });
+
     });
-</script> -->
+</script>
 
 
 {% endblock %}

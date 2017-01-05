@@ -888,8 +888,8 @@ def save_statutory_backup(db, statutory_mapping_id, created_by):
 #
 def change_compliance_status(db, mapping_id, is_active, updated_by):
     tbl_name = "tbl_compliances"
-    columns = ["is_active", "updated_by"]
-    values = [is_active, int(updated_by)]
+    columns = ["is_active", "updated_by", "is_approved"]
+    values = [is_active, int(updated_by), 1]
     where = "statutory_mapping_id=%s"
     values.append(mapping_id)
     db.update(tbl_name, columns, values, where)
@@ -898,8 +898,8 @@ def change_compliance_status(db, mapping_id, is_active, updated_by):
 def change_statutory_mapping_status(db, data, updated_by):
     statutory_mapping_id = int(data.statutory_mapping_id)
     is_active = int(data.is_active)
-    columns = ["is_active", "updated_by"]
-    values = [is_active, int(updated_by)]
+    columns = ["is_active", "updated_by", "is_approved"]
+    values = [is_active, int(updated_by), 1]
     where = "statutory_mapping_id=%s"
     values.append(statutory_mapping_id)
     db.update(tblStatutoryMappings, columns, values, where)
@@ -1379,8 +1379,9 @@ def get_compliance_details(db, user_id, compliance_id):
                 date.get("repeat_by")
             )
             date_list.append(s_date)
-    summary = make_summary(date_list, c_info["frequency_id"], c_info)
-
+    summary, dates = make_summary(date_list, c_info["frequency_id"], c_info)
+    if dates is not None :
+        summary += dates
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
         c_name, c_info["compliance_description"],
@@ -1505,7 +1506,7 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
                 date_list.append(s_date)
         else :
             date_list = None
-        summary = make_summary(date_list, c["frequency_id"], c)
+        summary, dates = make_summary(date_list, c["frequency_id"], c)
         compliance_list.append(knowledgetransaction.ComplianceList(
             c["compliance_id"], c["statutory_provision"],
             c["compliance_task"], c["document_name"],

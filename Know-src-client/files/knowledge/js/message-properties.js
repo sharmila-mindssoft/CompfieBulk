@@ -54,6 +54,7 @@ var message = {
   'compliancetask_required': 'Compliance Task Required',
   'compliancedescription_required': 'Compliance Description Required',
   'compliancefrequency_required': 'Compliance Frequency Required',
+  'invalid_reference': 'Enter valid reference link',
   'repeatstype_required': 'Repeats Type Required',
   'repeatsevery_required': 'Repeats Every Required',
   'duration_required': 'Duration Required',
@@ -339,8 +340,7 @@ var message = {
   "save_ip_setting_success": "IP Settings Saved Successfully",
   "delete_ip_setting_success": "IP Settings Deleted Successfully",
   "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
-};
-
+}
 function clearMessage() {
   $('.error-message').hide();
   $('.error-message').text('');

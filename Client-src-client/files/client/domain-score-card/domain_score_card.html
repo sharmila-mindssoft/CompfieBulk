@@ -24,24 +24,21 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Country" value="India">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">India</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Business Group" >
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">RG Business Group</p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity 01">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <p class="form-control-static">RG Legal Entity</p>
                             </div>
                         </div>
                     </div>
@@ -70,9 +67,9 @@
                     </div>
                     <div class="col-sm-12">
                         <center>
-                            <div class="form-group">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                            <div class="form-group m-b-0">
+                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -80,16 +77,27 @@
                 </form>
                 </div>
                 </div>
+                <script type="text/javascript">
+                    function show_div() {
+                        $('.details').show();
+                        $('#compliance_animation')
+                          .removeClass().addClass('bounceInLeft animated')
+                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                          $(this).removeClass();
+                        });
+                    }
+                </script>
                 </div>
-                <div class="card-box">
+                <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
                 <div class="table-responsive">
                     <div class="col-sm-12">
                         <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
                         <div class="col-sm-12 text-center"><h4>Domain Score Card</h4></div>
-                        <div class="col-sm-6 text-center"><h6>Legal Entity : RG Legal Entity 01</h6></div>
+                        <div class="col-sm-6 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
                         <div class="col-sm-6 text-center"><h6>Country : India</h6></div>
                     </div>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" >
+                    <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0" >
                         <thead>
                             <tr>
                                 <th width="01%">#</th>
@@ -136,8 +144,9 @@
                         </tbody>
                     </table>
                     <div class="domain-table-view">
+                    <div class="clear"></div><br>
                     <div class="col-sm-12"><h6>Labour Law</h6></div>
-                    <table id="datatable-responsive" class="table table-list dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table id="datatable-responsive" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
                         <thead>
                             <tr class="bg-lightdark">
                                 <th width="15%" rowspan="2">Unit</th>
@@ -218,6 +227,7 @@
                     </table>
                   </div>
                 </div>
+            </div>
             </div>
         </div>
         <!-- end col -->

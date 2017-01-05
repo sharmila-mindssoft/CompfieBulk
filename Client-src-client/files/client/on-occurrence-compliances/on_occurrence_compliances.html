@@ -1,225 +1,267 @@
-{% extends "files/client/common/html/container.html" %}
-{% block content %}
+{% extends "files/client/common/html/container.html" %} {% block content %}
 <div class="content-page">
-<div class="content">
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12">
-      <h4 class="page-title">On Occurrence Compliances</h4>
-    </div>
-  </div>
-  <div class="row">
-  <div id="animationSandbox">
-    <div class="col-lg-12">
-      <div class="panel panel-default panel-info">
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-          <div class="dataTable_wrapper">
-            <table  class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th align="center" width="1%">#</th>
-                  <th width="15%">Statutory</th>
-                  <th width="15%">Compliance Task</th>
-                  <th width="15%">Description</th>
-                  <th width="12%">To complete with in</th>
-                  <th width="10%">Start Date</th>
-                  <th width="10%">Remarks</th>
-                  <th width="10%" class="text-center">Start</th>
-                </tr>
-                <tr class="odd gradeX">
-                  <td align="center"></td>
-                  <td>
-                    <div class="form-group col-sm-12 no-padding">
-                      <input type="text" class="form-control input-sm"><i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group col-sm-12 no-padding">
-                      <input type="text" class="form-control input-sm"><i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="form-group col-sm-12 no-padding">
-                      <input type="text" class="form-control input-sm"><i class="fa fa-filter form-control-feedback l-h-34"></i>
-                    </div>
-                  </td>
-                  <td align="center"></td>
-                  <td align="center"></td>
-                  <td align="center"></td>
-                  <td align="center"></td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td align="center">1</td>
-                  <td>WORKMEN'S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </td>
-                  <td><a class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg">Form EE - Report of accident </a></td>
-                  <td>Report of fatal Accident and Serious Injury within 7 days to the Commissioner (not application when ESI Act applies).</td>
-                  <td>2 Day(s)</td>
-                  <td><input type="text" name="startDate" class="form-control input-sm"></td>
-                  <td><input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks"></td>
-                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5 width-90px" type="reset" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">2</td>
-                  <td>WORKMEN'S COMPENSATION ACT, 1923 >> Sec.10 </td>
-                  <td><a class="c-pointer">Notice Accident  </a></td>
-                  <td>As soon as Practicable</td>
-                  <td>3 Hour(s)</td>
-                  <td><input type="text" name="startDate" class="form-control input-sm"></td>
-                  <td><input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks"></td>
-                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5 width-90px" type="reset" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">3</td>
-                  <td>WORKMEN'S COMPENSATION ACT, 1923 >> Sec.10 </td>
-                  <td><a class="c-pointer">Notice Opening </a></td>
-                  <td>As soon as Practicable</td>
-                  <td>1 Month(s)</td>
-                  <td><input type="text" name="startDate" class="form-control input-sm"></td>
-                  <td><input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks"></td>
-                  <td class="text-center"><button class="btn btn-primary waves-effect m-l-5 width-90px" type="reset" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-</div>
-</div>
-<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="mySmallModalLabel">Start</h4>
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4 class="page-title">On Occurrence Compliances</h4>
+                </div>
             </div>
-            <div class="modal-body">
-              <form role="form">
-                  <div class="form-group">
-                      <label for="exampleInputPassword">Password</label>
-                      <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
-                  </div>
-                  <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
-              </form>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="page-title">Task History</h4>
-            <hr class="no-top-margin no-bottom-margin">
-            <div class="modal-body">
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-2 control-label">Statutory: </label>
-                            <div class="col-sm-8">
-                                <p class="form-control-static">WORKMEN'S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </p>
+            <div class="row">
+                <div id="animationSandbox">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default panel-info">
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-offset-1 col-md-4">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-8 has-feedback">
+                                                <input class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity" type="text">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Unit:</label>
+                                            <div class="col-sm-8 has-feedback">
+                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group m-b-0 text-center">
+                                            <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dataTable_wrapper">
+                                    <table class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th align="center" width="1%">#</th>
+                                                <th width="15%">Statutory</th>
+                                                <th width="15%">Compliance Task</th>
+                                                <th width="15%">Description</th>
+                                                <th width="10%">To complete within</th>
+                                                <th width="10%">Start Date</th>
+                                                <th width="10%">Remarks</th>
+                                                <th width="10%" class="text-center">Start</th>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td align="center"></td>
+                                                <td>
+                                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                        <input type="text" class="form-control input-sm" placeholder="Enter Statutory">
+                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                        <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                        <input type="text" class="form-control input-sm" placeholder="Enter Description">
+                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                    </div>
+                                                </td>
+                                                <td align="center"></td>
+                                                <td align="center"></td>
+                                                <td align="center"></td>
+                                                <td align="center"></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td align="center">1</td>
+                                                <td>WORKMEN'S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </td>
+                                                <td><a class="c-pointer" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">Form EE - Report of accident </a></td>
+                                                <td>Report of fatal Accident and Serious Injury within 7 days to the Commissioner (not application when ESI Act applies).</td>
+                                                <td>2 Day(s)</td>
+                                                <td>
+                                                    <div class="has-feedback">
+                                                        <input type="text" name="startDate" placeholder="DD-MMM-YYYY" class="form-control input-sm">
+                                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks">
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm" type="button" href="#custom-modal-new" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a"> Start</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center">2</td>
+                                                <td>WORKMEN'S COMPENSATION ACT, 1923 >> Sec.10 </td>
+                                                <td><a class="c-pointer" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">Notice Accident  </a></td>
+                                                <td>As soon as Practicable</td>
+                                                <td>3 Hour(s)</td>
+                                                <td>
+                                                    <div class="has-feedback">
+                                                        <input type="text" name="startDate" placeholder="DD-MMM-YYYY" class="form-control input-sm">
+                                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks">
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center">3</td>
+                                                <td>WORKMEN'S COMPENSATION ACT, 1923 >> Sec.10 </td>
+                                                <td><a class="c-pointer">Notice Opening </a></td>
+                                                <td>As soon as Practicable</td>
+                                                <td>1 Month(s)</td>
+                                                <td>
+                                                    <div class="has-feedback">
+                                                        <input type="text" name="startDate" placeholder="DD-MMM-YYYY" class="form-control input-sm">
+                                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks">
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm" type="reset" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-2 control-label">Unit:</label>
-                            <div class="col-sm-8">
-                                <p class="form-control-static">UN00002 - Madurai Unit 2 </p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-2 control-label">Compliance Task:</label>
-                            <div class="col-sm-8">
-                                <p class="form-control-static">Form EE - Report of accident </p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-2 control-label">Compliance Description:</label>
-                            <div class="col-sm-8">
-                                <p class="form-control-static">Report of fatal Accident and Serious Injury within 7 days to the Commissioner (not application when ESI Act applies). </p>
-                            </div>
-                        </div>
-                 
-                <div class="clear"></div>
-                <div class="table-responsive">
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                        <tbody>
-                          <tr class="table_bg_01">
-                            <td class="header-bg1">Start Date</td>
-                            <td class="header-bg1">Assignee</td>
-                            <td class="header-bg1">Completed On</td>
-                            <td class="header-bg1">Concurr</td>
-                            <td class="header-bg1">Concurred On</td>
-                            <td class="header-bg1">Approver</td>
-                            <td class="header-bg1">Approved On</td>
-                            <td class="header-bg1">Status</td>
-                          </tr>
-                          <tr>
-                            <td>10-Sep-2016</td>
-                            <td>Ravi Kumar</td>
-                            <td>11-Sep-2016</td>
-                            <td>Nagendren</td>
-                            <td>11-Sep-2016</td>
-                            <td>Sivaramakrishnan</td>
-                            <td>16/01/2016</td>
-                            <td>Complied</td>
-                          </tr>
-                          <tr>
-                            <td>25-Jul-2016</td>
-                            <td>Ravi Kumar</td>
-                            <td>29-Jul-2016</td>
-                            <td>Nagendren</td>
-                            <td>29-Jul-2016</td>
-                            <td>Sivaramakrishnan</td>
-                            <td>29-Jul-2016</td>
-                            <td>Delayed Complied</td>
-                          </tr>
-                          <tr>
-                            <td>15-Jun-2016</td>
-                            <td>Ravi Kumar</td>
-                            <td>16-Jun-2016</td>
-                            <td>Nagendren</td>
-                            <td>16-Jun-2016</td>
-                            <td>Sivaramakrishnan</td>
-                            <td>16-Jun-2016</td>
-                            <td>Complied</td>
-                          </tr>
-                          <tr>
-                            <td>10-Mar-2016</td>
-                            <td>Ravi Kumar</td>
-                            <td>12-Mar-2016</td>
-                            <td>Nagendren</td>
-                            <td>12-Mar-2016</td>
-                            <td>Sivaramakrishnan</td>
-                            <td>12-Mar-2016</td>
-                            <td>Complied</td>
-                          </tr>
-                          <tr>
-                            <td>15-Jan-2016</td>
-                            <td>Ravi Kumar</td>
-                            <td>16-Jan-2016</td>
-                            <td>Nagendren</td>
-                            <td>16-Jan-2016</td>
-                            <td>Sivaramakrishnan</td>
-                            <td>16-Jan-2016</td>
-                            <td>Complied</td>
-                          </tr>
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div><!-- /.modal-dialog -->
+    </div>
 </div>
-
-<script type="text/javascript">
-var resizefunc = [];
-</script>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-800">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Compliance History</h4>
+    <div class="custom-modal-text">
+        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+            <div class="form-group">
+                <label class="col-sm-offset-1 col-sm-2 control-label">Statutory: </label>
+                <div class="col-sm-9">
+                    <label class="pull-left control-label">WORKMEN'S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-2 control-label">Unit:</label>
+                <div class="col-sm-9">
+                    <label class="pull-left control-label">UN00002 - Madurai Unit 2 </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-2 control-label">Compliance Task:</label>
+                <div class="col-sm-9">
+                    <label class="pull-left control-label">Form EE - Report of accident </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Compliance Description:</label>
+                <div class="col-sm-9">
+                    <label class="pull-left control-label">Report of fatal Accident and Serious Injury within 7 days to the Commissioner. </label>
+                </div>
+            </div>
+        </form>
+        <div class="clear"></div>
+        <div class="table-responsive">
+            <table id="datatable-responsive" class="table dt-responsive nowrap  text-left" width="100%">
+                <tbody>
+                    <tr class="table_bg_01">
+                        <td class="header-bg1">Start Date</td>
+                        <td class="header-bg1">Assignee</td>
+                        <td class="header-bg1">Completed On</td>
+                        <td class="header-bg1">Concurr</td>
+                        <td class="header-bg1">Concurred On</td>
+                        <td class="header-bg1">Approver</td>
+                        <td class="header-bg1">Approved On</td>
+                        <td class="header-bg1">Status</td>
+                    </tr>
+                    <tr>
+                        <td>10-Sep-2016</td>
+                        <td>Ravi Kumar</td>
+                        <td>11-Sep-2016</td>
+                        <td>Nagendren</td>
+                        <td>11-Sep-2016</td>
+                        <td>Sivaramakrishnan</td>
+                        <td>16/01/2016</td>
+                        <td>Complied</td>
+                    </tr>
+                    <tr>
+                        <td>25-Jul-2016</td>
+                        <td>Ravi Kumar</td>
+                        <td>29-Jul-2016</td>
+                        <td>Nagendren</td>
+                        <td>29-Jul-2016</td>
+                        <td>Sivaramakrishnan</td>
+                        <td>29-Jul-2016</td>
+                        <td>Delayed Complied</td>
+                    </tr>
+                    <tr>
+                        <td>15-Jun-2016</td>
+                        <td>Ravi Kumar</td>
+                        <td>16-Jun-2016</td>
+                        <td>Nagendren</td>
+                        <td>16-Jun-2016</td>
+                        <td>Sivaramakrishnan</td>
+                        <td>16-Jun-2016</td>
+                        <td>Complied</td>
+                    </tr>
+                    <tr>
+                        <td>10-Mar-2016</td>
+                        <td>Ravi Kumar</td>
+                        <td>12-Mar-2016</td>
+                        <td>Nagendren</td>
+                        <td>12-Mar-2016</td>
+                        <td>Sivaramakrishnan</td>
+                        <td>12-Mar-2016</td>
+                        <td>Complied</td>
+                    </tr>
+                    <tr>
+                        <td>15-Jan-2016</td>
+                        <td>Ravi Kumar</td>
+                        <td>16-Jan-2016</td>
+                        <td>Nagendren</td>
+                        <td>16-Jan-2016</td>
+                        <td>Sivaramakrishnan</td>
+                        <td>16-Jan-2016</td>
+                        <td>Complied</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="custom-modal-new" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Start</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="form-group">
+                <label for="exampleInputPassword" class="pull-left">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword" placeholder="******">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light">Submit</button>
+        </form>
+    </div>
+</div>
+<script src="/files/client/common/js/custombox/custombox.min.js"></script>
 {% endblock %}
