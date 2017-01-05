@@ -608,7 +608,7 @@ api_params = {
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'is_created': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     "console_cl_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
-    "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True}
+    "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
 
     'statutory_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgereport', 'class_name': 'StatutoryMappingReport'},
 
