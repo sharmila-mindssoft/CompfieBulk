@@ -2679,17 +2679,27 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_clientdatabase_list`()
 BEGIN
-    SELECT client_id, legal_entity_id, machine_id, database_ip
-    FROM tbl_client_database;
+    select t2.client_database_id, t1.client_id, (select group_name from
+    tbl_client_groups where client_id = t1.client_id) as group_name,
+    t1.legal_entity_id, t1.legal_entity_name, t2.machine_id,
+    (select machine_name from tbl_application_server where
+    machine_id = t2.machine_id) as machine_name,
+    t2.database_server_id, (select database_server_name from tbl_database_server
+    where database_server_id = t2.database_server_id) as database_server_name,
+    t2.client_database_server_id, (select database_server_name from tbl_database_server
+    where database_server_id = t2.client_database_server_id) as client_database_server_name,
+    t2.file_server_id, (select file_server_name from tbl_file_server
+    where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
+    from tbl_legal_entities as t1 left join tbl_client_database as t2
+    on t1.legal_entity_id = t2.legal_entity_id;
 
-    SELECT client_id, group_name FROM tbl_client_groups;
+    SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
-    SELECT legal_entity_id, legal_entity_name, client_id
-    FROM tbl_legal_entities;
+    select database_server_id, database_server_name, database_ip, database_port,
+    legal_entity_ids from tbl_database_server;
 
-    SELECT machine_id, machine_name FROM tbl_machines;
-
-    SELECT db_server_name, ip  FROM tbl_database_server;
+    SELECT file_server_id, file_server_name, ip, port, legal_entity_ids from
+    tbl_file_server;
 END //
 
 DELIMITER ;
@@ -2702,39 +2712,62 @@ DROP PROCEDURE IF EXISTS `sp_clientdatabase_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_clientdatabase_save`(
-    IN clientid INT(11), le_id INT(11),
-    db_server_ip VARCHAR(20), machineid INT(11)
+    IN clientid INT(11), le_id INT(11), machineid INT(11), db_server_id int(11),
+    le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
+    _created_by int(11), _created_on timestamp
 )
 BEGIN
-    DECLARE port_no INT(11);
-    DECLARE username VARCHAR(50);
-    DECLARE pwd VARCHAR(50);
-    DECLARE dbservername VARCHAR(50);
-    DECLARE machine_ip VARCHAR(50);
-    DECLARE machine_port INT(4);
-    DECLARE shortname VARCHAR(20);
-    SELECT port INTO port_no FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT server_username INTO username FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT server_password INTO pwd FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT db_server_name INTO dbservername FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT ip INTO machine_ip FROM tbl_machines WHERE machine_id = machineid;
-    SELECT port INTO machine_port FROM tbl_machines WHERE machine_id = machineid;
-    SELECT short_name INTO shortname FROM tbl_client_groups WHERE client_id=clientid;
-    INSERT INTO tbl_client_database (
-        client_id, legal_entity_id, machine_id, database_ip,
-        database_port, database_username, database_password,
-        database_name, server_ip, server_port, client_short_name
-    ) VALUES (
-        clientid, le_id, machineid, db_server_ip, port_no, username,
-        pwd, dbservername, machine_ip, machine_port, shortname
-    ) ON DUPLICATE KEY UPDATE machine_id=machineid,
-    database_ip = db_server_ip, database_port=port_no,
-    database_username=username, database_password=pwd,
-    database_name=dbservername, server_ip=machine_ip,
-    server_port=machine_port;
+    insert into tbl_client_database
+    (client_id, legal_entity_id, machine_id, file_server_id, database_server_id,
+    client_database_server_id, created_by, created_on)
+    values
+    (clientid, le_id, machineid, _f_s_id, le_db_server_id, db_server_id, _created_by, _created_on);
+
+    update tbl_application_server set client_ids = _cl_ids
+    where machine_id = machineid;
+
+    update tbl_database_server set legal_entity_ids = _le_ids
+    where database_server_id = le_db_server_id;
+
+    update tbl_file_server set legal_entity_ids = _le_ids
+    where file_server_id = file_server_id;
+
+    update tbl_legal_entities set is_created = 1
+    where legal_entity_id = _le_id;
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Update Client Database Environment
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientdatabase_update`(
+IN client_db_id int(11), clientid INT(11), le_id INT(11), machineid INT(11), db_server_id int(11),
+    le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
+    _created_by int(11), _created_on timestamp
+)
+BEGIN
+    update tbl_client_database set client_id = clientid, legal_entity_id = le_id,
+    machine_id = machineid, file_server_id = _f_s_id, database_server_id = le_db_server_id,
+    client_database_server_id = db_server_id, updated_by = _created_by
+    where client_database_id = client_db_id;
+
+    update tbl_application_server set client_ids = _cl_ids
+    where machine_id = machineid;
+
+    update tbl_database_server set legal_entity_ids = _le_ids
+    where database_server_id = le_db_server_id;
+
+    update tbl_file_server set legal_entity_ids = _le_ids
+    where file_server_id = file_server_id;
+
+END //
+
+DELIMITER;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Configuring File Storage
@@ -6170,7 +6203,7 @@ BEGIN
     if is_cl = 0 then
         INSERT INTO tbl_messages
         SET
-        user_category_id = (select user_category_id from tbl_user_category
+        user_category_id = (select user_category_id from tbl_user_login_details
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
         message_text = (select concat(legal_entity_name,' ','has been closed')
@@ -7618,7 +7651,7 @@ in _user_id int(11), _unit_id int(11),_link text, _created_by int(11),
 BEGIN
     INSERT INTO tbl_messages
     SET
-    user_category_id = (select user_category_id from tbl_user_category
+    user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = _created_by),
     message_heading = 'Assign Client Unit',
     message_text = (select concat(unit_name,' ','unit has been assigned')

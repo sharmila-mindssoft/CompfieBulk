@@ -431,8 +431,8 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/allocate-db-env",
-        "files/knowledge/allocate-db-env/allocate-db-env.html",
+        "/knowledge/allocate-database-environment",
+        "files/knowledge/allocate-database-environment/allocate-database-environment.html",
         None, {}
     ),
     (
