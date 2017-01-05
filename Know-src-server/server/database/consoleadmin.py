@@ -3,8 +3,8 @@ from protocol import consoleadmin
 from forms import *
 from tables import *
 from server.common import get_date_time
-from server.validateEnvironment import ServerValidation
-from server.createclientdatabase import ClientDBCreate
+from server.database.validateEnvironment import ServerValidation
+from server.database.createclientdatabase import ClientDBCreate
 
 __all__ = [
     "get_db_server_list",
