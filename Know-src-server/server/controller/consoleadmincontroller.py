@@ -134,6 +134,14 @@ def process_console_admin_request(request, db):
         logger.logKnowledgeApi("SaveAutoDeletion", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
+    elif(type(request_frame) is consoleadmin.getAllocateServerReportData):
+        logger.logKnowledgeApi("getAllocateServerReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_allocate_server_report_data(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("getAllocateServerReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
@@ -291,3 +299,14 @@ def process_file_server_entry(db, request, session_user):
     else:
         file_server_entry_process(db, request, session_user)
         return consoleadmin.SaveFileServerSuccess()
+
+
+###############################################################################
+# To get allocated server group, legal entity
+# parameter : Object of database, session user
+# return type : Returns success response
+###############################################################################
+def process_allocate_server_report_data(db, request, session_user):
+    (
+        groups_list, les_list, units_list
+    ) = get_allocated_server_form_data(db)
