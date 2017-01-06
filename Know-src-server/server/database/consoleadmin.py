@@ -19,7 +19,8 @@ __all__ = [
     "save_auto_deletion_details",
     "get_file_server_list",
     "file_server_entry_process",
-    "is_duplicate_file_server_name"
+    "is_duplicate_file_server_name",
+    "get_allocated_server_form_data"
 ]
 
 
@@ -667,3 +668,29 @@ def file_server_entry_process(db, request, user_id):
     except Exception, e:
         print e
         raise process_error("E078")
+
+
+###############################################################################
+# To get allocated server details
+# parameter : Object of databse
+# return type : Returns records of allocated server lost
+#   process error
+###############################################################################
+def get_allocated_server_form_data(db):
+    result = db.call_proc("sp_allocate_db_environment_report_getdata", None)
+    allocate_db_report = []
+    if(result is not None):
+        for row in result:
+            allocate_db_report.append(consoleadmin.AllocateDBList(
+                    client_id=row["client_id"], group_name=row["group_name"],
+                    legal_entity_id=row["legal_entity_id"],
+                    legal_entity_name=row["legal_entity_name"],
+                    machine_id=row["machine_id"], machine_name=row["machine_name"],
+                    client_db_server_id=row["client_database_server_id"],
+                    client_db_server_name=row["client_db_server_name"],
+                    db_server_id=row["database_server_id"], db_server_name=row["db_server_name"],
+                    file_server_id=row["file_server_id"],
+                    file_server_name=row["file_server_name"]
+                )
+            )
+        return allocate_db_report
