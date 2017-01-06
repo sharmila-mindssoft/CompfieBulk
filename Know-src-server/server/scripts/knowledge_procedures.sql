@@ -7847,3 +7847,24 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_tbl_client_groups_createdb_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_client_groups_createdb_info`(
+in gpid int(11), cdbid int(11), ledbid int(11)
+BEGIN
+
+    select group_name, short_name,
+        (select count(client_id) from tbl_client_database where client_id = gpid) as cnt
+    from tbl_client_groups where client_id = gpid;
+
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port, database_username, database_password
+    FROM tbl_database_server WHERE database_server_id in (cdbid, ledbid);
+
+END //
+
+DELIMITER ;
+

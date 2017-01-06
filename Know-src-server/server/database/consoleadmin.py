@@ -4,7 +4,7 @@ from forms import *
 from tables import *
 from server.common import get_date_time
 from server.database.validateEnvironment import ServerValidation
-from server.database.createclientdatabase import ClientDBCreate
+from server.database.createclientdatabase import ClientGroupDBCreate
 
 __all__ = [
     "get_db_server_list",
@@ -366,6 +366,41 @@ def validated_env_before_save(db, request):
     else :
         return True
 
+def create_db_process(db, client_id, legal_entity_id, db_server_id, le_db_server_id):
+
+    def _create_db(_db_info, short_name, is_group):
+        if is_group :
+            create_db = ClientGroupDBCreate(
+                db, client_id, short_name,
+                _db_info.get("database_ip"),
+                _db_info.get("database_port"),
+                _db_info.get("database_username"),
+                _db_info.get("database_password")
+            )
+            is_db_created = create_db.begin_process()
+        else :
+            pass
+        return is_db_created
+
+    client_db_info = db.call_proc_with_multiresult_set("sp_tbl_client_groups_createdb_info", [client_id, db_server_id, le_db_server_id], 2)
+    c_info = client_db_info[0][0]
+    db_info = client_db_info[1]
+
+    count = c_info.get("cnt")
+    is_group = True
+    if count > 0 :
+        is_group = False
+
+    is_group = True
+    _db_info = None
+    for r in db_info :
+        if r["database_server_id"] == db_server_id :
+            _db_info = r
+
+    if _db_info :
+        is_done = _create_db(_db_info, c_info.get("short_name"), is_group)
+    return is_done[0]
+
 def save_allocated_db_env(db, request, session_user):
     is_valid = validated_env_before_save(db, request)
     if is_valid is not True:
@@ -388,12 +423,13 @@ def save_allocated_db_env(db, request, session_user):
     # try:
     if client_db_id is None:
         try :
-            client_id = db.call_insert_proc(
+            db.call_insert_proc(
                 "sp_clientdatabase_save",
                 (client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
                     client_ids, legal_entity_ids, session_user, get_date_time())
             )
-
+            if (create_db_process(db, client_id, legal_entity_id, db_server_id, le_db_server_id)) :
+                pass
         except Exception :
             print "Environment allocation failed"
 
