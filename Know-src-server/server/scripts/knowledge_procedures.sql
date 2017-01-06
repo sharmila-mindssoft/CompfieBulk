@@ -2723,6 +2723,7 @@ BEGIN
     values
     (clientid, le_id, machineid, _f_s_id, le_db_server_id, db_server_id, _created_by, _created_on);
 
+
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
 
@@ -2733,7 +2734,7 @@ BEGIN
     where file_server_id = file_server_id;
 
     update tbl_legal_entities set is_created = 1
-    where legal_entity_id = _le_id;
+    where legal_entity_id = le_id;
 END //
 
 DELIMITER ;
@@ -7725,3 +7726,30 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Allocate Database Environemnt - Get Details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_getdata`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_getdata`()
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name
+    from
+    tbl_client_database as t1;
+END //
+
+DELIMITER;
