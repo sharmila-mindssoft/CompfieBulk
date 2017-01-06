@@ -12,10 +12,50 @@ var message = {
   'usergroupname_max': 'User Group Name is maximum 50 characters Allowed',
   'usergroupname_str' : 'User Group Name Not Valid Characters',
   'usergroupname_exists': 'User Group Name Already Exists',
+
   'invalid_usergroupid': 'Invalid User Group Id',
-  'category_required' : 'Category Name Required',
   'form_name_required' : 'Select atleast one form from list',
 
+  'country_required': 'Country Required',
+  'country_max': 'Country is maximum 50 characters Allowed',
+  'country_str' : 'Country Not Valid Characters',
+
+  'businessgroup_required': 'Business Group Required',
+  'businessgroup_max': 'Business Group is maximum 50 characters Allowed',
+  'businessgroup_str' : 'Business Group Not Valid Characters',
+
+  'legalentity_required': 'Legal Entity Required',
+  'legalentity_max': 'Legal Entity is maximum 50 characters Allowed',
+  'legalentity_str' : 'Legal Entity Not Valid Characters',
+
+  'division_required': 'Division Required',
+  'division_max': 'Division is maximum 50 characters Allowed',
+  'division_str' : 'Division Not Valid Characters',
+
+  'category_required' : 'Category Name Required',
+  'category_max': 'Category is maximum 50 characters Allowed',
+  'category_str' : 'Category Not Valid Characters',
+
+  'domain_required': 'Domain Required',
+  'domain_max': 'Domain is maximum 50 characters Allowed',
+  'domain_str' : 'Domain Not Valid Characters',
+
+  'unit_required': 'Unit Required',
+  'unit_max': 'Unit is maximum 50 characters Allowed',
+  'unit_str' : 'Unit Not Valid Characters',
+
+  'act_required': 'Act Required',
+  'act_max': 'Act is maximum 50 characters Allowed',
+  'act_str' : 'Act Not Valid Characters',
+
+  'compliancetask_required': 'Compliance Task Required',
+  'compliancetask_max': 'Compliancetask is maximum 50 characters Allowed',
+  'compliancetask_str' : 'Compliancetask Not Valid Characters',
+  'user_required': 'User Task Required',
+  'user_max': 'User is maximum 50 characters Allowed',
+  'user_str' : 'User Not Valid Characters',
+  'fromdate_required': 'From Date Required',
+  'todate_required': 'To Date Required',
 
   'invalid_username_password': 'Unable to login. Incorrect username / password!',
   'contract_expired': 'Contract Expired',
@@ -34,8 +74,8 @@ var message = {
   'emailid_required': 'Email Id Required',
   'usergroup_required': 'User Group Required',
   'invalid_emailid': 'Invalid Email ID',
-  'country_required': 'Country Required',
-  'domain_required': 'Domain Required',
+  
+
   'emailid_exists': 'Email Id Already Exists',
   'contactno_exists': 'Contact Number Already Exists',
   'employeeid_exists': 'Employee Id Already Exists',
@@ -69,7 +109,7 @@ var message = {
   'nostatutory_selected': 'No statutory is selected',
   'statutory_already_added': 'This statutory already added in list',
   'statutoryprovision_required': 'Statutory Provision Required',
-  'compliancetask_required': 'Compliance Task Required',
+  
   'compliancedescription_required': 'Compliance Description Required',
   'compliancefrequency_required': 'Compliance Frequency Required',
   'repeatstype_required': 'Repeats Type Required',
@@ -100,13 +140,13 @@ var message = {
   'mapping_update_success': 'Statutory mapping updated successfully',
   'action_selection_success': 'Selected action has been saved successfully',
   'group_required': 'Group Required',
-  'legalentity_required': 'Legal Entity Required',
+  
   'le_50': 'Legal Entity : Not Allowed More than 50 Characters.',
-  'businessgroup_required': 'Business Group Required',
-  'division_required': 'Division Required',
+  
+  
   'geographylevel_required': 'Geography Level Required',
   'location_required': 'Location Required',
-  'unit_required': 'Unit Required',
+  
   'act_remarks_required': 'Remarks required for not applicable act',
   'act_remarks_opted_required': 'Remarks required for not opted act',
   'compliance_remarks_opted_required': 'Remarks required for not opted compliance',
@@ -123,7 +163,7 @@ var message = {
   'duedate_required': 'Due Date Required',
   'compliancedate_required': 'Compliance Date Required',
   'validity_required': 'Validity Date Required',
-  'act_required': 'Act Required',
+  
   'approval_level': 'Level of Approval is Required',
   'reminder_assignee_required': 'Reminder to Assignee is Required',
   'escalationreminder_concurrence_approval_required': 'Escalation Reminders to Concurrence & Approval Person is Required',
@@ -193,9 +233,8 @@ var message = {
   'usertype_required': 'User Type Required',
   'add_one_form': 'Select atleast one form from list',
   'cannot_deactivate_usergroup': 'User(s) Exists. Cannot Deactivate User group.',
-  'todate_required': 'To Date Required',
-  'fromdate_required': 'From Date Required',
-  'catgname_required': 'Category Name Required',
+  
+  
   'action_required': 'Action Required',
   'validitydate_required': 'Validity Date Required',
   'nextduedate_required': 'Next Due Date Required',
@@ -326,6 +365,7 @@ var message = {
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',
   'mobile_required': 'Mobile Number Required',
+  'catgname_required': 'Category Name Required',
   
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
