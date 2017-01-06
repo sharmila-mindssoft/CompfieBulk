@@ -30,12 +30,10 @@ var legalEntityName = $("#legal-entity-name");
 var countryName = $("#country-name");
 var domainName = $("#domain-name");
 var reportTableTbody = $("#report-table-tbody");
-var templates = $("#templates");
+var template = $("#template");
 var reportTable = $("#report-table");
-var reportTable = $("#total-record");
+var totalRecord = $("#total-record");
 var REPORT = null;
-
-
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
@@ -111,11 +109,19 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        //if (REPORT.validate()) {
+        if (REPORT.validate()) {
             reportView.show();
             showAnimation(reportView);
+            REPORT.fetchReportValues();
+            REPORT.showReportValues();
+        }
+    });
+
+    exportButton.click(function() {
+        if (REPORT.validate()) {
             REPORT.fetchReportValues()
-        //}
+            REPORT.exportReportValues();
+        }
     });
 
 }
@@ -165,6 +171,7 @@ StatusReportConsolidated = function() {
     this._users = [];
     this._compliance_task_status = [];
     this._service_providers = [];
+    this._report_data = [];
 }
 
 StatusReportConsolidated.prototype.loadSearch = function() {
@@ -330,263 +337,110 @@ showAnimation = function(element) {
     element.removeClass().addClass('bounceInLeft animated')
         .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
             $(this).removeClass();
-    });
+        });
 }
 
 StatusReportConsolidated.prototype.fetchReportValues = function() {
     t_this = this;
-    var jsondata = '{"GetStatusReportConslidatedSuccess":{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance-task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity-status":"Approved","activity-date":"20-Aug-2016","doc_list":[],"completion-date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance-task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity-status":"Submitted","activity-date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8090/report/status-consolidated"}],"completion-date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance-task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity-status":"Pending","activity-date":"","doc_list":[],"completion-date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance-task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity-status":"Submitted","activity-date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8090/report/status-consolidated"}],"completion-date":"","com_id":1,"f_id":1}]}}';
+    var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
     var object = jQuery.parseJSON(jsondata);
-    t_this._countries = object.countries;
-    t_this._entities = object.entities;
-    t_this._domains = object.domains;
-    t_this._frequencies = object.frequencies;
-    t_this._userType = object.user_type;
-    t_this._users = object.users;
-    t_this._complianceTaskStatus = object.compliance_task_status;
-    t_this._serviceProviders = object.service_providers;
+    t_this._report_data = object.data_lists;
 };
 
-StatusReportConsolidated.prototype.loadReportValues = function() {
-    Domain_name.focus();
+StatusReportConsolidated.prototype.showReportValues = function() {
+    t_this = this;
+    var data = t_this._report_data;
+    clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
+    legalEntityName.html(legalEntity.html());
+    countryName.html(country.html());
+    domainName.html(domain.val());
+    var j = 1;
+    reportTableTbody.find('tr').remove();
+    var unitname = "";
+    var actname = "";
+    var complianceTask = "";
+    $.each(data, function(k, v) {
+        if (unitname != v.u_name) {
+            var cloneone = $('#template #report-table .row-one').clone();
+            $('.unit-name', cloneone).text(v.u_name);
+            reportTableTbody.append(cloneone);
+            unitname = v.u_name;
+        }
+
+        if (actname != v.l_name) {
+            var clonetwo = $('#template #report-table .row-two').clone();
+            $('.act-name', clonetwo).text(v.l_name);
+            reportTableTbody.append(clonetwo);
+            actname = v.l_name;
+        }
+
+        if (complianceTask != v.compliance_task) {
+            var clonethree = $('#template #report-table .row-three').clone();
+            $('.sno', clonethree).text(j);
+            $('.compliance-task', clonethree).text(v.compliance_task);
+            $('.frequency', clonethree).text(v.frequency);
+            $('.due-date', clonethree).text(v.due_date);
+            $('.compliance-task-status', clonethree).text(v.task_status);
+            $('.user-name', clonethree).text(v.user_name);
+            $('.activity-status', clonethree).text(v.activity_status);
+            if (v.activity_date != "")
+                $('.activity-date', clonethree).text(v.activity_date);
+            else
+                $('.activity-date', clonethree).text('-');
+            if (v.doc_list.length > 0) {
+                $.each(v.doc_list, function(k1, v1) {
+                    $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
+                });
+            } else {
+                $('.uploaded-document', clonethree).text('-');
+            }
+            
+            if (v.completion_date != "")
+                $('.completion-date', clonethree).text(v.completion_date);
+            else
+                $('.completion-date', clonethree).text('-');
+            reportTableTbody.append(clonethree);
+            j = j + 1;
+            complianceTask = v.compliance_task;
+        } else {
+            var clonefour = $('#template #report-table .row-four').clone();
+            $('.user-name-new', clonefour).text(v.user_name);
+            $('.activity-status-new', clonefour).text(v.activity_status);
+            if (v.activity_date != "")
+                $('.activity-date-new', clonefour).text(v.activity_date);
+            else
+                $('.activity-date-new', clonefour).text('-');
+            if (v.doc_list.length > 0) {
+                $.each(v.doc_list, function(k1, v1) {
+                    $('.uploaded-document-new a', clonefour).text(v1.doc_name).attr("href", v1.doc_url);
+                });
+            } else {
+                $('.uploaded-document-new', clonefour).text('-');
+            }
+
+            if (v.completion_date != "")
+                $('.completion-date-new', clonefour).text(v.completion_date);
+            else
+                $('.completion-date-new', clonefour).text('-');
+            reportTableTbody.append(clonefour);
+            j = j + 1;
+            complianceTask = v.compliance_task;
+        }
+    });
+    totalRecord.html(j);
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-StatusReportConsolidated.prototype.displayMessage = function(message) {
-    Msg_pan.text(message);
-    Msg_pan.show();
-};
-
-StatusReportConsolidated.prototype.clearMessage = function() {
-    Msg_pan.text('');
-    Msg_pan.hide();
+StatusReportConsolidated.prototype.exportReportValues = function() {
+    alert('export');
 };
 
 StatusReportConsolidated.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        //this.displayMessage(msg.domainname_exists);
         this.displayMessage("Domain name exists");
-    } else if (error == 'InvaliddomainId') {
-        //this.displayMessage(msg.invalid_domainId);
-        this.displayMessage("invalid domainId");
-    } else if (error == 'InvalidPassword') {
-        //this.displayMessage(msg.invalid_password);
-        this.displayMessage("invalid password");
     } else {
         this.displayMessage(error);
     }
 };
-
-StatusReportConsolidated.prototype.popupWarning = function(message, callback) {
-    var Warning_popup = $('.warning-confirm');
-    Warning_popup.dialog({
-        //title: msg.title_status_change,
-        title: "title status change",
-        buttons: {
-            Ok: function() {
-                $(this).dialog('close');
-                callback(true);
-            },
-            Cancel: function() {
-                $(this).dialog('close');
-                callback(false);
-            }
-        },
-        open: function() {
-            $('.warning-message').html(message);
-        }
-    });
-};
-
-
-StatusReportConsolidated.prototype.showAddScreen = function() {
-    AddScreen.show();
-    Domain_name.focus();
-};
-
-//Status Title
-function showTitle(e) {
-    if (e.className == "fa c-pointer status fa-times text-danger") {
-        e.title = 'Click Here to Activate';
-    } else if (e.className == "fa c-pointer status fa-check text-success") {
-        e.title = 'Click Here to Deactivate';
-    }
-}
-
-//open password dialog
-function showModalDialog(e, domainId, isActive) {
-    t_this = this;
-    var passStatus = null;
-    if (isActive == true) {
-        passStatus = false;
-        statusmsg = message.deactive_message;
-    } else {
-        passStatus = true;
-        statusmsg = message.active_message;
-    }
-    CurrentPassword.val('');
-    confirm_alert(statusmsg, function(isConfirm) {
-        if (isConfirm) {
-            Custombox.open({
-                target: '#custom-modal',
-                effect: 'contentscale',
-                complete: function() {
-                    CurrentPassword.focus();
-                    isAuthenticate = false;
-                },
-                close: function() {
-                    if (isAuthenticate) {
-                        t_this.changeStatus(domainId, passStatus);
-                    }
-                },
-            });
-            e.preventDefault();
-        }
-    });
-}
-
-
-StatusReportConsolidated.prototype.fetchCountryMultiselect = function() {
-    var str = '';
-    for (var i in REPORT._CountryList) {
-        d = REPORT._CountryList[i];
-        if (d.is_active == true) {
-            var selected = '';
-            if ($.inArray(d.country_id, REPORT._country_ids) >= 0)
-                selected = ' selected ';
-            else
-                selected = '';
-            str += '<option value="' + d.country_id + '" ' + selected + '>' + d.country_name + '</option>';
-        }
-    }
-    MultiSelect_Country.html(str).multiselect('rebuild');
-};
-
-StatusReportConsolidated.prototype.showEdit = function(d_id, d_name, d_country) {
-    this.showAddScreen();
-    Domain_name.val(d_name);
-    Domain_id.val(d_id);
-    this._country_ids = d_country;
-    this.fetchCountryMultiselect();
-};
-
-StatusReportConsolidated.prototype.changeStatus = function(d_id, status) {
-    mirror.changeDomainStatus(d_id, status, function(error, response) {
-        if (error == null) {
-            t_this.showList();
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
-};
-
-
-StatusReportConsolidated.prototype.submitProcess = function() {
-    d_id = parseInt(Domain_id.val());
-    name = Domain_name.val().trim();
-    c_ids = MultiSelect_Country.val().map(Number);
-    t_this = this;
-    if (Domain_id.val() == '') {
-        mirror.saveDomain(name, c_ids, function(error, response) {
-            if (error == null) {
-                t_this.displayMessage(error);
-                displaySuccessMessage(message.save_success);
-                t_this.showList();
-            } else {
-                t_this.displayMessage(error);
-            }
-        });
-    } else {
-        mirror.updateDomain(d_id, name, c_ids, function(error, response) {
-            if (error == null) {
-                displaySuccessMessage(message.update_success);
-                t_this.showList();
-            } else {
-                t_this.displayMessage(error);
-            }
-        });
-    }
-};
-
-function chkbox_select(item, id, name, active) {
-    a_klass = Country_li_active;
-    eveClick = "";
-    li_string = ''
-    if (active == true) {
-        li_string = '<li id="' + id + '" class="' + a_klass + '" onclick=list_click(this) >' + name + '</li>';
-    } else {
-        li_string = '<li id="' + id + '" onclick=list_click(this) >' + name + '</li>';
-    }
-    return li_string;
-}
-
-function list_click(element) {
-    country_class = 'active_selectbox_country';
-
-    klass = $(element).attr('class');
-    if (klass == country_class) {
-        $(element).removeClass(country_class);
-        REPORT._country_ids.splice(REPORT._country_ids.indexOf(parseInt(element.id)));
-    } else {
-        $(element).addClass(country_class);
-        REPORT._country_ids.push(parseInt(element.id));
-    }
-    Country.val(REPORT._country_ids.length + ' Selected');
-}
-
-function key_search(mainList) {
-    d_key = SearchDomain.val().toLowerCase();
-    c_key = SearchCountry.val().toLowerCase();
-    d_status = $('.search-status-li.active').attr('value');
-    var fList = [];
-    for (var entity in mainList) {
-        dName = mainList[entity].domain_name;
-        cnames = mainList[entity].c_names;
-        dStatus = mainList[entity].is_active;
-
-        var flg = false;
-
-        if (c_key.length == 0) {
-            flg = true;
-        } else {
-            for (var c in cnames) {
-                if (~cnames[c].toLowerCase().indexOf(c_key)) {
-                    flg = true;
-                    continue;
-                }
-            }
-        }
-
-        if ((~dName.toLowerCase().indexOf(d_key)) && flg == true) {
-            if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
-                fList.push(mainList[entity]);
-            }
-        }
-    }
-    return fList
-}
 
 REPORT = new StatusReportConsolidated();
 

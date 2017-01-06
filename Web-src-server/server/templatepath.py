@@ -124,7 +124,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/domain-score-card",
-        "files/client/domain-score-card/domain-score-card.html",
+        "files/client/domain-score-card/domain_score_card.html",
         None, {}
     ),
     (
