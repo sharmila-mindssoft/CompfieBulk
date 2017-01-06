@@ -516,13 +516,13 @@ DROP PROCEDURE IF EXISTS sp_get_audit_trails;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_audit_trails`(
-	IN _from_date varchar(10), IN _to_date varchar(10),
-	IN _user_id varchar(10), IN _form_id varchar(10),
-	IN _country_id int(11), IN _category_id int(11),
-	IN _from_limit INT, IN _to_limit INT
+    IN _from_date varchar(10), IN _to_date varchar(10),
+    IN _user_id varchar(10), IN _form_id varchar(10),
+    IN _country_id int(11), IN _category_id int(11),
+    IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
-	if _category_id = 1 then
+    if _category_id = 1 then
         SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
         FROM tbl_activity_log as t1 -- , tbl_users as t2
         WHERE
@@ -2767,7 +2767,7 @@ BEGIN
 
 END //
 
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To Get data for Configuring File Storage
@@ -6414,12 +6414,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutorymapping_report_levl1_list`()
 BEGIN
-	SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
-	t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
-	INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
-	INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
-	INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
-	WHERE t2.level_position=1;
+    SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+    t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+    INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+    INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+    INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
+    WHERE t2.level_position=1;
 
 END //
 
@@ -6437,20 +6437,20 @@ DELIMITER //
 CREATE PROCEDURE `sp_statutorymapping_report_statutorymaster`(
 in statutoryId int(11))
 BEGIN
-	if statutoryId is not null then
-		SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
-		t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
-		INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
-		INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
-		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
-		where t1.statutory_id = statutoryId;
-	else
-		SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
-		t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
-		INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
-		INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
-		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id;
-	end if;
+    if statutoryId is not null then
+        SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+        t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+        INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+        INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+        INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
+        where t1.statutory_id = statutoryId;
+    else
+        SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+        t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+        INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+        INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+        INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id;
+    end if;
 
 END //
 
@@ -6466,7 +6466,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_countries_for_audit_trails`()
 BEGIN
-	select t1.user_id, t1.country_id,
+    select t1.user_id, t1.country_id,
     (select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
     (select country_name from tbl_countries where country_id = t1.country_id) as country_name
     from
@@ -7721,7 +7721,7 @@ DELIMITER ;
 
 -- --------------
 -- statutory mapping report data
---- -------------
+-- -------------
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_reportdata`;
 
 DELIMITER //
@@ -7833,7 +7833,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_database_server_byid`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_environment_byid`(
-in dsid int(11), asid int(11), fsid int(11)
+in dsid int(11), asid int(11), fsid int(11))
 BEGIN
     SELECT database_server_id, database_server_name,
         database_ip, database_port, database_username, database_password
@@ -7853,7 +7853,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_client_groups_createdb_info`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_client_groups_createdb_info`(
-in gpid int(11), cdbid int(11), ledbid int(11)
+in gpid int(11), cdbid int(11), ledbid int(11))
 BEGIN
 
     select group_name, short_name,
