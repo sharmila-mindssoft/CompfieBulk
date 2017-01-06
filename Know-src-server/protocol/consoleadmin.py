@@ -315,13 +315,25 @@ class SaveAutoDeletion(Request):
             "auto_deletion_details": self.auto_deletion_details
         }
 
+class GetAllocateServerReportData(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetAllocateServerReportData()
+
+    def to_structure(self):
+        return {
+        }
 
 def _init_Request_class_map():
     classes = [
         GetDatabaseServerList, SaveDBServer, GetClientServerList, SaveClientServer,
         GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
         GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
-        SaveFileServer
+        SaveFileServer, GetAllocateServerReportData
     ]
     class_map = {}
     for c in classes:
@@ -589,6 +601,70 @@ class ClientDatabase(object):
             "is_created": self.is_created,
         }
 
+class AllocateDBList(object):
+    def __init__(
+        self, client_id, group_name, legal_entity_id, legal_entity_name,
+        machine_id, machine_name, client_db_server_id,
+        client_db_server_name, db_server_id, db_server_name, file_server_id,
+        file_server_name
+    ):
+        self.client_id = client_id
+        self.group_name = group_name
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.machine_id = machine_id
+        self.machine_name = machine_name
+        self.client_db_server_id = client_db_server_id
+        self.client_db_server_name = client_db_server_name
+        self.db_server_id = db_server_id
+        self.db_server_name = db_server_name
+        self.file_server_id = file_server_id
+        self.file_server_name = file_server_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data,
+            [
+                "client_id", "group_name", "legal_entity_id", "legal_entity_name",
+                "machine_id", "machine_name", "client_db_server_id",
+                "client_db_server_name", "db_server_id", "db_server_name",
+                "file_server_id", "file_server_name"
+            ]
+        )
+        client_id = data.get("client_id")
+        group_name = data.get("group_name")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        machine_id = data.get("machine_id")
+        machine_name = data.get("machine_name")
+        client_db_server_id = data.get("client_db_server_id")
+        client_db_server_name = data.get("client_db_server_name")
+        db_server_id = data.get("db_server_id")
+        db_server_name = data.get("db_server_name")
+        file_server_id = data.get("file_server_id")
+        file_server_name = data.get("file_server_name")
+        return ClientDatabase(
+            client_id, group_name, legal_entity_id, legal_entity_name,
+            machine_id, machine_name, client_db_server_id, client_db_server_name,
+            db_server_id, db_server_name, file_server_id, file_server_name
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "machine_id": self.machine_id,
+            "machine_name": self.machine_name,
+            "client_db_server_id": self.client_db_server_id,
+            "client_db_server_name": self.client_db_server_name,
+            "db_server_id": self.db_server_id,
+            "db_server_name": self.db_server_name,
+            "file_server_id": self.file_server_id,
+            "file_server_name": self.file_server_name,
+        }
 
 class ClientGroup(object):
     def __init__(self, client_id, group_name):
@@ -1043,6 +1119,20 @@ class SaveAutoDeletionSuccess(Response):
     def to_inner_structure(self):
         return {}
 
+class GetAllocatedDBListSuccess(Response):
+    def __init__(self, allocate_db_list):
+        self.allocate_db_list = allocate_db_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["allocate_db_list"])
+        allocate_db_list = data.get("allocate_db_list")
+        return GetAllocatedDBListSuccess(allocate_db_list)
+
+    def to_inner_structure(self):
+        return {
+            "allocate_db_list": self.allocate_db_list
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -1052,7 +1142,8 @@ def _init_Response_class_map():
         GetAllocatedDBEnvSuccess, SaveAllocatedDBEnvSuccess,
         GetFileStorageSuccess, SaveFileStorageSuccess,
         GetAutoDeletionListSuccess, SaveAutoDeletionSuccess,
-        GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists
+        GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists,
+        GetAllocatedDBListSuccess
     ]
     class_map = {}
     for c in classes:
