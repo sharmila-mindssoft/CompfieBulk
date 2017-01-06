@@ -145,6 +145,10 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
+        print s
+        s = s.encode('base64')
+        print s
+        s = json.dumps(s)
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -153,7 +157,15 @@ class API(object):
     ):
         request_data = None
         try:
-            data = request.get_json(force=True)
+            print request.data
+            data = request.data.decode('base64')
+            print data
+            data = json.loads(data)
+            print data
+            # data = request.get_json(force=True)
+            # print data
+            # data = data.decode('base64')
+            # print data
             # data = request.data
             # print data
             # print "\n"
