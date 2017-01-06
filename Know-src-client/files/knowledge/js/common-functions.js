@@ -1070,6 +1070,8 @@ function commonAutoComplete1(
                     var cresult = false;
                     var dresult = false;
                     for(var j=0; j<list_val[i][value].length; j++){
+                      /*console.log(condition_values1);
+                      console.log(condition_values2);*/
                       if($.inArray(list_val[i][value][j]["c_id"], condition_values1) >= 0){
                         cresult = true;
                       }

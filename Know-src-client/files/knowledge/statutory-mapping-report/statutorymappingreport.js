@@ -104,20 +104,12 @@ function loadCountwiseResult(filterList) {
     if (actname != lastActName) {
       var tableRow = $('#act-templates .table-act-list .table-row-act-list');
       var clone = tableRow.clone();
-      $('.actname', clone).html(actname + '<span><img src="/knowledge/images/chevron_black_down.png"></span>');
+      $('.actname', clone).text(actname);
       $('.tbody-compliance').append(clone);
-      $('.tbody-compliance').append('<tbody class="accordion-content accordion-content' + count + ' default"></tbody>');
-      /*if(count==1){
-        $('.accordion-content'+count).addClass("default");
-      }*/
+      
       lastOccuranceid = 0;
       count++;
-      $(clone, '.actname').click(function () {
-        //Expand or collapse this panel
-        $(this).next().slideToggle('fast');
-        //Hide the other panels
-        $('.accordion-content').not($(this).next()).slideUp('fast');
-      });
+      
     }
     var occurance = '';
     var occuranceid;
@@ -130,8 +122,8 @@ function loadCountwiseResult(filterList) {
       });
       var tableRow2 = $('#head-templates .table-compliance-frequency-list .table-row-com-frequency');
       var clone2 = tableRow2.clone();
-      $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">' + occurance + '</div>');
-      $('.accordion-content' + (count - 1)).append(clone2);
+      $('.tbl_heading', clone2).text(occurance);
+      $('.tbody-compliance').append(clone2);
     }
     var tableRow1 = $('#compliance-templates .table-compliances-list .table-row');
     var clone1 = tableRow1.clone();
@@ -208,7 +200,7 @@ function loadCountwiseResult(filterList) {
       applicableLocation = applicableLocation + filterList[entity].geo_maps[i] + '<br>';
     }
     $('.tbl_applicablelocation', clone1).html(applicableLocation);
-    $('.accordion-content' + (count - 1)).append(clone1);
+    $('.tbody-compliance').append(clone1);
     compliance_count = compliance_count + 1;
     lastActName = actname;
     lastOccuranceid = frequency_id;
@@ -218,16 +210,17 @@ function loadCountwiseResult(filterList) {
   } else {
     $('.compliance_count').text('');
   }
+
   if (compliance_count >= totalRecord) {
-    $('#pagination').hide();
+    //$('#pagination').hide();
   }
   if (count == 1) {
     var tableRow1 = $('#nocompliance-templates .table-nocompliances-list .table-row');
     var clone1 = tableRow1.clone();
     $('.tbody-compliance').append(clone1);
     $('.tbl_norecords', clone1).text('No Records');
-    $('.accordion-content' + count).append(clone1);
-    $('#pagination').hide();
+    $('.tbody-compliance').append(clone1);
+    //$('#pagination').hide();
   }
 }
 function loadresult() {

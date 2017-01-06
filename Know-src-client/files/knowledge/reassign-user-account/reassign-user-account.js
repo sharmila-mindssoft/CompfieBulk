@@ -123,7 +123,7 @@ function loadTMList(){
 
                 $('.tm-techno-manager-name', clone).keyup(function(e){
                     var condition_fields = ["country_domains"];
-                    var condition_values1 = [group_countries[value.ct_id]];
+                    var condition_values1 = group_countries[value.ct_id];
                     var condition_values2 = group_domains[value.ct_id];
 
                     var text_val = $(this).val();
@@ -143,8 +143,11 @@ function loadTMList(){
                 group_countries[value.ct_id] = [];
                 group_domains[value.ct_id] = [];
             }
-
-            group_countries[value.ct_id] = group_countries[value.ct_id].push(value.c_id);
+            console.log(value.ct_id)
+            console.log(group_countries)
+            console.log(value.c_id)
+            console.log(group_countries[value.ct_id])
+            group_countries[value.ct_id] = $.merge(group_countries[value.ct_id], [value.c_id]);
             group_domains[value.ct_id] = $.merge(group_domains[value.ct_id], value.d_ids);
 
             var letableRow = $('#templates .tm-view-row .tm-view-le-row');
@@ -159,8 +162,6 @@ function loadTMList(){
             $('.techno_executive_id', clone).addClass('group_le_'+value.ct_id);
             $('.old_executive_id', clone).attr('id', 'old_executive_id_'+value.le_id);
             $('.old_executive_id', clone).val(value.executive_id);
-
-            
 
             $('.tm-techno-executive-name', clone).keyup(function(e){
                 var condition_fields = ["country_domains"];
@@ -181,8 +182,8 @@ function loadTMList(){
             $('.tbody-tm-view').append(clone);
         });
 
-        console.log(group_countries)
-        console.log(group_domains)
+        //console.log(group_countries)
+        //console.log(group_domains)
         $('.tm-group-checkbox').on('click', function(e) {
             var tm_view = '.tm-ac-' + $(this).val();
             var te_view = '.te-ac-' + $(this).val();
