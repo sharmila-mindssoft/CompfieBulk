@@ -6,7 +6,7 @@ import uuid
 import shutil
 import zipfile
 import datetime
-from protocol import (core)
+from clientprotocol import (clientcore)
 from server.common import (
     string_to_datetime, datetime_to_string,
     convert_to_dict
@@ -205,9 +205,9 @@ class ConvertJsonToCSV(object):
                 datetime_to_string(
                     row["activity_date"]
                 ),
-                core.COMPLIANCE_ACTIVITY_STATUS(
+                clientcore.COMPLIANCE_ACTIVITY_STATUS(
                     row["activity_status"]).to_structure(),
-                core.COMPLIANCE_STATUS(
+                clientcore.COMPLIANCE_STATUS(
                     row["compliance_status"]).to_structure(),
                 row["remarks"], employee_name
             ]
@@ -964,7 +964,7 @@ class ConvertJsonToCSV(object):
                     statutory_dates = json.loads(statutory_dates)
                     date_list = []
                     for date in statutory_dates:
-                        s_date = core.StatutoryDate(
+                        s_date = clientcore.StatutoryDate(
                             date["statutory_date"],
                             date["statutory_month"],
                             date["trigger_before_days"],
@@ -975,7 +975,7 @@ class ConvertJsonToCSV(object):
                     compliance_name = compliance[0]
                     description = compliance[1]
                     statutory_date = date_list
-                    compliance_frequency = core.COMPLIANCE_FREQUENCY(
+                    compliance_frequency = clientcore.COMPLIANCE_FREQUENCY(
                         compliance[6])
 
                     due_date = None
@@ -1413,7 +1413,7 @@ class ConvertJsonToCSV(object):
             contract_to = string_to_datetime(contract_to).date()
 
         client_agreement_list = db.call_proc(
-            "sp_client_agreement_details", (country_id, client_id, business_group_id, 
+            "sp_client_agreement_details", (country_id, client_id, business_group_id,
         legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
         )
 
@@ -1452,7 +1452,7 @@ class ConvertJsonToCSV(object):
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No",
                     "Used Licence", "Total Licence",
                     "Used File Space", "Total File Space",
-                    "Contract From", "Contract To", 
+                    "Contract From", "Contract To",
                     "Total Domin", "Domain Name", "Total Unit", "Used Unit", "Activation Date"
                 ]
                 self.write_csv(csv_headers, None)
@@ -1488,7 +1488,7 @@ class ConvertJsonToCSV(object):
 
 
         client_agreement_list = db.call_proc(
-            "sp_domainwise_agreement_details", (country_id, client_id, business_group_id, 
+            "sp_domainwise_agreement_details", (country_id, client_id, business_group_id,
         legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
         )
 
@@ -1518,14 +1518,14 @@ class ConvertJsonToCSV(object):
                     "Group Name", "Business Group Name",
                     "Legal Entity Name", "Group Admin Email",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No",
-                    "Contract From", "Contract To", 
+                    "Contract From", "Contract To",
                     "Total Unit", "Used Unit", "Activation Date"
                 ]
                 self.write_csv(csv_headers, None)
                 is_header = True
             csv_values = [
                 group_name, business_group_name, legal_entity_name, group_admin_email,
-                legal_entity_admin_email, legal_entity_admin_contactno, contract_from, 
+                legal_entity_admin_email, legal_entity_admin_contactno, contract_from,
                 contract_to, domain_total_unit, domain_used_unit, activation_date
             ]
             self.write_csv(None, csv_values)

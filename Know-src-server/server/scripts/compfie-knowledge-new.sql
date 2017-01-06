@@ -781,7 +781,7 @@ CREATE TABLE `tbl_application_server` (
   `machine_name` varchar(50) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
-  `legal_entity_ids` longtext,
+  `group_ids` longtext,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,

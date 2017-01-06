@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (
+from clientprotocol.jsonvalidators_client import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values)
 
 

@@ -11,7 +11,7 @@
 ### validation_method = [is_alphabet, is_alphanumeric, is_date, is_address ]
 '''
 
-from protocol.api_key_validation import *
+from clientprotocol.api_key_validation_client import *
 from server.constants import CAPTCHA_LENGTH
 
 __all__ = [
@@ -51,7 +51,6 @@ api_params = {
     "menus":  {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False, 'module_name': 'core', "class_name": "Form"},
     "user_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUserGroup"},
     "user_category": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUsercategory"},
-
     'form_ids': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
 }

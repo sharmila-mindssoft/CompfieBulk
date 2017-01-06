@@ -1,4 +1,4 @@
-from protocol import (core)
+from clientprotocol import (clientcore)
 from server.clientdatabase.tables import *
 
 from server.common import (
@@ -152,7 +152,7 @@ def get_client_configuration(db):
         )
     c_list = []
     for r in result:
-        info = core.ClientConfiguration(
+        info = clientcore.ClientConfiguration(
             r["country_id"],
             r["domain_id"],
             r["period_from"],

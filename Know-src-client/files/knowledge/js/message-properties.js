@@ -54,6 +54,7 @@ var message = {
   'compliancetask_required': 'Compliance Task Required',
   'compliancedescription_required': 'Compliance Description Required',
   'compliancefrequency_required': 'Compliance Frequency Required',
+  'invalid_reference': 'Enter valid reference link',
   'repeatstype_required': 'Repeats Type Required',
   'repeatsevery_required': 'Repeats Every Required',
   'duration_required': 'Duration Required',

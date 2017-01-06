@@ -49,6 +49,7 @@ app = Flask(__name__)
 
 csrf = CsrfProtect()
 app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
+app.config["WTF_CSRF_TIME_LIMIT"] = 200
 # app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
 csrf.init_app(app)
 
@@ -230,7 +231,7 @@ class API(object):
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             if str(e).find("expected a") is False:
-                self._db.rollback()
+                _db.rollback()
                 _db_con.close()
             # response.set_status(400)
             # response.send(str(e))
@@ -491,7 +492,8 @@ def run_server(port):
             ("/knowledge/api/files", api.handle_format_file),
             ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
             ("/knowledge/api/mobile/login", api.handle_mobile_login_request),
-            ("/knowledge/api/mobile", api.handle_mobile_request)
+            ("/knowledge/api/mobile", api.handle_mobile_request),
+            ("/knowledge/api/upload", api.handle_mobile_request)
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):

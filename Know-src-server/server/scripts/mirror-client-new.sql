@@ -71,6 +71,7 @@ CREATE TABLE `tbl_mapped_industries` (
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
   `client_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
   `group_admin_username` varchar(20) NOT NULL,

@@ -1,6 +1,6 @@
 from server.clientdatabase.tables import *
 
-from protocol import (
+from clientprotocol import (
   clientadminsettings
 )
 

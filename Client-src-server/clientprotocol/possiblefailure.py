@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
+from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list)
 
 class Response(object):
     def to_structure(self):
