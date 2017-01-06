@@ -127,7 +127,7 @@
                                             
                                         </tbody>
                                     </table>
-                                    <div class="domain-table-view">
+                                    <div class="domain-table-view" style="display: none;">
                                         <div class="clear"></div>
                                         <br>
                                         <div class="col-sm-12">
@@ -166,58 +166,43 @@
 <div id="template">
     <table id="report-table">
         <tr class="report-row">
-            <td>1</td>
-            <td><a class="labour-view c-pointer">Labour Law</a></td>
-            <td class="text-center">50</td>
-            <td class="text-center">20</td>
-            <td class="text-center">15</td>
-            <td class="text-center font-bold">85</td>
+            <td class="sno"></td>
+            <td><a class="labour-view c-pointer domain-name"></a></td>
+            <td class="text-center assigned"></td>
+            <td class="text-center un-assigned"></td>
+            <td class="text-center not-opted"></td>
+            <td class="text-center font-bold row-total"></td>
         </tr>
         <tr class="report-total-row">
             <td>&nbsp;</td>
             <td class="font-bold">Total</td>
-            <td class="font-bold text-center">128</td>
-            <td class="font-bold text-center">55</td>
-            <td class="font-bold text-center">60</td>
-            <td class="font-bold text-center">243</td>
+            <td class="font-bold text-center assigned-total"></td>
+            <td class="font-bold text-center un-assigned-total"></td>
+            <td class="font-bold text-center not-opted-total"></td>
+            <td class="font-bold text-center total-count"></td>
         </tr>
-        <tr class="report-new-row">
-            <td>UN001 - Unit One</td>
-            <td class="text-center">4</td>
-            <td class="text-center">3</td>
-            <td class="text-center">2</td>
-            <td class="text-center">1</td>
-            <td class="text-center">4</td>
-            <td class="text-center">2</td>
-            <td class="font-bold text-center">16</td>
+        <tr class="unit-details report-new-row">
+            <td class="unit-name">UN001 - Unit One</td>
+            <td class="text-center inprogress "></td>
+            <td class="text-center complied "></td>
+            <td class="text-center delayed-complied "></td>
+            <td class="text-center not-complied "></td>
+            <td class="text-center un-assigned "></td>
+            <td class="text-center not-opted "></td>
+            <td class="font-bold text-center row-total"></td>
         </tr>
-        <tr class="report-new-total-row">
+        <tr class="unit-details report-new-total-row">
             <td class="font-bold">Total</td>
-            <td class="text-center font-bold">24</td>
-            <td class="text-center font-bold">15</td>
-            <td class="text-center font-bold">4</td>
-            <td class="text-center font-bold">7</td>
-            <td class="text-center font-bold">20</td>
-            <td class="text-center font-bold">15</td>
-            <td class="text-center font-bold">85</td>
+            <td class="text-center font-bold total-inprogress"></td>
+            <td class="text-center font-bold total-complied"></td>
+            <td class="text-center font-bold total-delayed-complied"></td>
+            <td class="text-center font-bold total-not-complied"></td>
+            <td class="text-center font-bold total-un-assigned"></td>
+            <td class="text-center font-bold total-not-opted"></td>
+            <td class="text-center font-bold total-count-new"></td>
         </tr>
     </table>
 </div>
-<script>
-$(function() {
-    $('.domain-table-view').hide();
-    $('.labour-view').on('click', function(e) {
-        $('.domain-table-view').show();
-    });
-    $('.finance-view').on('click', function(e) {
-        $('.domain-table-view').hide();
-    });
-    $('.ils-view').on('click', function(e) {
-        $('.domain-table-view').hide();
-    });
-
-});
-</script>
 <script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/domain-score-card/domain_score_card.js"></script>
 {% endblock %}
