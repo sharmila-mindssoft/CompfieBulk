@@ -615,6 +615,7 @@ api_params = {
     'is_created': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     "console_cl_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
 
 
 }

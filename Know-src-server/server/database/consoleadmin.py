@@ -26,6 +26,7 @@ __all__ = [
     "get_group_ip_details_form_data",
     "save_ip_setting_details",
     "delete_ip_setting_details",
+    "get_ip_settings_report_filter",
     "ip_setting_report_data",
 ]
 
@@ -829,14 +830,30 @@ def delete_ip_setting_details(db, request, session_user):
 def ip_setting_report_data(db, request, session_user):
     client_id = request.client_id
     ip = request.ip
+    f_count = request.from_count
+    t_count = request.page_count
     
     data = db.call_proc(
-        "sp_ip_setting_details_report", (client_id, ip,)
+        "sp_ip_setting_details_report", (client_id, ip, f_count, t_count)
     )
     ips_list = return_group_ipslist(data)
     return (
         ips_list
     )
 
-
-    
+def get_ip_settings_report_filter(db):
+    #
+    #  To get data required for ip settings form
+    #  Parameters : None
+    #  Return : Returns Client group details and
+    #   form details
+    #
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_settings_report_filter", None, 2)
+    groups = data[0]
+    forms = data[1]
+    groups_list = return_client_groups(groups)
+    forms_list = return_forms(forms)
+    return (
+        groups_list, forms_list
+    )

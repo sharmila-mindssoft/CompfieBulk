@@ -387,27 +387,46 @@ class DeleteIPSettings(Request):
             "client_id": self.client_id,
         }
 
-class GetIPSettingsReport(Request):
-    def __init__(
-        self, client_id, ip
-    ):
-        self.client_id = client_id
-        self.ip = ip
+class GetIPSettingsReportFilter(Request):
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetIPSettingsReportFilter()
+
+    def to_structure(self):
+        return {
+        }
+
+class GetIPSettingsReport(Request):
+    def __init__(
+        self, client_id, ip, from_count, page_count
+    ):
+        self.client_id = client_id
+        self.ip = ip
+        self.from_count = from_count
+        self.page_count = page_count
+        
+    @staticmethod
+    def parse_structure(data):
         data = parse_dictionary(
-            data, ["client_id", "ip"]
+            data, ["client_id", "ip_optional", "from_count", "page_count"]
         )
         return GetIPSettingsReport(
             data.get("client_id"),
-            data.get("ip")
+            data.get("ip_optional"),
+            data.get("from_count"),
+            data.get("page_count")
         )
 
     def to_structure(self):
         return {
             "client_id": self.client_id,
-            "ip": self.ip,
+            "ip_optional": self.ip,
+            "from_count": self.from_count,
+            "page_count": self.page_count
         }
 
 def _init_Request_class_map():
@@ -416,7 +435,7 @@ def _init_Request_class_map():
         GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
         GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
         SaveFileServer, GetIPSettingsList, GetGroupIPDetails, SaveIPSettings, DeleteIPSettings,
-        GetIPSettingsReport
+        GetIPSettingsReport, GetIPSettingsReportFilter
     ]
     class_map = {}
     for c in classes:
@@ -1243,7 +1262,7 @@ class GetIPSettingsListSuccess(Response):
         client_groups = data.get("client_groups")
         ip_setting_forms = data.get("ip_setting_forms")
         ips_list = data.get("ips_list")
-        return GetAutoDeletionListSuccess(
+        return GetIPSettingsListSuccess(
             client_groups, ip_setting_forms, ips_list
         )
 
@@ -1324,6 +1343,32 @@ class GetIPSettingsReportSuccess(Response):
             "group_ips_list": self.group_ips_list
         }
 
+class GetIPSettingsReportFilterSuccess(Response):
+    def __init__(
+        self, client_groups, ip_setting_forms
+    ):
+        self.client_groups = client_groups
+        self.ip_setting_forms = ip_setting_forms
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_groups", "ip_setting_forms"
+            ]
+        )
+        client_groups = data.get("client_groups")
+        ip_setting_forms = data.get("ip_setting_forms")
+        return GetIPSettingsReportFilterSuccess(
+            client_groups, ip_setting_forms
+        )
+
+    def to_inner_structure(self):
+        return {
+            "client_groups": self.client_groups,
+            "ip_setting_forms": self.ip_setting_forms
+        }
+
 def _init_Response_class_map():
     classes = [
         GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
@@ -1334,7 +1379,7 @@ def _init_Response_class_map():
         GetAutoDeletionListSuccess, SaveAutoDeletionSuccess,
         GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists,
         GetIPSettingsListSuccess, GetGroupIPDetailsSuccess, DeleteIPSettingsSuccess,
-        GetIPSettingsReportSuccess
+        GetIPSettingsReportSuccess, GetIPSettingsReportSuccess
     ]
     class_map = {}
     for c in classes:

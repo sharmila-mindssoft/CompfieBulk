@@ -7880,6 +7880,23 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
+-- To Get data for IP Settings report filter
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_report_filter`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_report_filter`()
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups;
+
+    SELECT form_id, form_name
+    FROM tbl_client_forms order by form_order;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
 -- To Get data for Client IP Details
 -- --------------------------------------------------------------------------------
 
@@ -7888,13 +7905,15 @@ DROP PROCEDURE IF EXISTS `sp_ip_setting_details_report`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_ip_setting_details_report`(
-    IN c_id INT(11), IN ip_ VARCHAR(50)
+    IN c_id INT(11), IN ip_ VARCHAR(50), IN f_count INT(11), IN t_count INT(11)
 )
 BEGIN
     SELECT form_id, ips, client_id FROM tbl_ip_settings 
     where 
     IF(c_id IS NOT NULL, client_id = c_id, 1) and 
-    IF(ip_ IS NOT NULL, ips = ip_, 1);
+    IF(ip_ IS NOT NULL, ips = ip_, 1)
+    order by client_id
+    limit f_count, t_count
 END //
 
 DELIMITER ;

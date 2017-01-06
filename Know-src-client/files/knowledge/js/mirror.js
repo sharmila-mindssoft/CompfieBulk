@@ -2490,13 +2490,24 @@ function initMirror() {
       apiRequest(callerName, request, callback);
   }
 
-  function getIPSettingsReport(clientId, IP, callback){
+  function getIPSettingsReportFilter(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsReportFilter",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsReport(clientId, IP, FCount, TCount, callback){
       callerName = "console_admin";
       var request = [
         "GetIPSettingsReport",
         {
           "client_id": clientId,
-          "ip": IP
+          "ip_optional": IP,
+          "from_count": FCount,
+          "page_count": TCount
         }
       ];
       apiRequest(callerName, request, callback);
@@ -2715,6 +2726,7 @@ function initMirror() {
     getIPSettingsDetails: getIPSettingsDetails,
     saveIPSettings: saveIPSettings,
     deleteIPSettings:deleteIPSettings,
+    getIPSettingsReportFilter: getIPSettingsReportFilter,
     getIPSettingsReport: getIPSettingsReport,
   };
 }

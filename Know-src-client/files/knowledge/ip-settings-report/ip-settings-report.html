@@ -19,10 +19,14 @@
                     <div class="col-sm-6">
                         <div class="form-group has-feedback" >
                           <label class="col-sm-3 control-label">Group:</label>
-                          <div class="col-md-9">
-                            <input type="text" class="form-control input-sm" placeholder="Enter Group Name">
-                            <i class="form-control-feedback fa fa-search"></i>
-                          </div>
+                            <div class="col-sm-9 controls">
+                              <input type="text" class="form-control input-sm" id="groupval" placeholder="Enter Group" tabindex="1">
+                              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                              <input type="hidden" id="group">
+                              <div id="ac-group" class="ac-textbox default-display-none">
+                                  <ul style="width:85%;"></ul>
+                              </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -30,35 +34,22 @@
                         <div class="form-group">
                           <label class="col-sm-3 control-label">IP:</label>
                           <div class="col-md-9">
-                            <input type="text" data-mask="999.999.999.9999" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="" value="">
+                            <input type="text" data-mask="999.999.999.9999" id="ip-address" class="form-control input-sm" placeholder="">
                             <span class="font-13 text-muted">e.g: "192.168.110.310"</span>
                           </div>
                         </div>
                     </div>
                     <div class="clear"></div>
                     <div class="form-group text-center m-b-0">
-                        <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
-                        <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                        <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+                        <button class="btn btn-info waves-effect waves-light btn-export" type="button"> Export </button>
                     </div>
                        
                     <div class="clear"></div>
                 </form>
                 </div>
                 </div>
-                <script type="text/javascript">
-                    function show_div() {
-                        $('.details').show();
-                        $('#compliance_animation')
-                          .removeClass().addClass('bounceInLeft animated')
-                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                          $(this).removeClass();
-                        });
-                    }
-
-                    function showRecord() {
-                        alert('hi');
-                    }
-                </script>
+                
                 </div>
                 <div id="compliance_animation">
                 <div class="card-box details" style="display: none;">
@@ -73,10 +64,12 @@
                                 <th width="15%">Group Name</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
+                        <tbody class="tbody-form-list">
+                            <!-- <tr>
                                 <td>1</td>
-                                <td><a class="waves-effect waves-light c-pointer" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="showRecord()">RG Group</a></td>
+                                <td>
+                                <a class="waves-effect waves-light c-pointer" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="showRecord()">RG Group</a>
+                                </td>
                             </tr>
                             <tr class="collapse" id="collapseExample">
                                 <td colspan="100%">
@@ -119,8 +112,8 @@
                                         </tbody>
                                     </table>
                                 </td>
-                            </tr>
-                            <tr>
+                            </tr> -->
+                            <!-- <tr>
                                 <td>2</td>
                                 <td><a class="waves-effect waves-light c-pointer" role="button" data-toggle="collapse" href="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">MRG Group</a></td>
                             </tr>
@@ -165,11 +158,11 @@
                                         </tbody>
                                     </table>
                                 </td>
-                            </tr>
+                            </tr> -->
                             
                         </tbody>
                     </table>
-                    <p class="rpt-count m-b-0">Total : 4 record(s)</p>
+                    <p class="rpt-count m-b-0 total_record">Total : 4 record(s)</p>
                 </div>
             </div>
             </div>
@@ -177,5 +170,48 @@
         <!-- end col -->
     </div>
 </div>
+
+<div id="templates">
+    
+    <table class="table-form-list">
+        <tr class="table-row-head">
+            <td class="sno" align="center"></td>
+            <td class="form-name">
+                <a class="waves-effect waves-light c-pointer group-name" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample"></a>
+            </td>
+            
+        </tr>
+
+        <tr class="collapse table-row-child">
+            
+            <td colspan="100%">
+                <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th width="15%">Form Name</th>
+                        <th width="15%">IP Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <tr>
+                            <td >Settings</td>
+                            <td>192.168.110.310</td>
+                        </tr> -->
+                        
+                    </tbody>
+                </table>
+            </td>
+
+        </tr>
+
+        <tr class="table-row-forms">
+            <td class="form-name"></td>
+            <td class="ip-address"></td>
+        </tr>
+
+    </table>
+
+</div>
+
 <script type="text/javascript" src="/script/ip-settings-report/ip-settings-report.js"></script>
 {% endblock %}
