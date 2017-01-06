@@ -1113,9 +1113,9 @@ overflow:visible;
     padding-bottom: 8em;
   }
 }
-.fa{
+/*.fa{
    font-family: "Arimo",sans-serif;
-}
+}*/
 .left{
   text-align: left !important;
 }
@@ -1128,4 +1128,9 @@ a{
 .middle{
 text-align: center;
 margin: 0 auto;
+}
+.statlvl{
+padding: 8px;
+border-right: 1px solid #e8e8e8;
+width: 32% !important;
 }
