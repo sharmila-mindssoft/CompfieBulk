@@ -2684,11 +2684,14 @@ BEGIN
     t1.legal_entity_id, t1.legal_entity_name, t2.machine_id,
     (select machine_name from tbl_application_server where
     machine_id = t2.machine_id) as machine_name,
-    t2.database_server_id, (select database_server_name from tbl_database_server
+    t2.database_server_id,
+    (select database_server_name from tbl_database_server
     where database_server_id = t2.database_server_id) as database_server_name,
-    t2.client_database_server_id, (select database_server_name from tbl_database_server
+    t2.client_database_server_id,
+    (select database_server_name from tbl_database_server
     where database_server_id = t2.client_database_server_id) as client_database_server_name,
-    t2.file_server_id, (select file_server_name from tbl_file_server
+    t2.file_server_id,
+    (select file_server_name from tbl_file_server
     where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
     from tbl_legal_entities as t1 left join tbl_client_database as t2
     on t1.legal_entity_id = t2.legal_entity_id;
@@ -2733,10 +2736,30 @@ BEGIN
     where file_server_id = file_server_id;
 
     update tbl_legal_entities set is_created = 1
-    where legal_entity_id = _le_id;
+    where legal_entity_id = le_id;
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_dbname_info_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientdatabase_dbname_info_save`(
+    IN csid int(11), dun varchar(100), dpwd varchar(100), dbowner int(11),
+    dbname varchar(100), is_group int(1)
+)
+BEGIN
+    insert into tbl_client_database_info(client_database_id, db_owner_id,
+    database_username, database_password, database_name, is_group)
+    values
+    (csid, dbowner, dun, dpwd, dbname, is_group);
+
+END //
+
+DELIMITER ;
+
+
 
 -- --------------------------------------------------------------------------------
 -- Update Client Database Environment
@@ -7856,8 +7879,8 @@ CREATE PROCEDURE `sp_tbl_client_groups_createdb_info`(
 in gpid int(11), cdbid int(11), ledbid int(11))
 BEGIN
 
-    select group_name, short_name,
-        (select count(client_id) from tbl_client_database where client_id = gpid) as cnt
+    select group_name, short_name, email_id,
+        (select IFNULL(count(client_id), 0) from tbl_client_database where client_id = gpid) as cnt
     from tbl_client_groups where client_id = gpid;
 
     SELECT database_server_id, database_server_name,

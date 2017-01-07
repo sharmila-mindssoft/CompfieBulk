@@ -80,7 +80,8 @@ class API(object):
         self._knowledge_server_address = knowledge_server_address
         # self._http_client = http_client
         print self._knowledge_server_address
-        self._databases = {}
+        self._group_databases = {}
+        self._le_databases = {}
         self._replication_managers = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
@@ -121,9 +122,9 @@ class API(object):
         except Exception:
             pass
 
-    def client_connection_pool(self, data, le_id):
+    def client_connection_pool(self, data, le_id, poolname):
         return mysql.connector.pooling.MySQLConnectionPool(
-            pool_name=str(le_id) + "con_pool",
+            pool_name=str(le_id) + poolname,
             pool_size=32,
             pool_reset_session=True,
             autocommit=False,
@@ -135,32 +136,56 @@ class API(object):
         )
 
     def server_added(self, servers):
-        print self.__class__
-        self._databases = {}
+
+        self._group_databases = {}
+        self._le_databases = {}
         self._replication_managers = {}
         try:
 
-            for company_id, company in servers.iteritems():
-
+            for company in servers:
+                company_id = company.company_id
+                print company
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
+                print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
-                    if self._databases.get(company_id) is not None :
-                        continue
+                    print company.to_structure()
+                    if company.is_group is True:
+                        if self._group_databases.get(company_id) is not None :
+                            continue
+                        else :
+                            # group db connections
+                            try:
+                                db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
+                                self._group_databases[company_id] = db_cons
+                                print " %s added in connection pool" % company_id
+                            except Exception, e:
+                                # when db connection failed continue to the next server
+                                logger.logClientApi(ip, port)
+                                logger.logClientApi(e, "Group Server added")
+                                logger.logClient("error", "exception", str(traceback.format_exc()))
+                                logger.logClient("error", "clientmain.py-server-added", e)
+                                logger.logClientApi("GROUP database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
+                                continue
+                    else :
+                        if self._le_databases.get(company_id) is not None :
+                            continue
+                        else :
+                            try:
+                                db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
+                                self._le_databases[company_id] = db_cons
+                                print " %s added in le connection pool" % company_id
+                            except Exception, e:
+                                # when db connection failed continue to the next server
+                                logger.logClientApi(ip, port)
+                                logger.logClientApi(e, "LE database added")
+                                logger.logClient("error", "exception", str(traceback.format_exc()))
+                                logger.logClient("error", "clientmain.py-le_database-added", e)
+                                logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
+                                continue
 
-                    try:
-                        db_cons = self.client_connection_pool(company, company_id)
-                        self._databases[company_id] = db_cons
-                        print " %s added in connection pool" % company_id
-                    except Exception, e:
-                        logger.logClientApi(ip, port)
-                        logger.logClientApi(e, "Server added")
-                        logger.logClient("error", "exception", str(traceback.format_exc()))
-                        logger.logClient("error", "clientmain.py-server-added", e)
-                        logger.logClientApi("Client database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
-                        continue
-
-            print self._databases
+            print self._le_databases
+            print self._group_databases
             print "after connection created"
             # After database connection client poll for replication
 
@@ -240,7 +265,7 @@ class API(object):
             response.send(custom_text)
 
     def _parse_request(
-        self, request_data_type
+        self, request_data_type, is_group
     ):
         request_data = None
         # _db = None
@@ -254,10 +279,15 @@ class API(object):
                 self._send_response("Invalid json format", 300)
 
             company_id = int(data[0])
+            print company_id
+            print "-" * 10
+            print is_group
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
                 actual_data
             )
+            if is_group is False :
+                company_id = request_data.legal_entity_id
 
         except Exception, e:
             logger.logClientApi(e, "_parse_request")
@@ -278,14 +308,17 @@ class API(object):
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
         request_data, company_id = self._parse_request(
-            request_data_type
+            request_data_type, is_group
         )
         if request_data is None:
             return
 
         print "in handle api"
-        print self._databases
-        db_cons = self._databases.get(company_id)
+        print is_group
+        if is_group :
+            db_cons = self._group_databases.get(company_id)
+        else :
+            db_cons = self._le_databases.get(company_id)
 
         print company_id
         if db_cons is None:
@@ -334,7 +367,7 @@ class API(object):
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
 
-    @api_request(clientmasters.RequestFormat)
+    @api_request(clientmasters.RequestFormat, is_group=True)
     def handle_client_masters(self, request, db):
         return controller.process_client_master_requests(request, db)
 

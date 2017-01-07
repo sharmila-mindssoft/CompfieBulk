@@ -1,11 +1,9 @@
 import os
 import io
-import Queue
-import threading
 import MySQLdb as mysql
 from server import logger
 from server.common import (
-    generate_random
+    generate_random, generate_special_random
 )
 
 
@@ -20,15 +18,16 @@ CLIENT_GROUP_PREFIX = "compfie_group"
     creation of tables, procedures and trigger
     and client specific knowledge data to created db
 '''
-class ClientGroupDBCreate(object):
+class ClientDBBase(object):
     def __init__(
-        self, db, client_id, short_name, database_ip, database_port,
+        self, db, client_id, short_name, email_id, database_ip, database_port,
         database_username, database_password
     ):
         logger.logGroup("ClientDBCreate", "inside client db create init")
         self._db = db
         self._client_id = client_id
         self._short_name = short_name
+        self._email_id = email_id
         self._host = database_ip
         self._port = database_port
         self._username = database_username
@@ -37,6 +36,10 @@ class ClientGroupDBCreate(object):
         self._db_name = None
         self._db_username = None
         self._db_password = None
+        self._is_db_failed = False
+
+        self._db_file_path = None
+        self._db_prefix = None
         logger.logGroup("ClientDBCreate", "ClientDBCreate Begin")
 
     def process_error(self, message):
@@ -44,50 +47,22 @@ class ClientGroupDBCreate(object):
         return str(message)
         # raise ValueError(message)
 
-    def prepare_db_constrains(self):
-        result = self.get_db_constrains()
-        if result is False:
-            raise self.process_error("Prepare db_constrains failed")
-        elif result is True:
-            res = self.process_db_creation()
-            self.update_client_db_details()
-            return res
-
-    def db_name(self):
+    def db_create_name(self):
         return "%s_%s_%s" % (
-            CLIENT_GROUP_PREFIX, self._short_name.lower(), self._client_id
+            self._db_prefix, self._short_name.lower(), self._client_id
         )
 
-    def db_username(self):
+    def db_create_username(self):
         return generate_random()
 
-    def db_password(self):
-        return generate_random()
+    def db_create_password(self):
+        return generate_special_random()
 
     def get_db_constrains(self):
-        self._db_name = self.db_name()
-        self._db_username = self.db_username()
-        self._db_password = self.db_password()
+        self._db_name = self.db_create_name()
+        self._db_username = self.db_create_username()
+        self._db_password = self.db_create_password()
         return True
-
-    def process_db_creation(self):
-        def enthread():
-            q = Queue.Queue()
-
-            def wrapper():
-                q.put(
-                    self._create_database()
-                )
-            create_database_thread = threading.Thread(target=wrapper)
-            create_database_thread.start()
-            return q
-
-        result_q = enthread()
-        logger.logGroup("process_db_creation", "--------========================")
-        result = result_q.get()
-        logger.logGroup("process_db_creation", "==================--------------")
-        logger.logGroup("", "\n")
-        return result
 
     def _mysql_server_connect(self, host, username, password, port):
         return mysql.connect(
@@ -105,10 +80,14 @@ class ClientGroupDBCreate(object):
             self._host, self._username, self._password, self._port
         )
         try:
+            print con
             logger.logGroup("delete_database", "begin")
             cursor = con.cursor()
+            print cursor
             query = "DROP DATABASE IF EXISTS %s" % self._db_name
+            print query
             cursor.execute(query)
+            print 'after drop'
             # drop created user here.
             con.commit()
             logger.logGroup("delete_database", "end")
@@ -116,6 +95,105 @@ class ClientGroupDBCreate(object):
             logger.logGroup("delete_database", str(e))
             print e
             con.rollback()
+            raise Exception(e)
+
+    def _create_db(self, cursor):
+        try:
+            query = "CREATE DATABASE %s" % self._db_name
+            print query
+            cursor.execute(query)
+        except mysql.Error, ex:
+            self._is_db_failed = True
+            print ex
+            logger.logGroup("_create_db", str(ex))
+            e = "client db creation failed"
+            print e
+            logger.logGroup("_create_db", "failed")
+            raise Exception(ex)
+
+    def _grant_privileges(self, cursor):
+        try:
+            query = "GRANT SELECT, INSERT, UPDATE, " + \
+                " DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
+            print query
+            param = (
+                self._db_name, self._db_username, str('%'), self._db_password
+            )
+            print param
+            cursor.execute(query % param)
+            cursor.execute("FLUSH PRIVILEGES;")
+        except mysql.Error, ex:
+            print ex
+            logger.logGroup("_grant_privileges", str(ex))
+            logger.logGroup("_grant_privileges", "failed")
+            e = "client database user grant_privileges failed"
+            print e
+            raise Exception(ex)
+
+    def _create_admin_user(self, cursor):
+        try:
+            query = "insert into tbl_users (user_category_id, client_id, employee_name, " + \
+                " email_id " + \
+                " )" + \
+                " values (1, %s, 'Administrator', %s)"
+            cursor.execute(query, [self._client_id, self._email_id])
+
+        except mysql.Error, e:
+            logger.logGroup("_create_admin_user", str(e))
+            logger.logGroup("_create_admin_user", "failed")
+            #  self.process_error(
+            #     "admin user creation failed in client database"
+            # )
+            raise Exception(e)
+
+    def _create_tables(self, cursor):
+        # "scripts/mirror-client-group.sql"
+        try:
+            sql_script_path = os.path.join(
+                os.path.join(os.path.split(__file__)[0], ".."),
+                self._db_file_path
+            )
+            with io.FileIO(sql_script_path, "r") as file_obj:
+                sql_file = file_obj.read()
+                sql_commands = sql_file.split(';')
+                size = len(sql_commands)
+                for index, command in enumerate(sql_commands):
+                    if (index < size-1):
+                        # print command
+                        cursor.execute(command)
+                    else:
+                        break
+        except mysql.Error, e:
+            print e
+            logger.logGroup("_create_tables", str(e))
+            logger.logGroup("_create_tables", "failed")
+            # raise self.process_error(
+            #     "table creation failed in client database"
+            # )
+
+    def prepare_db_constrains(self):
+        result = self.get_db_constrains()
+        if result is False:
+            raise self.process_error("Prepare db_constrains failed")
+        elif result is True:
+            res = self._create_database()
+            return res
+
+    def begin_process(self):
+        print "inside process begin"
+        return self.prepare_db_constrains()
+
+class ClientGroupDBCreate(ClientDBBase):
+    def __init__(
+        self, db, client_id, short_name, email_id, database_ip, database_port,
+        database_username, database_password
+    ):
+        super(ClientGroupDBCreate, self).__init__(
+            db, client_id, short_name, email_id, database_ip, database_port,
+            database_username, database_password
+        )
+        self._db_prefix = CLIENT_GROUP_PREFIX
+        self._db_file_path = "scripts/mirror-client-group.sql"
 
     def _create_database(self):
         db_con = None
@@ -141,20 +219,19 @@ class ClientGroupDBCreate(object):
             )
             db_cursor = db_con.cursor()
             logger.logGroup("_create_database", "client connection success")
+
             self._create_tables(db_cursor)
             logger.logGroup("_create_database", "table create success")
+
             self._create_admin_user(db_cursor)
             logger.logGroup("_create_database", "admin create success")
             # self._create_procedure(db_cursor)
             logger.logGroup("_create_database", "procedure create success")
             # self._create_trigger(db_cursor)
             logger.logGroup("_create_database", "trigger create success")
-            # self._save_client_domains(self._domain_ids, db_cursor)
-            logger.logGroup("_create_database", "domain create success")
-            # self._save_client_countries(self._country_ids, db_cursor)
-            logger.logGroup("_create_database", "country create success")
+
             db_con.commit()
-            return True
+            return (True, self._db_name, self._db_username, self._db_password)
         except Exception, e:
             print e
             print "main Exception"
@@ -163,103 +240,9 @@ class ClientGroupDBCreate(object):
                 db_con.rollback()
             if main_con is not None:
                 main_con.rollback()
-            return e
-
-    def _save_client_countries(self, country_ids, cursor):
-        try:
-            q = "SELECT country_id, country_name, is_active " + \
-                    " FROM tbl_countries " + \
-                    " WHERE find_in_set(country_id, %s)"
-            rows = self._db.select_all(q, [country_ids])
-            for r in rows:
-                q = " INSERT INTO tbl_countries VALUES (%s, %s, %s)"
-                cursor.execute(q, [int(r[0]), r[1], int(r[2])])
-        except Exception:
-            logger.logGroup("_save_client_countries", "failed")
-            raise self.process_error("save client countries failed")
-
-    def _save_client_domains(self, domain_ids, cursor):
-        try:
-            q = "SELECT domain_id, domain_name, is_active " + \
-                    " FROM tbl_domains " + \
-                    " WHERE find_in_set(domain_id, %s)"
-            rows = self._db.select_all(q, [domain_ids])
-            for r in rows:
-                q = " INSERT INTO tbl_domains VALUES (%s, %s, %s)"
-                cursor.execute(q, [int(r[0]), r[1], int(r[2])])
-        except Exception:
-            logger.logGroup("_save_client_domains", "failed")
-            raise self.process_error("save client domains failed")
-
-    def _create_db(self, cursor):
-        try:
-            query = "CREATE DATABASE %s" % self._db_name
-            print query
-            cursor.execute(query)
-        except mysql.Error, ex:
-            print ex
-            logger.logGroup("_create_db", str(ex))
-            e = "client db creation failed"
-            print e
-            logger.logGroup("_create_db", "failed")
-            raise self.process_error(e)
-
-    def _grant_privileges(self, cursor):
-        try:
-            query = "GRANT SELECT, INSERT, UPDATE, " + \
-                " DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
-            print query
-            param = (
-                self._db_name, self._db_username, str('%'), self._db_password
-            )
-            print param
-            cursor.execute(query % param)
-            cursor.execute("FLUSH PRIVILEGES;")
-        except mysql.Error, ex:
-            print ex
-            logger.logGroup("_grant_privileges", str(ex))
-            logger.logGroup("_grant_privileges", "failed")
-            e = "client database user grant_privileges failed"
-            raise self.process_error(e)
-
-    def _create_admin_user(self, cursor):
-        try:
-            # encrypted_password, password = generate_and_return_password()
-            query = "insert into tbl_users (user_category_id employee_name, " + \
-                " email_id " + \
-                " )" + \
-                " values ('Administrator', %s)"
-            cursor.execute(query, [self._email_id, encrypted_password])
-
-        except mysql.Error, e:
-            logger.logGroup("_create_admin_user", str(e))
-            logger.logGroup("_create_admin_user", "failed")
-            raise self.process_error(
-                "admin user creation failed in client database"
-            )
-
-    def _create_tables(self, cursor):
-        try:
-            sql_script_path = os.path.join(
-                os.path.join(os.path.split(__file__)[0], ".."),
-                "scripts/mirror-client-group.sql"
-            )
-            with io.FileIO(sql_script_path, "r") as file_obj:
-                sql_file = file_obj.read()
-                sql_commands = sql_file.split(';')
-                size = len(sql_commands)
-                for index, command in enumerate(sql_commands):
-                    if (index < size-1):
-                        cursor.execute(command)
-                    else:
-                        break
-        except mysql.Error, e:
-            print e
-            logger.logGroup("_create_tables", str(e))
-            logger.logGroup("_create_tables", "failed")
-            raise self.process_error(
-                "table creation failed in client database"
-            )
+            if not self._is_db_failed :
+                self.delete_database()
+            raise Exception(e)
 
     def _create_procedure(self, cursor):
         try:
@@ -366,84 +349,64 @@ class ClientGroupDBCreate(object):
                 " CALL procedure_to_update_version('compliance'); " + \
                 " END; "
             cursor.execute(t9)
-        except Exception:
+        except Exception, e:
             logger.logGroup("_create_trigger", str(e))
             logger.logGroup("_create_trigger", "failed")
             raise self.process_error(
                 "trigger creation failed in client database "
             )
 
-    def _get_machine_details(self):
-        columns = "machine_id, ip, port"
-        condition = "server_full = 0 ORDER BY length(client_ids) limit 1"
-        rows = self._db.get_data(tblMachines, columns, condition)
-        return rows
 
-    def set_server_full(self, db_server_condition):
-        columns = ["server_full"]
-        values = [1]
-        self._db.update(
-            tblMachines, columns, values, db_server_condition
+class ClientLEDBCreate(ClientDBBase):
+    def __init__(
+        self, db, client_id, short_name, email_id, database_ip, database_port,
+        database_username, database_password
+    ):
+        super(ClientLEDBCreate, self).__init__(
+            db, client_id, short_name, email_id, database_ip, database_port,
+            database_username, database_password
         )
+        self._db_prefix = CLIENT_LE_DB_PREFIX
+        self._db_file_path = "scripts/mirror-client-new.sql"
 
-    def update_client_db_details(self):
-        db_server_column = "company_ids"
-        db_server_value = self._client_id
+    def _create_database(self):
+        db_con = None
+        main_con = None
+        try:
+            temp_var = "%s, %s, %s" % (self._host, self._username, self._password)
+            logger.logGroup("_create_database", temp_var)
+            main_con = self._mysql_server_connect(
+                self._host, self._username, self._password, self._port
+            )
+            print "main_con success"
+            logger.logGroup("_create_database", "main connection success")
+            main_cursor = main_con.cursor()
+            self._create_db(main_cursor)
+            logger.logGroup("_create_database", "create DB success")
+            self._grant_privileges(main_cursor)
+            logger.logGroup("_create_database", "create DB user success")
+            main_con.commit()
 
-        db_server_condition = "ip = %s and port = %s"
-        db_server_condition_val = [str(self._host), str(self._port)]
-        print db_server_condition
+            db_con = self._db_connect(
+                self._host, self._username, self._password, self._db_name,
+                self._port
+            )
+            db_cursor = db_con.cursor()
+            logger.logGroup("_create_database", "client connection success")
 
-        self._db.append(
-            tblDatabaseServer, db_server_column, db_server_value,
-            db_server_condition, db_server_condition_val
-        )
-        db_server_column = ["length"]
-        self._db.increment(
-            tblDatabaseServer, db_server_column,
-            db_server_condition, condition_val=db_server_condition_val
-        )
-        result = self._get_machine_details()
-        if len(result) == 0:
-            raise self.process_error("Client server is full")
-        machine_id = result[0]["machine_id"]
-        server_ip = result[0]["ip"]
-        server_port = result[0]["port"]
-        machine_columns = "client_ids"
-        machine_value = self._client_id
-        machine_condition = " ip = %s and port = %s"
-        machinery_condition_val = [str(server_ip), str(server_port)]
-        self._db.append(
-            tblMachines, machine_columns, machine_value,
-            machine_condition, machinery_condition_val
-        )
-        client_db_columns = [
-            "client_id", "machine_id", "database_ip",
-            "database_port", "database_username", "database_password",
-            "client_short_name", "database_name",
-            "server_ip", "server_port"
-        ]
-        client_dB_values = [
-            self._client_id, machine_id, self._host, self._port,
-            self._db_username, self._db_password, self._short_name,
-            self._db_name, server_ip, server_port
-        ]
-        length_rows = self._db.get_data(
-            tblMachines, "client_ids",
-            machine_condition, machinery_condition_val
-        )
-        print "machine length_rows"
-        if length_rows:
-            print length_rows
-            company_ids = length_rows[0]["client_ids"].split(",")
-            print company_ids
-            if len(company_ids) >= 30:
-                self.set_server_full(machine_condition)
-        return self._db.insert(
-            tblClientDatabase, client_db_columns,
-            client_dB_values
-        )
+            self._create_tables(db_cursor)
+            logger.logGroup("_create_database", "table create success")
 
-    def begin_process(self):
-        print "inside process begin"
-        return self.prepare_db_constrains()
+            db_con.commit()
+            return (True, self._db_name, self._db_username, self._db_password)
+        except Exception, e:
+            print e
+            print "main Exception"
+            logger.logGroup("_create_database", str(e))
+            if db_con is not None:
+                db_con.rollback()
+            if main_con is not None:
+                main_con.rollback()
+            if not self._is_db_failed :
+                self.delete_database()
+            raise Exception(e)

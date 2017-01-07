@@ -250,11 +250,14 @@ function initMirror() {
       // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(request),
-      success: function (data) {
-        // var data = parseJSON(data);
+      data: btoa(toJSON(request)),
+      success: function (data){
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
+        console.log(status);
+        console.log(response);
         matchString = 'success';
         clearSession();
         login_url = '/knowledge/login';
@@ -262,7 +265,9 @@ function initMirror() {
         window.location.href = login_url;
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        callback(jqXHR.responseText);
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
+        callback(rdata.responseText);
       }
     });
   }

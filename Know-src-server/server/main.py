@@ -2,11 +2,12 @@ import os
 import json
 import traceback
 import jinja2
+import base64
 import mysql.connector.pooling
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
-
+import logging
 from lxml import etree
 from protocol import (
     admin, consoleadmin, clientadminsettings,
@@ -44,12 +45,14 @@ import logger
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 # base config
 
 csrf = CsrfProtect()
 app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
-app.config["WTF_CSRF_TIME_LIMIT"] = 200
+app.config["WTF_CSRF_TIME_LIMIT"] = 500
 # app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
 csrf.init_app(app)
 
@@ -101,7 +104,6 @@ def before_first_request():
         "port": KNOWLEDGE_DB_PORT,
         "autocommit": False,
     }
-    print db_conf
     cnx_pool = make_pool("con_pool", db_conf)
     # cnx_pool.set_config(**db_conf)
     return cnx_pool
@@ -146,8 +148,7 @@ class API(object):
         else:
             s = response_data
         print s
-        s = s.encode('base64')
-        print s
+        s = base64.b64encode(s)
         s = json.dumps(s)
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
@@ -157,21 +158,11 @@ class API(object):
     ):
         request_data = None
         try:
+            print request
             print request.data
+            print "-" * 10
             data = request.data.decode('base64')
-            print data
             data = json.loads(data)
-            print data
-            # data = request.get_json(force=True)
-            # print data
-            # data = data.decode('base64')
-            # print data
-            # data = request.data
-            # print data
-            # print "\n"
-            # print "\n"
-            # print request_data_type
-
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -215,7 +206,6 @@ class API(object):
 
             elif type(request_data) is str:
                 raise ValueError(request_data)
-            print "not returned"
 
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
@@ -254,7 +244,7 @@ class API(object):
         DistributionRequest
     )
     def handle_server_list(self, request, db):
-        print "request"
+        print request
         return CompanyServerDetails(
             gen.get_servers(db)
         )
@@ -262,7 +252,6 @@ class API(object):
     @csrf.exempt
     @api_request(GetClientChanges)
     def handle_client_list(self, request, db):
-        print request
         return GetClientChangesSuccess(
             gen.get_client_replication_list(db)
         )

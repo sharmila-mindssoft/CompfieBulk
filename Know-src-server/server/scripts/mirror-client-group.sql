@@ -3,20 +3,36 @@ CREATE TABLE `tbl_user_category` (
   `user_category_name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_compliance_frequency` (
-  `frequency_id` int(11) NOT NULL,
-  `frequency` varchar(20) NOT NULL,
-  PRIMARY KEY (`frequency_id`)
+CREATE TABLE `tbl_verification_type` (
+  `verification_type_id` int(11) NOT NULL,
+  `verification_type` varchar(50) NOT NULL,
+  PRIMARY KEY (`verification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_compliance_repeat_type` (
-  `repeat_type_id` int(11) NOT NULL,
-  `repeat_type` varchar(20) NOT NULL,
-  PRIMARY KEY (`repeat_type_id`)
+CREATE TABLE `tbl_form_category` (
+  `form_category_id` int(11) PRIMARY KEY NOT NULL,
+  `form_id` int(11) NOT NULL,
+  `user_category_id` int(11) NOT NULL,
+  UNIQUE KEY(`form_id`,  `user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_compliance_duration_type` (
-  `duration_type_id` int(11) NOT NULL,
-  `duration_type` varchar(20) NOT NULL,
-  PRIMARY KEY (`duration_type_id`)
+CREATE TABLE `tbl_form_type` (
+  `form_type_id` int(11) NOT NULL,
+  `form_type` varchar(20) NOT NULL,
+  PRIMARY KEY (`form_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_forms` (
+  `form_id` int(11) NOT NULL,
+  `form_type_id` int(11) NOT NULL,
+  `form_name` varchar(50) NOT NULL,
+  `form_url` varchar(50) NOT NULL,
+  `form_order` int(11) NOT NULL,
+  `parent_menu` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`form_id`),
+  CONSTRAINT `tbl_forms_ibfk_1` FOREIGN KEY (`form_type_id`) REFERENCES `tbl_form_type` (`form_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_session_types` (
+  `session_type_id` int(11) NOT NULL,
+  `session_type` varchar(20) NOT NULL,
+  PRIMARY KEY (`session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_countries` (
   `country_id` int(11) NOT NULL,
@@ -48,8 +64,7 @@ CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `short_name` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `group_admin_username` varchar(20) NOT NULL,
-  `total_view_licence` int(11) DEFAULT NULL,
+  `total_view_licence` int(11) NOT NULL,
   `licence_used` int(11) DEFAULT NULL,
   PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -146,37 +161,6 @@ CREATE TABLE `tbl_units_organizations` (
   `organisation_id` int(11) DEFAULT NULL,
   UNIQUE KEY (`unit_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_verification_type` (
-  `verification_type_id` int(11) NOT NULL,
-  `verification_type` varchar(50) NOT NULL,
-  PRIMARY KEY (`verification_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_form_category` (
-  `form_category_id` int(11) PRIMARY KEY NOT NULL,
-  `form_id` int(11) NOT NULL,
-  `user_category_id` int(11) NOT NULL,
-  UNIQUE KEY(`form_id`,  `user_category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_form_type` (
-  `form_type_id` int(11) NOT NULL,
-  `form_type` varchar(20) NOT NULL,
-  PRIMARY KEY (`form_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_forms` (
-  `form_id` int(11) NOT NULL,
-  `form_type_id` int(11) NOT NULL,
-  `form_name` varchar(50) NOT NULL,
-  `form_url` varchar(50) NOT NULL,
-  `form_order` int(11) NOT NULL,
-  `parent_menu` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`form_id`),
-  CONSTRAINT `tbl_forms_ibfk_1` FOREIGN KEY (`form_type_id`) REFERENCES `tbl_form_type` (`form_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_session_types` (
-  `session_type_id` int(11) NOT NULL,
-  `session_type` varchar(20) NOT NULL,
-  PRIMARY KEY (`session_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_groups` (
   `user_group_id` int(11) NOT NULL,
   `user_category_id` int(11) DEFAULT NULL,
@@ -267,14 +251,12 @@ CREATE TABLE `tbl_user_sessions` (
   PRIMARY KEY (`session_token`),
   UNIQUE KEY(`user_id`, `session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   UNIQUE KEY (`user_id`, `legal_entity_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE `tbl_user_units` (
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -313,7 +295,7 @@ CREATE TABLE `tbl_reminder_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-# client tables endsINSERT INTO tbl_user_category VALUES(1, "Group Admin");
+INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
 INSERT INTO tbl_user_category VALUES(3, "Legal Entity Admin");
 INSERT INTO tbl_user_category VALUES(4, "Domain Admin");
@@ -518,20 +500,6 @@ INSERT INTO tbl_session_types VALUES(1, "web");
 INSERT INTO tbl_session_types VALUES(2, "android");
 INSERT INTO tbl_session_types VALUES(3, "ios");
 INSERT INTO tbl_session_types VALUES(4, "blackberry");
--- tbl_compliance_duration_type
-INSERT INTO tbl_compliance_duration_type VALUES(1, "Day(s)");
-INSERT INTO tbl_compliance_duration_type VALUES(2, "Hour(s)");
-INSERT INTO tbl_compliance_duration_type VALUES(3, "Month(s)");
--- tbl_compliance_repeat_type
-INSERT INTO tbl_compliance_repeat_type VALUES(1, "Day(s)");
-INSERT INTO tbl_compliance_repeat_type VALUES(2, "Month(s)");
-INSERT INTO tbl_compliance_repeat_type VALUES(3, "Year(s)");
--- tbl_compliance_frequency
-INSERT INTO tbl_compliance_frequency VALUES(1, "One Time");
-INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
-INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
-INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
-INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
 -- tbl_verification_type
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
