@@ -1,4 +1,4 @@
-from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list)
+from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
 from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
@@ -130,6 +130,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -152,16 +154,17 @@ class Request(object):
 # Statutory Settings Request
 #
 class GetStatutorySettings(Request):
-    def __init__(self):
-        pass
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetStatutorySettings()
+        data = parse_dictionary(data, ["le_id"])
+        return GetStatutorySettings(data.get("le_id"))
 
     def to_inner_structure(self):
         return {
+            "le_id": self.legal_entity_id
         }
 
 class GetSettingsCompliances(Request):
@@ -651,6 +654,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):

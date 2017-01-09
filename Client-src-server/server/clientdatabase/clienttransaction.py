@@ -18,7 +18,8 @@ from server.clientdatabase.general import (
     set_new_due_date, is_two_levels_of_approval,
     is_admin, calculate_due_date, filter_out_due_dates,
     get_user_email_name,  save_compliance_notification,
-    get_user_countries, is_space_available, update_used_space
+    get_user_countries, is_space_available, update_used_space,
+    get_user_category
 )
 from server.exceptionmessage import client_process_error
 from server.clientdatabase.savetoknowledge import *
@@ -52,40 +53,40 @@ __all__ = [
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
 
-def get_statutory_settings(db, session_user):
-    admin_id = get_admin_id(db)
-    if session_user == admin_id:
-        where_qry = ''
-        condition_val = None
-    else:
-        user_id = int(session_user)
-        where_qry = " WHERE t2.is_closed=0 AND t1.unit_id in ( " + \
+def get_statutory_settings(db, legal_entity_id, session_user):
+    cat_id = get_user_category(db, session_user)
+    user_id = int(session_user)
+    where_qry = " WHERE t1.legal_entity_id = %s and t2.is_closed = 0 "
+    condition_val = [legal_entity_id]
+    if cat_id > 3 :
+        where_qry += " WHERE t1.unit_id in ( " + \
             " select unit_id from tbl_user_units where user_id LIKE %s) " + \
             " AND t1.domain_id in (select domain_id from tbl_user_domains " + \
-            " where user_id LIKE %s)"
-        condition_val = [user_id, user_id]
+            " where user_id LIKE %s) "
+        condition_val.extend([user_id, user_id])
+
     query = "SELECT distinct  " + \
-        " t1.country_id, t1.domain_id, t1.unit_id,t2.unit_name, " + \
+        " t3.country_id, t1.domain_id, t1.unit_id,t2.unit_name, " + \
         " (select business_group_name from tbl_business_groups " + \
         " where business_group_id = t2.business_group_id " + \
-        " ) business_group_name, " + \
-        " (select legal_entity_name from tbl_legal_entities " + \
-        " where legal_entity_id = t2.legal_entity_id)legal_entity_name, " + \
+        " ) business_group_name, t3.legal_entity_name," + \
         " (select division_name from tbl_divisions " + \
         " where division_id = t2.division_id)division_name, " + \
         " t2.address, t2.postal_code, t2.unit_code, " + \
         " (select country_name from tbl_countries " + \
-        " where country_id = t1.country_id )country_name, " + \
+        " where country_id = t3.country_id )country_name, " + \
         " (select domain_name from tbl_domains " + \
         " where domain_id = t1.domain_id)domain_name, " + \
         " t2.is_closed,  " + \
-        " (select is_new from tbl_client_statutories " + \
+        " (select is_new from tbl_client_compliances " + \
         " where unit_id = t1.unit_id order by is_new limit 1) " + \
-        " FROM tbl_client_statutories t1 " + \
+        " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_units t2 " + \
-        " ON t1.unit_id = t2.unit_id %s " + \
+        " ON t1.unit_id = t2.unit_id " + \
+        " INNER JOIN tbl_legal_entity as t3 on t1.legal_entity_id = t3.legal_entity_id %s" + \
         " ORDER BY t1.unit_id "
     query = query % (where_qry)
+    print query
     if condition_val is None:
         rows = db.select_all(query)
     else:

@@ -95,5 +95,14 @@ api_params = {
     "address": make_text_field(is_optional=True),
     "menu":  make_map_type_vector_type("clientcore", "Form"),
 
-
+    "u_id": make_int_field(),
+    "u_name": make_string_field(),
+    "c_name": make_string_field(),
+    "c_id": make_int_field(),
+    "c_name": make_string_field(),
+    "d_name": make_string_field(),
+    "div_name": make_string_field(is_optional=True),
+    "is_closed": make_bool_field(),
+    "is_new": make_bool_field(),
+    "statutories": make_vector_type_field(module="clienttransactions", klass_name="UnitStatutoryCompliances")
 }

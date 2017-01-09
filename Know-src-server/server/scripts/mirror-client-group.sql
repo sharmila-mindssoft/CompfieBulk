@@ -75,7 +75,7 @@ CREATE TABLE `tbl_business_groups` (
   PRIMARY KEY (`business_group_id`),
   UNIQUE KEY(`business_group_id`, `client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_legal_entity` (
+CREATE TABLE `tbl_legal_entities` (
   `legal_entity_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
