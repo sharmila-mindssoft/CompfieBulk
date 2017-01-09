@@ -52,7 +52,7 @@ class GetStatutoryMappingReportData(Request):
     def __init__(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id, level_1_statutory_id, frequency_id,
-        record_count
+        record_count, page_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -62,10 +62,11 @@ class GetStatutoryMappingReportData(Request):
         self.level_1_statutory_id = level_1_statutory_id
         self.frequency_id = frequency_id
         self.record_count = record_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "d_id", "a_i_id", "a_s_n_id", "a_g_id", "statutory_id_optional", "frequency_id", "r_count"])
+        data = parse_dictionary(data, ["c_id", "d_id", "a_i_id", "a_s_n_id", "a_g_id", "statutory_id_optional", "frequency_id", "r_count", "page_count"])
         country_id = data.get("c_id")
         domain_id = data.get("d_id")
         industry_id = data.get("a_i_id")
@@ -74,7 +75,8 @@ class GetStatutoryMappingReportData(Request):
         level_1_statutory_id = data.get("statutory_id_optional")
         frequency_id = data.get("frequency_id")
         record_count = data.get("r_count")
-        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, frequency_id, record_count)
+        page_count = data.get("page_count")
+        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, frequency_id, record_count, page_count)
 
     def to_inner_structure(self):
         return {
@@ -85,7 +87,8 @@ class GetStatutoryMappingReportData(Request):
             "a_g_id": self.geography_id,
             "statutory_id_optional": self.level_1_statutory_id,
             "frequency_id": self.frequency_id,
-            "r_count": self.record_count
+            "r_count": self.record_count,
+            "page_count": self.page_count
         }
 
 class GetGeographyReport(Request):

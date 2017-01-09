@@ -952,7 +952,9 @@ def return_user_mapping_users(data):
         mapping = fn(
                 user_mapping_id=datum["user_mapping_id"],
                 parent_user_id=datum["parent_user_id"],
-                child_user_id=datum["child_user_id"]
+                child_user_id=datum["child_user_id"],
+                country_id=datum["country_id"],
+                domain_id=datum["domain_id"],
             )
         result.append(mapping)
 
@@ -1061,7 +1063,7 @@ def save_user_mappings(db, request, session_user):
             child_user_id, session_user, current_time_stamp
         ) for child_user_id in child_users
     ]
-    db.call_update_proc("sp_usermapping_delete", (parent_user_id,))
+    db.call_update_proc("sp_usermapping_delete", (parent_user_id, country_id, domain_id))
     result = db.bulk_insert(
         tblUserMapping, insert_columns, insert_values
     )

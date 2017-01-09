@@ -2968,10 +2968,11 @@ DROP PROCEDURE IF EXISTS `sp_usermapping_delete`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_usermapping_delete`(
-    IN parent_userid INT(11)
+    IN parent_userid INT(11), IN c_id INT(11), IN d_id INT(11)
 )
 BEGIN
-    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
+    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid and 
+    country_id = c_id and domain_id = d_id;
 END //
 
 DELIMITER ;
@@ -3149,22 +3150,10 @@ BEGIN
     IF @u_cat_id = 5 THEN
         select count(distinct t1.unit_id) as total_units,
         t1.domain_id, t2.legal_entity_id, t2.client_id,
-        (
-            SELECT legal_entity_name from tbl_legal_entities as tle
-            WHERE tle.legal_entity_id = t2.legal_entity_id
-        ) as legal_entity_name,
-        (
-            SELECT business_group_name from tbl_business_groups as tbg
-            WHERE tbg.client_id = t2.client_id
-        ) as business_group_name,
-        (
-            SELECT domain_name from tbl_domains td
-            WHERE td.domain_id=t1.domain_id
-        ) as domain_name,
-        (
-            SELECT group_name FROM tbl_client_groups tcg
-            WHERE tcg.client_id=t2.client_id
-        ) as client_name,(
+        tle.legal_entity_name as legal_entity_name,
+        tbg.business_group_name as business_group_name,
+        td.domain_name as domain_name,
+        tcg.group_name as client_name,(
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
             and tuu.user_category_id = 7
@@ -3172,36 +3161,31 @@ BEGIN
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
         inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
+        inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
+        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
+        inner join tbl_domains td on td.domain_id=t1.domain_id
+        left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
         group by t1.domain_id, t2.client_id;
 
 
     ELSE
         select count(distinct t1.unit_id) as total_units,
-        t1.domain_id, t2.legal_entity_id, t2.client_id, (
-            SELECT domain_name from tbl_domains td
-            WHERE td.domain_id=t1.domain_id
-        ) as domain_name,
-        (
-            SELECT group_name FROM tbl_client_groups tcg
-            WHERE tcg.client_id=t2.client_id
-        ) as client_name,
-        (
-            SELECT legal_entity_name from tbl_legal_entities as tle
-            WHERE tle.legal_entity_id = t2.legal_entity_id
-        ) as legal_entity_name,
-        (
-            SELECT business_group_name from tbl_business_groups as tbg
-            WHERE tbg.client_id = t2.client_id
-        ) as business_group_name,
-        (
+        t1.domain_id, t2.legal_entity_id, t2.client_id,
+        tle.legal_entity_name as legal_entity_name,
+        tbg.business_group_name as business_group_name,
+        td.domain_name as domain_name,
+        tcg.group_name as client_name,(
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
-            and  tuu.user_id != userid_ and tuu.user_category_id = 8
+            and tuu.user_category_id = 8
         ) as assigned_units
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id and
-        uc.unit_id = t2.unit_id
+        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
+        inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
+        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
+        inner join tbl_domains td on td.domain_id=t1.domain_id
+        left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
         group by t1.domain_id, t2.client_id;
     END IF;
 
@@ -6225,7 +6209,7 @@ BEGIN
     closed_remarks = _rem where
     legal_entity_id = _le_id;
 
-    if is_cl = 0 then
+    if _is_cl = 0 then
         INSERT INTO tbl_messages
         SET
         user_category_id = (select user_category_id from tbl_user_login_details
@@ -6237,7 +6221,7 @@ BEGIN
     else
         INSERT INTO tbl_messages
         SET
-        user_category_id = (select user_category_id from tbl_user_category
+        user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
         message_text = (select concat(legal_entity_name,' ','has been reactivated')
@@ -7742,6 +7726,81 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- To Get data for IP Settings form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_list`()
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups;
+
+    SELECT form_id, form_name
+    FROM tbl_client_forms order by form_order;
+
+    SELECT ips.client_id, ips.form_id,
+    (select group_name from tbl_client_groups where client_id = ips.client_id) as group_name
+    FROM tbl_ip_settings ips group by ips.client_id order by group_name;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Client IP Details
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_group_ip_details`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_group_ip_details`(
+    IN c_id INT(11)
+)
+BEGIN
+    SELECT form_id, ips, client_id FROM tbl_ip_settings where client_id = c_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To delete IP Setting details of particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_delete`(
+    IN c_id INT(11)
+)
+BEGIN
+    DELETE FROM tbl_ip_settings
+    WHERE client_id=c_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get name of group
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_group_name_by_id`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_group_name_by_id`(
+    IN c_id INT(11)
+)
+BEGIN
+    SELECT group_name
+    FROM tbl_client_groups
+    WHERE client_id=c_id;
+END //
+
+DELIMITER ;
+
+
 -- --------------
 -- statutory mapping report data
 -- -------------
@@ -7842,8 +7901,65 @@ BEGIN
             and t3.domain_id = did
             and  IF(gid IS NOT NULL, t2.geography_id = gid, 1)
             order by t3.statutory_mapping_id;
+END //
 
+DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- To Get data for IP Settings report filter
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_report_filter`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_report_filter`()
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups;
+
+    SELECT form_id, form_name
+    FROM tbl_client_forms order by form_order;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Client IP Details
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_ip_setting_details_report`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_setting_details_report`(
+    IN c_id INT(11), IN ip_ VARCHAR(50), IN f_count INT(11), IN t_count INT(11)
+)
+BEGIN
+    
+    SELECT count(distinct client_id) as total_record FROM tbl_ip_settings 
+    where 
+    IF(c_id IS NOT NULL, client_id = c_id, 1) and 
+    IF(ip_ IS NOT NULL, ips = ip_, 1);
+    
+    SELECT t2.form_id,t2.client_id, t2.ips
+    From tbl_ip_settings t2 
+    inner join (
+    SELECT t.client_id, 
+           @rownum := @rownum + 1 AS num
+    FROM (select distinct client_id from tbl_ip_settings order by client_id) t, 
+           (SELECT @rownum := 0) r
+          ) t3 on t2.client_id = t3.client_id
+    where 
+    IF(c_id IS NOT NULL, t2.client_id = c_id, 1) and 
+    IF(ip_ IS NOT NULL, t2.ips = ip_, 1) and
+    t3.num between f_count and t_count
+    order by t2.client_id;
+
+    /*SELECT form_id, ips, client_id FROM tbl_ip_settings 
+    where 
+    IF(c_id IS NOT NULL, client_id = c_id, 1) and 
+    IF(ip_ IS NOT NULL, ips = ip_, 1)
+    order by client_id
+    limit f_count, t_count*/
 END //
 
 DELIMITER ;

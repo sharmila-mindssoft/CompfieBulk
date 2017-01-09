@@ -27,8 +27,8 @@
                                             <div class="col-md-2">&nbsp;</div>
                                             <div class="col-md-5">
                                                 <div class="form-group has-feedback techno-mgr">
-                                                    <label class="col-sm-4 control-label">Techno Manager: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <label class="col-sm-5 control-label">Techno Manager: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Manager" id="techno_manager_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="techno_manager_id">
@@ -38,12 +38,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 middle m-b-15">
                                                 <button class="btn btn-primary text-center waves-effect waves-light m-b-0 tm-show-btn" type="button"> Show </button>
                                             </div>
                                         </div>
                                         <div class="group-view">
-                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                                        <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th align="center" width="1%"></th>
@@ -134,6 +135,7 @@
                                                     </tr>
                                                 </tbody> -->
                                             </table>
+                                            </div>
                                             <div class="form-group text-center m-t-15">
                                                 <div class="col-md-3">
                                                     
@@ -141,7 +143,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
-                                                        <div class="col-md-6">
+                                                        <div class="col-sm-6">
                                                             <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="tm_remarks"></textarea>
                                                         </div>
                                                     </div>
@@ -159,8 +161,8 @@
                                             <div class="col-md-2">&nbsp;</div>
                                             <div class="col-md-5">
                                                 <div class="form-group has-feedback techno-user">
-                                                    <label class="col-sm-4 control-label">Techno Executive: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <label class="col-sm-5 control-label">Techno Executive: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="techno_executive_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="techno_executive_id">
@@ -170,12 +172,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 middle m-b-15">
                                                 <button class="btn btn-primary text-center waves-effect waves-light m-b-0 te-show-btn" type="button"> Show </button>
                                             </div>
                                         </div>
                                         <div class="group-view">
-                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                        <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th width="2%">
@@ -229,11 +232,12 @@
                                                     </tr>
                                                 </tbody> -->
                                             </table>
+                                            </div>
                                             <div class="form-group text-center m-t-15">
                                                 <div class="col-md-6">
                                                     <div class="form-group has-feedback reassign-tm">
-                                                        <label class="col-md-6 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
-                                                        <div class="col-md-6">
+                                                        <label class="col-sm-4 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
                                                           <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="te_techno_executive_name">
                                                           <i class="form-control-feedback fa fa-search"></i>
                                                           <input type="hidden" id="te_techno_executive_id">
@@ -246,7 +250,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
-                                                        <div class="col-md-6">
+                                                        <div class="col-sm-6">
                                                             <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="te_remarks"></textarea>
                                                         </div>
                                                     </div>
@@ -264,7 +268,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group has-feedback domain-mgr" style="">
                                                     <label class="col-sm-4 control-label">Domain Manager: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain Manager" id="domain_manager_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="domain_manager_id">
@@ -275,7 +279,7 @@
                                                 </div>
                                                 <div class="form-group has-feedback filter-group-mandatory" style="">
                                                     <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Group" id="dm_group_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="dm_group_id">
@@ -286,7 +290,7 @@
                                                 </div>
                                                 <div class="form-group has-feedback filter-business" style="">
                                                     <label class="col-sm-4 control-label">Business Group:</label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Business Group" id="dm_business_group_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="dm_business_group_id">
@@ -302,7 +306,7 @@
                                                 
                                                 <div class="form-group has-feedback filter-legal" style="">
                                                     <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Legal Entity" id="dm_legal_entity_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="dm_legal_entity_id">
@@ -313,7 +317,7 @@
                                                 </div>
                                                 <div class="form-group has-feedback filter-domain" style="">
                                                     <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain" id="dm_domain_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="dm_domain_id">
@@ -323,12 +327,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group text-center m-b-0">
+                                            <div class="form-group text-center m-b-10">
                                                 <button class="btn btn-primary text-center waves-effect waves-light m-b-0 dm-show-btn" type="button"> Show </button>
                                             </div>
                                         </div>
                                         <div class="group-view">
-                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                        <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th width="2%"></th>
@@ -457,6 +462,7 @@
                                                     
                                                 </tbody> -->
                                             </table>
+                                            </div>
                                             <div class="form-group text-center m-t-15">
                                                 <div class="col-md-3">
                                             
@@ -464,7 +470,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
-                                                        <div class="col-md-6">
+                                                        <div class="col-sm-6">
                                                             <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="dm_remarks"></textarea>
                                                         </div>
                                                     </div>
@@ -482,7 +488,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group has-feedback domain-mgr" style="">
                                                     <label class="col-sm-4 control-label">Domain Executive: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain Manager" id="domain_executive_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="domain_executive_id">
@@ -493,7 +499,7 @@
                                                 </div>
                                                 <div class="form-group has-feedback filter-group-mandatory" style="">
                                                     <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Group" id="de_group_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="de_group_id">
@@ -504,7 +510,7 @@
                                                 </div>
                                                 <div class="form-group has-feedback filter-business" style="">
                                                     <label class="col-sm-4 control-label">Business Group:</label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Business Group" id="de_business_group_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="de_business_group_id">
@@ -520,7 +526,7 @@
                                                 
                                                 <div class="form-group has-feedback filter-legal" style="">
                                                     <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Legal Entity" id="de_legal_entity_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="de_legal_entity_id">
@@ -531,7 +537,7 @@
                                                 </div>
                                                 <div class="form-group has-feedback filter-domain" style="">
                                                     <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain" id="de_domain_name">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="de_domain_id">
@@ -541,12 +547,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group text-center m-b-0">
+                                            <div class="form-group text-center m-b-10">
                                                 <button class="btn btn-primary text-center waves-effect waves-light m-b-0 de-show-btn" type="button"> Show </button>
                                             </div>
                                         </div>
                                         <div class="group-view">
-                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                         <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th width="2%">
@@ -604,11 +611,12 @@
                                                 <tbody class="tbody-de-view">
                                                 </tbody>
                                             </table>
+                                            </div>
                                             <div class="form-group text-center m-t-15">
                                                 <div class="col-md-6">
                                                     <div class="form-group has-feedback reassign-tm">
-                                                        <label class="col-md-6 control-label">Reassign To Domain Executive: <span class="mandatory">*</span></label>
-                                                        <div class="col-md-6">
+                                                        <label class="col-sm-4 control-label">Reassign To Domain Executive: <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
                                                           <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain Executive" id="de_domain_executive_name">
                                                           <i class="form-control-feedback fa fa-search"></i>
                                                           <input type="hidden" id="de_domain_executive_id">
@@ -621,7 +629,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
-                                                        <div class="col-md-6">
+                                                        <div class="col-sm-6">
                                                             <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="de_remarks"></textarea>
                                                         </div>
                                                     </div>
@@ -639,8 +647,8 @@
                                             <div class="col-md-2">&nbsp;</div>
                                             <div class="col-md-5">
                                                 <div class="form-group techno-user">
-                                                    <label class="col-sm-4 control-label">Category: <span class="mandatory">*</span></label>
-                                                    <div class="col-md-6">
+                                                    <label class="col-sm-5 control-label">Category: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
                                                         <select id="category" class="form-control input-sm">
                                                             <option value="1" selected="selected">Techno Manager</option>
                                                             <option value="2">Domain Manager</option>
@@ -648,11 +656,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 middle m-b-10">
                                                 <button class="btn btn-primary text-center waves-effect waves-light m-b-0 replace-manager-show-btn" type="button"> Show </button>
                                             </div>
                                         </div>
                                         <div class="group-view">  
+                                         <div class="table-responsive">
                                             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-list replace-tm" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
@@ -696,7 +705,9 @@
                                                 </tr> -->
                                             </tbody>
                                         </table>
+                                        </div>
                                         <p class="p-l-5 replace-tm">*  note text goes here</p>
+                                         <div class="table-responsive">
                                         <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-list replace-dm" style="display: none;" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
@@ -728,6 +739,7 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                            </div>
                                             <p class="p-l-5replace-dm" style="display: none;">*  note text goes here</p>
                                             <div class="form-group text-center m-t-15">
                                                 <div class="col-md-3">
@@ -742,7 +754,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
-                                                        <div class="col-md-6">
+                                                        <div class="col-sm-6">
                                                             <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="replace_manager_remarks" ></textarea>
                                                         </div>
                                                     </div>
@@ -776,7 +788,7 @@
                 <th>
                   <div class="form-group has-feedback m-b-0 default-display-none tm-ac-view">
                       <label class="col-sm-4 p-t-7">Techno Manager</label>
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                           <input class="form-control input-sm tm-techno-manager-name" value="" type="text" placeholder="Enter Techno Manager">
                           <i class="form-control-feedback fa fa-search"></i>
                           <input type="hidden" class="techno_manager_id">
@@ -833,7 +845,7 @@
               <th>
                 <div class="form-group has-feedback m-b-0 dm-ac-view">
                     <label class="col-sm-4 p-t-7">Domain Manager</label>
-                    <div class="col-md-6">
+                    <div class="col-sm-6">
                         <input class="form-control input-sm dm-domain-manager-name" value="" type="text" placeholder="Enter Domain Manager">
                         <i class="form-control-feedback fa fa-search"></i>
                         <input type="hidden" class="domain_manager_id">
@@ -859,7 +871,7 @@
               <td>
                 <div class="form-group has-feedback m-b-0 default-display-none de-ac-view">
                     <label class="col-sm-4 p-t-7">Domain Executive</label>
-                    <div class="col-md-6">
+                    <div class="col-sm-6">
                         <input class="form-control input-sm dm-domain-executive-name" value="" type="text" placeholder="Enter Domain Executive">
                         <i class="form-control-feedback fa fa-search"></i>
                         <input type="hidden" class="d_old_executive_id">

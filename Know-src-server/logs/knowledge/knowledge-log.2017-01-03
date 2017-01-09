@@ -1,0 +1,1930 @@
+2017-01-03 10:47:41,516 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 10:47:41,517 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 10:47:46,765 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 10:47:46,765 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 10:47:50,333 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 10:47:50,333 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 10:47:52,654 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 10:47:52,654 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 10:48:26,449 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 10:48:26,449 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 86, in process_techno_report_request
+    result = process_get_assigned_statutory_report_filters(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 262, in process_get_assigned_statutory_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 10:48:31,637 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 10:48:31,637 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 10:48:35,658 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 10:48:35,658 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 10:49:43,931 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 10:49:43,931 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 10:50:34,572 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-03 10:50:34,572 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/technomasters.py", line 2132, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-03 10:50:34,572 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-03 10:50:34,573 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2017-01-03 10:50:59,044 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 10:50:59,045 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 10:51:03,306 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 10:51:03,306 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 10:51:14,202 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 10:51:14,202 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 10:51:24,169 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 10:51:24,171 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 10:53:31,831 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-03 10:53:31,831 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/admin.py", line 1472, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-03 10:53:31,831 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-03 10:53:31,832 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2017-01-03 11:06:59,508 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-03 11:06:59,508 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/technomasters.py", line 2132, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-03 11:06:59,509 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-03 11:06:59,509 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2017-01-03 11:07:14,490 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 11:07:14,490 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 11:07:35,144 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:07:35,144 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:07:40,745 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:07:40,745 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:07:43,704 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:07:43,704 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 86, in process_techno_report_request
+    result = process_get_assigned_statutory_report_filters(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 262, in process_get_assigned_statutory_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:07:52,882 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 11:07:52,883 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 11:08:28,909 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-03 11:08:28,915 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/admin.py", line 1472, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-03 11:08:28,920 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-03 11:08:28,924 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2017-01-03 11:36:58,317 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:36:58,317 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:38:49,713 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-03 11:38:49,714 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/technoreports.py", line 1190, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-03 11:38:49,714 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-03 11:38:49,714 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2017-01-03 11:40:14,996 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:40:14,998 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:42:17,467 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:42:17,468 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:42:23,046 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:42:23,046 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:45:49,424 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:45:49,424 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:46:32,412 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:46:32,412 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:46:41,769 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:46:41,770 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:46:44,455 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:46:44,455 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:47:27,106 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:47:27,107 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 11:47:49,322 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 11:47:49,322 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 86, in process_techno_report_request
+    result = process_get_assigned_statutory_report_filters(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 262, in process_get_assigned_statutory_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 12:14:07,184 - knowledge_logger - main.py-parse-request : expected a alphabets, but received: level 1 
+
+2017-01-03 12:14:07,185 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/knowledgemaster.py", line 972, in parse_structure
+    request = parse_structure_VariantType_knowledgemaster_Request(request)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/parse_structure.py", line 107, in parse_structure_VariantType_knowledgemaster_Request
+    return knowledgemaster.Request.parse_structure(data)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/knowledgemaster.py", line 33, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/knowledgemaster.py", line 83, in parse_inner_structure
+    data = parse_dictionary(data, ["c_id", "levels"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 338, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 506, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 492, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/knowledgemaster.py", line 61, in parse_structure
+    data = parse_dictionary(data, ["l_id", "l_position", "l_name", "is_remove"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 387, in parse_dictionary_values
+    val = _validation_method(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/api_key_validation.py", line 21, in is_alphabet
+    raise expectation_error('a alphabets', value)
+ValueError: expected a alphabets, but received: level 1
+ 
+
+2017-01-03 12:14:07,185 - knowledge_logger - main.py-handle-api- : expected a alphabets, but received: level 1 
+
+2017-01-03 12:14:07,185 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a alphabets, but received: level 1
+ 
+
+2017-01-03 12:25:24,371 - knowledge_logger - main.py-parse-request : expected a alphabets, but received: losangels1 
+
+2017-01-03 12:25:24,371 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/knowledgemaster.py", line 972, in parse_structure
+    request = parse_structure_VariantType_knowledgemaster_Request(request)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/parse_structure.py", line 107, in parse_structure_VariantType_knowledgemaster_Request
+    return knowledgemaster.Request.parse_structure(data)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/knowledgemaster.py", line 33, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/knowledgemaster.py", line 117, in parse_inner_structure
+    data = parse_dictionary(data, ["g_l_id", "g_name", "p_ids", "p_names", "c_id"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 387, in parse_dictionary_values
+    val = _validation_method(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/api_key_validation.py", line 21, in is_alphabet
+    raise expectation_error('a alphabets', value)
+ValueError: expected a alphabets, but received: losangels1
+ 
+
+2017-01-03 12:25:24,371 - knowledge_logger - main.py-handle-api- : expected a alphabets, but received: losangels1 
+
+2017-01-03 12:25:24,371 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a alphabets, but received: losangels1
+ 
+
+2017-01-03 13:00:21,448 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:00:21,448 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:20:20,581 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:20:20,582 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:22:31,506 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:22:31,507 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:23:51,776 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:23:51,777 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:32:58,299 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:32:58,299 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:33:00,833 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:33:00,835 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:33:14,935 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:33:14,935 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:34:23,424 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:34:23,425 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:34:25,916 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:34:25,916 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:37:11,063 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:37:11,063 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:37:19,911 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:37:19,911 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:37:29,979 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:37:29,981 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:39:47,170 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:39:47,171 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:39:48,557 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:39:48,557 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:39:50,903 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:39:50,903 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:39:55,162 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:39:55,163 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:45:31,189 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:45:31,189 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:45:32,875 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:45:32,876 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:48:16,429 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:48:16,430 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:49:26,803 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:49:26,803 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:49:33,292 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:49:33,293 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 13:49:36,021 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 13:49:36,022 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:03:16,717 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:03:16,718 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:03:20,258 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:03:20,258 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:03:22,905 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:03:22,905 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:04:08,077 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:04:08,077 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:04:59,336 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:04:59,337 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:05:10,221 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:05:10,222 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:05:11,989 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:05:11,989 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:05:22,372 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:05:22,372 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:18:01,810 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:18:01,810 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:28:53,446 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:28:53,446 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:28:54,803 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:28:54,803 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:29:05,614 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:29:05,614 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:39:03,527 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:39:03,527 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:40:22,122 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:40:22,123 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:40:23,521 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:40:23,522 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:40:28,323 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:40:28,324 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 15:46:46,690 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 15:46:46,691 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:10:35,491 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:10:35,492 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:18:04,361 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:18:04,361 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:18:31,586 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:18:31,586 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:20:41,444 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:20:41,445 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:21:26,549 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:21:26,549 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:21:35,725 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:21:35,726 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:21:54,859 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:21:54,859 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:25:37,175 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:25:37,176 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:25:44,675 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:25:44,675 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:25:49,014 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:25:49,014 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:25:51,052 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:25:51,052 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:26:14,444 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:26:14,444 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:26:16,064 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:26:16,064 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:26:33,573 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:26:33,574 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 317, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 86, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/admincontroller.py", line 489, in get_reassign_user_account_form_data
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:29:10,955 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:29:10,955 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:29:14,612 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 16:29:14,612 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 16:29:35,574 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:29:35,575 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 86, in process_techno_report_request
+    result = process_get_assigned_statutory_report_filters(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 262, in process_get_assigned_statutory_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:29:41,699 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 16:29:41,699 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 16:30:02,505 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:30:02,506 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    result = get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
+    groups = get_groups(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 826, in get_groups
+    return return_group(groups[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:30:17,469 - knowledge_logger - main.py-handle-api- : sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause' 
+
+2017-01-03 16:30:17,469 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 325, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technocontroller.py", line 142, in process_techno_request
+    db, request_frame, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technomastercontroller.py", line 537, in get_assign_legal_entity_list
+    assign_le_list = get_assign_legalentities(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technomaster.py", line 2046, in get_assign_legalentities
+    "sp_assign_legal_entities_list", [session_user]
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_assign_legal_entities_list- [7]- 1054 (42S22): Unknown column 'tle.is_approved' in 'where clause'
+ 
+
+2017-01-03 16:38:56,256 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-03 16:38:56,256 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 163, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/admin.py", line 1472, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-03 16:38:56,256 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-03 16:38:56,256 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 204, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2017-01-03 16:45:29,609 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:45:29,609 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:52:36,945 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:52:36,945 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:53:54,217 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:53:54,217 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 16:56:21,747 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 16:56:21,747 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:11:34,947 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:11:34,947 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:12:12,638 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:12:12,638 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:12:44,445 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:12:44,445 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:17:18,187 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:17:18,187 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:17:21,143 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:17:21,143 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:17:23,206 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:17:23,207 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:17:30,629 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:17:30,630 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 17:19:24,423 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 17:19:24,424 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 18:36:30,759 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 18:36:30,788 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 18:36:57,751 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 18:36:57,751 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 18:37:04,465 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 18:37:04,465 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 86, in process_techno_report_request
+    result = process_get_assigned_statutory_report_filters(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 262, in process_get_assigned_statutory_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 18:39:14,883 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 18:39:14,884 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 86, in process_techno_report_request
+    result = process_get_assigned_statutory_report_filters(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 262, in process_get_assigned_statutory_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 18:45:26,323 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 18:45:26,324 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 18:45:48,424 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 18:45:48,424 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 107, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 305, in process_get_client_details_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+
+2017-01-03 18:45:51,452 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-03 18:45:51,452 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 210, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 361, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 86, in process_techno_report_request
+    result = process_get_assigned_statutory_report_filters(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/technoreportcontroller.py", line 262, in process_get_assigned_statutory_report_filters
+    business_groups = get_business_groups_for_statutorysetting_report(db, user_id)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/technoreport.py", line 44, in get_business_groups_for_statutorysetting_report
+    return return_business_groups(db, result[1])
+IndexError: list index out of range
+ 
+

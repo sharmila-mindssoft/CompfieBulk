@@ -45,3 +45,4 @@ frmViewProfile = 44
 frmChangePassword = 45
 frmMessages = 46
 frmStatutoryNotification = 47
+frmIPSettings = 50

@@ -162,6 +162,7 @@ class API(object):
             print request.data
             print "-" * 10
             data = request.data.decode('base64')
+            print data
             data = json.loads(data)
             request_data = request_data_type.parse_structure(
                 data

@@ -606,11 +606,17 @@ api_params = {
     "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
     "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    
+    "ip_setting_forms": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "Form"},
+    "ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "IPSettingsList"},
+    "group_ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "GroupIPDetails"},
+
+    'statutory_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgereport', 'class_name': 'StatutoryMappingReport'},
     'is_created': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     "console_cl_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
 
-    'statutory_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgereport', 'class_name': 'StatutoryMappingReport'},
 
 }
 api_params['domain_id'] = api_params.get('d_id')

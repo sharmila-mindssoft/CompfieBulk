@@ -212,9 +212,10 @@ function initMirror() {
       headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(request),
+      data: btoa(toJSON(request)),
       success: function (data) {
-        // var data = parseJSON(data);
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -226,7 +227,9 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        callback(jqXHR.responseText, null);
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
+        callback(rdata, null);
       }
     });
   }
@@ -828,7 +831,7 @@ function initMirror() {
     ];
     apiRequest('knowledge_report', request, callback);
   }
-  function filterData(cId, dId, iId, sNId, gId, level1SId, fId, rCount) {
+  function filterData(cId, dId, iId, sNId, gId, level1SId, fId, rCount, page_count) {
     var filter = {};
     filter.c_id = cId;
     filter.d_id = dId;
@@ -838,6 +841,7 @@ function initMirror() {
     filter.statutory_id_optional = level1SId;
     filter.frequency_id = fId;
     filter.r_count = rCount;
+    filter.page_count = page_count;
     return filter;
   }
   function getStatutoryMappingsReportData(filterDatas, callback) {
@@ -2452,6 +2456,79 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getIPSettingsList(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsList",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getGroupIPDetails(clientId, callback){
+      callerName = "console_admin";
+      var request = [
+        "GetGroupIPDetails",
+        {
+          "client_id": clientId
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsDetails(form_id, ip, client_id) {
+    return {
+        "form_id": form_id,
+        "ip": ip,
+        "client_id": client_id,
+      }
+  }
+
+  function saveIPSettings(ip_details, callback){
+      callerName = "console_admin";
+      var request = [
+        "SaveIPSettings",
+        {
+          "group_ips_list": ip_details
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function deleteIPSettings(clientId, callback){
+      callerName = "console_admin";
+      var request = [
+        "DeleteIPSettings",
+        {
+          "client_id": clientId
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsReportFilter(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsReportFilter",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsReport(clientId, IP, FCount, TCount, callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsReport",
+        {
+          "client_id": clientId,
+          "ip_optional": IP,
+          "from_count": FCount,
+          "page_count": TCount
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2660,6 +2737,13 @@ function initMirror() {
     getFileServerList: getFileServerList,
     fileServerEntry: fileServerEntry,
     domainManagerInfo: domainManagerInfo,
+    getIPSettingsList: getIPSettingsList,
+    getGroupIPDetails: getGroupIPDetails,
+    getIPSettingsDetails: getIPSettingsDetails,
+    saveIPSettings: saveIPSettings,
+    deleteIPSettings:deleteIPSettings,
+    getIPSettingsReportFilter: getIPSettingsReportFilter,
+    getIPSettingsReport: getIPSettingsReport,
   };
 }
 var mirror = initMirror();

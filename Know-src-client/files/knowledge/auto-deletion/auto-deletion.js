@@ -40,7 +40,6 @@ function initialize(type_of_form){
             displayMessage(error);
         }
         mirror.getAutoDeletionList(function (error, response) {
-            console.log(error, response)
             if (error == null) {
                 onSuccess(response);
             } else {
@@ -80,18 +79,6 @@ function clearFields(){
     deletion_period.val("");
 }
 
-btnAdd.click(function(){
-    initialize("add")
-});
-
-btnSubmit.click(function(){
-    saveAutoDeletion();
-});
-
-btnCancel.click(function(){
-    initialize("list")
-});
-
 //retrive  autocomplete value
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
@@ -106,43 +93,59 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     }
 }
 
-//load group list in autocomplete text box
-GroupVal.keyup(function(e) {
-    $(".unit-view").hide();
-    btnSubmit.hide();
+function pageControls() {
 
-    var text_val = $(this).val();
-    commonAutoComplete(
-        e, ACGroup, Group, text_val,
-        CLIENT_GROUPS, "group_name", "client_id",
-        function(val) {
-            onAutoCompleteSuccess(GroupVal, Group, val);
+    btnAdd.click(function(){
+        initialize("add")
     });
-});
 
-//load legalentity list in autocomplete text box
-LegalEntityVal.keyup(function(e) {
-    $(".unit-view").hide();
-    btnSubmit.hide();
+    btnSubmit.click(function(){
+        saveAutoDeletion();
+    });
 
-    if (Group.val() != '') {
-        var condition_fields = ["client_id", "is_closed"];
-        var condition_values = [Group.val(), false];
+    btnCancel.click(function(){
+        initialize("list")
+    });
+
+    //load group list in autocomplete text box
+    GroupVal.keyup(function(e) {
+        $(".unit-view").hide();
+        btnSubmit.hide();
 
         var text_val = $(this).val();
         commonAutoComplete(
-            e, ACLegalEntity, LegalEntity, text_val,
-            LEGAL_ENTITIES, "legal_entity_name", "legal_entity_id",
+            e, ACGroup, Group, text_val,
+            CLIENT_GROUPS, "group_name", "client_id",
             function(val) {
-                onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
-            }, condition_fields, condition_values);
-    }
-});
+                onAutoCompleteSuccess(GroupVal, Group, val);
+        });
+    });
 
-deletion_period.on('input', function(e) {
-    this.value = isNumbers($(this));
-    $('.unit-deletion-period').val(this.value)
-});
+    //load legalentity list in autocomplete text box
+    LegalEntityVal.keyup(function(e) {
+        $(".unit-view").hide();
+        btnSubmit.hide();
+
+        if (Group.val() != '') {
+            var condition_fields = ["client_id", "is_closed"];
+            var condition_values = [Group.val(), false];
+
+            var text_val = $(this).val();
+            commonAutoComplete(
+                e, ACLegalEntity, LegalEntity, text_val,
+                LEGAL_ENTITIES, "legal_entity_name", "legal_entity_id",
+                function(val) {
+                    onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
+                }, condition_fields, condition_values);
+        }
+    });
+
+    deletion_period.on('input', function(e) {
+        this.value = isNumbers($(this));
+        $('.unit-deletion-period').val(this.value)
+    });
+
+}
 
 function loadEdit(cId, leId, dPeriod, leName, gName){
     showPage("edit");
@@ -264,6 +267,7 @@ function saveAutoDeletion(){
 //initialization
 $(function () {
   initialize("list");
+  pageControls();
 });
 
 $(document).find('.js-filtertable').each(function(){
