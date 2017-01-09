@@ -7910,12 +7910,32 @@ CREATE PROCEDURE `sp_ip_setting_details_report`(
     IN c_id INT(11), IN ip_ VARCHAR(50), IN f_count INT(11), IN t_count INT(11)
 )
 BEGIN
-    SELECT form_id, ips, client_id FROM tbl_ip_settings 
+    
+    SELECT count(distinct client_id) as total_record FROM tbl_ip_settings 
+    where 
+    IF(c_id IS NOT NULL, client_id = c_id, 1) and 
+    IF(ip_ IS NOT NULL, ips = ip_, 1);
+    
+    SELECT t2.form_id,t2.client_id, t2.ips
+    From tbl_ip_settings t2 
+    inner join (
+    SELECT t.client_id, 
+           @rownum := @rownum + 1 AS num
+    FROM (select distinct client_id from tbl_ip_settings order by client_id) t, 
+           (SELECT @rownum := 0) r
+          ) t3 on t2.client_id = t3.client_id
+    where 
+    IF(c_id IS NOT NULL, t2.client_id = c_id, 1) and 
+    IF(ip_ IS NOT NULL, t2.ips = ip_, 1) and
+    t3.num between f_count and t_count
+    order by t2.client_id;
+
+    /*SELECT form_id, ips, client_id FROM tbl_ip_settings 
     where 
     IF(c_id IS NOT NULL, client_id = c_id, 1) and 
     IF(ip_ IS NOT NULL, ips = ip_, 1)
     order by client_id
-    limit f_count, t_count
+    limit f_count, t_count*/
 END //
 
 DELIMITER ;
