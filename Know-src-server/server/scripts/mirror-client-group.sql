@@ -216,6 +216,7 @@ CREATE TABLE `tbl_users` (
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
@@ -270,10 +271,10 @@ CREATE TABLE `tbl_email_verification` (
   `expiry_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_activity_log` (
-  `activity_log_id` int(11) NOT NULL,
+  `activity_log_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
-  `unit_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) DEFAULT NULL,
+  `unit_id` int(11) DEFAULT NULL,
   `user_category_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `form_id` int(11) NOT NULL,
@@ -309,40 +310,40 @@ INSERT INTO tbl_form_type VALUES(4, "My Accounts");
 INSERT INTO tbl_form_type VALUES(5, "Dashboard");
 -- Forms
 INSERT INTO tbl_forms VALUES(1, 1, 'Service Provider', "/service-provider", 1, null);
-INSERT INTO tbl_forms VALUES(2, 1, 'User Privileges', "/client-user-privilege", 1, null);
-INSERT INTO tbl_forms VALUES(3, 1, 'User Management', "/client-user-management", 1, null);
-INSERT INTO tbl_forms VALUES(4, 1, 'Unit Closure', "/unit-closure", 1, null);
-INSERT INTO tbl_forms VALUES(5, 2, 'Statutory Settings', "/statutory-settings", 1, null);
-INSERT INTO tbl_forms VALUES(6, 2, 'Review Settings', "/review-settings", 1, null);
-INSERT INTO tbl_forms VALUES(7, 2, 'Assign Compliance', "/assign-compliance", 1, null);
-INSERT INTO tbl_forms VALUES(8, 2, 'Reassign Compliance', "/reassign-compliance", 1, null);
-INSERT INTO tbl_forms VALUES(9, 2, 'Compliance Approval', "/compliance-approval", 1, null);
-INSERT INTO tbl_forms VALUES(10, 2, 'Completed Task - Current Year', "/completed-tasks-current-year", 1, null);
-INSERT INTO tbl_forms VALUES(11, 2, 'On Occurrence Compliances', "/on-occurrence-compliances", 1, null);
-INSERT INTO tbl_forms VALUES(12, 3, 'Legal Entity Wise Report', "/legal-entity-wise-report", 1, null);
-INSERT INTO tbl_forms VALUES(13, 3, 'Domain Wise Report', "/domain-wise-report", 1, null);
-INSERT INTO tbl_forms VALUES(14, 3, 'Unit Wise Compliance', "/unit-wise-compliance", 1, null);
-INSERT INTO tbl_forms VALUES(15, 3, 'Service Provider Wise Compliance', "/service-provider-wise-compliance", 1, null);
-INSERT INTO tbl_forms VALUES(16, 3, 'User Wise Compliance', "/user-wise-compliance", 1, null);
-INSERT INTO tbl_forms VALUES(17, 3, 'Status Report Consolidated', "/status-report-consolidated", 1, null);
-INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-wise-report", 1, null);
-INSERT INTO tbl_forms VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 1, null);
-INSERT INTO tbl_forms VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 1, null);
-INSERT INTO tbl_forms VALUES(21, 3, 'Statutory Settings Unit Wise Report', "/statutory-settings-unit-wise-report", 1, null);
-INSERT INTO tbl_forms VALUES(22, 3, 'Reassigned History Report', "/reassigned-history-report", 1, null);
-INSERT INTO tbl_forms VALUES(23, 3, 'Risk Report', "/risk-report", 1, null);
-INSERT INTO tbl_forms VALUES(24, 3, 'Unit List', "/unit-list", 1, null);
-INSERT INTO tbl_forms VALUES(25, 3, 'Statutory Notification List', "/statutory-notification-list", 1, null);
-INSERT INTO tbl_forms VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 1, null);
-INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 1, null);
-INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 1, null);
-INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/View Profile", 1, null);
-INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 1, null);
-INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 1, null);
-INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 1, null);
-INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 1, null);
-INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 1, null);
-INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-details", 1, null);
+INSERT INTO tbl_forms VALUES(2, 1, 'User Privileges', "/client-user-privilege", 2, null);
+INSERT INTO tbl_forms VALUES(3, 1, 'User Management', "/client-user-management", 3, null);
+INSERT INTO tbl_forms VALUES(4, 1, 'Unit Closure', "/unit-closure", 4, null);
+INSERT INTO tbl_forms VALUES(5, 2, 'Statutory Settings', "/statutory-settings", 5, null);
+INSERT INTO tbl_forms VALUES(6, 2, 'Review Settings', "/review-settings", 6, null);
+INSERT INTO tbl_forms VALUES(7, 2, 'Assign Compliance', "/assign-compliance", 7, null);
+INSERT INTO tbl_forms VALUES(8, 2, 'Reassign Compliance', "/reassign-compliance", 8, null);
+INSERT INTO tbl_forms VALUES(9, 2, 'Compliance Approval', "/compliance-approval", 9, null);
+INSERT INTO tbl_forms VALUES(10, 2, 'Completed Task - Current Year', "/completed-tasks-current-year", 10, null);
+INSERT INTO tbl_forms VALUES(11, 2, 'On Occurrence Compliances', "/on-occurrence-compliances", 11, null);
+INSERT INTO tbl_forms VALUES(12, 3, 'Legal Entity Wise Report', "/legal-entity-wise-report", 12, null);
+INSERT INTO tbl_forms VALUES(13, 3, 'Domain Wise Report', "/domain-wise-report", 13, null);
+INSERT INTO tbl_forms VALUES(14, 3, 'Unit Wise Compliance', "/unit-wise-compliance", 14, null);
+INSERT INTO tbl_forms VALUES(15, 3, 'Service Provider Wise Compliance', "/service-provider-wise-compliance", 15, null);
+INSERT INTO tbl_forms VALUES(16, 3, 'User Wise Compliance', "/user-wise-compliance", 16, null);
+INSERT INTO tbl_forms VALUES(17, 3, 'Status Report Consolidated', "/status-report-consolidated", 17, null);
+INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-wise-report", 18, null);
+INSERT INTO tbl_forms VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 19, null);
+INSERT INTO tbl_forms VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 20, null);
+INSERT INTO tbl_forms VALUES(21, 3, 'Statutory Settings Unit Wise Report', "/statutory-settings-unit-wise-report", 21, null);
+INSERT INTO tbl_forms VALUES(22, 3, 'Reassigned History Report', "/reassigned-history-report", 22, null);
+INSERT INTO tbl_forms VALUES(23, 3, 'Risk Report', "/risk-report", 23, null);
+INSERT INTO tbl_forms VALUES(24, 3, 'Unit List', "/unit-list", 24, null);
+INSERT INTO tbl_forms VALUES(25, 3, 'Statutory Notification List', "/statutory-notification-list", 25, null);
+INSERT INTO tbl_forms VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 26, null);
+INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
+INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
+INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/View Profile", 29, null);
+INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 30, null);
+INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
+INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
+INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 33, null);
+INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
+INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-details", 35, null);
 -- Group Admin Forms (form_category_id, form_id, user_category_id )
 insert into tbl_form_category values (1, 1, 1);
 insert into tbl_form_category values (2, 2, 1);
