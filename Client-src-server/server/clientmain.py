@@ -300,19 +300,54 @@ class API(object):
         print request_data, company_id
         return request_data, company_id
 
+    def _validate_user_session(self, session_token):
+        session_token = session_token.split('-')
+        client_id = session_token[0]
+        _group_db_cons = self._group_databases.get(client_id)
+        _group_db = Database(_group_db_cons)
+        try :
+            _group_db.begin()
+            session_user = _group_db.validate_session_token(session_token)
+
+            _group_db.commit()
+            _group_db_cons.close()
+            if session_user is None :
+                return False
+            else :
+                return session_user, client_id
+        except Exception, e :
+            _group_db.rollback()
+            _group_db_cons.close()
+            raise Exception(e)
+
     def handle_api_request(
         self, unbound_method,
         request_data_type, need_client_id, is_group
     ):
+        def respond(response_data):
+            return self._send_response(
+                response_data, 200
+            )
+
         ip_address = request.remote_addr
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
+        # validate api format
         request_data, company_id = self._parse_request(
             request_data_type, is_group
         )
         if request_data is None:
             return
 
+        # validate session token
+        if need_client_id is False :
+            session = request_data.session_token
+            session_user, client_id = self._validate_user_session(session)
+            if session_user is False :
+                return respond(clientlogin.InvalidSessionToken())
+        else :
+            session_user = None
+        # request process in controller
         print "in handle api"
         print is_group
         if is_group :
@@ -332,11 +367,6 @@ class API(object):
         if _db_con is None:
             self._send_response("Company not found", 404)
 
-        def respond(response_data):
-            return self._send_response(
-                response_data, 200
-            )
-
         _db.begin()
         try:
             if need_client_id :
@@ -344,7 +374,9 @@ class API(object):
                     self, request_data, _db, company_id, ip_address
                 )
             else :
-                response_data = unbound_method(self, request_data, _db)
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, client_id
+                )
             _db.commit()
             _db_con.close()
             return respond(response_data)
@@ -370,35 +402,35 @@ class API(object):
         return controller.process_login_request(request, db, client_id, user_ip)
 
     @api_request(clientmasters.RequestFormat, is_group=True)
-    def handle_client_masters(self, request, db):
+    def handle_client_masters(self, request, db, session_user, client_id):
         return controller.process_client_master_requests(request, db)
 
-    @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db):
+    @api_request(clienttransactions.RequestFormat, is_group=False)
+    def handle_client_transaction(self, request, db, session_user, client_id):
         return controller.process_client_transaction_requests(request, db)
 
     @api_request(clientreport.RequestFormat)
-    def handle_client_reports(self, request, db):
+    def handle_client_reports(self, request, db, session_user, client_id):
         return controller.process_client_report_requests(request, db)
 
     @api_request(dashboard.RequestFormat)
-    def handle_client_dashboard(self, request, db):
+    def handle_client_dashboard(self, request, db, session_user, client_id):
         return controller.process_client_dashboard_requests(request, db)
 
     @api_request(clientadminsettings.RequestFormat)
-    def handle_client_admin_settings(self, request, db):
+    def handle_client_admin_settings(self, request, db, session_user, client_id):
         return controller.process_client_admin_settings_requests(request, db)
 
     @api_request(general.RequestFormat)
-    def handle_general(self, request, db):
+    def handle_general(self, request, db, session_user, client_id):
         return controller.process_general_request(request, db)
 
     @api_request(clientuser.RequestFormat)
-    def handle_client_user(self, request, db):
+    def handle_client_user(self, request, db, session_user, client_id):
         return controller.process_client_user_request(request, db)
 
     @api_request(clientmobile.RequestFormat)
-    def handle_mobile_request(self, request, db):
+    def handle_mobile_request(self, request, db, session_user, client_id):
         return mobilecontroller.process_client_mobile_request(request, db)
 
 

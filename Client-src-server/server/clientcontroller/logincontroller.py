@@ -95,17 +95,6 @@ def process_login(db, request, client_id, session_user_ip):
     if user_id is None:
         # return clientlogin.InvalidUserName()
         return clientlogin.InvalidCredentials(None)
-    # elif is_contract_not_started(db):
-    #     return clientlogin.ContractNotYetStarted()
-    # elif not is_configured(db):
-    #     logger.logLogin("info", user_ip, username, "NotConfigured")
-    #     return clientlogin.NotConfigured()
-    # elif not is_in_contract(db):
-    #     logger.logLogin("info", user_ip, username, "ContractExpired")
-    #     return clientlogin.ContractExpired()
-    # elif not is_client_active(client_id):
-    #     logger.logLogin("info", user_ip, username, "InvalidCredentials")
-    #     return invalid_credentials(db, user_id, session_user_ip)
     else:
         response = verify_login(db, username, encrypt_password)
         print response
