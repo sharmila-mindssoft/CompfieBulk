@@ -129,12 +129,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/legal-entity-wise-score-card",
-        "files/client/legal-entity-wise-score-card/legal-entity-wise-score-card.html",
+        "files/client/legal-entity-wise-score-card/legal_entity_wise_score_card.html",
         None, {}
     ),
     (
         "/work-flow-score-card",
-        "files/client/work-flow-score-card/work-flow-score-card.html",
+        "files/client/work-flow-score-card/work_flow_score_card.html",
         None, {}
     ),
     (
