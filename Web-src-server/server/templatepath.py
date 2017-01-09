@@ -94,7 +94,7 @@ CLIENT_TEMPLATE_PATHS = [
     # reports ---------------------------------------------------------------------
     (
         "/legal-entity-wise-report",
-        "files/client/legal-entity-wise-report/legal-entity-wise-report.html",
+        "files/client/legal-entity-wise-report/legal_entity_wise_report.html",
         None, {}
     ),
     (

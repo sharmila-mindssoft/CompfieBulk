@@ -1,0 +1,116 @@
+2017-01-06 11:21:31,669 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-06 11:21:31,670 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 164, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/admin.py", line 1472, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-06 11:21:31,670 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-06 11:21:31,670 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 205, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2017-01-06 11:22:52,530 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-06 11:22:52,531 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 211, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 354, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 49, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 92, in process_get_statutory_mapping_report_data
+    from_count, to_count
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/knowledgereport.py", line 59, in get_statutory_mapping_report
+    rcount = result[0][0]["count"]
+IndexError: list index out of range
+ 
+
+2017-01-06 11:22:53,322 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-06 11:22:53,323 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 211, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 354, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 49, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 92, in process_get_statutory_mapping_report_data
+    from_count, to_count
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/knowledgereport.py", line 59, in get_statutory_mapping_report
+    rcount = result[0][0]["count"]
+IndexError: list index out of range
+ 
+
+2017-01-06 11:22:53,578 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-06 11:22:53,578 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 211, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 354, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 49, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 92, in process_get_statutory_mapping_report_data
+    from_count, to_count
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/knowledgereport.py", line 59, in get_statutory_mapping_report
+    rcount = result[0][0]["count"]
+IndexError: list index out of range
+ 
+
+2017-01-06 11:22:58,492 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2017-01-06 11:22:58,493 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 211, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 354, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 49, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/controller/knowledgereportcontroller.py", line 92, in process_get_statutory_mapping_report_data
+    from_count, to_count
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/database/knowledgereport.py", line 59, in get_statutory_mapping_report
+    rcount = result[0][0]["count"]
+IndexError: list index out of range
+ 
+
+2017-01-06 12:40:12,391 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-06 12:40:12,392 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 164, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/admin.py", line 1472, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-06 12:40:12,392 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-06 12:40:12,392 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 205, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
