@@ -705,14 +705,23 @@ class Database(object):
             new_id = int(row["maxid"]) + 1
         return new_id
 
-    def save_activity(self, user_id, form_id, action):
+    def save_activity(
+        self, category_id, user_id, form_id, action, client_id,
+        legal_entity_id, unit_id,
+    ):
         created_on = get_date_time()
-        activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
+        # if legal_entity_id is None :
+        #     legal_entity_id = ''
+        # if unit_id is None :
+        #     unit_id = ''
+
         query = " INSERT INTO tbl_activity_log " + \
-            " (activity_log_id, user_id, form_id, action, created_on) " + \
-            " VALUES (%s, %s, %s, %s, %s) "
+            " (client_id, legal_entity_id, unit_id, user_category_id, " + \
+            " user_id, form_id, action, created_on) " + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
         self.execute(query, (
-                activityId, user_id, form_id, action, created_on
+                client_id, legal_entity_id, unit_id, category_id,
+                user_id, form_id, action, created_on
         ))
         return True
 

@@ -104,7 +104,7 @@ class CompanyManager(object) :
             try:
                 data = response.body
                 data = base64.decodestring(data + b'=' * 10)
-                print data
+
                 r = Response.parse_structure(
                     json.loads(data)
                 )

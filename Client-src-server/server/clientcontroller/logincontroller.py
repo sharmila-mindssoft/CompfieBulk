@@ -15,9 +15,11 @@ from server.clientdatabase.general import (
     get_form_ids_for_admin, get_report_form_ids,
     verify_username,
     validate_reset_token, update_password, delete_used_token,
-    remove_session, update_profile, verify_password, get_user_name_by_id
+    remove_session, update_profile, verify_password, get_user_name_by_id,
+    get_user_forms, get_forms_by_category, get_legal_entity_info
     )
 from server.exceptionmessage import client_process_error
+from server.clientcontroller.corecontroller import process_user_forms
 
 __all__ = [
     "process_login_request",
@@ -91,24 +93,26 @@ def process_login(db, request, client_id, session_user_ip):
     logger.logLogin("info", user_ip, username, "Login process begin")
     user_id = verify_username(db, username)
     if user_id is None:
-        return clientlogin.InvalidUserName()
-    elif is_contract_not_started(db):
-        return clientlogin.ContractNotYetStarted()
-    elif not is_configured(db):
-        logger.logLogin("info", user_ip, username, "NotConfigured")
-        return clientlogin.NotConfigured()
-    elif not is_in_contract(db):
-        logger.logLogin("info", user_ip, username, "ContractExpired")
-        return clientlogin.ContractExpired()
-    elif not is_client_active(client_id):
-        logger.logLogin("info", user_ip, username, "InvalidCredentials")
-        return invalid_credentials(db, user_id, session_user_ip)
+        # return clientlogin.InvalidUserName()
+        return clientlogin.InvalidCredentials(None)
+    # elif is_contract_not_started(db):
+    #     return clientlogin.ContractNotYetStarted()
+    # elif not is_configured(db):
+    #     logger.logLogin("info", user_ip, username, "NotConfigured")
+    #     return clientlogin.NotConfigured()
+    # elif not is_in_contract(db):
+    #     logger.logLogin("info", user_ip, username, "ContractExpired")
+    #     return clientlogin.ContractExpired()
+    # elif not is_client_active(client_id):
+    #     logger.logLogin("info", user_ip, username, "InvalidCredentials")
+    #     return invalid_credentials(db, user_id, session_user_ip)
     else:
         response = verify_login(db, username, encrypt_password)
+        print response
     if login_type.lower() == "web":
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
-            delete_login_failure_history(db, user_id)
+            delete_loguser_login_responsein_failure_history(db, user_id)
             return admin_login_response(db, client_id, user_ip)
         else:
             if response is "ContractExpired":
@@ -118,6 +122,7 @@ def process_login(db, request, client_id, session_user_ip):
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return invalid_credentials(db, user_id, session_user_ip)
             else:
+                print "user_login_response"
                 logger.logLogin("info", user_ip, username, "Login process end")
                 delete_login_failure_history(db, user_id)
                 return user_login_response(db, response, client_id, user_ip)
@@ -234,38 +239,36 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
 
 
 def user_login_response(db, data, client_id, ip):
+    cat_id = data["user_category_id"]
     user_id = data["user_id"]
     email_id = data["email_id"]
+    address = data["address"]
     session_type = 1  # web
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     employee = "%s - %s" % (employee_code, employee_name)
+    username = data["username"]
+    mobile_no = data["mobile_no"]
     session_token = add_session(
-        db, user_id, session_type, ip, employee, client_id
+        db, cat_id, user_id, session_type, ip, employee, client_id
     )
     contact_no = data["contact_no"]
     user_group_name = data["user_group_name"]
-    form_ids = data["form_ids"]
-    is_promoted_admin = int(data["is_admin"])
-    if is_promoted_admin == 1:
-        form_ids = "%s, 3, 4, 6, 7, 8, 24" % (form_ids)
-        form_ids_list = [int(x) for x in form_ids.split(",")]
-        if 1 not in form_ids_list:
-            form_ids_list.append(1)
-        report_form_ids = get_report_form_ids(db).split(",")
-        for form_id in report_form_ids:
-            if form_id not in form_ids_list:
-                form_ids_list.append(form_id)
-    else:
-        form_ids_list = [int(x) for x in form_ids.split(",")]
-        # form_ids = ",".join(str(x) for x in form_ids_list)
+    le_info = get_legal_entity_info(db, user_id, cat_id)
+
+    if len(le_info) == 0:
+        return clientlogin.LegalEntityNotVailable()
+    if cat_id == 1 :
+        forms = get_forms_by_category(db, cat_id)
+    else :
+        forms = get_user_forms(db, user_id)
     menu = process_user_forms(
-        db, ",".join(str(x) for x in form_ids_list), client_id, 0
+        db, forms
     )
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
-        menu, employee_name, employee_code, contact_no, None, None,
-        client_id, bool(is_promoted_admin)
+        menu, employee_name, employee_code, contact_no, address,
+        client_id, username, mobile_no, le_info
     )
 
 

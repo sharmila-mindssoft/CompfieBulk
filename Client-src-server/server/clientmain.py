@@ -316,8 +316,10 @@ class API(object):
         print "in handle api"
         print is_group
         if is_group :
+            print "Group DB"
             db_cons = self._group_databases.get(company_id)
         else :
+            print "LE Db"
             db_cons = self._le_databases.get(company_id)
 
         print company_id

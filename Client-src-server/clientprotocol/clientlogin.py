@@ -274,8 +274,8 @@ class Response(object):
 class UserLoginSuccess(Response):
     def __init__(
         self, user_id, session_token, email_id, user_group_name, menu,
-        employee_name, employee_code, contact_no, address, designation, client_id,
-        is_admin, username, mobile_no
+        employee_name, employee_code, contact_no, address, client_id,
+        username, mobile_no, entity_info
     ):
         self.user_id = user_id
         self.session_token = session_token
@@ -286,53 +286,52 @@ class UserLoginSuccess(Response):
         self.employee_code = employee_code
         self.contact_no = contact_no
         self.address = address
-        self.designation = designation
         self.client_id = client_id
-        self.is_admin = is_admin
         self.username = username
         self.mobile_no = mobile_no
+        self.entity_info = entity_info
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "user_id", "session_token", "email_id",
-            "user_group_name", "menu", "employee_name", "employee_code",
-            "contact_no", "address", "designation", "user_client_id", "is_admin", "username", "mobile_no"])
-        user_id = data.get("user_id")
+            "usr_id", "session_token", "email_id",
+            "u_g_name", "menu", "emp_name", "emp_code",
+            "con_no", "address", "ct_id", "username", "mob_no", "entity_info"])
+        user_id = data.get("usr_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
-        user_group_name = data.get("user_group_name")
+        user_group_name = data.get("u_g_name")
         menu = data.get("menu")
-        employee_name = data.get("employee_name")
-        employee_code = data.get("employee_code")
-        contact_no = data.get("contact_no")
+        employee_name = data.get("emp_name")
+        employee_code = data.get("emp_code")
+        contact_no = data.get("con_no")
         address = data.get("address")
-        designation = data.get("designation")
-        client_id = data.get("user_client_id")
-        is_admin = data.get("is_admin")
+        client_id = data.get("ct_id")
         username = data.get("username")
-        mobile_no = data.get("mobile_no")
+        mobile_no = data.get("mob_no")
+        entity_info = data.get("entity_info")
         return UserLoginSuccess(
             user_id, session_token, email_id, user_group_name, menu,
             employee_name, employee_code, contact_no, address,
-            designation, client_id, is_admin, username, mobile_no)
+            client_id, username, mobile_no, entity_info
+
+        )
 
     def to_inner_structure(self):
         return {
-            "user_id": self.user_id,
+            "usr_id": self.user_id,
             "session_token": self.session_token,
             "email_id": self.email_id,
-            "user_group_name": self.user_group_name,
+            "u_g_name": self.user_group_name,
             "menu": self.menu,
-            "employee_name": self.employee_name,
-            "employee_code": self.employee_code,
-            "contact_no": self.contact_no,
+            "emp_name": self.employee_name,
+            "emp_code": self.employee_code,
+            "con_no": self.contact_no,
             "address": self.address,
-            "designation": self.designation,
-            "user_client_id": self.client_id,
-            "is_admin": self.is_admin,
+            "ct_id": self.client_id,
             "username": self.username,
-            "mobile_no": self.mobile_no
+            "mob_no": self.mobile_no,
+            "entity_info": self.entity_info
         }
 
 class AdminLoginSuccess(Response):
@@ -577,6 +576,20 @@ class NotConfigured(Response):
         return {
         }
 
+class LegalEntityNotVailable(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return LegalEntityNotVailable()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class EnterDifferentPassword(Response):
     def __init__(self):
         pass
@@ -684,7 +697,7 @@ def _init_Response_class_map():
         InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
         InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken,
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
-        NotConfigured, ContractNotYetStarted, UpdateUserProfileSuccess,
+        NotConfigured, LegalEntityNotVailable, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
         SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists
     ]

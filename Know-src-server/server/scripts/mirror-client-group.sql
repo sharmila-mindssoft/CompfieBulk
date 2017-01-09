@@ -337,7 +337,7 @@ INSERT INTO tbl_forms VALUES(25, 3, 'Statutory Notification List', "/statutory-n
 INSERT INTO tbl_forms VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 26, null);
 INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
 INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
-INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/View Profile", 29, null);
+INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/view-profile", 29, null);
 INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 30, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
 INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);

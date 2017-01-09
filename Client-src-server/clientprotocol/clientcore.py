@@ -3890,3 +3890,30 @@ class ClientUsercategory(object):
             "u_c_id": self.user_category_id,
             "u_c_name": self.user_category_name,
         }
+
+class LegalEntityInfo(object):
+    def __init__(self, legal_entity_id, legal_entity_name, business_group_id, business_group_name):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id", "le_name", "bg_id", "bg_name"])
+        legal_entity_id = data.get("le_id")
+        legal_entity_name = data.get("le_name")
+        business_group_id = data.get("bg_id")
+        business_group_name = data.get("bg_name")
+        return ClientUserGroup(
+            legal_entity_id, legal_entity_name,
+            business_group_id, business_group_name
+        )
+
+    def to_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "le_name": self.legal_entity_name,
+            "bg_name": self.business_group_name,
+            "bg_id": self.business_group_id
+        }
