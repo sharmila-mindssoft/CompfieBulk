@@ -315,6 +315,18 @@ class SaveAutoDeletion(Request):
             "auto_deletion_details": self.auto_deletion_details
         }
 
+class GetAllocateServerReportData(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetAllocateServerReportData()
+
+    def to_structure(self):
+        return {
+        }
 
 class GetIPSettingsList(Request):
     def __init__(self):
@@ -408,7 +420,7 @@ class GetIPSettingsReport(Request):
         self.ip = ip
         self.from_count = from_count
         self.page_count = page_count
-        
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
@@ -435,7 +447,8 @@ def _init_Request_class_map():
         GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
         GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
         SaveFileServer, GetIPSettingsList, GetGroupIPDetails, SaveIPSettings, DeleteIPSettings,
-        GetIPSettingsReport, GetIPSettingsReportFilter
+        GetIPSettingsReport, GetIPSettingsReportFilter,
+        SaveFileServer, GetAllocateServerReportData
     ]
     class_map = {}
     for c in classes:
@@ -703,6 +716,70 @@ class ClientDatabase(object):
             "is_created": self.is_created,
         }
 
+class AllocateDBList(object):
+    def __init__(
+        self, client_id, group_name, legal_entity_id, legal_entity_name,
+        machine_id, machine_name, client_db_server_id,
+        client_db_server_name, db_server_id, db_server_name, file_server_id,
+        file_server_name
+    ):
+        self.client_id = client_id
+        self.group_name = group_name
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.machine_id = machine_id
+        self.machine_name = machine_name
+        self.client_db_server_id = client_db_server_id
+        self.client_db_server_name = client_db_server_name
+        self.db_server_id = db_server_id
+        self.db_server_name = db_server_name
+        self.file_server_id = file_server_id
+        self.file_server_name = file_server_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data,
+            [
+                "client_id", "group_name", "legal_entity_id", "legal_entity_name",
+                "machine_id", "machine_name", "client_db_server_id",
+                "client_db_server_name", "db_server_id", "db_server_name",
+                "file_server_id", "file_server_name"
+            ]
+        )
+        client_id = data.get("client_id")
+        group_name = data.get("group_name")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        machine_id = data.get("machine_id")
+        machine_name = data.get("machine_name")
+        client_db_server_id = data.get("client_db_server_id")
+        client_db_server_name = data.get("client_db_server_name")
+        db_server_id = data.get("db_server_id")
+        db_server_name = data.get("db_server_name")
+        file_server_id = data.get("file_server_id")
+        file_server_name = data.get("file_server_name")
+        return ClientDatabase(
+            client_id, group_name, legal_entity_id, legal_entity_name,
+            machine_id, machine_name, client_db_server_id, client_db_server_name,
+            db_server_id, db_server_name, file_server_id, file_server_name
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "machine_id": self.machine_id,
+            "machine_name": self.machine_name,
+            "client_db_server_id": self.client_db_server_id,
+            "client_db_server_name": self.client_db_server_name,
+            "db_server_id": self.db_server_id,
+            "db_server_name": self.db_server_name,
+            "file_server_id": self.file_server_id,
+            "file_server_name": self.file_server_name,
+        }
 
 class ClientGroup(object):
     def __init__(self, client_id, group_name):
@@ -1091,7 +1168,7 @@ class Form(object):
         )
         form_id = data.get("form_id")
         form_name = data.get("form_name")
-        
+
         return Unit(
             form_id, form_name
         )
@@ -1120,7 +1197,7 @@ class IPSettingsList(object):
         client_id = data.get("client_id")
         form_id = data.get("form_id")
         group_name = data.get("group_name")
-        
+
         return Unit(
             client_id, form_id, group_name
         )
@@ -1150,7 +1227,7 @@ class GroupIPDetails(object):
         form_id = data.get("form_id")
         ip = data.get("ip")
         client_id = data.get("client_id")
-        
+
         return GroupIPDetails(
             form_id, ip, client_id
         )
@@ -1243,6 +1320,20 @@ class SaveAutoDeletionSuccess(Response):
     def to_inner_structure(self):
         return {}
 
+class GetAllocatedDBListSuccess(Response):
+    def __init__(self, allocate_db_list):
+        self.allocate_db_list = allocate_db_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["allocate_db_list"])
+        allocate_db_list = data.get("allocate_db_list")
+        return GetAllocatedDBListSuccess(allocate_db_list)
+
+    def to_inner_structure(self):
+        return {
+            "allocate_db_list": self.allocate_db_list
+        }
 
 class GetIPSettingsListSuccess(Response):
     def __init__(
@@ -1323,7 +1414,7 @@ class DeleteIPSettingsSuccess(Response):
 class GetIPSettingsReportSuccess(Response):
     def __init__(
         self, total_records, group_ips_list
-    ):  
+    ):
         self.total_records = total_records
         self.group_ips_list = group_ips_list
 
@@ -1382,7 +1473,8 @@ def _init_Response_class_map():
         GetAutoDeletionListSuccess, SaveAutoDeletionSuccess,
         GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists,
         GetIPSettingsListSuccess, GetGroupIPDetailsSuccess, DeleteIPSettingsSuccess,
-        GetIPSettingsReportSuccess, GetIPSettingsReportSuccess
+        GetIPSettingsReportSuccess, GetIPSettingsReportSuccess,
+        GetAllocatedDBListSuccess
     ]
     class_map = {}
     for c in classes:

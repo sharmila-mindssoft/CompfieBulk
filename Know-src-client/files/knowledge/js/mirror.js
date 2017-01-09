@@ -2527,6 +2527,14 @@ function initMirror() {
         }
       ];
       apiRequest(callerName, request, callback);
+
+  function getAllocateServerReportData(callback){
+    callerName = 'console_admin';
+    var request = [
+        "GetAllocateServerReportData",
+        {}
+      ];
+    apiRequest(callerName, request, callback);
   }
 
   return {
@@ -2744,6 +2752,7 @@ function initMirror() {
     deleteIPSettings:deleteIPSettings,
     getIPSettingsReportFilter: getIPSettingsReportFilter,
     getIPSettingsReport: getIPSettingsReport,
+    getAllocateServerReportData: getAllocateServerReportData,
   };
 }
 var mirror = initMirror();

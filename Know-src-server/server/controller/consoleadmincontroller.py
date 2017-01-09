@@ -106,6 +106,14 @@ def process_console_admin_request(request, db):
         result = process_ip_setting_report(
             db, request_frame, session_user)
 
+    elif(type(request_frame) is consoleadmin.GetAllocateServerReportData):
+        logger.logKnowledgeApi("GetAllocateServerReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_allocate_server_report_data(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("GetAllocateServerReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
+
     return result
 
 
@@ -264,6 +272,7 @@ def process_file_server_entry(db, request, session_user):
         file_server_entry_process(db, request, session_user)
         return consoleadmin.SaveFileServerSuccess()
 
+
 ###############################################################################
 # To get ip setting details
 # parameter : Object of database, Save Request, session user
@@ -331,4 +340,12 @@ def process_ip_setting_report(db, request, session_user):
     return consoleadmin.GetIPSettingsReportSuccess(
         total_records=total_records, group_ips_list=group_ips_list)
 
-    
+
+###############################################################################
+# To get allocated server group, legal entity
+# parameter : Object of database, session user
+# return type : Returns success response
+###############################################################################
+def process_allocate_server_report_data(db, request, session_user):
+    allocate_server_list = get_allocated_server_form_data(db)
+    return consoleadmin.GetAllocatedDBListSuccess(allocate_server_list)

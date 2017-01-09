@@ -2726,6 +2726,7 @@ BEGIN
     values
     (clientid, le_id, machineid, _f_s_id, le_db_server_id, db_server_id, _created_by, _created_on);
 
+
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
 
@@ -2778,6 +2779,9 @@ BEGIN
     machine_id = machineid, file_server_id = _f_s_id, database_server_id = le_db_server_id,
     client_database_server_id = db_server_id, updated_by = _created_by
     where client_database_id = client_db_id;
+
+    update tbl_client_database set client_database_server_id = db_server_id
+    where client_id = clientid;
 
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
@@ -2971,7 +2975,7 @@ CREATE PROCEDURE `sp_usermapping_delete`(
     IN parent_userid INT(11), IN c_id INT(11), IN d_id INT(11)
 )
 BEGIN
-    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid and 
+    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid and
     country_id = c_id and domain_id = d_id;
 END //
 
@@ -7934,29 +7938,29 @@ CREATE PROCEDURE `sp_ip_setting_details_report`(
     IN c_id INT(11), IN ip_ VARCHAR(50), IN f_count INT(11), IN t_count INT(11)
 )
 BEGIN
-    
-    SELECT count(distinct client_id) as total_record FROM tbl_ip_settings 
-    where 
-    IF(c_id IS NOT NULL, client_id = c_id, 1) and 
+
+    SELECT count(distinct client_id) as total_record FROM tbl_ip_settings
+    where
+    IF(c_id IS NOT NULL, client_id = c_id, 1) and
     IF(ip_ IS NOT NULL, ips = ip_, 1);
-    
+
     SELECT t2.form_id,t2.client_id, t2.ips
-    From tbl_ip_settings t2 
+    From tbl_ip_settings t2
     inner join (
-    SELECT t.client_id, 
+    SELECT t.client_id,
            @rownum := @rownum + 1 AS num
-    FROM (select distinct client_id from tbl_ip_settings order by client_id) t, 
+    FROM (select distinct client_id from tbl_ip_settings order by client_id) t,
            (SELECT @rownum := 0) r
           ) t3 on t2.client_id = t3.client_id
-    where 
-    IF(c_id IS NOT NULL, t2.client_id = c_id, 1) and 
+    where
+    IF(c_id IS NOT NULL, t2.client_id = c_id, 1) and
     IF(ip_ IS NOT NULL, t2.ips = ip_, 1) and
     t3.num between f_count and t_count
     order by t2.client_id;
 
-    /*SELECT form_id, ips, client_id FROM tbl_ip_settings 
-    where 
-    IF(c_id IS NOT NULL, client_id = c_id, 1) and 
+    /*SELECT form_id, ips, client_id FROM tbl_ip_settings
+    where
+    IF(c_id IS NOT NULL, client_id = c_id, 1) and
     IF(ip_ IS NOT NULL, ips = ip_, 1)
     order by client_id
     limit f_count, t_count*/
@@ -8007,3 +8011,28 @@ END //
 
 DELIMITER ;
 
+-- Allocate Database Environemnt - Get Details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_getdata`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_getdata`()
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name
+    from
+    tbl_client_database as t1;
+END //
+
+DELIMITER;
