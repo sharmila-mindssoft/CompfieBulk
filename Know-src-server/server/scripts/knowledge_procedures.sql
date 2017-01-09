@@ -2945,10 +2945,11 @@ DROP PROCEDURE IF EXISTS `sp_usermapping_delete`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_usermapping_delete`(
-    IN parent_userid INT(11)
+    IN parent_userid INT(11), IN c_id INT(11), IN d_id INT(11)
 )
 BEGIN
-    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
+    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid and 
+    country_id = c_id and domain_id = d_id;
 END //
 
 DELIMITER ;

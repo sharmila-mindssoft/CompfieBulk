@@ -1063,7 +1063,7 @@ def save_user_mappings(db, request, session_user):
             child_user_id, session_user, current_time_stamp
         ) for child_user_id in child_users
     ]
-    db.call_update_proc("sp_usermapping_delete", (parent_user_id,))
+    db.call_update_proc("sp_usermapping_delete", (parent_user_id, country_id, domain_id))
     result = db.bulk_insert(
         tblUserMapping, insert_columns, insert_values
     )
