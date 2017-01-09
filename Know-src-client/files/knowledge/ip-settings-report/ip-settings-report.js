@@ -13,6 +13,19 @@ var FORMS_LIST = '';
 
 var GROUP_IPS_LIST = '';
 var form_map = {};
+var group_map = {};
+
+//Pagination variable declaration
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var on_current_page = 1;
+var sno = 0;
+var totalRecord;
+
+//Other variable declaration
+var ReportView = $('.grid-table-rpt');
 
 function initialize(){
     $(".details").hide();
@@ -34,8 +47,38 @@ function initialize(){
             onFailure(error);
         }
     });
-    
 }
+
+
+function showPagePan(showFrom, showTo, total) {
+    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
+    CompliacneCount.text(showText);
+    PaginationView.show();
+};
+
+function hidePagePan() {
+    CompliacneCount.text('');
+    PaginationView.hide();
+}
+
+function createPageView(total_records) {
+    perPage = parseInt(ItemsPerPage.val());
+    Pagination.empty();
+    Pagination.removeData('twbs-pagination');
+    Pagination.unbind('page');
+
+    Pagination.twbsPagination({
+        totalPages: Math.ceil(total_records/perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cPage = parseInt(page);
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
+                getResult();
+            }
+        }
+    });
+};
 
 function clearFields(){
     GroupVal.val("");
@@ -47,23 +90,57 @@ function generateMaps(){
     $.each(FORMS_LIST, function(key, value){
         form_map[value.form_id] = value.form_name
     });
+
+    $.each(CLIENT_GROUPS, function(key, value){
+        group_map[value.client_id] = value.group_name
+    });
 }
 
 function getResult(){
+    displayLoader();
     var g_id = null;
     var ip_address = null;
-    var f_count = 1;
-    var t_count = 100;
+    var t_count = parseInt(ItemsPerPage.val());;
     if(Group.val() != ''){
         g_id = parseInt(Group.val());
     }
     if(IPAddress.val() != ''){
         ip_address = IPAddress.val();
     }
-    mirror.getIPSettingsReport(g_id, ip_address, f_count, t_count, function (error, response) {
+
+
+    if (on_current_page == 1) {
+      sno = 0
+    }
+    else {
+      sno = (on_current_page - 1) *  t_count;
+    }
+
+    t_count = sno + t_count;
+    mirror.getIPSettingsReport(g_id, ip_address, (sno + 1), t_count, function (error, response) {
         if (error == null) {
             GROUP_IPS_LIST = response.group_ips_list;
-            loadForms();
+            totalRecord = response.total_records;
+
+            if (totalRecord == 0) {
+                var g_row = $("#templates .table-form-list .table-row-head");
+                var clone = g_row.clone();
+                $(".sno", clone).text('');
+                $(".group-name", clone).text("No Records Found");
+                $(".tbody-form-list").append(clone);    
+                PaginationView.hide();
+                ReportView.show();
+                hideLoader();
+              } else {
+                hideLoader();
+                if(sno==0){
+                  createPageView(totalRecord);
+                }
+                PaginationView.show();
+                ReportView.show();
+                loadForms();
+              }
+
         } else {
             displayMessage(error);
         }
@@ -80,6 +157,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function pageControls() {
 
     btnShow.click(function(){
+        on_current_page = 1;
         $('.details').show();
         $('#compliance_animation')
           .removeClass().addClass('bounceInLeft animated')
@@ -104,38 +182,73 @@ function pageControls() {
                 onAutoCompleteSuccess(GroupVal, Group, val);
         });
     });
+
+    ItemsPerPage.on('change', function (e) {
+        perPage = parseInt($(this).val());
+        sno = 0;
+        on_current_page = 1;
+        createPageView(totalRecord);
+        getResult();
+    });
 }
 
 
 function loadForms(){
-    
+    var lastGroup = '';
     $(".tbody-form-list").empty();
-    var g_row = $("#templates .table-form-list .table-row");
-    var count = 0;
-    $.each(FORMS_LIST, function(key, value){
-        ++ count;
-        var clone = g_row.clone();
-        $(".form-name", clone).text(value.form_name);
 
-        $('.ip-address', clone).attr('id', 'ip_'+value.form_id);
-        $(".ip-address", clone).val(form_map[value.form_id]);
+    var showFrom = sno + 1;
+    var is_null = true;
 
-        $(".ip-address", clone).on('input', function(e) {
-            this.value = isNumbers_Dot($(this));
-        });
-        $(".tbody-form-list").append(clone);  
-        
+    var g_row = $("#templates .table-form-list .table-row-head");
+    $.each(GROUP_IPS_LIST, function(key, value){
+        if(lastGroup != group_map[value.client_id]){
+            is_null = false;
+            sno++;
+            var clone = g_row.clone();
+            $(".sno", clone).text(sno);
+            $('.group-name', clone).attr('href', '#collapse'+sno);
+            $(".group-name", clone).text(group_map[value.client_id]);
+            $(".tbody-form-list").append(clone);
+
+            var c_row = $("#templates .table-form-list .table-row-child");
+            var c_clone = c_row.clone();
+            c_clone.attr('id', 'collapse'+sno);
+            c_clone.find('tbody').addClass('tbody-iplist-'+sno);
+            $(".tbody-form-list").append(c_clone);
+
+            lastGroup = group_map[value.client_id];
+        }
+
+        var f_row = $("#templates .table-form-list .table-row-forms");
+        var f_clone = f_row.clone();
+        $(".form-name", f_clone).text(form_map[value.form_id]);
+        $(".ip-address", f_clone).text(value.ip);
+        $(".tbody-iplist-"+sno).append(f_clone);
     });
-    if(count == 0){
-        var clone = unit_row.clone();
-        $(".form-name", clone).text("No Forms Found");
-        $(".ip-address", clone).hide();
-        $(".tbody-form-list").append(clone);    
+
+    if (is_null == true) {
+      hidePagePan();
     }
+    else {
+      showPagePan(showFrom, sno, totalRecord);
+    }
+    hideLoader();
+
+    /*if(sno == 0){
+        var g_row = $("#templates .table-form-list .table-row-head");
+        var clone = g_row.clone();
+        $(".sno", clone).text('');
+        $(".group-name", clone).text("No Records Found");
+        $(".tbody-form-list").append(clone);    
+    }else{
+        $('.total_record').text("Total : " + sno +" record(s)");
+    }*/
 }
 
 //initialization
 $(function () {
   initialize("list");
   pageControls();
+  loadItemsPerPage();
 });

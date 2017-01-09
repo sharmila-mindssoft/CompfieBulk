@@ -1322,24 +1322,27 @@ class DeleteIPSettingsSuccess(Response):
 
 class GetIPSettingsReportSuccess(Response):
     def __init__(
-        self, group_ips_list
-    ):
+        self, total_records, group_ips_list
+    ):  
+        self.total_records = total_records
         self.group_ips_list = group_ips_list
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-               "group_ips_list"
+               "total_records", "group_ips_list"
             ]
         )
+        total_records = data.get("total_records")
         group_ips_list = data.get("group_ips_list")
         return GetIPSettingsReportSuccess(
-            group_ips_list
+            total_records, group_ips_list
         )
 
     def to_inner_structure(self):
         return {
+            "total_records": self.total_records,
             "group_ips_list": self.group_ips_list
         }
 

@@ -833,12 +833,13 @@ def ip_setting_report_data(db, request, session_user):
     f_count = request.from_count
     t_count = request.page_count
     
-    data = db.call_proc(
-        "sp_ip_setting_details_report", (client_id, ip, f_count, t_count)
-    )
-    ips_list = return_group_ipslist(data)
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_setting_details_report", (client_id, ip, f_count, t_count), 2)
+
+    total_records = data[0][0]["total_record"]
+    ips_list = return_group_ipslist(data[1])
     return (
-        ips_list
+        total_records, ips_list
     )
 
 def get_ip_settings_report_filter(db):
