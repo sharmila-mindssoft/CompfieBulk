@@ -18,39 +18,66 @@ __all__ = [
     'api_params'
 ]
 
+def make_int_field(length=1000, is_optional=False):
+    return {'type': 'INT', 'length': length, 'is_optional': is_optional}
+
+def make_string_field(length=100, is_optional=False, validfun=allow_specialchar):
+    return {'type': 'STRING', 'length': length , 'validation_method': validfun, 'is_optional': is_optional}
+
+def make_text_field(length=100, is_optional=False):
+    return {'type': 'TEXT', 'length': length , 'is_optional': is_optional}
+
+def make_vector_type_field(module, klass_name, is_optional=False):
+    return {'type': 'VECTOR_TYPE', 'is_optional': is_optional, 'module_name': module, "class_name": klass_name},
+
+def make_vector_type_int(length=100, is_optional=False):
+    return {'type': 'VECTOR_TYPE_INT', 'length': length, 'is_optional': is_optional}
+
+def make_bool_field():
+    return {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+
+def make_enum_type(module, klass_name):
+    return {'type': 'ENUM_TYPE', 'module_name': module, 'class_name': klass_name},
+
+def make_map_type(module, klass_name, validfun=is_numeric, is_optional=false):
+    return {'type': 'MAP_TYPE', 'validation_method': validfun, 'is_optional': is_optional, 'module_name': module, "class_name": klass_name},
+
+def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
+    return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name},
+
 api_params = {
     'request': {},
-    'session_token': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
-    'reset_token': {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
+    'session_token': make_text_field(length=50),
+    'reset_token':  make_text_field(length=50),
 
-    'new_password': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': False},
-    'current_password': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': False},
+    'new_password': make_text_field(length=20),
+    'current_password': make_text_field(length=20),
 
-    'login_type': {'type': 'ENUM_TYPE', 'length': None,  'validation_method': None, 'module_name': 'core', 'class_name': 'SESSION_TYPE'},
-    'username': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
-    'password': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': False},
-    'short_name': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
-    'ip': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
-    'user_client_id': {'type': 'INT', 'length': 500, 'validation_methods': None, 'is_optional': True},
-    'captcha_text': {'type': 'STRING', 'length': CAPTCHA_LENGTH, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'login_type': make_enum_type("clientcore", "SESSION_TYPE"),
+    'username': make_text_field(length=100),
+    'password': make_text_field(length=100),
+    'short_name': make_text_field(length=50),
+    'ip': make_text_field(length=50),
+    'user_client_id': make_int_field(is_optional=True),
+    'captcha_text': make_string_field(length=CAPTCHA_LENGTH, is_optional=True, validfun=is_alpha_numeric),
+    'form_id': make_int_field(length=100),
+    'form_name': make_string_field(length=50, validfun=allow_specialchar),
+    'form_url': make_string_field(length=250, validfun=is_url),
+    'parent_menu': make_string_field(length=50, is_optional=True, validfun=is_alphabet),
+    'form_type': make_string_field(length=50, validfun=is_alphabet),
 
-    'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'u_g_id': make_int_field(),
+    'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric),
+    'is_active': make_bool_field(),
+    'u_c_id': make_int_field,
+    'f_ids': make_vector_type_int(length=1000, is_optional=True),
+    'u_c_name': make_string_field(length=50, validfun=is_alpha_numeric),
+    "forms": make_map_type("clientcore", "Menu"),
+    "menus": make_map_type_vector_type("clientcore", "Form"),
 
-    'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},
-    'form_url': {'type': 'TEXT', 'length': 250, 'validation_method': is_url, 'is_optional': False},
-    'parent_menu': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
-    'form_type': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    "user_groups": make_vector_type_field("clientcore", "ClientUserGroup"),
+    "user_category": make_vector_type_field("clientcore", "ClientUsercategory"),
 
-    'u_g_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
-    'u_g_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'is_active': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
-    'u_c_id': {'type': 'INT', 'length': 1000, 'validation_method': None, 'is_optional': False},
-    'f_ids': {'type': 'VECTOR_TYPE_INT', 'length': 1000, 'validation_method': None, 'is_optional': True},
-    'u_c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    "forms":  {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name': 'core', "class_name": "Menu"},
-    "menus":  {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False, 'module_name': 'core', "class_name": "Form"},
-    "user_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUserGroup"},
-    "user_category": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUsercategory"},
-
-    'form_ids': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'form_ids': make_int_field(),
+    "entity_info": make_vector_type_field(module="clientcode", kalss="LegalEntityInfo"),
 }
