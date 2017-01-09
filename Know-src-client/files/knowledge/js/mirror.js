@@ -212,9 +212,10 @@ function initMirror() {
       headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(request),
+      data: btoa(toJSON(request)),
       success: function (data) {
-        // var data = parseJSON(data);
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -226,7 +227,9 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        callback(jqXHR.responseText, null);
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
+        callback(rdata, null);
       }
     });
   }
