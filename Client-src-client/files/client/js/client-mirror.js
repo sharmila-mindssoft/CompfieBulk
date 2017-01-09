@@ -97,7 +97,7 @@ function initClientMirror() {
     function getSessionToken() {
         // var info = getUserInfo();
         // return info.session_token;
-        return "1-6026dd780194411fbcac2ce5decc5141";
+        return "14-6026dd780194411fbcac2ce5decc5141";
     }
 
     function getUserMenu() {
@@ -158,7 +158,7 @@ function initClientMirror() {
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
-            'session_token': "1-6026dd780194411fbcac2ce5decc5141",
+            'session_token': "14-6026dd780194411fbcac2ce5decc5141",
             'request': request
         };
         var body = [

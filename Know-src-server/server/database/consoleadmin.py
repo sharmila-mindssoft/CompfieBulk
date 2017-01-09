@@ -28,6 +28,7 @@ __all__ = [
     "delete_ip_setting_details",
     "get_ip_settings_report_filter",
     "ip_setting_report_data",
+    "get_allocated_server_form_data"
 ]
 
 
@@ -772,6 +773,7 @@ def file_server_entry_process(db, request, user_id):
         print e
         raise process_error("E078")
 
+
 def get_ip_settings_form_data(db):
     #
     #  To get data required for ip settings form
@@ -890,7 +892,7 @@ def save_ip_setting_details(db, request, session_user):
 def delete_ip_setting_details(db, request, session_user):
     client_id = request.client_id
     db.call_update_proc("sp_ip_settings_delete", (client_id,))
-    
+
 
 ###############################################################################
 # To get ip setting report details
@@ -902,7 +904,7 @@ def ip_setting_report_data(db, request, session_user):
     ip = request.ip
     f_count = request.from_count
     t_count = request.page_count
-    
+
     data = db.call_proc_with_multiresult_set(
         "sp_ip_setting_details_report", (client_id, ip, f_count, t_count), 2)
 
@@ -928,3 +930,29 @@ def get_ip_settings_report_filter(db):
     return (
         groups_list, forms_list
     )
+
+
+###############################################################################
+# To get allocated server details
+# parameter : Object of databse
+# return type : Returns records of allocated server lost
+#   process error
+###############################################################################
+def get_allocated_server_form_data(db):
+    result = db.call_proc("sp_allocate_db_environment_report_getdata", None)
+    allocate_db_report = []
+    if(result is not None):
+        for row in result:
+            allocate_db_report.append(consoleadmin.AllocateDBList(
+                    client_id=row["client_id"], group_name=row["group_name"],
+                    legal_entity_id=row["legal_entity_id"],
+                    legal_entity_name=row["legal_entity_name"],
+                    machine_id=row["machine_id"], machine_name=row["machine_name"],
+                    client_db_server_id=row["client_database_server_id"],
+                    client_db_server_name=row["client_db_server_name"],
+                    db_server_id=row["database_server_id"], db_server_name=row["db_server_name"],
+                    file_server_id=row["file_server_id"],
+                    file_server_name=row["file_server_name"]
+                )
+            )
+        return allocate_db_report

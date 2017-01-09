@@ -436,6 +436,11 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/knowledge/allocate-database-environment-report",
+        "files/knowledge/allocate-database-environment-report/allocate-database-environment-report.html",
+        None, {}
+    ),
+    (
         "/knowledge/auto-deletion",
         "files/knowledge/auto-deletion/auto-deletion.html",
         None, {}
