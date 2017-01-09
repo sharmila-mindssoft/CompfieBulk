@@ -816,7 +816,7 @@ function initMirror() {
     ];
     apiRequest('knowledge_report', request, callback);
   }
-  function filterData(cId, dId, iId, sNId, gId, level1SId, fId, rCount) {
+  function filterData(cId, dId, iId, sNId, gId, level1SId, fId, rCount, page_count) {
     var filter = {};
     filter.c_id = cId;
     filter.d_id = dId;
@@ -826,6 +826,7 @@ function initMirror() {
     filter.statutory_id_optional = level1SId;
     filter.frequency_id = fId;
     filter.r_count = rCount;
+    filter.page_count = page_count;
     return filter;
   }
   function getStatutoryMappingsReportData(filterDatas, callback) {
