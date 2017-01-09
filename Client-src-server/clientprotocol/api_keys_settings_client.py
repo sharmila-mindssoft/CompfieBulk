@@ -28,22 +28,22 @@ def make_text_field(length=100, is_optional=False):
     return {'type': 'TEXT', 'length': length , 'is_optional': is_optional}
 
 def make_vector_type_field(module, klass_name, is_optional=False):
-    return {'type': 'VECTOR_TYPE', 'is_optional': is_optional, 'module_name': module, "class_name": klass_name},
+    return {'type': 'VECTOR_TYPE', 'is_optional': is_optional, 'module_name': module, "class_name": klass_name}
 
 def make_vector_type_int(length=100, is_optional=False):
     return {'type': 'VECTOR_TYPE_INT', 'length': length, 'is_optional': is_optional}
 
 def make_bool_field():
-    return {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    return {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False}
 
 def make_enum_type(module, klass_name):
-    return {'type': 'ENUM_TYPE', 'module_name': module, 'class_name': klass_name},
+    return {'type': 'ENUM_TYPE', 'module_name': module, 'class_name': klass_name}
 
-def make_map_type(module, klass_name, validfun=is_numeric, is_optional=false):
-    return {'type': 'MAP_TYPE', 'validation_method': validfun, 'is_optional': is_optional, 'module_name': module, "class_name": klass_name},
+def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
+    return {'type': 'MAP_TYPE', 'validation_method': validfun, 'is_optional': is_optional, 'module_name': module, "class_name": klass_name}
 
 def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
-    return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name},
+    return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
 api_params = {
     'request': {},
@@ -66,8 +66,8 @@ api_params = {
     'parent_menu': make_string_field(length=50, is_optional=True, validfun=is_alphabet),
     'form_type': make_string_field(length=50, validfun=is_alphabet),
 
-    'u_g_id': make_int_field(),
-    'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric),
+    'u_g_id': make_int_field(is_optional=True),
+    'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'is_active': make_bool_field(),
     'u_c_id': make_int_field,
     'f_ids': make_vector_type_int(length=1000, is_optional=True),
@@ -79,5 +79,21 @@ api_params = {
     "user_category": make_vector_type_field("clientcore", "ClientUsercategory"),
 
     'form_ids': make_int_field(),
-    "entity_info": make_vector_type_field(module="clientcode", kalss="LegalEntityInfo"),
+
+    "entity_info": make_vector_type_field(module="clientcode", klass_name="LegalEntityInfo"),
+    "ct_id": make_int_field(),
+    "le_id": make_int_field(),
+    "le_name": make_string_field(),
+    "bg_name": make_string_field(is_optional=True),
+    "bg_id": make_int_field(is_optional=True),
+    "usr_id": make_int_field(),
+    "email_id": make_string_field(validfun=allow_specialchar),
+    "emp_name": make_string_field(is_optional=True),
+    "emp_code": make_string_field(is_optional=True),
+    "con_no": make_string_field(is_optional=True),
+    "mob_no": make_string_field(is_optional=True),
+    "address": make_text_field(is_optional=True),
+    "menu":  make_map_type_vector_type("clientcore", "Form"),
+
+
 }
