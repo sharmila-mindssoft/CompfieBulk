@@ -191,6 +191,15 @@ def new_uuid():
 # To check generate a random string with alpahbets
 # and numbers
 ########################################################
+def generate_special_random(length=10):
+    characters = string.ascii_uppercase + string.ascii_lowercase
+    char = ''.join(
+        random.SystemRandom().choice(characters) for _ in range(length-3)
+    )
+    char += ''.join(random.SystemRandom().choice(string.digits) for _ in range(1))
+    char += ''.join(random.SystemRandom().choice('#$@!') for _ in range(2))
+    return char
+
 def generate_random(length=7):
     characters = string.ascii_uppercase + string.digits
     return ''.join(

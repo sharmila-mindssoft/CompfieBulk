@@ -1,6 +1,3 @@
-
-var csrf_token = $('meta[name=csrf-token]').attr('content')
-var btnLogin = $('#btn-login');
 var landingPage = null;
 var captchaStatus = false;
 var captchaText = null;
@@ -44,40 +41,29 @@ function setLandingPage(userProfile) {
   } else {
     landingPage = '/home';
   }
-}
-function getShortName() {
-  var pathArray = window.location.pathname.split('/');
-  short_name = null;
-  if (typeof pathArray[2] === 'undefined') {
-    short_name = null;
-  } else if (pathArray[2] === 'login') {
-    short_name = null;
-  } else {
-    short_name = pathArray[2];
-  }
-  return short_name;
+
 }
 //
 // isLoginValidated, resetLoginUI, performLogin
 //
 function isLoginValidated(e_email, e_password, e_captcha) {
   if (e_email.val() == '') {
-    displayLoginMessage('Enter username / password');
+    displayLoginMessage(message.username_password_required);
     e_email.focus();
     return false;
   }
   if (e_password.val() == '') {
-    displayLoginMessage('Enter username / password');
+    displayLoginMessage(message.username_password_required);
     e_password.focus();
     return false;
   }
   if (e_captcha.val() == '' && captchaStatus == true) {
-    displayLoginMessage('Enter Captcha');
+    displayLoginMessage(message.captcha_required);
     e_captcha.focus();
     return false;
   }
   if (e_captcha.val() != '' && getCaptcha() != e_captcha.val()) {
-    displayLoginMessage('Invalid Captcha');
+    displayLoginMessage(message.invalid_captcha);
     e_captcha.focus();
     return false;
   }
@@ -85,11 +71,13 @@ function isLoginValidated(e_email, e_password, e_captcha) {
 }
 function loadCaptcha() {
   captcha_text = getCaptcha();
+  console.log('captcha_text : ' + captcha_text);
   if (captcha_text == null || captcha_text == 'null') {
     captchaStatus = false;
   } else {
     captchaStatus = true;
   }
+  console.log('captcha status :' + captchaStatus);
   if (captchaStatus) {
     var myCanvas = document.getElementById('captchaCanvas');
     var myCanvasContext = myCanvas.getContext('2d');
@@ -109,10 +97,6 @@ function resetLoginUI(e_button, e_email, e_password) {
   e_email.focus();
   loadCaptcha();
 }
-function parseJSON(data) {
-  // data = JSON.stringify(data);
-  return JSON.parse(data);
-}
 function processLogin(username, password, shortName, callback) {
   var request = [
     'Login',
@@ -120,42 +104,33 @@ function processLogin(username, password, shortName, callback) {
       'login_type': 'Web',
       'username': username,
       'password': password,
-      'short_name': short_name,
+      'short_name': shortName,
       'ip': ''
     }
   ];
-  if (shortName == null) {
-    var requestFrame = request;
-    BASE_URL = '/knowledge/api/';
-  } else {
-    var requestFrame = [
-      shortName,
-      request
-    ];
-    BASE_URL = '/api/';
-  }
+  console.log(request);
+  var requestFrame = [
+    shortName,
+    request
+  ];
+  BASE_URL = '/api/';
+
   function getCookie(name) {
     var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
     return r ? r[1] : undefined;
   }
   // console.log(getCookie('_xsrf'));
   // url = BASE_URL + "login";
-  actula_data = JSON.stringify(requestFrame, null, ' ');
-  console.log(actula_data);
   $.ajax({
     url: BASE_URL + 'login',
-    headers: { 'X-CSRFToken': csrf_token },
+    headers: { 'X-Xsrftoken': getCookie('_xsrf') },
     type: 'POST',
     contentType: 'application/json',
-    data: btoa(actula_data),
+    data: JSON.stringify(requestFrame, null, ' '),
     success: function (data, textStatus, jqXHR) {
-      data = atob(data);
-      data = parseJSON(data);
+      var data = JSON.parse(data);
       var status = data[0];
       var response = data[1];
-
-      console.log(status)
-      console.log(response)
       matchString = 'success';
       if (status.toLowerCase().indexOf(matchString) != -1) {
         initSession(response, shortName);
@@ -165,13 +140,11 @@ function processLogin(username, password, shortName, callback) {
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      rdata = parseJSON(jqXHR.responseText);
-      rdata = atob(rdata);
-      callback(rdata, errorThrown);
+      callback(jqXHR.responseText, errorThrown);
     }
   });
 }
-function performLogin(e_button, e_email, e_password, e_captcha) {
+function performLogin(e_button, e_email, e_password, e_shortname, e_captcha) {
   if (!isLoginValidated(e_email, e_password, e_captcha))
     return;
   displayLoginLoader();
@@ -187,11 +160,11 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
     } else {
       status = data;
     }
-    var disp_message = 'Unable to login. Incorrect username / password!';
+    var disp_message = message.invalid_username_password;
     if (status == 'NotConfigured') {
-      disp_message = 'Please Wait...Your account configuration is under progress..';
+      disp_message = message.accountconfiguration_underprogress;
     } else if (status.indexOf('timeout') >= 0) {
-      disp_message = 'Connection Timeout';
+      disp_message = message.connection_timeout;
     } else {
       status = status.replace(/([A-Z])/g, ' $1').trim();
       disp_message = status;
@@ -200,31 +173,19 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
     $('input').val('');
     resetLoginUI(e_button, e_email, e_password);
   }
-  if (getShortName() === null) {
-    processLogin(e_email.val(), e_password.val(), null, function (error, response) {
-      if (error == null) {
-        // onSuccess(response)
-        resetLoginUI(e_button, e_email, e_password);
-        clearCaptcha();
-        window.location.href = '/knowledge/home';
-        $('#captcha-view').hide();
-      } else {
-        onFailure(error);
-      }
-    });
-  } else {
-    processLogin(e_email.val(), e_password.val(), getShortName(), function (error, response) {
-      if (error == null) {
-        // onSuccess(response)
-        resetLoginUI(e_button, e_email, e_password);
-        clearCaptcha();
-        window.location.href = landingPage;
-        $('#captcha-view').hide();
-      } else {
-        onFailure(error);
-      }
-    });
-  }
+
+  processLogin(e_email.val(), e_password.val(), e_shortname.val(), function (error, response) {
+    if (error == null) {
+      // onSuccess(response)
+      resetLoginUI(e_button, e_email, e_password);
+      clearCaptcha();
+      window.location.href = landingPage;
+      $('#captcha-view').hide();
+    } else {
+      onFailure(error);
+    }
+  });
+
 }
 function initializeUI() {
   var windowHHeight = $(window).height();
@@ -236,33 +197,38 @@ function initializeUI() {
 }
 function initializeLogin() {
   initializeUI();
-  $('#username').keydown(function (e) {
+  $('#txt-username').keydown(function (e) {
     if (e.keyCode == 13 && $(this).val() != '')
-      $('#password').focus();
+      $('#txt-password').focus();
   });
-  $('#password').keydown(function (e) {
+  $('#txt-password').keydown(function (e) {
     if (e.keyCode == 13 && $(this).val() != '')
-      performLogin($(this), $('#username'), $('#password'), $('#txt-captcha'));
+      //performLogin($(this), $("#txt-username"), $("#txt-password"));
+      performLogin($(this), $('#txt-username'), $('#txt-password'), $('#txt-shortname'), $('#txt-captcha'));
   });
   $('#txt-captcha').keydown(function (e) {
     if (e.keyCode == 13 && $(this).val() != '')
-      performLogin($(this), $('#username'), $('#password'), $('#txt-captcha'));
+      //performLogin($(this), $("#txt-username"), $("#txt-password"));
+      performLogin($(this), $('#txt-username'), $('#txt-password'), $('#txt-shortname'), $('#txt-captcha'));
   });
-  btnLogin.on('click', function () {
-    performLogin($(this), $('#username'), $('#password'), $('#txt-captcha'));
+  $('#btn-login').on('click', function () {
+    //performLogin($(this), $("#txt-username"), $("#txt-password"));
+    performLogin($(this), $('#txt-username'), $('#txt-password'), $('#txt-shortname'), $('#txt-captcha'));
   });
 }
+function clearold_session() {
+  delete window.sessionStorage["userInfo"];
+}
+
 $(document).ready(function () {
   //console.log("inside document ready");
-  $('#username').focus();
-  short_name = getShortName();
-  if (short_name === null) {
-    var url = '/knowledge/forgot-password';
-    $('.text-forgot-password a').attr('href', url);
-  } else {
-    var url = '/forgot_password/' + short_name;
-    $('.text-forgot-password a').attr('href', url);
-  }
+  clearold_session();
+  $('#txt-username').focus();
+
+
+  // var url = '/forgot_password/' + short_name;
+  // $('.text-forgot-password a').attr('href', url);
+
   initializeLogin();
 });
 $(window).resize(initializeUI);

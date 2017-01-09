@@ -781,7 +781,7 @@ CREATE TABLE `tbl_application_server` (
   `machine_name` varchar(50) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
-  `group_ids` longtext,
+  `client_ids` longtext,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -868,6 +868,20 @@ CREATE TABLE `tbl_client_database` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`client_database_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `tbl_client_database_info`;
+CREATE TABLE `tbl_client_database_info` (
+  `client_database_id` int(11) NOT NULL,
+  `db_owner_id` int(11) DEFAULT NULL,
+  `database_username` varchar(50) NOT NULL,
+  `database_password` varchar(50) NOT NULL,
+  `database_name` varchar(50) NOT NULL,
+  `is_group` tinyint(1) DEFAULT '0',
+  KEY `fk_tbl_client_database` (`client_database_id`),
+  CONSTRAINT `fk_tbl_client_database` FOREIGN KEY (`client_database_id`) REFERENCES `tbl_client_database` (`client_database_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_verification_type`;
 CREATE TABLE `tbl_verification_type` (

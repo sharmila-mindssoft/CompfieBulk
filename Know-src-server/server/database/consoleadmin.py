@@ -4,7 +4,7 @@ from forms import *
 from tables import *
 from server.common import get_date_time
 from server.database.validateEnvironment import ServerValidation
-from server.database.createclientdatabase import ClientDBCreate
+from server.database.createclientdatabase import ClientGroupDBCreate, ClientLEDBCreate
 
 __all__ = [
     "get_db_server_list",
@@ -226,6 +226,7 @@ def get_client_database_form_data(db):
     #
     data = db.call_proc_with_multiresult_set(
         "sp_clientdatabase_list", None, 4)
+    print data
     client_dbs = data[0]
     machines = data[1]
     db_servers = data[2]
@@ -372,6 +373,71 @@ def validated_env_before_save(db, request):
     else :
         return True
 
+def create_db_process(db, client_database_id, client_id, legal_entity_id, db_server_id, le_db_server_id):
+
+    def save_db_name(db_name, db_user, db_password, is_group):
+        dbowner = client_id
+        if is_group is False :
+            dbowner = legal_entity_id
+        db.call_insert_proc("sp_clientdatabase_dbname_info_save", [client_database_id, db_user, db_password, dbowner, db_name, int(is_group)])
+
+    def _create_db(_db_info, short_name, email_id, is_group):
+        if is_group :
+            create_db = ClientGroupDBCreate(
+                db, client_id, short_name, email_id,
+                _db_info.get("database_ip"),
+                _db_info.get("database_port"),
+                _db_info.get("database_username"),
+                _db_info.get("database_password")
+            )
+            is_db_created = create_db.begin_process()
+            if is_db_created[0] is True :
+                save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], True)
+        else :
+            create_db = ClientLEDBCreate(
+                db, client_id, short_name, email_id,
+                _db_info.get("database_ip"),
+                _db_info.get("database_port"),
+                _db_info.get("database_username"),
+                _db_info.get("database_password")
+            )
+            is_db_created = create_db.begin_process()
+            if is_db_created[0] is True :
+                save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], False)
+
+    # db information for both client and legal entity
+    client_db_info = db.call_proc_with_multiresult_set("sp_tbl_client_groups_createdb_info", [client_id, db_server_id, le_db_server_id], 2)
+    c_info = client_db_info[0][0]
+    db_info = client_db_info[1]
+    print client_db_info
+    print [client_id, db_server_id, le_db_server_id]
+    print c_info
+    count = c_info.get("cnt")
+
+    _db_group_info = None
+    _db_le_info = None
+
+    for r in db_info :
+        if r["database_server_id"] == db_server_id :
+            _db_group_info = r
+        if r["database_server_id"] == le_db_server_id :
+            _db_le_info = r
+
+    # create group db
+    print count
+    if count == 1 :
+        if _db_group_info :
+            is_done = _create_db(_db_group_info, c_info.get("short_name"), c_info.get("email_id"), True)
+            print is_done
+
+    # create le db
+
+    if _db_le_info :
+        is_done = _create_db(_db_le_info, c_info.get("short_name"), c_info.get("email_id"), False)
+        print is_done
+
+    return is_done
+
 def save_allocated_db_env(db, request, session_user):
     is_valid = validated_env_before_save(db, request)
     if is_valid is not True:
@@ -380,6 +446,7 @@ def save_allocated_db_env(db, request, session_user):
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     client_db_id = request.client_database_id
+    print client_db_id
     db_server_id = request.db_server_id
     machine_id = request.machine_id
     le_db_server_id = request.le_db_server_id
@@ -394,14 +461,16 @@ def save_allocated_db_env(db, request, session_user):
     # try:
     if client_db_id is None:
         try :
-            client_id = db.call_insert_proc(
+            client_db_id = db.call_insert_proc(
                 "sp_clientdatabase_save",
                 (client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
                     client_ids, legal_entity_ids, session_user, get_date_time())
             )
+            create_db_process(db, client_db_id, client_id, legal_entity_id, db_server_id, le_db_server_id)
 
-        except Exception :
-            print "Environment allocation failed"
+        except Exception, e :
+            print e
+            raise Exception(e)
 
     else:
         db.call_insert_proc(
@@ -420,6 +489,7 @@ def save_allocated_db_env(db, request, session_user):
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
+    return True
     # perform db creation
 
     # except Exception, e:

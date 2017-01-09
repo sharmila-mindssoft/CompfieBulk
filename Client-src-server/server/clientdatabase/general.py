@@ -70,22 +70,22 @@ __all__ = [
 ]
 
 
-def get_client_user_forms(db, form_ids, is_admin):
-    columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
-    columns += "tf.form_url, tf.form_order, tf.parent_menu "
+def get_client_user_forms(db, user_id):
+    # columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
+    # columns += "tf.form_url, tf.form_order, tf.parent_menu "
 
-    tables = [tblForms, tblFormType]
-    aliases = ["tf",  "tft"]
-    joinConditions = ["tf.form_type_id = tft.form_type_id"]
-    whereCondition, whereConditionVal = db.generate_tuple_condition(
-        "form_id", [int(x) for x in form_ids.split(",")]
-    )
-    order = " order by tf.form_order "
-    joinType = "left join"
-    rows = db.get_data_from_multiple_tables(
-        columns, tables, aliases, joinType,
-        joinConditions, whereCondition + order, [whereConditionVal]
-    )
+    # tables = [tblForms, tblFormType]
+    # aliases = ["tf",  "tft"]
+    # joinConditions = ["tf.form_type_id = tft.form_type_id"]
+    # whereCondition, whereConditionVal = db.generate_tuple_condition(
+    #     "form_id", [int(x) for x in form_ids.split(",")]
+    # )
+    # order = " order by tf.form_order "
+    # joinType = "left join"
+    # rows = db.get_data_from_multiple_tables(
+    #     columns, tables, aliases, joinType,
+    #     joinConditions, whereCondition + order, [whereConditionVal]
+    # )
     return rows
 
 
@@ -427,17 +427,66 @@ def is_in_contract(db):
 
 
 def verify_username(db, username):
-    columns = "count(*) as result, user_id"
-    condition = "email_id=%s and is_active = 1"
+    columns = "count(0) as result, user_id"
+    condition = "username=%s and is_active = 1"
     condition_val = [username]
     rows = db.get_data(
-        tblUsers, columns, condition, condition_val
+        tblUserLoginDetails, columns, condition, condition_val
     )
     count = rows[0]["result"]
     if count == 1:
         return rows[0]["user_id"]
     else:
         return None
+
+def get_forms_by_category(db, category_id):
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+        "t2.user_category_id , t3.form_type " + \
+        "FROM tbl_forms as t1 " + \
+        "inner join tbl_form_category as t2 on t1.form_id = t2.form_id " + \
+        "inner join tbl_form_type as t3 on t1.form_type_id = t3.form_type_id " + \
+        "where user_category_id = %s order by t1.form_order"
+    rows = db.select_all(q, [category_id])
+    return rows
+
+def get_user_forms(db, user_id):
+    # except group admin forms
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+        "FROM tbl_forms as t1 " + \
+        "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
+        "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
+        " WHERE t3.user_id = %s and t3.is_active = 1 and t3.is_disable = 0 " + \
+        " ORDER BY t1.form_order "
+
+    rows = db.select_all(q, [user_id])
+    return rows
+
+
+def get_legal_entity_info(db, user_id, user_category_id):
+    if user_category_id == 1 :
+        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
+            "t1.business_group_id, " + \
+            " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
+            "FROM tbl_legal_entity as t1 " + \
+            "WHERE contract_to > now() and is_closed = 0"
+        rows = db.select_all(q)
+    else :
+        q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
+            "t1.client_id, t1.business_group_id, " + \
+            " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
+            "from tbl_legal_entity as t1 " + \
+            "inner join tbl_user_domains as t2 on " + \
+            "t1.legal_entity_id = t1.legal_entity_id " + \
+            "where contract_to > now() and is_closed = 0 and t2.user_id= %s"
+        rows = db.select_all(q, [user_id])
+
+    le_list = []
+    for r in rows :
+        le_list.append(clientcore.LegalEntityInfo(
+            r["legal_entity_id"], r["legal_entity_name"],
+            r["business_group_id"], r["business_group_name"]
+        ))
+    return le_list
 
 
 def verify_password(db, password, user_id):
@@ -448,7 +497,7 @@ def verify_password(db, password, user_id):
     condition = "password=%s and user_id=%s"
     condition_val = [encrypted_password, user_id]
     rows = db.get_data(
-        tblUsers, columns, condition, condition_val
+        tblUserLoginDetails, columns, condition, condition_val
     )
 
     if(int(rows[0]["result"]) <= 0):

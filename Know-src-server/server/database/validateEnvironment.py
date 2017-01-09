@@ -29,7 +29,8 @@ class ServerValidation(object):
         port = self.dbase_info.get("database_port")
         try :
             connection = mysql.connect(host=dhost, user=uname, passwd=pwd, port=port)
-            connection.open()
+            c = connection.cursor()
+            c.close()
             connection.close()
             return True
         except mysql.Error, e :
@@ -39,11 +40,17 @@ class ServerValidation(object):
     def validate_application_server(self):
         port = self.machine_info.get("port")
         ip = self.machine_info.get("ip")
-        r = requests.post("http://%s:%s/api/isalive") % (ip, port)
-        if r.status_code != 200 :
-            return "Application server connection failed"
-        else :
-            return True
+        try :
+            r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+            print r
+            print "-" * 50
+            if r.status_code != 200 :
+                return "Application server connection failed"
+            else :
+                return True
+
+        except :
+            raise RuntimeError("Application server connection failed")
 
     def validate_file_server(self):
         pass

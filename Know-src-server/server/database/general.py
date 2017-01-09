@@ -126,20 +126,15 @@ def remove_trail_log(db, client_id, received_count):
 
 def get_servers(db):
 
-    query = "select t2.database_ip, t2.database_port, t2.database_username, t2.database_password," + \
-        " t2.database_server_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
-        " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port " + \
+    query = "select t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
+        " ct1.database_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
+        " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port, ct1.is_group " + \
         " from tbl_client_database as t1 " + \
+        " inner join tbl_client_database_info as ct1 on t1.client_database_id = ct1.client_database_id " + \
         " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
     print query
-
-    # query = "SELECT client_id, machine_id, database_ip, "
-    # query += "database_port, database_username, "
-    # query += "database_password, client_short_name, "
-    # query += "database_name, server_ip, server_port "
-    # query += "FROM tbl_client_database"
     rows = db.select_all(query)
     print rows
     return return_companies(rows)
@@ -161,9 +156,10 @@ def return_companies(data):
             d["short_name"],
             d["database_username"],
             d["database_password"],
-            d["database_server_name"],
+            d["database_name"],
             database_ip,
-            company_server_ip
+            company_server_ip,
+            bool(d["is_group"])
         ))
     return results
 

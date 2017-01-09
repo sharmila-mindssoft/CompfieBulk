@@ -17,7 +17,6 @@ function initMirror() {
     return JSON.stringify(data, null, ' ');
   }
   function parseJSON(data) {
-    data = JSON.stringify(data);
     return JSON.parse(data);
   }
   function initSession(userProfile) {
@@ -154,16 +153,23 @@ function initMirror() {
       'session_token': sessionToken,
       'request': request
     };
+    actula_data = toJSON(requestFrame);
+
     $.ajax({
       url: BASE_URL + callerName,
       headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(requestFrame),
+      data: btoa(actula_data),
       success: function (data) {
-        // var data = parseJSON(data);
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
+
+        console.log(status);
+        console.log(response);
+
         matchString = 'success';
         if (status.toLowerCase().indexOf(matchString) != -1) {
           if (status == 'UpdateUserProfileSuccess') {
@@ -182,6 +188,8 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
         console.log(textStatus, errorThrown);
         // alert(jqXHR.responseText.toLowerCase().indexOf("csrf"));
         if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
@@ -189,9 +197,8 @@ function initMirror() {
           window.location.href = login_url;
         }
 
-
         // console.log(jqXHR.responseText)
-        callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
+        callback(rdata, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);
                                                     // callback(error, null);
@@ -243,11 +250,14 @@ function initMirror() {
       // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(request),
-      success: function (data) {
-        // var data = parseJSON(data);
+      data: btoa(toJSON(request)),
+      success: function (data){
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
+        console.log(status);
+        console.log(response);
         matchString = 'success';
         clearSession();
         login_url = '/knowledge/login';
@@ -255,7 +265,9 @@ function initMirror() {
         window.location.href = login_url;
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        callback(jqXHR.responseText);
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
+        callback(rdata.responseText);
       }
     });
   }
