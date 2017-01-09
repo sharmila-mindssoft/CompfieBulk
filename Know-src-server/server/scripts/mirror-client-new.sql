@@ -64,7 +64,7 @@ CREATE TABLE `tbl_business_groups` (
   PRIMARY KEY (`business_group_id`),
   UNIQUE KEY(`business_group_id`, `client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_legal_entity` (
+CREATE TABLE `tbl_legal_entities` (
   `legal_entity_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
@@ -310,7 +310,7 @@ CREATE TABLE `tbl_unit_closure` (
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
-  CONSTRAINT `legal_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entity` (`legal_entity_id`),
+  CONSTRAINT `legal_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `unit_fk2` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_dates` (
@@ -362,7 +362,7 @@ CREATE TABLE `tbl_assign_compliances` (
   `trigger_before_days` int(11) DEFAULT NULL,
   `due_date` date DEFAULT NULL,
   `validity_date` date DEFAULT NULL,
-  CONSTRAINT `legalentity_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entity` (`legal_entity_id`),
+  CONSTRAINT `legalentity_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `country_fk2` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `domain_fk3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
   CONSTRAINT `unit_fk4` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),

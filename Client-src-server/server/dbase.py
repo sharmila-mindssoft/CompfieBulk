@@ -16,7 +16,7 @@ class BaseDatabase(object):
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
         # self._mysql = MySQL()
-        print self._mysql
+        # print self._mysql
 
     def dbConfig(self, app):
         app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
@@ -56,7 +56,6 @@ class Database(object):
         self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
-        print "\n\n"
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -153,9 +152,6 @@ class Database(object):
     # To begin a database transaction
     ########################################################
     def begin(self):
-        print self._connection
-        print self._cursor
-        print "cursor " * 10
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor(dictionary=True, buffered=True)
@@ -727,11 +723,14 @@ class Database(object):
 
     def validate_session_token(self, session_token):
         query = "SELECT t01.user_id FROM tbl_user_sessions t01 " + \
-            " LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id " + \
+            " LEFT JOIN tbl_user_login_details t02 ON t01.user_id = t02.user_id " + \
             " and is_active = 1 " + \
             " WHERE  session_token=%s"
+        print query
+        print session_token
         param = [session_token]
         row = self.select_one(query, param)
+        print row
         user_id = None
         if row:
             user_id = row["user_id"]

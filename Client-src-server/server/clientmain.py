@@ -287,7 +287,7 @@ class API(object):
                 actual_data
             )
             if is_group is False :
-                company_id = request_data.legal_entity_id
+                company_id = request_data.request.legal_entity_id
 
         except Exception, e:
             logger.logClientApi(e, "_parse_request")
@@ -300,15 +300,20 @@ class API(object):
         print request_data, company_id
         return request_data, company_id
 
-    def _validate_user_session(self, session_token):
-        session_token = session_token.split('-')
-        client_id = session_token[0]
-        _group_db_cons = self._group_databases.get(client_id)
+    def _validate_user_session(self, session):
+        session_token = session.split('-')
+        client_id = int(session_token[0])
+        print self._group_databases
+        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        print client_id
+        print _group_db_cons
         _group_db = Database(_group_db_cons)
+        print "----"
+        print _group_db
         try :
             _group_db.begin()
-            session_user = _group_db.validate_session_token(session_token)
-
+            session_user = _group_db.validate_session_token(session)
+            print session_user
             _group_db.commit()
             _group_db_cons.close()
             if session_user is None :
@@ -316,6 +321,7 @@ class API(object):
             else :
                 return session_user, client_id
         except Exception, e :
+            print e
             _group_db.rollback()
             _group_db_cons.close()
             raise Exception(e)
@@ -342,6 +348,7 @@ class API(object):
         # validate session token
         if need_client_id is False :
             session = request_data.session_token
+            print session
             session_user, client_id = self._validate_user_session(session)
             if session_user is False :
                 return respond(clientlogin.InvalidSessionToken())
@@ -405,9 +412,9 @@ class API(object):
     def handle_client_masters(self, request, db, session_user, client_id):
         return controller.process_client_master_requests(request, db)
 
-    @api_request(clienttransactions.RequestFormat, is_group=False)
+    @api_request(clienttransactions.RequestFormat)
     def handle_client_transaction(self, request, db, session_user, client_id):
-        return controller.process_client_transaction_requests(request, db)
+        return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db, session_user, client_id):
