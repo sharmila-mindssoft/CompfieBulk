@@ -7,7 +7,6 @@ var GroupVal = $('#groupval');
 var Group = $('#group');
 var ACGroup = $('#ac-group');
 
-
 var CLIENT_GROUPS = '';
 var FORMS_LIST = '';
 
@@ -234,16 +233,6 @@ function loadForms(){
       showPagePan(showFrom, sno, totalRecord);
     }
     hideLoader();
-
-    /*if(sno == 0){
-        var g_row = $("#templates .table-form-list .table-row-head");
-        var clone = g_row.clone();
-        $(".sno", clone).text('');
-        $(".group-name", clone).text("No Records Found");
-        $(".tbody-form-list").append(clone);    
-    }else{
-        $('.total_record').text("Total : " + sno +" record(s)");
-    }*/
 }
 
 //initialization
