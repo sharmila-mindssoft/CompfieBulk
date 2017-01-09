@@ -1,17 +1,27 @@
 var country = $("#country");
+var countryId = $("#country-id");
+var acCountry = $("#ac-country");
+
 var legalEntity = $("#legal-entity");
+var legalEntityId = $("#legal-entity-id");
+var acLegalEntity = $("#ac-legal-entity");
+
 var domain = $("#domain");
 var domainId = $("#domain-id");
 var acDomain = $("#ac-domain");
+
 var unit = $("#unit");
 var unitId = $("#unit-id");
 var acUnit = $("#ac-unit");
+
 var act = $("#act");
 var actId = $("#act-id");
 var acAct = $("#ac-act");
+
 var complianceTask = $("#compliance-task");
 var complianceTaskId = $("#compliance-task-id");
 var acComplianceTask = $("#ac-compliance-task");
+
 var complianceFrequency = $("#compliance-frequency");
 var userType = $("#user-type");
 var user = $("#user");
@@ -50,6 +60,31 @@ function PageControls() {
                 var dateMin = $('.to-date').datepicker("getDate");
             }
         }
+    });
+
+    country.keyup(function(e) {
+        var text_val = country.val().trim();
+        var countryList = REPORT._countries;
+        if (countryList.length == 0 && text_val != '')
+            displayMessage(message.domainname_required);
+        var condition_fields = ["is_active"];
+        var condition_values = [true];
+        //alert(text_val +' - '+countryList.toSource() +' - '+)
+        commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
+            onCountryAutoCompleteSuccess(REPORT, val);
+        }, condition_fields, condition_values);
+    });
+
+    legalEntity.keyup(function(e) {
+        var text_val = legalEntity.val().trim();
+        var legalEntityList = REPORT._entities;
+        if (legalEntityList.length == 0 && text_val != '')
+            displayMessage(message.domainname_required);
+        var condition_fields = ["is_active", "c_id"];
+        var condition_values = [true, countryId.val()];
+        commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
+            onLegalEntityAutoCompleteSuccess(REPORT, val);
+        }, condition_fields, condition_values);
     });
 
     domain.keyup(function(e) {
@@ -126,10 +161,34 @@ function PageControls() {
 
 }
 
+clearElement = function(arr) {
+    if(arr.length > 0) {
+        $.each(arr, function(i, element) {
+            element.val('');
+        });
+    }
+}
+
+onCountryAutoCompleteSuccess = function(REPORT, val) {
+    country.val(val[1]);
+    countryId.val(val[0]);
+    country.focus();
+    clearElement([legalEntity, legalEntityId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+}
+
+onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
+    legalEntity.val(val[1]);
+    legalEntityId.val(val[0]);
+    legalEntity.focus();
+    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    REPORT.fetchDomainList(val[0]);
+}
+
 onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
+    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
     REPORT.fetchUnitList(val[0]);
 }
 
@@ -137,6 +196,7 @@ onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
+    clearElement([act, actId, complianceTask, complianceTaskId]);
     REPORT.fetchActList(val[0]);
 }
 
@@ -144,6 +204,7 @@ onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
+    clearElement([complianceTask, complianceTaskId]);
     REPORT.fetchComplianceaskList(val[0]);
 }
 
@@ -198,11 +259,10 @@ StatusReportConsolidated.prototype.loadSearch = function() {
 
 StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this = this;
-    var jsondata = '{"countries":[{"c_id":1,"c_name":"india"},{"c_id":1,"c_name":"srilanka"}],"entities":[{"le_id":1,"le_name":"RG Legal Entity"},{"le_id":2,"le_name":"ABC Legal Entity"}],"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":2,"is_active":true}],"frequencies":[{"f_id":1,"f_name":"Periodical"},{"f_id":2,"f_name":"Review"},{"f_id":3,"f_name":"Flexi Review"},{"f_id":4,"f_name":"One Time"}],"user_type":[{"user_type_id":1,"user_type_name":"Assignee"},{"user_type_id":2,"user_type_name":"Concurrence"},{"user_type_id":3,"user_type_name":"Approval"}],"compliance_task_status":[{"comp_task_status_id":1,"comp_task_status":"Complied"},{"comp_task_status_id":2,"comp_task_status":"Delayed Compliances"},{"comp_task_status_id":3,"comp_task_status":"Inprogress"},{"comp_task_status_id":4,"comp_task_status":"Not Complied"}],"service_providers":[{"s_p_id":1,"s_p_name":"String","s_p_shrot":"short"}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
+    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"frequencies":[{"f_id":1,"f_name":"Periodical"},{"f_id":2,"f_name":"Review"},{"f_id":3,"f_name":"Flexi Review"},{"f_id":4,"f_name":"One Time"}],"user_type":[{"user_type_id":1,"user_type_name":"Assignee"},{"user_type_id":2,"user_type_name":"Concurrence"},{"user_type_id":3,"user_type_name":"Approval"}],"compliance_task_status":[{"comp_task_status_id":1,"comp_task_status":"Complied"},{"comp_task_status_id":2,"comp_task_status":"Delayed Compliances"},{"comp_task_status_id":3,"comp_task_status":"Inprogress"},{"comp_task_status_id":4,"comp_task_status":"Not Complied"}],"service_providers":[{"s_p_id":1,"s_p_name":"String","s_p_shrot":"short"}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._countries = object.countries;
     t_this._entities = object.entities;
-    t_this._domains = object.domains;
     t_this._frequencies = object.frequencies;
     t_this._userType = object.user_type;
     t_this._users = object.users;
@@ -216,21 +276,28 @@ StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
 };
 
-StatusReportConsolidated.prototype.fetchUnitList = function() {
+StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
+    t_this = this;
+    var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":2,"is_active":true},{"d_id":3,"d_name":"Employee Law","le_id":1,"is_active":true}]}';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._domains = object.domains;
+};
+
+StatusReportConsolidated.prototype.fetchUnitList = function(dom_id) {
     t_this = this;
     var jsondata = '{"units":[{"u_id":1,"u_name":"RG Madurai Unit","u_code":"RG1034","address":"12 RJ Complex, Main road, Madurai, 625022","d_id":1,"is_active":true},{"u_id":2,"u_name":"RG Dindugal Unit","u_code":"RG1035","address":"10 RG Complex, Main road, Dindugal, 623020","d_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._units = object.units;
 };
 
-StatusReportConsolidated.prototype.fetchActList = function() {
+StatusReportConsolidated.prototype.fetchActList = function(unit_id) {
     t_this = this;
     var jsondata = '{"acts":[{"act_id":1,"act_name":"The Batteries Act","u_id":1,"is_active":true},{"act_id":2,"act_name":"Indian Partnership Act, 1932","u_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._acts = object.acts;
 };
 
-StatusReportConsolidated.prototype.fetchComplianceaskList = function() {
+StatusReportConsolidated.prototype.fetchComplianceaskList = function(act_id) {
     t_this = this;
     var jsondata = '{"compliance_task":[{"c_id":1,"c_task":"FORM I - Half yearly returns Submission","act_id":1,"is_active":true},{"c_id":2,"c_task":"FORM II - Registration","act_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
@@ -290,6 +357,22 @@ StatusReportConsolidated.prototype.renderComplianceTaskStatusList = function(dat
 };
 
 StatusReportConsolidated.prototype.validate = function() {
+    if (country) {
+        if (isNotEmpty(country, message.country_required) == false)
+            return false;
+        else if (isLengthMinMax(country, 1, 50, message.country_max) == false)
+            return false;
+        else if (isCommonName(country, message.country_str) == false)
+            return false;
+    }
+    if (legalEntity) {
+        if (isNotEmpty(legalEntity, message.legalentity_required) == false)
+            return false;
+        else if (isLengthMinMax(legalEntity, 1, 50, message.legalentity_max) == false)
+            return false;
+        else if (isCommonName(legalEntity, message.legalentity_str) == false)
+            return false;
+    }
     if (domain) {
         if (isNotEmpty(domain, message.domain_required) == false)
             return false;

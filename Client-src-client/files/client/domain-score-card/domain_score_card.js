@@ -45,11 +45,12 @@ StatusReportConsolidated = function() {
     this._divisions = [];
     this._categorys = [];
     this._domains = [];
+    this._report_data = [];
 }
 
 StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this = this;
-    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":1,"c_name":"srilanka","is_active":true}],"business_group":[{"b_g_id":1,"b_g_name":"RG Business Group","c_id":1,"is_active":true},{"b_g_id":2,"b_g_name":"ABC Business Group","c_id":1,"is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"b_g_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"b_g_id":null,"is_active":true}]}';
+    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"business_group":[{"b_g_id":1,"b_g_name":"RG Business Group","c_id":1,"is_active":true},{"b_g_id":2,"b_g_name":"ABC Business Group","c_id":1,"is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"b_g_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"b_g_id":null,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._countries = object.countries;
     t_this._business_group = object.business_group;
@@ -57,10 +58,6 @@ StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this._divisions = object.divisions;
     t_this._categorys = object.categorys;
     t_this._domains = object.domains;
-
-    t_this.renderCountriesList(t_this._countries);
-    t_this.renderBusinessGroupList(t_this._business_group);
-    t_this.renderLegalEntityList(t_this._entities);
 };
 
 function PageControls() {
@@ -273,7 +270,7 @@ showAnimation = function(element) {
 
 StatusReportConsolidated.prototype.fetchReportValues = function() {
     t_this = this;
-    var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai division - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai division - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai division - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai division - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
+    var jsondata = '{"data_lists":[{"c_id":1,"b_g_id":1,"le_id":1,"div_id":1,"cat_id":1,"dom_id":1,"domain_name":"Labour Law","domain_lists":[{"unit_name":"UN001 - Unit One","inprogress":4,"complied":3,"delayed_complied":2,"not_complied":1,"un_assigned":4,"not_opted":2,"total":16},{"unit_name":"UN002 - Unit Two","inprogress":6,"complied":4,"delayed_complied":0,"not_complied":1,"un_assigned":4,"not_opted":2,"total":17}],"assigned":50,"un_assigned":20,"not_opted":5,"total":85},{"c_id":1,"b_g_id":1,"le_id":1,"div_id":1,"cat_id":1,"dom_id":2,"domain_name":"Finance Law","domain_lists":[{"unit_name":"UN003 - Unit Three","inprogress":5,"complied":4,"delayed_complied":0,"not_complied":0,"un_assigned":4,"not_opted":2,"total":15}],"assigned":43,"un_assigned":15,"not_opted":30,"total":88},{"c_id":1,"b_g_id":1,"le_id":1,"div_id":1,"cat_id":1,"dom_id":3,"domain_name":"Employee Law","domain_lists":[{"unit_name":"UN003 - Unit Four","inprogress":5,"complied":4,"delayed_complied":0,"not_complied":0,"un_assigned":4,"not_opted":2,"total":15},{"unit_name":"UN005 - Unit Five","inprogress":5,"complied":4,"delayed_complied":0,"not_complied":0,"un_assigned":4,"not_opted":2,"total":15}],"assigned":35,"un_assigned":20,"not_opted":15,"total":70}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._report_data = object.data_lists;
 };
@@ -286,78 +283,85 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     countryName.html(country.val());
     var j = 1;
     reportTableTbody.find('tr').remove();
-    var divisionname = "";
-    var actname = "";
-    var category = "";
+    var assigned_count = 0;
+    var un_assigned_count = 0;
+    var not_opted_count = 0;
+    var row_total_count = 0;
     $.each(data, function(k, v) {
-        if (divisionname != v.u_name) {
-            var cloneone = $('#template #report-table .row-one').clone();
-            $('.division-name', cloneone).text(v.u_name);
-            reportTableTbody.append(cloneone);
-            divisionname = v.u_name;
-        }
+        //sno domain-name assigned un-assigned not-opted row-total
+        var cloneone = $('#template #report-table .report-row').clone();
+        $('.sno', cloneone).text(j);
+        $('.domain-name', cloneone).text(v.domain_name);
+        $('.domain-name', cloneone).on('click', function() {
+            t_this.showDomainDetails(v.dom_id);
+        });
+        $('.assigned', cloneone).text(v.assigned);
+        $('.un-assigned', cloneone).text(v.un_assigned);
+        $('.not-opted', cloneone).text(v.not_opted);
+        $('.row-total', cloneone).text(v.total);
+        reportTableTbody.append(cloneone);
+        j = j + 1;
+        assigned_count = assigned_count + v.assigned;
+        un_assigned_count = un_assigned_count + v.un_assigned;
+        not_opted_count = not_opted_count + v.not_opted;
+        row_total_count = row_total_count + v.total;
 
-        if (actname != v.l_name) {
-            var clonetwo = $('#template #report-table .row-two').clone();
-            $('.act-name', clonetwo).text(v.l_name);
-            reportTableTbody.append(clonetwo);
-            actname = v.l_name;
-        }
-
-        if (category != v.compliance_task) {
-            var clonethree = $('#template #report-table .row-three').clone();
-            $('.sno', clonethree).text(j);
-            $('.compliance-task', clonethree).text(v.compliance_task);
-            $('.frequency', clonethree).text(v.frequency);
-            $('.due-date', clonethree).text(v.due_date);
-            $('.compliance-task-status', clonethree).text(v.task_status);
-            $('.user-name', clonethree).text(v.user_name);
-            $('.activity-status', clonethree).text(v.activity_status);
-            if (v.activity_date != "")
-                $('.activity-date', clonethree).text(v.activity_date);
-            else
-                $('.activity-date', clonethree).text('-');
-            if (v.doc_list.length > 0) {
-                $.each(v.doc_list, function(k1, v1) {
-                    $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
-                });
-            } else {
-                $('.uploaded-document', clonethree).text('-');
-            }
-            
-            if (v.completion_date != "")
-                $('.completion-date', clonethree).text(v.completion_date);
-            else
-                $('.completion-date', clonethree).text('-');
-            reportTableTbody.append(clonethree);
-            j = j + 1;
-            category = v.compliance_task;
-        } else {
-            var clonefour = $('#template #report-table .row-four').clone();
-            $('.user-name-new', clonefour).text(v.user_name);
-            $('.activity-status-new', clonefour).text(v.activity_status);
-            if (v.activity_date != "")
-                $('.activity-date-new', clonefour).text(v.activity_date);
-            else
-                $('.activity-date-new', clonefour).text('-');
-            if (v.doc_list.length > 0) {
-                $.each(v.doc_list, function(k1, v1) {
-                    $('.uploaded-document-new a', clonefour).text(v1.doc_name).attr("href", v1.doc_url);
-                });
-            } else {
-                $('.uploaded-document-new', clonefour).text('-');
-            }
-
-            if (v.completion_date != "")
-                $('.completion-date-new', clonefour).text(v.completion_date);
-            else
-                $('.completion-date-new', clonefour).text('-');
-            reportTableTbody.append(clonefour);
-            j = j + 1;
-            category = v.compliance_task;
+        var inprogress_new_count = 0;
+        var complied_new_count = 0;
+        var delayed_new_count = 0;
+        var not_complied_new_count = 0;
+        var un_assigned_new_count = 0;
+        var not_opted_new_count = 0;
+        var row_total_new_count = 0;
+        var i = 0
+        $.each(v.domain_lists, function(k1, v1) {
+            var clonetwo = $('#template #report-table .report-new-row').clone();
+            clonetwo.addClass("domain-"+v.dom_id);
+            $('.unit-name', clonetwo).text(v1.unit_name);
+            $('.inprogress', clonetwo).text(v1.inprogress);
+            $('.complied', clonetwo).text(v1.complied);
+            $('.delayed-complied', clonetwo).text(v1.delayed_complied);
+            $('.not-complied', clonetwo).text(v1.not_complied);
+            $('.un-assigned', clonetwo).text(v1.un_assigned);
+            $('.not-opted', clonetwo).text(v1.not_opted);
+            $('.row-total', clonetwo).text(v1.total);
+            reportTableTbodyNew.append(clonetwo);
+            inprogress_new_count = inprogress_new_count + v1.inprogress;
+            complied_new_count = complied_new_count + v1.complied;
+            delayed_new_count = delayed_new_count + v1.delayed_complied;
+            not_complied_new_count = not_complied_new_count + v1.not_complied;
+            un_assigned_new_count = un_assigned_new_count + v1.un_assigned;
+            not_opted_new_count = not_opted_new_count + v1.not_opted;
+            row_total_new_count = row_total_new_count + v1.total;
+            i = i + 1;
+        });
+        if(i > 1) {
+            var clonethree = $('#template #report-table .report-new-total-row').clone();
+            clonethree.addClass("domain-"+v.dom_id);
+            $('.total-inprogress', clonethree).text(inprogress_new_count);
+            $('.total-complied', clonethree).text(complied_new_count);
+            $('.total-delayed-complied', clonethree).text(delayed_new_count);
+            $('.total-not-complied', clonethree).text(not_complied_new_count);
+            $('.total-un-assigned', clonethree).text(un_assigned_new_count);
+            $('.total-not-opted', clonethree).text(not_opted_new_count);
+            $('.total-count-new', clonethree).text(row_total_new_count);
+            reportTableTbodyNew.append(clonethree);
         }
     });
-    totalRecord.html(j);
+    if(j > 2) {
+        var clonefour = $('#template #report-table .report-total-row').clone();
+        $('.assigned-total', clonefour).text(assigned_count);
+        $('.un-assigned-total', clonefour).text(un_assigned_count);
+        $('.not-opted-total', clonefour).text(not_opted_count);
+        $('.total-count', clonefour).text(row_total_count);
+        reportTableTbody.append(clonefour);
+    }
+};
+
+StatusReportConsolidated.prototype.showDomainDetails = function(dom_id) {
+    $('.domain-table-view').show();
+    $('.unit-details').hide();
+    $('.domain-'+dom_id).show();
 };
 
 StatusReportConsolidated.prototype.exportReportValues = function() {

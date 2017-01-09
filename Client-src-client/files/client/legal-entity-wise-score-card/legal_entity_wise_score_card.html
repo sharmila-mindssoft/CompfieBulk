@@ -1,260 +1,185 @@
-{% extends "files/client/common/html/container.html" %}
-{% block content %}
+{% extends "files/client/common/html/container.html" %} {% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
-<div class="content">
-<div class="container">
-    <div class="row" id="animationSandbox">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
-        
-            <div class="portlet">
-                <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Legal Entity Wise Score Card</h3>
-                    <div class="portlet-widgets">
-                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
-                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                        </a> -->
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-                <!-- <h4 class="page-title">Legal Entity Wise Score Card</h4> -->
-                <!-- <hr class="no-top-margin"> -->
-                <div id="bg-primary1" class="panel-collapse collapse in">
-                    <div class="portlet-body">
-                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Country: </label>
-                            <div class="col-sm-7 has-feedback">
-                                <p class="form-control-static">India</p>
+    <div class="content">
+        <div class="container">
+            <div class="row" id="animationSandbox">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="portlet">
+                        <div class="portlet-heading bg-info">
+                            <h3 class="portlet-title">Legal Entity Wise Score Card</h3>
+                            <div class="portlet-widgets"></div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-primary1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="country-id" value="">
+                                                <div id="ac-country" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal-entity-id" value="">
+                                                <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="domain-id" value="">
+                                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <center>
+                                            <div class="form-group m-b-0">
+                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
+                                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button"> Export </button>
+                                            </div>
+                                        </center>
+                                    </div>
+                                    <div class="clear"></div>
+                                </form>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Legal Entity: </label>
-                            <div class="col-sm-7 has-feedback">
-                                <p class="form-control-static">RG Legal Entity</p>
+                    </div>
+                    <div id="compliance_animation">
+                        <div id="report-view" style="display: none;">
+                            <div class="card-box">
+                                <div class="table-responsive">
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo"></div>
+                                        <div class="col-sm-12 text-center">
+                                            <h4>Domain Score Card</h4></div>
+                                        <div class="col-sm-4 text-center">
+                                            <h6>Legal Entity : <span id="legal-entity-name"></span></h6></div>
+                                        <div class="col-sm-4 text-center">
+                                            <h6>Country : <span id="country-name" ></span></h6></div>
+                                        <div class="col-sm-4 text-center">
+                                            <h6>Domain : <span id="domain-name" ></span></h6></div>
+                                    </div>
+                                    <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th width="01%">#</th>
+                                                <th width="10%">Task Status</th>
+                                                <th width="10%" class="text-center">Count</th>
+                                                <th width="10%" class="text-center">Unit Wise</th>
+                                                <th width="10%" class="text-center">User Wise</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Inprogress</td>
+                                                <td class="text-center inprogress-count"></td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect waves-light inprogress-unit-view" type="button"> View </button>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect waves-light inprogress-user-view" type="button"> View </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Completed</td>
+                                                <td class="text-center completed-count"></td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect waves-light completed-unit-view" type="button"> View </button>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect waves-light completed-user-view" type="button"> View </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>Over due</td>
+                                                <td class="text-center overdue-count"></td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect waves-light overdue-unit-view" type="button"> View </button>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary waves-effect waves-light overdue-user-view" type="button"> View </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td class="font-bold">Total</td>
+                                                <td class="text-center total-count"></td>
+                                                <td class="text-center"></td>
+                                                <td class="text-center"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="task-details" style="display: none;">
+                                        <div class="clear"></div>
+                                        <br>
+                                        <div class="col-sm-12">
+                                            <h6 class="task-name"></h6>
+                                        </div>
+                                        <table id="datatable-responsive" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr class="bg-lightdark">
+                                                    <th width="15%" class="task-title"></th>
+                                                    <th width="10%" class="text-center">To Complete</th>
+                                                    <th width="10%" class="text-center">To Concur</th>
+                                                    <th width="10%" class="text-center">To Approve</th>
+                                                    <th width="10%" class="text-center">Total(Task)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="report-table-tbody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
-                            <div class="col-sm-7 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <center>
-                            <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
-                            </div>
-                        </center>
-                    </div>
-                    <div class="clear"></div>
-                </form>
                 </div>
-                </div>
-                <script type="text/javascript">
-                    function show_div() {
-                        $('.details').show();
-                        $('#compliance_animation')
-                          .removeClass().addClass('bounceInLeft animated')
-                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                          $(this).removeClass();
-                        });
-                    }
-                </script>
-                </div>
-                <div id="compliance_animation">
-                <div class="card-box details" style="display: none;">
-                <div class="table-responsive">
-                    <div class="col-sm-12">
-                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
-                        <div class="col-sm-12 text-center"><h4>Legal Entity Wise Score Card</h4></div>
-                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
-                        <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
-                        <div class="col-sm-4 text-center"><h6>Domain : Labour Law</h6></div>
-                    </div>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0" >
-                        <thead>
-                            <tr>
-                                <th width="01%">#</th>
-                                <th width="10%">Task Status</th>
-                                <th width="10%" class="text-center">Count</th>
-                                <th width="10%" class="text-center">Unit Wise</th>
-                                <th width="10%" class="text-center">User Wise</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Inprogress</td>
-                                <td class="text-center">25</td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light inprogress-unit-view" type="button"> View </button></td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light inprogress-user-view" type="button"> View </button></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Completed</td>
-                                <td class="text-center">10</td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light completed-unit-view" type="button"> View </button></td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light completed-user-view" type="button"> View </button></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Over due</td>
-                                <td class="text-center">15</td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light overdue-unit-view" type="button"> View </button></td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light overdue-user-view" type="button"> View </button></td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td class="font-bold">Total</td>
-                                <td class="text-center">50</td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light total-unit-view" type="button"> View </button></td>
-                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light total-user-view" type="button"> View </button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="unit-view">
-                    <div class="clear"></div><br>
-                    <div class="col-sm-12"><h6>Unit wise Inprogress Task Count</h6></div>
-                    <table id="datatable-responsive" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
-                        <thead>
-                            <tr class="bg-lightdark">
-                                <th width="15%">Unit</th>
-                                <th width="10%" class="text-center">To Complete</th>
-                                <th width="10%" class="text-center">To Concur</th>
-                                <th width="10%" class="text-center">To Approve</th>
-                                <th width="10%" class="text-center">Total(Task)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>RG1001 - Corporate Office</td>
-                                <td class="text-center">1</td>
-                                <td class="text-center">2</td>
-                                <td class="text-center">4</td>
-                                <td class="font-bold text-center">7</td>
-                            </tr>
-                            <tr>
-                                <td>RG1002 - Regional Office</td>
-                                <td class="text-center">2</td>
-                                <td class="text-center">5</td>
-                                <td class="text-center">2</td>
-                                <td class="font-bold text-center">9</td>
-                            </tr>
-                            <tr>
-                                <td>RG1004 - Branch Office</td>
-                                <td class="text-center">5</td>
-                                <td class="text-center">3</td>
-                                <td class="text-center">1</td>
-                                <td class="font-bold text-center">9</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">Total</td>
-                                <td class="text-center font-bold">8</td>
-                                <td class="text-center font-bold">10</td>
-                                <td class="text-center font-bold">7</td>
-                                <td class="text-center font-bold">25</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                  </div>
-                  <div class="user-view">
-                    <div class="clear"></div><br>
-                    <div class="col-sm-12"><h6>User wise Inprogress Task Count</h6></div>
-                    <table id="datatable-responsive" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
-                        <thead>
-                            <tr class="bg-lightdark">
-                                <th width="15%">Users</th>
-                                <th width="10%" class="text-center">To Complete</th>
-                                <th width="10%" class="text-center">To Concur</th>
-                                <th width="10%" class="text-center">To Approve</th>
-                                <th width="10%" class="text-center">Total(Task)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Sathish</td>
-                                <td class="text-center">1</td>
-                                <td class="text-center">2</td>
-                                <td class="text-center">4</td>
-                                <td class="font-bold text-center">7</td>
-                            </tr>
-                            <tr>
-                                <td>Arun</td>
-                                <td class="text-center">2</td>
-                                <td class="text-center">5</td>
-                                <td class="text-center">2</td>
-                                <td class="font-bold text-center">9</td>
-                            </tr>
-                            <tr>
-                                <td>Mani</td>
-                                <td class="text-center">5</td>
-                                <td class="text-center">3</td>
-                                <td class="text-center">1</td>
-                                <td class="font-bold text-center">9</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">Total</td>
-                                <td class="text-center font-bold">8</td>
-                                <td class="text-center font-bold">10</td>
-                                <td class="text-center font-bold">7</td>
-                                <td class="text-center font-bold">25</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                  </div>
-                </div>
-            </div>
             </div>
         </div>
-        <!-- end col -->
     </div>
 </div>
+<div id="template">
+    <table id="report-table">
+        <tr class="report-row">
+            <td class="task-row-title">RG1004 - Branch Office</td>
+            <td class="text-center to-complete">5</td>
+            <td class="text-center to-concur">3</td>
+            <td class="text-center to-approve">1</td>
+            <td class="font-bold text-center total-task">9</td>
+        </tr>
+        <tr class="report-total-row">
+            <td class="font-bold">Total</td>
+            <td class="text-center font-bold to-complete-total">8</td>
+            <td class="text-center font-bold to-concur-total">10</td>
+            <td class="text-center font-bold to-approve-total">7</td>
+            <td class="text-center font-bold grand-total">25</td>
+        </tr>
+    </table>
 </div>
-</div>
-<script>
-$(function(){
-  $('.unit-view').hide();
-  $('.user-view').hide();
-  $('.inprogress-unit-view').on('click', function (e) {
-    $('.unit-view').show();
-    $('.user-view').hide();
-  });
-  $('.inprogress-user-view').on('click', function (e) {
-    $('.unit-view').hide();
-    $('.user-view').show();
-  });
-  $('.completed-unit-view').on('click', function (e) {
-    $('.unit-view').hide();
-    $('.user-view').hide();
-  });
-  $('.completed-user-view').on('click', function (e) {
-    $('.unit-view').hide();
-    $('.user-view').hide();
-  });
-  $('.overdue-unit-view').on('click', function (e) {
-    $('.unit-view').hide();
-    $('.user-view').hide();
-  });
-  $('.overdue-user-view').on('click', function (e) {
-    $('.unit-view').hide();
-    $('.user-view').hide();
-  });
-  $('.total-unit-view').on('click', function (e) {
-    $('.unit-view').hide();
-    $('.user-view').hide();
-  });
-  $('.total-user-view').on('click', function (e) {
-    $('.unit-view').hide();
-    $('.user-view').hide();
-  });
- 
-});
-</script> 
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/legal-entity-wise-score-card/legal_entity_wise_score_card.js"></script>
 {% endblock %}
