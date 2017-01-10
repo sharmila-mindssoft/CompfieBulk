@@ -79,98 +79,76 @@ def get_statutory_settings(db, legal_entity_id, session_user):
         " where domain_id = t1.domain_id)domain_name, " + \
         " t2.is_closed,  " + \
         " (select is_new from tbl_client_compliances " + \
-        " where unit_id = t1.unit_id order by is_new limit 1) " + \
+        " where unit_id = t1.unit_id order by is_new limit 1) as is_new " + \
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_units t2 " + \
         " ON t1.unit_id = t2.unit_id " + \
-        " INNER JOIN tbl_legal_entity as t3 on t1.legal_entity_id = t3.legal_entity_id %s" + \
+        " INNER JOIN tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id %s" + \
         " ORDER BY t1.unit_id "
     query = query % (where_qry)
-    print query
     if condition_val is None:
         rows = db.select_all(query)
     else:
         rows = db.select_all(query, condition_val)
 
-    columns = [
-        "country_id", "domain_id", "unit_id", "unit_name",
-        "business_group_name", "legal_entity_name",
-        "division_name", "address", "postal_code", "unit_code",
-        "country_name", 'domain_name', 'is_closed', 'is_new'
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_statutory_settings(result)
+    return return_statutory_settings(rows)
 
 
 def return_compliance_for_statutory_settings(
     db, unit_id,  from_count, to_count
 ):
     query = "SELECT t1.client_compliance_id, " + \
-        " t1.client_statutory_id, t1.compliance_id, " + \
-        " t1.statutory_applicable, t1.statutory_opted, " + \
-        " t1.not_applicable_remarks, " + \
-        " t1.compliance_applicable, t1.compliance_opted, " + \
-        " t1.compliance_remarks, " + \
+        " t1.compliance_id, " + \
+        " t1.statutory_applicable_status, t1.statutory_opted_status, " + \
+        " t1.remarks, " + \
+        " t1.compliance_applicable_status, t1.compliance_opted_status, " + \
+        " t1.not_opted_remarks, " + \
         " t2.compliance_task, t2.document_name, t2.statutory_mapping, " + \
         " t2.statutory_provision, t2.compliance_description, " + \
-        " (select is_new from tbl_client_statutories " + \
-        " where client_statutory_id = t1.client_statutory_id), " + \
+        " t1.is_new, " + \
         " (select domain_name from tbl_domains " + \
-        " where domain_id = t2.domain_id), " + \
+        " where domain_id = t2.domain_id) as domain_name, " + \
         " (select count(tc1.client_compliance_id) " + \
         " from tbl_client_compliances tc1 " + \
-        " inner join tbl_client_statutories ts2 " + \
-        " ON ts2.client_statutory_id = tc1.client_statutory_id " + \
-        " AND ts2.unit_id = %s " + \
+        " where tc1.unit_id = %s " + \
         " ) total " + \
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
-        " WHERE " + \
-        " t1.client_statutory_id in ( " + \
-        " select distinct client_statutory_id from " + \
-        " tbl_client_statutories where unit_id = %s) " + \
+        " WHERE t1.unit_id = %s" + \
         " ORDER BY t2.domain_id, t2.statutory_mapping " + \
         " limit %s, %s "
+
     rows = db.select_all(query, [
             unit_id,
             unit_id,
             from_count,
             to_count
     ])
-    columns = [
-        "client_compliance_id", "client_statutory_id", "compliance_id",
-        "statutory_applicable", "statutory_opted",
-        "not_applicable_remarks", "compliance_applicable",
-        "compliance_opted", "compliance_remarks",
-        "compliance_task", "document_name", "statutory_mapping",
-        "statutory_provision", "compliance_description",
-        "is_new", "domain", "total"
-    ]
-    results = convert_to_dict(rows, columns)
     statutory_wise_compliances = []
     total = 0
-    for r in results:
+    for r in rows:
         total = r["total"]
-        statutory_opted = r["statutory_opted"]
+        statutory_opted = r["statutory_opted_status"]
         if statutory_opted is None:
-            statutory_opted = bool(r["statutory_applicable"])
+            statutory_opted = bool(r["statutory_applicable_status"])
         else:
             statutory_opted = bool(statutory_opted)
 
-        compliance_opted = r["compliance_opted"]
+        compliance_opted = r["compliance_opted_status"]
         if type(compliance_opted) is int:
             compliance_opted = bool(compliance_opted)
         else:
-            compliance_opted = bool(r["compliance_applicable"])
+            compliance_opted = bool(r["compliance_applicable_status"])
 
-        compliance_remarks = r["compliance_remarks"]
+        compliance_remarks = r["not_opted_remarks"]
         if compliance_remarks == "":
             compliance_remarks = None
         if r["document_name"] == "":
             r["document_name"] = None
 
-        mappings = r["statutory_mapping"].split('>>')
+        s_maps = json.loads(r["statutory_mapping"])
+        mappings = s_maps[0].split('>>')
         statutory_name = mappings[0].strip()
         statutory_name = statutory_name.strip()
         if len(mappings) > 1:
@@ -191,20 +169,19 @@ def return_compliance_for_statutory_settings(
 
         compliance = clienttransactions.ComplianceApplicability(
             statutory_name,
-            bool(r["statutory_applicable"]),
+            bool(r["statutory_applicable_status"]),
             statutory_opted,
-            r["not_applicable_remarks"],
-            r["client_statutory_id"],
+            r["remarks"],
             r["client_compliance_id"],
             r["compliance_id"],
             name,
             r["compliance_description"],
             provision,
-            bool(r["compliance_applicable"]),
+            bool(r["compliance_applicable_status"]),
             bool(compliance_opted),
             compliance_remarks,
             not bool(r["is_new"]),
-            r["domain"]
+            r["domain_name"]
         )
 
         statutory_wise_compliances.append(compliance)

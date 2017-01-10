@@ -143,7 +143,7 @@ CREATE TABLE `tbl_units` (
   `country_id` int(11) NOT NULL,
   `domain_ids` longtext,
   `organisation_ids` longtext,
-  `geography_id` int(11) NOT NULL,
+  `geography_name` longtext NOT NULL,
   `unit_code` varchar(50) NOT NULL,
   `unit_name` varchar(50) NOT NULL,
   `address` varchar(250) NOT NULL,
