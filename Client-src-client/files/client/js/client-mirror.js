@@ -97,7 +97,7 @@ function initClientMirror() {
     function getSessionToken() {
         // var info = getUserInfo();
         // return info.session_token;
-        return "14-6026dd780194411fbcac2ce5decc5141";
+        return "14-602fddgdgfdg43535446546xcvxcvx141";
     }
 
     function getUserMenu() {
@@ -158,7 +158,7 @@ function initClientMirror() {
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
-            'session_token': "14-6026dd780194411fbcac2ce5decc5141",
+            'session_token': "14-602fddgdgfdg43535446546xcvxcvx141",
             'request': request
         };
         var body = [
@@ -1889,6 +1889,42 @@ function initClientMirror() {
         }
     }
 
+    function getUnitClosureData(callback){
+        var request = [
+            'GetUnitClosureData',
+            {}
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUnitClosureUnitList(le_id, callback){
+        var request = [
+            'GetUnitClosureUnitData',
+            {
+                "legal_entity_id": le_id
+            }
+        ];
+        callerName = 'client_masters';
+        console.log(request)
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback)
+    {
+        callerName = 'client_masters';
+        var request = [
+          'SaveUnitClosureData',
+          {
+            "password": password,
+            "closed_remarks": remarks,
+            "unit_id": unit_id,
+            "grp_mode": action_mode
+          }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     function uploadFormatFile(formdata, callback) {
         $.ajax({
             url: '/api/files/' + getSessionToken(),
@@ -2032,7 +2068,10 @@ function initClientMirror() {
         updateUserProfile: updateUserProfile,
         updateUserInfo: updateUserInfo,
         getContractExpireAndNotificationCount: getContractExpireAndNotificationCount,
-        uploadFormatFile: uploadFormatFile
+        uploadFormatFile: uploadFormatFile,
+        getUnitClosureData: getUnitClosureData,
+        getUnitClosureUnitList: getUnitClosureUnitList,
+        saveUnitClosureData: saveUnitClosureData
     };
 }
 var client_mirror = initClientMirror();
