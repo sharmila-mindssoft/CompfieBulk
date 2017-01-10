@@ -3,8 +3,6 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ###############################################################################
-import time
-from server import logger
 from protocol import login, consoleadmin
 from server.database.consoleadmin import *
 from generalcontroller import validate_user_session, validate_user_forms
@@ -40,80 +38,80 @@ def process_console_admin_request(request, db):
     if session_user is None:
         return login.InvalidSessionToken()
 
-    if(
-        type(request_frame) is consoleadmin.GetDbServerList
-    ):
-        logger.logKnowledgeApi("GetDbServerList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
+    if(type(request_frame) is consoleadmin.GetDatabaseServerList):
         result = process_get_db_server_list(db)
-        logger.logKnowledgeApi("GetDbServerList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveDBServer):
-        logger.logKnowledgeApi("SaveDBServer", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_db_server(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveDBServer", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(
         type(request_frame) is consoleadmin.GetClientServerList
     ):
-        logger.logKnowledgeApi("GetClientServerList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_server_list(db)
-        logger.logKnowledgeApi("GetClientServerList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveClientServer):
-        logger.logKnowledgeApi("SaveClientServer", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_client_server(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveClientServer", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+
+    elif(
+        type(request_frame) is consoleadmin.GetFileServerList
+    ):
+        result = process_get_file_server_list(db)
+
+    elif(
+        type(request_frame) is consoleadmin.SaveFileServer
+    ):
+        result = process_file_server_entry(db, request_frame, session_user)
 
     elif(type(request_frame) is consoleadmin.GetAllocatedDBEnv):
-        logger.logKnowledgeApi("GetAllocatedDBEnv", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_allocated_db_env(db)
-        logger.logKnowledgeApi("GetAllocatedDBEnv", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveAllocatedDBEnv):
-        logger.logKnowledgeApi("SaveAllocatedDBEnv", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_allocated_db_env(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveAllocatedDBEnv", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.GetFileStorage):
-        logger.logKnowledgeApi("GetFileStorage", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_file_storage(db)
-        logger.logKnowledgeApi("GetFileStorage", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveFileStorage):
-        logger.logKnowledgeApi("SaveFileStorage", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_file_storage(db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveFileStorage", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.GetAutoDeletionList):
-        logger.logKnowledgeApi("GetAutoDeletionList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_auto_deletion_list(
             db, request_frame, session_user)
-        logger.logKnowledgeApi("GetAutoDeletionList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif(type(request_frame) is consoleadmin.SaveAutoDeletion):
-        logger.logKnowledgeApi("SaveAutoDeletion", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_auto_deletion(
             db, request_frame, session_user)
-        logger.logKnowledgeApi("SaveAutoDeletion", "process end")
+
+    elif(type(request_frame) is consoleadmin.GetIPSettingsList):
+        result = process_get_ip_settings_list(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.GetGroupIPDetails):
+        result = process_get_group_ip_details(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.SaveIPSettings):
+        result = process_save_ip_settings(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.DeleteIPSettings):
+        result = process_delete_ip_settings(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.GetIPSettingsReportFilter):
+        result = process_ip_setting_report_filter(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.GetIPSettingsReport):
+        result = process_ip_setting_report(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.GetAllocateServerReportData):
+        logger.logKnowledgeApi("GetAllocateServerReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
+        result = process_allocate_server_report_data(
+            db, request_frame, session_user)
+        logger.logKnowledgeApi("GetAllocateServerReportData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     return result
@@ -138,7 +136,7 @@ def process_get_db_server_list(db):
 #               response
 ###############################################################################
 def process_save_db_server(db, request, session_user):
-    if is_duplicate_db_server_name(db, request.db_server_name, request.ip):
+    if is_duplicate_db_server_name(db, request.db_server_name, request.db_server_id):
         return consoleadmin.DBServerNameAlreadyExists()
     else:
         save_db_server(db, request, session_user)
@@ -179,14 +177,13 @@ def process_save_client_server(db, request, session_user):
 ###############################################################################
 def process_get_allocated_db_env(db):
     (
-        client_dbs_list, groups_list, les_list,
-        machines_list, db_servers_list
+        client_dbs_list, machines_list, db_servers_list, file_server_list
     ) = get_client_database_form_data(db)
     return consoleadmin.GetAllocatedDBEnvSuccess(
-        client_dbs=client_dbs_list, client_groups=groups_list,
-        client_legal_entities=les_list,
+        client_dbs=client_dbs_list,
         client_server_name_and_id=machines_list,
-        db_server_name_and_id=db_servers_list
+        db_server_name_and_id=db_servers_list,
+        file_server_list=file_server_list
     )
 
 
@@ -250,3 +247,105 @@ def process_get_auto_deletion_list(db, request, session_user):
 def process_save_auto_deletion(db, request, session_user):
     save_auto_deletion_details(db, request, session_user)
     return consoleadmin.SaveAutoDeletionSuccess()
+
+
+###############################################################################
+# To GET configure file server details
+# parameter : Object of database, Get Request, session user
+# return type : Returns file server records
+###############################################################################
+def process_get_file_server_list(db):
+    file_server_list = get_file_server_list(db)
+    return consoleadmin.GetFileServerListSuccess(file_server_list)
+
+
+###############################################################################
+# To save configure file server details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_file_server_entry(db, request, session_user):
+    if is_duplicate_file_server_name(
+            db, request.file_server_name, request.file_server_id):
+        return consoleadmin.FileServerNameAlreadyExists()
+    else:
+        file_server_entry_process(db, request, session_user)
+        return consoleadmin.SaveFileServerSuccess()
+
+
+###############################################################################
+# To get ip setting details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_get_ip_settings_list(db, request, session_user):
+    (
+        groups_list, forms_list, ips_list
+    ) = get_ip_settings_form_data(db)
+    return consoleadmin.GetIPSettingsListSuccess(
+        client_groups=groups_list, ip_setting_forms=forms_list, ips_list=ips_list)
+
+
+###############################################################################
+# To get group ip details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_get_group_ip_details(db, request, session_user):
+    (
+        group_ips_list
+    ) = get_group_ip_details_form_data(db, request)
+    return consoleadmin.GetGroupIPDetailsSuccess(
+        group_ips_list=group_ips_list)
+
+###############################################################################
+# To save ip settings details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_save_ip_settings(db, request, session_user):
+    save_ip_setting_details(db, request, session_user)
+    return consoleadmin.SaveIPSettingsSuccess()
+
+###############################################################################
+# To delete ip settings details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_delete_ip_settings(db, request, session_user):
+    delete_ip_setting_details(db, request, session_user)
+    return consoleadmin.DeleteIPSettingsSuccess()
+
+###############################################################################
+# To get ip setting details report filter
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_ip_setting_report_filter(db, request, session_user):
+    (
+        groups_list, forms_list
+    ) = get_ip_settings_report_filter(db)
+    return consoleadmin.GetIPSettingsReportFilterSuccess(
+        client_groups=groups_list, ip_setting_forms=forms_list
+        )
+###############################################################################
+# To get ip settings report details
+# parameter : Object of database, Get Request, session user
+# return type : Returns success response
+###############################################################################
+def process_ip_setting_report(db, request, session_user):
+    (
+        total_records, group_ips_list
+    ) = ip_setting_report_data(db, request, session_user)
+    return consoleadmin.GetIPSettingsReportSuccess(
+        total_records=total_records, group_ips_list=group_ips_list)
+
+
+###############################################################################
+# To get allocated server group, legal entity
+# parameter : Object of database, session user
+# return type : Returns success response
+###############################################################################
+def process_allocate_server_report_data(db, request, session_user):
+    allocate_server_list = get_allocated_server_form_data(db)
+    return consoleadmin.GetAllocatedDBListSuccess(allocate_server_list)

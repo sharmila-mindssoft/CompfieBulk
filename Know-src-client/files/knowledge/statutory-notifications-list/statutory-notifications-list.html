@@ -18,7 +18,7 @@
                         <div class="form-horizontal group-border-dashed">
                             <div class="col-sm-6">
                                 <div class="form-group has-feedback">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                    <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="country" value="">
                                         <input type="text" class="form-control input-sm" id="countryval" value="" autofocus="autofocus"  tabindex="1">
@@ -29,7 +29,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                                    <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="domain" value="">
                                         <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="2">
@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Act:</label>
+                                    <label class="col-sm-4 control-label">Act:</label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="level1val" tabindex="3">
                                         <input type="hidden" id="level1">
@@ -53,25 +53,25 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group has-feedback">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">From Date:</label>
+                                    <label class="col-sm-4 control-label">From Date:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate" tabindex="4" readonly="readonly">
                                         <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">To Date:</label>
+                                    <label class="col-sm-4 control-label">To Date:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate" tabindex="5" readonly="readonly">
                                         <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <center>
-                                    <div class="form-group m-b-0">
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                    <div class="form-group m-t-5 m-b-0">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit" tabindex="6"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" tabindex="7"> Export </button>
                                     </div>
                                 </center>
                             </div>
@@ -90,6 +90,15 @@
                         <div class="col-sm-6 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
                       </div>
                       <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr align="left" class="heading-list">
+                          <th class="header-bg" width="1%" align="center">#</th>
+                          <th class="header-bg" width="15%" >Act</th>
+                          <th class="header-bg" width="20%" >Compliance Task</th>
+                          <th class="header-bg" width="10%" >Date</th>
+                          <th class="header-bg" width="20%">Notifications Content</th>
+                        </tr>
+                        </thead>
                             <tbody class="table-statutory-notifications-list">
                             </tbody>
                         </table>
@@ -120,13 +129,7 @@
 </div>
 <div id="templates">
 <table class="table-statutory-notification-list">
-  <tr align="left" class="heading-list">
-    <th class="header-bg" width="1%" align="center">#</th>
-    <th class="header-bg" width="15%" >Act</th>
-    <th class="header-bg" width="20%" >Compliance Task</th>
-    <th class="header-bg" width="10%" >Date</th>
-    <th class="header-bg" width="20%">Notifications Content</th>
-  </tr>
+
 
 <tr class="tbody-statutory-notification-list">
   <td class="sno"></td>

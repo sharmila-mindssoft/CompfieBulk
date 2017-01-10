@@ -570,7 +570,6 @@ def update_geography(
                 else:
                     p_ids = p_ids + p_ids_len[i]
                 i = i + 1
-        
         result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
 
         for row in result:

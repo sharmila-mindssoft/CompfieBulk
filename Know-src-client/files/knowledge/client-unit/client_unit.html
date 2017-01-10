@@ -2,18 +2,18 @@
 <div class="container" id="clientunit-view">
     <div class="row">
         <div class="col-lg-12">
-            <div class="col-sm-10">
-                <h4 class="page-title">Clients Unit</h4>
-            </div>
-            <div class="col-sm-2">
+              <div class="btn-group pull-right m-t-5 m-b-20">
                 <button type="submit" class="btn btn-success waves-effect waves-light m-l-10 btn-md pull-right" id="btn-clientunit-add"> <i class="fa fa-plus-circle"></i> Add</button>
             </div>
+                <h4 class="page-title">Clients Unit</h4>
+
+
         </div>
     </div>
     <div class="row" id="animationSandbox" id="clientUnitView">
         <div class="col-lg-12">
             <div class="panel panel-default panel-info">
-                <div class="panel-body">
+                <div class="card-box table-responsive">
                     <div class="dataTable_wrapper">
                         <table class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                             <thead>
@@ -29,25 +29,25 @@
                                 <tr>
                                     <td align="center"></td>
                                     <td>
-                                        <div class="form-group has-feedback col-sm-12 no-padding">
+                                        <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
                                             <input class="form-control input-sm filter-text-box js-filter" placeholder="Group" type="text" id="search-group-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="form-group has-feedback col-sm-12 no-padding">
+                                        <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
                                             <input class="form-control input-sm filter-text-box js-filter" placeholder="Business Group" type="text" id="search-bgroup-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="form-group has-feedback col-sm-12 no-padding">
+                                        <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
                                             <input class="form-control input-sm filter-text-box js-filter" placeholder="Country" type="text" id="search-country-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="form-group has-feedback col-sm-12 no-padding">
+                                        <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
                                             <input class="form-control input-sm filter-text-box js-filter" placeholder="Legal Entity" type="text" id="search-le-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
@@ -118,7 +118,7 @@
                                     <label class=" col-sm-4 control-label">Group <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="client-unit-id" value=""><span class="l-h-30 labelgroup"></span>
-                                        <Select id="group-select" class="form-control input-sm" onchange="loadBusinessGroups();" tabindex="1" autofocus="autofocus">
+                                        <Select id="group-select" class="form-control input-sm" tabindex="1" autofocus="autofocus">
                                             <option value="">Select</option>
                                         </Select>
                                     </div>
@@ -126,7 +126,7 @@
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-4 control-label">Country <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" name="country-name" autofocus="autofocus" tabindex="3" maxlength="50" id="country-name" autofocus="autofocus" onchange="loadLegalEntity();">
+                                        <input type="text" class="form-control input-sm" name="country-name" autofocus="autofocus" tabindex="3" maxlength="50" id="country-name" autofocus="autofocus">
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" name="country-id" id="country-id" value="">
                                         <div id="ac-country" class="ac-textbox default-display-none">
@@ -221,6 +221,7 @@
                         <div class="form-group">
                             <!-- Active units -->
                             <label class="col-sm-4 p-t-7 pull-right active_cnt"></label>
+
                             <input type="hidden" id="divisioncount" value="" class="divisioncnt">
                             <input type="hidden" id="unitcount" value="" class="unitcnt">
                         </div>
@@ -242,8 +243,8 @@
                                 <th width="8%">Postal Code</th>
                                 <th width="8%">Domain</th>
                                 <th width="10%">Organization</th>
-                                <th width="5%">Status</th>
-                                <th width="8%">Approve</th>
+                                <th width="5%" class="text-center">Status</th>
+                                <th width="8%" class="text-center">Approve</th>
                                 <th width="4%" class="text-center">Edit</th>
                             </tr>
                         </thead>

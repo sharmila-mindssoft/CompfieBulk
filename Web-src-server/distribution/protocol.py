@@ -44,7 +44,7 @@ class Company(object):
     def __init__(
         self,
         company_id, short_url, db_username,
-        db_password, db_name, db_ip, company_server_ip
+        db_password, db_name, db_ip, company_server_ip, is_group
     ):
         self.company_id = company_id
         self.short_url = short_url
@@ -53,13 +53,14 @@ class Company(object):
         self.db_name = db_name
         self.db_ip = db_ip
         self.company_server_ip = company_server_ip
+        self.is_group = is_group
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "company_id", "short_url", "db_username",
-                "db_password", "db_name", "db_ip", "company_server_ip"
+                "db_password", "db_name", "db_ip", "company_server_ip", "is_group"
             ]
         )
         company_id = data.get("company_id")
@@ -78,9 +79,10 @@ class Company(object):
         company_server_ip = parse_structure_RecordType_protocol_IPAddress(
             company_server_ip
         )
+        is_group = data.get("is_group")
         return Company(
             company_id, short_url, db_username,
-            db_password, db_name, db_ip, company_server_ip
+            db_password, db_name, db_ip, company_server_ip, is_group
         )
 
     def to_structure(self):
@@ -94,6 +96,7 @@ class Company(object):
             "company_server_ip": to_structure_RecordType_protocol_IPAddress(
                 self.company_server_ip
             ),
+            "is_group": self.is_group
         }
 
 #

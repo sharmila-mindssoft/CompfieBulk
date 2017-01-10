@@ -85,13 +85,11 @@ function isLoginValidated(e_email, e_password, e_captcha) {
 }
 function loadCaptcha() {
   captcha_text = getCaptcha();
-  console.log('captcha_text : ' + captcha_text);
   if (captcha_text == null || captcha_text == 'null') {
     captchaStatus = false;
   } else {
     captchaStatus = true;
   }
-  console.log('captcha status :' + captchaStatus);
   if (captchaStatus) {
     var myCanvas = document.getElementById('captchaCanvas');
     var myCanvasContext = myCanvas.getContext('2d');
@@ -110,6 +108,10 @@ function resetLoginUI(e_button, e_email, e_password) {
   e_password.removeAttr('disabled', 'disabled');
   e_email.focus();
   loadCaptcha();
+}
+function parseJSON(data) {
+  // data = JSON.stringify(data);
+  return JSON.parse(data);
 }
 function processLogin(username, password, shortName, callback) {
   var request = [
@@ -138,15 +140,22 @@ function processLogin(username, password, shortName, callback) {
   }
   // console.log(getCookie('_xsrf'));
   // url = BASE_URL + "login";
+  actula_data = JSON.stringify(requestFrame, null, ' ');
+  console.log(actula_data);
   $.ajax({
     url: BASE_URL + 'login',
     headers: { 'X-CSRFToken': csrf_token },
     type: 'POST',
     contentType: 'application/json',
-    data: JSON.stringify(requestFrame, null, ' '),
+    data: btoa(actula_data),
     success: function (data, textStatus, jqXHR) {
+      data = atob(data);
+      data = parseJSON(data);
       var status = data[0];
       var response = data[1];
+
+      console.log(status)
+      console.log(response)
       matchString = 'success';
       if (status.toLowerCase().indexOf(matchString) != -1) {
         initSession(response, shortName);
@@ -156,7 +165,9 @@ function processLogin(username, password, shortName, callback) {
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      callback(jqXHR.responseText, errorThrown);
+      rdata = parseJSON(jqXHR.responseText);
+      rdata = atob(rdata);
+      callback(rdata, errorThrown);
     }
   });
 }

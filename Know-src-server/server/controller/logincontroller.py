@@ -5,7 +5,6 @@ from server.constants import (
     KNOWLEDGE_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS
 )
 
-from server import logger
 from server.common import (
     encrypt, new_uuid, generate_random
 )
@@ -25,44 +24,28 @@ __all__ = [
 
 def process_login_request(request, db, session_user_ip):
     if type(request) is login.Login:
-        logger.logKnowledgeApi("Login", "process begin")
         result = process_login(db, request, session_user_ip)
-        logger.logKnowledgeApi("Login", "process end")
 
     elif type(request) is login.ForgotPassword:
-        logger.logKnowledgeApi("ForgotPassword", "process begin")
         result = process_forgot_password(db, request)
-        logger.logKnowledgeApi("ForgotPassword", "process end")
 
     elif type(request) is login.ResetTokenValidation:
-        logger.logKnowledgeApi("ResetTokenValidation", "process begin")
         result = process_reset_token(db, request)
-        logger.logKnowledgeApi("ResetTokenValidation", "process end")
 
     elif type(request) is login.ResetPassword:
-        logger.logKnowledgeApi("ResetPassword", "process begin")
         result = process_reset_password(db, request)
-        logger.logKnowledgeApi("ResetPassword", "process end")
 
     elif type(request) is login.ChangePassword:
-        logger.logKnowledgeApi("ChangePassword", "process begin")
         result = process_change_password(db, request)
-        logger.logKnowledgeApi("ChangePassword", "process end")
 
     elif type(request) is login.Logout:
-        logger.logKnowledgeApi("Logout", "process begin")
         result = process_logout(db, request)
-        logger.logKnowledgeApi("Logout", "process end")
 
     elif type(request) is login.CheckRegistrationToken:
-        logger.logKnowledgeApi("CheckRegistrationToken", "process begin")
         result = process_validate_rtoken(db, request)
-        logger.logKnowledgeApi("CheckRegistrationToken", "process end")
 
     elif type(request) is login.SaveRegistraion:
-        logger.logKnowledgeApi("SaveRegistraion", "process begin")
         result = process_save_logindetails(db, request)
-        logger.logKnowledgeApi("SaveRegistraion", "process end")
 
     elif type(request) is login.CheckUsername:
         result = process_check_username(db, request)

@@ -421,18 +421,23 @@ TEMPLATE_PATHS = [
     ),
     # Console Admin
     (
-        "/knowledge/configure-db-server",
-        "files/knowledge/configure-db-server/configure-db-server.html",
+        "/knowledge/configure-database-server",
+        "files/knowledge/configure-database-server/configure-database-server.html",
         None, {}
     ),
     (
-        "/knowledge/configure-client-server",
-        "files/knowledge/configure-client-server/configure-client-server.html",
+        "/knowledge/application-server",
+        "files/knowledge/application-server/application-server.html",
         None, {}
     ),
     (
-        "/knowledge/allocate-db-env",
-        "files/knowledge/allocate-db-env/allocate-db-env.html",
+        "/knowledge/allocate-database-environment",
+        "files/knowledge/allocate-database-environment/allocate-database-environment.html",
+        None, {}
+    ),
+    (
+        "/knowledge/allocate-database-environment-report",
+        "files/knowledge/allocate-database-environment-report/allocate-database-environment-report.html",
         None, {}
     ),
     (
@@ -441,8 +446,13 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/configure-file-storage",
-        "files/knowledge/configure-file-storage/configure-file-storage.html",
+        "/knowledge/ip-settings",
+        "files/knowledge/ip-settings/ip-settings.html",
+        None, {}
+    ),
+    (
+        "/knowledge/configure-file-server",
+        "files/knowledge/configure-file-server/configure-file-server.html",
         None, {}
     ),
     (
@@ -479,5 +489,10 @@ TEMPLATE_PATHS = [
         "/knowledge/statutory-notifications",
         "files/knowledge/statutorynotifications/statutorynotifications.html",
         None, {}
-    )
+    ),
+    (
+        "/knowledge/ip-settings-report",
+        "files/knowledge/ip-settings-report/ip-settings-report.html",
+        None, {}
+    ),
 ]

@@ -1,9 +1,7 @@
-import time
 from protocol import login, technotransactions, technomasters
 from generalcontroller import (
     validate_user_session, validate_user_forms
 )
-from server import logger
 from server.database.admin import (
     get_domains_for_user
 )
@@ -35,96 +33,23 @@ def process_techno_transaction_request(request, db):
     if user_id is None:
         return login.InvalidSessionToken()
 
-    # if type(request_frame) is technotransactions.GetAssignedStatutories:
-    #     logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
-    #     logger.logKnowledgeApi("------", str(time.time()))
-    #     result = process_get_assigned_statutories(db)
-    #     logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
-    #     logger.logKnowledgeApi("------", str(time.time()))
-
-    if type(request_frame) is technotransactions.GetAssignedStatutoriesById:
-        logger.logKnowledgeApi("GetAssignedStatutoriesById", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutories_by_id(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetAssignedStatutoriesById", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
-
-    elif type(
-        request_frame
-    ) is technotransactions.GetAssignedStatutoryWizardOneData:
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutory_wizard_one(
-            db, user_id
-        )
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryWizardOneData", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
-
-    # elif(
-    #     type(
-    #         request_frame
-    #     ) is technotransactions.GetAssignedStatutoryWizardTwoData
-    # ):
-    #     logger.logKnowledgeApi(
-    #         "GetAssignedStatutoryWizardTwoData", "process begin")
-    #     logger.logKnowledgeApi("------", str(time.time()))
-    #     result = process_get_assigned_statutory_wizard_two(
-    #         db, request_frame, user_id
-    #     )
-    #     logger.logKnowledgeApi(
-    #         "GetAssignedStatutoryWizardTwoData", "process end")
-    #     logger.logKnowledgeApi("------", str(time.time()))
-
-    elif type(request_frame) is technotransactions.SaveAssignedStatutory:
-        logger.logKnowledgeApi("SaveAssignedStatutory", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = process_save_assigned_statutory(db, request_frame, user_id)
-        logger.logKnowledgeApi("SaveAssignedStatutory", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
-
     elif type(request_frame) is technotransactions.GetCountriesForGroup:
-        logger.logKnowledgeApi("GetCountriesForGroup", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_countries_for_groups(db, user_id)
-        logger.logKnowledgeApi("GetCountriesForGroup", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.GetGroupAdminGroupUnitList:
-        logger.logKnowledgeApi("GetGroupAdminGroupUnitList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_groupadmingroup_unit_list(db, user_id)
-        logger.logKnowledgeApi("GetGroupAdminGroupUnitList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.ResendGroupAdminRegnMail:
-        logger.logKnowledgeApi("SendRegistraion", "process begin")
         result = resend_user_registration_mail(db, request_frame, user_id)
-        logger.logKnowledgeApi("SendRegistraion", "process end")
 
     elif type(request_frame) is technotransactions.SendGroupAdminRegnMail:
-        logger.logKnowledgeApi("SendGroupAdminRegnMail", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_Send_GroupAdminRegn_Mail(db, request_frame, user_id)
-        logger.logKnowledgeApi("SendGroupAdminRegnMail", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.GetLegalEntityClosureReportData:
-        logger.logKnowledgeApi("GetLegalEntityClosureReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_LegalEntityClosureReportData(db, user_id)
-        logger.logKnowledgeApi("GetLegalEntityClosureReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.SaveLegalEntityClosureData:
-        logger.logKnowledgeApi("SaveLegalEntityClosureData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_Save_LegalEntityClosureData(db, request_frame, user_id)
-        logger.logKnowledgeApi("SaveLegalEntityClosureData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 

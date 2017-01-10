@@ -912,10 +912,10 @@ $('#groupsval').keyup(function (e) {
           onAutoCompleteSuccess(GroupVal, Group, val);
     });
   }
-  else
+  /*else
   {
     displayMessage(message.country_required);
-  }
+  }*/
 });
 
 //load businessgroup form list in autocomplete text box
@@ -956,7 +956,7 @@ $('#businessgroupsval').keyup(function (e) {
     }, condition_fields, condition_values);
 
   }
-  else
+  /*else
   {
     if(country_id == 0 || country_id == '')
     {
@@ -967,7 +967,7 @@ $('#businessgroupsval').keyup(function (e) {
       displayMessage(message.group_required);
     }
 
-  }
+  }*/
 });
 
 //load legalentity form list in autocomplete text box
@@ -1011,7 +1011,7 @@ $('#legalentityval').keyup(function (e) {
           onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
       }, condition_fields, condition_values);
   }
-  else
+  /*else
   {
     if(country_id == 0 || country_id == '')
     {
@@ -1022,7 +1022,7 @@ $('#legalentityval').keyup(function (e) {
       displayMessage(message.group_required);
     }
 
-  }
+  }*/
 });
 
 //load legalentity form list in autocomplete text box
@@ -1065,7 +1065,7 @@ $('#divisionval').keyup(function (e) {
           onAutoCompleteSuccess(DivisionVal, Division, val);
       }, condition_fields, condition_values);
   }
-  else
+  /*else
   {
     if(country_id == 0 || country_id == '')
     {
@@ -1079,7 +1079,7 @@ $('#divisionval').keyup(function (e) {
     {
       displayMessage(message.legalentity_required);
     }
-  }
+  }*/
 });
 
 //load legalentity form list in autocomplete text box
@@ -1114,7 +1114,7 @@ $('#categoryval').keyup(function (e) {
           onAutoCompleteSuccess(CategoryVal, Category, val);
     });
   }
-  else
+  /*else
   {
     if(country_id == 0 || country_id == '')
     {
@@ -1128,7 +1128,7 @@ $('#categoryval').keyup(function (e) {
     {
       displayMessage(message.legalentity_required);
     }
-  }
+  }*/
 });
 
 //load legalentity form list in autocomplete text box
@@ -1165,7 +1165,7 @@ $('#unitval').keyup(function (e) {
           onAutoCompleteSuccess(UnitVal, Unit, val);
     });
   }
-  else
+  /*else
   {
     if(country_id == 0 || country_id == '')
     {
@@ -1179,6 +1179,6 @@ $('#unitval').keyup(function (e) {
     {
       displayMessage(message.legalentity_required);
     }
-  }
+  }*/
 });
 

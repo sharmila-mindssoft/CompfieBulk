@@ -31,6 +31,10 @@ var CurrentPassword = $('#current-password');
 ApproveStatusUL = $('#ap-status-list');
 ApproveStatusLI = $('.ap-status-li');
 ApproveStatusText = $('#ap-status');
+FilterBox = $('.filter-box');
+Search_status_ui = $('.search-status-list');
+Search_status_li = $('.search-status-li');
+Search_status = $('#search-status');
 // Tab 1
 Country = $('#country');
 Domain = $("#domain");
@@ -48,6 +52,8 @@ Duration = $('#duration');
 
 RepeatsType = $('#repeats_type');
 RepeatsEvery = $('#repeats_every')
+MultiselectDate = $('.multi-date-box');
+
 ComplianceTask = $('#compliance_task');
 Provision = $('#statutory_provision');
 Description = $('#compliance_description');
@@ -219,6 +225,13 @@ function RenderInput() {
                 _renderinput.country_name = val.c_name;
                 _renderinput.loadDomain(val.c_id);
                 _renderinput.loadNature(val.c_id);
+                _renderinput.domain_id = null;
+                _renderinput.org_ids = [];
+                _renderinput.org_names = [];
+                _renderinput.selected_iids = [];
+                _renderinput.nature_id = null;
+                Organisation.empty();
+                _renderinput.loadOrganisation(_renderinput.country_id, _renderinput.domain_id);
                 $('#c'+val.c_id).addClass('active');
                 $('#c'+val.c_id + ' i').addClass("fa-check");
             });
@@ -276,7 +289,8 @@ function RenderInput() {
         var first_li = 0;
 
         // append select
-
+        _renderinput.org_ids = [];
+        _renderinput.org_names = [];
         $.each(ORGANISATION_INFO, function(ke, val) {
             if (val.is_active == false)
                 return;
@@ -284,7 +298,7 @@ function RenderInput() {
                 (parseInt(val.c_id) == parseInt(c_id)) &&
                 (parseInt(val.d_id) == parseInt(d_id))
             ){
-                if (first_li == 0) {
+                if (ke == 0) {
                     orgObject = list_template.clone();
                     orgObject.addClass("organisationlist");
                     orgObject.attr('id', 'o-1');
@@ -303,10 +317,10 @@ function RenderInput() {
                             $('.organisationlist').addClass('active');
                             $('.organisationlist i').addClass('fa-check');
                             $.each(ORGANISATION_INFO, function(k, v) {
-                                if ((v.c_id != c_id) && (v.d_id != d_id))
-                                    return;
-                                _renderinput.org_ids.push(v.org_id);
-                                _renderinput.org_names.push(v.org_name);
+                                if ((v.c_id == _renderinput.country_id) && (v.d_id == _renderinput.domain_id)) {
+                                    _renderinput.org_ids.push(v.org_id);
+                                    _renderinput.org_names.push(v.org_name);
+                                }
                             });
                         }
                     });
@@ -323,11 +337,11 @@ function RenderInput() {
                     if (sts == true) {
                         $('#o'+val.org_id).removeClass('active');
                         $('#o'+val.org_id+ ' i').removeClass('fa-check');
-                        _renderinput.org_id = _renderinput.remveItemFromList(
-                            val.org_id, this.org_id
+                        _renderinput.org_ids = _renderinput.remveItemFromList(
+                            val.org_id, _renderinput.org_ids
                         );
-                        _renderinput.org_name = _renderinput.remveItemFromList(
-                            val.org_name, this.org_name
+                        _renderinput.org_names = _renderinput.remveItemFromList(
+                            val.org_name, _renderinput.org_names
                         );
                     }
                     else {
@@ -401,6 +415,92 @@ function RenderInput() {
             RepeatsType.append(
                 _renderinput.make_option(val.repeat_type, val.repeat_type_id)
             );
+        });
+        RepeatsType.on('change', function(){
+            if (RepeatsType.val() == 2) {
+                if ((12 % parseInt(RepeatsEvery.val()) == 0 )  && (parseInt(RepeatsEvery.val()) < 12)){
+                    $('.multicheckbox', RecurringPan).show();
+                    _renderinput.loadMultipleDate();
+                }
+                else {
+                    $('.multicheckbox', RecurringPan).hide();
+                }
+            }
+            else{
+                $('.multicheckbox', RecurringPan).hide();
+            }
+            if (RepeatsType.val() != '') {
+                dat = RepeatsEvery.val();
+                mon = $('#repeats_type option:selected').text();
+                summary = 'Repeats every ' + dat + " " + mon
+                $('.recurr-summary', RecurringPan).text(summary);
+                _renderinput.summary = summary
+            }
+
+        });
+    };
+    this.loadDate = function(idx) {
+        date_pan = $("#templates #date-list-templates").clone();
+        date_pan.attr('id', 'dt'+ idx);
+        $('.month-select', date_pan).empty();
+        _renderinput.loadMonthAndData($('.month-select', date_pan));
+        $('.trigger-value', date_pan).on('input', function(e) {
+            this.value = isNonZeroNumbers($(this));
+        });
+        return date_pan;
+    };
+    this.loadDays = function(idx, key) {
+        $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
+            if (v.m_id == key) {
+                $('.date-select', '#dt'+idx).append(_renderinput.make_option("Select", ''));
+                for (var i=1; i<=v.range; i++) {
+                    dopt =_renderinput.make_option(i, i);
+                    $('.date-select', '#dt'+ idx).append(dopt);
+                }
+            }
+        });
+    }
+    this.loadedDateEvent = function(idx) {
+        $('.month-select', '#dt'+ idx).change(function(){
+            _renderinput.loadDays(idx, $('.month-select', '#dt'+idx).val());
+
+            if (idx == 0) {
+                // auto select month from first index value
+                every_val = parseInt(RepeatsEvery.val());
+                actual_len =  12 / every_val
+                first_month = $('.month-select', '#dt0').val();
+
+                if (first_month != '') {
+                    for (i = 1 ; i < actual_len ; i++) {
+                        next_val = parseInt(first_month) + ( i * parseInt(every_val));
+                        if (next_val > 12) {
+                            next_val = next_val - 12;
+                        }
+                        $('.month-select', '#dt'+i).val(next_val);
+                        _renderinput.loadDays(i, next_val);
+                    }
+                }
+            }
+        });
+
+    };
+    this.loadMultipleDate = function() {
+
+        MultiselectDate.on('click', function(e) {
+            $('.date-list').empty();
+            if (MultiselectDate.prop('checked')) {
+                if (12 % parseInt(RepeatsEvery.val()) == 0 ) {
+                    len = 12 / parseInt(RepeatsEvery.val());
+                    for (i=0; i < len ; i++) {
+                        $('.date-list').append(_renderinput.loadDate(i));
+                        _renderinput.loadedDateEvent(i);
+                    }
+                }
+            }
+            else {
+                $('.date-list').append(_renderinput.loadDate(0));
+                _renderinput.loadedDateEvent(0);
+            }
         });
     };
 
@@ -566,10 +666,10 @@ function RenderInput() {
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
-                    if (_renderinput.l_one_id == null) {
+                    /*if (_renderinput.l_one_id == null) {
                         displayMessage(msg.statutory_selection_required);
                         return false;
-                    }
+                    }*/
                     new_value = $('#dv'+ v.l_position).val();
                     _sid = $('#dvid'+v.l_position).val();
 
@@ -619,6 +719,16 @@ function RenderInput() {
                 //     );
                 // }
             });
+
+            $('#sf'+v.l_position, slObject).keyup(function(){
+                var searchText = $(this).val().toLowerCase();
+                $('#snl'+v.l_position+' > li').each(function(){
+                    var currentLiText = $(this).text().toLowerCase(),
+                        showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                    $(this).toggle(showCurrentLi);
+                });
+            });
+
 
             $('#tbody-statutory-level').append(slObject);
             if (v.l_position == 1){
@@ -710,33 +820,21 @@ function RenderInput() {
             Duration.val(data.duration);
 
             DurationType.val(data.d_type_id);
+            $('.occasional_summary').text(data.summary);
         }
         else {
 
             RepeatsType.val(data.r_type_id);
             RepeatsEvery.val(data.r_every);
+            $('.recurr-summary').text(data.summary);
 
             $('.date-list').empty();
             $.each(data.statu_dates, function(k, v) {
 
-
-                date_pan = $("#templates #date-list-templates").clone();
-
-                $('.month-select', date_pan).empty();
-                _renderinput.loadMonthAndData($('.month-select', date_pan));
-                $('.month-select', date_pan).change(function(){
-                    $('.date-select', date_pan).empty();
-                    $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
-                        if (v.m_id == parseInt($('.month-select', date_pan).val())) {
-                            for (var i=1; i<=v.range; i++) {
-                                dopt =_renderinput.make_option(i, i);
-                                $('.date-select', date_pan).append(dopt);
-                            }
-                        }
-                    });
-                });
-
+                date_pan = _renderinput.loadDate(k);
                 $('.month-select', date_pan).val(v['statutory_month']);
+                $('.trigger-value', date_pan).val(v['trigger_before_days']);
+
                 $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
                     if (vv.m_id == v["statutory_month"]) {
                         for (var i=1; i<vv.range; i++) {
@@ -746,8 +844,8 @@ function RenderInput() {
                     }
                 });
                 $('.date-select', date_pan).val(v['statutory_date']);
-                $('.trigger-value', date_pan).val(v['trigger_before_days']);
                 $('.date-list').append(date_pan);
+                _renderinput.loadedDateEvent(k);
             });
 
 
@@ -799,13 +897,13 @@ function RenderInput() {
         var j = 1;
         $.each(_renderinput.mapped_compliances, function(ke, v) {
             cObj = $('#templates #compliance-templates .table-row').clone();
-
+            console.log(v);
             $('.sno', cObj).text(j);
             $('.statutory-provision', cObj).text(v.s_provision);
             $('.task', cObj).text(v.c_task);
             $('.description', cObj).text(v.description);
             $('.frequency', cObj).text(v.frequency);
-            $('.repeats', cObj).val();
+            $('.summary-repeats', cObj).text(v.summary);
             $('#edit-icon', cObj).attr('title', 'Edit');
             $('#edit-icon', cObj).on('click', function () {
                 _renderinput.loadCompliance(v);
@@ -955,11 +1053,21 @@ function RenderInput() {
             $('.gname-list', slObject).attr(
                 'id', 'gnl' + v.l_position
             );
+            $('.geo-name-filter', slObject).attr('id', 'gnf'+v.l_position);
+
+            $('#gnf'+v.l_position, slObject).keyup(function(){
+                var searchText = $(this).val().toLowerCase();
+                $('#gnl'+v.l_position+' > li').each(function(){
+                    var currentLiText = $(this).text().toLowerCase(),
+                        showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                    $(this).toggle(showCurrentLi);
+                });
+            });
+
             $('.tbody-geography-level').append(slObject);
 
         });
     };
-
 
     this.hideFrequencyAll = function() {
         Onetimepan.hide();
@@ -995,7 +1103,7 @@ function RenderInput() {
                     e.preventDefault();
                     d_select = $('#duration_type option:selected');
                     if ((DurationType.val() != '') && (Duration.val() != '')) {
-                        _renderinput.summary =  "To complete with in " + this.value + " "+ d_select.text();
+                        _renderinput.summary =  "To complete with in " + Duration.val() + " "+ d_select.text();
                         $('.occasional_summary').text(_renderinput.summary);
                     }
 
@@ -1016,29 +1124,45 @@ function RenderInput() {
             }
             else {
                 RecurringPan.show();
+                if (freq_val == 2){
+                    txt = "Periodical";
+                    $('.mandatory', RecurringPan).show();
+                }
+                else if (freq_val == 3) {
+                    txt = "Review";
+                    $('.mandatory', RecurringPan).show();
+                }
+                else{
+                    txt = "Flexi Review";
+                    $('.mandatory', RecurringPan).hide();
+                }
+                $('.header-title', RecurringPan).html(txt);
                 _renderinput.loadRepeats();
                 $('.date-list').empty();
-                date_pan = $("#templates #date-list-templates").clone();
+                // date_pan = $("#templates #date-list-templates").clone();
 
-                $('.month-select', date_pan).empty();
-                this.loadMonthAndData($('.month-select', date_pan));
-                $('.month-select', date_pan).change(function(){
-                    $('.date-select', date_pan).empty();
-                    $('.date-select', date_pan).append(_renderinput.make_option("Select", ''));
-                    $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
-                        if (v.m_id == parseInt($('.month-select', date_pan).val())) {
-                            for (var i=1; i<=v.range; i++) {
-                                dopt =_renderinput.make_option(i, i);
-                                $('.date-select', date_pan).append(dopt);
-                            }
-                        }
-                    });
-                });
+                // $('.month-select', date_pan).empty();
+                // this.loadMonthAndData($('.month-select', date_pan));
+                // $('.month-select', date_pan).change(function(){
+                //     $('.date-select', date_pan).empty();
+                //     $('.date-select', date_pan).append(_renderinput.make_option("Select", ''));
+                //     _renderinput.loadDays();
+                //     $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
+                //         if (v.m_id == parseInt($('.month-select', date_pan).val())) {
+                //             for (var i=1; i<=v.range; i++) {
+                //                 dopt =_renderinput.make_option(i, i);
+                //                 $('.date-select', date_pan).append(dopt);
+                //             }
+                //         }
+                //     });
+                // });
 
-                $('.trigger-value', date_pan).on('input', function(e) {
-                    this.value = isNonZeroNumbers($(this));
-                });
+                // $('.trigger-value', date_pan).on('input', function(e) {
+                //     this.value = isNonZeroNumbers($(this));
+                // });
+                _renderinput.loadDate(0)
                 $('.date-list').append(date_pan);
+                _renderinput.loadedDateEvent(0);
             }
 
         }
@@ -1139,8 +1263,6 @@ function FetchBack() {
                                 info["s_names"] = v.p_maps
                             else
                                 info["s_names"] = [];
-                            console.log(v.p_maps);
-                            console.log(info["s_names"]);
                             info["s_names"].push(v.s_name)
                             if (v.p_ids == null) {
                                 info["l_one_id"] = 0;
@@ -1152,7 +1274,6 @@ function FetchBack() {
                             _renderinput.mapped_statu.push(info);
                         }
                     });
-                    console.log(_renderinput.mapped_statu);
                     _renderinput.renderStatuGrid();
                     _renderinput.renderComplianceGrid();
 
@@ -1458,6 +1579,36 @@ function ListPage() {
     this.hide = function() {
         ListScreen.hide();
     };
+    this.listFilter = function() {
+        country_search = $('#country-search').val().toLowerCase();
+        domain_search = $('#domain-search').val().toLowerCase();
+        org_search = $('#org-search').val().toLowerCase();
+        nature_search = $('#nature-search').val().toLowerCase();
+        statu_search = $('#statu-search').val().toLowerCase();
+
+        map_status = $('.search-status-li.active').attr('value');
+        // usr_disable = $('#ap-status-list.active').attr('value');
+
+        filteredList = []
+        $.each(STATU_MAPPINGS, function(k, data){
+            c_name = data.c_name.toLowerCase();
+            d_name = data.d_name.toLowerCase();
+            org_name = data.i_names.join(' , ');
+            org_name = org_name.toLowerCase();
+            nature_name = data.s_n_name.toLowerCase();
+            map_name = data.s_maps.join(' , ');
+            map_name = map_name.toLowerCase();
+
+            if (
+                (~c_name.indexOf(country_search)) && (~d_name.indexOf(domain_search)) &&
+                (~org_name.indexOf(org_search)) && (~nature_name.indexOf(nature_search)) &&
+                (~map_name.indexOf(statu_search)) && ((map_status == 'all') || (parseInt(map_status) == data.is_active))
+            ) {
+                filteredList.push(data);
+            }
+        });
+        _listPage.renderList(filteredList, filteredList.length);
+    };
 
 }
 //
@@ -1473,10 +1624,6 @@ function ViewPage() {
         _renderinput.loadCounty();
     };
     this.validateFirstTab = function() {
-
-
-
-
         if (_renderinput.country_id == null) {
             displayMessage(msg.country_required);
             return false;
@@ -1532,6 +1679,13 @@ function ViewPage() {
             return false;
         }
         else {
+            if (ReferenceLink.val().length > 0) {
+                isValid = isWebUrl(ReferenceLink);
+                if (isValid == false) {
+                    displayMessage(msg.invalid_reference);
+                    return false;
+                }
+            }
             if (
                 (Frequency.val() == 2) ||
                 (Frequency.val() == 3)
@@ -1562,6 +1716,7 @@ function ViewPage() {
             }
             return true;
         }
+
 
     };
     this.showFouthTab = function(){
@@ -1783,19 +1938,22 @@ function pageControls() {
         }
         else {
             if (add_new) {
-                console.log(_renderinput.mapped_statu)
                 _renderinput.mapped_statu.push(info)
                 _renderinput.renderStatuGrid();
             }
         }
     });
 
-
     Frequency.change(function() {
         _renderinput.hideFrequencyAll();
         _renderinput.showFrequencyVal();
     });
-
+    ComplianceTask.on('input', function(e) {
+        this.value = isCommon($(this));
+    });
+    Document.on('input', function(e) {
+        this.value = isCommon_Name($(this));
+    });
     Description.keyup(function(e) {
         countDown = $('#counter');
         var mxlength = 500;
@@ -1808,6 +1966,12 @@ function pageControls() {
         else {
             countDown.html(mxlength - txtlen + "characters");
         }
+    });
+    Description.on('input', function(e) {
+        this.value = isCommon($(this));
+    });
+    Provision.on('input', function(e) {
+        this.value = isCommon($(this));
     });
     Provision.keyup(function(e) {
         countDown = $('#counter1');
@@ -1822,6 +1986,9 @@ function pageControls() {
             countDown.html(mxlength - txtlen + "characters");
         }
     });
+    Penal.on('input', function(e) {
+        this.value = isCommon($(this));
+    });
     Penal.keyup(function(e) {
         countDown = $('#counter2');
         var mxlength = 500;
@@ -1835,6 +2002,7 @@ function pageControls() {
             countDown.html(mxlength - txtlen + "characters");
         }
     });
+
     ReferenceLink.keyup(function(e) {
         countDown = $('#counter3');
         var mxlength = 500;
@@ -1861,11 +2029,11 @@ function pageControls() {
             info['comp_id'] = null;
         else
             info['comp_id'] = parseInt(Comp_id.val());
-
         if (Temp_id.val() == '')
-            info['temp_id'] = null;
+            info['temp_id'] = _renderinput.mapped_compliances.length + 1;
         else
             info['temp_id'] = Temp_id.val();
+
 
         info['s_provision'] = Provision.val().trim();
         info['c_task'] = ComplianceTask.val().trim();
@@ -1898,7 +2066,10 @@ function pageControls() {
             repeat_by = parseInt(repeat_by);
 
 
-            $(".date-list").each(function(){
+            $(".statu-date-pan").each(function(idx, val){
+                if ($('.date-select', '#dt'+idx).val() == undefined) {
+                    return false;
+                }
                 statu = {};
                 statu['statutory_date'] = null;
                 statu['statutory_month'] = null;
@@ -1955,18 +2126,23 @@ function pageControls() {
         info['frequency'] = $('#compliance_frequency option:selected').text();
         info['summary'] = _renderinput.summary;
 
-        is_duplidate = false;
+        is_duplidate = false
+        if (Temp_id.val() != '') {
+            $.each(_renderinput.mapped_compliances, function(k, v) {
+                compid = v.comp_id;
+                if (compid == null)
+                    compid = '';
+                if ((Temp_id.val() == Comp_id.val()) || (Temp_id.val() == v.temp_id)) {
+                    _renderinput.mapped_compliances.splice(k, 1);
+                    return false;
+                }
+            });
+        }
 
-        $.each(_renderinput.mapped_compliances, function(k, v) {
-            if ((Temp_id.val() == Comp_id.val()) && (Comp_id.val() == v.comp_id)) {
-                _renderinput.mapped_compliances.splice(k, 1);
-                return false;
-            }
-        });
         $.each(_renderinput.mapped_compliances, function(k, v) {
             if (
                 (v.s_provision == Provision.val().trim()) &&
-                (v.c_task == ComplianceTask.val().trim()) &&
+                (v.c_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
                 ((Comp_id.val().trim() == '') || (Temp_id.val().trim() != Comp_id.val().trim()))
             ){
                 displayMessage(msg.compliancetask_duplicate);
@@ -1974,6 +2150,7 @@ function pageControls() {
                 return false;
             }
         });
+        console.log(info);
         if (!is_duplidate) {
             _renderinput.mapped_compliances.push(info);
             _renderinput.renderComplianceGrid();
@@ -2037,22 +2214,9 @@ function pageControls() {
         });
 
         $(event.target).parent().addClass('active');
-        // $(event.target)
-
-        // var currentClass = $(event.target).find('i').attr('class');
-        // Search_status.removeClass();
-        // if (currentClass != undefined) {
-        //     Search_status.addClass(currentClass);
-        //     Search_status.text('');
-        // } else {
-        //     Search_status.addClass('fa');
-        //     Search_status.text('All');
-        // }
         ApproveStatusText.text($(event.target).text());
         ap_status = $(event.target).parent().val();
         _fetchback.getMappedList(ap_status, 0);
-
-        // processFilter();
     });
 
     PasswordSubmitButton.click(function() {
@@ -2061,6 +2225,76 @@ function pageControls() {
 
     $('#ottriggerbefore').on('input', function(e) {
         this.value = isNonZeroNumbers($(this));
+    });
+
+    RepeatsEvery.on('input', function(e) {
+        this.value = isNumbers($(this));
+        MultiselectDate.attr('checked', false);
+        $('.multicheckbox').hide();
+        $('.date-list').empty();
+        RepeatsType.val('');
+        date_pan = _renderinput.loadDate(0);
+        $('.date-list').append(date_pan);
+        _renderinput.loadedDateEvent(0);
+
+    });
+
+    FilterBox.keyup(function() {
+        _listPage.listFilter();
+    });
+
+    Search_status_ui.click(function(event) {
+        Search_status_li.each(function(index, el) {
+            $(el).removeClass('active');
+        });
+        $(event.target).parent().addClass('active');
+
+        var currentClass = $(event.target).find('i').attr('class');
+        Search_status.removeClass();
+        if (currentClass != undefined) {
+            Search_status.addClass(currentClass);
+            Search_status.text('');
+        } else {
+            Search_status.addClass('fa');
+            Search_status.text('All');
+        }
+        _listPage.listFilter();
+    });
+
+    $('#ct-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#country > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
+
+    $('#dt-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#domain > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
+
+    $('#orglist-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#industry > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
+
+    $('#naturelist-search').keyup(function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#statutorynature > li').each(function(){
+            var currentLiText = $(this).text().toLowerCase(),
+                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
     });
 
 }

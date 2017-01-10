@@ -1,5 +1,5 @@
 from server import logger
-from protocol import (dashboard, login, general, clientreport)
+from clientprotocol import (dashboard, clientlogin, general, clientreport)
 from server.jsontocsvconverter import ConvertJsonToCSV
 from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
@@ -28,7 +28,7 @@ def process_client_dashboard_requests(request, db):
     session_user = db.validate_session_token(session_token)
 
     if session_user is None:
-        return login.InvalidSessionToken()
+        return clientlogin.InvalidSessionToken()
 
     if get_client_compliance_count(db) == 0:
         logger.logClientApi("CheckMasterDataDashboard", "process begin")

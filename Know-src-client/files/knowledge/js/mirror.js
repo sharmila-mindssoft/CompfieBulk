@@ -17,7 +17,6 @@ function initMirror() {
     return JSON.stringify(data, null, ' ');
   }
   function parseJSON(data) {
-    data = JSON.stringify(data);
     return JSON.parse(data);
   }
   function initSession(userProfile) {
@@ -154,16 +153,23 @@ function initMirror() {
       'session_token': sessionToken,
       'request': request
     };
+    actula_data = toJSON(requestFrame);
+
     $.ajax({
       url: BASE_URL + callerName,
       headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(requestFrame),
+      data: btoa(actula_data),
       success: function (data) {
-        // var data = parseJSON(data);
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
+
+        console.log(status);
+        console.log(response);
+
         matchString = 'success';
         if (status.toLowerCase().indexOf(matchString) != -1) {
           if (status == 'UpdateUserProfileSuccess') {
@@ -182,6 +188,8 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
         console.log(textStatus, errorThrown);
         // alert(jqXHR.responseText.toLowerCase().indexOf("csrf"));
         if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
@@ -189,9 +197,8 @@ function initMirror() {
           window.location.href = login_url;
         }
 
-
         // console.log(jqXHR.responseText)
-        callback(jqXHR.responseText, errorThrown);  // alert("jqXHR:"+jqXHR.status);
+        callback(rdata, errorThrown);  // alert("jqXHR:"+jqXHR.status);
                                                     // alert("textStatus:"+textStatus);
                                                     // alert("errorThrown:"+errorThrown);
                                                     // callback(error, null);
@@ -205,9 +212,10 @@ function initMirror() {
       headers: { 'X-CSRFToken': csrf_token },
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(request),
+      data: btoa(toJSON(request)),
       success: function (data) {
-        // var data = parseJSON(data);
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
         matchString = 'success';
@@ -219,7 +227,9 @@ function initMirror() {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        callback(jqXHR.responseText, null);
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
+        callback(rdata, null);
       }
     });
   }
@@ -243,11 +253,14 @@ function initMirror() {
       // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
       type: 'POST',
       contentType: 'application/json',
-      data: toJSON(request),
-      success: function (data) {
-        // var data = parseJSON(data);
+      data: btoa(toJSON(request)),
+      success: function (data){
+        data = atob(data);
+        data = parseJSON(data);
         var status = data[0];
         var response = data[1];
+        console.log(status);
+        console.log(response);
         matchString = 'success';
         clearSession();
         login_url = '/knowledge/login';
@@ -255,7 +268,9 @@ function initMirror() {
         window.location.href = login_url;
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        callback(jqXHR.responseText);
+        rdata = parseJSON(jqXHR.responseText);
+        rdata = atob(rdata);
+        callback(rdata.responseText);
       }
     });
   }
@@ -816,7 +831,7 @@ function initMirror() {
     ];
     apiRequest('knowledge_report', request, callback);
   }
-  function filterData(cId, dId, iId, sNId, gId, level1SId, fId, rCount) {
+  function filterData(cId, dId, iId, sNId, gId, level1SId, fId, rCount, page_count) {
     var filter = {};
     filter.c_id = cId;
     filter.d_id = dId;
@@ -826,6 +841,7 @@ function initMirror() {
     filter.statutory_id_optional = level1SId;
     filter.frequency_id = fId;
     filter.r_count = rCount;
+    filter.page_count = page_count;
     return filter;
   }
   function getStatutoryMappingsReportData(filterDatas, callback) {
@@ -1087,7 +1103,7 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function updateClientGroup(g_id, g_name, u_name, short_name, no_of_view_licence,
+  function updateClientGroup(g_id, g_name, u_name, short_name, no_of_view_licence, remarks,
     les, d_cs, callback) {
     callerName = 'techno';
     var request = [
@@ -1099,7 +1115,8 @@ function initMirror() {
         "short_name": short_name,
         "no_of_view_licence": no_of_view_licence,
         "legal_entities": les,
-        "date_configurations": d_cs
+        "date_configurations": d_cs,
+        "remarks": remarks
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1655,6 +1672,26 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getLegalEntity(entity_id, callback) {
+    callerName = 'client_coordination_master';
+    var request = [
+      'GetLegalEntityInfo',
+      {
+        "le_id": entity_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function approveClientGroupList(client_id, entity_id, entity_name, approval_status, reason) {
+    return {
+        "ct_id": client_id,
+        "le_id": entity_id,
+        "le_name": entity_name,
+        "approval_status": approval_status,
+        "reason": reason,
+    }
+
+  }
   function approveClientGroup(group_approval_details, callback){
     callerName = 'client_coordination_master';
     var request = [
@@ -1665,22 +1702,23 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getDbServerList(callback){
+  function getDatabaseServerList(callback){
     callerName = 'console_admin';
     var request = [
-      'GetDbServerList',
+      'GetDatabaseServerList',
       {
       }
     ];
     apiRequest(callerName, request, callback);
   }
   function saveDBServer(
-    db_server_name, ip, port, username, password, callback
+    db_server_id, db_server_name, ip, port, username, password, callback
   ){
     callerName = "console_admin"
     var request = [
       "SaveDBServer",
       {
+        "db_server_id": db_server_id,
         "db_server_name": db_server_name,
         "ip": ip,
         "port": port,
@@ -1714,6 +1752,30 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function getFileServerList(callback){
+    callerName = 'console_admin';
+    var request = [
+      'GetFileServerList',
+      {
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function fileServerEntry(
+    file_server_id, file_server_name, ip, port, callback
+  ){
+    callerName = "console_admin";
+    var request = [
+      "SaveFileServer",
+      {
+        "file_server_id": file_server_id,
+        "file_server_name": file_server_name,
+        "ip": ip,
+        "port": port
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
   function getAllocatedDBEnv(callback){
       callerName = "console_admin";
       var request = [
@@ -1722,15 +1784,20 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function saveDBEnv(client_id, le_id, db_server_ip, machine_id, callback){
+  function saveDBEnv(client_db_id, client_id, le_id, machine_id, db_server_id, le_db_server_id, file_server_id, cl_ids, le_ids, callback){
       callerName = "console_admin";
       var request = [
           "SaveAllocatedDBEnv",
           {
+            "client_database_id": client_db_id,
             "client_id": client_id,
             "legal_entity_id": le_id,
-            "database_server_ip": db_server_ip,
-            "machine_id": machine_id
+            "machine_id": machine_id,
+            "db_server_id": db_server_id,
+            "le_db_server_id": le_db_server_id,
+            "file_server_id": file_server_id,
+            "console_cl_ids": cl_ids,
+            "console_le_ids": le_ids
           }
       ];
       apiRequest(callerName, request, callback);
@@ -1762,6 +1829,14 @@ function initMirror() {
         {}
       ];
       apiRequest(callerName, request, callback);
+  }
+  function getDeletionDetails(client_id, entity_id, unit_id, deletion_period) {
+    return {
+        "client_id": client_id,
+        "legal_entity_id": entity_id,
+        "unit_id": unit_id,
+        "deletion_period": deletion_period,
+    }
   }
   function saveAutoDeletion(auto_deletion_details, callback){
       callerName = "console_admin";
@@ -1802,13 +1877,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignedUnitsList(domain_id, client_id, callback){
+  function getAssignedUnitsList(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignedUnits",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1824,13 +1900,14 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignUnitFormData(domain_id, client_id, callback){
+  function getAssignUnitFormData(domain_id, client_id, legal_entity_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignUnitFormData",
       {
         "domain_id": domain_id,
-        "client_id": client_id
+        "client_id": client_id,
+        "legal_entity_id": legal_entity_id
       }
     ];
     apiRequest(callerName, request, callback);
@@ -1855,17 +1932,129 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
-  function saveReassignUserAccount(
-    user_type, old_user_id, new_user_id, assigned_ids, remarks, callback
+  function getTechnoUSerInfo(techno_user_id, callback){
+    callerName = "admin";
+    var request = [
+        "GetTechnoUserData",
+        {
+          "techno_id": techno_user_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getDomainUserInfo(domain_user_id, group_id, entity_id, domain_id, callback){
+    callerName = "admin";
+    var request = [
+        "GetDomainUserData",
+        {
+          "d_u_id": domain_user_id,
+          "gt_id": group_id,
+          "le_id": entity_id,
+          "d_id": domain_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function technoManagerInfo(reassign_to, client_id, entity_id, techno_executive, old_techno_executive) {
+    var userInfo = {};
+    userInfo.reassign_to = reassign_to;
+    userInfo.gt_id = client_id;
+    userInfo.le_id = entity_id;
+    userInfo.t_e_id = techno_executive;
+    userInfo.old_t_e_id = old_techno_executive;
+    return userInfo;
+  }
+
+  function ReassignTechnoManager(user_from, data, remarks, callback){
+      callerName = "admin";
+      var request = [
+        "SaveReassignTechnoManager",
+        {
+          "reassign_from": user_from,
+          "t_manager_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function technoExecutiveInfo(client_id, entity_id) {
+    var userInfo = {};
+    userInfo.gt_id = client_id;
+    userInfo.le_id = entity_id;
+    return userInfo;
+  }
+
+  function ReassignTechnoExecutive(user_from, user_to, data, remarks, callback){
+      callerName = "admin";
+      var request = [
+        "SaveReassignTechnoExecutive",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "t_executive_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function domainManagerInfo(unit_id, domain_executive, old_domain_executive) {
+    var userInfo = {};
+    userInfo.u_id = unit_id;
+    userInfo.d_e_id = domain_executive;
+    userInfo.old_d_e_id = old_domain_executive;
+    return userInfo;
+  }
+
+  function ReassignDomainManager(
+    user_from, user_to, client_id, entity_id, domain_id, data,
+    remarks, callback
   ){
       callerName = "admin";
       var request = [
-        "SaveReassignUserAccount",
+        "SaveReassignDomainManager",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "gt_id": client_id,
+          "le_id": entity_id,
+          "d_id": domain_id,
+          "d_manager_info": data,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function ReassignDomainExecutive(
+    user_from, user_to, client_id, entity_id, domain_id, unit_ids,
+    remarks, callback
+  ){
+      callerName = "admin";
+      var request = [
+        "SaveReassignDomainExecutive",
+        {
+          "reassign_from": user_from,
+          "reassign_to": user_to,
+          "gt_id": client_id,
+          "le_id": entity_id,
+          "d_id": domain_id,
+          "unit_ids": unit_ids,
+          "remarks": remarks
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+  function SaveUserReplacement(user_type, user_from, user_to, remarks, callback) {
+      callerName = "admin";
+      var request = [
+        "UserReplacement",
         {
           "user_type": user_type,
-          "old_user_id": old_user_id,
-          "new_user_id": new_user_id,
-          "assigned_ids": assigned_ids,
+          "old_user_id": user_from,
+          "new_user_id": user_to,
           "remarks": remarks
         }
       ];
@@ -1995,13 +2184,14 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function getAssignedStatutoriesById(u_id, d_id, callback){
+  function getAssignedStatutoriesById(u_id, d_id, rcount, callback){
     callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutoriesById",
         {
           "u_id": u_id,
-          "d_id": d_id
+          "d_id": d_id,
+          "rcount": rcount
         }
       ];
     apiRequest(callerName, request, callback);
@@ -2266,6 +2456,87 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
+  function getIPSettingsList(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsList",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getGroupIPDetails(clientId, callback){
+      callerName = "console_admin";
+      var request = [
+        "GetGroupIPDetails",
+        {
+          "client_id": clientId
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsDetails(form_id, ip, client_id) {
+    return {
+        "form_id": form_id,
+        "ip": ip,
+        "client_id": client_id,
+      }
+  }
+
+  function saveIPSettings(ip_details, callback){
+      callerName = "console_admin";
+      var request = [
+        "SaveIPSettings",
+        {
+          "group_ips_list": ip_details
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function deleteIPSettings(clientId, callback){
+      callerName = "console_admin";
+      var request = [
+        "DeleteIPSettings",
+        {
+          "client_id": clientId
+        }
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsReportFilter(callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsReportFilter",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getIPSettingsReport(clientId, IP, FCount, TCount, callback){
+      callerName = "console_admin";
+      var request = [
+        "GetIPSettingsReport",
+        {
+          "client_id": clientId,
+          "ip_optional": IP,
+          "from_count": FCount,
+          "page_count": TCount
+        }
+      ];
+      apiRequest(callerName, request, callback);
+
+  function getAllocateServerReportData(callback){
+    callerName = 'console_admin';
+    var request = [
+        "GetAllocateServerReportData",
+        {}
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
   return {
     log: log,
     toJSON: toJSON,
@@ -2407,8 +2678,10 @@ function initMirror() {
     getEntityApprovalList: getEntityApprovalList,
     approveUnit: approveUnit,
     getClientGroupApprovalList: getClientGroupApprovalList,
+    getLegalEntity: getLegalEntity,
+    approveClientGroupList: approveClientGroupList,
     approveClientGroup: approveClientGroup,
-    getDbServerList: getDbServerList,
+    getDatabaseServerList: getDatabaseServerList,
     saveDBServer: saveDBServer,
     getClientServerList: getClientServerList,
     saveClientServer: saveClientServer,
@@ -2417,6 +2690,7 @@ function initMirror() {
     getFileStorage: getFileStorage,
     saveFileStorage: saveFileStorage,
     getAutoDeletionList: getAutoDeletionList,
+    getDeletionDetails: getDeletionDetails,
     saveAutoDeletion: saveAutoDeletion,
     getUserMappings: getUserMappings,
     saveUserMappings: saveUserMappings,
@@ -2426,7 +2700,13 @@ function initMirror() {
     getAssignUnitFormData: getAssignUnitFormData,
     saveAssignedUnits: saveAssignedUnits,
     getReassignUserAccountFormdata: getReassignUserAccountFormdata,
-    saveReassignUserAccount: saveReassignUserAccount,
+    getTechnoUSerInfo: getTechnoUSerInfo,
+    getDomainUserInfo: getDomainUserInfo,
+    ReassignTechnoManager: ReassignTechnoManager,
+    ReassignTechnoExecutive: ReassignTechnoExecutive,
+    ReassignDomainManager: ReassignDomainManager,
+    ReassignDomainExecutive: ReassignDomainExecutive,
+    SaveUserReplacement: SaveUserReplacement,
     getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
     getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
     getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
@@ -2459,7 +2739,20 @@ function initMirror() {
     getAssignedStatutoriesList: getAssignedStatutoriesList,
     getComplianceStatutoriesList: getComplianceStatutoriesList,
     getAssignedStatutoriesForApprove: getAssignedStatutoriesForApprove,
-    approveAssignedStatutory: approveAssignedStatutory
+    approveAssignedStatutory: approveAssignedStatutory,
+    technoManagerInfo: technoManagerInfo,
+    technoExecutiveInfo: technoExecutiveInfo,
+    getFileServerList: getFileServerList,
+    fileServerEntry: fileServerEntry,
+    domainManagerInfo: domainManagerInfo,
+    getIPSettingsList: getIPSettingsList,
+    getGroupIPDetails: getGroupIPDetails,
+    getIPSettingsDetails: getIPSettingsDetails,
+    saveIPSettings: saveIPSettings,
+    deleteIPSettings:deleteIPSettings,
+    getIPSettingsReportFilter: getIPSettingsReportFilter,
+    getIPSettingsReport: getIPSettingsReport,
+    getAllocateServerReportData: getAllocateServerReportData,
   };
 }
 var mirror = initMirror();
