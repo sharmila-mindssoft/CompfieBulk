@@ -1,0 +1,856 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+
+<link href="/files/client/common/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+<div class="list-screen">
+<div class="content-page">
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="btn-group pull-right m-t-5 m-b-20">
+                        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" onclick="parent.location='/client-user-management/create'"><i class="fa fa-plus-circle"></i> Add</button>
+                    </div>
+                    <h4 class="page-title">User Management</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="portlet p-b-20">
+                        <div id="bg-primary1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <form class="form-horizontal" role="form">
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback">
+                                                    <label class="col-md-4 control-label">Country</label>
+                                                    <div class="col-md-7">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Country Name">
+                                                        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end col -->
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback">
+                                                    <label class="col-sm-4 control-label">Business Group</label>
+                                                    <div class="col-md-7">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Business Group">
+                                                        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end col -->
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback">
+                                                    <label class="col-md-4 control-label">Legal Entity</label>
+                                                    <div class="col-md-7">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Legal Entity">
+                                                        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end col -->
+                                        </form>
+                                    </div>
+                                    <center>
+                                        <div class="form-group m-b-20">
+                                            <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Show </button>
+                                        </div>
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="card-box p-t-5" >
+                        <form class="form-horizontal" role="form">
+                            <div class="col-lg-2 no-padding"></div>
+                            <div class="col-lg-2 no-padding">
+                                <div class="form-group m-b-0">
+                                    <label class="col-md-5 control-label">Country:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">India</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-lg-3 no-padding">
+                                <div class="form-group m-b-0">
+                                    <label class="col-sm-5 control-label">Business Group:</label>
+                                    <div class="col-md-7 no-padding">
+                                        <p class="form-control-static"> &nbsp; RG Business Group</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-lg-3">
+                                <div class="form-group m-b-0">
+                                    <label class="col-sm-5 control-label">Legal Entity:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">RG Legal Entity</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="clear"></div>
+                            <hr class="m-b-5 m-t-5">
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-3 no-padding">
+                                <div class="form-group m-b-0">
+                                    <label class="col-md-5 control-label">Contract From:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">01-Jan-2016</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-lg-3">
+                                <div class="form-group m-b-0">
+                                    <label class="col-md-5 control-label">Contract To:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">31-Dec-2016</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear p-t-5"></div>
+                        </form>
+                        <div class="bg-lightdark">
+                            <form class="form-horizontal" role="form">
+                                <div class="col-lg-4 m-b-5">
+                                    <div class="form-group m-b-0 pull-left">
+                                        <label class="col-md-12 control-label">Total Licence(s): 20 - Used: 5 | Remaining: 15</label>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                                <div class="col-lg-8">
+                                    <div class="form-group m-b-0 pull-right">
+                                        <label class="col-sm-12 control-label"><i class="fa fa-square text-muted"></i> View Only &nbsp; &nbsp; <i class="fa fa-square text-warning"></i> Legal Entity Admin &nbsp; &nbsp; <i class="fa fa-square text-info"></i> Domain Admin &nbsp; &nbsp; <i class="fa fa-square text-danger"></i> Inhouse User &nbsp; &nbsp; <i class="fa fa-square"></i> Service Provider User</label>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                            </form>
+                            <div class="clear"></div>
+                        </div>
+                        <div>
+                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap no-padding highlight m-b-0"  cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="1%">#</th>
+                                        <th width="05%" class="text-center">Category <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="10%">Users <span class="fa fa-sort pull-right sort active"></span></th>
+                                        <th width="10%">User ID <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="10%">Email ID <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="8%">Mobile Number <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="10%" class="text-center">Registration Email <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="04%" class="text-center">Edit</th>
+                                        <th width="04%" class="text-center">Status</th>
+                                        <th width="04%" class="text-center">Disable</th>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td align="center" >
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
+                                                All
+                                                <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#">All</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-muted"></i> View Only</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-warning"></i> Legal Entity Admin</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-info"></i> Domain Admin</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-danger"></i> Inhouse User</a></li>
+                                                    <li><a href="#"><i class="fa fa-square"></i> Service Provider User</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Users" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="User ID" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Email ID" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Mobile Number" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td align="center">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle waves-effect " data-toggle="dropdown" aria-expanded="true"> 
+                                                    All
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#">All</a></li>
+                                                    <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
+                                                    <li><a href="#"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td class="text-center"><i class="fa fa-square text-muted"></i></td>
+                                        <td>EMP0001 - Sivaraman</td>
+                                        <td>&nbsp;</td>
+                                        <td>sivaraman@domain.com</td>
+                                        <td>8520147963</td>
+                                        <td class="text-center"><a href="#" id="resend-alert">Resend</a></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Deactivate"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click here to Disable"></i>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                        <td>EMP0002 - Rajkumar</td>
+                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> raj123</td>
+                                        <td>admin@domain.com</td>
+                                        <td>9876543210</td>
+                                        <td class="text-center">&nbsp;</td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-times text-danger c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Activate" data-original-title="Tooltip on top"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click here to Disable"></i>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td class="text-center"><i class="fa fa-square text-info"></i></td>
+                                        <td>EMP0003 - Hariharan</td>
+                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> hari</td>
+                                        <td>hariharn@domain.com</td>
+                                        <td>9632587410</td>
+                                        <td class="text-center">&nbsp;</td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Deactivate"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click here to Disable"></i>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td class="text-center"><i class="fa fa-square text-danger"></i></td>
+                                        <td>EMP0009 - Srinivasan</td>
+                                        <td>&nbsp;</td>
+                                        <td>srinivasan@domain.com</td>
+                                        <td>9876543210</td>
+                                        <td class="text-center"><a href="#">Resend</a></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Deactivate"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click here to Disable"></i>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td class="text-center"><i class="fa fa-square"></i></td>
+                                        <td>ARM Solutions</td>
+                                        <td>arm5242</td>
+                                        <td>armsolutions@domain.com</td>
+                                        <td>9345678912</td>
+                                        <td class="text-center">&nbsp;</td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Deactivate"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-danger c-pointer" data-toggle="tooltip" title="Days Left 30 Day(s)."></i>
+                                        </td>
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="clear"></div><br><br>
+                    <div class="card-box p-t-5" >
+                        <form class="form-horizontal" role="form">
+                            <div class="col-lg-2 no-padding"></div>
+                            <div class="col-lg-2 no-padding">
+                                <div class="form-group m-b-0">
+                                    <label class="col-md-5 control-label">Country:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">India</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-lg-3 no-padding">
+                                <div class="form-group m-b-0">
+                                    <label class="col-sm-5 control-label">Business Group:</label>
+                                    <div class="col-md-7 no-padding">
+                                        <p class="form-control-static"> &nbsp; RG Business Group</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-lg-3">
+                                <div class="form-group m-b-0">
+                                    <label class="col-sm-5 control-label">Legal Entity:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">RG Legal Entity 01</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="clear"></div>
+                            <hr class="m-b-5 m-t-5">
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-3 no-padding">
+                                <div class="form-group m-b-0">
+                                    <label class="col-md-5 control-label">Contract From:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">01-Jan-2016</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-lg-3">
+                                <div class="form-group m-b-0">
+                                    <label class="col-md-5 control-label">Contract To:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static">31-Dec-2016</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear p-t-5"></div>
+                        </form>
+                        <div class="bg-lightdark">
+                            <form class="form-horizontal" role="form">
+                                <div class="col-lg-4 m-b-5">
+                                    <div class="form-group m-b-0 pull-left">
+                                        <label class="col-md-12 control-label">Total Licence(s): 15 - Used: 3 | Remaining: 12</label>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                                <div class="col-lg-8">
+                                    <div class="form-group m-b-0 pull-right">
+                                        <label class="col-sm-12 control-label"><i class="fa fa-square text-muted"></i> View Only &nbsp; &nbsp; <i class="fa fa-square text-warning"></i> Legal Entity Admin &nbsp; &nbsp; <i class="fa fa-square text-info"></i> Domain Admin &nbsp; &nbsp; <i class="fa fa-square text-danger"></i> Inhouse User &nbsp; &nbsp; <i class="fa fa-square"></i> Service Provider User</label>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                            </form>
+                            <div class="clear"></div>
+                        </div>
+                        <div>
+                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="1%">#</th>
+                                        <th width="05%" class="text-center">Category <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="10%">Users <span class="fa fa-sort pull-right sort active"></span></th>
+                                        <th width="10%">User ID <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="10%">Email ID <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="8%">Mobile Number <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="10%" class="text-center">Registration Email <span class="fa fa-sort pull-right sort"></span></th>
+                                        <th width="04%" class="text-center">Edit</th>
+                                        <th width="04%" class="text-center">Status</th>
+                                        <th width="04%" class="text-center">Disable</th>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td align="center" >
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> All <span class="caret"></span> </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#">All</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-muted"></i> View Only</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-warning"></i> Legal Entity Admin</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-info"></i> Domain Admin</a></li>
+                                                    <li><a href="#"><i class="fa fa-square text-danger"></i> Inhouse User</a></li>
+                                                    <li><a href="#"><i class="fa fa-square"></i> Service Provider User</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Users" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="User ID" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Email ID" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Mobile Number" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td align="center">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle waves-effect " data-toggle="dropdown" aria-expanded="true"> 
+                                                    All
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#">All</a></li>
+                                                    <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
+                                                    <li><a href="#"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                        <td>Legal Entity Admin</td>
+                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> admin123</td>
+                                        <td>admin@domain.com</td>
+                                        <td>9876543210</td>
+                                        <td class="text-center">&nbsp;</td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Deactivate"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click here to Disable"></i>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td class="text-center"><i class="fa fa-square text-info"></i></td>
+                                        <td>EMP0010 - Hariharan</td>
+                                        <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> hari</td>
+                                        <td>hariharn@domain.com</td>
+                                        <td>9632587410</td>
+                                        <td class="text-center">&nbsp;</td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Deactivate"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click here to Disable"></i>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td class="text-center"><i class="fa fa-square text-danger"></i></td>
+                                        <td>EMP0015 - Srinivasan</td>
+                                        <td>&nbsp;</td>
+                                        <td>srinivasan@domain.com</td>
+                                        <td>9876543210</td>
+                                        <td class="text-center"><a href="#">Resend</a></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                                        </td>
+                                        <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Deactivate"></i></td>
+                                        <td class="icon-3x text-center">
+                                            <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click here to Disable"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- end col -->
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id= "">
+   <link rel="stylesheet" href="/files/client/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
+<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-md-1"></div>
+        <div class="col-sm-10">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">
+                        User Management
+                    </h3>
+                    <div class="portlet-widgets">
+                        <a href="#" onclick="parent.location='/client-user-management/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div id="basicwizard" >
+                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
+                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. User Details</a></li>
+                                <li><a href="#tab2" data-toggle="tab">2. Select Unit</a></li>
+                            </ul>
+                            <div class="tab-content m-b-0" >
+                                <div class="tab-pane fade active in" id="tab1" style="border:1px solid #acacac;">
+                                    <div class="row m-t-15">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Category <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control input-sm" id="categoryid">
+                                                      <option value="1">View Only</option>
+                                                      <option value="2">Legal Entity Admin</option>
+                                                      <option value="3">Domain Admin</option>
+                                                      <option value="4">Inhouse User</option>
+                                                      <option value="5">Service Provider User</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group has-feedback view-seating-unit" style="display:none;">
+                                                <label class="col-sm-4 control-label">Seating Unit <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" value="RG1001 - Corporate Office" type="text">
+                                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                </div>
+                                            </div>
+                                            <div class="form-group has-feedback view-service-provider" style="display:none;">
+                                                <label class="col-sm-4 control-label">Service Provider <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" value="ART Solutions" type="text">
+                                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                </div>
+                                            </div>
+                                            <div class="form-group has-feedback">
+                                                <label class="col-sm-4 control-label">User Group <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control input-sm"  placeholder="Enter User Group" value="Manager">
+                                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Email ID <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" type="text" value="siva@domain.com">
+                                                    <span class="help-desk"><small>[We will use this email ID to contact you about your account.]</small></span>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Employee Name <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" value="Sivaraman" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="form-group clearfix m-b-10">
+                                                <label class="col-sm-4 control-label">Employee ID <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control input-sm" value="EMP001" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="form-group view-user-level" style="display:none;">
+                                            <label class="col-sm-4 control-label">User Level <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6">
+                                                <select class="form-control input-sm">
+                                                  <option>Level 1 (Low)</option>
+                                                  <option>Level 2</option>
+                                                  <option selected="selected">Level 3</option>
+                                                  <option>Level 4</option>
+                                                  <option>Level 5</option>
+                                                  <option>Level 6</option>
+                                                  <option>Level 7</option>
+                                                  <option>Level 8</option>
+                                                  <option>Level 9</option>
+                                                  <option>Level 10 (High)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                            <div class="form-group clearfix m-b-10">
+                                                <label class="col-sm-4 control-label">Contact No</label>
+                                                <div class="col-sm-6">
+                                                    <div class="col-md-3 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+                                                    </div>
+                                                    <div class="col-md-3 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="000" value="452">
+                                                    </div>
+                                                    <div class="col-md-6 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="1234567" value="1234567">
+                                                    </div>
+                                                    <span class="help-desk"><small>[+91 452 1234567]</small></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group clearfix m-b-10">
+                                                <label class="col-sm-4 control-label">Mobile No <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <div class="col-md-3 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+                                                    </div>
+                                                    <div class="col-md-9 no-padding">
+                                                      <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="9876543210" value="9876543210">
+                                                    </div>
+                                                    <span class="help-desk"><small>[+91 9876543210]</small></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                                    <hr class="m-t-5 m-b-10">
+                                    <!--h4 class="header-title m-t-10 m-b-30 p-l-10 p-t-10 p-b-10 bg-lightdark">Settings</h4-->
+                                    <h4 class="header-title p-l-10">Settings</h4>
+                                    <div class="row m-t-15">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="col-lg-6">
+                                            <div class="form-group select-business-group">
+                                                <label class="col-sm-4 control-label">Business Group</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control input-sm example-multiple" multiple="multiple">
+                                                        <option value="1" selected="">RG Business Group 01</option>
+                                                        <option value="2" selected="">RG Business Group 02</option>
+                                                        <option value="3">RG Business Group 03</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group select-legal-entity has-feedback">
+                                                <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                                        <optgroup label="RG Busness Group 01">
+                                                            <option value="4" selected="">RG Legal Entity</option>
+                                                            <option value="5" selected="">RG Legal Entity 02</option>
+                                                            <option value="6">RG Legal Entity 03</option>
+                                                        </optgroup>
+                                                        <optgroup label="RG Busness Group 02">
+                                                            <option value="1">RG Legal Entity 04</option>
+                                                            <option value="2">RG Legal Entity 05</option>
+                                                            <option value="3">RG Legal Entity 06</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group select-division">
+                                                <label class="col-sm-4 control-label">Division</label>
+                                                <div class="col-sm-6">
+                                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                                        <optgroup label="RG Legal Entity">
+                                                            <option value="4" selected="">RG Division 01</option>
+                                                            <option value="5">RG Division 02</option>
+                                                        </optgroup>
+                                                        <optgroup label="RG Legal Entity 02">
+                                                            <option value="1">RG Division 03</option>
+                                                            <option value="2">RG Division 04</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group select-category">
+                                                <label class="col-sm-4 control-label">Category</label>
+                                                <div class="col-sm-6">
+                                                    <select class="example-multiple-optgroups" multiple="multiple">
+                                                        <optgroup label="RG Legal Entity">
+                                                            <option value="4" selected="">RG Category 01</option>
+                                                            <option value="5">RG Category 02</option>
+                                                        </optgroup>
+                                                        <optgroup label="RG Legal Entity 02">
+                                                            <option value="1">RG Category 03</option>
+                                                            <option value="2">RG Category 04</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group select-domain clearfix m-b-10">
+                                                <label class="col-sm-4 control-label">Domain <span class="mandatory">*</span></label>
+                                                <div class="col-sm-6">
+                                                    <select class="example-multiple" multiple="multiple">
+                                                        <option value="Labour Law" selected="">Labour Law</option>
+                                                        <option value="Finance Law" selected="">Finance Law </option>
+                                                        <option value="Industrial Law">Industrial Law</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="clear"></div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab2" style="border:1px solid #acacac;">
+                                    <div class="row">
+                                        <div class="col-sm-12 scroll_box">
+                                            <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list no-border" width="100%" cellspacing="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="col-sm-6 no-padding-left">
+                                                                <div class="form-group has-feedback m-b-5 m-t-10">
+                                                                    <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 no-padding-right">
+                                                                <div class="checkbox checkbox-primary checkbox-white m-b-0 m-t-10 pull-right">
+                                                                    <input id="checkbox3" type="checkbox">
+                                                                    <label for="checkbox3"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                            <ul class="list-unstyled">
+                                                                <li class="heading">KG Autoparts </li>
+                                                                <li>VRM1001 - Corporate Office, 871, South street, Delhi</li>
+                                                                <li class="active">VRM1003 - Regional Office - South, 16, North Street, Mambalam, Chennai <i class="fa fa-check pull-right"></i></li>
+                                                                <li>VRM1004 - Branch Office - 1, 85, First Floor, Hani Complex, Bangalore</li>
+                                                                <li>VRM1005 - Branch Office - 2, KK nagar, Madurai</li>
+                                                                <li>VRM1006 - Branch Office - 3, 28,Ramnagar, Delhi</li>
+                                                                <li class="heading">KG Transports <i class="fa fa-check pull-right"></i> </li>
+                                                                <li class="active">VRM1007 - Branch Office - 4, 28 West Street, Hydrabad<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active">VRM1008 - Branch Office - 5, 12 RJ Complex, Main road, T.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active">VRM1008 - Branch Office - 6, 13 CRP Complex, Anna Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active">VRM1008 - Branch Office - 7, 14 CRM Complex, Main road, KK.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                                <ul class="pager wizard m-b-0">
+                                    <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                    <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                    <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                    <!-- <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Save</a> &nbsp; </li> -->
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+var resizefunc = [];
+
+$(document).ready(function() {
+    $('#basicwizard').bootstrapWizard({'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'});
+});
+
+$(function(){
+  $('#categoryid').on('change', function (e) {
+    if($(this).val() == '1'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').show();
+      $('.select-category').show();
+      $('.select-domain').show();
+      $(".view-seating-unit").hide();
+      $(".view-service-provider").hide();
+      $(".view-user-level").hide();
+    }else if($(this).val() == '2'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').hide();
+      $('.select-category').hide();
+      $('.select-domain').hide();
+      $(".view-seating-unit").show();
+      $(".view-service-provider").hide();
+      $(".view-user-level").hide();
+    }else if($(this).val() == '3'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').hide();
+      $('.select-category').hide();
+      $('.select-domain').show();
+      $(".view-seating-unit").show();
+      $(".view-service-provider").hide();
+      $(".view-user-level").hide();
+    }else if($(this).val() == '4'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').show();
+      $('.select-category').show();
+      $('.select-domain').show();
+      $(".view-seating-unit").show();
+      $(".view-service-provider").hide();
+      $(".view-user-level").show();
+    }else if($(this).val() == '5'){
+      $('.select-business-group').show();
+      $('.select-legal-entity').show();
+      $('.select-division').show();
+      $('.select-category').show();
+      $('.select-domain').show();
+      $(".view-seating-unit").hide();
+      $(".view-service-provider").show();
+      $(".view-user-level").show();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.example-multiple-optgroups').multiselect({
+            buttonWidth: '100%',
+            enableClickableOptGroups: true 
+        });
+        $('.example-multiple').multiselect({
+            buttonWidth: '100%'
+        });
+    });
+</script>
+</div>
+
+<script src="/files/client/common/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
+<script src="/files/client/common/js/jquery.sweet-alert.init.js"></script>
+<script src="/files/knowledge/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script src="/files/knowledge/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+
+{% endblock %}
