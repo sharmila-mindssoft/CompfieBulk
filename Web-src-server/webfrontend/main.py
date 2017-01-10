@@ -3,6 +3,7 @@ import json
 import traceback
 import mimetypes
 import jinja2
+import base64
 import time
 from tornado.httpclient import AsyncHTTPClient
 from tornado.web import (
@@ -78,7 +79,10 @@ class Controller(object):
         print request.header('Remote_addr')
         print request.header('X-Real_ip')
         try:
-            data = json.loads(request.body())
+
+            data = request.body()
+            data = json.loads(data)
+            print data
             if type(data) is not list:
                 send_bad_request(
                     response,
@@ -142,6 +146,7 @@ class TemplateHandler(RequestHandler):
         self._company_manager = company_manager
 
     def update_static_urls(self, content):
+        data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
@@ -159,7 +164,7 @@ class TemplateHandler(RequestHandler):
                 if node.tag == "link":
                     url += "?v=%s" % (FILE_VERSION)
             node.set('href', url)
-        data = etree.tostring(tree, method="html")
+        data += etree.tostring(tree, method="html")
         return data
 
     def get(self, url=None, token=None):
@@ -286,7 +291,8 @@ def run_web_front_end(port, knowledge_server_address):
         images_path = os.path.join(common_path, "images")
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
-        script_path = client_path
+        font_path = os.path.join(common_path, "fonts")
+        script_path = os.path.join(files_path, "client")
         login_path = os.path.join(client_path, "login")
 
         web_server.low_level_url(
@@ -303,6 +309,11 @@ def run_web_front_end(port, knowledge_server_address):
             r"/js/(.*)",
             StaticFileHandler,
             dict(path=js_path)
+        )
+        web_server.low_level_url(
+            r"/fonts/(.*)",
+            StaticFileHandler,
+            dict(path=font_path)
         )
         web_server.low_level_url(
             r"/common/(.*)",

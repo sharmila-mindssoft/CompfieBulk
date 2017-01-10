@@ -54,7 +54,7 @@ tblUserSessions = "tbl_user_sessions"
 tblUsers = "tbl_users"
 tblLegalEntityDomains = 'tbl_legal_entity_domains'
 tblClientFileStorage = "tbl_client_filestorage"
-tblUnitAutoDeletion = "tbl_unit_autodeletion"
+tblAutoDeletion = "tbl_auto_deletion"
 tblUserMapping = "tbl_user_mapping"
 tblUserMappingUsers = "tbl_user_mapping_users"
 tblUserUnits = "tbl_user_units"
@@ -62,6 +62,7 @@ tblUserLegalEntity = "tbl_user_legalentity"
 tblUserUnits = "tbl_user_units"
 tblUserClients = "tbl_user_clients"
 tblClientEmailVerification = "tbl_client_email_verification"
+tblIPSettings = "tbl_ip_settings"
 
 
 #

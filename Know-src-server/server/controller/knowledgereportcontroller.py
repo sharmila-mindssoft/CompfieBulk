@@ -1,10 +1,8 @@
-import time
 from protocol import login, knowledgereport
 from generalcontroller import (
     validate_user_session, validate_user_forms,
     process_get_domains, process_get_countries
 )
-from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 from server.database.admin import (
     get_countries_for_user, get_domains_for_user
@@ -14,7 +12,7 @@ from server.database.general import (
 )
 from server.database.knowledgemaster import (
     get_industries, get_statutory_nature,
-    get_geographies, get_country_wise_level_1_statutoy
+    get_geographies
 )
 from server.database.admin import (
     get_level_1_statutories
@@ -40,49 +38,23 @@ def process_knowledge_report_request(request, db):
         return login.InvalidSessionToken()
 
     if type(request_frame) is knowledgereport.GetStatutoryMappingReportFilters:
-        logger.logKnowledgeApi(
-            "GetStatutoryMappingReportFilters", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_mapping_filters(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi(
-            "GetStatutoryMappingReportFilters", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetStatutoryMappingReportData:
-        logger.logKnowledgeApi(
-            "GetStatutoryMappingReportData", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_mapping_report_data(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetStatutoryMappingReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetGeographyReport:
-        logger.logKnowledgeApi("GetGeographyReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_geography_report(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetGeographyReport", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetDomainsReport:
-        logger.logKnowledgeApi("GetDomainsReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_domain_report(db, user_id)
-        logger.logKnowledgeApi("GetDomainsReport", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgereport.GetCountriesReport:
-        logger.logKnowledgeApi("GetCountriesReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_country_report(db, user_id)
-        logger.logKnowledgeApi("GetCountriesReport", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 
@@ -111,7 +83,7 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
     level_1_id = request_frame.level_1_statutory_id
     frequency_id = request_frame.frequency_id
     from_count = request_frame.record_count
-    to_count = RECORD_DISPLAY_COUNT
+    to_count = request_frame.page_count
     report_data, total_record = get_statutory_mapping_report(
         db, country_id, domain_id, industry_id,
         nature_id, geography_id, level_1_id, frequency_id, user_id,

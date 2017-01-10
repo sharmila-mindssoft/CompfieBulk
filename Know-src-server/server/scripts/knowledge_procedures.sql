@@ -516,13 +516,13 @@ DROP PROCEDURE IF EXISTS sp_get_audit_trails;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_audit_trails`(
-	IN _from_date varchar(10), IN _to_date varchar(10),
-	IN _user_id varchar(10), IN _form_id varchar(10),
-	IN _country_id int(11), IN _category_id int(11),
-	IN _from_limit INT, IN _to_limit INT
+    IN _from_date varchar(10), IN _to_date varchar(10),
+    IN _user_id varchar(10), IN _form_id varchar(10),
+    IN _country_id int(11), IN _category_id int(11),
+    IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
-	if _category_id = 1 then
+    if _category_id = 1 then
         SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
         FROM tbl_activity_log as t1 -- , tbl_users as t2
         WHERE
@@ -1714,8 +1714,9 @@ CREATE PROCEDURE `sp_activity_log_save`(
     action_performed_on TIMESTAMP
 )
 BEGIN
-    INSERT INTO tbl_activity_log (user_id, form_id, action, created_on)
-    VALUES (userid, formid, action_performed, action_performed_on);
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid;
+    INSERT INTO tbl_activity_log (user_category_id, user_id, form_id, action, created_on)
+    VALUES (@u_cat_id, userid, formid, action_performed, action_performed_on);
 END //
 
 DELIMITER ;
@@ -2679,17 +2680,30 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_clientdatabase_list`()
 BEGIN
-    SELECT client_id, legal_entity_id, machine_id, database_ip
-    FROM tbl_client_database;
+    select t2.client_database_id, t1.client_id, (select group_name from
+    tbl_client_groups where client_id = t1.client_id) as group_name,
+    t1.legal_entity_id, t1.legal_entity_name, t2.machine_id,
+    (select machine_name from tbl_application_server where
+    machine_id = t2.machine_id) as machine_name,
+    t2.database_server_id,
+    (select database_server_name from tbl_database_server
+    where database_server_id = t2.database_server_id) as database_server_name,
+    t2.client_database_server_id,
+    (select database_server_name from tbl_database_server
+    where database_server_id = t2.client_database_server_id) as client_database_server_name,
+    t2.file_server_id,
+    (select file_server_name from tbl_file_server
+    where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
+    from tbl_legal_entities as t1 left join tbl_client_database as t2
+    on t1.legal_entity_id = t2.legal_entity_id;
 
-    SELECT client_id, group_name FROM tbl_client_groups;
+    SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
-    SELECT legal_entity_id, legal_entity_name, client_id
-    FROM tbl_legal_entities;
+    select database_server_id, database_server_name, database_ip, database_port,
+    legal_entity_ids from tbl_database_server;
 
-    SELECT machine_id, machine_name FROM tbl_machines;
-
-    SELECT db_server_name, ip  FROM tbl_database_server;
+    SELECT file_server_id, file_server_name, ip, port, legal_entity_ids from
+    tbl_file_server;
 END //
 
 DELIMITER ;
@@ -2702,36 +2716,83 @@ DROP PROCEDURE IF EXISTS `sp_clientdatabase_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_clientdatabase_save`(
-    IN clientid INT(11), le_id INT(11),
-    db_server_ip VARCHAR(20), machineid INT(11)
+    IN clientid INT(11), le_id INT(11), machineid INT(11), db_server_id int(11),
+    le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
+    _created_by int(11), _created_on timestamp
 )
 BEGIN
-    DECLARE port_no INT(11);
-    DECLARE username VARCHAR(50);
-    DECLARE pwd VARCHAR(50);
-    DECLARE dbservername VARCHAR(50);
-    DECLARE machine_ip VARCHAR(50);
-    DECLARE machine_port INT(4);
-    DECLARE shortname VARCHAR(20);
-    SELECT port INTO port_no FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT server_username INTO username FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT server_password INTO pwd FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT db_server_name INTO dbservername FROM tbl_database_server WHERE ip = db_server_ip;
-    SELECT ip INTO machine_ip FROM tbl_machines WHERE machine_id = machineid;
-    SELECT port INTO machine_port FROM tbl_machines WHERE machine_id = machineid;
-    SELECT short_name INTO shortname FROM tbl_client_groups WHERE client_id=clientid;
-    INSERT INTO tbl_client_database (
-        client_id, legal_entity_id, machine_id, database_ip,
-        database_port, database_username, database_password,
-        database_name, server_ip, server_port, client_short_name
-    ) VALUES (
-        clientid, le_id, machineid, db_server_ip, port_no, username,
-        pwd, dbservername, machine_ip, machine_port, shortname
-    ) ON DUPLICATE KEY UPDATE machine_id=machineid,
-    database_ip = db_server_ip, database_port=port_no,
-    database_username=username, database_password=pwd,
-    database_name=dbservername, server_ip=machine_ip,
-    server_port=machine_port;
+    insert into tbl_client_database
+    (client_id, legal_entity_id, machine_id, file_server_id, database_server_id,
+    client_database_server_id, created_by, created_on)
+    values
+    (clientid, le_id, machineid, _f_s_id, le_db_server_id, db_server_id, _created_by, _created_on);
+
+
+    update tbl_application_server set client_ids = _cl_ids
+    where machine_id = machineid;
+
+    update tbl_database_server set legal_entity_ids = _le_ids
+    where database_server_id = le_db_server_id;
+
+    update tbl_file_server set legal_entity_ids = _le_ids
+    where file_server_id = file_server_id;
+
+    update tbl_legal_entities set is_created = 1
+    where legal_entity_id = le_id;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_dbname_info_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientdatabase_dbname_info_save`(
+    IN csid int(11), dun varchar(100), dpwd varchar(100), dbowner int(11),
+    dbname varchar(100), is_group int(1)
+)
+BEGIN
+    insert into tbl_client_database_info(client_database_id, db_owner_id,
+    database_username, database_password, database_name, is_group)
+    values
+    (csid, dbowner, dun, dpwd, dbname, is_group);
+
+END //
+
+DELIMITER ;
+
+
+
+-- --------------------------------------------------------------------------------
+-- Update Client Database Environment
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_clientdatabase_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientdatabase_update`(
+IN client_db_id int(11), clientid INT(11), le_id INT(11), machineid INT(11), db_server_id int(11),
+    le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
+    _created_by int(11), _created_on timestamp
+)
+BEGIN
+    update tbl_client_database set client_id = clientid, legal_entity_id = le_id,
+    machine_id = machineid, file_server_id = _f_s_id, database_server_id = le_db_server_id,
+    client_database_server_id = db_server_id, updated_by = _created_by
+    where client_database_id = client_db_id;
+
+    update tbl_client_database set client_database_server_id = db_server_id
+    where client_id = clientid;
+
+    update tbl_application_server set client_ids = _cl_ids
+    where machine_id = machineid;
+
+    update tbl_database_server set legal_entity_ids = _le_ids
+    where database_server_id = le_db_server_id;
+
+    update tbl_file_server set legal_entity_ids = _le_ids
+    where file_server_id = file_server_id;
+
 END //
 
 DELIMITER ;
@@ -2788,24 +2849,24 @@ CREATE PROCEDURE `sp_unit_autodeletion_list`()
 BEGIN
     SELECT client_id, group_name FROM tbl_client_groups;
 
-    SELECT legal_entity_id, legal_entity_name, client_id,
+    SELECT tl.legal_entity_id, tl.legal_entity_name, tl.client_id,
     (
         SELECT count(unit_id) FROM tbl_units tu
         WHERE tu.legal_entity_id=tl.legal_entity_id
     ) as unit_count,
     (
-        SELECT max(deletion_year) FROM tbl_unit_autodeletion tua
+        SELECT max(deletion_period) FROM tbl_auto_deletion tua
         WHERE tua.client_id=tl.client_id
         and tua.legal_entity_id = tl.legal_entity_id
-    ) as deletion_period, is_active
-    FROM tbl_legal_entities tl;
+    ) as deletion_period, tl.is_closed
+    FROM tbl_legal_entities tl where tl.is_approved = 1;
 
-    SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name,
+    SELECT tu.unit_id, tu.client_id, tu.legal_entity_id, tu.unit_code, tu.unit_name,
     (
-        SELECT deletion_year FROM tbl_unit_autodeletion tua
+        SELECT deletion_period FROM tbl_auto_deletion tua
         WHERE tua.client_id=tu.client_id
-        and tua.legal_entity_id = tu.legal_entity_id
-    ) as deletion_year, address FROM tbl_units tu;
+        and tua.legal_entity_id = tu.legal_entity_id and tua.unit_id = tu.unit_id
+    ) as deletion_period, address FROM tbl_units tu where tu.is_approved = 1;
 END //
 
 DELIMITER ;
@@ -2821,7 +2882,7 @@ CREATE PROCEDURE `sp_unitautodeletion_delete`(
     IN le_id INT(11)
 )
 BEGIN
-    DELETE FROM tbl_unit_autodeletion
+    DELETE FROM tbl_auto_deletion
     WHERE legal_entity_id=le_id;
 END //
 
@@ -2912,10 +2973,11 @@ DROP PROCEDURE IF EXISTS `sp_usermapping_delete`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_usermapping_delete`(
-    IN parent_userid INT(11)
+    IN parent_userid INT(11), IN c_id INT(11), IN d_id INT(11)
 )
 BEGIN
-    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid;
+    DELETE FROM tbl_user_mapping WHERE parent_user_id=parent_userid and
+    country_id = c_id and domain_id = d_id;
 END //
 
 DELIMITER ;
@@ -3093,22 +3155,10 @@ BEGIN
     IF @u_cat_id = 5 THEN
         select count(distinct t1.unit_id) as total_units,
         t1.domain_id, t2.legal_entity_id, t2.client_id,
-        (
-            SELECT legal_entity_name from tbl_legal_entities as tle
-            WHERE tle.legal_entity_id = t2.legal_entity_id
-        ) as legal_entity_name,
-        (
-            SELECT business_group_name from tbl_business_groups as tbg
-            WHERE tbg.client_id = t2.client_id
-        ) as business_group_name,
-        (
-            SELECT domain_name from tbl_domains td
-            WHERE td.domain_id=t1.domain_id
-        ) as domain_name,
-        (
-            SELECT group_name FROM tbl_client_groups tcg
-            WHERE tcg.client_id=t2.client_id
-        ) as client_name,(
+        tle.legal_entity_name as legal_entity_name,
+        tbg.business_group_name as business_group_name,
+        td.domain_name as domain_name,
+        tcg.group_name as client_name,(
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
             and tuu.user_category_id = 7
@@ -3116,36 +3166,31 @@ BEGIN
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
         inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
+        inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
+        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
+        inner join tbl_domains td on td.domain_id=t1.domain_id
+        left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
         group by t1.domain_id, t2.client_id;
 
 
     ELSE
         select count(distinct t1.unit_id) as total_units,
-        t1.domain_id, t2.legal_entity_id, t2.client_id, (
-            SELECT domain_name from tbl_domains td
-            WHERE td.domain_id=t1.domain_id
-        ) as domain_name,
-        (
-            SELECT group_name FROM tbl_client_groups tcg
-            WHERE tcg.client_id=t2.client_id
-        ) as client_name,
-        (
-            SELECT legal_entity_name from tbl_legal_entities as tle
-            WHERE tle.legal_entity_id = t2.legal_entity_id
-        ) as legal_entity_name,
-        (
-            SELECT business_group_name from tbl_business_groups as tbg
-            WHERE tbg.client_id = t2.client_id
-        ) as business_group_name,
-        (
+        t1.domain_id, t2.legal_entity_id, t2.client_id,
+        tle.legal_entity_name as legal_entity_name,
+        tbg.business_group_name as business_group_name,
+        td.domain_name as domain_name,
+        tcg.group_name as client_name,(
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
-            and  tuu.user_id != userid_ and tuu.user_category_id = 8
+            and tuu.user_category_id = 8
         ) as assigned_units
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id and
-        uc.unit_id = t2.unit_id
+        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
+        inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
+        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
+        inner join tbl_domains td on td.domain_id=t1.domain_id
+        left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
         group by t1.domain_id, t2.client_id;
     END IF;
 
@@ -4274,7 +4319,9 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
-    (select count(compliance_id) from tbl_client_compliances where compliance_applicable_status = 3 and client_statutory_id = t1.client_statutory_id)
+    (select count(compliance_id) from tbl_client_compliances where
+     (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 )
+     and client_statutory_id = t1.client_statutory_id)
     as is_edit
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
@@ -4467,7 +4514,7 @@ BEGIN
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved < 5
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
      and t3.geography_id IN
@@ -4486,7 +4533,7 @@ BEGIN
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id and t6.is_approved < 5
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
      and t3.geography_id IN
@@ -6167,10 +6214,10 @@ BEGIN
     closed_remarks = _rem where
     legal_entity_id = _le_id;
 
-    if is_cl = 0 then
+    if _is_cl = 0 then
         INSERT INTO tbl_messages
         SET
-        user_category_id = (select user_category_id from tbl_user_category
+        user_category_id = (select user_category_id from tbl_user_login_details
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
         message_text = (select concat(legal_entity_name,' ','has been closed')
@@ -6179,7 +6226,7 @@ BEGIN
     else
         INSERT INTO tbl_messages
         SET
-        user_category_id = (select user_category_id from tbl_user_category
+        user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
         message_text = (select concat(legal_entity_name,' ','has been reactivated')
@@ -6379,12 +6426,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutorymapping_report_levl1_list`()
 BEGIN
-	SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
-	t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
-	INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
-	INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
-	INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
-	WHERE t2.level_position=1;
+    SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+    t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+    INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+    INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+    INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
+    WHERE t2.level_position=1;
 
 END //
 
@@ -6402,20 +6449,20 @@ DELIMITER //
 CREATE PROCEDURE `sp_statutorymapping_report_statutorymaster`(
 in statutoryId int(11))
 BEGIN
-	if statutoryId is not null then
-		SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
-		t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
-		INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
-		INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
-		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
-		where t1.statutory_id = statutoryId;
-	else
-		SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
-		t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
-		INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
-		INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
-		INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id;
-	end if;
+    if statutoryId is not null then
+        SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+        t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+        INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+        INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+        INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id
+        where t1.statutory_id = statutoryId;
+    else
+        SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, t2.country_id,
+        t3.country_name, t2.domain_id, t4.domain_name FROM tbl_statutories t1
+        INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id
+        INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id
+        INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id;
+    end if;
 
 END //
 
@@ -6431,7 +6478,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_countries_for_audit_trails`()
 BEGIN
-	select t1.user_id, t1.country_id,
+    select t1.user_id, t1.country_id,
     (select user_category_id from tbl_users where user_id = t1.user_id) as user_category_id,
     (select country_name from tbl_countries where country_id = t1.country_id) as country_name
     from
@@ -7270,10 +7317,9 @@ BEGIN
 
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
-        inner join tbl_user_clients as t2
-        on t1.user_id = t2.user_id
         where t1.is_active = 1
         and t1.is_disable = 0
+        and t1.user_category_id = 5
         group by user_id;
 
 
@@ -7298,12 +7344,11 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
-        inner join tbl_user_legalentity as t2
-        on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.is_active = 1
         and t1.is_disable = 0
+        and t1.user_category_id = 6
         group by user_id;
 
 END //
@@ -7331,8 +7376,6 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
-        inner join tbl_user_units as t2
-        on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.user_category_id = 7 and t1.is_active = 1
@@ -7365,8 +7408,6 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
-        inner join tbl_user_units as t2
-        on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.user_category_id = 8 and t1.is_active = 1
@@ -7618,12 +7659,12 @@ in _user_id int(11), _unit_id int(11),_link text, _created_by int(11),
 BEGIN
     INSERT INTO tbl_messages
     SET
-    user_category_id = (select user_category_id from tbl_user_category
+    user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = _created_by),
     message_heading = 'Assign Client Unit',
     message_text = (select concat(unit_name,' ','unit has been assigned')
     from tbl_units where unit_id = _unit_id),
-    link = _link, created_by = _created_on, created_on = _created_on;
+    link = _link, created_by = _created_by, created_on = _created_on;
 
     INSERT INTO tbl_message_users
     SET
@@ -7689,3 +7730,310 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for IP Settings form
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_list`()
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups;
+
+    SELECT form_id, form_name
+    FROM tbl_client_forms order by form_order;
+
+    SELECT ips.client_id, ips.form_id,
+    (select group_name from tbl_client_groups where client_id = ips.client_id) as group_name
+    FROM tbl_ip_settings ips group by ips.client_id order by group_name;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Client IP Details
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_group_ip_details`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_group_ip_details`(
+    IN c_id INT(11)
+)
+BEGIN
+    SELECT form_id, ips, client_id FROM tbl_ip_settings where client_id = c_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To delete IP Setting details of particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_delete`(
+    IN c_id INT(11)
+)
+BEGIN
+    DELETE FROM tbl_ip_settings
+    WHERE client_id=c_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get name of group
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_group_name_by_id`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_group_name_by_id`(
+    IN c_id INT(11)
+)
+BEGIN
+    SELECT group_name
+    FROM tbl_client_groups
+    WHERE client_id=c_id;
+END //
+
+DELIMITER ;
+
+
+-- --------------
+-- statutory mapping report data
+-- -------------
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_reportdata`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mappings_reportdata`(
+in cid int(11), did int(11), iid int(11), snid int(11), gid int(11),
+l1sid int(11), fid int(11),  uid int(11), fcount int(11), tcount int(11)
+)
+BEGIN
+    -- records count
+    SELECT  count(distinct t2.compliance_id) as count
+         FROM tbl_statutory_mappings t1
+         INNER JOIN tbl_compliances t2
+         ON t2.statutory_mapping_id = t1.statutory_mapping_id
+         INNER JOIN tbl_mapped_industries t3
+         ON t3.statutory_mapping_id = t1.statutory_mapping_id
+         INNER JOIN tbl_mapped_locations t4
+         ON t4.statutory_mapping_id = t1.statutory_mapping_id
+         inner join tbl_mapped_statutories as ts
+         on ts.statutory_mapping_id = t1.statutory_mapping_id
+         INNER JOIN tbl_user_domains t5
+         ON t5.domain_id = t1.domain_id and t5.country_id = t1.country_id
+         and t5.user_id = uid
+
+         WHERE t2.is_approved in (2, 3) AND t2.is_active = 1 AND
+         t1.country_id = cid
+         and t1.domain_id = did
+         and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
+         and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
+         and IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
+         and IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+         and IF(fid is not NULL, t2.frequency_id = fid, 1)
+         ORDER BY t1.statutory_mapping, t2.frequency_id;
+
+    -- records
+    SELECT distinct t1.statutory_mapping_id, t1.country_id,
+        (select country_name from tbl_countries
+        where country_id = t1.country_id)
+        country_name,  t1.domain_id,
+        (select domain_name from tbl_domains
+        where domain_id = t1.domain_id) domain_name,
+        -- t1.industry_ids,
+        t1.statutory_nature_id,
+        (select statutory_nature_name from tbl_statutory_natures
+        where statutory_nature_id = t1.statutory_nature_id)
+        statutory_nature_name,  -- t1.statutory_ids, t1.geography_ids,
+        t1.is_approved, t1.is_active, t1.statutory_mapping,
+        t2.compliance_id, t2.statutory_provision,
+        t2.compliance_task, t2.compliance_description,
+        t2.document_name, t2.format_file, t2.format_file_size,
+        t2.penal_consequences, t2.frequency_id,
+        t2.statutory_dates, t2.repeats_every,
+        t2.repeats_type_id, t2.duration, t2.duration_type_id
+        FROM tbl_statutory_mappings t1
+        INNER JOIN tbl_compliances t2
+        ON t2.statutory_mapping_id = t1.statutory_mapping_id
+        INNER JOIN tbl_mapped_industries t3
+        ON t3.statutory_mapping_id = t1.statutory_mapping_id
+        INNER JOIN tbl_mapped_locations t4
+        ON t4.statutory_mapping_id = t1.statutory_mapping_id
+        inner join tbl_mapped_statutories as ts
+        on ts.statutory_mapping_id = t1.statutory_mapping_id
+        INNER JOIN tbl_user_domains t5
+        ON t5.domain_id = t1.domain_id and t5.country_id = t1.country_id
+        and t5.user_id = uid
+        WHERE t2.is_approved in (2, 3)
+        AND t2.is_active = 1 AND t1.country_id = cid
+        and t1.domain_id = did
+        and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
+        and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
+        and  IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
+        and  IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+        and  IF(fid is not NULL, t2.frequency_id = fid, 1)
+        ORDER BY t1.statutory_mapping, t2.frequency_id
+        limit fcount, tcount;
+
+    -- organisation info
+    select distinct t.organisation_id, t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+         inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+         inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+         inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
+         where t2.is_approved in (2,3) and t3.user_id = uid
+         and t2.country_id = cid
+         and t2.domain_id = did
+         and  IF(iid IS NOT NULL, t1.organisation_id = iid, 1)
+        order by t1.statutory_mapping_id;
+
+    -- geography info
+    SELECT distinct t1.geography_id, t1.geography_name, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
+            inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
+            inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
+            inner join tbl_user_domains as t5 on t5.country_id = t3.country_id and t5.domain_id = t3.domain_id
+            where t3.is_approved in(2,3) and t5.user_id = uid
+            and t3.country_id = cid
+            and t3.domain_id = did
+            and  IF(gid IS NOT NULL, t2.geography_id = gid, 1)
+            order by t3.statutory_mapping_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for IP Settings report filter
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_ip_settings_report_filter`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_settings_report_filter`()
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups;
+
+    SELECT form_id, form_name
+    FROM tbl_client_forms order by form_order;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Client IP Details
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_ip_setting_details_report`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_setting_details_report`(
+    IN c_id INT(11), IN ip_ VARCHAR(50), IN f_count INT(11), IN t_count INT(11)
+)
+BEGIN
+
+    SELECT count(distinct client_id) as total_record FROM tbl_ip_settings
+    where
+    IF(c_id IS NOT NULL, client_id = c_id, 1) and
+    IF(ip_ IS NOT NULL, ips = ip_, 1);
+
+    SELECT t2.form_id,t2.client_id, t2.ips
+    From tbl_ip_settings t2
+    inner join (
+    SELECT t.client_id,
+           @rownum := @rownum + 1 AS num
+    FROM (select distinct client_id from tbl_ip_settings order by client_id) t,
+           (SELECT @rownum := 0) r
+          ) t3 on t2.client_id = t3.client_id
+    where
+    IF(c_id IS NOT NULL, t2.client_id = c_id, 1) and
+    IF(ip_ IS NOT NULL, t2.ips = ip_, 1) and
+    t3.num between f_count and t_count
+    order by t2.client_id;
+
+    /*SELECT form_id, ips, client_id FROM tbl_ip_settings
+    where
+    IF(c_id IS NOT NULL, client_id = c_id, 1) and
+    IF(ip_ IS NOT NULL, ips = ip_, 1)
+    order by client_id
+    limit f_count, t_count*/
+END //
+
+DELIMITER ;
+
+-- -------------------
+-- database server info
+-- -------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_database_server_byid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_environment_byid`(
+in dsid int(11), asid int(11), fsid int(11))
+BEGIN
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port, database_username, database_password
+    FROM tbl_database_server WHERE database_server_id = dsid;
+
+    SELECT machine_id, machine_name, ip, port
+    FROM tbl_application_server where machine_id = asid;
+
+    SELECT file_server_id, file_server_name, ip, port
+    FROM tbl_file_server WHERE file_server_id = fsid;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_tbl_client_groups_createdb_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_client_groups_createdb_info`(
+in gpid int(11), cdbid int(11), ledbid int(11))
+BEGIN
+
+    select group_name, short_name, email_id,
+        (select IFNULL(count(client_id), 0) from tbl_client_database where client_id = gpid) as cnt
+    from tbl_client_groups where client_id = gpid;
+
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port, database_username, database_password
+    FROM tbl_database_server WHERE database_server_id in (cdbid, ledbid);
+
+END //
+
+DELIMITER ;
+
+-- Allocate Database Environemnt - Get Details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_getdata`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_getdata`()
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name
+    from
+    tbl_client_database as t1;
+END //
+
+DELIMITER;

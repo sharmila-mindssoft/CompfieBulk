@@ -1,4 +1,4 @@
-from protocol import mobile, login
+from clientprotocol import clientmobile, clientlogin
 from server.clientdatabase.mobile import *
 
 __all__ = [
@@ -14,31 +14,31 @@ def process_client_mobile_request(request, db):
     session_user = db.validate_session_token(session_token)
 
     if session_user is None:
-        return login.InvalidSessionToken()
+        return clientlogin.InvalidSessionToken()
 
-    elif type(request_frame) is mobile.GetVersions:
+    elif type(request_frame) is clientmobile.GetVersions:
         return process_get_version(db, request)
 
-    elif type(request_frame) is mobile.GetUsers:
+    elif type(request_frame) is clientmobile.GetUsers:
         return process_get_users(db, session_user)
 
-    elif type(request_frame) is mobile.GetUnitDetails:
+    elif type(request_frame) is clientmobile.GetUnitDetails:
         return process_get_unit_details(db, session_user)
-    elif type(request_frame) is mobile.GetComplianceApplicabilityStatus:
+    elif type(request_frame) is clientmobile.GetComplianceApplicabilityStatus:
         return process_get_compliance_applicability(db, session_user)
-    elif type(request_frame) is mobile.GetComplianceHistory:
+    elif type(request_frame) is clientmobile.GetComplianceHistory:
         return process_get_compliance_history(db, session_user, request_frame)
-    elif type(request_frame) is mobile.CheckDiskSpace:
+    elif type(request_frame) is clientmobile.CheckDiskSpace:
         return process_check_disk_space(db)
-    elif type(request_frame) is mobile.GetTrendChartData:
+    elif type(request_frame) is clientmobile.GetTrendChartData:
         return process_get_trend_chart(db, session_user)
-    elif type(request_frame) is mobile.SaveRegistrationKey:
+    elif type(request_frame) is clientmobile.SaveRegistrationKey:
         return
 
 
 def process_get_version(db, request):
     data = get_version(db)
-    return mobile.GetVersionsSuccess(
+    return clientmobile.GetVersionsSuccess(
         int(data["unit_details"]),
         int(data["user_details"]),
         int(data["compliance_applicability"]),
@@ -49,7 +49,7 @@ def process_get_version(db, request):
 
 def process_get_users(db, session_user):
     users = get_users_for_mobile(db, session_user)
-    return mobile.GetUsersSuccess(users)
+    return clientmobile.GetUsersSuccess(users)
 
 
 def process_get_unit_details(db, session_user):
@@ -59,7 +59,7 @@ def process_get_unit_details(db, session_user):
     legal_entity = get_legal_entities_for_mobile(db)
     division = get_divisions_for_mobile(db)
     units = get_units_for_assign_compliance(db, session_user)
-    return mobile.GetUnitDetailsSuccess(
+    return clientmobile.GetUnitDetailsSuccess(
         countries, domains,
         business_groups, legal_entity,
         division, units
@@ -68,22 +68,22 @@ def process_get_unit_details(db, session_user):
 
 def process_get_compliance_applicability(db, session_user):
     data = get_compliance_applicability_for_mobile(db, session_user)
-    return mobile.GetComplianceApplicabilityStatusSuccess(data)
+    return clientmobile.GetComplianceApplicabilityStatusSuccess(data)
 
 
 def process_get_trend_chart(db, session_user):
     data = get_trend_chart_for_mobile(db, session_user)
-    return mobile.GetTrendChartDataSuccess(data)
+    return clientmobile.GetTrendChartDataSuccess(data)
 
 
 def process_get_compliance_history(db, session_user, request):
     data = get_compliance_history_for_mobile(db, session_user, request)
-    return mobile.GetComplianceHistorySuccess(data)
+    return clientmobile.GetComplianceHistorySuccess(data)
 
 
 def process_check_disk_space(db):
     data = get_check_disk_space_for_mobile(db)
-    return mobile.CheckDiskSpaceSuccess(
+    return clientmobile.CheckDiskSpaceSuccess(
         int(data["total_disk_space"]),
         int(data["total_disk_space_used"])
     )
@@ -91,5 +91,5 @@ def process_check_disk_space(db):
 
 def process_save_registration_key(db, session_user, request):
     save_registration_key(db, session_user, request)
-    return mobile.SaveRegistrationKeySuccess()
-    # return mobile.InvalidRegistrationKey()
+    return clientmobile.SaveRegistrationKeySuccess()
+    # return clientmobile.InvalidRegistrationKey()

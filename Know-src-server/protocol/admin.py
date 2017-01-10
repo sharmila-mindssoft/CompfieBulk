@@ -1066,30 +1066,36 @@ class GetValidityDateListSuccess(Response):
 
 class UserMapping(object):
     def __init__(
-        self, user_mapping_id, parent_user_id, child_user_id
+        self, user_mapping_id, parent_user_id, child_user_id, country_id, domain_id
     ):
         self.user_mapping_id = user_mapping_id
         self.parent_user_id = parent_user_id
         self.child_user_id = child_user_id
+        self.country_id = country_id
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "user_mapping_id", "parent_user_id", "child_user_id"
+                "user_mapping_id", "parent_user_id", "child_user_id", "country_id", "domain_id"
             ])
         user_mapping_id = data.get("user_mapping_id")
         parent_user_id = data.get("parent_user_id")
         child_user_id = data.get("child_user_id")
+        country_id = data.get("country_id")
+        domain_id = data.get("domain_id")
         return UserMapping(
-            user_mapping_id, parent_user_id, child_user_id
+            user_mapping_id, parent_user_id, child_user_id, country_id, domain_id
         )
 
     def to_structure(self):
         return {
             "user_mapping_id": self.user_mapping_id,
             "parent_user_id": self.parent_user_id,
-            "child_user_id": self.child_user_id
+            "child_user_id": self.child_user_id,
+            "country_id": self.country_id,
+            "domain_id": self.domain_id
         }
 
 

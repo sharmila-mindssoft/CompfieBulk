@@ -1,6 +1,5 @@
 from protocol import login, knowledgetransaction
 from generalcontroller import validate_user_session, validate_user_forms
-from server import logger
 
 from server.database.knowledgetransaction import (
     check_duplicate_compliance_name,
@@ -44,74 +43,48 @@ def process_knowledge_transaction_request(request, db):
         return login.InvalidSessionToken()
 
     if type(request_frame) is knowledgetransaction.GetStatutoryMappingsMaster:
-        logger.logKnowledgeApi("GetStatutoryMappingsMaster", "process begin")
         result = process_get_statutory_mapping_master(db, user_id)
-        logger.logKnowledgeApi("GetStatutoryMappingsMaster", "process end")
 
     if type(request_frame) is knowledgetransaction.GetStatutoryMaster:
-        logger.logKnowledgeApi("GetStatutoryMaster", "process begin")
         result = process_get_statutory_master(db, user_id)
-        logger.logKnowledgeApi("GetStatutoryMaster", "process end")
 
     elif type(request_frame) is knowledgetransaction.GetStatutoryMappings:
-        logger.logKnowledgeApi("GetStatutoryMappings", "process begin")
         result = process_get_statutory_mappings(db, user_id, request_frame)
-        logger.logKnowledgeApi("GetStatutoryMappings", "process end")
 
     elif type(
         request_frame
     ) is knowledgetransaction.CheckDuplicateStatutoryMapping:
-        logger.logKnowledgeApi(
-            "CheckDuplicateStatutoryMapping", "process begin"
-        )
         result = process_check_statutory_mapping(db, request_frame)
-        logger.logKnowledgeApi("CheckDuplicateStatutoryMapping", "process end")
 
     elif type(request_frame) is knowledgetransaction.SaveStatutoryMapping:
-        logger.logKnowledgeApi("SaveStatutoryMapping", "process begin")
         result = process_save_statutory_mapping(db, request_frame, user_id)
-        logger.logKnowledgeApi("SaveStatutoryMapping", "process end")
 
     elif type(request_frame) is knowledgetransaction.UpdateStatutoryMapping:
-        logger.logKnowledgeApi("UpdateStatutoryMapping", "process begin")
         result = process_update_statutory_mapping(db, request_frame, user_id)
-        logger.logKnowledgeApi("UpdateStatutoryMapping", "process end")
 
     elif type(
         request_frame
     ) is knowledgetransaction.ChangeStatutoryMappingStatus:
-        logger.logKnowledgeApi("ChangeStatutoryMappingStatus", "process begin")
         result = process_change_statutory_mapping_status(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("ChangeStatutoryMappingStatus", "process end")
 
     elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappings:
-        logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
         result = process_get_approve_statutory_mappings(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappingsFilters:
-        logger.logKnowledgeApi("GetApproveStatutoryMappingFilterSuccess", "process begin")
         result = process_get_approve_mapping_filters(db, user_id)
-        logger.logKnowledgeApi("GetApproveStatutoryMappingFilterSuccess", "process end")
 
     elif type(
         request_frame
     ) is knowledgetransaction.GetComplianceInfo:
-        logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
         result = process_get_compliance_info(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
 
     elif type(request_frame) is knowledgetransaction.ApproveStatutoryMapping:
-        logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
         result = process_approve_statutory_mapping(db, request_frame, user_id)
-        logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
 
     elif type(request_frame) is knowledgetransaction.GetComplianceEdit:
-        logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
         result = process_get_compliance_Edit(db, request_frame, user_id)
-        logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
 
     return result
 

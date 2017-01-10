@@ -23,7 +23,7 @@
                     <td>Your contract with Compfie for the group TVS is about to expire. Kindly renew your contract to avail the services continuously. Before contract expiration you can download documents <a href="#">here</a> </td>
                     <td>26-Aug-2016</td>
                   </tr>
-                  <tr data-toggle="modal" data-target=".bs-example-modal-lg">
+                  <tr href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
                     <td><i class="fa fa-hand-o-right"></i></td>
                     <td>Compliance Form R - Register of wage should be completed in 7 days </td>
                     <td>26-Aug-2016</td>
@@ -64,49 +64,51 @@
 </div>
 </div>
 </div>
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="page-title">Notifications</h4>
-            <hr class="no-top-margin no-bottom-margin">
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                        <tbody>
-                          <tr class="table_bg_01">
-                            <td class="header-bg1">Act</td>
-                            <td class="header-bg1">Unit</td>
-                            <td class="header-bg1">Compliance</td>
-                            <td class="header-bg1">Due Date</td>
-                            <td class="header-bg1">Delayed By</td>
-                          </tr>
-                          <tr>
-                            <td>The Batteries Act</td>
-                            <td>VRM1003 - Regional Office - South</td>
-                            <td>FORM II - Registration</td>
-                            <td>30-Dec-2015</td>
-                            <td>5 Days</td>
-                          </tr>
-                        </tbody>
-                    </table>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                        <tbody>
-                          <tr class="table_bg_01">
-                            <td class="header-bg1">Assignee</td>
-                            <td class="header-bg1">Concurrence</td>
-                            <td class="header-bg1">Approval</td>
-                          </tr>
-                          <tr>
-                            <td>Rajkumar<br/>(rajkumar@domain.com, 9876543210)</td>
-                            <td>Raguram<br/>(raguram@domain.com, 9876543210)</td>
-                            <td>Krishnamoorthy<br/>(krishnamoorthy@domain.com, 9876543210)</td>
-                          </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-800">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Reminders</h4>
+    <div class="custom-modal-text">
+        <div class="table-responsive">
+            <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                <tbody>
+                  <tr class="table_bg_01">
+                    <td class="header-bg1">Act</td>
+                    <td class="header-bg1">Unit</td>
+                    <td class="header-bg1">Compliance</td>
+                    <td class="header-bg1">Due Date</td>
+                    <td class="header-bg1">Delayed By</td>
+                  </tr>
+                  <tr>
+                    <td>The Batteries Act</td>
+                    <td>VRM1003 - Regional Office - South</td>
+                    <td>Compliance Form R - Register of wage</td>
+                    <td>30-Dec-2015</td>
+                    <td>5 Days</td>
+                  </tr>
+                </tbody>
+            </table>
+            <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" width="100%">
+                <tbody>
+                  <tr class="table_bg_01">
+                    <td class="header-bg1">Assignee</td>
+                    <td class="header-bg1">Concurrence</td>
+                    <td class="header-bg1">Approval</td>
+                  </tr>
+                  <tr>
+                    <td>Rajkumar<br/>(rajkumar@domain.com, 9876543210)</td>
+                    <td>Raguram<br/>(raguram@domain.com, 9876543210)</td>
+                    <td>Krishnamoorthy<br/>(krishnamoorthy@domain.com, 9876543210)</td>
+                  </tr>
+                </tbody>
+            </table>
         </div>
-    </div><!-- /.modal-dialog -->
+    </div>
 </div>
+
+<script src="/files/client/common/js/custombox/custombox.min.js"></script>
+
 {% endblock %}

@@ -7,11 +7,22 @@
   <div id="animationSandbox">
   <div class="col-sm-2"> </div>
     <div class="col-sm-8">
-      <div class="card-box">
-          <h4 class="page-title">Profile</h4>
-          <hr class="no-top-margin">
-        <div class="col-lg-6">
+      <div class="portlet">
+          <!-- <h4 class="page-title">Profile</h4>
+          <hr class="no-top-margin"> -->
+          <div class="portlet-heading bg-info">
+              <h3 class="portlet-title">Profile</h3>
+              <div class="portlet-widgets">
+                  <!--a href="#" onclick="location.href='/service-provider/list'">
+                      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                  </a-->
+              </div>
+              <div class="clearfix"></div>
+          </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+              <div class="portlet-body">
         <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+        <div class="col-lg-6">
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Employee Name</label>
             <div class="col-sm-6 controls">
@@ -37,7 +48,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contact No.</label>
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contact No. <span class="mandatory">*</span></label>
             <div class="col-md-6">
             <div class="col-md-3 no-padding">
               <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
@@ -52,7 +63,7 @@
           </div>
           </div>
           <div class="form-group">
-            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Mobile No. <span class="mandatory">*</span></label>
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Mobile No. </label>
             <div class="col-md-6">
             <div class="col-md-3 no-padding">
               <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
@@ -63,10 +74,8 @@
             <span class="help-desk"><small>[+91 9876543210]</small></span>
           </div>
           </div>
-        </form>
-        </div>
-        <div class="col-lg-6">
-        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+          </div>
+          <div class="col-lg-6">
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Employee ID</label>
             <div class="col-sm-6 controls">
@@ -91,12 +100,14 @@
               <textarea class="form-control input-sm" rows="2" placeholder="Enter Address">242, West Street, K.K. Nagar, Madurai, Tamil Nadu, India</textarea>
             </div>
           </div>
+        </div>
         </form>
+        </div>
         </div>
         <div class="clear"></div>
       <div class="form-group text-center">
-          <button class="btn btn-primary waves-effect waves-light" type="submit"> Submit </button>
-          <button class="btn btn-info waves-effect waves-light" type="submit" onclick="location.href='/change-password-client'" > Change Password</button>
+          <button class="btn btn-primary waves-effect waves-light" type="button"> Submit </button>
+          <button class="btn btn-info waves-effect waves-light" type="button" onclick="location.href='/change-password-client'" > Change Password</button>
       </div>
     
     <!-- end col -->

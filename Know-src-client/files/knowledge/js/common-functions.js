@@ -127,7 +127,7 @@ function isNumbers(inputElm) {
 }
 function isNonZeroNumbers(inputElm) {
   //allowed => only numbers
-  return inputElm.val().replace(/[^1-9]/gi, '');
+  return inputElm.val().replace(/[^0-9]/gi, '');
 }
 function isCommon_Name(inputElm) {
   //allowed => alphanumeric, dot
@@ -148,6 +148,14 @@ function isAlphanumeric_Shortname(inputElm) {
 function isCommon_Unitcode(inputElm) {
   //allowed => alphanumeric
   return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
+}
+function isNumbers_Dot(inputElm) {
+  //allowed => only numbers and dot
+  return inputElm.val().replace(/[^0-9.]/gi, '');
+}
+function isWebUrl(inputElm) {
+  var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
+  return urlregex.test(inputElm.val());
 }
 //move to top function
 jQuery(document).ready(function () {
@@ -1062,6 +1070,8 @@ function commonAutoComplete1(
                     var cresult = false;
                     var dresult = false;
                     for(var j=0; j<list_val[i][value].length; j++){
+                      /*console.log(condition_values1);
+                      console.log(condition_values2);*/
                       if($.inArray(list_val[i][value][j]["c_id"], condition_values1) >= 0){
                         cresult = true;
                       }
@@ -1069,13 +1079,13 @@ function commonAutoComplete1(
                         dresult = true;
                       }
                     }
-                    
+
                     if(cresult && dresult){
                       condition_result = true;
                     }else{
                       condition_result = false;
                     }
-                    
+
                   }else{
                     condition_result = (list_val[i][value] == condition_values[key]);
                   }

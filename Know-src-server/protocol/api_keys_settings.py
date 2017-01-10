@@ -86,13 +86,14 @@ api_params = {
     "document_name": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'compliance_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'compliance_name': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'url': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'url': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 
     "m_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'comp_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'comp_name': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     's_provision': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    's_pro_map': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
     'reference': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'refer': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
@@ -325,32 +326,38 @@ api_params = {
     "user_category_id": {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
     "user_category_name": {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': False},
 
+    "le_db_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "db_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-    "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
-    "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "client_db_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "client_db_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "database_server_ip": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    "port": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "db_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "DBServer"},
     "no_of_clients": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
 
     "client_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-    "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "client_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "client_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientServer"},
 
     "file_server_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-    "file_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "file_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "file_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "FileServerList"},
 
     "client_dbs": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientDatabase"},
     "client_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientGroup"},
     "client_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "LegalEntity"},
+    "allocate_db_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'consoleadmin', "class_name": "AllocateDBList"},
 
     "legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntity"},
     "business_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
     "bgrps": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
     "client_server_name_and_id": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientServerNameAndID"},
     "db_server_name_and_id": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "DBServerNameAndID"},
+    "file_server_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "AllocateFileServerList"},
     "machine_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
-    "machine_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "machine_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "client_database_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
 
     "file_storages": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "FileStorage"},
 
@@ -600,9 +607,19 @@ api_params = {
     "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
     "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    
+    "ip_setting_forms": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "Form"},
+    "ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "IPSettingsList"},
+    "group_ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "GroupIPDetails"},
+
+    'statutory_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgereport', 'class_name': 'StatutoryMappingReport'},
+    'is_created': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    "console_cl_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+
 
 }
-
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')
 api_params['country_id'] = api_params.get('c_id')
@@ -631,6 +648,7 @@ api_params['level_1_statutory_id'] = api_params.get('statutory_id')
 api_params['level_1_s_id'] = api_params.get('statutory_id')
 api_params['level_1_statutory_name'] = api_params.get('statutory_name')
 api_params['level_1_s_name'] = api_params.get('statutory_name')
+api_params['act_name'] = api_params.get('statutory_name')
 api_params['g_l_id'] = api_params.get('level_id')
 api_params['g_name'] = api_params.get('geography_name')
 api_params['p_ids'] = api_params.get('s_pids')

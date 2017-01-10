@@ -1,0 +1,1029 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
+<link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+  $(function(){
+    $(".left-menu-button").show();
+    $(".content-page").removeClass('m-l-0');
+  });
+</script>
+
+
+<div class="left side-menu">
+  <div class="sidebar-inner slimscrollleft">
+    <div id="sidebar-menu">
+      <ul>
+        <li class="text-muted menu-title">Chart List</li>
+        <li class="has_sub"> <a href="/dashboard" class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/escalation" class="waves-effect"><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
+        <li class="has_sub active"> <a href="/dashboard/not-complied" class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/assignee-wise" class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/trend-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
+        <li class="has_sub"> <a href="/dashboard/risk-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div>
+
+
+
+<div class="content-page">
+  <div class="content">
+    <div class="container">
+      <!-- Page-Title -->
+      <div class="row">
+        <div class="col-sm-12 h4-title">
+          <h4 class="page-title pull-left">Over due compliance of RG Groups</h4>
+		  <div class="pull-right">
+        <button type="button" class="btn btn-success waves-effect waves-light" onclick="location.href='/dashboard/not-complied'" > <i class="fa fa-mail-reply"></i> Back</button>
+			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
+					<i class="zmdi zmdi-sort"></i> <small>Filter</small>
+               </a>
+			</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12"> 
+         <div class="table-responsive details">
+                    <div class="card-box">
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="02%">#</th>
+                                    <th width="15%">Business Group</th>
+                                    <th width="10%">Legal Entity</th>
+                                    <th width="10%">Division</th>
+                                    <th width="10%">Type</th>
+                                    <th width="15%">Compliance</th>
+                                    <th width="10%">Assigned To</th>
+                                    <th width="10%">Delayed By</th>
+                                </tr>
+                                <tr>
+                                  <td></td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding">
+                                      <input type="text" class="form-control input-sm" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding">
+                                      <input type="text" class="form-control input-sm"  />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding">
+                                      <input type="text" class="form-control input-sm"  />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding">
+                                      <input type="text" class="form-control input-sm"  />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding">
+                                      <input type="text" class="form-control input-sm"  />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding">
+                                      <input type="text" class="form-control input-sm"  />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding">
+                                      <input type="text" class="form-control input-sm"  />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr >
+                                    <td colspan="100%">
+                                      <!-- Start accordian -->
+                                      <div class="panel-group col-lg-12 no-padding-left no-padding-right no-bottom-margin" id="accordion" role="tablist" aria-multiselectable="true">
+                                            <div class="panel panel-default bx-shadow-none">
+                                                <div class="panel-heading p-0" role="tab" id="headingOne">
+                                                    <h4 class="panel-title">
+                                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5"> RG1018 - Madurai Unit </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                                    <div class="panel-body no-padding">
+                                                      <div class="dataTable_wrapper top-lightborder">
+                                                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border highlight" cellspacing="0" width="100%">
+                                                          <tbody>
+                                                            <tr>
+                                                                <td colspan="100%" >
+                                                                    <div class="col-sm-2 no-padding">
+                                                                        <input type="text" class="form-control input-sm text-center" value="The Batteries Act, 2001" readonly="true" />
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td width="02%">1</td>
+                                                              <td width="15%">RG Business Group 01</td>
+                                                              <td width="10%">RG Legal Entity</td>
+                                                              <td width="10%">RG Division 01</td>
+                                                              <td width="10%">Factory</td>
+                                                              <td width="15%">FORM I - Submit half yearly returns</td>
+                                                              <td width="10%">Sivaraman</td>
+                                                              <td width="10%">5 Days</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>2</td>
+                                                              <td>RG Business Group 01</td>
+                                                              <td>RG Legal Entity</td>
+                                                              <td>RG Division 01</td>
+                                                              <td>Office</td>
+                                                              <td>FORM II - Importers registration</td>
+                                                              <td>Narayanan</td>
+                                                              <td>3 Days</td>
+                                                            </tr>
+                                                          </tbody>
+                                                        </table>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default bx-shadow-none">
+                                                <div class="panel-heading p-5" role="tab" id="headingTwo">
+                                                    <h4 class="panel-title">
+                                                        <a class="collapsed" role="button" data-toggle="collapse"
+                                                           data-parent="#accordion" href="#collapseTwo"
+                                                           aria-expanded="false" aria-controls="collapseTwo">
+                                                            RG1020 - Namakkal Unit
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                                    <div class="panel-body no-padding">
+                                                      <div class="dataTable_wrapper top-lightborder">
+                                                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border highlight" cellspacing="0" width="100%">
+                                                          <tbody>
+                                                            <tr>
+                                                                <td colspan="100%" >
+                                                                    <div class="col-sm-2 no-padding">
+                                                                        <input type="text" class="form-control input-sm text-center" value="The Batteries Act, 2001" readonly="true" />
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td width="02%">1</td>
+                                                              <td width="15%">RG Business Group 01</td>
+                                                              <td width="10%">RG Legal Entity</td>
+                                                              <td width="10%">RG Division 01</td>
+                                                              <td width="10%">Factory</td>
+                                                              <td width="15%">FORM I - Submit half yearly returns</td>
+                                                              <td width="10%">Sivaraman</td>
+                                                              <td width="10%">5 Days</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>2</td>
+                                                              <td>RG Business Group 01</td>
+                                                              <td>RG Legal Entity</td>
+                                                              <td>RG Division 01</td>
+                                                              <td>Office</td>
+                                                              <td>FORM II - Importers registration</td>
+                                                              <td>Narayanan</td>
+                                                              <td>3 Days</td>
+                                                            </tr>
+                                                          </tbody>
+                                                        </table>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default bx-shadow-none">
+                                              <div class="panel-heading p-5" role="tab" id="headingTwo">
+                                                    <h4 class="panel-title">
+                                                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree"> RG1021 - Chennai Unit </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                                                    <div class="panel-body no-padding">
+                                                      <div class="dataTable_wrapper top-lightborder">
+                                                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border highlight" cellspacing="0" width="100%">
+                                                          <tbody>
+                                                            <tr>
+                                                                <td colspan="100%" >
+                                                                    <div class="col-sm-2 no-padding">
+                                                                        <input type="text" class="form-control input-sm text-center highlight" value="The Batteries Act, 2001" readonly="true" />
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td width="02%">1</td>
+                                                              <td width="15%">RG Business Group 01</td>
+                                                              <td width="10%">RG Legal Entity</td>
+                                                              <td width="10%">RG Division 01</td>
+                                                              <td width="10%">Factory</td>
+                                                              <td width="15%">FORM I - Submit half yearly returns</td>
+                                                              <td width="10%">Sivaraman</td>
+                                                              <td width="10%">5 Days</td>
+                                                            </tr>
+                                                            <!-- <tr>
+                                                              <td>2</td>
+                                                              <td>RG Business Group 01</td>
+                                                              <td>RG Legal Entity</td>
+                                                              <td>RG Division 01</td>
+                                                              <td>Office</td>
+                                                              <td>FORM II - Importers registration</td>
+                                                              <td>Narayanan</td>
+                                                              <td>3 Days</td>
+                                                            </tr> -->
+                                                          </tbody>
+                                                        </table>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                                <p class="rpt-count">Showing 05 records</p>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <!-- End accordian -->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+      </div>
+    </div>
+    <!-- content -->
+  </div>
+</div>
+<div class="side-bar right-bar"> <a href="javascript:void(0);" class="right-bar-toggle close-button"> <i class="zmdi zmdi-close-circle-o"></i> </a>
+  <h4 class="filter-text">Filter By</h4>
+  <div class="notification-list nicescroll">
+    <div class="form-group col-sm-12">
+      <label class="control-label">Country</label>
+    <div class="pull-right">
+      <select class="form-control input-sm" id="country" multiple="multiple">
+        <option selected="selected">India</option>
+        <option selected="selected">US</option>
+        <option selected="selected">Malaysia</option>
+        <option selected="selected">Singapore</option>
+        <option selected="selected">China</option>
+      </select>
+    </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Domain</label>
+    <div class="pull-right">
+      <select class="form-control input-sm pull-right" id="domain" multiple="multiple">
+        <option selected="selected">Finance Law</option>
+        <option selected="selected">Labour Law</option>
+        <option selected="selected">Industrial Law</option>
+      </select>
+    </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioGroup" type="checkbox" checked="checked">
+        <label for="radioGroup"> Group </label>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin ">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioBusinessGroup" type="checkbox">
+        <label for="radioBusinessGroup"> Business Group </label>
+      </div>
+      <div class="has-feedback textboxbusiness" id="filter-business-group">
+        <input type="text" class="form-control input-sm pull-right" value="KG">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioLegalEntity" type="checkbox">
+        <label for="radioLegalEntity"> Legal Entity </label>
+      </div>
+      <div class="has-feedback textboxlegalentity" id="filter-legal-entity">
+        <input type="text" class="form-control input-sm pull-right" value="RG Legal Entity 1">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioDivision" type="checkbox">
+        <label for="radioDivision"> Division </label>
+      </div>
+      <div class="has-feedback textboxdivision" id="filter-division">
+        <input type="text" class="form-control input-sm pull-right" value="KG Manufacturing Division">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radiocategorys" type="checkbox">
+        <label for="radiocategorys"> Category </label>
+      </div>
+      <div class="has-feedback textboxcategory" id="filter-category">
+        <input type="text" class="form-control input-sm pull-right" value="KG Category 1">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin ">
+        <input id="radioUnit" type="checkbox">
+        <label for="radioUnit"> Unit </label>
+      </div>
+      <div class="has-feedback textboxunit" id="filter-unit">
+        <input type="text" class="form-control input-sm pull-right" value="Branch Office - 1">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+      </div>
+    </div>
+    <!-- <div class="form-group col-sm-12">
+      <div class="checkbox checkbox-primary">
+        <input id="radioConsolidated" type="checkbox">
+        <label for="radioConsolidated"> Consolidated </label>
+      </div>
+    </div> -->
+    <div class="form-group col-sm-12">
+      <button class="btn btn-primary" id="go">Go</button>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
+<script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $('#country').multiselect();
+    $('#domain').multiselect();	
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+      $("#year-para").hide();
+      $(".dropdown-box-container").click(function() {
+        $(".filter-dropdown-container").slideToggle();
+      })
+      //window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+    })
+
+        $(document).ready(function () {
+            $(".textboxdomain").show();
+            $(".textboxgroup").hide();
+            $(".textboxlegalentity").hide();
+            $(".textboxdivision").hide();
+            $(".textboxcategory").hide();
+            $(".textboxunit").hide();
+            $(".textboxbusiness").hide();
+
+            $("#radioGroup").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", true);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadEscalations();
+            });
+            $("#radioBusinessGroup").click(function() {
+                $(".textboxbusiness").show();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", true);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadEscalationsBusinessGroup();
+            });
+            $("#radioLegalEntity").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").show();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", true);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadEscalationsLegalEntity();
+            });
+            $("#radioDivision").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").show();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", true);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadEscalations();
+            });
+            $("#radiocategorys").click(function() {
+                $(".textboxbusiness").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").show();
+                $(".textboxunit").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+                
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", true);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadEscalationsBusinessGroup();
+            });
+            $("#radioUnit").click(function() {
+                $(".textboxgroup").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").show();
+                $(".textboxbusiness").hide();
+
+                $("#previousyear").show();
+                $("#nextyear").show();
+                
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", true);
+                $("#radioConsolidate").prop("checked", false);
+                $("#radioConsolidated").prop("checked", false);
+
+                loadEscalations();
+            });
+            $("#radioConsolidated").click(function() {
+                $(".textboxgroup").hide();
+                $(".textboxlegalentity").hide();
+                $(".textboxdivision").hide();
+                $(".textboxcategory").hide();
+                $(".textboxunit").hide();
+                $(".textboxbusiness").hide();
+
+                $("#previousyear").hide();
+                $("#nextyear").hide();
+
+                $("#radioGroup").prop("checked", false);
+                $("#radioBusinessGroup").prop("checked", false);
+                $("#radioLegalEntity").prop("checked", false);
+                $("#radioDivision").prop("checked", false);
+                $("#radiocategorys").prop("checked", false);
+                $("#radioUnit").prop("checked", false);
+                $("#radioConsolidate").prop("checked", true);
+
+                loadEscalationsLegalEntity();
+            });
+        });
+
+    $(document).ready(function() {
+      loadEscalations();
+      $("#viewaspie").hide();
+
+      $("#previous").click(function() {
+          
+       })
+
+      $("#next").click(function() {
+          
+       })
+
+      $("#viewaspie").click(function() {
+              loadEscalations();
+       })
+
+      $("#viewasbar").click(function() {
+              loadEscalationsBar();
+       })
+
+      $("#back").click(function() {
+              loadEscalations();
+       })
+
+      $("#go-le").click(function() {
+              loadEscalations();
+       })
+
+      $("#go-d").click(function() {
+              loadEscalations();
+       })
+
+      $("#go-u").click(function() {
+              loadEscalations();
+       })
+
+      /*$("#radio1").click(function() {
+              loadEscalations();
+       })
+
+      $("#radio2").click(function() {
+              loadEscalations();
+       })
+
+      $("#radio3").click(function() {
+              loadEscalations();
+       })
+
+      $("#radio4").click(function() {
+              loadEscalations();
+       })*/
+
+
+      $('#domainradio').click(function() {
+             if( $(".textboxdomain").is(":hidden") ) {
+               $(".textboxdomain").show();
+               $("#domainradio").prop('checked', true);
+             }
+             else
+             {
+               $(".textboxdomain").hide();
+               $("#domainradio").prop('checked', false);
+             }
+             });
+      $('#countryradio').click(function() {
+          if( $(".textboxcountry").is(":hidden") ) {
+            $(".textboxcountry").show();
+            $("#countryradio").prop('checked', true);
+          }
+          else
+          {
+            $(".textboxcountry").hide();
+            $("#countryradio").prop('checked', false);
+          }
+      });
+
+
+      $(".esc-tab").click(function() {
+        $("#year-para").hide();        
+        $(".esc-tab").addClass("active")
+        //$(".actwise-tab").removeClass("active")
+        $(".ageing-tab").removeClass("active")
+        $(".compliance-tab").removeClass("active")
+        $(".task-status-tab").removeClass("active");
+        $(".trend-tab").removeClass("active")
+        $(".usecom-tab").removeClass("active")
+        $(".graph-box").show();
+        $(".grid-table-dash").hide();
+        $(".grid-table-dash1").hide();
+        $("#level-filter").fadeIn();
+        $("#viewaspie").hide();
+        $("#unit-auto").show();
+        $("#entity-auto").show();
+        $("#division-auto").show();
+        loadEscalations();
+      })
+    })
+
+
+    function loadEscalationsBar(){
+      $("#viewaspie").show();
+      $("#viewasbar").hide();
+      $("#back").hide();
+      $(function () {
+          var not_complied = 0;
+          var drill="";
+          var delayed= 0;
+          var title = "";
+          
+              not_complied = 3;
+              drill = "unitesc";
+              delayed = 10;
+              var dataSum = (10 + 3);
+              title = "South gate, Madurai";
+          
+            $('#container').highcharts({
+              colors:['#FF7700','#D10018'],
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Escalations - '+title
+                },
+                xAxis: {
+                    type: 'category'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Total tasks'
+                    }
+
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                  column:{
+                point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                if (drilldown) {
+                                 loadDrillDownData(drilldown); 
+                                }
+                            }
+                          }
+                        }
+                },
+                series: {
+                        borderWidth: 0,
+                    }
+                },
+                
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.0f}</b> <br/>'
+                },
+                legend: {
+                      reversed: true,
+                      itemStyle: {
+                          fontWeight:'normal',
+                          fontSize:'11px'
+                      }
+                    },
+        
+        series: [{
+                    name: "Tasks",
+                    colorByPoint: true,
+                     dataLabels: {
+                            enabled: true,
+                            format:'{point.percentage:.0f}%',
+                            formatter:function() {
+                                      var pcnt = (this.y / dataSum) * 100;
+                                      return Highcharts.numberFormat(pcnt,0) + '%';
+                            }
+                        },
+          data: [{
+                        name: "Delayed compliance",
+                        y:delayed,
+                    }, {
+                        name: "Not complied",
+                        y:not_complied,
+                        // drilldown:drill
+                    }]
+                }]        
+            });
+        });
+    }
+
+    
+
+    function loadEscalations(){
+      $("#viewasbar").hide();
+      $("#viewaspie").hide();
+      $("#previous").hide();
+      $("#next").hide();
+      $("#back").hide();
+        $(function () {
+            var ztt = 0;
+            var drill="";
+            var tts= 0;
+            var chartColor = ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'];
+                        var stn= 0;
+                  var above90= 0;
+                  var title = "";
+                  var total=0;
+                  colors: chartColor;
+                  drill = "unitesc";
+                  var tts = 8;
+                  var stn= 3;
+                  var above90= 2;
+                  var ztt = 5;
+                  total = 8+3+2+5;
+                  title = "Branch Office - 1 ";
+                  total = 28;
+              
+              $('#container').highcharts({
+                  // colors:['#a3d202','#e70808'], green, orange, yellow, red
+                  colors: chartColor,
+                  chart: {
+                      type: 'pie',
+                      options3d: {
+                          enabled: true,
+                          alpha: 30
+                      }
+                  },
+                  title: {
+                      text: 'Over due compliance of '+title
+                  },
+                  subtitle: {
+                      text: ''
+                  },
+                  plotOptions: {
+                      pie: {                          
+                          depth: 45,
+                          dataLabels: {
+                              enabled: true,
+                              format: '{point.percentage}%'
+                          },
+                          showInLegend: true,
+                          point: {
+                          events: {
+                              click: function() {
+                                  var drilldown = this.drilldown;
+                                  if (drilldown) { 
+                                    loadDrillDownData(drilldown);
+                                  }
+                              }
+                            }
+                        }
+                      }
+                  },
+                  legend: {
+                      reversed: true,
+                      itemStyle: {
+                          fontWeight:'normal',
+                          fontSize:'11px'
+                      }
+                    },
+                  tooltip: {
+                    headerFormat: '',
+                    pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of '+total
+                  },
+                  series: [{
+                      name: 'Compliances',
+                       dataLabels: {
+                            enabled: true,
+                            format:'{point.percentage:.0f}%'
+                        },
+                      data: [
+                          {
+                            name:"0-30 days",
+                            y:ztt,
+                            // drilldown:drill
+                          },{
+                            name:"31-60 days",
+                            y:tts,
+                          },{
+                            name:"61-90 days",
+                            y:stn,
+                          },{
+                            name:"Above 90 days",
+                            y:above90,
+                          }             
+                      ]
+                  }]
+              });
+          });
+    }
+
+
+    function loadEscalationsBusinessGroup(){
+      $("#viewasbar").hide();
+      $("#viewaspie").hide();
+      $("#previous").hide();
+      $("#next").hide();
+      $("#back").hide();
+        $(function () {
+            var ztt = 0;
+            var drill="";
+            var tts= 0;
+            var chartColor = ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'];
+                        var stn= 0;
+                  var above90= 0;
+                  var title = "";
+                  var total=0;
+                  colors: chartColor;
+                  drill = "unitesc";
+                  var tts = 2;
+                  var stn= 32;
+                  var above90= 8;
+                  var ztt =21;
+                  total = 8+3+2+5;
+                  title = "KG Business Group  ";
+                  total = 28;
+              
+              $('#container').highcharts({
+                  colors: chartColor,
+                  chart: {
+                      type: 'pie',
+                      options3d: {
+                          enabled: true,
+                          alpha: 30
+                      }
+                  },
+                  title: {
+                      text: 'Over due compliance of '+title
+                  },
+                  subtitle: {
+                      text: ''
+                  },
+                  plotOptions: {
+                      pie: {                          
+                          depth: 45,
+                          dataLabels: {
+                              enabled: true,
+                              format: '{point.percentage}%'
+                          },
+                          showInLegend: true,
+                          point: {
+                          events: {
+                              click: function() {
+                                  var drilldown = this.drilldown;
+                                  if (drilldown) { 
+                                    loadDrillDownData(drilldown);
+                                  }
+                              }
+                            }
+                        }
+                      }
+                  },
+                  legend: {
+                      reversed: true,
+                      itemStyle: {
+                          fontWeight:'normal',
+                          fontSize:'11px'
+                      }
+                    },
+                  tooltip: {
+                    headerFormat: '',
+                    pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of '+total
+                  },
+                  series: [{
+                      name: 'Compliances',
+                       dataLabels: {
+                            enabled: true,
+                            format:'{point.percentage:.0f}%'
+                        },
+                      data: [
+                          {
+                            name:"0-30 days",
+                            y:ztt,
+                          },{
+                            name:"31-60 days",
+                            y:tts,
+                          },{
+                            name:"61-90 days",
+                            y:stn,
+                          },{
+                            name:"Above 90 days",
+                            y:above90,
+                          }             
+                      ]
+                  }]
+              });
+          });
+    }
+
+
+    function loadEscalationsLegalEntity(){
+      $("#viewasbar").hide();
+      $("#viewaspie").hide();
+      $("#previous").hide();
+      $("#next").hide();
+      $("#back").hide();
+        $(function () {
+            var ztt = 0;
+            var drill="";
+            var tts= 0;
+            var chartColor = ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'];
+                        var stn= 0;
+                  var above90= 0;
+                  var title = "";
+                  var total=0;
+                  colors: chartColor;
+                  drill = "unitesc";
+                  var tts = 30;
+                  var stn= 22;
+                  var above90= 19;
+                  var ztt =21;
+                  total = 4+9+2+9;
+                  title = "KG";
+                  total = 28;
+              
+              $('#container').highcharts({
+                  colors: chartColor,
+                  chart: {
+                      type: 'pie',
+                      options3d: {
+                          enabled: true,
+                          alpha: 30
+                      }
+                  },
+                  title: {
+                      text: 'Over due compliance of '+title
+                  },
+                  subtitle: {
+                      text: ''
+                  },
+                  plotOptions: {
+                      pie: {                          
+                          depth: 45,
+                          dataLabels: {
+                              enabled: true,
+                              format: '{point.percentage}%'
+                          },
+                          showInLegend: true,
+                          point: {
+                          events: {
+                              click: function() {
+                                  var drilldown = this.drilldown;
+                                  if (drilldown) { 
+                                    loadDrillDownData(drilldown);
+                                  }
+                              }
+                            }
+                        }
+                      }
+                  },
+                  legend: {
+                      reversed: true,
+                      itemStyle: {
+                          fontWeight:'normal',
+                          fontSize:'11px'
+                      }
+                    },
+                  tooltip: {
+                    headerFormat: '',
+                    pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of '+total
+                  },
+                  series: [{
+                      name: 'Compliances',
+                       dataLabels: {
+                            enabled: true,
+                            format:'{point.percentage:.0f}%'
+                        },
+                      data: [
+                          {
+                            name:"0-30 days",
+                            y:ztt,
+                          },{
+                            name:"31-60 days",
+                            y:tts,
+                          },{
+                            name:"61-90 days",
+                            y:stn,
+                          },{
+                            name:"Above 90 days",
+                            y:above90,
+                          }             
+                      ]
+                  }]
+              });
+          });
+    }
+
+
+  </script> 
+{% endblock %}

@@ -235,7 +235,7 @@ function getApprovalRow(unit_id, approval_status, reason){
         approval_status = false;
     }
     return {
-        "legal_entity_name":  $(".approve_le_name").text().split(":")[1].trim(),
+        "legal_entity_name": $(".approve_le_name").text().split(":")[1].trim(),
         "unit_id": unit_id,
         "approval_status": approval_status,
         "reason": reason

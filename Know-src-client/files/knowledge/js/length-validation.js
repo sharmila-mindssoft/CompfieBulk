@@ -380,7 +380,6 @@ function expectationError(expected, received){
 
 function validateLength(key_name, value) {
   v = max_length[key_name];
-  console.log(value);
   if (value.length > v) {
     msg = " should not exceed " + v + " characters";
     return msg;

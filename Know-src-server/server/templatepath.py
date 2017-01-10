@@ -431,13 +431,23 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/allocate-db-env",
-        "files/knowledge/allocate-db-env/allocate-db-env.html",
+        "/knowledge/allocate-database-environment",
+        "files/knowledge/allocate-database-environment/allocate-database-environment.html",
+        None, {}
+    ),
+    (
+        "/knowledge/allocate-database-environment-report",
+        "files/knowledge/allocate-database-environment-report/allocate-database-environment-report.html",
         None, {}
     ),
     (
         "/knowledge/auto-deletion",
         "files/knowledge/auto-deletion/auto-deletion.html",
+        None, {}
+    ),
+    (
+        "/knowledge/ip-settings",
+        "files/knowledge/ip-settings/ip-settings.html",
         None, {}
     ),
     (
@@ -479,5 +489,10 @@ TEMPLATE_PATHS = [
         "/knowledge/statutory-notifications",
         "files/knowledge/statutorynotifications/statutorynotifications.html",
         None, {}
-    )
+    ),
+    (
+        "/knowledge/ip-settings-report",
+        "files/knowledge/ip-settings-report/ip-settings-report.html",
+        None, {}
+    ),
 ]

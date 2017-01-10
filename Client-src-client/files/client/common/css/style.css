@@ -245,7 +245,7 @@
 .box-height-250 {
     height: 250px;
 }
-- .box-height-350 {
+.box-height-350 {
     height: 350px;
 }
 .box-height-150 {
@@ -490,8 +490,13 @@ li.sortable-placeholder {
     white-space: nowrap;
     width: 100%;
 }
+.dropdown-menu>li>a {
+    white-space: nowrap;
+    cursor: pointer;
+}
 .dropdown-submenu>li>a {
     white-space: nowrap;
+    cursor: pointer;
 }
 .dropdown-submenu>a:after {
     display: block;
@@ -577,6 +582,7 @@ li.sortable-placeholder {
     padding-left: 3px;
     /*background-color: #FAFAFA;*/
 }
+
 .min-table tr td.font-bold {
     font-size: 10px;
     font-weight: bold;
@@ -626,7 +632,6 @@ li.sortable-placeholder {
     float: left;
     width: 25px;
 }
-
 .sort {
     margin-top: 3px;
     cursor: pointer;
@@ -635,7 +640,10 @@ li.sortable-placeholder {
     color: #BFBFBF !important;
     font-size: 14px;
 }
-.sort.active {
+.sort.sorting-asc {
+    color: #F0F0F0 !important;
+}
+.sort.sorting-desc {
     color: #F0F0F0 !important;
 }
 .box-width-400 {
@@ -654,6 +662,7 @@ li.sortable-placeholder {
     resize: vertical;
     overflow: auto
 }
+
 .themes-settings {
     margin: 0px auto;
     padding-left: 15px;
@@ -661,11 +670,52 @@ li.sortable-placeholder {
     cursor: pointer;
 }
 .themes-settings:hover {
-    background-color: #FFFFCC;
+    background-color: #dcdcdc;
     border: 1px solid #555555;
 }
 .theme-active {
-    background-color: #FFFFCC !important;
+    background-color: #dcdcdc !important;
     border: 1px solid #99996B !important;
     cursor: default;
 }
+#template {
+    display: none;
+}
+.custombox-modal {
+    width: 100%;
+}
+
+
+.default-display-none {
+    display: none;
+}
+
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+
+}
+.ac-textbox ul {
+  background: #FFFFFF none repeat scroll 0 0;
+  border: 1px solid #DDDDDD;
+  line-height: 30px;
+  list-style: outside none none;
+  max-height: 200px;
+  overflow-y: scroll;
+  padding-left: 0px;
+  position: absolute;
+  width: 94%;
+  z-index: 999;
+}
+.ac-textbox ul li {
+  /*font-size: 0.8em;*/
+  padding-right:5px;
+  padding-left:5px;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;
+}
+
+/* Autocomplete selectbox Style */

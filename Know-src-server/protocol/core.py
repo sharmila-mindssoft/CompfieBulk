@@ -1223,7 +1223,6 @@ class FileList(object):
             "file_name": self.file_name,
             "file_content": self.file_content
         }
-
 #
 # Compliance
 #

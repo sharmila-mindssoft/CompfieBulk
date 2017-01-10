@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-sm-12">
     <div class="btn-group pull-right m-t-5 m-b-20">
-        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" onclick="parent.location='/le-user-management/create'"> <span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add </button>
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" onclick="parent.location='/le-user-management/create'"> <i class="fa fa-plus-circle"></i> Add </button>
         </div>
         <h3 class="page-title">User Management</h3>
         <div class="card-box">
@@ -20,7 +20,7 @@
                 <!-- end col -->
                 <div class="col-lg-8">
                   <div class="form-group m-b-0 pull-right">
-                    <label class="col-sm-12 control-label"></label>
+                    <label class="col-sm-12 control-label"><i class="fa fa-square text-info"></i> Domain Admin &nbsp; &nbsp; <i class="fa fa-square text-danger"></i> Inhouse User &nbsp; &nbsp; <i class="fa fa-square"></i> Service Provider User</label>
                   </div>
                 </div>
               </form>
@@ -31,36 +31,30 @@
               <thead>
                 <tr>
                   <th width="1%">#</th>
+                  <th width="05%" class="text-center">Category</th>
                   <th width="10%">Users</th>
-                  <th width="08%">User ID</th>
-                  <th width="08%">Licence</th>
-                  <th width="08%">User Level</th>
-                  <th width="08%">User Group</th>
-                  <th width="08%">Domain</th>
-                  <th width="14%">Seating Unit</th>
-                  <th width="12%" class="text-center">Registration Email</th>
+                  <th width="10%">User ID</th>
+                  <th width="10%">Email ID</th>
+                  <th width="10%">Mobile Number</th>
+                  <th width="10%" class="text-center">Registration Email</th>
                   <th width="06%" class="text-center">Edit</th>
                   <th width="06%" class="text-center">Status</th>
                   <th width="06%" class="text-center">Disable</th>
                 </tr>
                 <tr>
                   <td></td>
-                  <td>
-                    <div class="col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm" />
-                        <i class="fa fa-filter form-control-feedback"></i>
-                      </div>
-                  </td>
-                  <td>
-                    <div class="col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm"  />
-                        <i class="fa fa-filter form-control-feedback"></i>
-                      </div>
-                  </td>
-                  <td>
-                    <div class="col-sm-12 no-padding">
-                        <input type="text" class="form-control input-sm"  />
-                        <i class="fa fa-filter form-control-feedback"></i>
+                  <td align="center" >
+                      <div class="btn-group">
+                          <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
+                          All
+                          <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                              <li><a href="#">All</a></li>
+                              <li><a href="#"><i class="fa fa-square text-info"></i> Domain Admin</a></li>
+                              <li><a href="#"><i class="fa fa-square text-danger"></i> Inhouse User</a></li>
+                              <li><a href="#"><i class="fa fa-square"></i> Service Provider User</a></li>
+                          </ul>
                       </div>
                   </td>
                   <td>
@@ -108,13 +102,14 @@
               <tbody>
                 <tr>
                   <td>1</td>
+                  <td class="text-center"><i class="fa fa-square text-info"></i></td>
                   <td>EMP0010 - Hariharan</td>
                   <td>&nbsp;</td>
-                  <td>Full Access</td>
-                  <td>Level 4</td>
-                  <td>Group 3</td>
+                  <td>hariharan@domain.com</td>
+                  <td>9876543211</td>
+                  <!-- <td>Group 3</td>
                   <td>Finance Law</td>
-                  <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> VBM1001 - Corporate Office</td>
+                  <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> RG1001 - Corporate Office</td> -->
                   <td class="text-center"><a href="#">Resend</a></td>
                   <td class="icon-3x text-center">
                       <i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
@@ -124,13 +119,11 @@
                 </tr>
                 <tr>
                   <td>2</td>
+                  <td class="text-center"><i class="fa fa-square text-danger"></i></td>
                   <td>EMP0012 - Sivaraman</td>
                   <td>siva</td>
-                  <td>Domain Admin</td>
-                  <td>Level 3</td>
-                  <td>Manager</td>
-                  <td>Labour Law</td>
-                  <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> VBM1002 - Regional Office - South</td>
+                  <td>sivaraman@domain.com</td>
+                  <td>9876543210</td>
                   <td class="text-center">&nbsp;</td>
                   <td class="icon-3x text-center">
                       <i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
@@ -140,13 +133,11 @@
                 </tr>
                 <tr>
                   <td>3</td>
-                  <td>EMP0015 - Srinivasan</td>
-                  <td>vason</td>
-                  <td>Full Access</td>
-                  <td>Level 2</td>
-                  <td>Group 2</td>
-                  <td>Industrial Law</td>
-                  <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> VBM103 - Branch Office - Chennai</td>
+                  <td class="text-center"><i class="fa fa-square"></i></td>
+                  <td>ARM Solutions</td>
+                  <td>arm5242</td>
+                  <td>armsolutions@domain.com</td>
+                  <td>9345678912</td>
                   <td class="text-center">&nbsp;</td>
                   <td class="icon-3x text-center">
                       <i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
