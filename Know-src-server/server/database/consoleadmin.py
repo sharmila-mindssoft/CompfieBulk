@@ -1,4 +1,4 @@
-from server.exceptionmessage import process_error, fetch_error
+from server.exceptionmessage import process_error, fetch_error, fetch_run_error
 from protocol import consoleadmin
 from forms import *
 from tables import *
@@ -442,7 +442,7 @@ def create_db_process(db, client_database_id, client_id, legal_entity_id, db_ser
 def save_allocated_db_env(db, request, session_user):
     is_valid = validated_env_before_save(db, request)
     if is_valid is not True:
-        raise fetch_error(is_valid)
+        raise fetch_run_error(is_valid)
 
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
