@@ -32,7 +32,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Master ---------------------------------------------------------------------
     (
         "/service-provider",
-        "files/client/service-provider/service_provider_list.html",
+        "files/client/service-provider/service_provider.html",
         None, {}
     ),
     (
