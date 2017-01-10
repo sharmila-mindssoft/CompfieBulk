@@ -97,13 +97,13 @@ function initClientMirror() {
     function getSessionToken() {
         // var info = getUserInfo();
         // return info.session_token;
-        return "1-6026dd780194411fbcac2ce5decc5141";
+        return "14-6026dd780194411fbcac2ce5decc5141";
     }
 
     function getUserMenu() {
         var info = getUserInfo();
         if (info != null) {
-            return info.menu.menus;
+            return info.menu;
         } else {
             login_url = '/login/' + window.localStorage.recent_short_name;
             window.location.href = login_url;
@@ -149,7 +149,8 @@ function initClientMirror() {
 
     function redirect_login() {
         var short_name = getClientShortName();
-        login_url = '/login/' + short_name;
+        //login_url = '/login/' + short_name;
+        login_url = '/login';
         window.localStorage.recent_short_name = short_name;
         clearSession();
         window.location.href = login_url;
@@ -158,7 +159,7 @@ function initClientMirror() {
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
-            'session_token': "1-6026dd780194411fbcac2ce5decc5141",
+            'session_token': "14-6026dd780194411fbcac2ce5decc5141",
             'request': request
         };
         var body = [

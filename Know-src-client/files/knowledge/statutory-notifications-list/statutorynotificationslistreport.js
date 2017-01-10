@@ -30,20 +30,8 @@ var sno = 0;
 var totalRecord;
 
 //Other variable declaration
-var LoaderIcon = $('.loading-indicator-spin');
 var ReportView = $('.grid-table-rpt');
 
-
-function displayLoader() {
-  LoaderIcon.show();
-}
-function hideLoader() {
-  LoaderIcon.hide();
-}
-
-function resetValues(){
-  displayMessage('');
-}
 
 function initialize(){
     //resetValues();
@@ -159,7 +147,7 @@ function loadCompliances(data){
       $('.compliancetask', clone).html(value.compliance_task);
       $('.c-pointer', clone);
       $('.c-pointer').hover(function(){
-        showTitle(this, value.notification_text);
+        showTitle(this, value.description);
       });
       //$('.c-pointer').attr('title',value.notification_text);
       $('.date', clone).html(value.notification_date);
@@ -172,12 +160,13 @@ function loadCompliances(data){
     else {
       showPagePan(showFrom, sno, totalRecord);
     }
+    hideLoader();
 }
 //Status Title
 function showTitle(e, notf_text){
-  console.log(notf_text)
   var titleText = notf_text;
     e.title = titleText;
+    console.log(e.title)
 }
 function processSubmit (){
   if(validateMandatory()){
@@ -212,6 +201,7 @@ function processSubmit (){
               sno  = sno;
               ReportData = response.statutory_notifictions_list;
               totalRecord = response.total_count;
+              console.log(totalRecord)
 
               $('.disp_country').text(CountryVal.val());
               $('.disp_domain').text(DomainVal.val());
@@ -223,8 +213,10 @@ function processSubmit (){
                 $('.no_records', clone4).text('No Records Found');
                 $('.table-statutory-notifications-list').append(clone4);
                 PaginationView.hide();
+                ReportView.show();
                 hideLoader();
               } else {
+                hideLoader();
                 if(sno==0){
                   createPageView(totalRecord);
                 }

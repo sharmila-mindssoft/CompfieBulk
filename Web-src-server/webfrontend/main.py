@@ -3,6 +3,7 @@ import json
 import traceback
 import mimetypes
 import jinja2
+import base64
 import time
 from tornado.httpclient import AsyncHTTPClient
 from tornado.web import (
@@ -78,7 +79,9 @@ class Controller(object):
         print request.header('Remote_addr')
         print request.header('X-Real_ip')
         try:
-            data = json.loads(request.body())
+
+            data = request.body()
+            data = json.loads(data)
             print data
             if type(data) is not list:
                 send_bad_request(

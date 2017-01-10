@@ -16,71 +16,8 @@
         <div class="col-lg-10">
             <div class="panel panel-default panel-info">
                 <div class="panel-body">
-                    <div class="dataTable_wrapper">
-                        <table class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th align="center" width="2%">#</th>
-                                    <th width="20%">Country</th>
-                                    <th width="20%">Group</th>
-                                    <th width="10%">No. of Legal Entity</th>
-                                    <th width="5%" class="text-center">Edit</th>
-                                    <th width="5%" class="text-center">Status</th>
-                                    <th width="10%">Approval Status</th>
-                                </tr>
-                                <tr class="filter-tr client-master-filter">
-                                    <td align="center"></td>
-                                    <td>
-                                        <div class="form-group has-feedback col-sm-12 no-padding">
-                                            <input class="form-control input-sm filter-text-box" placeholder="Country" type="text" id="search-country">
-                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group has-feedback col-sm-12 no-padding">
-                                            <input class="form-control input-sm filter-text-box" placeholder="Group" type="text" id="search-group">
-                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group has-feedback col-sm-12 no-padding">
-                                            <input class="form-control input-sm filter-text-box" placeholder="No.of Legal Entity" type="text" id="search-legalentity">
-                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                        </div>
-                                    </td>
-                                    <td align="center"></td>
-                                    <td align="center">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                                                <i id="search-status" class="fa">All</i>
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu search-status-list" >
-                                                <li value="all" class="search-status-li active"><a>All</a></li>
-                                                <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
-                                                <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
-                                               <i id="search-astatus" class="fa">All</i>
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu search-astatus-list">
-                                                <li value="all" class="search-astatus-li active"><a>All</a></li>
-                                                <li value="0" class="search-astatus-li"><a>Pending</a></li>
-                                                <li value="1" class="search-astatus-li"><a>Approved</a></li>
-                                                <li value="2" class="search-astatus-li"><a>Rejected</a></li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody class="tbody-clientgroup-list">
-                            </tbody>
-                        </table>
+                    <div class="panel-group col-lg-12 no-padding tbody-clientgroup-list" id="accordion" role="tablist" aria-multiselectable="true">
+
                     </div>
                 </div>
             </div>
@@ -88,43 +25,93 @@
     </div>
 </div>
 <div id="templates">
-    <table class="table-clientgroup-list">
-        <tr class="odd gradeX table-row">
-            <td align="center" class="sno"></td>
-            <td class="country_names"></td>
-            <td class="group_name"></td>
-            <td class="no_of_entities"></td>
-            <td class="icon-3x text-center edit-icon"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click Here to Edit"></i> </td>
-            <td class="icon-3x text-center status">
-                <span data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click here to deactive"></i></span>
-            </td>
-            <td class="approval-status"></td>
-        </tr>
-    </table>
-</div>
-<!-- Modal Start-->
-<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-sm">
-        <input type="hidden" class="popup-group-id">
-        <input type="hidden" class="popup-pass-value">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times text-primary c-pointer"></i></button>
-                <h4 class="modal-title" id="mySmallModalLabel"> Enter Password</h4>
-            </div>
-            <div class="modal-body p-b-0">
-                <div class="form-group">
-                    <input class="form-control input-sm popup-password" placeholder="Password" type="password">
+
+<div id="act-templates" class="default-display-none">
+      <div class="panel panel-default bx-shadow-none p-head">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="panel-title">
+              <div class="act-status" style="float:left; width:3%;">
+                 
+              </div>
+              <div class="panel-title">
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion" 
+                    aria-expanded="true" >
+                    <span></span>
+                <div class="controls pull-right m-t-m-5">
+                  <div class="col-sm-12 no-padding">
+                  <i class="fa fa-pencil text-primary c-pointer edit-icon" data-toggle="tooltip" title=""></i>  
+                  </div>
                 </div>
-                <div class="form-group">
-                    <button class="btn btn-primary waves-effect waves-light status-submit" type="submit"> Submit </button>
+                </a>
+              </div>
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th align="center" width="2%">#</th>
+                                <th width="30%">Country</th>
+                                <th width="30%">Legal Entity Name</th>
+                                <th width="15%" class="text-center">Status</th>
+                                <th width="20%">Approval Status</th>
+                            </tr>
+
+                            <tr>
+                                <td align="center"></td>
+                                <td>
+                                    <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
+                                        <input class="form-control input-sm filter-text-box" placeholder="Country" type="text" id="search-country">
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
+                                        <input class="form-control input-sm filter-text-box" placeholder="Legal Entity Name" type="text" id="search-legalentity">
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td class="text-center"></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                            All
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a>All</a></li>
+                                            <li><a>Pending</a></li>
+                                            <li><a>Approved</a></li>
+                                            <li><a>Rejected</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-le-list">                               
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
+      </div>
+  </div>
+  <div id="le-value">
+    <table class="table-le-values">
+      <tr class="le-details">
+          <td><span class="sno"> </span></td>
+          <td class="countryname"></td>
+          <td class="legalentityname"></td>
+          <td align="center" class="status"></td>
+          <td class="approvalstatus"></td>
+      </tr>
+    </table>
+  </div>
 </div>
-<!-- Modal End-->
-<!-- Client Master View End -->
+
 <!-- Client Master Add Start -->
 <div class="container default-display-none" id="clientgroup-add">
     <div class="row" id="animationSandbox">
@@ -210,11 +197,12 @@
                             <div class="le-body">
                             </div>
                             <div class="col-sm-12">
-                                <div class="form-group pull-right m-b-0 p-t-7 edit-date-config default-display-none">
+                                <div class="form-group pull-right m-b-0 p-t-7 edit-date-config default-display-none" src="/images/icon-edit.png">
                                     <a class="waves-effect waves-light c-pointer icon-3x" type="button"><i class="fa fa-pencil text-primary"></i></a>
                                 </div>
                                 <h4 class="page-title">Date Configuration</h4>
                             </div>
+                            <div class="card-box table-responsive">
                             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
@@ -225,6 +213,7 @@
                                 <tbody class="tbody-dateconfiguration-list">
                                 </tbody>
                             </table>
+                            </div>
                             <div class="form-group text-center m-b-0 p-t-7">
                                 <button class="btn btn-primary waves-effect waves-light save" type="button"> Submit </button>
                                 <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/client-group/list'"> Cancel </button> -->
@@ -283,7 +272,7 @@
             </td>
             <td>
                 <div class="form-group col-sm-6 m-b-0">
-                    <input class="form-control input-sm numeric no-of-units" maxlength="3" type="text">
+                    <input class="form-control input-sm no-of-units" maxlength="3" type="text">
                 </div>
             </td>
             <td class="icon-3x text-center">
@@ -301,27 +290,12 @@
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Country<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
-                        <select placeholder="Select Country" class="form-control country input-sm" tabindex="5">
+                        <select placeholder="Select Country" class="form-control country input-sm" tabindex="">
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">Contract From<span class="mandatory">*</span></label>
-                    <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm contract-from" readonly="readonly" placeholder="Select Contract From" tabindex="8" type="text">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">Upload Logo</label>
-                    <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm" tabindex="11" id="upload-logo" type="file">
-                        <span>
-                        <img  id="upload-logo-img"  width="25">
-                    </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
+                 </div>
+                   <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Business Group</label>
                     <div class="select_business_group">
@@ -344,37 +318,66 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">Contract To<span class="mandatory">*</span></label>
-                    <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm contract-to" type="text" readonly="readonly" placeholder="Select Contract To" tabindex="9">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
-                    <div class="col-sm-3 no-padding-right" id="file-space-div">
-                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex="12"><abbr class="l-h-34"> GB</abbr>
-                    </div>
-                    <div class="col-sm-4 pull-left"></div>
-                </div>
-            </div>
-            <div class="col-sm-4">
+                 </div>
+                  <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Legal Entity<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm legal-entity-text" placeholder="Enter Legal Entity" id="legal_entity_text" tabindex="7" type="text">
+                        <input class="form-control input-sm legal-entity-text" placeholder="Enter Legal Entity" id="legal_entity_text" tabindex="" type="text">
                     </div>
                     <label class="col-sm-1 icon-3x no-padding-right edit-right-icon pull-right">
                         <i class="fa fa-pencil text-primary c-pointer pull-right"></i>
                     </label>
                 </div>
+                 </div>
+            <div class="col-sm-4  clear">
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Contract From<span class="mandatory">*</span></label>
+                    <div class="col-sm-6 no-padding-right">
+                        <input class="form-control input-sm contract-from" readonly="readonly" placeholder="Select Contract From" tabindex="" type="text">
+                    </div>
+                </div>
+                 </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Contract To<span class="mandatory">*</span></label>
+                    <div class="col-sm-6 no-padding-right">
+                        <input class="form-control input-sm contract-to" type="text" readonly="readonly" placeholder="Select Contract To" tabindex="">
+                    </div>
+                </div>
+                 </div>
+                    <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Total Licence(s)<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm numeric" value="" id="no-of-user-licence" type="text" tabindex="10" placeholder="Enter No. of Licence">
+                        <input class="form-control input-sm numeric" value="" id="no-of-user-licence" type="text" tabindex="" placeholder="Enter No. of Licence">
                     </div>
                 </div>
             </div>
+            <div class="col-sm-4 clear">
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Upload Logo</label>
+                    <div class="col-sm-6 no-padding-right">
+                        <input class="form-control input-sm" tabindex="" id="upload-logo" type="file">
+                        <span>
+                        <img  id="upload-logo-img"  width="25">
+                    </span>
+                    </div>
+                </div>
+            </div>
+          
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
+                    <div class="col-sm-3 no-padding-right" id="file-space-div">
+                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex=""><abbr class="l-h-34"> GB</abbr>
+                    </div>
+                    <div class="col-sm-4 pull-left"></div>
+                </div>
+            </div>
+           
+         <div class="card-box table-responsive">
             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap domain-table" width="100%" cellspacing="0">
                 <thead>
                     <tr>
@@ -388,6 +391,8 @@
                 <tbody class="domain-list">
                 </tbody>
             </table>
+            </div>
+
             <!-- <button type="button" class="btn btn-info btn-sm waves-effect waves-light pull-right m-t-5">
             <span><i class="fa fa-plus"></i></span> 
           </button> -->
@@ -415,8 +420,7 @@
                 </div>
             </td>
             <td>
-                <div class="form-group col-sm-6 m-b-0 add-org">
-                    <a class="c-pointer addOrganizationType" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
+                    <a class="c-pointer addOrganizationType" ><!--  href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" -->
                         <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title=""></i> Add Organization
                     </a>
                 </div>
@@ -489,7 +493,7 @@
 </div>
 <div class="logo-img default-display-none">
     <span>
-        <img  id="upload-logo-img"  width="25" height="30">
+        <img  id="upload-logo-img"  width="25" >
     </span>
 </div>
 <div class="tooltip-templates default-display-none">
@@ -504,4 +508,5 @@
     </select>
 </div>
 <script type="text/javascript" src="/script/client-master/client-master.js"></script>
+                <div class="form-group col-sm-6 m-b-0 add-org">
 {% endblock %}

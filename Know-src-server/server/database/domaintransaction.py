@@ -29,6 +29,8 @@ def return_assigned_statutories(data):
     fn = domaintransactionprotocol.AssignedStatutories
     data_list = []
     for d in data :
+        is_edit = True if d.get("is_edit") > 0 else False
+        is_edit = True if d["status"] == 4 else is_edit
         c_name = "%s - %s" % (d["unit_code"], d["unit_name"])
         data_list.append(fn(
             d["country_name"], d["client_id"], d["group_name"],
@@ -36,7 +38,8 @@ def return_assigned_statutories(data):
             d["division_name"], c_name, d["geography_name"],
             d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
             core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["status"]),
-            d["status"], d["client_statutory_id"], d["legal_entity_id"], d["reason"]
+            d["status"], d["client_statutory_id"], d["legal_entity_id"], d["reason"],
+            is_edit
         ))
 
     return data_list
@@ -68,7 +71,7 @@ def return_statutories_filters(data):
     ]
 
     entity_list = [
-        core.UnitLegalEntity(
+        core.AssignUnitLegalEntity(
             datum["legal_entity_id"], datum["legal_entity_name"],
             datum["business_group_id"], datum["client_id"]
         ) for datum in entitys
@@ -133,7 +136,7 @@ def get_compliances_to_assign(db, request, user_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     rcount = request.rcount
-    show_count = 5
+    show_count = 10
     results = []
     totals = []
     for u in unit_ids :
@@ -183,6 +186,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
 
     data_list = []
     for r in assigned_new_compliance :
+
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
@@ -192,10 +196,13 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                 level_1, level_1_name, map_text,
                 r["statutory_provision"], r["compliance_id"], r["document_name"],
                 r["compliance_task"], r["compliance_description"], orgs,
-                None, None, None, None, unit_id
+                None, None, None, 0, unit_id
 
             ))
         else :
+            # print r["is_approved"]
+            # if r["is_approved"] == 5 :
+            #     continue
             data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
                 level_1, level_1_name, map_text,
                 r["statutory_provision"], r["compliance_id"], r["document_name"],
@@ -289,11 +296,13 @@ def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
 
 
 def get_assigned_compliance_by_id(db, request, user_id):
-    # is_saved = 0 , is_submmitted = 1, is_rejected = 2, is_assigned = 3, is_new = 4
+    # is_new = 0 is_saved = 1 , is_submmitted = 2, is_approved = 3, is_rejected = 4,  is_assigned = 5
     unit_id = request.unit_id
     domain_id = request.domain_id
+    rcount = request.rcount
+    show_count = 10
 
-    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id], 5)
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, rcount, show_count], 5)
     statu = result[1]
     organisation = result[2]
     assigned_new_compliance = result[3]
@@ -340,9 +349,12 @@ def get_assigned_compliance_by_id(db, request, user_id):
                     level_1, level_1_s_name, map_text,
                     r["statutory_provision"], r["compliance_id"], r["document_name"],
                     r["compliance_task"], r["compliance_description"], orgs,
-                    None, None, None, None, unit_id
+                    None, None, None, 0, unit_id
                 ))
         else :
+            # print r["is_approved"]
+            # if r["is_approved"] == 5 :
+            #     continue
             # before save rest of the field will be null before save in assignstatutorycompliance
             data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
                 level_1, level_1_s_name, map_text,
@@ -380,6 +392,7 @@ def save_approve_statutories(db, request, user_id):
     reason = request.remarks
     unit_name = request.unit_name
     domain_name = request.domain_name
+    # 3 : approve 4: reject
     if s_s not in (3, 4) :
         raise process_edrror("E089")
 
@@ -393,9 +406,9 @@ def save_approve_statutories(db, request, user_id):
     if s_s == 4 :
 
         for c in compliance_ids :
+            # reject selected compliances
             q1 = "UPDATE tbl_client_compliances set is_approved=%s, approved_by=%s, approved_on=%s" + \
                 " where unit_id = %s and domain_id = %s and compliance_id = %s"
-
             db.execute(q1, [4, user_id, get_date_time(), unit_id, domain_id, c])
 
         msg = "Assgined statutories has been rejected for unit %s in %s domain with following reason %s" % (
@@ -403,8 +416,14 @@ def save_approve_statutories(db, request, user_id):
         )
 
     else :
-        q1 = "UPDATE tbl_client_compliances set is_approved=%s where client_statutory_id = %s"
-        db.execute(q1, [s_s, client_statutory_id])
+        # is_approve = 5 when the compliance is applicable or not applicable
+        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_applicable_status != 3 and client_statutory_id = %s"
+        db.execute(q1, [5, client_statutory_id])
+
+        # is_approve = 3 when the compliance is not at all applicable because it has to reshow domain users
+        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_applicable_status = 3 and client_statutory_id = %s"
+        db.execute(q1, [3, client_statutory_id])
+
         msg = "Assgined statutories has been approved for unit %s in %s domain " % (
             unit_name, domain_name
         )

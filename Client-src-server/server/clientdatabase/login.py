@@ -1,4 +1,4 @@
-from protocol import (core)
+from clientprotocol import (clientcore)
 from server.clientdatabase.tables import *
 
 from server.common import (
@@ -63,68 +63,47 @@ def is_contract_not_started(db):
     else:
         return True
 
-
 def is_client_active(client_id):
     t_obj = IsClientActive(client_id)
     return t_obj._is_client_active()
 
 
 def verify_login(db, username, password):
-    data_columns = [
-        "user_id", "user_group_id", "email_id",
-        "employee_name", "employee_code", "contact_no",
-        "user_group_name", "form_ids", "is_admin",
-        "service_provider_id", "is_primary_admin"
-    ]
-    query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, " + \
-        " t1.employee_name, t1.employee_code, t1.contact_no, " + \
-        " t2.user_group_name, t2.form_ids, t1.is_admin, " + \
-        " t1.service_provider_id, t1.is_primary_admin " + \
-        " FROM tbl_users t1 LEFT JOIN tbl_user_groups t2 " + \
-        " ON t1.user_group_id = t2.user_group_id " + \
-        " WHERE t1.password= %s and t1.email_id= %s and t1.is_active=1"
-
-    data_list = db.select_one(query, [password, username])
+    q = "SELECT t1.user_category_id, ul.username, t1.user_id, t1.email_id, " + \
+        "t1.employee_name, t1.employee_code, t1.contact_no, t1.mobile_no, t1.address, t1.user_group_id, " + \
+        " (select user_group_name from tbl_user_groups where user_group_id = t1.user_group_id) as user_group_name" + \
+        " FROM tbl_user_login_details as ul  " + \
+        " INNER JOIN tbl_users t1 on t1.user_id = ul.user_id " + \
+        " WHERE ul.password= %s and ul.username = %s and ul.is_active=1 "
+    print q
+    data_list = db.select_one(q, [password, username])
     if data_list is None:
         return False
     else:
-        result = convert_to_dict(data_list, data_columns)
-        if result["is_primary_admin"] == 1:
-            return True
-        if is_service_proivder_user(db, result["user_id"]):
-            if (
-                is_service_provider_in_contract(
-                    db, result["service_provider_id"]
-                )
-            ):
-                # result["client_id"] = client_id
-                return result
-            else:
-                return "ContractExpired"
-        else:
-            return result
-
+        # verify legal entity is active
+        # verity legal entity contract expired
+        # verify service provider contract expired
+        return data_list
 
 def add_session(
-    db, user_id, session_type_id, ip,
-    employee, client_id=None
+    db, user_category_id, user_id, session_type_id, ip,
+    employee, client_id
 ):
-    if client_id is not None:
-        clear_old_session(db, user_id, session_type_id, client_id)
-    else:
-        clear_old_session(db, user_id, session_type_id)
+
+    clear_old_session(db, user_id, session_type_id, client_id)
     session_id = new_uuid()
-    if client_id is not None:
-        session_id = "%s-%s" % (client_id, session_id)
+    session_id = "%s-%s" % (client_id, session_id)
     updated_on = get_date_time()
+
     query = "INSERT INTO tbl_user_sessions " + \
         " (session_token, user_id, session_type_id, last_accessed_time) " + \
         " VALUES (%s, %s, %s, %s);"
+
     db.execute(query, (session_id, user_id, session_type_id, updated_on))
 
     action = "Log In by - \"%s\" from \"%s\"" % (employee, ip)
     # action = "Log In by - \"%s\" " % (employee)
-    db.save_activity(user_id, 0, action)
+    db.save_activity(user_category_id, user_id, 0, action, client_id, None, None)
 
     return session_id
 
@@ -152,7 +131,7 @@ def get_client_configuration(db):
         )
     c_list = []
     for r in result:
-        info = core.ClientConfiguration(
+        info = clientcore.ClientConfiguration(
             r["country_id"],
             r["domain_id"],
             r["period_from"],

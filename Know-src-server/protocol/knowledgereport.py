@@ -15,6 +15,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -50,7 +52,7 @@ class GetStatutoryMappingReportData(Request):
     def __init__(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id, level_1_statutory_id, frequency_id,
-        record_count
+        record_count, page_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -60,10 +62,11 @@ class GetStatutoryMappingReportData(Request):
         self.level_1_statutory_id = level_1_statutory_id
         self.frequency_id = frequency_id
         self.record_count = record_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "d_id", "a_i_id", "a_s_n_id", "a_g_id", "statutory_id_optional", "frequency_id", "r_count"])
+        data = parse_dictionary(data, ["c_id", "d_id", "a_i_id", "a_s_n_id", "a_g_id", "statutory_id_optional", "frequency_id", "r_count", "page_count"])
         country_id = data.get("c_id")
         domain_id = data.get("d_id")
         industry_id = data.get("a_i_id")
@@ -72,7 +75,8 @@ class GetStatutoryMappingReportData(Request):
         level_1_statutory_id = data.get("statutory_id_optional")
         frequency_id = data.get("frequency_id")
         record_count = data.get("r_count")
-        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, frequency_id, record_count)
+        page_count = data.get("page_count")
+        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, frequency_id, record_count, page_count)
 
     def to_inner_structure(self):
         return {
@@ -83,7 +87,8 @@ class GetStatutoryMappingReportData(Request):
             "a_g_id": self.geography_id,
             "statutory_id_optional": self.level_1_statutory_id,
             "frequency_id": self.frequency_id,
-            "r_count": self.record_count
+            "r_count": self.record_count,
+            "page_count": self.page_count
         }
 
 class GetGeographyReport(Request):
@@ -145,6 +150,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -189,7 +196,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
         return GetStatutoryMappingReportFiltersSuccess(countries, domains, industries, statutory_natures, geographies, level_1_statutories)
 
     def to_inner_structure(self):
-        data = {
+        return {
             "countries": self.countries,
             "domains": self.domains,
             "industries": self.industries,
@@ -198,7 +205,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
             "level_one_statutories": self.level_1_statutories,
             "compliance_frequency": self.compliance_frequency,
         }
-        return to_structure_dictionary_values(data)
+
 
 class StatutoryMappingReport(object):
     def __init__(
@@ -242,33 +249,33 @@ class StatutoryMappingReport(object):
             "country_name",
             "domain_name", "industry_names",
             "statutory_nature_name",
-            "geography_mappings", "approval_status", "is_active",
+            "geo_maps", "approval_status_id", "is_active",
             "act_name",
-            "compliance_id", "statutory_provision",
-            "compliance_task", "description",
-            "penal_consequences", "frequency_id",
-            "statutory_dates", "repeats_type_id",
-            "repeats_every", "duration_type_id",
+            "comp_id", "s_pro_map",
+            "c_task", "description",
+            "p_consequences", "frequency_id",
+            "statu_dates", "r_type_id",
+            "r_every", "d_type_id",
             "duration", "url"
         ])
         country_name = data.get("country_name")
         domain_name = data.get("domain_name")
         industry_names = data.get("industry_names")
         statutory_nature_name = data.get("statutory_nature_name")
-        geography_mappings = data.get("geography_mappings")
-        approval_status = data.get("approval_status")
+        geography_mappings = data.get("geo_maps")
+        approval_status = data.get("approval_status_id")
         is_active = data.get("is_active")
         act_name = data.get("act_name")
-        compliance_id = data.get("compliance_id")
-        statutory_provision = data.get("statutory_provision")
-        compliance_task = data.get("compliance_task")
+        compliance_id = data.get("comp_id")
+        statutory_provision = data.get("s_pro_map")
+        compliance_task = data.get("c_task")
         description = data.get("description")
-        penal_consequences = data.get("penal_consequences")
+        penal_consequences = data.get("p_consequences")
         frequency_id = data.get("frequency_id")
-        statutory_dates = data.get("statutory_dates")
-        repeats_type_id = data.get("repeats_type_id")
-        repeats_every = data.get("repeats_every")
-        duration_type_id = data.get("duration_type_id")
+        statutory_dates = data.get("statu_dates")
+        repeats_type_id = data.get("r_type_id")
+        repeats_every = data.get("r_every")
+        duration_type_id = data.get("d_type_id")
         duration = data.get("duration")
         url = data.get("url")
         return StatutoryMappingReport(
@@ -291,20 +298,20 @@ class StatutoryMappingReport(object):
             "domain_name": self.domain_name,
             "industry_names": self.industry_names,
             "statutory_nature_name": self.statutory_nature_name,
-            "geography_mappings": self.geography_mappings,
-            "approval_status": self.approval_status,
+            "geo_maps": self.geography_mappings,
+            "approval_status_id": self.approval_status,
             "is_active": self.is_active,
             "act_name": self.act_name,
-            "compliance_id": self.compliance_id,
-            "statutory_provision": self.statutory_provision,
-            "compliance_task": self.compliance_task,
+            "comp_id": self.compliance_id,
+            "s_pro_map": self.statutory_provision,
+            "c_task": self.compliance_task,
             "description": self.description,
-            "penal_consequences": self.penal_consequences,
+            "p_consequences": self.penal_consequences,
             "frequency_id": self.frequency_id,
-            "statutory_dates": self.statutory_dates,
-            "repeats_type_id": self.repeats_type_id,
-            "repeats_every": self.repeats_every,
-            "duration_type_id": self.duration_type_id,
+            "statu_dates": self.statutory_dates,
+            "r_type_id": self.repeats_type_id,
+            "r_every": self.repeats_every,
+            "d_type_id": self.duration_type_id,
             "duration": self.duration,
             "url": self.url
 

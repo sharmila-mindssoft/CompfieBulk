@@ -282,6 +282,7 @@ function loadCompliances(data) {
     else {
       showPagePan(showFrom, sno, totalRecord);
     }
+    hideLoader();
 }
 
 function tree_open_close(id) {
@@ -340,6 +341,7 @@ function processSubmit(csv) {
                             $('.total-records').text('');
                             hideLoader();
                         } else {
+                            hideLoader();
                             if (sno == 0) {
                                 createPageView(totalRecord);
                             }

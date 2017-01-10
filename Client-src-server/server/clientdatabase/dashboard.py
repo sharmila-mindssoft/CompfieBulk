@@ -1,7 +1,7 @@
 import json
 import datetime
 from dateutil import relativedelta
-from protocol import (core, dashboard)
+from clientprotocol import (clientcore, dashboard)
 from server.constants import FORMAT_DOWNLOAD_URL
 from server.emailcontroller import EmailHandler
 from server.clientdatabase.tables import *
@@ -293,7 +293,7 @@ def frame_compliance_status_count(
             country_id = v["country_id"]
             domain_id = v["domain_id"]
             if len(compliance_list) == 0:
-                compliance_count = core.NumberOfCompliances(
+                compliance_count = clientcore.NumberOfCompliances(
                     domain_id, country_id, str(year), complied,
                     delayed, inprogress, not_complied
                 )
@@ -361,7 +361,7 @@ def frame_compliance_status_yearwise_count(
                 if int(inprogress) == int(complied) == int(delayed) == int(not_complied) == 0 :
                     continue
 
-                compliance_count = core.NumberOfCompliances(
+                compliance_count = clientcore.NumberOfCompliances(
                     domain_id, country_id, str(year), complied,
                     delayed, inprogress, not_complied
                 )
@@ -1277,7 +1277,7 @@ def return_compliance_details_drill_down(
         if type(ageing) is int:
             ageing = " %s Day(s)" % ageing
 
-        status = core.COMPLIANCE_STATUS(compliance_status)
+        status = clientcore.COMPLIANCE_STATUS(compliance_status)
         if r["document_name"] not in ("", "None", None):
             name = "%s-%s" % (r["document_name"], r["compliance_task"])
         else:
@@ -1722,7 +1722,7 @@ def get_not_complied_drill_down(
         if type(ageing) is int:
             ageing = " %s Day(s)" % ageing
 
-        status = core.COMPLIANCE_STATUS("Not Complied")
+        status = clientcore.COMPLIANCE_STATUS("Not Complied")
         name = "%s-%s" % (r["document_name"], r["compliance_task"])
         compliance = dashboard.Level1Compliance(
             name, r["compliance_description"], r["employee_name"],
@@ -1949,7 +1949,7 @@ def get_compliance_applicability_drill_down(
         statutory_dates = json.loads(r["statutory_dates"])
         date_list = []
         for s in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 s["statutory_date"], s["statutory_month"],
                 s["trigger_before_days"],
                 s.get("repeat_by")
@@ -1964,7 +1964,7 @@ def get_compliance_applicability_drill_down(
             if len(format_file) != 0:
                 file_list = []
                 download_file_list = []
-                file_info = core.FileList(
+                file_info = clientcore.FileList(
                     int(format_file_size), format_file, None
                 )
                 file_list.append(file_info)

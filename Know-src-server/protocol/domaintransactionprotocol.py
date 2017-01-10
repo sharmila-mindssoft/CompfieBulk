@@ -58,21 +58,24 @@ class GetAssignedStatutoriesForApprove(Request):
 
 
 class GetAssignedStatutoriesById(Request):
-    def __init__(self, unit_id, domain_id):
+    def __init__(self, unit_id, domain_id, rcount):
         self.unit_id = unit_id
         self.domain_id = domain_id
+        self.rcount = rcount
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_id", "d_id"])
+        data = parse_dictionary(data, ["u_id", "d_id", "rcount"])
         unit_id = data.get("u_id")
         domain_id = data.get("d_id")
-        return GetAssignedStatutoriesById(unit_id, domain_id)
+        rcount = data.get("rcount")
+        return GetAssignedStatutoriesById(unit_id, domain_id, rcount)
 
     def to_inner_structure(self):
         return {
             "u_id": self.unit_id,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "rcount": self.rcount
         }
 
 
@@ -615,7 +618,7 @@ class AssignedStatutories(object):
         legal_entity_name, division_name, unit_code_with_name,
         geography_name, unit_id, domain_id, domain_name, category_name,
         approve_status, approved_status_id, client_statutory_id,
-        legal_entity_id, reason
+        legal_entity_id, reason, is_editable
     ):
         self.country_name = country_name
         self.client_id = client_id
@@ -634,6 +637,7 @@ class AssignedStatutories(object):
         self.client_statutory_id = client_statutory_id
         self.legal_entity_id = legal_entity_id
         self.reason = reason
+        self.is_editable = is_editable
 
     @staticmethod
     def parse_structure(data):
@@ -642,7 +646,8 @@ class AssignedStatutories(object):
             "l_e_name", "div_name",
             "u_id", "u_name", "g_name", "d_id",
             "d_name", "cat_name", "approval_status_text", "a_s_id",
-            "client_statutory_id", "le_id", "reason"
+            "client_statutory_id", "le_id", "reason",
+            "is_editable"
         ])
         country_name = data.get("c_name")
         client_id = data.get("ct_id")
@@ -661,6 +666,7 @@ class AssignedStatutories(object):
         client_statutory_id = data.get("client_statutory_id")
         legal_entity_id = data.get("le_id")
         reason = data.get("reason")
+        is_editable = data.get("is_editable")
         return AssignedStatutories(
             country_name,
             client_id, group_name, business_group_name,
@@ -669,7 +675,7 @@ class AssignedStatutories(object):
             domain_name, category_name,
             submission_status, approved_status_id,
             client_statutory_id, legal_entity_id,
-            reason
+            reason, is_editable
         )
 
     def to_structure(self):
@@ -691,7 +697,8 @@ class AssignedStatutories(object):
             "a_s_id": self.approved_status_id,
             "client_statutory_id": self.client_statutory_id,
             "le_id": self.legal_entity_id,
-            "reason": self.reason
+            "reason": self.reason,
+            "is_editable": self.is_editable
         }
 
 class LegalentityDomains(object):

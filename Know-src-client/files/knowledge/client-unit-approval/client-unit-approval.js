@@ -13,7 +13,7 @@ function initialize(type_of_form){
         DIV_CAT_COMBINATIONS = '';
         unit_approval_details = [];
         function onSuccess(data) {
-            APPROVAL_LIST = data.unit_approval_list;  
+            APPROVAL_LIST = data.unit_approval_list;
             loadApprovalList();
         }
         function onFailure(error) {
@@ -43,7 +43,7 @@ function initialize(type_of_form){
             }
         });
     }
-    
+
 }
 
 function showPage(type_of_form){
@@ -130,7 +130,7 @@ function loadApprovalForm(){
     }else{
         $(".approve_bg_name").text("Business Group : "+LE_DICT[LE_ID]["bg_name"]);
     }
-    
+
     $(".approve_le_name").text("Legal Entity : "+LE_DICT[LE_ID]["le_name"]);
     $.each(LE_APPROVAL_LIST, function(key, value){
         var division_name = value["division_name"];
@@ -181,7 +181,7 @@ function loadApprovalForm(){
         clone2.addClass("approval-drop-down-"+(key+1));
         clone2.addClass("group-select-"+class_name);
 
-        
+
         $(".approve-control", clone1).html(clone2);
         unit_list.append(clone1);
         $(".approval-drop-down-"+(key+1)).change(function(){
@@ -202,11 +202,11 @@ function loadApprovalForm(){
 function updateUnitStatus(selectbox_class, reason_class){
     var selected_option = $("."+selectbox_class).val();
     if(selected_option == 2){
-        $("."+reason_class).show();    
+        $("."+reason_class).show();
     }else{
-        $("."+reason_class).hide();   
+        $("."+reason_class).hide();
         //$("."+reason_class).val('');
-    } 
+    }
 }
 function updateGroupUnitStatus(e){
     var selected_class = $(e).attr('id');
@@ -216,10 +216,10 @@ function updateGroupUnitStatus(e){
         $('.group-reason-'+selected_class).hide();
     });
     if(selected_option == 2){
-        $("#reason-"+selected_class).show();    
+        $("#reason-"+selected_class).show();
     }else{
         $("#reason-"+selected_class).hide();
-    } 
+    }
 }
 function updateGroupUnitReason(e){
     var selected_class = $(e).attr('id');
@@ -235,6 +235,7 @@ function getApprovalRow(unit_id, approval_status, reason){
         approval_status = false;
     }
     return {
+        "legal_entity_name": $(".approve_le_name").text().split(":")[1].trim(),
         "unit_id": unit_id,
         "approval_status": approval_status,
         "reason": reason
@@ -264,7 +265,7 @@ function validateForm(){
         }
     });
     if(result == false){
-        return false;    
+        return false;
     }else{
         return true;
     }
@@ -291,7 +292,7 @@ function submitApprovalForm(){
         }else{
             displayMessage(message.approve_atleast_one);
         }
-    }    
+    }
 }
 //initialization
 $(function() {

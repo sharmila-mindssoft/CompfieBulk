@@ -45,15 +45,15 @@ def logKnowledge(log_level, from_file_name, message) :
     elif log_level == "error" :
         knowledgeLogger.error(log_message)
 
-clientLogger = _get_time_rotate_file_obj("client_logger", client_log_path)
-def logClient(log_level, from_file_name, message) :
-    log_message = "%s : %s \n" % (from_file_name, message)
-    if log_level == "debug" :
-        clientLogger.debug(log_message)
-    elif log_level == "info" :
-        clientLogger.info(log_message)
-    elif log_level == "error" :
-        clientLogger.error(log_message)
+# clientLogger = _get_time_rotate_file_obj("client_logger", client_log_path)
+# def logClient(log_level, from_file_name, message) :
+#     log_message = "%s : %s \n" % (from_file_name, message)
+#     if log_level == "debug" :
+#         clientLogger.debug(log_message)
+#     elif log_level == "info" :
+#         clientLogger.info(log_message)
+#     elif log_level == "error" :
+#         clientLogger.error(log_message)
 
 def _get_rotate_file_obj(logger_name, log_path):
     log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
@@ -72,7 +72,7 @@ def _get_rotate_file_obj(logger_name, log_path):
     r_logger.addHandler(rotateFileHandler)
     return r_logger
 
-loginLogger = _get_rotate_file_obj("login_logger", client_login_log_path)
+# loginLogger = _get_rotate_file_obj("login_logger", client_login_log_path)
 
 def logLogin(log_level, ip, user, message):
     log_message = "%s : %s : %s \n" % (ip, user, message)
@@ -83,17 +83,17 @@ def logLogin(log_level, ip, user, message):
     elif log_level == "info" :
         loginLogger.info(log_message)
 
-webfrontLogger = _get_rotate_file_obj("webfrontend_logger", webfront_log_path)
-def logWebfront(message):
-    log_message = "%s \n" % (message)
-    if ENABLE_INFO_LOG :
-        webfrontLogger.info(log_message)
+# webfrontLogger = _get_rotate_file_obj("webfrontend_logger", webfront_log_path)
+# def logWebfront(message):
+#     log_message = "%s \n" % (message)
+#     if ENABLE_INFO_LOG :
+#         webfrontLogger.info(log_message)
 
-traceLogger = _get_rotate_file_obj("trace_log", trace_log_path)
-def logClientApi(callername, message):
-    log_message = "%s: %s \n" % (callername, message)
-    if ENABLE_INFO_LOG :
-        traceLogger.info(log_message)
+# traceLogger = _get_rotate_file_obj("trace_log", trace_log_path)
+# def logClientApi(callername, message):
+#     log_message = "%s: %s \n" % (callername, message)
+#     if ENABLE_INFO_LOG :
+#         traceLogger.info(log_message)
 
 knowtraceLogger = _get_rotate_file_obj("know_trace_log", know_trace_log_path)
 def logKnowledgeApi(callername, message):
@@ -107,14 +107,14 @@ def logKnowledgeApi(callername, message):
 #     processErrorLogger.error(log_message)
 
 knowtQueryLogger = _get_rotate_file_obj("know_query_log", know_query_log_path)
-clientQueryLogger = _get_rotate_file_obj("client_query_log", client_query_log_path)
+# clientQueryLogger = _get_rotate_file_obj("client_query_log", client_query_log_path)
 def logQuery(knowledge_qry, callername, message):
     log_message = "%s: %s \n" % (callername, message)
-    if ENABLE_QUERY_LOG :
-        if knowledge_qry :
-            clientQueryLogger.info(log_message)
-        else :
-            knowtQueryLogger.info(log_message)
+    # if ENABLE_QUERY_LOG :
+    #     if knowledge_qry :
+    #         clientQueryLogger.info(log_message)
+    #     else :
+    knowtQueryLogger.info(log_message)
 
 knowGroupLogger = _get_rotate_file_obj("know_group_log", knowledge_group_log_path)
 def logGroup(callername, message):

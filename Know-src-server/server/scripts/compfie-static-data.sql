@@ -46,16 +46,17 @@ INSERT INTO tbl_forms VALUES(18, 2, 'Assign Legal Entity', '/knowledge/assign-le
 INSERT INTO tbl_forms VALUES(19, 2, 'Assign Client Unit', '/knowledge/assign-client-unit', 19, null);
 
 INSERT INTO tbl_forms VALUES(20, 2, 'Client Unit Approval', '/knowledge/client-unit-approval', 20, null);
-INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '', 21, null);
+INSERT INTO tbl_forms VALUES(21, 2, 'Legal Entity Closure', '/knowledge/legal-entity-closure', 21, null);
 INSERT INTO tbl_forms VALUES(22, 2, 'Client Unit', '/knowledge/client-unit', 22, null);
 
 INSERT INTO tbl_forms VALUES(23, 2, 'Assign Statutory', '/knowledge/assign-statutory', 23, null);
 INSERT INTO tbl_forms VALUES(24, 2, 'Approve Assigned Statutory', '/knowledge/approve-assigned-statutory', 24, null);
-INSERT INTO tbl_forms VALUES(25, 2, 'Configure Database Server', '/knowledge/configure-db-server', 25, null);
-INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/configure-client-server', 26, null);
-INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-storage', 27, null);
-INSERT INTO tbl_forms VALUES(28, 2, 'Client Environment Settings', '/knowledge/allocate-db-env', 28, null);
+INSERT INTO tbl_forms VALUES(25, 2, 'Configure Database Server', '/knowledge/configure-database-server', 25, null);
+INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/application-server', 26, null);
+INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-server', 27, null);
+INSERT INTO tbl_forms VALUES(28, 2, 'Allocate Server', '/knowledge/allocate-database-environment', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
+INSERT INTO tbl_forms VALUES(50, 2, 'Form Authorization - IP Settings', '/knowledge/ip-settings', 50, null);
 
 -- Reports
 INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
@@ -65,17 +66,17 @@ INSERT INTO tbl_forms VALUES(33, 3, 'Geography Report', '/knowledge/geography-re
 INSERT INTO tbl_forms VALUES(34, 3, 'Organization Report', '/knowledge/organization-report', 34, 'Master');
 INSERT INTO tbl_forms VALUES(35, 3, 'Statutory Nature Report', '/knowledge/statutory-nature-report', 35, 'Master');
 INSERT INTO tbl_forms VALUES(36, 3, 'Statutory Mapping Report', '/knowledge/statutory-mapping-report', 36, null);
-INSERT INTO tbl_forms VALUES(37, 3, 'Statutory Notifications List', '/knowledge/statutory-notifications-list', 37, null);
+INSERT INTO tbl_forms VALUES(37, 3, 'Statutory Notification List', '/knowledge/statutory-notifications-list', 37, null);
 INSERT INTO tbl_forms VALUES(38, 3, 'Client Agreement Master Report', '/knowledge/client-agreement-report', 38, null);
-INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Report', '/knowledge/domain-agreement-master-report', 39, null);
+INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Agreement Master Report', '/knowledge/domain-agreement-master-report', 39, null);
 INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-unit-details', 40, null);
 INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail Login Trace', '/knowledge/audit-trail-login-trace', 43, null);
 INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
 INSERT INTO tbl_forms VALUES(49, 3, 'Reassign User Report', '/knowledge/reassign-user-report', 49, NULL);
-
-
+INSERT INTO tbl_forms VALUES(51, 3, 'Form Authorization - IP Settings Report', '/knowledge/ip-settings-report', 51, null);
+INSERT INTO tbl_forms VALUES(52, 3, 'Allocate Server Report', '/knowledge/allocate-database-environment-report', 52, NULL);
 
 -- My Account
 INSERT INTO tbl_forms VALUES(44, 4, 'View Profile', '/knowledge/profile', 44, null);
@@ -117,7 +118,7 @@ INSERT INTO tbl_form_category VALUES(26, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(27, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(28, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(29, 0, 1, 0, 0, 0, 0, 0, 0);
-INSERT INTO tbl_form_category VALUES(50, 0, 0, 0, 0, 0, 0, 1, 0);
+INSERT INTO tbl_form_category VALUES(50, 0, 1, 0, 0, 0, 0, 0, 0);
 -- Reports
 INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(31, 1, 0, 0, 0, 0, 0, 0, 0);
@@ -136,6 +137,9 @@ INSERT INTO tbl_form_category VALUES(42, 1, 0, 0, 0, 1, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(43, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(49, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(51, 0, 1, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(52, 0, 1, 0, 0, 0, 0, 0, 0);
+
 -- My Accounts
 INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);

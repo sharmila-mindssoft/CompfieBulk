@@ -20,9 +20,10 @@ var CountryVal = $('#countryval');
 var Country = $('#country');
 var DomainVal = $('#domainval');
 var Domain = $('#domain');
-
+var cTab = '';
 $(".user-tab li").click(function() {
     activateTab($(this).attr('value'));
+    cTab = $(this).attr('value');
 });
 
 $(".btn-cancel").click(function(){
@@ -84,6 +85,7 @@ function clearFields(){
     ACTIVE_CHILD_USERS = [];
     selected_country = '';
     selected_domain = '';
+    cTab = '';
 }
 
 function activateTab(active_class){
@@ -240,9 +242,15 @@ function activateParentUser(element, user_id){
 
 function activateChildUsers(){
     ACTIVE_CHILD_USERS = [];
+
+    var INACTIVE_CHILD_USERS = [];
+
     $.each(USER_MAPPINGS, function(key, value){
-        if(value.parent_user_id == ACTIVE_PARENT_USER){
+        if(value.parent_user_id == ACTIVE_PARENT_USER && value.country_id == selected_country && value.domain_id == selected_domain){
             ACTIVE_CHILD_USERS.push(value.child_user_id);
+        }
+        else if(value.parent_user_id != ACTIVE_PARENT_USER && value.country_id == selected_country && value.domain_id == selected_domain){
+            INACTIVE_CHILD_USERS.push(value.child_user_id);
         }
     });
     //if(ACTIVE_CHILD_USERS.length > 0){
@@ -263,6 +271,10 @@ function activateChildUsers(){
                 if(ACTIVE_CHILD_USERS.indexOf(value.user_id) != -1){
                     clone.addClass('active');
                     clone.find('i').addClass('fa fa-check pull-right');
+                }else if(INACTIVE_CHILD_USERS.indexOf(value.user_id) != -1){
+                    if(cTab != 'tech-mgr-mgr-tab'){
+                        clone.remove();
+                    }
                 }
             }
         });

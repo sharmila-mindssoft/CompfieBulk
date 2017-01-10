@@ -1,27 +1,6 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-<style>
-.le{
-    background-color:#eee;
-}
-.domain-header td{
-    padding: 0px;
-    margin-left:0px;
-}
-.domain-header table {
-    cellspacing:0;
-    cellpadding:0;
-    width:100%;
-    border: 1px dotted #ccc;
-}
-.grid-table th {
-    text-align: left;
-}
-.width85 {
-   width:85%; 
-}
 
-</style>
 <div class="container">
   <div class="row">
     <div class="col-sm-1"> </div>
@@ -41,10 +20,10 @@
           <div class="col-lg-12">
             <div class="row">
               <div class="form-horizontal" role="form">
-                <div class="col-lg-5">
+                <div class="col-lg-6">
                   <div class="form-group has-feedback">
-                    <label class="col-md-4 control-label">Country <span class="mandatory">*</span></label>
-                    <div class="col-md-8">
+                    <label class="col-sm-4 control-label">Country <span class="mandatory">*</span></label>
+                    <div class="col-sm-8">
                       <input type="text" class="form-control input-sm" id="countryval" tabindex="1" autofocus="autofocus" value="" placeholder="Enter Country">
                       <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                       <input type="hidden" id="country-id" value="">
@@ -55,10 +34,10 @@
                   </div>
                 </div>
                 <!-- end col -->
-                <div class="col-lg-5">
+                <div class="col-lg-6">
                 <div class="form-group has-feedback">
                   <label class="col-sm-4 control-label">Client Group</label>
-                  <div class="col-md-8">
+                  <div class="col-sm-8">
                     <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2" placeholder="Enter Client Group">
                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                     <input type="hidden" id="group-id">
@@ -69,8 +48,8 @@
                 </div>
               </div>
               <!-- end col -->
-              <div class="col-sm-2">
-                <div class="form-group text-center">
+              <div class="col-sm-12">
+                <div class="form-group text-center m-t-5 m-b-0">
                   <button class="btn btn-primary text-center waves-effect waves-light btn-show" type="submit" tabindex="3" > Show </button>
                 </div>
               </div>
@@ -81,15 +60,45 @@
             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight client-group-grid" cellspacing="0" width="100%">
               <thead>
                 <tr>
-                  <th width="15%">Client Group</th>
-                  <th width="15%">Short Name</th>
-                  <th width="20%">Group Admin</th>
-                  <th width="15%" class="text-center">No.of Legal Entity</th>
-                  <th width="10%">Action <span class="mandatory">*</span></th>
-                  <th width="25%">Reason</th>
+                  <th width="2%">#</th>
+                  <th width="20%">Country</th>
+                  <th width="20%">Username</th>
+                  <th width="20%">Legal Entity Name</th>
+                  <th width="18%">Action <span class="mandatory">*</span></th>
+                  <th width="20%">Reason</th>
                 </tr>
               </thead>
                 <tbody class="group-list">
+
+              <!-- <tr class="warning">
+                  <th style="vertical-align: middle;">1</th>
+                  <th style="vertical-align: middle;">RG Group</th>
+                  <th style="vertical-align: middle;">user@domain.com</th>
+                  <th></th>
+                  <th>
+                      <select class="form-control input-sm">
+                          <option selected="selected">Select</option>
+                          <option>Approve</option>
+                          <option>Reject</option>
+                      </select>
+                  </th>
+                  <th>&nbsp;</th>
+              </tr>
+              <tr>
+                  <td></td>
+                  <td>India</td>
+                  <td></td>
+                  <td><a href="#" class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg">ABC Legal Entity</a></td>
+                  <td>
+                      <select class="form-control input-sm">
+                          <option>Select</option>
+                          <option selected="selected">Approve</option>
+                          <option>Reject</option>
+                      </select>
+                  </td>
+                  <td><input type="text" class="form-control input-sm" placeholder="Enter reason" /></td>
+              </tr> -->
+
                 </tbody>
             </table>
             <div class="col-sm-12">
@@ -110,36 +119,55 @@
 </div>
 
 <div id="templates" class="default-display-none">
-    <div class="group-row">
-        <table>
-            <tr>
-                <!-- <td class="sno"></td> -->
-                <td class="group_name"><a href="#" class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg"></a></td>
-                <td class="short_name"></td>
-                <td class="email_id"></td>
-                <td class="le_count text-center" style=""></td>
-                <td class="action">
-                    <select class="form-control input-sm">
-                        <option value="0" selected="selected">Select</option>
-                        <option value="1" >Approve</option>
-                        <option value="2">Reject</option>
-                    </select>
-                </td>
-                <td class="reason-box">
-                    <input type="text" class="form-control input-sm default-display-none reason" placeholder="Enter reason" />
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="no-records">
-        <table>
-            <tr>
-                <td colspan="6" align="center">
-                    No records found
-                </td>
-            </tr>
-        </table>
-    </div>
+    <table class="table-group-list">
+      <tr class="warning">
+      <th class="sno"></th>
+      <th class="group_name"></th>
+      <th class="email_id"></th>
+      <th></th>
+      <th>
+          <select class="form-control chosen sm-approve-control input-sm" data-placeholder="Choose a Action" tabindex="1">
+            <option value="0" selected="selected"> Select</option>
+            <option value="1">Approve</option>
+            <option value="2">Reject</option>
+          </select>
+      </th>
+      <td class="sm-reason-box">
+          <textarea class="form-control input-sm sm-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+      </td>
+      </tr>
+  </table>
+
+  <table class="table-le-list">
+      <tr>
+        <td>&nbsp;</td>
+        <td class="country_name">
+          <!-- <a class="c-pointer"></a> -->
+        </td>
+        <td></td>
+        <td class="legal_entity_name">
+          <a href="#" class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg"></a>
+        </td>
+      
+        <td>
+            <select class="form-control chosen compliance-approve-control input-sm" data-placeholder="Choose a Action" tabindex="1">
+              <option value="0"> Select</option>
+              <option value="1">Approve</option>
+              <option value="2">Reject</option>
+            </select>
+        </td>
+        <td class="compliance-reason-box">
+        <textarea class="form-control input-sm compliance-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+      </td>
+      </tr>
+  </table>
+
+  <table class="table-no-record">
+      <tr>
+      <td colspan="8" align="center"> No Records Found</td>
+      </tr>
+  </table>
+  
     <div class="le-row">
         <table>
             <tr class="le">

@@ -6,13 +6,9 @@
 ########################################################
 from protocol import technomasters
 
-from server.database.admin import (
-    get_domains_for_user
-)
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
-    get_geograhpy_levels_for_user,
-    get_geographies_for_user_with_mapping, get_industries
+    get_industries
 )
 
 from server.database.technomaster import *
@@ -50,7 +46,7 @@ __all__ = [
 # To Get list of all clients with details
 ########################################################
 def get_client_groups(db, request, session_user):
-    groups = get_groups(db)
+    groups = get_groups(db, session_user)
     return technomasters.GetClientGroupsSuccess(
         groups=groups
     )
@@ -134,7 +130,7 @@ def process_update_client_group(db, request, session_user):
         db, request.client_id, request.date_configurations, session_user
     )
     update_client_group(
-        db, request.group_name, request.client_id
+        db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks
     )
     legal_entity_names = update_legal_entities(
         db, request, request.client_id, session_user)
@@ -555,8 +551,8 @@ def get_unassigned_units(db, session_user):
 ############################################################
 # To Get assigned units list
 ############################################################
-def get_assigned_units(db, request):
-    units_list = get_assigned_units_list(db, request)
+def get_assigned_units(db, request, session_user):
+    units_list = get_assigned_units_list(db, request, session_user)
     return technomasters.GetAssignedUnitsSuccess(
         assigned_units_list=units_list
     )
@@ -577,13 +573,14 @@ def get_assigned_unit_details(db, request):
 ############################################################
 def get_assign_unit_form_data(db, request, session_user):
     (
-        business_groups, legal_entities, units, domain_managers
+        business_groups, legal_entities, units, domain_managers, mapped_domain_users
     ) = get_data_for_assign_unit(db, request, session_user)
     return technomasters.GetAssignUnitFormDataSuccess(
         business_groups=business_groups,
         unit_legal_entity=legal_entities,
         assigned_unit_details_list=units,
-        domain_manager_users=domain_managers
+        domain_manager_users=domain_managers,
+        mapped_domain_users=mapped_domain_users
     )
 
 
@@ -629,7 +626,7 @@ def view_assign_legal_entity(db, request, session_user):
     #techno_users = get_techno_users_list(db, session_user)
     client_id = request.client_id
     assigned_legal_entities= get_assigned_legal_entity(db, client_id)
-   
+
     return technomasters.ViewAssignLegalEntitySuccess(
         assigned_legal_entities=assigned_legal_entities,
     )
