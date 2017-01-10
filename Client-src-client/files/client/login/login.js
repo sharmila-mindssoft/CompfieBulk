@@ -35,7 +35,8 @@ function initSession(userProfile, shortName) {
   }
 }
 function setLandingPage(userProfile) {
-  menus = userProfile.menu.menus;
+  menus = userProfile.menu;
+  console.log(userProfile)
   if ('Home' in menus) {
     landingPage = '/dashboard';  // landingPage = "/home";
   } else {

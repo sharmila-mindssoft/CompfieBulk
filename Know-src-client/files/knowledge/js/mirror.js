@@ -2528,6 +2528,7 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
   }
+
   function getAllocateServerReportData(callback){
     callerName = 'console_admin';
     var request = [

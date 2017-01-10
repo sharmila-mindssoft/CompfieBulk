@@ -467,14 +467,14 @@ def get_legal_entity_info(db, user_id, user_category_id):
         q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
             "t1.business_group_id, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
-            "FROM tbl_legal_entity as t1 " + \
+            "FROM tbl_legal_entities as t1 " + \
             "WHERE contract_to > now() and is_closed = 0"
         rows = db.select_all(q)
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
             "t1.client_id, t1.business_group_id, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
-            "from tbl_legal_entity as t1 " + \
+            "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_domains as t2 on " + \
             "t1.legal_entity_id = t1.legal_entity_id " + \
             "where contract_to > now() and is_closed = 0 and t2.user_id= %s"
