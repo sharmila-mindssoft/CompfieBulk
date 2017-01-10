@@ -3890,3 +3890,92 @@ class ClientUsercategory(object):
             "u_c_id": self.user_category_id,
             "u_c_name": self.user_category_name,
         }
+
+#
+# Unit closure - Legal Entity
+#
+class UnitClosureLegalEntity(object):
+    def __init__(self, legal_entity_id, legal_entity_name):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id", "legal_entity_name"])
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        return UnitClosureLegalEntity(legal_entity_id, legal_entity_name)
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+        }
+
+#
+# Unit Closure - Units List
+#
+class UnitClosure_Units(object):
+    def __init__(
+        self, unit_id, unit_code, unit_name, address, postal_code,
+        legal_entity_id, legal_entity_name, business_group_name, division_name,
+        category_name, is_active, closed_on, validity_days
+    ):
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
+        self.division_name = division_name
+        self.category_name = category_name
+        self.is_active = is_active
+        self.closed_on = closed_on
+        self.validity_days = validity_days
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "unit_id", "unit_code", "unit_name", "address", "postal_code",
+            "legal_entity_id", "legal_entity_name", "business_group_name",
+            "division_name", "category_name", "is_active", "closed_on",
+            "validity_days"
+            ])
+        unit_id = data.get("unit_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_name = data.get("business_group_name")
+        division_name = data.get("division_name")
+        category_name = data.get("category_name")
+        is_active = data.get("is_active")
+        closed_on = data.get("closed_on")
+        validity_days = data.get("validity_days")
+        return UnitClosure_Units(
+            unit_id, unit_code, unit_name, address, postal_code,
+            legal_entity_id, legal_entity_name, business_group_name,
+            division_name, category_name, is_active, closed_on,
+            validity_days
+        )
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "address": self.address,
+            "postal_code": self.postal_code,
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_name": self.business_group_name,
+            "division_name": self.division_name,
+            "category_name": self.category_name,
+            "is_active": self.is_active,
+            "closed_on": self.closed_on,
+            "validity_days": self.validity_days,
+        }
