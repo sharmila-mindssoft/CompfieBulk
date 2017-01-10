@@ -448,7 +448,7 @@ def verify_password(db, password, user_id):
     condition = "password=%s and user_id=%s"
     condition_val = [encrypted_password, user_id]
     rows = db.get_data(
-        tblUsers, columns, condition, condition_val
+        tblUserLoginDetails, columns, condition, condition_val
     )
 
     if(int(rows[0]["result"]) <= 0):
