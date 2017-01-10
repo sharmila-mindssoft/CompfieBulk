@@ -2112,7 +2112,8 @@ class ServiceProvider(object):
 
 class ServiceProviderDetails(object):
     def __init__(self, service_provider_id, service_provider_name, short_name, contract_from,  
-    contract_to, contact_person, contact_no, email_id, mobile_no, address, is_active, is_blocked, remarks):
+    contract_to, contact_person, contact_no, email_id, mobile_no, address, 
+    is_active, is_blocked, unblock_days, remarks):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
         self.short_name = short_name
@@ -2125,14 +2126,15 @@ class ServiceProviderDetails(object):
         self.address = address
         self.is_active = is_active
         self.is_blocked = is_blocked
+        self.unblock_days = unblock_days
         self.remarks = remarks
-        # self.blocked_on = blocked_on
+        
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["service_provider_id", "service_provider_name", "short_name", "contract_from",
           "contact_person", "contact_no", "mobile_no",
-          "email_id", "address", "is_active", "is_blocked", "remarks"])
+          "email_id", "address", "is_active", "is_blocked", "unblock_days", "remarks"])
         service_provider_id = data.get("service_provider_id")
         service_provider_name = data.get("service_provider_name")
         short_name =  data.get("short_name")
@@ -2145,11 +2147,12 @@ class ServiceProviderDetails(object):
         address =  data.get("address")
         is_active =  data.get("is_active")
         is_blocked =  data.get("is_blocked")
+        unblock_days =  data.get("unblock_days")
         remarks = data.get("remarks")
-        # blocked_on =  data.get("blocked_on")
+        
         
         return ServiceProviderDetails(service_provider_id, service_provider_name, short_name, contract_from,
-         contract_to, contact_person, contact_no, mobile_no, email_id, address, is_active, is_blocked, remarks )
+         contract_to, contact_person, contact_no, mobile_no, email_id, address, is_active, is_blocked, unblock_days, remarks )
 
     def to_structure(self):
         return {
@@ -2165,6 +2168,7 @@ class ServiceProviderDetails(object):
             "address": self.address,
             "is_active": self.is_active,
             "is_blocked": self.is_blocked,
+            "unblock_days": self.unblock_days,            
             "remarks": self.remarks            
         }
 
