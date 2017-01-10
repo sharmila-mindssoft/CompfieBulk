@@ -150,6 +150,7 @@ class API(object):
         print s
         s = base64.b64encode(s)
         s = json.dumps(s)
+        print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
