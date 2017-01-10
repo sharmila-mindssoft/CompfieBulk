@@ -33,6 +33,9 @@ def make_vector_type_field(module, klass_name, is_optional=False):
 def make_vector_type_int(length=100, is_optional=False):
     return {'type': 'VECTOR_TYPE_INT', 'length': length, 'is_optional': is_optional}
 
+def make_vector_type_string(length=100, is_optional=False, validfun=allow_specialchar):
+    return {'type': 'VECTOR_TYPE_STRING', 'length': length, 'is_optional': is_optional, 'validation_method': validfun}
+
 def make_bool_field():
     return {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False}
 
@@ -101,8 +104,24 @@ api_params = {
     "c_id": make_int_field(),
     "c_name": make_string_field(),
     "d_name": make_string_field(),
+    "d_names": make_vector_type_string(),
     "div_name": make_string_field(is_optional=True),
     "is_closed": make_bool_field(),
     "is_new": make_bool_field(),
-    "statutories": make_vector_type_field(module="clienttransactions", klass_name="UnitStatutoryCompliances")
+    "statutories": make_vector_type_field(module="clienttransactions", klass_name="UnitStatutoryCompliances"),
+    "tot_count": make_int_field(length=100000),
+    "applicable_statu": make_vector_type_field(module="clienttransactions", klass_name="ComplianceApplicability"),
+    "lone_statu_name": make_string_field(length=200),
+    "app_status": make_bool_field(),
+    "opt_status": make_bool_field(),
+    "not_app_remarks": make_text_field(length=500, is_optional=True),
+    "c_comp_id": make_int_field(),
+    "comp_id": make_int_field(),
+    "comp_name": make_string_field(),
+    "descp": make_text_field(length=500),
+    "s_prov": make_text_field(length=500),
+    "comp_app_status": make_bool_field(),
+    "comp_opt_status": make_bool_field(),
+    "comp_remarks": make_text_field(length=500, is_optional=True),
+    "r_count": make_int_field(length=100000),
 }

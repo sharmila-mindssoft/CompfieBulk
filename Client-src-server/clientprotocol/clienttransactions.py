@@ -168,23 +168,24 @@ class GetStatutorySettings(Request):
         }
 
 class GetSettingsCompliances(Request):
-    def __init__(self, unit_id, record_count):
+    def __init__(self, legal_entity_id, unit_id, record_count):
+        self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_id", "record_count"])
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
-        record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
-        return GetSettingsCompliances(unit_id, record_count)
+        data = parse_dictionary(data, ["le_id", "u_id", "r_count"])
+        legal_entity_id = data.get("le_id")
+        unit_id = data.get("u_id")
+        record_count = data.get("r_count")
+        return GetSettingsCompliances(legal_entity_id, unit_id, record_count)
 
     def to_inner_structure(self):
         return {
-            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count),
+            "le_id": self.legal_entity_id,
+            "u_id": self.unit_id,
+            "r_count": self.record_count,
         }
 
 class ApplicableCompliance(object):
@@ -689,41 +690,35 @@ class UnitStatutoryCompliances(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "country_name", "domain_names", "business_group_name", "legal_entity_name", "division_name", "is_closed", "is_new"])
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
-        unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
+        data = parse_dictionary(data, [
+            "u_id", "u_name", "address", "c_name", "d_names",
+            "bg_name", "le_name", "div_name",
+            "is_closed", "is_new"
+        ])
+        unit_id = data.get("u_id")
+        unit_name = data.get("u_name")
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
-        country_name = data.get("country_name")
-        country_name = parse_structure_CustomTextType_50(country_name)
-        domain_names = data.get("domain_names")
-        domain_names = parse_structure_VectorType_CustomTextType_50(domain_names)
-        business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_OptionalType_CustomTextType_100(business_group_name)
-        legal_entity_name = data.get("legal_entity_name")
-        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
-        division_name = data.get("division_name")
-        division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
+        country_name = data.get("c_name")
+        domain_names = data.get("d_names")
+        business_group_name = data.get("bg_name")
+        legal_entity_name = data.get("le_name")
+        division_name = data.get("div_name")
         is_closed = data.get("is_closed")
-        is_closed = parse_structure_Bool(is_closed)
         is_new = data.get("is_new")
-        is_new = parse_structure_Bool(is_new)
         return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed, is_new)
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "address": to_structure_CustomTextType_250(self.address),
-            "country_name": to_structure_CustomTextType_50(self.country_name),
-            "domain_names": to_structure_VectorType_CustomTextType_50(self.domain_names),
-            "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
-            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
-            "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
-            "is_closed": to_structure_Bool(self.is_closed),
-            "is_new": to_structure_Bool(self.is_new)
+            "u_id": self.unit_id,
+            "u_name": self.unit_name,
+            "address": self.address,
+            "c_name": self.country_name,
+            "d_names": self.domain_names,
+            "bg_name": self.business_group_name,
+            "le_name": self.legal_entity_name,
+            "div_name": self.division_name,
+            "is_closed": self.is_closed,
+            "is_new": self.is_new
         }
 
 class GetStatutorySettingsSuccess(Response):
@@ -734,12 +729,11 @@ class GetStatutorySettingsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutories"])
         statutories = data.get("statutories")
-        statutories = parse_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances(statutories)
         return GetStatutorySettingsSuccess(statutories)
 
     def to_inner_structure(self):
         return {
-            "statutories": to_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances(self.statutories)
+            "statutories": self.statutories
         }
 
 class GetSettingsCompliancesSuccess(Response):
@@ -749,17 +743,15 @@ class GetSettingsCompliancesSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutories", "total_count"])
-        statutories = data.get("statutories")
-        statutories = parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(statutories)
-        total_count = data.get("total_count")
-        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        data = parse_dictionary(data, ["applicable_statu", "tot_count"])
+        statutories = data.get("applicable_statu")
+        total_count = data.get("tot_count")
         return GetSettingsCompliancesSuccess(statutories, total_count)
 
     def to_inner_structure(self):
         return {
-            "statutories": to_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(self.statutories),
-            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
+            "applicable_statu": self.statutories,
+            "tot_count": self.total_count
         }
 
 class UpdateStatutorySettingsSuccess(Response):
@@ -2062,7 +2054,6 @@ class ComplianceApplicability(object):
     def __init__(
         self,
         level_1_statutory_name, applicable_status, opted_status, not_applicable_remarks,
-        client_statutory_id,
         client_compliance_id,
         compliance_id,
         compliance_name, description, statutory_provision,
@@ -2073,7 +2064,6 @@ class ComplianceApplicability(object):
         self.applicable_status = applicable_status
         self.opted_status = opted_status
         self.not_applicable_remarks = not_applicable_remarks
-        self.client_statutory_id = client_statutory_id
         self.client_compliance_id = client_compliance_id
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
@@ -2088,48 +2078,29 @@ class ComplianceApplicability(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "level_1_statutory_name", "applicable_status", "opted_status", "not_applicable_remarks",
-            "client_statutory_id", "client_compliance_id",
-            "compliance_id",
-            "compliance_name", "description",
-            "statutory_provision",
-            "compliance_applicable_status",
-            "compliance_opted_status", "compliance_remarks",
-            "is_new", "domain_name"
+            "lone_statu_name", "app_status", "opt_status", "not_app_remarks",
+            "c_comp_id", "comp_id", "comp_name", "descp", "s_prov",
+            "comp_app_status", "comp_opt_status", "comp_remarks", "is_new",
+            "d_name"
         ])
-        level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_CustomTextType_500(level_1_statutory_name)
-        applicable_status = data.get("applicable_status")
-        applicable_status = parse_structure_Bool(applicable_status)
-        opted_status = data.get("opted_status")
-        opted_status = parse_structure_Bool(opted_status)
-        not_applicable_remarks = data.get("not_applicable_remarks")
-        not_applicable_remarks = parse_structure_OptionalType_CustomTextType_500(not_applicable_remarks)
-        client_statutory_id = data.get("client_statutory_id")
-        client_statutory_id = parse_structure_UnsignedIntegerType_32(client_statutory_id)
-        client_compliance_id = data.get("client_compliance_id")
-        client_compliance_id = parse_structure_UnsignedIntegerType_32(client_compliance_id)
-        compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_250(compliance_name)
-        description = data.get("description")
-        description = parse_structure_Text(description)
-        statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_Text(statutory_provision)
-        compliance_applicable_status = data.get("compliance_applicable_status")
-        compliance_applicable_status = parse_structure_Bool(compliance_applicable_status)
-        compliance_opted_status = data.get("compliance_opted_status")
-        compliance_opted_status = parse_structure_OptionalType_Bool(compliance_opted_status)
-        compliance_remarks = data.get("compliance_remarks")
-        compliance_remarks = parse_structure_OptionalType_CustomTextType_500(compliance_remarks)
+        level_1_statutory_name = data.get("lone_statu_name")
+        applicable_status = data.get("app_status")
+        opted_status = data.get("opt_status")
+        not_applicable_remarks = data.get("not_app_remarks")
+        client_compliance_id = data.get("c_comp_id")
+        compliance_id = data.get("comp_id")
+        compliance_name = data.get("comp_name")
+        description = data.get("descp")
+        statutory_provision = data.get("s_prov")
+        compliance_applicable_status = data.get("comp_app_status")
+        compliance_opted_status = data.get("comp_opt_status")
+        compliance_remarks = data.get("comp_remarks")
         is_new = data.get("is_new")
-        is_new = parse_structure_Bool(is_new)
-        domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50(domain_name)
+        domain_name = data.get("d_name")
         return ComplianceApplicability(
-            level_1_statutory_name, applicable_status, opted_status, not_applicable_remarks,
-            client_statutory_id, client_compliance_id,
+            level_1_statutory_name, applicable_status, opted_status,
+            not_applicable_remarks,
+            client_compliance_id,
             compliance_id, compliance_name,
             description, statutory_provision,
             compliance_applicable_status, compliance_opted_status,
@@ -2139,19 +2110,19 @@ class ComplianceApplicability(object):
 
     def to_structure(self):
         return {
-            "level_1_statutory_name": to_structure_CustomTextType_500(self.level_1_statutory_name),
-            "applicable_status": to_structure_Bool(self.applicable_status),
-            "opted_status": to_structure_Bool(self.opted_status),
-            "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),
-            "client_statutory_id": to_structure_UnsignedIntegerType_32(self.client_statutory_id),
-            "client_compliance_id": to_structure_UnsignedIntegerType_32(self.client_compliance_id),
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_Text(self.description),
-            "statutory_provision": parse_structure_Text(self.statutory_provision),
-            "compliance_applicable_status": to_structure_Bool(self.compliance_applicable_status),
-            "compliance_opted_status": to_structure_OptionalType_Bool(self.compliance_opted_status),
-            "compliance_remarks": to_structure_OptionalType_CustomTextType_500(self.compliance_remarks),
-            "is_new": to_structure_Bool(self.is_new),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name)
+            "lone_statu_name": self.level_1_statutory_name,
+            "app_status": self.applicable_status,
+            "opt_status": self.opted_status,
+            "not_app_remarks": self.not_applicable_remarks,
+            "c_comp_id": self.client_compliance_id,
+            "comp_id": self.compliance_id,
+            "comp_name": self.compliance_name,
+            "descp": self.description,
+            "s_prov": self.statutory_provision,
+            "comp_app_status": self.compliance_applicable_status,
+            "comp_opt_status": self.compliance_opted_status,
+            "comp_remarks": self.compliance_remarks,
+            "is_new": self.is_new,
+            "d_name": self.domain_name
         }
+
