@@ -36,8 +36,8 @@ def make_vector_type_int(length=100, is_optional=False):
 def make_vector_type_string(length=100, is_optional=False, validfun=allow_specialchar):
     return {'type': 'VECTOR_TYPE_STRING', 'length': length, 'is_optional': is_optional, 'validation_method': validfun}
 
-def make_bool_field():
-    return {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False}
+def make_bool_field(is_optional=False):
+    return {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': is_optional}
 
 def make_enum_type(module, klass_name):
     return {'type': 'ENUM_TYPE', 'module_name': module, 'class_name': klass_name}
