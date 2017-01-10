@@ -1714,8 +1714,9 @@ CREATE PROCEDURE `sp_activity_log_save`(
     action_performed_on TIMESTAMP
 )
 BEGIN
-    INSERT INTO tbl_activity_log (user_id, form_id, action, created_on)
-    VALUES (userid, formid, action_performed, action_performed_on);
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid;
+    INSERT INTO tbl_activity_log (user_category_id, user_id, form_id, action, created_on)
+    VALUES (@u_cat_id, userid, formid, action_performed, action_performed_on);
 END //
 
 DELIMITER ;
@@ -7663,7 +7664,7 @@ BEGIN
     message_heading = 'Assign Client Unit',
     message_text = (select concat(unit_name,' ','unit has been assigned')
     from tbl_units where unit_id = _unit_id),
-    link = _link, created_by = _created_on, created_on = _created_on;
+    link = _link, created_by = _created_by, created_on = _created_on;
 
     INSERT INTO tbl_message_users
     SET
