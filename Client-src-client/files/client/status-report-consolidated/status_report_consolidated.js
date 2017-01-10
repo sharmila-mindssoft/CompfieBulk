@@ -162,7 +162,7 @@ function PageControls() {
 }
 
 clearElement = function(arr) {
-    if(arr.length > 0) {
+    if (arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -477,7 +477,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             } else {
                 $('.uploaded-document', clonethree).text('-');
             }
-            
+
             if (v.completion_date != "")
                 $('.completion-date', clonethree).text(v.completion_date);
             else
