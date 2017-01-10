@@ -197,7 +197,9 @@ def approve_statutory_mapping_list(db, user_id):
                 date.get("repeat_by")
             )
             date_list.append(s_date)
-        summary = make_summary(date_list, m["frequency_id"], m)
+        summary, dates = make_summary(date_list, m["frequency_id"], m)
+        if dates is not None :
+            summary += dates
 
         compliance.append(mobile.MappingComplianceInfo(
             m["compliance_id"], c_name, bool(m["is_active"]),

@@ -103,7 +103,7 @@ function initClientMirror() {
     function getUserMenu() {
         var info = getUserInfo();
         if (info != null) {
-            return info.menu.menus;
+            return info.menu;
         } else {
             login_url = '/login/' + window.localStorage.recent_short_name;
             window.location.href = login_url;
@@ -149,7 +149,8 @@ function initClientMirror() {
 
     function redirect_login() {
         var short_name = getClientShortName();
-        login_url = '/login/' + short_name;
+        //login_url = '/login/' + short_name;
+        login_url = '/login';
         window.localStorage.recent_short_name = short_name;
         clearSession();
         window.location.href = login_url;

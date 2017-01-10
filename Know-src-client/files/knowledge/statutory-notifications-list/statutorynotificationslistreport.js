@@ -30,20 +30,8 @@ var sno = 0;
 var totalRecord;
 
 //Other variable declaration
-var LoaderIcon = $('.loading-indicator-spin');
 var ReportView = $('.grid-table-rpt');
 
-
-function displayLoader() {
-  LoaderIcon.show();
-}
-function hideLoader() {
-  LoaderIcon.hide();
-}
-
-function resetValues(){
-  displayMessage('');
-}
 
 function initialize(){
     //resetValues();
@@ -176,7 +164,6 @@ function loadCompliances(data){
 }
 //Status Title
 function showTitle(e, notf_text){
-  console.log("a:"+notf_text)
   var titleText = notf_text;
     e.title = titleText;
     console.log(e.title)

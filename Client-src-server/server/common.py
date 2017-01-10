@@ -197,6 +197,12 @@ def generate_random(length=7):
         random.SystemRandom().choice(characters) for _ in range(length)
     )
 
+def generate_special_random(length=7):
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(
+        random.SystemRandom().choice(characters) for _ in range(length)
+    )
+
 
 ########################################################
 # To generate random password encrypted with md5

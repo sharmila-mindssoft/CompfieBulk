@@ -446,6 +446,11 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/knowledge/ip-settings",
+        "files/knowledge/ip-settings/ip-settings.html",
+        None, {}
+    ),
+    (
         "/knowledge/configure-file-server",
         "files/knowledge/configure-file-server/configure-file-server.html",
         None, {}
@@ -484,5 +489,10 @@ TEMPLATE_PATHS = [
         "/knowledge/statutory-notifications",
         "files/knowledge/statutorynotifications/statutorynotifications.html",
         None, {}
-    )
+    ),
+    (
+        "/knowledge/ip-settings-report",
+        "files/knowledge/ip-settings-report/ip-settings-report.html",
+        None, {}
+    ),
 ]

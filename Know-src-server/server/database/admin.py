@@ -952,7 +952,9 @@ def return_user_mapping_users(data):
         mapping = fn(
                 user_mapping_id=datum["user_mapping_id"],
                 parent_user_id=datum["parent_user_id"],
-                child_user_id=datum["child_user_id"]
+                child_user_id=datum["child_user_id"],
+                country_id=datum["country_id"],
+                domain_id=datum["domain_id"],
             )
         result.append(mapping)
 
@@ -1061,7 +1063,7 @@ def save_user_mappings(db, request, session_user):
             child_user_id, session_user, current_time_stamp
         ) for child_user_id in child_users
     ]
-    db.call_update_proc("sp_usermapping_delete", (parent_user_id,))
+    db.call_update_proc("sp_usermapping_delete", (parent_user_id, country_id, domain_id))
     result = db.bulk_insert(
         tblUserMapping, insert_columns, insert_values
     )
@@ -1263,9 +1265,9 @@ def get_reassign_user_filters(db):
         ))
 
     domain_exec_users = []
-    le_ids = []
-    grp_ids = []
     for t in domain_execut[1] :
+        le_ids = []
+        grp_ids = []
         user_id = t["user_id"]
         e_name = "%s - %s" % (t["employee_code"], t["employee_name"])
         c_d_list = []
@@ -1274,7 +1276,7 @@ def get_reassign_user_filters(db):
                 c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
 
         for z in domain_execut[2] :
-            if z["user_id"] == user_id :
+            if z["user_id"] == user_id and z["legal_entity_id"] is not None :
                 le_ids.append(z["legal_entity_id"])
                 grp_ids.append(z["client_id"])
 
@@ -1304,7 +1306,7 @@ def get_reassign_user_filters(db):
                 p_ids.append(y["parent_user_id"])
 
         for z in domain_manag[3] :
-            if z["user_id"] == user_id :
+            if z["user_id"] == user_id and z["legal_entity_id"] is not None :
                 le_ids.append(z["legal_entity_id"])
                 grp_ids.append(z["client_id"])
 

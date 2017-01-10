@@ -62,6 +62,7 @@ tblUserLegalEntity = "tbl_user_legalentity"
 tblUserUnits = "tbl_user_units"
 tblUserClients = "tbl_user_clients"
 tblClientEmailVerification = "tbl_client_email_verification"
+tblIPSettings = "tbl_ip_settings"
 
 
 #

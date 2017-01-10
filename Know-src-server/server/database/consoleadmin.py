@@ -4,7 +4,7 @@ from forms import *
 from tables import *
 from server.common import get_date_time
 from server.database.validateEnvironment import ServerValidation
-from server.database.createclientdatabase import ClientDBCreate
+from server.database.createclientdatabase import ClientGroupDBCreate, ClientLEDBCreate
 
 __all__ = [
     "get_db_server_list",
@@ -22,6 +22,12 @@ __all__ = [
     "get_file_server_list",
     "file_server_entry_process",
     "is_duplicate_file_server_name",
+    "get_ip_settings_form_data",
+    "get_group_ip_details_form_data",
+    "save_ip_setting_details",
+    "delete_ip_setting_details",
+    "get_ip_settings_report_filter",
+    "ip_setting_report_data",
     "get_allocated_server_form_data"
 ]
 
@@ -221,6 +227,7 @@ def get_client_database_form_data(db):
     #
     data = db.call_proc_with_multiresult_set(
         "sp_clientdatabase_list", None, 4)
+    print data
     client_dbs = data[0]
     machines = data[1]
     db_servers = data[2]
@@ -367,6 +374,71 @@ def validated_env_before_save(db, request):
     else :
         return True
 
+def create_db_process(db, client_database_id, client_id, legal_entity_id, db_server_id, le_db_server_id):
+
+    def save_db_name(db_name, db_user, db_password, is_group):
+        dbowner = client_id
+        if is_group is False :
+            dbowner = legal_entity_id
+        db.call_insert_proc("sp_clientdatabase_dbname_info_save", [client_database_id, db_user, db_password, dbowner, db_name, int(is_group)])
+
+    def _create_db(_db_info, short_name, email_id, is_group):
+        if is_group :
+            create_db = ClientGroupDBCreate(
+                db, client_id, short_name, email_id,
+                _db_info.get("database_ip"),
+                _db_info.get("database_port"),
+                _db_info.get("database_username"),
+                _db_info.get("database_password")
+            )
+            is_db_created = create_db.begin_process()
+            if is_db_created[0] is True :
+                save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], True)
+        else :
+            create_db = ClientLEDBCreate(
+                db, client_id, short_name, email_id,
+                _db_info.get("database_ip"),
+                _db_info.get("database_port"),
+                _db_info.get("database_username"),
+                _db_info.get("database_password")
+            )
+            is_db_created = create_db.begin_process()
+            if is_db_created[0] is True :
+                save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], False)
+
+    # db information for both client and legal entity
+    client_db_info = db.call_proc_with_multiresult_set("sp_tbl_client_groups_createdb_info", [client_id, db_server_id, le_db_server_id], 2)
+    c_info = client_db_info[0][0]
+    db_info = client_db_info[1]
+    print client_db_info
+    print [client_id, db_server_id, le_db_server_id]
+    print c_info
+    count = c_info.get("cnt")
+
+    _db_group_info = None
+    _db_le_info = None
+
+    for r in db_info :
+        if r["database_server_id"] == db_server_id :
+            _db_group_info = r
+        if r["database_server_id"] == le_db_server_id :
+            _db_le_info = r
+
+    # create group db
+    print count
+    if count == 1 :
+        if _db_group_info :
+            is_done = _create_db(_db_group_info, c_info.get("short_name"), c_info.get("email_id"), True)
+            print is_done
+
+    # create le db
+
+    if _db_le_info :
+        is_done = _create_db(_db_le_info, c_info.get("short_name"), c_info.get("email_id"), False)
+        print is_done
+
+    return is_done
+
 def save_allocated_db_env(db, request, session_user):
     is_valid = validated_env_before_save(db, request)
     if is_valid is not True:
@@ -375,6 +447,7 @@ def save_allocated_db_env(db, request, session_user):
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     client_db_id = request.client_database_id
+    print client_db_id
     db_server_id = request.db_server_id
     machine_id = request.machine_id
     le_db_server_id = request.le_db_server_id
@@ -389,14 +462,16 @@ def save_allocated_db_env(db, request, session_user):
     # try:
     if client_db_id is None:
         try :
-            client_id = db.call_insert_proc(
+            client_db_id = db.call_insert_proc(
                 "sp_clientdatabase_save",
                 (client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
                     client_ids, legal_entity_ids, session_user, get_date_time())
             )
+            create_db_process(db, client_db_id, client_id, legal_entity_id, db_server_id, le_db_server_id)
 
-        except Exception :
-            print "Environment allocation failed"
+        except Exception, e :
+            print e
+            raise Exception(e)
 
     else:
         db.call_insert_proc(
@@ -415,6 +490,7 @@ def save_allocated_db_env(db, request, session_user):
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
+    return True
     # perform db creation
 
     # except Exception, e:
@@ -696,6 +772,164 @@ def file_server_entry_process(db, request, user_id):
     except Exception, e:
         print e
         raise process_error("E078")
+
+
+def get_ip_settings_form_data(db):
+    #
+    #  To get data required for ip settings form
+    #  Parameters : None
+    #  Return : Returns Client group details and
+    #   form details
+    #
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_settings_list", None, 3)
+    groups = data[0]
+    forms = data[1]
+    ipslist = data[2]
+    groups_list = return_client_groups(groups)
+    forms_list = return_forms(forms)
+    ips_list = return_ipslist(ipslist)
+    return (
+        groups_list, forms_list, ips_list
+    )
+
+###############################################################################
+# To convert data fetched from database into List of object of Unit
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of Form List
+###############################################################################
+def return_forms(data):
+    fn = consoleadmin.Form
+    result = [
+        fn(
+            form_id=datum["form_id"], form_name=datum["form_name"]
+        ) for datum in data
+    ]
+    return result
+
+def return_ipslist(data):
+    fn = consoleadmin.IPSettingsList
+    result = [
+        fn(
+            client_id=datum["client_id"], form_id=datum["form_id"], group_name=datum["group_name"]
+        ) for datum in data
+    ]
+    return result
+
+def get_group_ip_details_form_data(db, request):
+    #
+    #  To get data required for group ip details
+    #  Parameters : None
+    #  Return : Returns Client groupis IP details
+    #
+    data = db.call_proc(
+        "sp_group_ip_details", [request.client_id]
+    )
+    group_ips_list = return_group_ipslist(data)
+    return (
+        group_ips_list
+    )
+
+def return_group_ipslist(data):
+    fn = consoleadmin.GroupIPDetails
+    result = [
+        fn(
+            form_id=datum["form_id"], ip=datum["ips"], client_id=datum["client_id"]
+        ) for datum in data
+    ]
+    return result
+
+###############################################################################
+# To save ip setting details
+# parameter : Object of databse, Save Auto deletion request, session user
+# return type : Returns True on success full save. Otherwise raises
+#   process error
+###############################################################################
+def save_ip_setting_details(db, request, session_user):
+    ip_setting_details = request.group_ips_list
+    insert_columns = [
+        "client_id", "form_id", "ips"
+    ]
+    insert_values = []
+    client_id = None
+    for detail in ip_setting_details:
+        #unit_ids.append(detail.unit_id)
+        client_id = detail.client_id
+        insert_values.append(
+            (
+                detail.client_id, detail.form_id,
+                detail.ip
+            )
+        )
+    #
+    #  To delete all ip setting details under the legal entity
+    #  Parameters : client id
+    #  Return : True on successfull deletion otherwise returns False
+    #
+    db.call_update_proc("sp_ip_settings_delete", (client_id,))
+    result = db.bulk_insert(
+        tblIPSettings, insert_columns, insert_values
+    )
+    if result:
+        #
+        #  To get legal entity name by it's id to save activity
+        #  Parameters : legal entity id
+        #  Return : Returns legal entity name
+        #
+        data = db.call_proc("sp_group_name_by_id", (client_id,))
+        action = "Configured ip settings for %s " % (
+            data[0]["group_name"])
+        db.save_activity(session_user, frmIPSettings, action)
+    else:
+        raise process_error("E078")
+
+###############################################################################
+# To delete ip setting details
+# parameter : Object of databse, Save Auto deletion request, session user
+# return type : Returns True on success full save. Otherwise raises
+#   process error
+###############################################################################
+def delete_ip_setting_details(db, request, session_user):
+    client_id = request.client_id
+    db.call_update_proc("sp_ip_settings_delete", (client_id,))
+
+
+###############################################################################
+# To get ip setting report details
+# parameter : Object of databse, report request, session user
+# return type : Returns report data.
+###############################################################################
+def ip_setting_report_data(db, request, session_user):
+    client_id = request.client_id
+    ip = request.ip
+    f_count = request.from_count
+    t_count = request.page_count
+
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_setting_details_report", (client_id, ip, f_count, t_count), 2)
+
+    total_records = data[0][0]["total_record"]
+    ips_list = return_group_ipslist(data[1])
+    return (
+        total_records, ips_list
+    )
+
+def get_ip_settings_report_filter(db):
+    #
+    #  To get data required for ip settings form
+    #  Parameters : None
+    #  Return : Returns Client group details and
+    #   form details
+    #
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_settings_report_filter", None, 2)
+    groups = data[0]
+    forms = data[1]
+    groups_list = return_client_groups(groups)
+    forms_list = return_forms(forms)
+    return (
+        groups_list, forms_list
+    )
 
 
 ###############################################################################

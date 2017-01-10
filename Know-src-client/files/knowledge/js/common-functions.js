@@ -149,6 +149,10 @@ function isCommon_Unitcode(inputElm) {
   //allowed => alphanumeric
   return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
 }
+function isNumbers_Dot(inputElm) {
+  //allowed => only numbers and dot
+  return inputElm.val().replace(/[^0-9.]/gi, '');
+}
 function isWebUrl(inputElm) {
   var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
   return urlregex.test(inputElm.val());
@@ -1066,6 +1070,8 @@ function commonAutoComplete1(
                     var cresult = false;
                     var dresult = false;
                     for(var j=0; j<list_val[i][value].length; j++){
+                      /*console.log(condition_values1);
+                      console.log(condition_values2);*/
                       if($.inArray(list_val[i][value][j]["c_id"], condition_values1) >= 0){
                         cresult = true;
                       }

@@ -82,6 +82,30 @@ def process_console_admin_request(request, db):
         result = process_save_auto_deletion(
             db, request_frame, session_user)
 
+    elif(type(request_frame) is consoleadmin.GetIPSettingsList):
+        result = process_get_ip_settings_list(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.GetGroupIPDetails):
+        result = process_get_group_ip_details(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.SaveIPSettings):
+        result = process_save_ip_settings(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.DeleteIPSettings):
+        result = process_delete_ip_settings(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.GetIPSettingsReportFilter):
+        result = process_ip_setting_report_filter(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.GetIPSettingsReport):
+        result = process_ip_setting_report(
+            db, request_frame, session_user)
+
     elif(type(request_frame) is consoleadmin.GetAllocateServerReportData):
         logger.logKnowledgeApi("GetAllocateServerReportData", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
@@ -247,6 +271,74 @@ def process_file_server_entry(db, request, session_user):
     else:
         file_server_entry_process(db, request, session_user)
         return consoleadmin.SaveFileServerSuccess()
+
+
+###############################################################################
+# To get ip setting details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_get_ip_settings_list(db, request, session_user):
+    (
+        groups_list, forms_list, ips_list
+    ) = get_ip_settings_form_data(db)
+    return consoleadmin.GetIPSettingsListSuccess(
+        client_groups=groups_list, ip_setting_forms=forms_list, ips_list=ips_list)
+
+
+###############################################################################
+# To get group ip details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_get_group_ip_details(db, request, session_user):
+    (
+        group_ips_list
+    ) = get_group_ip_details_form_data(db, request)
+    return consoleadmin.GetGroupIPDetailsSuccess(
+        group_ips_list=group_ips_list)
+
+###############################################################################
+# To save ip settings details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_save_ip_settings(db, request, session_user):
+    save_ip_setting_details(db, request, session_user)
+    return consoleadmin.SaveIPSettingsSuccess()
+
+###############################################################################
+# To delete ip settings details
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_delete_ip_settings(db, request, session_user):
+    delete_ip_setting_details(db, request, session_user)
+    return consoleadmin.DeleteIPSettingsSuccess()
+
+###############################################################################
+# To get ip setting details report filter
+# parameter : Object of database, Save Request, session user
+# return type : Returns success response
+###############################################################################
+def process_ip_setting_report_filter(db, request, session_user):
+    (
+        groups_list, forms_list
+    ) = get_ip_settings_report_filter(db)
+    return consoleadmin.GetIPSettingsReportFilterSuccess(
+        client_groups=groups_list, ip_setting_forms=forms_list
+        )
+###############################################################################
+# To get ip settings report details
+# parameter : Object of database, Get Request, session user
+# return type : Returns success response
+###############################################################################
+def process_ip_setting_report(db, request, session_user):
+    (
+        total_records, group_ips_list
+    ) = ip_setting_report_data(db, request, session_user)
+    return consoleadmin.GetIPSettingsReportSuccess(
+        total_records=total_records, group_ips_list=group_ips_list)
 
 
 ###############################################################################

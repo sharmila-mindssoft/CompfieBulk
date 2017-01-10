@@ -80,7 +80,8 @@ class API(object):
         self._knowledge_server_address = knowledge_server_address
         # self._http_client = http_client
         print self._knowledge_server_address
-        self._databases = {}
+        self._group_databases = {}
+        self._le_databases = {}
         self._replication_managers = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
@@ -121,9 +122,9 @@ class API(object):
         except Exception:
             pass
 
-    def client_connection_pool(self, data, le_id):
+    def client_connection_pool(self, data, le_id, poolname):
         return mysql.connector.pooling.MySQLConnectionPool(
-            pool_name=str(le_id) + "con_pool",
+            pool_name=str(le_id) + poolname,
             pool_size=32,
             pool_reset_session=True,
             autocommit=False,
@@ -135,32 +136,56 @@ class API(object):
         )
 
     def server_added(self, servers):
-        print self.__class__
-        self._databases = {}
+
+        self._group_databases = {}
+        self._le_databases = {}
         self._replication_managers = {}
         try:
 
-            for company_id, company in servers.iteritems():
-
+            for company in servers:
+                company_id = company.company_id
+                print company
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
+                print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
-                    if self._databases.get(company_id) is not None :
-                        continue
+                    print company.to_structure()
+                    if company.is_group is True:
+                        if self._group_databases.get(company_id) is not None :
+                            continue
+                        else :
+                            # group db connections
+                            try:
+                                db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
+                                self._group_databases[company_id] = db_cons
+                                print " %s added in connection pool" % company_id
+                            except Exception, e:
+                                # when db connection failed continue to the next server
+                                logger.logClientApi(ip, port)
+                                logger.logClientApi(e, "Group Server added")
+                                logger.logClient("error", "exception", str(traceback.format_exc()))
+                                logger.logClient("error", "clientmain.py-server-added", e)
+                                logger.logClientApi("GROUP database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
+                                continue
+                    else :
+                        if self._le_databases.get(company_id) is not None :
+                            continue
+                        else :
+                            try:
+                                db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
+                                self._le_databases[company_id] = db_cons
+                                print " %s added in le connection pool" % company_id
+                            except Exception, e:
+                                # when db connection failed continue to the next server
+                                logger.logClientApi(ip, port)
+                                logger.logClientApi(e, "LE database added")
+                                logger.logClient("error", "exception", str(traceback.format_exc()))
+                                logger.logClient("error", "clientmain.py-le_database-added", e)
+                                logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
+                                continue
 
-                    try:
-                        db_cons = self.client_connection_pool(company, company_id)
-                        self._databases[company_id] = db_cons
-                        print " %s added in connection pool" % company_id
-                    except Exception, e:
-                        logger.logClientApi(ip, port)
-                        logger.logClientApi(e, "Server added")
-                        logger.logClient("error", "exception", str(traceback.format_exc()))
-                        logger.logClient("error", "clientmain.py-server-added", e)
-                        logger.logClientApi("Client database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
-                        continue
-
-            print self._databases
+            print self._le_databases
+            print self._group_databases
             print "after connection created"
             # After database connection client poll for replication
 
@@ -240,7 +265,7 @@ class API(object):
             response.send(custom_text)
 
     def _parse_request(
-        self, request_data_type
+        self, request_data_type, is_group
     ):
         request_data = None
         # _db = None
@@ -254,10 +279,15 @@ class API(object):
                 self._send_response("Invalid json format", 300)
 
             company_id = int(data[0])
+            print company_id
+            print "-" * 10
+            print is_group
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
                 actual_data
             )
+            if is_group is False :
+                company_id = request_data.request.legal_entity_id
 
         except Exception, e:
             logger.logClientApi(e, "_parse_request")
@@ -270,22 +300,69 @@ class API(object):
         print request_data, company_id
         return request_data, company_id
 
+    def _validate_user_session(self, session):
+        session_token = session.split('-')
+        client_id = int(session_token[0])
+        print self._group_databases
+        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        print client_id
+        print _group_db_cons
+        _group_db = Database(_group_db_cons)
+        print "----"
+        print _group_db
+        try :
+            _group_db.begin()
+            session_user = _group_db.validate_session_token(session)
+            print session_user
+            _group_db.commit()
+            _group_db_cons.close()
+            if session_user is None :
+                return False
+            else :
+                return session_user, client_id
+        except Exception, e :
+            print e
+            _group_db.rollback()
+            _group_db_cons.close()
+            raise Exception(e)
+
     def handle_api_request(
         self, unbound_method,
         request_data_type, need_client_id, is_group
     ):
+        def respond(response_data):
+            return self._send_response(
+                response_data, 200
+            )
+
         ip_address = request.remote_addr
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
+        # validate api format
         request_data, company_id = self._parse_request(
-            request_data_type
+            request_data_type, is_group
         )
         if request_data is None:
             return
 
+        # validate session token
+        if need_client_id is False :
+            session = request_data.session_token
+            print session
+            session_user, client_id = self._validate_user_session(session)
+            if session_user is False :
+                return respond(clientlogin.InvalidSessionToken())
+        else :
+            session_user = None
+        # request process in controller
         print "in handle api"
-        print self._databases
-        db_cons = self._databases.get(company_id)
+        print is_group
+        if is_group :
+            print "Group DB"
+            db_cons = self._group_databases.get(company_id)
+        else :
+            print "LE Db"
+            db_cons = self._le_databases.get(company_id)
 
         print company_id
         if db_cons is None:
@@ -297,11 +374,6 @@ class API(object):
         if _db_con is None:
             self._send_response("Company not found", 404)
 
-        def respond(response_data):
-            return self._send_response(
-                response_data, 200
-            )
-
         _db.begin()
         try:
             if need_client_id :
@@ -309,7 +381,9 @@ class API(object):
                     self, request_data, _db, company_id, ip_address
                 )
             else :
-                response_data = unbound_method(self, request_data, _db)
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, client_id
+                )
             _db.commit()
             _db_con.close()
             return respond(response_data)
@@ -334,36 +408,36 @@ class API(object):
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
 
-    @api_request(clientmasters.RequestFormat)
-    def handle_client_masters(self, request, db):
+    @api_request(clientmasters.RequestFormat, is_group=True)
+    def handle_client_masters(self, request, db, session_user, client_id):
         return controller.process_client_master_requests(request, db)
 
     @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db):
-        return controller.process_client_transaction_requests(request, db)
+    def handle_client_transaction(self, request, db, session_user, client_id):
+        return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)
-    def handle_client_reports(self, request, db):
+    def handle_client_reports(self, request, db, session_user, client_id):
         return controller.process_client_report_requests(request, db)
 
     @api_request(dashboard.RequestFormat)
-    def handle_client_dashboard(self, request, db):
+    def handle_client_dashboard(self, request, db, session_user, client_id):
         return controller.process_client_dashboard_requests(request, db)
 
     @api_request(clientadminsettings.RequestFormat)
-    def handle_client_admin_settings(self, request, db):
+    def handle_client_admin_settings(self, request, db, session_user, client_id):
         return controller.process_client_admin_settings_requests(request, db)
 
     @api_request(general.RequestFormat)
-    def handle_general(self, request, db):
+    def handle_general(self, request, db, session_user, client_id):
         return controller.process_general_request(request, db)
 
     @api_request(clientuser.RequestFormat)
-    def handle_client_user(self, request, db):
+    def handle_client_user(self, request, db, session_user, client_id):
         return controller.process_client_user_request(request, db)
 
     @api_request(clientmobile.RequestFormat)
-    def handle_mobile_request(self, request, db):
+    def handle_mobile_request(self, request, db, session_user, client_id):
         return mobilecontroller.process_client_mobile_request(request, db)
 
 

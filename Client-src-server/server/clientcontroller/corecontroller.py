@@ -37,16 +37,8 @@ def get_user_forms(db, form_ids):
     return rows
 
 def process_user_forms(
-    db, form_ids, client_id=None, is_admin=None
+    db, forms
 ):
-    forms = None
-    if client_id is not None:
-        pass
-        # forms = get_client_user_forms(db, form_ids, is_admin)
-    else:
-        if type(form_ids) is list:
-            form_ids = ', '.join(form_ids)
-        forms = get_user_forms(db, form_ids)
     form_list = []
     for f in forms:
         form_id = int(f["form_id"])
@@ -84,7 +76,8 @@ def process_user_menus(form_list):
         _forms.append(form)
         menus[form_type] = _forms
     menus = reorder_menu(menus)
-    return clientcore.Menu(menus)
+    return menus
+    # return clientcore.Menu(menus)
 
 
 def reorder_menu(menus):

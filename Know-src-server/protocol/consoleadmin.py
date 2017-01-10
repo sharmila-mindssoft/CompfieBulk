@@ -328,11 +328,126 @@ class GetAllocateServerReportData(Request):
         return {
         }
 
+class GetIPSettingsList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetIPSettingsList()
+
+    def to_structure(self):
+        return {
+        }
+
+class GetGroupIPDetails(Request):
+    def __init__(
+        self, client_id
+    ):
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["client_id"]
+        )
+        return GetGroupIPDetails(
+            data.get("client_id")
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+        }
+
+class SaveIPSettings(Request):
+    def __init__(
+        self, group_ips_list
+    ):
+        self.group_ips_list = group_ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["group_ips_list"]
+        )
+        return SaveIPSettings(data.get("group_ips_list"))
+
+    def to_structure(self):
+        return {
+            "group_ips_list": self.group_ips_list
+        }
+
+class DeleteIPSettings(Request):
+    def __init__(
+        self, client_id
+    ):
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["client_id"]
+        )
+        return DeleteIPSettings(
+            data.get("client_id")
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+        }
+
+class GetIPSettingsReportFilter(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data)
+        return GetIPSettingsReportFilter()
+
+    def to_structure(self):
+        return {
+        }
+
+class GetIPSettingsReport(Request):
+    def __init__(
+        self, client_id, ip, from_count, page_count
+    ):
+        self.client_id = client_id
+        self.ip = ip
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["client_id", "ip_optional", "from_count", "page_count"]
+        )
+        return GetIPSettingsReport(
+            data.get("client_id"),
+            data.get("ip_optional"),
+            data.get("from_count"),
+            data.get("page_count")
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "ip_optional": self.ip,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
 def _init_Request_class_map():
     classes = [
         GetDatabaseServerList, SaveDBServer, GetClientServerList, SaveClientServer,
         GetAllocatedDBEnv, SaveAllocatedDBEnv, GetFileStorage, SaveFileStorage,
         GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
+        SaveFileServer, GetIPSettingsList, GetGroupIPDetails, SaveIPSettings, DeleteIPSettings,
+        GetIPSettingsReport, GetIPSettingsReportFilter,
         SaveFileServer, GetAllocateServerReportData
     ]
     class_map = {}
@@ -1037,6 +1152,92 @@ class Unit(object):
             "address": self.address
         }
 
+class Form(object):
+    def __init__(
+        self, form_id, form_name
+    ):
+        self.form_id = form_id
+        self.form_name = form_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "form_id", "form_name"
+            ]
+        )
+        form_id = data.get("form_id")
+        form_name = data.get("form_name")
+
+        return Unit(
+            form_id, form_name
+        )
+
+    def to_structure(self):
+        return {
+            "form_id": self.form_id,
+            "form_name": self.form_name
+        }
+
+class IPSettingsList(object):
+    def __init__(
+        self, client_id, form_id, group_name
+    ):
+        self.client_id = client_id
+        self.form_id = form_id
+        self.group_name = group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "form_id", "group_name"
+            ]
+        )
+        client_id = data.get("client_id")
+        form_id = data.get("form_id")
+        group_name = data.get("group_name")
+
+        return Unit(
+            client_id, form_id, group_name
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "form_id": self.form_id,
+            "group_name": self.group_name
+        }
+
+class GroupIPDetails(object):
+    def __init__(
+        self, form_id, ip, client_id
+    ):
+        self.form_id = form_id
+        self.ip = ip
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "form_id", "ip", "client_id"
+            ]
+        )
+        form_id = data.get("form_id")
+        ip = data.get("ip")
+        client_id = data.get("client_id")
+
+        return GroupIPDetails(
+            form_id, ip, client_id
+        )
+
+    def to_structure(self):
+        return {
+            "form_id": self.form_id,
+            "ip": self.ip,
+            "client_id": self.client_id
+        }
 
 class GetAutoDeletionListSuccess(Response):
     def __init__(
@@ -1134,6 +1335,134 @@ class GetAllocatedDBListSuccess(Response):
             "allocate_db_list": self.allocate_db_list
         }
 
+class GetIPSettingsListSuccess(Response):
+    def __init__(
+        self, client_groups, ip_setting_forms, ips_list
+    ):
+        self.client_groups = client_groups
+        self.ip_setting_forms = ip_setting_forms
+        self.ips_list = ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_groups", "ip_setting_forms", "ips_list"
+            ]
+        )
+        client_groups = data.get("client_groups")
+        ip_setting_forms = data.get("ip_setting_forms")
+        ips_list = data.get("ips_list")
+        return GetIPSettingsListSuccess(
+            client_groups, ip_setting_forms, ips_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "client_groups": self.client_groups,
+            "ip_setting_forms": self.ip_setting_forms,
+            "ips_list": self.ips_list
+        }
+
+class GetGroupIPDetailsSuccess(Response):
+    def __init__(
+        self, group_ips_list
+    ):
+        self.group_ips_list = group_ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+               "group_ips_list"
+            ]
+        )
+        group_ips_list = data.get("group_ips_list")
+        return GetGroupIPDetailsSuccess(
+            group_ips_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "group_ips_list": self.group_ips_list
+        }
+
+class SaveIPSettingsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveIPSettingsSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+class DeleteIPSettingsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DeleteIPSettingsSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+class GetIPSettingsReportSuccess(Response):
+    def __init__(
+        self, total_records, group_ips_list
+    ):
+        self.total_records = total_records
+        self.group_ips_list = group_ips_list
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+               "total_records", "group_ips_list"
+            ]
+        )
+        total_records = data.get("total_records")
+        group_ips_list = data.get("group_ips_list")
+        return GetIPSettingsReportSuccess(
+            total_records, group_ips_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "total_records": self.total_records,
+            "group_ips_list": self.group_ips_list
+        }
+
+class GetIPSettingsReportFilterSuccess(Response):
+    def __init__(
+        self, client_groups, ip_setting_forms
+    ):
+        self.client_groups = client_groups
+        self.ip_setting_forms = ip_setting_forms
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_groups", "ip_setting_forms"
+            ]
+        )
+        client_groups = data.get("client_groups")
+        ip_setting_forms = data.get("ip_setting_forms")
+        return GetIPSettingsReportFilterSuccess(
+            client_groups, ip_setting_forms
+        )
+
+    def to_inner_structure(self):
+        return {
+            "client_groups": self.client_groups,
+            "ip_setting_forms": self.ip_setting_forms
+        }
+
 def _init_Response_class_map():
     classes = [
         GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
@@ -1143,6 +1472,8 @@ def _init_Response_class_map():
         GetFileStorageSuccess, SaveFileStorageSuccess,
         GetAutoDeletionListSuccess, SaveAutoDeletionSuccess,
         GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists,
+        GetIPSettingsListSuccess, GetGroupIPDetailsSuccess, DeleteIPSettingsSuccess,
+        GetIPSettingsReportSuccess, GetIPSettingsReportSuccess,
         GetAllocatedDBListSuccess
     ]
     class_map = {}

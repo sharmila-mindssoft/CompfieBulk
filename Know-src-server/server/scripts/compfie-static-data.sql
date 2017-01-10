@@ -56,6 +56,7 @@ INSERT INTO tbl_forms VALUES(26, 2, 'Configure Application Server', '/knowledge/
 INSERT INTO tbl_forms VALUES(27, 2, 'Configure File Server', '/knowledge/configure-file-server', 27, null);
 INSERT INTO tbl_forms VALUES(28, 2, 'Allocate Server', '/knowledge/allocate-database-environment', 28, null);
 INSERT INTO tbl_forms VALUES(29, 2, 'Auto Deletion', '/knowledge/auto-deletion', 29, null);
+INSERT INTO tbl_forms VALUES(50, 2, 'Form Authorization - IP Settings', '/knowledge/ip-settings', 50, null);
 
 -- Reports
 INSERT INTO tbl_forms VALUES(30, 3, 'User Mapping Report', '/knowledge/user-mapping-report', 30, null);
@@ -74,9 +75,8 @@ INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/sta
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail Login Trace', '/knowledge/audit-trail-login-trace', 43, null);
 INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
 INSERT INTO tbl_forms VALUES(49, 3, 'Reassign User Report', '/knowledge/reassign-user-report', 49, NULL);
-INSERT INTO tbl_forms VALUES(51, 3, 'Allocate Server Report', '/knowledge/allocate-database-environment-report', 51, NULL);
-
-
+INSERT INTO tbl_forms VALUES(51, 3, 'Form Authorization - IP Settings Report', '/knowledge/ip-settings-report', 51, null);
+INSERT INTO tbl_forms VALUES(52, 3, 'Allocate Server Report', '/knowledge/allocate-database-environment-report', 52, NULL);
 
 -- My Account
 INSERT INTO tbl_forms VALUES(44, 4, 'View Profile', '/knowledge/profile', 44, null);
@@ -118,7 +118,7 @@ INSERT INTO tbl_form_category VALUES(26, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(27, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(28, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(29, 0, 1, 0, 0, 0, 0, 0, 0);
-INSERT INTO tbl_form_category VALUES(50, 0, 0, 0, 0, 0, 0, 1, 0);
+INSERT INTO tbl_form_category VALUES(50, 0, 1, 0, 0, 0, 0, 0, 0);
 -- Reports
 INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(31, 1, 0, 0, 0, 0, 0, 0, 0);
@@ -138,6 +138,7 @@ INSERT INTO tbl_form_category VALUES(43, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(49, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(51, 0, 1, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(52, 0, 1, 0, 0, 0, 0, 0, 0);
 
 -- My Accounts
 INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
@@ -181,69 +182,708 @@ INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
 
--- tbl_machines
--- INSERT INTO `tbl_machines` (`machine_id`, `machine_name`, `ip`, `port`, `client_ids`, `server_full`) VALUES
--- (1, 'client server one', '127.0.0.1', 8081, '1', 0);
-
--- tbl_database_server
--- INSERT INTO `tbl_database_server` (`ip`, `db_server_name`, `port`, `server_username`, `server_password`) VALUES
--- ('127.0.0.1', 'db server one', 3306, 'root', '123456');
-
 -- triggers
--- DROP TRIGGER IF EXISTS `after_tbl_business_groups_insert`;
--- DELIMITER //
--- CREATE TRIGGER `after_tbl_business_groups_insert` AFTER INSERT ON `tbl_business_groups`
---  FOR EACH ROW BEGIN
---    SET @action = 0;
+
+--
+-- Triggers `tbl_client_groups`
+--
+DROP TRIGGER IF EXISTS `after_tbl_client_groups_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_groups`
+ FOR EACH ROW BEGIN
+   SET @action = 0;
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'group_name',
+                NEW.group_name,
+                'tbl_client_groups');
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'short_name',
+                NEW.short_name,
+                'tbl_client_groups');
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'email_id',
+                NEW.email_id,
+                'tbl_client_groups');
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'total_view_licence',
+                NEW.contract_from,
+                'tbl_client_groups');
 
 
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.business_group_id,
---                 'business_group_name',
---                 NEW.business_group_name,
---                 'tbl_business_groups');
---     UPDATE tbl_client_replication_status set is_new_data = 1
---     WHERE client_id = NEW.client_id;
--- END
--- //
--- DELIMITER ;
+    INSERT INTO tbl_client_replication_status (client_id, is_new_data) VALUES(NEW.client_id, 1);
+END
+//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_groups`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+   SET @save = 0;
+   IF OLD.group_name <> NEW.group_name THEN
+   SET @save = 1;
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'group_name',
+                NEW.group_name,
+                'tbl_client_groups');
+   END IF;
 
 
--- DROP TRIGGER IF EXISTS `after_tbl_business_groups_update`;
--- DELIMITER //
--- CREATE TRIGGER `after_tbl_business_groups_update` AFTER UPDATE ON `tbl_business_groups`
---  FOR EACH ROW BEGIN
---    SET @action = 1;
+   IF OLD.short_name <> NEW.short_name THEN
+   SET @save = 1;
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'short_name',
+                NEW.short_name,
+                'tbl_client_groups');
+   END IF;
 
 
---    IF OLD.business_group_name <> NEW.business_group_name THEN
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.business_group_id,
---                 'business_group_name',
---                 NEW.business_group_name,
---                 'tbl_business_groups');
---     UPDATE tbl_client_replication_status set is_new_data = 1
---     WHERE client_id = NEW.client_id;
---    END IF;
+   IF OLD.email_id <> NEW.email_id THEN
+   SET @save = 1;
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'email_id',
+                NEW.email_id,
+                'tbl_client_groups');
+   END IF;
 
--- END
--- //
--- DELIMITER ;
 
+   IF OLD.total_view_licence <> NEW.total_view_licence THEN
+   SET @save = 1;
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.client_id,
+                'total_view_licence',
+                NEW.total_view_licence,
+                'tbl_client_groups');
+   END IF;
+
+    IF @save = 1 THEN
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id;
+    END IF;
+
+END
+//
+DELIMITER ;
+-- ------
+-- business_groups
+-- ------
+
+DROP TRIGGER IF EXISTS `after_tbl_business_groups_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_business_groups_insert` AFTER INSERT ON `tbl_business_groups`
+ FOR EACH ROW BEGIN
+   SET @action = 0;
+
+
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.business_group_id,
+                'business_group_name',
+                NEW.business_group_name,
+                'tbl_business_groups');
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+END
+//
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS `after_tbl_business_groups_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_business_groups_update` AFTER UPDATE ON `tbl_business_groups`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+   IF OLD.business_group_name <> NEW.business_group_name THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.business_group_id,
+                'business_group_name',
+                NEW.business_group_name,
+                'tbl_business_groups');
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+   END IF;
+
+END
+//
+DELIMITER ;
+
+-- ------------
+-- legal entities
+-- ------------
+
+DROP TRIGGER IF EXISTS `after_tbl_legal_entities_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_entities`
+ FOR EACH ROW BEGIN
+   SET @action = 0;
+
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'legal_entity_name',
+                NEW.legal_entity_name,
+                'tbl_legal_entities');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'country_id',
+                NEW.country_id,
+                'tbl_legal_entities');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'business_group_id',
+                NEW.business_group_id,
+                'tbl_legal_entities');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'contract_from',
+                NEW.contract_from,
+                'tbl_legal_entities');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'contract_to',
+                NEW.contract_to,
+                'tbl_legal_entities');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'logo',
+                NEW.logo,
+                'tbl_legal_entities');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'logo_size',
+                NEW.logo_size,
+                'tbl_legal_entities');
+
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'file_space_limit',
+                NEW.file_space_limit,
+                'tbl_legal_entities');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'total_licence',
+                NEW.total_licence,
+                'tbl_legal_entities');
+
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+END
+//
+DELIMITER ;
+
+
+
+DROP TRIGGER IF EXISTS `after_tbl_legal_entities_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_entities`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+
+   IF OLD.legal_entity_name <> NEW.legal_entity_name THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'legal_entity_name',
+                NEW.legal_entity_name,
+                'tbl_legal_entities');
+
+    IF OLD.country_id <> NEW.country_id THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'country_id',
+                NEW.country_id,
+                'tbl_legal_entities');
+
+    IF OLD.business_group_id <> NEW.business_group_id THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'business_group_id',
+                NEW.business_group_id,
+                'tbl_legal_entities');
+
+    IF OLD.contract_from <> NEW.contract_from THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'contract_from',
+                NEW.contract_from,
+                'tbl_legal_entities');
+
+    IF OLD.contract_to <> NEW.contract_to THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'contract_to',
+                NEW.contract_to,
+                'tbl_legal_entities');
+
+    IF OLD.logo <> NEW.logo THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'logo',
+                NEW.logo,
+                'tbl_legal_entities');
+
+    IF OLD.logo_size <> NEW.logo_size THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'logo_size',
+                NEW.logo_size,
+                'tbl_legal_entities');
+
+    IF OLD.file_space_limit <> NEW.file_space_limit THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'file_space_limit',
+                NEW.file_space_limit,
+                'tbl_legal_entities');
+
+    IF OLD.total_licence <> NEW.total_licence THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'total_licence',
+                NEW.total_licence,
+                'tbl_legal_entities');
+
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+   END IF;
+
+END
+//
+DELIMITER ;
+
+--
+-- legal_entity_domains
+--
+
+
+DROP TRIGGER IF EXISTS `after_tbl_legal_entity_domains_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_legal_entity_domains_insert` AFTER INSERT ON `tbl_legal_entity_domains`
+ FOR EACH ROW BEGIN
+   SET @action = 0;
+
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'domain_id',
+                NEW.domain_id,
+                'tbl_legal_entity_domains');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'activation_date',
+                NEW.activation_date,
+                'tbl_legal_entity_domains');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'organisation_id',
+                NEW.organisation_id,
+                'tbl_legal_entity_domains');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'count',
+                NEW.count,
+                'tbl_legal_entity_domains');
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+END
+//
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS `after_tbl_legal_entity_domains_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_legal_entity_domains_update` AFTER INSERT ON `tbl_legal_entity_domains`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+   IF OLD.domain_id <> NEW.domain_id THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'domain_id',
+                NEW.domain_id,
+                'tbl_legal_entity_domains');
+
+    IF OLD.activation_date <> NEW.activation_date THEN
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'activation_date',
+                NEW.activation_date,
+                'tbl_legal_entity_domains');
+
+    IF OLD.organisation_id <> NEW.organisation_id THEN
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'organisation_id',
+                NEW.organisation_id,
+                'tbl_legal_entity_domains');
+
+    IF OLD.count <> NEW.count THEN
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'count',
+                NEW.count,
+                'tbl_legal_entity_domains');
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+END
+//
+DELIMITER ;
+
+--
+-- divisions
+--
+
+DROP TRIGGER IF EXISTS `after_tbl_divisions_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_divisions_insert` AFTER INSERT ON `tbl_divisions`
+ FOR EACH ROW BEGIN
+   SET @action = 0;
+
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.division_id,
+                'division_name',
+                NEW.division_name,
+                'tbl_divisions');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.division_id,
+                'legal_entity_id',
+                NEW.legal_entity_id,
+                'tbl_divisions');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.division_id,
+                'business_group_id',
+                NEW.business_group_id,
+                'tbl_divisions');
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+END
+//
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS `after_tbl_divisions_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_divisions_update` AFTER UPDATE ON `tbl_divisions`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+   IF OLD.division_name <> NEW.division_name THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.division_id,
+                'division_name',
+                NEW.division_name,
+                'tbl_divisions');
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+   END IF;
+
+END
+//
+DELIMITER ;
 -- --
 -- -- Triggers `tbl_client_compliances`
 -- --
@@ -553,336 +1193,6 @@ INSERT INTO tbl_verification_type VALUES(3, "Data Download");
 -- //
 -- DELIMITER ;
 
-
--- --
--- -- Triggers `tbl_client_groups`
--- --
--- DROP TRIGGER IF EXISTS `after_tbl_client_groups_insert`;
--- DELIMITER //
--- CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_groups`
---  FOR EACH ROW BEGIN
---    SET @action = 0;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'group_name',
---                 NEW.group_name,
---                 'tbl_client_groups');
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'logo_url',
---                 concat('logoooo', NEW.logo_url),
---                 'tbl_client_groups');
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'logo_size',
---                 NEW.logo_size,
---                 'tbl_client_groups');
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'contract_from',
---                 NEW.contract_from,
---                 'tbl_client_groups');
-
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'contract_to',
---                 NEW.contract_to,
---                 'tbl_client_groups');
-
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'no_of_user_licence',
---                 NEW.no_of_user_licence,
---                 'tbl_client_groups');
-
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'total_disk_space',
---                 NEW.total_disk_space,
---                 'tbl_client_groups');
-
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'total_disk_space_used',
---                 NEW.total_disk_space_used,
---                 'tbl_client_groups');
-
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'is_sms_subscribed',
---                 NEW.is_sms_subscribed,
---                 'tbl_client_groups');
-
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'url_short_name',
---                 NEW.url_short_name,
---                 'tbl_client_groups');
-
---     INSERT INTO tbl_client_replication_status (client_id, is_new_data) VALUES(NEW.client_id, 1);
--- END
--- //
--- DELIMITER ;
-
--- DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
--- DELIMITER //
--- CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_groups`
---  FOR EACH ROW BEGIN
---    SET @action = 1;
---    SET @save = 0;
---    IF OLD.group_name <> NEW.group_name THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'group_name',
---                 NEW.group_name,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.logo_url <> NEW.logo_url THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'logo_url',
---                 NEW.logo_url,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.logo_size <> NEW.logo_size THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'logo_size',
---                 NEW.logo_size,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.contract_from <> NEW.contract_from THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'contract_from',
---                 NEW.contract_from,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.contract_to <> NEW.contract_to THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'contract_to',
---                 NEW.contract_to,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.no_of_user_licence <> NEW.no_of_user_licence THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'no_of_user_licence',
---                 NEW.no_of_user_licence,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.total_disk_space <> NEW.total_disk_space THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'total_disk_space',
---                 NEW.total_disk_space,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.total_disk_space_used <> NEW.total_disk_space_used THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'total_disk_space_used',
---                 NEW.total_disk_space_used,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.is_sms_subscribed <> NEW.is_sms_subscribed THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'is_sms_subscribed',
---                 NEW.is_sms_subscribed,
---                 'tbl_client_groups');
---    END IF;
-
-
---    IF OLD.url_short_name <> NEW.url_short_name THEN
---    SET @save = 1;
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 NEW.client_id,
---                 NEW.client_id,
---                 'url_short_name',
---                 NEW.url_short_name,
---                 'tbl_client_groups');
---    END IF;
-
---     IF @save = 1 THEN
---         UPDATE tbl_client_replication_status set is_new_data = 1
---         WHERE client_id = NEW.client_id;
---     END IF;
-
--- END
--- //
--- DELIMITER ;
 
 
 -- --

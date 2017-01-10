@@ -403,6 +403,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
+        # print param, val, field_name
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
         # print field_name, param, val
@@ -434,9 +435,11 @@ def to_structure_dictionary_values(x):
         elif _type == 'MAP_TYPE_VECTOR_TYPE':
             map = {}
             for key, value in val.items():
+                # print key
                 key = _validation_method(key)
                 if type(value) is list:
                     vals = to_VectorType(_module_name, _class_name, value)
+                    # print vals
                     map[key] = vals
                 else:
                     map[key] = value
@@ -456,7 +459,7 @@ def to_structure_dictionary_values(x):
             assert _class_name is not None
             val = to_EnumType(_module_name, _class_name, val)
         else:
-            # print field_name, param, val
+            print field_name, param, val
             val = parse_values(field_name, param, val)
         if(
             val is not None and _validation_method is not None and
@@ -471,7 +474,7 @@ def to_structure_dictionary_values(x):
 
 
 def return_import(module, class_name):
-    mod = __import__('protocol.'+module, fromlist=[class_name])
+    mod = __import__('clientprotocol.'+module, fromlist=[class_name])
     klass = getattr(mod, class_name)
     return klass
 
