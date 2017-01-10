@@ -52,7 +52,23 @@ api_params = {
     "user_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUserGroup"},
     "user_category": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientUsercategory"},
     'form_ids': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
-
+    'legal_entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'legal_entity_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "unit_closure_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcore', "class_name": "UnitClosureLegalEntity"},
+    'unit_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'unit_name': {'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
+    'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'postal_code': {'type': 'INT', 'length': 1000000, 'validation_method': is_numeric, 'is_optional': False},
+    'division_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'business_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'is_active': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    "closed_on": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
+    'validity_days': {'type': 'INT', 'length': 365, 'validation_method': None, 'is_optional': True},
+    "unit_closure_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcore', "class_name": "UnitClosure_Units"},
+    'grp_mode': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
+    "closed_remarks": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
