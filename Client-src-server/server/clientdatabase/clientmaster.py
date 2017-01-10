@@ -57,7 +57,8 @@ def get_service_provider_details_list(db):
     columns = [
         "service_provider_id", "service_provider_name", "short_name", "contract_from",
         "contract_to", "contact_person", "contact_no", "email_id", "mobile_no",
-        "address", "is_active", "is_blocked", "remarks"
+        "address", "is_active", "is_blocked", "remarks",
+        "ifnull(DATEDIFF(CURRENT_DATE(), blocked_on),0) AS unblock_days"
     ]
     condition = condition_val = None
     order = " ORDER BY service_provider_name"
@@ -89,7 +90,8 @@ def return_service_provider_details(service_providers):
             service_provider["mobile_no"],
             service_provider["address"],
             bool(service_provider["is_active"]),
-            bool(service_provider["is_blocked"]),
+            bool(service_provider["is_blocked"]),            
+            service_provider["unblock_days"],
             service_provider["remarks"])
 
         results.append(service_provider_obj)
@@ -130,7 +132,7 @@ def save_service_provider(db, service_provider, session_user):
     columns = [
         "service_provider_name", "short_name", "contract_from", "contract_to",
         "contact_person", "contact_no", "mobile_no", "email_id", "address",
-        "created_on", "created_by", "updated_on", "updated_by"
+        "created_on", "created_by", "updated_on", "updated_by"        
     ]
     values = [
         service_provider.service_provider_name, service_provider.short_name,
