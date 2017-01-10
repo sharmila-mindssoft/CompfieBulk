@@ -813,27 +813,19 @@ class GetAssignCompliancesFormDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "domains", "business_groups", "legal_entities",
-            "divisions", "units", "users", "two_level_approve", "client_admin"
+            "countries", "domains", "gb_groups", "le_infos",
+            "div_infos", "assign_unit_infos", "assign_user_info",
+            "two_level_approve", "client_admin"
         ])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
-        legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
-        divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
+        business_groups = data.get("bg_groups")
+        legal_entities = data.get("le_infos")
+        divisions = data.get("div_infos")
+        units = data.get("assign_unit_infos")
+        users = data.get("assign_user_infos")
         two_level_approve = data.get("two_level_approve")
-        two_level_approve = parse_structure_Bool(two_level_approve)
         client_admin = data.get("client_admin")
-        client_admin = parse_structure_UnsignedIntegerType_32("client_admin")
         return GetAssignCompliancesFormDataSuccess(
             countries, domains, business_groups, legal_entities,
             divisions, units, users, two_level_approve,
@@ -842,15 +834,15 @@ class GetAssignCompliancesFormDataSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
-            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
-            "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
-            "two_level_approve": to_structure_Bool(self.two_level_approve),
-            "client_admin": to_structure_UnsignedIntegerType_32(self.client_admin)
+            "countries": self.countries,
+            "domains": self.domains,
+            "bg_groups": self.business_groups,
+            "le_infos": self.legal_entities,
+            "div_infos": self.divisions,
+            "assign_unit_infos": self.units,
+            "assign_user_infos": self.users,
+            "two_level_approve": self.two_level_approve,
+            "client_admin": self.client_admin
         }
 
 class GetComplianceForUnitsSuccess(Response):
@@ -1534,26 +1526,18 @@ class ASSIGN_COMPLIANCE_UNITS(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "unit_id", "unit_name", "address", "division_id",
-            "legal_entity_id", "business_group_id", "country_id",
-            "domain_ids"
+            "u_id", "u_name", "address", "div_id",
+            "le_id", "bg_id", "c_id",
+            "d_ids"
         ])
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
-        unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_100(unit_name)
+        unit_id = data.get("u_id")
+        unit_name = data.get("u_name")
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
-        division_id = data.get("division_id")
-        division_id = parse_structure_UnsignedIntegerType_32(division_id)
-        legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
-        business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
-        country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
+        division_id = data.get("div_id")
+        legal_entity_id = data.get("le_id")
+        business_group_id = data.get("bg_id")
+        country_id = data.get("c_id")
+        domain_ids = data.get("d_ids")
         return ASSIGN_COMPLIANCE_UNITS(
             unit_id, unit_name, address, division_id,
             legal_entity_id, business_group_id, country_id, domain_ids
@@ -1561,14 +1545,14 @@ class ASSIGN_COMPLIANCE_UNITS(object):
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.unit_id),
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "address": to_structure_CustomTextType_250(self.address),
-            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids)
+            "u_id": self.unit_id,
+            "u_name": self.unit_name,
+            "address": self.address,
+            "div_id": self.division_id,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+            "c_id": self.country_id,
+            "d_ids": self.domain_ids
         }
 
 #
@@ -1656,32 +1640,21 @@ class ASSIGN_COMPLIANCE_USER(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "user_id", "service_provider_id", "user_name", "user_level",
-            "seating_unit_id", "unit_ids", "domain_ids",
-            "is_assignee", "is_approver", "is_concurrence", "seating_unit_name"
+            "usr_id", "sp_id", "emp_name", "user_level",
+            "s_u_id", "u_ids", "d_ids",
+            "is_assignee", "is_approver", "is_concurrence", "s_u_name"
         ])
-        user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
-        user_name = data.get("user_name")
-        user_name = parse_structure_CustomTextType_50(user_name)
+        user_id = data.get("usr_id")
+        service_provider_id = data.get("sp_id")
+        user_name = data.get("emp_name")
         user_level = data.get("user_level")
-        user_level = parse_structure_CustomIntegerType_1_10(user_level)
-        seating_unit_id = data.get("seating_unit_id")
-        seating_unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(seating_unit_id)
-        unit_ids = data.get("unit_ids")
-        unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        seating_unit_id = data.get("s_u_id")
+        unit_ids = data.get("u_ids")
+        domain_ids = data.get("d_ids")
         is_assignee = data.get("is_assignee")
-        is_assignee = parse_structure_Bool(is_assignee)
         is_approver = data.get("is_approver")
-        is_approver = parse_structure_Bool(is_approver)
         is_concurrence = data.get("is_concurrence")
-        is_concurrence = parse_structure_Bool(is_concurrence)
-        seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_OptionalType_CustomTextType_500(seating_unit_name)
+        seating_unit_name = data.get("s_u_name")
         return ASSIGN_COMPLIANCE_USER(
             user_id, service_provider_id, user_name, user_level, seating_unit_id,
             unit_ids, domain_ids,
@@ -1690,17 +1663,17 @@ class ASSIGN_COMPLIANCE_USER(object):
 
     def to_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
-            "user_name": to_structure_CustomTextType_50(self.user_name),
-            "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
-            "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
-            "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "is_assignee": to_structure_Bool(self.is_assignee),
-            "is_concurrence": to_structure_Bool(self.is_concurrence),
-            "is_approver": to_structure_Bool(self.is_approver),
-            "seating_unit_name": to_structure_OptionalType_CustomTextType_500(self.seating_unit_name)
+            "usr_id": self.user_id,
+            "s_p_id": self.service_provider_id,
+            "emp_name": self.user_name,
+            "user_level": self.user_level,
+            "s_u_id": self.seating_unit_id,
+            "u_ids": self.unit_ids,
+            "d_ids": self.domain_ids,
+            "is_assignee": self.is_assignee,
+            "is_concurrence": self.is_concurrence,
+            "is_approver": self.is_approver,
+            "s_u_name": self.seating_unit_name
         }
 
 #
