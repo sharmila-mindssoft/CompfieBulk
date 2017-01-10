@@ -1,3 +1,4 @@
+var ListTable = $(".user-privileges-table-list");
 var AddScreen = $("#add-screen");
 var ViewScreen = $("#list-screen");
 var AddButton = $("#btn-add");
@@ -19,13 +20,13 @@ var FormRowList = $('#tbody-form-list');
 var CheckAll = $('#checkAll');
 
 var isAuthenticate;
-
-var Msg_pan = $(".error-message");
-var msg = message;
 var u_p_page = null;
-var item_selected = '';
 
-function UserPrivilegesPage() {
+var Search_status = $('#search-status');
+var Search_status_ul = $('.search-status-list');
+var Search_status_li = $('.search-status-li');
+
+UserPrivilegesPage = function () {
     this._FormsList = [];
     this._UserGroupsList = [];
     this._UserCategoryList = [];
@@ -38,6 +39,9 @@ UserPrivilegesPage.prototype.showList = function() {
     FilterCategoryName.val('');
     FormList.hide();
     this.fetchUserPrivileges();
+    Search_status.removeClass();
+    Search_status.addClass('fa');
+    Search_status.text('All');
 };
 
 UserPrivilegesPage.prototype.fetchUserPrivileges = function() {
@@ -56,11 +60,11 @@ UserPrivilegesPage.prototype.fetchUserPrivileges = function() {
 
 UserPrivilegesPage.prototype.possibleFailures = function(error) {
     if (error == "UserGroupNameAlreadyExists") {
-        displayMessage(msg.usergroupname_exists);
+        displayMessage(message.domainname_required);
     } else if (error == 'InvalidUserGroupId') {
-        displayMessage(msg.invalid_usergroupid);
+        displayMessage(message.invalid_usergroupid);
     } else if (error == 'InvalidPassword') {
-        displayMessage(msg.invalid_password);
+        displayMessage(message.invalid_password);
     } else {
         displayMessage(error);
     }
@@ -166,15 +170,15 @@ select_checkbox = function() {
 
 UserPrivilegesPage.prototype.validate = function() {
     if (UserGroupName) {
-        if (isNotEmpty(UserGroupName, msg.usergroupname_required) == false)
+        if (isNotEmpty(UserGroupName, message.usergroupname_required) == false)
             return false;
-        else if (isLengthMinMax(UserGroupName, 1, 50, msg.usergroupname_max) == false)
+        else if (isLengthMinMax(UserGroupName, 1, 50, message.usergroupname_max) == false)
             return false;
-        else if (isAlphabetic(UserGroupName, msg.usergroupname_str) == false)
+        else if (isCommonName(UserGroupName, message.usergroupname_str) == false)
             return false;
     }
     if (Category) {
-        if (isNotEmpty(Category, msg.category_required) == false)
+        if (isNotEmpty(Category, message.category_required) == false)
             return false;
     }
     if ($('.form-id')) {
@@ -195,7 +199,6 @@ UserPrivilegesPage.prototype.submitProcess = function() {
     $('.form-id:checked').each(function() {
         f_ids.push(parseInt($(this).val()));
     });
-    //alert(u_g_id +' - '+ u_g_name +' - '+ f_cat_id +' - '+f_ids);
     t_this = this;
     if (u_g_id == '') {
         client_mirror.saveClientUserGroup(u_g_name, f_cat_id, f_ids, function(error, response) {
@@ -219,7 +222,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
 };
 
 //Status Title
-function showTitle(e) {
+showTitle = function(e) {
     if (e.className == "fa c-pointer status fa-times text-danger") {
         e.title = 'Click Here to Activate';
     } else if (e.className == "fa c-pointer status fa-check text-success") {
@@ -263,7 +266,7 @@ UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive
 UserPrivilegesPage.prototype.validateAuthentication = function() {
     t_this = this;
     if (CurrentPassword) {
-        if (isNotEmpty(CurrentPassword, msg.password_required) == false)
+        if (isNotEmpty(CurrentPassword, message.password_required) == false)
             return false;
     }
     var password = CurrentPassword.val().trim();
@@ -300,7 +303,26 @@ UserPrivilegesPage.prototype.showEdit = function(u_g_id, u_g_name, u_c_id, f_ids
     t_this.renderFormList(u_c_id, f_ids);
 };
 
-function PageControls() {
+key_search = function(mainList) {
+    key_one = FilterUserGroupName.val().toLowerCase();
+    key_two = FilterCategoryName.val().toLowerCase();
+    d_status = Search_status_ul.find('li.active').attr('value');
+    var fList = [];
+    for (var entity in mainList) {
+        uGName = mainList[entity].u_g_name;
+        cNames = mainList[entity].u_c_name;
+        dStatus = mainList[entity].is_active;
+        if ((~uGName.toLowerCase().indexOf(key_one)) 
+            && (~cNames.toLowerCase().indexOf(key_two))) {
+            if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
+                fList.push(mainList[entity]);
+            }
+        }
+    }
+    return fList
+}
+
+PageControls = function() {
 
     Category.change(function() {
         var val = $(this).val().trim()
@@ -313,7 +335,7 @@ function PageControls() {
 
     CancelScreen.click(function() {
         u_p_page.showList();
-    })
+    });
 
     CheckAll.click(function() {
         $('.form-id').not(this).prop('checked', this.checked);
@@ -329,14 +351,40 @@ function PageControls() {
         u_p_page.validateAuthentication();
     });
 
+    FilterUserGroupName.keyup(function() {
+        fList = key_search(u_p_page._UserGroupsList);
+        u_p_page.renderList(fList);
+    });
+
+    FilterCategoryName.keyup(function() {
+        fList = key_search(u_p_page._UserGroupsList);
+        u_p_page.renderList(fList);
+    });
+
+    Search_status_ul.click(function(event) {
+        Search_status_li.each(function(index, el) {
+            $(el).removeClass('active');
+        });
+        $(event.target).parent().addClass('active');
+
+        var currentClass = $(event.target).find('i').attr('class');
+        Search_status.removeClass();
+        if (currentClass != undefined) {
+            Search_status.addClass(currentClass);
+            Search_status.text('');
+        } else {
+            Search_status.addClass('fa');
+            Search_status.text('All');
+        }
+        fList = key_search(u_p_page._UserGroupsList);
+        u_p_page.renderList(fList);
+    });
     
+    ListTable.jssorting(); // Sorting table
 }
 u_p_page = new UserPrivilegesPage();
 
 $(document).ready(function() {
     PageControls();
     u_p_page.showList();
-    $(document).find('.js-filtertable').each(function() {
-        $(this).filtertable().addFilter('.js-filter');
-    });
 });
