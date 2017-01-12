@@ -99,7 +99,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/domain-wise-report",
-         "files/client/domain-wise-report/domain-wise-report.html",
+         "files/client/domain-wise-report/domain_wise_report.html",
         None, {}
     ),
     (

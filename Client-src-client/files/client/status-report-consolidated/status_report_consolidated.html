@@ -19,7 +19,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="country-id" value="">
                                                 <div id="ac-country" class="ac-textbox default-display-none">
@@ -30,7 +30,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="2">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="legal-entity-id" value="">
                                                 <div id="ac-legal-entity" class="ac-textbox default-display-none">
@@ -41,7 +41,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain Name" tabindex="5">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain Name" tabindex="3">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="domain-id" value="">
                                                 <div id="ac-domain" class="ac-textbox default-display-none">
@@ -52,7 +52,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Unit:</label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit">
+                                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit"  tabindex="4">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="unit-id" value="">
                                                 <div id="ac-unit" class="ac-textbox default-display-none">
@@ -63,7 +63,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act">
+                                                <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act"  tabindex="5">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="act-id" value="">
                                                 <div id="ac-act" class="ac-textbox default-display-none">
@@ -74,7 +74,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task"  tabindex="6">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="compliance-task-id" value="">
                                                 <div id="ac-compliance-task" class="ac-textbox default-display-none">
@@ -87,47 +87,48 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="compliance-frequency" >
-                                                <option>dsfdsf</option>
+                                                <select class="form-control input-sm" id="compliance-frequency"  tabindex="7">
+                                   
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">User Type:</label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="user-type">
+                                                <select class="form-control input-sm" id="user-type"  tabindex="8">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User">
+                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User"  tabindex="9">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="user-id" value="">
                                                 <div id="ac-user" class="ac-textbox default-display-none">
                                                     <ul class="hidemenu"></ul>
                                                 </div>
                                             </div>
-                                        </div>
+                                            </div>
+
                                         <div class="form-group has-feedback">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm from-date" id="from-date" placeholder="DD-MM-YYYY">
+                                                <input type="text" class="form-control input-sm from-date" id="from-date" placeholder="DD-MM-YYYY"  tabindex="10">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
                                         <div class="form-group has-feedback">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label ">To Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm to-date" id="to-date" placeholder="DD-MM-YYYY">
+                                                <input type="text" class="form-control input-sm to-date" id="to-date" placeholder="DD-MM-YYYY"  tabindex="11">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Compliance Task Status:</label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="compliance-task-status" >
+                                                <select class="form-control input-sm" id="compliance-task-status" tabindex="12">
                                                 </select>
                                             </div>
                                         </div>
@@ -135,8 +136,8 @@
                                     <div class="col-sm-12">
                                         <center>
                                             <div class="form-group m-b-0">
-                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
-                                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button"> Export </button>
+                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button" tabindex="13"> Show </button>
+                                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="14"> Export </button>
                                             </div>
                                         </center>
                                     </div>
@@ -200,13 +201,13 @@
         <tr class="row-two">
             <td colspan="100%">
                 <div class="col-sm-2 no-padding">
-                    <mark class="p-l-10 p-r-10 act-name">Test Act</mark>
+                    <mark class="p-l-10 p-r-10 act-name"></mark>
                 </div>
             </td>
         </tr>
         <tr class="row-three">
             <td class="sno"></td>
-            <td class="compliance-task">FORM I - Half yearly returns Submission</td>
+            <td class="compliance-task"></td>
             <td class="frequency"></td>
             <td class="due-date"></td>
             <td class="compliance-task-status"></td>
@@ -242,3 +243,4 @@
 <script src="/script/status-report-consolidated/status_report_consolidated.js"></script>
 <script src="js/jquery-ui.js"></script>
 {% endblock %}
+RG Legal Entity

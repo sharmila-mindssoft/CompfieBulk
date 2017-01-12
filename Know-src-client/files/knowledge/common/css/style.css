@@ -1134,3 +1134,11 @@ padding: 8px;
 border-right: 1px solid #e8e8e8;
 width: 32% !important;
 }
+.multiselect:focus{
+  border:1px solid #aaa !important;
+  transition: all 300ms linear 0s;
+}
+.multiselect-container{
+  height: 145px !important;
+}
+
