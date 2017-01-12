@@ -253,7 +253,7 @@ function submitStatutoryNature()
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
-					displayMessage(msg.statutoryname_exists);
+					displayMessage(msg.statutoty_nature_name_exists);
 				} else {
 					displayMessage(error);
 				}
@@ -282,7 +282,7 @@ function submitStatutoryNature()
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
-					displayMessage(msg.industryname_exists);
+					displayMessage(msg.statutoty_nature_name_exists);
 				} else {
 					displayMessage(error);
 				}
@@ -346,9 +346,9 @@ function statNature_active(statNatureId, isActive) {
         displaySuccessMessage(message.statutoty_nature_status_deactive_success);
       }
       getStatutorynatures();
-      onSuccess(response);
+      //onSuccess(response);
     } else {
-      onFailure(error);
+      displayMessage(error);
     }
   });
 }
@@ -460,4 +460,5 @@ function initialize()
 //initialization
 $(document).ready(function () {
   initialize();
+  $('.js-sorting-table').jssorting(); // Sorting table
 });

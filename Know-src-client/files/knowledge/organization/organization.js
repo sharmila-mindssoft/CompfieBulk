@@ -54,7 +54,7 @@ function getIndustries() {
 		loadIndustryList(industriesList);
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
 	mirror.getIndustryList(function (error, response) {
 		if (error == null) {
@@ -404,9 +404,8 @@ function changeStatus(industryId, isActive) {
         displaySuccessMessage(message.organization_status_deactive_success);
       }
       getIndustries();
-      onSuccess(response);
       } else {
-      onFailure(error);
+      displayMessage(error);
     }
   });
 }
@@ -420,6 +419,7 @@ function displayAddMode(){
   domain_ac.val('');
   domain_val.val('');
   orgn_name.val('');
+  orgn_id.val('');
   country_ac.focus();
   inactive_ctry = '';
   inactive_domain = '';
@@ -558,4 +558,5 @@ function initialize()
 //initialization
 $(document).ready(function () {
   initialize();
+  $('.js-sorting-table').jssorting(); // Sorting table
 });

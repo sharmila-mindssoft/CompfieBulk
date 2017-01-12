@@ -19,6 +19,8 @@ $('.add-insert-level').click(function () {
   $('#add').hide();
 });
 $('.insert-level-cancel').click(function () {
+  loadLevels();
+  $('#insertvalue').val('');
   $('#view-insert-level').hide();
   $('#add').show();
 });
@@ -181,13 +183,16 @@ $('#submit').click(function () {
       }
     }
     if (result) {
+      console.log("1");
       var passlevellist = [];
       var isAdd = true;
       for (var k = 1; k <= 10; k++) {
         if ($('#levelid' + k).val() != '') {
           var isRemove = false;
           if ($('#level' + k).val().trim() == '') {
+            console.log("2");
             isRemove = true;
+            console.log('#level' + k);
           }
           passlevellist.push({
             'l_position': k,
@@ -217,11 +222,12 @@ $('#submit').click(function () {
         GetGeographyLevels();
       }
       function onFailure(error, response) {
+        console.log(error, response)
         if (error == 'DuplicateGeographyLevelsExists') {
           displayMessage(message.geographylevel_exists);
         } else if (error == 'LevelShouldNotbeEmpty') {
-          var levelValue = response.level;
-          var msg = 'Level ' + levelValue + ' ';
+          var levelValue = response.level_id;
+          var msg = 'Level ' + levelValue + ' cannot be deleted, hence name';
           displayMessage(msg + message.shouldnot_empty);
         } else {
           displayMessage(error);
@@ -231,6 +237,7 @@ $('#submit').click(function () {
         if (error == null) {
           $('.input-sm').val('');
           $('.hiddenvalue').val('');
+          $('#country').val('');
           onSuccess(response);
         } else {
           onFailure(error, response);

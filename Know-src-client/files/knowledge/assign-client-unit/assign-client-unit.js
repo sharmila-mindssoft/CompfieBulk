@@ -397,16 +397,20 @@ $('#assinee').keyup(function (e) {
 
   for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
     if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
+        console.log("1")
         for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
             if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                console.log("2")
                 var occur = -1;
                 for(var k=0;k<domain_users.length;k++){
                     if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                        console.log("3")
                         occur = 1;
                         break;
                     }
                 }
                 if(occur < 0){
+                    console.log(DOMAIN_MANAGER_USERS[j].employee_name)
                     domain_users.push({
                         "user_id":DOMAIN_MANAGER_USERS[j].user_id,
                         "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
