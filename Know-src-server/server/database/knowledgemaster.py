@@ -191,12 +191,12 @@ def return_statutory_nature(data):
     return results
 
 
-def check_duplicate_statutory_nature(db, nature_name, nature_id):
+def check_duplicate_statutory_nature(db, nature_name, country_id, nature_id):
     isDuplicate = False
     if nature_id is not None:
-        param = [nature_name, nature_id]
+        param = [nature_name, nature_id, country_id]
     else:
-        param = [nature_name, 0]
+        param = [nature_name, 0, country_id]
     row = db.call_proc("sp_statutory_nature_checkduplicatenature", param)
 
     for r in row:
@@ -332,7 +332,9 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             else:
                 raise process_error("E007")
         else:
-            values = [position, name, user_id, level.level_id]
+            print "names"
+            values = [position, name, level.level_id, user_id]
+            print name
             if (
                 db.call_update_proc(
                     "sp_update_statutory_levels", values
