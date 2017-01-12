@@ -337,6 +337,8 @@ var message = {
   "reassign_to_required": "Reassign to required",
   "reassign_to_tm_required": "Reassign to Techno Manager required",
   "reassign_to_te_required": "Reassign to Techno Executive required",
+  "reassign_to_dm_required": "Reassign to Domain Manager required",
+  "reassign_to_de_required": "Reassign to Domain Executive required",
   "no_records_selected_for_reassign": "No records selected for reassign",
   "reassign_from_reassign_to_both_are_same": "Reassign from user and Reassign to user both should not be same",
   "save_ip_setting_success": "IP Settings Saved Successfully",

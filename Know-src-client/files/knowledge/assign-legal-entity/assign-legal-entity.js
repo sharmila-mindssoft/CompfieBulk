@@ -73,7 +73,7 @@ function assignLE(cId, cName, gName) {
             ListScreen.hide();
             AddScreen.show();
             Group_Label.text(gName);
-            Country_Label.text(cName);
+            //Country_Label.text(cName);
             assignLegalEntitiesList = data.unassign_legal_entities;
             userList = data.techno_users;
             $(".select_all").prop('checked', false);

@@ -94,8 +94,14 @@ function clearData(){
     DMRemarks.val('');
     DERemarks.val('');
     ReplaceManagerRemarks.val('');
+    RTechnoExecutiveName.val('');
+    RTechnoExecutiveId.val('');
+    RDomainExecutiveName.val('');
+    RDomainExecutiveId.val('');
     d_id = '';
     c_id = '';
+    ManagerId = '';
+    ReplaceManagerId = '';
 }
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -622,6 +628,7 @@ function pageControls(){
         var reassign_from = TechnoManagerId.val();
         var tm_remarks = TMRemarks.val();
         var isValidate = false;
+        var flag = true;
 
         if(reassign_from == ''){
             displayMessage(message.reassign_from_required);
@@ -635,6 +642,7 @@ function pageControls(){
                         displayMessage(message.reassign_to_tm_required)
                         return false;
                     }else{
+                        flag = true;
                         $('.group_le_'+group_id).each(function (i, element) {
                             var selected_id = $(element).attr('id');
                             var legal_entity_id = selected_id.substr(selected_id.lastIndexOf('_') + 1);
@@ -643,6 +651,7 @@ function pageControls(){
 
                             if(te_id == ''){
                                 displayMessage(message.reassign_to_te_required);
+                                flag = false;
                                 return false;
                             }else{
                                 if(tm_remarks == ''){
@@ -663,7 +672,7 @@ function pageControls(){
                         });
                     }
                 });
-                if(isValidate){
+                if(isValidate && flag){
                     mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
                         function(error, response) {
                         if (error == null) {
@@ -858,7 +867,6 @@ function pageControls(){
 
     ReplaceManagerSubmit.click(function(){
         var replace_remarks = ReplaceManagerRemarks.val();
-
         if(ManagerId == ''){
             displayMessage(message.manager_required);
         }else if(ReplaceManagerId == ''){
