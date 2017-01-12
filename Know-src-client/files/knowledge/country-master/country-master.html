@@ -17,11 +17,11 @@
             <div class="col-sm-6">
                 <div class="card-box table-responsive"> <!-- table-responsive -->
                     <div class="col-sm-12 no-padding">
-                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th width="5%">#</th>
-                                    <th width="70%">Country Name</th>
+                                    <th width="70%">Country Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
                                     <th class="text-center">Edit</th>
                                     <th class="text-center">Status</th>
                                 </tr>
@@ -132,5 +132,6 @@
 </div>
 <!-- Sweet Alert js -->
 <script type="text/javascript" src="/script/country-master/countrymaster.js"></script>
+<script src="/js/js-sorting.js"></script>
 {% endblock %}
 
