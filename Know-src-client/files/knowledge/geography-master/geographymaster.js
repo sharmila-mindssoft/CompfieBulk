@@ -211,30 +211,38 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 //Autocomplete Script ends
 // dynamically load geograph first levels data according to geography level
 function loadGeographyFirstLevels(saverecord) {
+  //console.log(if(! (saverecord in geographyLevelsList)));
   $('.tbody-geography-level').find('div').remove();
   var geographyLevelList = geographyLevelsList[saverecord];
   var levelposition;
-  $.each(geographyLevelList, function (key, value) {
-    levelposition = value.l_position;
-    var tableRow = $('#geography-level-templates');
-    var clone = tableRow.clone();
-    $('.title', clone).text(value.l_name);
-    $('.geography-list', clone).attr('id', 'ulist' + levelposition);
-    $('.addleft', clone).attr('id', 'datavalue' + levelposition);
-    $('.addleft', clone).on('keypress', function (event) {
-      saverecord1(value.l_position, event);
+  if((saverecord in geographyLevelsList)){
+      $.each(geographyLevelList, function (key, value) {
+      levelposition = value.l_position;
+      var tableRow = $('#geography-level-templates');
+      var clone = tableRow.clone();
+      $('.title', clone).text(value.l_name);
+      $('.geography-list', clone).attr('id', 'ulist' + levelposition);
+      $('.addleft', clone).attr('id', 'datavalue' + levelposition);
+      $('.addleft', clone).on('keypress', function (event) {
+        saverecord1(value.l_position, event);
+      });
+      $('.popup-link', clone).attr('id', 'update' + levelposition);
+      $('.add-geo', clone).on('click', function () {
+        saverecord1(value.l_position, 'clickimage');
+      });
+      $('.glmid-class', clone).attr('id', 'glmid' + levelposition);
+      $('.glmid-class', clone).val(value.l_id);
+      $('.level-class', clone).attr('id', 'level' + levelposition);
+      $('.level-class', clone).val(levelposition);
+      $('.tbody-geography-level').append(clone);
+      $('#geography-level-templates').show();
     });
-    $('.popup-link', clone).attr('id', 'update' + levelposition);
-    $('.add-geo', clone).on('click', function () {
-      saverecord1(value.l_position, 'clickimage');
-    });
-    $('.glmid-class', clone).attr('id', 'glmid' + levelposition);
-    $('.glmid-class', clone).val(value.l_id);
-    $('.level-class', clone).attr('id', 'level' + levelposition);
-    $('.level-class', clone).val(levelposition);
-    $('.tbody-geography-level').append(clone);
-    $('#geography-level-templates').show();
-  });
+  }
+  else
+  {
+    displayMessage("No records!")
+  }
+
   var setlevelstage = 1;
   $('#datavalue' + setlevelstage).val('');
   $('#ulist' + setlevelstage).empty();
@@ -438,6 +446,9 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
     var tableRow = $('#geography-level-templates');
     var clone = tableRow.clone();
     $('.title', clone).text(value.l_name);
+    $('.addleft', clone).on('input', function(e) {
+        this.value = isAlphabetic($(this));
+    });
     if (levelposition == lposition) {
       $('.geography-list', clone).attr('id', 'ulist' + levelposition);
       $('.addleft', clone).attr('readonly', false);
@@ -457,6 +468,7 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
       $('.geography-list', clone).attr('id', 'ulist' + levelposition);
       $('.addleft', clone).attr('readonly', true);
       $('.addleft', clone).attr('id', 'datavalue' + levelposition);
+
       $('.addleft', clone).on('keypress', function (event) {
         saverecord1(value.l_position, event);
       });
@@ -669,9 +681,11 @@ function renderControls(){
   PasswordSubmitButton.click(function() {
     validateAuthentication();
   });
+
 }
 
 //initialization
 $(document).ready(function () {
   renderControls();
+  $('.js-sorting-table').jssorting(); // Sorting table
 });
