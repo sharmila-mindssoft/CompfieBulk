@@ -361,7 +361,7 @@ class GetGeographyReportSuccess(Response):
             "countries": self.countries,
             "geography_report": self.geography_report,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 
 def _init_Response_class_map():
