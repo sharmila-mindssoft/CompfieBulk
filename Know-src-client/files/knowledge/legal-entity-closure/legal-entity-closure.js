@@ -18,7 +18,7 @@ function loadLegalEntityClosureList() {
     }
 
     function onFailure(error) {
-        custom_alert(error);
+        displayMessage(error);
     }
     mirror.getLegalEntityClosureData(function(error, response) {
         if (error == null) {
@@ -42,12 +42,7 @@ function LegalEntityClosureData(data) {
         $('#le_id', clone).addClass('-' + val.legal_entity_id);
         $('.legal-entity', clone).text(val.legal_entity_name);
         $('.le_id', clone).text(val.legal_entity_id);
-        if(val.validity_days < 90 && val.validity_days > 0){
-            $('.status', clone).html('<i class="fa fa-check text-success c-pointer"></i>');
-        }
-        else{
-            $('.status', clone).html('<i class="fa fa-times text-danger c-pointer"></i>');
-        }
+
         if (val.is_active == false) {
             $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.legal_entity_id)
@@ -65,6 +60,7 @@ function LegalEntityClosureData(data) {
             $('#reactive', clone).css("display", "none");
             $('.closed', clone).css("display", "none");
             $('.closed', clone).text('');
+            $('.status', clone).text('Active');
             //break;
         } else {
             if (parseInt(val.validity_days) > 90) { //isclose=0=close
@@ -72,6 +68,7 @@ function LegalEntityClosureData(data) {
                 $('#reactive', clone).hide();
                 $('.closed', clone).css("display", "block");;
                 $('.closed', clone).text('Closed');
+                $('.status', clone).text('In Active');
                 //break;
             } else {
                 $('#close', clone).hide();
@@ -89,6 +86,7 @@ function LegalEntityClosureData(data) {
                 $('#reactive', clone).attr('title', val.validity_days + ' days left')
                 $('.closed', clone).hide();
                 $('.closed', clone).text('');
+                $('.status', clone).text('In Active');
                 //break;
             }
         }
@@ -262,7 +260,7 @@ $('#update_status').click(function() {
         if (txtpwd == '') {
             displayMessage(message.enter_password);
         } else {
-            displayMessage(message.remarks_required);
+            displayMessage(message.reason_required);
         }
     }
 });
@@ -281,7 +279,7 @@ function processFilterSearch()
 	searchList = [];
 	for(var v in legalEntityClosureList)
 	{
-        data_is_active = false;
+        data_is_active = true;
         data_closure = 0;
 		data = legalEntityClosureList[v];
 		c_name = data.country_name.toLowerCase();
@@ -297,12 +295,13 @@ function processFilterSearch()
 		le_name = data.legal_entity_name.toLowerCase();
         if((data.validity_days < 90 && data.validity_days > 0) && (data.is_active == true)){
             console.log("1:"+data.validity_days)
-            data_is_active = true;
+            data_is_active = false;
             data_closure = 2;
         }
 
         if(data.validity_days > 90){
             data_closure = 1;
+            data_is_active = false;
         }
 		if (
 	      (~c_name.indexOf(ctryname_search)) && (~g_name.indexOf(grpname_search)) &&
