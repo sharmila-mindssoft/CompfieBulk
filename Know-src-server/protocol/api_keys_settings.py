@@ -62,7 +62,7 @@ api_params = {
 
     'l_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'l_position': {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
-    'l_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'l_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
 
     'geography_id': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'geography_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -607,7 +607,7 @@ api_params = {
     "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
     "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
-    
+
     "ip_setting_forms": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "Form"},
     "ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "IPSettingsList"},
     "group_ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "GroupIPDetails"},
