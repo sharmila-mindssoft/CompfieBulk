@@ -267,6 +267,7 @@ function RenderInput() {
                 $("#d"+val.d_id + ' i').addClass('fa-check');
                 _renderinput.domain_id = val.d_id;
                 _renderinput.domain_name = val.d_name;
+                _renderinput.selected_iids = [];
                 _renderinput.loadOrganisation(val.c_id, val.d_id);
             });
             $('.name-holder', dObject).text(val.d_name);
@@ -318,8 +319,7 @@ function RenderInput() {
                             $('.organisationlist i').addClass('fa-check');
                             $.each(ORGANISATION_INFO, function(k, v) {
                                 if ((v.c_id == _renderinput.country_id) && (v.d_id == _renderinput.domain_id)) {
-                                    _renderinput.org_ids.push(v.org_id);
-                                    _renderinput.org_names.push(v.org_name);
+                                    _renderinput.selected_iids.push(v.org_id)
                                 }
                             });
                         }
@@ -337,23 +337,18 @@ function RenderInput() {
                     if (sts == true) {
                         $('#o'+val.org_id).removeClass('active');
                         $('#o'+val.org_id+ ' i').removeClass('fa-check');
-                        _renderinput.org_ids = _renderinput.remveItemFromList(
-                            val.org_id, _renderinput.org_ids
-                        );
-                        _renderinput.org_names = _renderinput.remveItemFromList(
-                            val.org_name, _renderinput.org_names
-                        );
+                        _renderinput.selected_iids = _renderinput.remveItemFromList(val.org_id, _renderinput.selected_iids)
                     }
                     else {
                         $('#o'+val.org_id).addClass('active');
                         $('#o'+val.org_id+ ' i').addClass('fa-check');
-                        _renderinput.org_ids.push(val.org_id);
-                        _renderinput.org_names.push(val.org_name);
+                        _renderinput.selected_iids.push(val.org_id);
                     }
                 });
 
                 $('.name-holder', orgObject).text(val.org_name);
                 Organisation.append(orgObject);
+                console.log(_renderinput.selected_iids);
                 if (_renderinput.selected_iids.length > 0) {
                     if (_renderinput.selected_iids.indexOf(val.org_id) > -1){
                         $('#o'+val.org_id).addClass('active');
@@ -362,13 +357,6 @@ function RenderInput() {
                         _renderinput.org_names.push(val.org_name);
                     }
                 }
-                else {
-                    if(_renderinput.org_ids.indexOf(val.org_id) > -1) {
-                        $('#o'+val.org_id).addClass('active');
-                        $('#o'+val.org_id+ ' i').addClass('fa-check');
-                    }
-                }
-
 
             }
         });
@@ -417,6 +405,9 @@ function RenderInput() {
             );
         });
         RepeatsType.on('change', function(){
+            if (parseInt(RepeatsEvery.val()) == 0) {
+                displayMessage(msg.invalid_repeatsevery);
+            }
             if (RepeatsType.val() == 2) {
                 if ((12 % parseInt(RepeatsEvery.val()) == 0 )  && (parseInt(RepeatsEvery.val()) < 12)){
                     $('.multicheckbox', RecurringPan).show();
@@ -428,6 +419,38 @@ function RenderInput() {
             }
             else{
                 $('.multicheckbox', RecurringPan).hide();
+            }
+
+            if (RepeatsType.val() == 1) {
+                // hide repeat by, statutoty date and statutory month
+                // show only trigger days
+                $('.repeat-by', RecurringPan).hide();
+                $(".statu-date-label", RecurringPan).hide();
+                $(".date-list").each(function(){
+                    $(".statu-date-div", this).hide();
+                });
+            }
+            else if (RepeatsType.val() == 2) {
+                // hide statutory month
+                // show statutory date and trigger days
+                $('.repeat-by', RecurringPan).show();
+                $(".statu-date-label", RecurringPan).show();
+                $(".date-list").each(function(){
+                    $(".statu-date-div", this).show();
+                    $(".month-select-div", this).hide();
+                    $(".date-select-div", this).show();
+
+                });
+            }
+            else {
+                // show month, date annd trigger days
+                $('.repeat-by', RecurringPan).show();
+                $(".statu-date-label", RecurringPan).show();
+                $(".date-list").each(function(){
+                    $(".statu-date-div", this).show();
+                    $(".date-select-div", this).show();
+                    $(".month-select-div", this).show();
+                });
             }
             if (RepeatsType.val() != '') {
                 dat = RepeatsEvery.val();
@@ -462,9 +485,12 @@ function RenderInput() {
     }
     this.loadedDateEvent = function(idx) {
         $('.month-select', '#dt'+ idx).change(function(){
-            _renderinput.loadDays(idx, $('.month-select', '#dt'+idx).val());
+            if (parseInt(RepeatsEvery.val()) == 0) {
+                displayMessage(msg.invalid_repeatsevery);
+            }
 
-            if (idx == 0) {
+            _renderinput.loadDays(idx, $('.month-select', '#dt'+idx).val());
+            if ((idx == 0) && (MultiselectDate.prop('checked') == true) ) {
                 // auto select month from first index value
                 every_val = parseInt(RepeatsEvery.val());
                 actual_len =  12 / every_val
@@ -589,6 +615,7 @@ function RenderInput() {
                 (v.c_id == _renderinput.country_id) &&
                 (v.d_id == _renderinput.domain_id)
             ){
+                console.log(p_id, l_position);
                 if (p_id == v.p_id)
                 {
                     if (l_position == v.l_position) {
@@ -666,11 +693,14 @@ function RenderInput() {
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
-                    /*if (_renderinput.l_one_id == null) {
+                    if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                         displayMessage(msg.statutory_selection_required);
                         return false;
-                    }*/
+                    }
                     new_value = $('#dv'+ v.l_position).val();
+                    if (new_value.length == 0) {
+                        return false;
+                    }
                     _sid = $('#dvid'+v.l_position).val();
 
                     if(_sid == '') {
@@ -701,6 +731,9 @@ function RenderInput() {
                     return false;
                 }
                 new_value = $('#dv'+ v.l_position).val();
+                if (new_value.length == 0) {
+                    return false;
+                }
                 _sid = $('#dvid'+v.l_position).val();
                 if (_sid == '') {
                     _fetchback.saveStautory(
@@ -867,6 +900,8 @@ function RenderInput() {
         Document.val('');
         Penal.val('');
         ReferenceLink.val('');
+        RepeatsEvery.val('');
+        Duration.val('');
 
         Comp_id.val('');
         Temp_id.val('');
@@ -882,10 +917,10 @@ function RenderInput() {
     this.renderComplianceGrid = function() {
 
         function showTitle(e){
-          if(e.className == "fa c-pointer status fa-times text-danger"){
+          if(e.className == "fa c-pointer inactive-icon fa-times text-danger"){
             e.title = 'Click here to activate';
           }
-          else if(e.className == "fa c-pointer status fa-check text-success")
+          else if(e.className == "fa c-pointer active-icon fa-check text-success")
           {
             e.title = 'Click here to deactivate';
           }
@@ -1054,6 +1089,7 @@ function RenderInput() {
                 'id', 'gnl' + v.l_position
             );
             $('.geo-name-filter', slObject).attr('id', 'gnf'+v.l_position);
+            $('.geo-name-filter', slObject).attr('placeholder', v.l_name);
 
             $('#gnf'+v.l_position, slObject).keyup(function(){
                 var searchText = $(this).val().toLowerCase();
@@ -1103,7 +1139,7 @@ function RenderInput() {
                     e.preventDefault();
                     d_select = $('#duration_type option:selected');
                     if ((DurationType.val() != '') && (Duration.val() != '')) {
-                        _renderinput.summary =  "To complete with in " + Duration.val() + " "+ d_select.text();
+                        _renderinput.summary =  "To complete within " + Duration.val() + " "+ d_select.text();
                         $('.occasional_summary').text(_renderinput.summary);
                     }
 
@@ -1111,7 +1147,7 @@ function RenderInput() {
                 $('#duration_type').change(function(){
                     d_select = $('#duration_type option:selected');
                     if ((DurationType.val() != '') && (Duration.val() != '')) {
-                        _renderinput.summary = "To complete with in " + Duration.val() +" "+ d_select.text();
+                        _renderinput.summary = "To complete within " + Duration.val() +" "+ d_select.text();
                         $('.occasional_summary').text(_renderinput.summary);
                     }
                     else {
@@ -1139,27 +1175,6 @@ function RenderInput() {
                 $('.header-title', RecurringPan).html(txt);
                 _renderinput.loadRepeats();
                 $('.date-list').empty();
-                // date_pan = $("#templates #date-list-templates").clone();
-
-                // $('.month-select', date_pan).empty();
-                // this.loadMonthAndData($('.month-select', date_pan));
-                // $('.month-select', date_pan).change(function(){
-                //     $('.date-select', date_pan).empty();
-                //     $('.date-select', date_pan).append(_renderinput.make_option("Select", ''));
-                //     _renderinput.loadDays();
-                //     $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
-                //         if (v.m_id == parseInt($('.month-select', date_pan).val())) {
-                //             for (var i=1; i<=v.range; i++) {
-                //                 dopt =_renderinput.make_option(i, i);
-                //                 $('.date-select', date_pan).append(dopt);
-                //             }
-                //         }
-                //     });
-                // });
-
-                // $('.trigger-value', date_pan).on('input', function(e) {
-                //     this.value = isNonZeroNumbers($(this));
-                // });
                 _renderinput.loadDate(0)
                 $('.date-list').append(date_pan);
                 _renderinput.loadedDateEvent(0);
@@ -1314,8 +1329,7 @@ function FetchBack() {
                 $('#dvid'+ l_position).val('');
                 $('#dvpid'+ l_position).val('');
                 _fetchback.getStatuMaster(l_position, function() {
-
-                    if (p_ids != null) {
+                    if(p_ids.length > 0) {
                         pid = p_ids[p_ids.length - 1];
                     }
                     else{
@@ -1475,11 +1489,13 @@ function ListPage() {
                     _listPage.displayMappingEdit(mapping_id, c.comp_id);
                 });
                 if (c.is_approved == 4) {
+                    console.log(c.remarks);
                     row.addClass('rejected_row');
                     $('.comp_approval_status', row).append(
                         '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'
                     );
                 }
+
                 $('.comp_approval_status', row).append(c.approval_status_text);
                 rowObjec.append(row);
             });
@@ -1506,7 +1522,7 @@ function ListPage() {
             $('.org_name', crow).text(org_names);
             $('.nature_name', crow).text(v.s_n_name);
             $('.s_name', crow).text(s_names);
-            $('.map_edit', crow).attr('title', 'Client here to edit');
+            $('.map_edit', crow).attr('title', 'Click here to edit');
             $('.map_edit', crow).addClass('fa-pencil text-primary');
             $('.map_edit', crow).on('click', function() {
                 _listPage.displayMappingEdit(v.m_id, null);
@@ -1632,7 +1648,7 @@ function ViewPage() {
             displayMessage(msg.domain_required);
             return false;
         }
-        else if (_renderinput.org_ids.length == 0) {
+        else if (_renderinput.selected_iids.length == 0) {
             displayMessage(msg.industry_required);
             return false;
         }
@@ -1643,6 +1659,7 @@ function ViewPage() {
         return true;
     };
     this.showSecondTab = function(){
+        _renderinput.last_selected = null;
         $('#tbody-statutory-level').empty();;
         _renderinput.loadStatuesLevels(0);
     };
@@ -1696,6 +1713,10 @@ function ViewPage() {
                 }
                 else if(RepeatsEvery.val().trim() == '') {
                     displayMessage(msg.repeatsevery_required);
+                    return false;
+                }
+                else if(RepeatsEvery.val().trim() == 0) {
+                    displayMessage(msg.invalid_repeatsevery);
                     return false;
                 }
             }
@@ -1772,7 +1793,7 @@ function ViewPage() {
         }
         map_data["c_id"] = _renderinput.country_id;
         map_data["d_id"] = _renderinput.domain_id;
-        map_data["i_ids"] = _renderinput.org_ids;
+        map_data["i_ids"] = _renderinput.selected_iids;
         map_data["s_n_id"] = _renderinput.nature_id;
         var s_ids = [];
         var mappings = [];
@@ -2084,6 +2105,18 @@ function pageControls() {
                 }
                 mon = $(".month-select", this).val();
                 trig = $(".trigger-value", this).val();
+                if (trig != '') {
+                    if (trig == 0) {
+                        displayMessage(msg.triggerbefore_iszero);
+                        return false;
+                    }
+                    else if (trig > 100) {
+                        displayMessage(msg.triggerbefore_exceed);
+                        return false;
+                    }
+                }
+                // validate same date and month
+
                 statu['repeat_by'] = repeat_by;
                 if (dt != '') {
                     statu['statutory_date'] = parseInt(dt);
@@ -2110,6 +2143,7 @@ function pageControls() {
             dt = $('#otstatutory_date').val();
             mon = $('#otstatutory_month').val();
             trig = $('#ottriggerbefore').val();
+
             if (dt != '') {
                 statu['statutory_date'] = parseInt(dt);
             }
@@ -2117,6 +2151,14 @@ function pageControls() {
                 statu['statutory_month'] = parseInt(mon);
             }
             if (trig != '') {
+                if (trig == 0) {
+                    displayMessage(msg.triggerbefore_iszero);
+                    return false;
+                }
+                else if (trig > 100) {
+                    displayMessage(msg.triggerbefore_exceed);
+                    return false;
+                }
                 statu['trigger_before_days'] = parseInt(trig)
             }
             _renderinput.statu_dates.push(statu);
@@ -2217,6 +2259,9 @@ function pageControls() {
         ApproveStatusText.text($(event.target).text());
         ap_status = $(event.target).parent().val();
         _fetchback.getMappedList(ap_status, 0);
+        Search_status.removeClass();
+        Search_status.addClass('fa');
+        Search_status.text('All');
     });
 
     PasswordSubmitButton.click(function() {
@@ -2224,7 +2269,7 @@ function pageControls() {
     });
 
     $('#ottriggerbefore').on('input', function(e) {
-        this.value = isNonZeroNumbers($(this));
+        this.value = isNumbers($(this));
     });
 
     RepeatsEvery.on('input', function(e) {
@@ -2237,6 +2282,9 @@ function pageControls() {
         $('.date-list').append(date_pan);
         _renderinput.loadedDateEvent(0);
 
+    });
+    Duration.on('input', function(e) {
+        this.value = isNumbers($(this));
     });
 
     FilterBox.keyup(function() {

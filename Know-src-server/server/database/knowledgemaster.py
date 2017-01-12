@@ -698,8 +698,10 @@ def update_statutory(
         db.save_activity(updated_by, 10, action)
         qry = "SELECT statutory_id, statutory_name, parent_ids " + \
             " from tbl_statutories " + \
-            " WHERE parent_ids like %s"
-        result = db.select_all(qry, [str("%" + str(statutory_id) + ",%")])
+            " WHERE find_in_set(%s, parent_ids)"
+        result = db.select_all(qry, [statutory_id])
+        print qry, statutory_id
+        print result
 
         for row in result:
             if row["parent_ids"] == "0,":
