@@ -31,6 +31,7 @@ var RACTechnoExecutive = $("#te-ac-techno-executive");
 var TERemarks = $("#te_remarks");
 var TEShow = $(".te-show-btn");
 var TESubmit = $(".btn-submit-2");
+var TESelectAll = $(".te-selectall");
 
 var DomainManagerName = $("#domain_manager_name");
 var DomainManagerId = $("#domain_manager_id");
@@ -51,7 +52,6 @@ var DMShow = $(".dm-show-btn");
 var DMSubmit = $(".btn-submit-3");
 var DomainDetailsList = '';
 var DMRemarks = $("#dm_remarks");
-
 
 var DomainExecutiveName = $("#domain_executive_name");
 var DomainExecutiveId = $("#domain_executive_id");
@@ -143,10 +143,10 @@ function loadTMList(){
                 group_countries[value.ct_id] = [];
                 group_domains[value.ct_id] = [];
             }
-            console.log(value.ct_id)
+            /*console.log(value.ct_id)
             console.log(group_countries)
             console.log(value.c_id)
-            console.log(group_countries[value.ct_id])
+            console.log(group_countries[value.ct_id])*/
             group_countries[value.ct_id] = $.merge(group_countries[value.ct_id], [value.c_id]);
             group_domains[value.ct_id] = $.merge(group_domains[value.ct_id], value.d_ids);
 
@@ -290,6 +290,10 @@ function loadDMList(){
             $('.tbody-dm-view').append(clone);
         });
 
+        $(".dm-group-checkbox-main").change(function() {
+            $(".tbody-dm-view .dm-group-checkbox").prop('checked', $(this).prop("checked"));
+        });
+
         $('.dm-group-checkbox').on('click', function(e) {
             var de_view = '.de-ac-' + $(this).val();
             if($(this).prop("checked")){
@@ -384,6 +388,10 @@ function pageControls(){
             TECHNO_USERS, "employee_name", "user_id", function (val) {
                 onAutoCompleteSuccess(RTechnoExecutiveName, RTechnoExecutiveId, val);
             });
+    });
+
+    TESelectAll.change(function() {
+        $(".tbody-te-view .te-group-checkbox").prop('checked', $(this).prop("checked"));
     });
 
     DomainManagerName.keyup(function(e){
@@ -852,9 +860,9 @@ function pageControls(){
         var replace_remarks = ReplaceManagerRemarks.val();
 
         if(ManagerId == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.manager_required);
         }else if(ReplaceManagerId == ''){
-            displayMessage(message.reassign_to_required);
+            displayMessage(message.replace_manager_required);
         }else if(replace_remarks == ''){
             displayMessage(message.remarks_required);
         }else{

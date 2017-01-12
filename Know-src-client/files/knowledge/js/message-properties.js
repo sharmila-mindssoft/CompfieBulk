@@ -338,10 +338,12 @@ var message = {
   "reassign_to_tm_required": "Reassign to Techno Manager required",
   "reassign_to_te_required": "Reassign to Techno Executive required",
   "no_records_selected_for_reassign": "No records selected for reassign",
-  "reassign_from_reassign_to_both_are_same": "Reaasign from user ans Reassign to user both should not be same",
+  "reassign_from_reassign_to_both_are_same": "Reassign from user and Reassign to user both should not be same",
   "save_ip_setting_success": "IP Settings Saved Successfully",
   "delete_ip_setting_success": "IP Settings Deleted Successfully",
   "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
+  "manager_required": "Manager Required",
+  "replace_manager_required": "Replace Manager Required",
 }
 
 function clearMessage() {

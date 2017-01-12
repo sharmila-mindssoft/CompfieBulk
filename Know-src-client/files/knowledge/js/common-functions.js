@@ -980,7 +980,8 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  if(list_val[i][value].length != undefined){
+                  
+                  if(jQuery.type( list_val[i][value] ) == 'array'){
                     condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                   }else{
                     condition_result = (list_val[i][value] == condition_values[key]);

@@ -43,6 +43,7 @@ function processCancel() {
 
 function processSave() {
     if (validateMandatory()) {
+        SaveButton.prop("disabled",true);
         var s_users = [];
         var s_le = [];
         s_users.push(parseInt(User_id.val()));
@@ -57,6 +58,7 @@ function processSave() {
                 ViewScreen.hide();
                 initialize();
             } else {
+                SaveButton.prop("disabled",false);
                 custom_alert(error);
             }
         });
@@ -64,6 +66,7 @@ function processSave() {
 }
 
 function assignLE(cId, cName, gName) {
+    SaveButton.prop("disabled",false);
     CLIENT_ID = cId
     mirror.getEditAssignLegalEntity(cId, function(error, data) {
         if (error == null) {
