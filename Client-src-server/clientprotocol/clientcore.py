@@ -3960,7 +3960,7 @@ class UnitClosure_Units(object):
             unit_id, unit_code, unit_name, address, postal_code,
             legal_entity_id, legal_entity_name, business_group_name,
             division_name, category_name, is_active, closed_on,
-            validity_days
+            validity_days)
 
     def to_structure(self):
         return {
