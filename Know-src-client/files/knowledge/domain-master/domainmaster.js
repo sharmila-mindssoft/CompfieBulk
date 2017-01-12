@@ -546,5 +546,6 @@ $(document).ready(function() {
     PageControls();
     d_page.showList();
     d_page.fetchDomain();
+    $('.js-sorting-table').jssorting(); // Sorting table
 });
 
