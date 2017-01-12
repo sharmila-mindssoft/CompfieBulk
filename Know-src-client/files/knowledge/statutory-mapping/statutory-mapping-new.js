@@ -287,7 +287,7 @@ function RenderInput() {
         $('.organisationlist', Organisation).removeClass('active');
         $('.organisationlist i', Organisation).removeClass('fa-check');
         Organisation.empty();
-        var first_li = 0;
+        var first_li = true;
 
         // append select
         _renderinput.org_ids = [];
@@ -299,7 +299,7 @@ function RenderInput() {
                 (parseInt(val.c_id) == parseInt(c_id)) &&
                 (parseInt(val.d_id) == parseInt(d_id))
             ){
-                if (ke == 0) {
+                if (first_li == true ) {
                     orgObject = list_template.clone();
                     orgObject.addClass("organisationlist");
                     orgObject.attr('id', 'o-1');
@@ -325,7 +325,7 @@ function RenderInput() {
                         }
                     });
                 }
-                first_li = ke;
+                first_li = false;
                 orgObject = list_template.clone();
                 orgObject.addClass("organisationlist");
                 orgObject.attr('id', 'o'+val.org_id);
@@ -439,7 +439,7 @@ function RenderInput() {
                     $(".statu-date-div", this).show();
                     $(".month-select-div", this).hide();
                     $(".date-select-div", this).show();
-
+                    _renderinput.loadDays(0, 1);
                 });
             }
             else {
@@ -863,8 +863,18 @@ function RenderInput() {
 
             $('.date-list').empty();
             $.each(data.statu_dates, function(k, v) {
-
                 date_pan = _renderinput.loadDate(k);
+                $(".statu-date-div", date_pan).show();
+                $(".date-select-div", date_pan).show();
+                $(".month-select-div", date_pan).show();
+
+                if (data.r_type_id == 1) {
+                    $(".statu-date-div", date_pan).hide();
+                }
+                else if (data.r_type_id == 2) {
+                    $(".month-select-div", date_pan).hide();
+                }
+
                 $('.month-select', date_pan).val(v['statutory_month']);
                 $('.trigger-value', date_pan).val(v['trigger_before_days']);
 
@@ -875,12 +885,37 @@ function RenderInput() {
                             $('.date-select', date_pan).append(opt);
                         }
                     }
+                    else {
+                        for (var i=1; i<31; i++) {
+                            opt = _renderinput.make_option(i, i);
+                            $('.date-select', date_pan).append(opt);
+                        }
+                    }
                 });
                 $('.date-select', date_pan).val(v['statutory_date']);
                 $('.date-list').append(date_pan);
                 _renderinput.loadedDateEvent(k);
             });
 
+            if (data.r_type_id == 1) {
+                // hide repeat by, statutoty date and statutory month
+                // show only trigger days
+                $('.repeat-by', RecurringPan).hide();
+                $(".statu-date-label", RecurringPan).hide();
+
+            }
+            else if (data.r_type_id == 2) {
+                // hide statutory month
+                // show statutory date and trigger days
+                $('.repeat-by', RecurringPan).show();
+                $(".statu-date-label", RecurringPan).show();
+
+            }
+            else {
+                // show month, date annd trigger days
+                $('.repeat-by', RecurringPan).show();
+                $(".statu-date-label", RecurringPan).show();
+            }
 
         }
 
@@ -2086,11 +2121,18 @@ function pageControls() {
             repeat_by = $("input[name='radioSingle1']:checked").val();
             repeat_by = parseInt(repeat_by);
 
-
             $(".statu-date-pan").each(function(idx, val){
-                if ($('.date-select', '#dt'+idx).val() == undefined) {
-                    return false;
+                if (RepeatsType.val() == 1) {
+                    if ($('.trigger-value', '#dt'+idx).val() == undefined){
+                        return false;
+                    }
                 }
+                else {
+                    if ($('.date-select', '#dt'+idx).val() == undefined){
+                        return false;
+                    }
+                }
+
                 statu = {};
                 statu['statutory_date'] = null;
                 statu['statutory_month'] = null;
@@ -2105,17 +2147,7 @@ function pageControls() {
                 }
                 mon = $(".month-select", this).val();
                 trig = $(".trigger-value", this).val();
-                if (trig != '') {
-                    if (trig == 0) {
-                        displayMessage(msg.triggerbefore_iszero);
-                        return false;
-                    }
-                    else if (trig > 100) {
-                        displayMessage(msg.triggerbefore_exceed);
-                        return false;
-                    }
-                }
-                // validate same date and month
+                   // validate same date and month
 
                 statu['repeat_by'] = repeat_by;
                 if (dt != '') {
@@ -2125,12 +2157,18 @@ function pageControls() {
                     statu['statutory_month'] = parseInt(mon);
                 }
                 if (trig != '') {
+                    if (trig == 0) {
+                        displayMessage(msg.triggerbefore_iszero);
+                        return false;
+                    }
+                    else if (trig > 100) {
+                        displayMessage(msg.triggerbefore_exceed);
+                        return false;
+                    }
                     statu['trigger_before_days'] = parseInt(trig)
                 }
                 _renderinput.statu_dates.push(statu);
             });
-
-
         }
         else {
 
@@ -2192,6 +2230,7 @@ function pageControls() {
                 return false;
             }
         });
+        console.log(_renderinput.statu_dates)
         console.log(info);
         if (!is_duplidate) {
             _renderinput.mapped_compliances.push(info);
