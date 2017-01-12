@@ -281,7 +281,6 @@ function validateMaxLength(key_name, value, show_name) {
 }
 
 function DomainValidate() {
-    alert("validation")
     if (MultiSelect_Country.val() == null) {
       displayMessage(msg.country_required);
       MultiSelect_Country.focus();

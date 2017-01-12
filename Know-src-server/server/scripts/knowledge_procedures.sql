@@ -4783,6 +4783,8 @@ BEGIN
     select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
     tbl_domain_countries as t1
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
+    inner join tbl_statutory_levels as t4 on t3.domain_id = t4.domain_id
+    and t3.country_id = t4.country_id
     inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
     and t2.country_id = t1.country_id
     and t2.user_id = userid
@@ -4878,7 +4880,7 @@ BEGIN
     from tbl_statutory_mappings as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
-    where t3.user_id = userid and t1.is_approved like approvestatus
+    where t3.user_id = userid
     order by country_name, domain_name, t1.statutory_mapping
     limit fromcount, tocount;
 
