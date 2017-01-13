@@ -3978,3 +3978,26 @@ class UnitClosure_Units(object):
             "closed_on": self.closed_on,
             "validity_days": self.validity_days,
         }
+
+class LegalEntityInfo(object):
+    def __init__(self, legal_entity_id, legal_entity_name, business_group_id, business_group_name):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id", "le_name", "bg_id", "bg_name"])
+        return LegalEntityInfo(
+            data.get("le_id"), data.get("le_name"),
+            data.get("bg_id"), data.get("bg_name")
+        )
+
+    def to_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "le_name": self.legal_entity_name,
+            "bg_id": self.business_group_id,
+            "bg_name": self.business_group_name
+        }
