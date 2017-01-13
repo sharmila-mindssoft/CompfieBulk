@@ -161,6 +161,9 @@ class API(object):
         try:
             print request
             print request.data
+
+            if not request.data:
+                raise ValueError("Request data is Null")
             print "-" * 10
             data = request.data.decode('base64')
             print data

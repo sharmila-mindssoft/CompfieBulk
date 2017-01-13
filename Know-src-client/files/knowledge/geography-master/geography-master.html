@@ -16,13 +16,13 @@
     <div class="col-sm-8">
       <div class="card-box table-responsive">
         <div class="col-sm-12 no-padding">
-          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Country</th>
-                <th>Level</th>
-                <th>Name</th>
+                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                <th>Level <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                <th>Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
                 <th class="text-center">Edit</th>
                 <th class="text-center" width="15%">Status</th>
               </tr>
@@ -211,4 +211,5 @@
     </div>
 </div>
 <script type="text/javascript" src="/script/geography-master/geographymaster.js"></script>
+<script src="/js/js-sorting.js"></script>
 {% endblock %}

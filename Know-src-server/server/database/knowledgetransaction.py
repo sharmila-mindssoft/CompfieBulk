@@ -680,7 +680,7 @@ def update_statutory_mapping(db, data, updated_by):
         db, statutory_mapping_id, country_id, domain_id, compliances, updated_by,
         is_approve
     )
-
+    print names
     save_statutory_industry(
         db, statutory_mapping_id, data.industry_ids, updated_by, False
     )
@@ -808,6 +808,10 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
         values.append(compliance_id)
         if (db.update(table_name, columns, values, where_condition)):
             compliance_ids.append(compliance_id)
+            cname = compliance_task
+            if document_name is not None :
+                cname = document_name + " - " + compliance_task
+            compliance_names.append(cname)
         else:
             raise process_error("E021")
     return compliance_ids, compliance_names
@@ -1268,6 +1272,7 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
     )
+    print [user_id, approve_status, fromcount, tocount]
     if len(result) == 0 :
         raise fetch_error()
     mapping = result[0]

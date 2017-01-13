@@ -71,7 +71,6 @@ function processGroupSearch()
   c_g_name = FilterCategorname.val().toLowerCase();
 
   user_status = $('.search-status-li.active').attr('value');
-  console.log(Boolean(parseInt(user_status)))
   searchList = []
 
   for(var i in uglist){
@@ -81,7 +80,6 @@ function processGroupSearch()
     data_c_g_name = getCategoryName(data.user_category_id);
     data_c_g_name = data_c_g_name.toLowerCase();
     data_is_active = data.is_active;
-    console.log(data_is_active)
 
     if ((~data_g_name.indexOf(g_name)) && (~data_c_g_name.indexOf(c_g_name)))
     {
@@ -243,7 +241,6 @@ function validateAuthentication(){
     validateMaxLength('password', password, "Password");
   }
   mirror.verifyPassword(password, function(error, response) {
-    console.log("err:"+error)
     if (error == null) {
       isAuthenticate = true;
       Custombox.close();
@@ -258,7 +255,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -299,7 +295,6 @@ function loadFormListUpdate(formList, userGroupList, catgid, userGroupId) {
   clearMessage();
   var i_incre;
   var list = formList[catgid].menus;
-  console.log(list)
   $.each(list, function (key, value) {
     if (jQuery.isEmptyObject(key) == false) {
       var tableRowList = $('#templates-form-heading .table-form-heading .table-row-form-heading');
@@ -307,7 +302,6 @@ function loadFormListUpdate(formList, userGroupList, catgid, userGroupId) {
       var clone1 = tableRowList.clone();
       $('.formHeading', clone1).text(key);
       $('.tableFormList').append(clone1);
-      console.log($('.tableFormList').find('tr').length)
       $.each(value, function (i) {
         var formName = value[i].form_name;
         var formId = value[i].form_id;
@@ -367,8 +361,11 @@ $('#btnUserGroupSubmit').click(function () {
         initialize();
       }
       function onFailure(error) {
+        alert(error)
         if (error == 'GroupNameAlreadyExists') {
           displayMessage(message.groupname_exists);
+        } else if (error == 'CannotDeactivateUserExists') {
+          displayMessage("Cannot Deactivate User Exists");
         } else {
           displayMessage(error);
         }
@@ -448,7 +445,12 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
     initialize();
   }
   function onFailure(error) {
-    displayMessage(error);
+    if (error == 'CannotDeactivateUserExists') {
+      displayMessage("Cannot Deactivate User Exists");
+    }
+    else{
+      displayMessage(error);
+    }
   }
   mirror.changeAdminUserGroupStatus(userGroupId, userGroupName, isActive, function (error, response) {
   if (error == null) {
@@ -500,6 +502,7 @@ function renderControls(){
 $(function () {
   renderControls();
   initialize();
+  $('.js-sorting-table').jssorting(); // Sorting table
 });
 /*$(document).find('.js-filtertable').each(function () {
   $(this).filtertable().addFilter('.js-filter');

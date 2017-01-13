@@ -6,6 +6,8 @@ from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, generate_and_return_password, datetime_to_string_time
 )
+from clientprotocol import clientmasters
+
 from server.clientdatabase.tables import *
 from server.clientdatabase.general import (
     is_primary_admin, is_admin, get_user_unit_ids,
@@ -45,7 +47,11 @@ __all__ = [
     "get_units_closure_for_user",
     "close_unit",
     "get_audit_trails",
-    "is_duplicate_employee_name"
+    "is_duplicate_employee_name",
+    "get_unit_closure_legal_entities",
+    "get_unit_closure_units_list",
+    "save_unit_closure_data",
+    "is_invalid_id"
 ]
 
 ############################################################################
@@ -1190,3 +1196,105 @@ def notify_user(
     except Exception, e:
         logger.logClient("error", "clientdatabase.py-notify-user", e)
         print "Error while sending email: %s" % e
+
+
+############################################################################
+# parameters: db object, requests, user id passed - to get legal entity list
+############################################################################
+def get_unit_closure_legal_entities(db, user_id):
+    le_list = []
+    columns = "user_category_id, client_id"
+    condition = "user_id = %s"
+    condition_val = [user_id]
+    l_id = None
+    recordSet = None
+    user_category = db.get_data(tblUsers, columns, condition, condition_val)
+    for row in user_category:
+        print row["user_category_id"]
+        if row["user_category_id"] == 1:
+            print "jfhdsjk"
+            columns = "legal_entity_id, legal_entity_name"
+            condition = "DATEDIFF(contract_to, NOW()) > 0 and is_closed = 0 and client_id = %s"
+            condition_val = [row["client_id"]]
+            order = " ORDER BY legal_entity_name"
+            recordSet = db.get_data(tblLegalEntities, columns, condition, condition_val, order)
+        else:
+            if row["user_category_id"] == 3:
+                columns = "distinct(legal_entity_id)"
+                condition = "user_id = %s"
+                condition_val = [user_id]
+                le_ids = db.get_data(tblUserDomains, columns, condition, condition_val)
+                if le_ids is not None:
+                    for le_id in le_ids:
+                        if l_id is None:
+                            l_id = str(le_id["legal_entity_id"])
+                        else:
+
+                            l_id = l_id + "," + str(le_id["legal_entity_id"])
+
+                print l_id
+                columns = "legal_entity_id, legal_entity_name"
+                le_condition, c_val = db.generate_tuple_condition(
+                        "legal_entity_id", [int(x) for x in l_id.split(",")]
+                    )
+                print le_condition
+                condition = "DATEDIFF(contract_to, NOW()) > 0 and is_closed = 0 and %s" % le_condition
+                condition_val = [c_val]
+                order = "ORDER BY legal_entity_name"
+                recordSet = db.get_data(tblLegalEntities, columns, condition, condition_val, order)
+    print recordSet
+    for row in recordSet:
+        le_list.append(clientcore.UnitClosureLegalEntity(
+            legal_entity_id=row["legal_entity_id"],
+            legal_entity_name=row["legal_entity_name"]
+            )
+        )
+    return le_list
+
+############################################################################
+# parameters: db object, requests, user id passed - to get units
+# list under legal entity id
+############################################################################
+def get_unit_closure_units_list(db, request):
+    le_id = request.legal_entity_id
+    result = db.call_proc("sp_unit_closure_units_list_by_le_id", (le_id,))
+    units_list = []
+    for row in result:
+        units_list.append(clientcore.UnitClosure_Units(
+            row["unit_id"], row["unit_code"], row["unit_name"], row["address"],
+            row["postal_code"], row["legal_entity_id"], row["legal_entity_name"],
+            row["business_group_name"], row["division_name"], row["category_name"],
+            bool(row["is_active"]), str(row["closed_on"]), row["validity_days"]
+            )
+        )
+    return units_list
+
+def is_invalid_id(db, check_mode, val):
+    print "inside valid checking"
+    print check_mode
+
+    if check_mode == "unit_id":
+        params = [val, ]
+        rows = db.call_proc("sp_tbl_units_check_unitId", params)
+        for d in rows:
+            if(int(d["unit_id_cnt"]) > 0):
+                return True
+            else:
+                return False
+
+
+def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode):
+    current_time_stamp = get_date_time()
+    print action_mode
+    if action_mode == "close":
+        print "save"
+        result = db.call_update_proc("sp_unit_closure_save", (
+            user_id, unit_id, 0, current_time_stamp, remarks
+        ))
+    elif action_mode == "reactive":
+        result = db.call_update_proc("sp_unit_closure_save", (
+            user_id, unit_id, 1, current_time_stamp, remarks
+        ))
+
+    print result
+    return result

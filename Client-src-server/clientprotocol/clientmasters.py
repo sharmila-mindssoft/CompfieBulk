@@ -567,6 +567,65 @@ class GetAuditTrails(Request):
             "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
         }
 
+class GetUnitClosureData(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetUnitClosureData()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetUnitClosureUnitData(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        return GetUnitClosureUnitData(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id
+        }
+
+class SaveUnitClosureData(Request):
+    def __init__(
+        self, password, closed_remarks, unit_id, grp_mode
+    ):
+        self.password = password
+        self.closed_remarks = closed_remarks
+        self.unit_id = unit_id
+        self.grp_mode = grp_mode
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "password", "closed_remarks", "unit_id", "grp_mode"
+        ])
+        password = data.get("password")
+        closed_remarks = data.get("closed_remarks")
+        unit_id = data.get("unit_id")
+        grp_mode = data.get("grp_mode")
+
+        return SaveUnitClosureData(
+            password, closed_remarks, unit_id, grp_mode
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "password": self.password,
+            "closed_remarks": self.closed_remarks,
+            "unit_id": self.unit_id,
+            "grp_mode": self.grp_mode,
+        }
+        return data
 
 def _init_Request_class_map():
     classes = [
@@ -574,7 +633,8 @@ def _init_Request_class_map():
         SaveServiceProvider, UpdateServiceProvider, ChangeServiceProviderStatus,
         GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges,
         ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser,
-        UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails
+        UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails,
+        GetUnitClosureData, SaveUnitClosureData, GetUnitClosureUnitData
     ]
     class_map = {}
     for c in classes:
@@ -1163,6 +1223,61 @@ class CannotCloseUnit(Response):
         return {
         }
 
+class GetUnitClosureDataSuccess(Response):
+    def __init__(self, unit_closure_legal_entities):
+        self.unit_closure_legal_entities = unit_closure_legal_entities
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_closure_legal_entities"])
+        unit_closure_legal_entities = data.get("unit_closure_legal_entities")
+        return GetUnitClosureDataSuccess(unit_closure_legal_entities)
+
+    def to_inner_structure(self):
+        return {
+            "unit_closure_legal_entities": self.unit_closure_legal_entities,
+        }
+
+class GetUnitClosureUnitDataSuccess(Response):
+    def __init__(self, unit_closure_units):
+        self.unit_closure_units = unit_closure_units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_closure_units"])
+        unit_closure_units = data.get("unit_closure_units")
+        return GetUnitClosureUnitDataSuccess(unit_closure_units)
+
+    def to_inner_structure(self):
+        return {
+            "unit_closure_units": self.unit_closure_units,
+        }
+
+class SaveUnitClosureSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveUnitClosureSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class InvalidUnitId(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidUnitId()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -1178,7 +1293,8 @@ def _init_Response_class_map():
         GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
         InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
         CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate,
-        CannotChangeStatusOfContractExpiredSP, CannotCloseUnit,
+        CannotChangeStatusOfContractExpiredSP, CannotCloseUnit, GetUnitClosureUnitDataSuccess,
+        GetUnitClosureDataSuccess, SaveUnitClosureSuccess, InvalidUnitId
     ]
     class_map = {}
     for c in classes:
@@ -1217,6 +1333,9 @@ class AuditTrail(object):
             "action": to_structure_CustomTextType_500(self.action),
             "date": to_structure_CustomTextType_20(self.date)
         }
+
+
+
 #
 # RequestFormat
 #
@@ -1240,4 +1359,3 @@ class RequestFormat(object):
             "session_token": to_structure_CustomTextType_50(self.session_token),
             "request": to_structure_VariantType_clientmasters_Request(self.request),
         }
-
