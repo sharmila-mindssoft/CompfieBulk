@@ -348,7 +348,6 @@ function RenderInput() {
 
                 $('.name-holder', orgObject).text(val.org_name);
                 Organisation.append(orgObject);
-                console.log(_renderinput.selected_iids);
                 if (_renderinput.selected_iids.length > 0) {
                     if (_renderinput.selected_iids.indexOf(val.org_id) > -1){
                         $('#o'+val.org_id).addClass('active');
@@ -470,11 +469,26 @@ function RenderInput() {
         $('.trigger-value', date_pan).on('input', function(e) {
             this.value = isNonZeroNumbers($(this));
         });
+        repeat_by = $("input[name='radioSingle1']:checked").val();
+        if ((RepeatsType.val() == 2) && (repeat_by == 2)) {
+            $('.date-select', date_pan).hide();
+            $(".statu-date-label", RecurringPan).hide();
+        }
+        else {
+            $('.date-select', date_pan).show();
+            $(".statu-date-label", RecurringPan).show();
+        }
+        if (RepeatsType.val() == 2) {
+            if (MultiselectDate.prop('checked') == false) {
+                $('.month-select', date_pan).hide();
+            }
+        }
         return date_pan;
     };
     this.loadDays = function(idx, key) {
         $.each(_renderinput.getMonthAndDataSets(), function(kk, v) {
             if (v.m_id == key) {
+                $('.date-select', '#dt'+idx).empty();
                 $('.date-select', '#dt'+idx).append(_renderinput.make_option("Select", ''));
                 for (var i=1; i<=v.range; i++) {
                     dopt =_renderinput.make_option(i, i);
@@ -526,6 +540,7 @@ function RenderInput() {
             else {
                 $('.date-list').append(_renderinput.loadDate(0));
                 _renderinput.loadedDateEvent(0);
+                _renderinput.loadDays(0, 1);
             }
         });
     };
@@ -613,9 +628,9 @@ function RenderInput() {
         $.each(STATUTORY_INFO, function(k, v) {
             if (
                 (v.c_id == _renderinput.country_id) &&
-                (v.d_id == _renderinput.domain_id)
+                (v.d_id == _renderinput.domain_id) &&
+                (v.l_position >= l_position)
             ){
-                console.log(p_id, l_position);
                 if (p_id == v.p_id)
                 {
                     if (l_position == v.l_position) {
@@ -860,42 +875,9 @@ function RenderInput() {
             RepeatsType.val(data.r_type_id);
             RepeatsEvery.val(data.r_every);
             $('.recurr-summary').text(data.summary);
-
-            $('.date-list').empty();
-            $.each(data.statu_dates, function(k, v) {
-                date_pan = _renderinput.loadDate(k);
-                $(".statu-date-div", date_pan).show();
-                $(".date-select-div", date_pan).show();
-                $(".month-select-div", date_pan).show();
-
-                if (data.r_type_id == 1) {
-                    $(".statu-date-div", date_pan).hide();
-                }
-                else if (data.r_type_id == 2) {
-                    $(".month-select-div", date_pan).hide();
-                }
-
-                $('.month-select', date_pan).val(v['statutory_month']);
-                $('.trigger-value', date_pan).val(v['trigger_before_days']);
-
-                $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
-                    if (vv.m_id == v["statutory_month"]) {
-                        for (var i=1; i<vv.range; i++) {
-                            opt = _renderinput.make_option(i, i);
-                            $('.date-select', date_pan).append(opt);
-                        }
-                    }
-                    else {
-                        for (var i=1; i<31; i++) {
-                            opt = _renderinput.make_option(i, i);
-                            $('.date-select', date_pan).append(opt);
-                        }
-                    }
-                });
-                $('.date-select', date_pan).val(v['statutory_date']);
-                $('.date-list').append(date_pan);
-                _renderinput.loadedDateEvent(k);
-            });
+            if (data.statu_dates.length > 1) {
+                MultiselectDate.prop('checked', true);
+            }
 
             if (data.r_type_id == 1) {
                 // hide repeat by, statutoty date and statutory month
@@ -904,18 +886,64 @@ function RenderInput() {
                 $(".statu-date-label", RecurringPan).hide();
 
             }
-            else if (data.r_type_id == 2) {
-                // hide statutory month
-                // show statutory date and trigger days
-                $('.repeat-by', RecurringPan).show();
-                $(".statu-date-label", RecurringPan).show();
-
-            }
             else {
                 // show month, date annd trigger days
                 $('.repeat-by', RecurringPan).show();
                 $(".statu-date-label", RecurringPan).show();
             }
+
+
+            $('.date-list').empty();
+            $.each(data.statu_dates, function(k, v) {
+
+                date_pan = _renderinput.loadDate(k);
+                $(".statu-date-div", date_pan).show();
+                $(".date-select-div", date_pan).show();
+                $(".month-select-div", date_pan).show();
+
+                if (v['repeat_by'] == 1) {
+                    $('#singleRadio1').prop('checked', true);
+                }
+                else {
+                    $('#singleRadio2').prop('checked', true);
+                    $(".date-select-div", date_pan).hide();
+                }
+
+                if (data.r_type_id == 1) {
+                    $(".statu-date-div", date_pan).hide();
+                }
+                else if (data.r_type_id == 2) {
+                    if (data.statu_dates.length > 1) {
+                        $(".month-select-div", date_pan).show();
+                    }
+                    else {
+                        $(".month-select-div", date_pan).hide();
+                        for (var i=1; i<31; i++) {
+                            opt = _renderinput.make_option(i, i);
+                            $('.date-select', date_pan).append(opt);
+                        }
+                    }
+                }
+
+                $('.month-select', date_pan).val(v['statutory_month']);
+                $('.trigger-value', date_pan).val(v['trigger_before_days']);
+                $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
+                    $('.date-select', date_pan).empty();
+                    if (vv.m_id == v["statutory_month"]) {
+                        for (var i=1; i<=vv.range; i++) {
+                            opt = _renderinput.make_option(i, i);
+                            $('.date-select', date_pan).append(opt);
+                        }
+                        return false;
+                    }
+
+                });
+                $('.date-select', date_pan).val(v['statutory_date']);
+                $('.date-list').append(date_pan);
+                _renderinput.loadedDateEvent(k);
+
+            });
+
 
         }
 
@@ -947,6 +975,7 @@ function RenderInput() {
         $('#counter2').html('');
         $('#counter3').html('');
         $('#upload_file').val('');
+        MultiselectDate.attr('checked', false);
         this.hideFrequencyAll();
     };
     this.renderComplianceGrid = function() {
@@ -1730,14 +1759,15 @@ function ViewPage() {
             displayMessage(msg.compliancefrequency_required);
             return false;
         }
-        else {
-            if (ReferenceLink.val().length > 0) {
-                isValid = isWebUrl(ReferenceLink);
-                if (isValid == false) {
-                    displayMessage(msg.invalid_reference);
-                    return false;
-                }
+        else if (ReferenceLink.val().length > 0) {
+            isValid = isWebUrl(ReferenceLink);
+            if (isValid == false) {
+                displayMessage(msg.invalid_reference);
+                return false;
             }
+        }
+        else {
+
             if (
                 (Frequency.val() == 2) ||
                 (Frequency.val() == 3)
@@ -2117,9 +2147,31 @@ function pageControls() {
 
             info['r_type_id'] = parseInt(RepeatsType.val());
             info['r_every'] = parseInt(RepeatsEvery.val());
+            if(info["r_type_id"] == 2) {
+                if(info['r_every'] > 99) {
+                    displayMessage(msg.months_maximum);
+                    return false;
+                }
+            }
+            else if (info["r_type_id"] == 3) {
+                if(info['r_every'] > 9) {
+                    displayMessage(msg.years_maximum);
+                    return false;
+                }
+            }
+            else {
+                if(info['r_every'] > 999) {
+                    displayMessage(msg.days_maximum);
+                    return false;
+                }
+            }
+
             date_list = [];
             repeat_by = $("input[name='radioSingle1']:checked").val();
             repeat_by = parseInt(repeat_by);
+
+            mons = []
+            dats = []
 
             $(".statu-date-pan").each(function(idx, val){
                 if (RepeatsType.val() == 1) {
@@ -2128,6 +2180,7 @@ function pageControls() {
                     }
                 }
                 else {
+                    // if ((MultiselectDate.prop('checked') == true) && ($('.date-select', '#dt'+idx).val() == undefined)){
                     if ($('.date-select', '#dt'+idx).val() == undefined){
                         return false;
                     }
@@ -2140,10 +2193,10 @@ function pageControls() {
                 statu['repeat_by'] = null;
 
                 if (repeat_by == 1) {
-                    dt = $(".date-select", this).val();
+                    dt = $(".date-select", '#dt'+idx).val();
                 }
                 else {
-                    dt = $(".date-select option:last", this).val();
+                    dt = $(".date-select option:last", '#dt'+idx).val();
                 }
                 mon = $(".month-select", this).val();
                 trig = $(".trigger-value", this).val();
@@ -2153,8 +2206,22 @@ function pageControls() {
                 if (dt != '') {
                     statu['statutory_date'] = parseInt(dt);
                 }
+                else {
+                    if (MultiselectDate.prop('checked') == true) {
+                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                        _renderinput.statu_dates = [];
+                        return false;
+                    }
+                }
                 if (mon != '') {
                     statu['statutory_month'] = parseInt(mon);
+                }
+                else {
+                    if (MultiselectDate.prop('checked') == true) {
+                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                        _renderinput.statu_dates = [];
+                        return false;
+                    }
                 }
                 if (trig != '') {
                     if (trig == 0) {
@@ -2166,6 +2233,13 @@ function pageControls() {
                         return false;
                     }
                     statu['trigger_before_days'] = parseInt(trig)
+                }
+                else {
+                    if (MultiselectDate.prop('checked') == true) {
+                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                        _renderinput.statu_dates = []
+                        return false;
+                    }
                 }
                 _renderinput.statu_dates.push(statu);
             });
@@ -2201,6 +2275,10 @@ function pageControls() {
             }
             _renderinput.statu_dates.push(statu);
         }
+        if ((MultiselectDate.prop('checked') == true) && (_renderinput.statu_dates.length == 0)) {
+            displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+            return false;
+        }
         info['statu_dates'] = _renderinput.statu_dates;
         info['is_active'] = true;
         info['frequency'] = $('#compliance_frequency option:selected').text();
@@ -2230,8 +2308,6 @@ function pageControls() {
                 return false;
             }
         });
-        console.log(_renderinput.statu_dates)
-        console.log(info);
         if (!is_duplidate) {
             _renderinput.mapped_compliances.push(info);
             _renderinput.renderComplianceGrid();
