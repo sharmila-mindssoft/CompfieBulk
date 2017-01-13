@@ -21,11 +21,7 @@ __all__ = [
 ########################################################
 def process_client_master_requests(request, db, session_user, client_id):
     request = request.request
-    client_id = int(client_info[0])
-    session_user = db.validate_session_token(session_token)
-    if session_user is None:
-        return clientlogin.InvalidSessionToken()
-
+    
     if type(request) is clientmasters.GetServiceProviders:
         result = process_get_service_providers(
             db, request, session_user

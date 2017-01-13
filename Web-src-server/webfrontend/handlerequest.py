@@ -29,6 +29,7 @@ class HandleRequest(object):
         def client_callback(response):
             code = response.code
             body = response.body
+            print body
             if code == 200:
                 callback(None, body)
             else:
