@@ -2254,6 +2254,8 @@ def get_domain_managers_for_user(db, client_id, domain_id, session_user):
     # users = db.call_proc_with_multiresult_set(
     #     "sp_users_domain_managers", [session_user], 2
 
+    print "params"
+    print session_user, domain_id, client_id
     users = db.call_proc_with_multiresult_set(
         "sp_users_domain_managers", [session_user, domain_id, client_id], 3)
     print "users"

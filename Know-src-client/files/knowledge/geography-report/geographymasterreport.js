@@ -276,10 +276,11 @@ function pageData(on_current_page){
   for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    if(recordData[i].country_id == cId){
+    if(cId == recordData[i].country_id){
+      console.log("page:"+i)
       data.push(recordData[i]);
     }
-    if(i == (recordLength-1))
+    if((data.length) == (recordLength - 1))
     {
       break;
     }
@@ -307,12 +308,14 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
   var geographyList = geographiesList;
   $('#search-geography-name').val('');
   var r_count = 0;
+  console.log("1:"+geographiesList.length);
   for(var i=0;i<geographiesList.length;i++){
     if(val[0] == geographiesList[i].country_id){
+      console.log("1-2:"+geographiesList[i].country_id, val[0], i);
       r_count++;
     }
   }
-  console.log(r_count)
+  console.log("2:"+r_count)
   totalRecord = r_count;
   processPaging();
 }

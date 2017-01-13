@@ -662,14 +662,14 @@ $('#businessgroupsval').keyup(function (e) {
   }
   else
   {
-    if(country_id == 0 || country_id == '')
+    /*if(country_id == 0 || country_id == '')
     {
       displayMessage(message.country_required);
     }
     else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
-    }
+    }*/
 
   }
 });
@@ -714,14 +714,14 @@ $('#legalentityval').keyup(function (e) {
   }
   else
   {
-    if(country_id == 0 || country_id == '')
+    /*if(country_id == 0 || country_id == '')
     {
       displayMessage(message.country_required);
     }
     else if(client_id == 0 || client_id == '')
     {
       displayMessage(message.group_required);
-    }
+    }*/
 
   }
 });
@@ -760,7 +760,7 @@ $('#unitval').keyup(function (e) {
   }
   else
   {
-    if(country_id == 0 || country_id == '')
+    /*if(country_id == 0 || country_id == '')
     {
       displayMessage(message.country_required);
     }
@@ -771,7 +771,7 @@ $('#unitval').keyup(function (e) {
     else if(le_id == 0 || le_id == '')
     {
       displayMessage(message.legalentity_required);
-    }
+    }*/
   }
 });
 //Domains------------------------------------------------------------------------------------------------
@@ -849,7 +849,7 @@ $('#domainval').keyup(function (e) {
   }
   else
   {
-    if(country_id == 0 || country_id == '')
+    /*if(country_id == 0 || country_id == '')
     {
       displayMessage(message.country_required);
     }
@@ -860,7 +860,7 @@ $('#domainval').keyup(function (e) {
     else if(le_id == 0 || le_id == '')
     {
       displayMessage(message.legalentity_required);
-    }
+    }*/
   }
 });
 
@@ -950,7 +950,7 @@ $('#orgtypeval').keyup(function (e) {
   }
   else
   {
-    if(country_id == 0 || country_id == '')
+    /*if(country_id == 0 || country_id == '')
     {
       displayMessage(message.country_required);
     }
@@ -961,7 +961,7 @@ $('#orgtypeval').keyup(function (e) {
     else if(le_id == 0 || le_id == '')
     {
       displayMessage(message.legalentity_required);
-    }
+    }*/
   }
 });
 

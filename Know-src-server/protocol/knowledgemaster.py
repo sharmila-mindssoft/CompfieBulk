@@ -521,18 +521,18 @@ class DuplicateGeographyLevelsExists(Response):
         }
 
 class LevelShouldNotbeEmpty(Response):
-    def __init__(self, level):
-        self.level = level
+    def __init__(self, level_id):
+        self.level_id = level_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["level"])
-        level = data.get("level")
-        return LevelShouldNotbeEmpty(level)
+        data = parse_dictionary(data, ["level_id"])
+        level_id = data.get("level_id")
+        return LevelShouldNotbeEmpty(level_id)
 
     def to_inner_structure(self):
         return {
-            "level": self.level
+            "level_id": self.level_id
         }
 
 class UpdateGeographyLevelSuccess(Response):

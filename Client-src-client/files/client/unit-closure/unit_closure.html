@@ -22,14 +22,14 @@
                                         <div class="form-group">
                                             <label class="col-sm-5 control-label" for="example-input-small">Legal Entity<span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm m-b-5 legal-entity" id="legal_entity_option">
+                                                <select class="form-control input-sm m-b-5 legal-entity" id="legal_entity_option" tabindex="1" autofocus="autofocus">
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group m-b-0 text-center">
-                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button" onclick="show_div()"> Show
+                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button" tabindex="2"> Show
                                             </button>
                                         </div>
                                     </div>
@@ -82,8 +82,8 @@
                                                         </button>
                                                         <ul class="dropdown-menu search-status-list">
                                                             <li value="all" class="search-status-li active"><a>All</a></li>
-                                                            <li value="1" class="search-status-li"><a>Active</a></li>
-                                                            <li value="0" class="search-status-li"><a>Inactive</a></li>
+                                                            <li value="0" class="search-status-li"><a>Active</a></li>
+                                                            <li value="1" class="search-status-li"><a>Inactive</a></li>
                                                         </ul>
                                                     </div>
                                                 </td>
@@ -116,24 +116,27 @@
         </div>
     </div>
 </div>
+
 <!-- Modal -->
-<div id="custom-modal" class="modal-demo box-width-400">
+<div id="custom-modal" class="modal-demo box-width-400 default-display-none">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
-        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Unit Closure</h4>
-    <div class="custom-modal-text">
-        <form role="form">
+    <div class="custom-modal-text box-width-400">
+        <div role="form">
+            <input type="hidden" class="popup_unit_id">
+            <input type="hidden" class="popup_mode">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
+                <input type="password" class="form-control" id="client_pwd"
+                placeholder="Password">
             </div>
             <div class="form-group">
-                <label for="exampleInputReason" class="pull-left">Remarks <span class="mandatory">*</span></label>
-                <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
+                <label for="exampleInputReason" class="pull-left">Reason</label>
+                <textarea class="form-control input-sm" rows="2" placeholder="Enter Reason" id="remarks" maxlength="500"></textarea>
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light">Submit
-            </button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="update_status">Submit</button>
         </form>
     </div>
 </div>
@@ -144,20 +147,25 @@
             <td class="Business-group"></td>
             <td class="legal-entity"></td>
             <td class="division-name"></td>
-            <td class="category-name" align="center">
+            <td class="category-name">
             </td>
-            <td class="unit-name" align="center">
+            <td class="unit-name" id="unit_id">
+                <span class="unit_id" style="display: none;"></span>
             </td>
-            <td align="center" class="icon-3x">
+            <td align="center">
                 <span class="status"></span>
             </td>
             <td class="text-center closure-sel">
-                <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="close"> Close</a>
-                <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="reactive"> Reactivate</a>
+                <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="close" style="display: none;"> Close</a>
+                <a class="btn btn-primary waves-effect m-l-5 width-90px" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" id="reactive"  style="display: none;"> Reactivate</a>
                 <span class="closed default-display-none" ></span>
             </td>
         </tr>
     </table>
 </div>
-<script src="/files/client/common/js/custombox/custombox.min.js"></script>
+<div class="le-drop-down">
+    <option value=""></option>
+</div>
+<script src="/script/unit-closure/unit_closure.js"></script>
+<script src="/js/custombox/custombox.min.js"></script>
 {% endblock %}

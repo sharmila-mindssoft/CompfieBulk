@@ -154,7 +154,7 @@ def process_client_report_requests(request, db):
         )
         logger.logClientApi("------", str(time.time()))
         result = get_reassignedhistory_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, client_id, le_id
         )
         logger.logClientApi("GetReassignedHistoryReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
@@ -504,7 +504,7 @@ def get_risk_report_filters(db, request, session_user, client_id):
     )
 
 
-def get_reassignedhistory_report_filters(db, request, session_user, client_id):
+def get_reassignedhistory_report_filters(db, request, session_user, client_id, le_id):
     user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     country_list = get_countries_for_user(db, session_user)

@@ -125,13 +125,10 @@ function renderUserList(response) {
             $('.edit', rowClone).on('click', function() {
                 displayEdit(v.user_id);
             });
-
             if (v.is_active == true) {
-                statusmsg = message.deactive_message;
                 $('.status', rowClone).removeClass('fa-times text-danger');
                 $('.status', rowClone).addClass('fa-check text-success');
             } else {
-                statusmsg = message.active_message;
                 $('.status', rowClone).removeClass('fa-check text-success');
                 $('.status', rowClone).addClass('fa-times text-danger');
             }
@@ -139,6 +136,12 @@ function renderUserList(response) {
                 showTitle(this);
             });
             $('.status', rowClone).on('click', function(e) {
+                if (v.is_active == true) {
+                    statusmsg = message.deactive_message;
+                }else {
+                    statusmsg = message.active_message;
+                }
+
                 CurrentPassword.val('');
                 Remark.val('');
                 RemarkView.hide();

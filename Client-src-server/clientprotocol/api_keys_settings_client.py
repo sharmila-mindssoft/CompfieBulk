@@ -72,7 +72,7 @@ api_params = {
     'u_g_id': make_int_field(is_optional=True),
     'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'is_active': make_bool_field(),
-    'u_c_id': make_int_field,
+    'u_c_id': make_int_field(),
     'f_ids': make_vector_type_int(length=1000, is_optional=True),
     'u_c_name': make_string_field(length=50, validfun=is_alpha_numeric),
     "forms": make_map_type("clientcore", "Menu"),
@@ -101,9 +101,9 @@ api_params = {
     "sp_id": make_int_field(),
     "s_u_id": make_int_field(is_optional=True),
     "s_u_name": make_string_field(is_optional=True),
-    "is_assignee": make_bool_field(is_optional=True),
-    "is_approver": make_bool_field(is_optional=True),
-    "is_concurrence": make_bool_field(is_optional=True),
+    "is_assignee": make_bool_field(),
+    "is_approver": make_bool_field(),
+    "is_concurrence": make_bool_field(),
 
     "u_id": make_int_field(),
     "u_ids": make_vector_type_int(is_optional=True),
@@ -139,7 +139,6 @@ api_params = {
     "comp_remarks": make_text_field(length=500, is_optional=True),
     "r_count": make_int_field(length=100000),
 
-
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "bg_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
@@ -149,6 +148,5 @@ api_params = {
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
-    "client_admin": make_int_field(),
-
+    "client_admin": make_int_field()
 }

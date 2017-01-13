@@ -16,13 +16,13 @@
     <div class="col-sm-8">
       <div class="card-box table-responsive">
         <div class="col-sm-12 no-padding">
-          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Country</th>
-                <th>Level</th>
-                <th>Name</th>
+                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                <th>Level <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                <th>Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
                 <th class="text-center">Edit</th>
                 <th class="text-center" width="15%">Status</th>
               </tr>
@@ -92,19 +92,20 @@
         </div>
         <div id="bg-primary1" class="panel-collapse collapse in">
           <div class="portlet-body p-b-10">
-            <div class="form-horizontal group-border-dashed">
-              <div class="form-group m-b-0">
-              <label class="col-sm-offset-2 col-sm-3 control-label" for="example-input-small">Country Name:<span class="mandatory">*</span></label>
-              <div class="col-sm-6 controls">
-                <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Country Name" value="" style="width:50%;" autofocus="autofocus">
-                <input type="hidden" id="country">
-                <input type="hidden" id="geographyid">
-                <div id="ac-country" class="ac-textbox default-display-none">
-                <ul class="hidemenu" style="width:50%;"></ul>
+          <form class="form-horizontal" role="form">
+              <div class="form-group has-feedback">
+                <label class="col-sm-4 control-label">Country Name:<span class="mandatory">*</span></label>
+                <div class="col-md-4">
+                  <input class="form-control input-sm" id="countryval" placeholder="Country Name" type="text">
+                  <i class="form-control-feedback fa fa-search"></i>
+                  <input type="hidden" id="country">
+                  <input type="hidden" id="geographyid">
+                  <div id="ac-country" class="ac-textbox default-display-none">
+                    <ul class="hidemenu"></ul>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+          </form>
       </div>
     </div>
     <div class="table-responsive p-l-20 p-r-20">
@@ -210,4 +211,5 @@
     </div>
 </div>
 <script type="text/javascript" src="/script/geography-master/geographymaster.js"></script>
+<script src="/js/js-sorting.js"></script>
 {% endblock %}

@@ -1,3 +1,4 @@
+// Declare basic elements to variable 
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
@@ -26,11 +27,8 @@ var users = $("#user");
 var usersId = $("#user-id");
 var acUsers = $("#ac-user");
 
-var complianceFrequency = $("#compliance-frequency");
-var userType = $("#user-type");
 var fromDate = $("#from-date");
 var toDate = $("#to-date");
-var complianceTaskStatus = $("#compliance-task-status");
 
 var showButton = $("#show-button");
 var exportButton = $("#export-button");
@@ -47,6 +45,7 @@ var totalRecord = $("#total-record");
 var REPORT = null;
 
 function PageControls() {
+    // To call date picker function. assign to date field 
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
         changeYear: true,
@@ -63,6 +62,7 @@ function PageControls() {
         }
     });
 
+    //when click the country text box to initiate auto complete to display & get values from object 
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._countries;
@@ -70,8 +70,9 @@ function PageControls() {
             displayMessage(message.domainname_required);
         var condition_fields = ["is_active"];
         var condition_values = [true];
-        //alert(text_val +' - '+countryList.toSource() +' - '+)
+        // to call auto complete common function to required variable to pass
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
+            // on success to return the ID and value  
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -145,12 +146,12 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        //if (REPORT.validate()) {
-        reportView.show();
-        showAnimation(reportView);
-        REPORT.fetchReportValues();
-        REPORT.showReportValues();
-        //}
+        if (REPORT.validate()) {
+            reportView.show();
+            showAnimation(reportView);
+            REPORT.fetchReportValues();
+            REPORT.showReportValues();
+        }
     });
 
     exportButton.click(function() {
@@ -169,7 +170,7 @@ clearElement = function(arr) {
         });
     }
 }
-
+// on success auto complete to set the value corresponding  
 onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
@@ -221,143 +222,61 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
     users.focus();
 }
 
-StatusReportConsolidated = function() {
-    this._countries = [];
+ReassignHistory = function() {
+    this._countries = []; // To declare empty array object 
     this._entities = [];
     this._domains = [];
     this._units = [];
     this._acts = [];
     this._compliance_task = [];
-    this._frequencies = [];
-    this._user_type = [];
     this._users = [];
-    this._compliance_task_status = [];
-    this._service_providers = [];
     this._report_data = [];
 }
 
-StatusReportConsolidated.prototype.loadSearch = function() {
+ReassignHistory.prototype.loadSearch = function() {
     reportView.hide();
-    country.empty();
-    legalEntity.empty();
-    domain.val('');
-    domainId.val('');
-    unit.val('');
-    unitId.val('');
-    act.val('');
-    actId.val('');
-    complianceTask.val('');
-    complianceTaskId.val('');
-    complianceFrequency.empty();
-    userType.empty();
-    users.val('');
-    usersId.val('');
-    fromDate.val('');
-    toDate.val('');
-    complianceTaskStatus.empty();
+    clearElement([country, countryId, legalEntity, legalEntityId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, fromDate, toDate]);
     this.fetchSearchList();
 };
 
-StatusReportConsolidated.prototype.fetchSearchList = function() {
+ReassignHistory.prototype.fetchSearchList = function() {
     t_this = this;
-    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"frequencies":[{"f_id":1,"f_name":"Periodical"},{"f_id":2,"f_name":"Review"},{"f_id":3,"f_name":"Flexi Review"},{"f_id":4,"f_name":"One Time"}],"user_type":[{"user_type_id":1,"user_type_name":"Assignee"},{"user_type_id":2,"user_type_name":"Concurrence"},{"user_type_id":3,"user_type_name":"Approval"}],"compliance_task_status":[{"comp_task_status_id":1,"comp_task_status":"Complied"},{"comp_task_status_id":2,"comp_task_status":"Delayed Compliances"},{"comp_task_status_id":3,"comp_task_status":"Inprogress"},{"comp_task_status_id":4,"comp_task_status":"Not Complied"}],"service_providers":[{"s_p_id":1,"s_p_name":"String","s_p_shrot":"short"}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
+    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._countries = object.countries;
     t_this._entities = object.entities;
-    t_this._frequencies = object.frequencies;
-    t_this._userType = object.user_type;
     t_this._users = object.users;
-    t_this._complianceTaskStatus = object.compliance_task_status;
-    t_this._serviceProviders = object.service_providers;
-
-    t_this.renderCountriesList(t_this._countries);
-    t_this.renderLegalEntityList(t_this._entities);
-    t_this.renderComplianceFrequencyList(t_this._frequencies);
-    t_this.renderUserTypeList(t_this._userType);
-    t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
 };
 
-StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
+ReassignHistory.prototype.fetchDomainList = function(le_id) {
     t_this = this;
     var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":2,"is_active":true},{"d_id":3,"d_name":"Employee Law","le_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._domains = object.domains;
 };
 
-StatusReportConsolidated.prototype.fetchUnitList = function(dom_id) {
+ReassignHistory.prototype.fetchUnitList = function(dom_id) {
     t_this = this;
     var jsondata = '{"units":[{"u_id":1,"u_name":"RG Madurai Unit","u_code":"RG1034","address":"12 RJ Complex, Main road, Madurai, 625022","d_id":1,"is_active":true},{"u_id":2,"u_name":"RG Dindugal Unit","u_code":"RG1035","address":"10 RG Complex, Main road, Dindugal, 623020","d_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._units = object.units;
 };
 
-StatusReportConsolidated.prototype.fetchActList = function(unit_id) {
+ReassignHistory.prototype.fetchActList = function(unit_id) {
     t_this = this;
     var jsondata = '{"acts":[{"act_id":1,"act_name":"The Batteries Act","u_id":1,"is_active":true},{"act_id":2,"act_name":"Indian Partnership Act, 1932","u_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._acts = object.acts;
 };
 
-StatusReportConsolidated.prototype.fetchComplianceaskList = function(act_id) {
+ReassignHistory.prototype.fetchComplianceaskList = function(act_id) {
     t_this = this;
     var jsondata = '{"compliance_task":[{"c_id":1,"c_task":"FORM I - Half yearly returns Submission","act_id":1,"is_active":true},{"c_id":2,"c_task":"FORM II - Registration","act_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._compliance_task = object.compliance_task;
 };
 
-StatusReportConsolidated.prototype.renderCountriesList = function(data) {
-    t_this = this;
-    country.empty();
-    var countryName = [];
-    $.each(data, function(i, e) {
-        //countryName.push(e.c_name+",");
-        countryName = e.c_name;
-    });
-    country.html(countryName);
-};
-
-StatusReportConsolidated.prototype.renderLegalEntityList = function(data) {
-    t_this = this;
-    legalEntity.empty();
-    var legalEntityName = [];
-    $.each(data, function(i, e) {
-        //legalEntityName.push(e.le_name+",");
-        legalEntityName = e.le_name;
-    });
-    legalEntity.html(legalEntityName);
-};
-
-StatusReportConsolidated.prototype.renderComplianceFrequencyList = function(data) {
-    t_this = this;
-    complianceFrequency.empty();
-    var complianceFrequencyList = '<option value="0">All</option>';
-    $.each(data, function(i, e) {
-        complianceFrequencyList = complianceFrequencyList + '<option value="' + e.f_id + '"> ' + e.f_name + ' </option>';
-    });
-    complianceFrequency.html(complianceFrequencyList);
-};
-
-StatusReportConsolidated.prototype.renderUserTypeList = function(data) {
-    t_this = this;
-    userType.empty();
-    var userTypeList = '<option value="0">All</option>';
-    $.each(data, function(i, e) {
-        userTypeList = userTypeList + '<option value="' + e.user_type_id + '"> ' + e.user_type_name + ' </option>';
-    });
-    userType.html(userTypeList);
-};
-
-StatusReportConsolidated.prototype.renderComplianceTaskStatusList = function(data) {
-    t_this = this;
-    complianceTaskStatus.empty();
-    var complianceTaskStatusList = '<option value="0">All</option>';
-    $.each(data, function(i, e) {
-        complianceTaskStatusList = complianceTaskStatusList + '<option value="' + e.comp_task_status_id + '"> ' + e.comp_task_status + ' </option>';
-    });
-    complianceTaskStatus.html(complianceTaskStatusList);
-};
-
-StatusReportConsolidated.prototype.validate = function() {
+ReassignHistory.prototype.validate = function() {
     if (country) {
         if (isNotEmpty(country, message.country_required) == false)
             return false;
@@ -424,14 +343,14 @@ showAnimation = function(element) {
         });
 }
 
-StatusReportConsolidated.prototype.fetchReportValues = function() {
+ReassignHistory.prototype.fetchReportValues = function() {
     t_this = this;
-    var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Sivakumar","activity_status":"Pending","activity_date":"20-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
+    var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Aug-2016","assigned":"EMP0016 - Rajkumar / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Approved"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jun-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":""},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"20-Aug-2016","assigned":"EEMP0016 -Rajkumar / EMP0013 - Suresh / EMP0014 -Praveen","reason":"Role Changed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._report_data = object.data_lists;
 };
 
-StatusReportConsolidated.prototype.showReportValues = function() {
+ReassignHistory.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
@@ -463,62 +382,30 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             var clonethree = $('#template #report-table .row-three').clone();
             $('.sno', clonethree).text(j);
             $('.compliance-task', clonethree).text(v.compliance_task);
-            $('.frequency', clonethree).text(v.frequency);
             $('.due-date', clonethree).text(v.due_date);
-            $('.compliance-task-status', clonethree).text(v.task_status);
-            $('.user-name', clonethree).text(v.user_name);
-            $('.activity-status', clonethree).text(v.activity_status);
-            if (v.activity_date != "")
-                $('.activity-date', clonethree).text(v.activity_date);
-            else
-                $('.activity-date', clonethree).text('-');
-            if (v.doc_list.length > 0) {
-                $.each(v.doc_list, function(k1, v1) {
-                    $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
-                });
-            } else {
-                $('.uploaded-document', clonethree).text('-');
-            }
-
-            if (v.completion_date != "")
-                $('.completion-date', clonethree).text(v.completion_date);
-            else
-                $('.completion-date', clonethree).text('-');
+            $('.assigned-date', clonethree).text(v.assigned_date);
+            $('.assigned', clonethree).text(v.assigned);
+            if (v.reason != "") { $('.reason', clonefour).text(v.reason); } else { $('.reason', clonefour).text('-'); }
             reportTableTbody.append(clonethree);
             complianceTask = v.compliance_task;
         } else {
             var clonefour = $('#template #report-table .row-four').clone();
-            $('.user-name-new', clonefour).text(v.user_name);
-            $('.activity-status-new', clonefour).text(v.activity_status);
-            if (v.activity_date != "")
-                $('.activity-date-new', clonefour).text(v.activity_date);
-            else
-                $('.activity-date-new', clonefour).text('-');
-            if (v.doc_list.length > 0) {
-                $.each(v.doc_list, function(k1, v1) {
-                    $('.uploaded-document-new a', clonefour).text(v1.doc_name).attr("href", v1.doc_url);
-                });
-            } else {
-                $('.uploaded-document-new', clonefour).text('-');
-            }
-
-            if (v.completion_date != "")
-                $('.completion-date-new', clonefour).text(v.completion_date);
-            else
-                $('.completion-date-new', clonefour).text('-');
+            $('.assigned-date-new', clonefour).text(v.assigned_date);
+            $('.assigned-new', clonefour).text(v.assigned);
+            $('.reason-new', clonefour).text(v.reason);
+            if (v.reason != "") { $('.reason-new', clonefour).text(v.reason); } else { $('.reason-new', clonefour).text('-'); }
             reportTableTbody.append(clonefour);
-
             complianceTask = v.compliance_task;
         }
     });
     totalRecord.html(j);
 };
 
-StatusReportConsolidated.prototype.exportReportValues = function() {
+ReassignHistory.prototype.exportReportValues = function() {
     alert('export');
 };
 
-StatusReportConsolidated.prototype.possibleFailures = function(error) {
+ReassignHistory.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
         this.displayMessage("Domain name exists");
     } else {
@@ -526,9 +413,12 @@ StatusReportConsolidated.prototype.possibleFailures = function(error) {
     }
 };
 
-REPORT = new StatusReportConsolidated();
+// call class ReassignHistory to store the REPORT object
+REPORT = new ReassignHistory();
 
 $(document).ready(function() {
+    // To initially to call the page controller what are the activity to set in page controller
     PageControls();
+    // To store values in object & search list element 
     REPORT.loadSearch();
 });

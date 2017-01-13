@@ -21,6 +21,7 @@ __all__ = [
 ########################################################
 def process_client_master_requests(request, db, session_user, client_id):
     request = request.request
+
     if type(request) is clientmasters.GetServiceProviders:
         result = process_get_service_providers(
             db, request, session_user
@@ -90,6 +91,33 @@ def process_client_master_requests(request, db, session_user, client_id):
 
     elif type(request) is clientmasters.GetAuditTrails:
         result = process_get_audit_trails(db, request, session_user)
+
+    elif type(request) is clientmasters.GetUnitClosureData:
+        logger.logClientApi(
+            "GetUnitClosureData - " + str(client_id), "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = process_get_unit_closure_data(db, request, session_user)
+        logger.logClientApi("GetUnitClosureData", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientmasters.GetUnitClosureUnitData:
+        logger.logClientApi(
+            "GetUnitClosureUnitData - " + str(client_id), "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = process_get_unit_closure_unit_data(db, request, session_user)
+        logger.logClientApi("GetUnitClosureUnitData", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientmasters.SaveUnitClosureData:
+        logger.logClientApi(
+            "SaveUnitClosureData - " + str(client_id), "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = process_save_unit_closure_unit_data(db, request, session_user)
+        logger.logClientApi("SaveUnitClosureData", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     return result
 
@@ -513,3 +541,42 @@ def reorder_menu(menus):
     if "My Accounts" in menus:
         new_menu["My Accounts"] = menus["My Accounts"]
     return new_menu
+
+
+########################################################
+# To get unit closure legal entity list under client id
+########################################################
+def process_get_unit_closure_data(db, request, session_user):
+    print "user"
+    print session_user
+    unit_closure_legal_entities = get_unit_closure_legal_entities(db, session_user)
+    print "controller"
+    print unit_closure_legal_entities
+    return clientmasters.GetUnitClosureDataSuccess(unit_closure_legal_entities)
+
+########################################################
+# To get unit closure units list under legal entity id
+########################################################
+def process_get_unit_closure_unit_data(db, request, session_user):
+    unit_closure_units = get_unit_closure_units_list(db, request)
+    return clientmasters.GetUnitClosureUnitDataSuccess(unit_closure_units)
+
+########################################################
+# To save unit closure units data under unit id
+########################################################
+def process_save_unit_closure_unit_data(db, request, session_user):
+    session_user = int(session_user)
+    unit_id = request.unit_id
+    action_mode = request.grp_mode
+    password = request.password
+    remarks = request.closed_remarks
+
+    if not is_invalid_id(db, "unit_id", unit_id):
+        return clientmasters.InvalidUnitId()
+    else:
+        if verify_password(db, password, session_user):
+            result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
+            if result is True:
+                return clientmasters.SaveUnitClosureSuccess()
+        else:
+            return clientmasters.InvalidPassword()

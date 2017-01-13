@@ -95,9 +95,8 @@ function initClientMirror() {
     }
 
     function getSessionToken() {
-        // var info = getUserInfo();
-        // return info.session_token;
-        return "14-6026dd780194411fbcac2ce5decc5141";
+        var info = getUserInfo();
+        return info.session_token;
     }
 
     function getUserMenu() {
@@ -159,7 +158,7 @@ function initClientMirror() {
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
-            'session_token': "14-6026dd780194411fbcac2ce5decc5141",
+            'session_token': sessionToken,
             'request': request
         };
         var body = [
@@ -1027,13 +1026,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    /*function getSaveClientUserGroupDict(ugName, fIds) {
-        return {
-            'ug_name': ugName,
-            'f_ids': fIds
-        };
-    }*/
-
     function saveClientUserGroup(u_g_name, f_cat_id, f_ids, callback) {
         callerName = 'client_masters';
         var request = [
@@ -1756,12 +1748,14 @@ function initClientMirror() {
     function getReassignedHistoryReportFilters(callback) {
         var request = [
             'GetReassignedHistoryReportFilters',
-            {}
+            {
+                'le_id': le_id,
+            }
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-
+    
     function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
         var request = [
             'GetReassignedHistoryReport', {
@@ -1888,6 +1882,42 @@ function initClientMirror() {
         } else {
             $('#escalation_count').text('0');
         }
+    }
+
+    function getUnitClosureData(callback){
+        var request = [
+            'GetUnitClosureData',
+            {}
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUnitClosureUnitList(le_id, callback){
+        var request = [
+            'GetUnitClosureUnitData',
+            {
+                "legal_entity_id": le_id
+            }
+        ];
+        callerName = 'client_masters';
+        console.log(request)
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback)
+    {
+        callerName = 'client_masters';
+        var request = [
+          'SaveUnitClosureData',
+          {
+            "password": password,
+            "closed_remarks": remarks,
+            "unit_id": unit_id,
+            "grp_mode": action_mode
+          }
+        ];
+        clientApiRequest(callerName, request, callback);
     }
 
     function uploadFormatFile(formdata, callback) {
@@ -2033,7 +2063,10 @@ function initClientMirror() {
         updateUserProfile: updateUserProfile,
         updateUserInfo: updateUserInfo,
         getContractExpireAndNotificationCount: getContractExpireAndNotificationCount,
-        uploadFormatFile: uploadFormatFile
+        uploadFormatFile: uploadFormatFile,
+        getUnitClosureData: getUnitClosureData,
+        getUnitClosureUnitList: getUnitClosureUnitList,
+        saveUnitClosureData: saveUnitClosureData
     };
 }
 var client_mirror = initClientMirror();
