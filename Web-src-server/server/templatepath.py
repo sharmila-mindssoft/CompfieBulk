@@ -143,7 +143,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/reassigned-history",
+        "/reassigned-history-report",
         "files/client/reassigned-history/reassign_history.html",
         None, {}
     ),

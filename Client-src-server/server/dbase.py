@@ -702,15 +702,19 @@ class Database(object):
         return new_id
 
     def save_activity(
-        self, category_id, user_id, form_id, action, client_id,
-        legal_entity_id, unit_id,
+        self, user_id, form_id, action, legal_entity_id=None, unit_id=None,
     ):
         created_on = get_date_time()
         # if legal_entity_id is None :
         #     legal_entity_id = ''
         # if unit_id is None :
         #     unit_id = ''
-
+        tblUsers = "tbl_users"
+        column = ["user_category_id, client_id"]
+        condition_val = "user_id= %s" % user_id
+        rows = self.get_data(tblUsers, column, condition_val)
+        client_id = rows[0]["client_id"]
+        category_id = rows[0]["user_category_id"]
         query = " INSERT INTO tbl_activity_log " + \
             " (client_id, legal_entity_id, unit_id, user_category_id, " + \
             " user_id, form_id, action, created_on) " + \
