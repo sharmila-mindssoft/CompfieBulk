@@ -1027,13 +1027,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    /*function getSaveClientUserGroupDict(ugName, fIds) {
-        return {
-            'ug_name': ugName,
-            'f_ids': fIds
-        };
-    }*/
-
     function saveClientUserGroup(u_g_name, f_cat_id, f_ids, callback) {
         callerName = 'client_masters';
         var request = [
@@ -1756,12 +1749,14 @@ function initClientMirror() {
     function getReassignedHistoryReportFilters(callback) {
         var request = [
             'GetReassignedHistoryReportFilters',
-            {}
+            {
+                'le_id': le_id,
+            }
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-
+    
     function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
         var request = [
             'GetReassignedHistoryReport', {

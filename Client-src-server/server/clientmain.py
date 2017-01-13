@@ -417,7 +417,7 @@ class API(object):
         return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)
-    def handle_client_reports(self, request, db, session_user, client_id):
+    def handle_client_reports(self, request, db, session_user, client_id, le_id):
         return controller.process_client_report_requests(request, db)
 
     @api_request(dashboard.RequestFormat)

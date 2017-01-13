@@ -99,7 +99,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/domain-wise-report",
-         "files/client/domain-wise-report/domain-wise-report.html",
+         "files/client/domain-wise-report/domain_wise_report.html",
         None, {}
     ),
     (
@@ -139,12 +139,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/statutory-settings-unit-wise-report",
-        "files/client/statutory-settings-unit-wise-report/statutory-settings-unit-wise-report.html",
+        "files/client/statutory-settings-unit-wise/statutory_settings_unit_wise.html",
         None, {}
     ),
     (
-        "/reassigned-history-report",
-        "files/client/reassigned-history-report/reassigned-history-report.html",
+        "/reassigned-history",
+        "files/client/reassigned-history/reassign_history.html",
         None, {}
     ),
     (
