@@ -53,7 +53,7 @@ CLIENT_TEMPLATE_PATHS = [
     # transactions ---------------------------------------------------------------------
     (
         "/statutory-settings",
-        "files/client/statutory-settings/statutorysettings.html",
+        "files/client/statutory-settings/statutory_settings.html",
         None, {}
     ),
     (
