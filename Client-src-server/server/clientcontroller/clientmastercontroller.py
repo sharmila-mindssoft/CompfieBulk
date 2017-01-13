@@ -21,7 +21,7 @@ __all__ = [
 ########################################################
 def process_client_master_requests(request, db, session_user, client_id):
     request = request.request
-    
+
     if type(request) is clientmasters.GetServiceProviders:
         result = process_get_service_providers(
             db, request, session_user
