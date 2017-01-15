@@ -1889,13 +1889,15 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-  function getAssignedUnitDetails(legal_entity_id, domain_manager_id, callback){
+  function getAssignedUnitDetails(legal_entity_id, domain_manager_id, client_id, domain_id, callback){
     callerName = "techno";
     var request = [
       "GetAssignedUnitDetails",
       {
         "legal_entity_id": legal_entity_id,
-        "user_id": domain_manager_id
+        "user_id": domain_manager_id,
+        "client_id": client_id,
+        "domain_id": domain_id
       }
     ];
     apiRequest(callerName, request, callback);
