@@ -326,7 +326,7 @@ Auditpage.prototype.setControlValues = function(e) {
         if(Category.val() != '')
         {
             var userId = User_id.val();
-            console.log("user:"+userId)
+            console.log("user:"+userId, Category.val())
             if(Category.val() > 2){
                 for(var i=0;i<a_page._auditData.length;i++)
                 {
@@ -342,14 +342,27 @@ Auditpage.prototype.setControlValues = function(e) {
                     else
                     {
                         if((a_page._auditData[i].user_category_id == Category.val())){
-                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id);
+                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id, form_list);
                         }
                     }
                 }
             }
             else
             {
-                form_list = a_page.pushForms("admin", 0);
+                for(var i=0;i<a_page._auditData.length;i++)
+                {
+                    if(userId > 0){
+                        if((a_page._auditData[i].user_id == userId)){
+                            console.log("1:"+form_list.length)
+                            form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
+                            console.log("2:"+form_list.length)
+                        }
+                    }
+                    else
+                    {
+                        form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
+                    }
+                }
             }
             commonAutoComplete(
                 e, ACForm, Form_id, textval,
@@ -471,19 +484,24 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
     console.log("check:"+userCheck)
     if(userCheck == true){
         form_name = null;
-
-        for(var j=0;j<a_page._formList.length;j++)
-        {
-            if(form_id == a_page._formList[j].form_id){
-                form_name = a_page._formList[j].form_name;
-                break;
+        console.log("id:"+form_id)
+        if(form_id > 0){
+            for(var j=0;j<a_page._formList.length;j++)
+            {
+                if(form_id == a_page._formList[j].form_id){
+                    form_name = a_page._formList[j].form_name;
+                    break;
+                }
             }
+        }
+        else{
+            form_name = "Login"
         }
         console.log("name:"+form_name);
         if(form_list.length > 0)
         {
             var arr_form = [];
-            element = a_page._formList[j].form_id;
+            element = form_id;
             arr_form = form_list.reduce(function(arr, e, i) {
                 if (e.form_id === element)
                     arr.push(i);
