@@ -1,11 +1,11 @@
-{% extends "files/client/common/html/container.html" %}
-{% block content %}
+{% extends "files/client/common/html/container.html" %}{% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
 <div class="content">
 <div class="container">
     <div class="row" id="animationSandbox">
         <div class="col-sm-12">
-            
             <div class="portlet">
                 <div class="portlet-heading bg-info">
                     <h3 class="portlet-title">Domain Wise Report</h3>
@@ -23,102 +23,132 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">India</p>
-                            </div>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span> </label>
+                             <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="country-id" value="">
+                                                <div id="ac-country" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">RG Legal Entity</p>
-                            </div>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                             <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="2">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal-entity-id" value="">
+                                                <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Domain Name" id="domain" tabindex="3">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="domain-id" value="">
+                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                <ul class="hidemenu"></ul>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Unit">
+                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit" tabindex="4">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="unit-id" value="">
+                                <div id="ac-unit" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
+                               <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act" tabindex="5">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="act-id" value="">
+                                                <div id="ac-act" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                            </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task" tabindex="6">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="compliance-task-id" value="">
+                                <div id="ac-compliance-task" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                            </div>
                             </div>
                         </div>
-                    </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
                             <div class="col-sm-6">
-                                <select class="form-control input-sm">
-                                  <option>All</option>
+                                <select class="form-control input-sm" id="compliance-frequency" tabindex="7">
+                                  <!-- <option>All</option>
                                   <option>Periodical</option>
                                   <option>Review</option>
                                   <option>Flexi Review</option>
                                   <option>One Time</option>
-                                  <option>On Occurrence</option>
+                                  <option>On Occurrence</option> -->
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">User Type:</label>
                             <div class="col-sm-6">
-                                <select class="form-control input-sm">
-                                  <option>All</option>
+                                <select class="form-control input-sm" id="user-type" tabindex="8">
+                                 <!--  <option>All</option>
                                   <option>Assignee</option>
                                   <option>Concurrence</option>
-                                  <option>Approval</option>
+                                  <option>Approval</option> -->
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter User">
+                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="9">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
+                                 <input type="hidden" id="user-id" value="">
+                                 <div id="ac-user" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                        </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MM-YYYY" value="01-Jan-2016">
+                                <input type="text" class="form-control input-sm from-date" placeholder="DD-MM-YYYY" id="from-date" tabindex="10">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MM-YYYY" value="31-Dec-2016">
+                                <input type="text" class="form-control input-sm to-date" placeholder="DD-MM-YYYY" tabindex="11" id="to-date">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-4 control-label">Compliance Task Status:</label>
                             <div class="col-sm-6">
-                                <select class="form-control input-sm">
-                                  <option>All</option>
+                                <select class="form-control input-sm" id="compliance-task-status" tabindex="12">
+                                  <!-- <option>All</option>
                                   <option>Complied</option>
                                   <option>Delayed Compliances</option>
                                   <option>Inprogress</option>
-                                  <option>Not Complied</option>
+                                  <option>Not Complied</option> -->
                                 </select>
                             </div>
                         </div>
@@ -126,8 +156,8 @@
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()" > Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="13"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="button" id="export-button" tabindex="14"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -135,7 +165,7 @@
                 </form>
                 </div>
                 </div>
-                <script type="text/javascript">
+               <!--  <script type="text/javascript">
                     function show_div() {
                         $('.details').show();
                         $('#compliance_animation')
@@ -144,10 +174,11 @@
                           $(this).removeClass();
                         });
                     }
-                </script>
+                </script> -->
                 </div>
                  <div id="compliance_animation">
-                <div class="card-box details" style="display: none;">
+                <div id="report-view" class="card-box details" style="display: none;">
+                <div class="card-box">
                 <div class="table-responsive">
                     <div class="col-sm-12">
                         <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
@@ -171,14 +202,14 @@
                                 <th width="10%">Completion Date</th>
                             </tr>
                         </thead>
-                        <tbody>
+                       <!--  <tbody>
                             <tr class="bg-lightdark">
                               <td colspan="100%">Unit: AP0003 - Madurai - No.14, 80 feet road, Anna nagar, Madurai</td>
                             </tr>
                             <tr>
                                 <td colspan="100%" >
                                     <div class="col-sm-2 no-padding">
-                                        <!-- <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" /> -->
+                                
                                         <mark class="p-l-10 p-r-10">Test Act Central</mark>
                                     </div>
                                 </td>
@@ -257,7 +288,7 @@
                             <tr>
                                 <td colspan="100%" >
                                     <div class="col-sm-2 no-padding">
-                                        <!-- <input type="text" class="form-control input-sm text-center" placeholder="RG Group" value=" Test Act Central " readonly="true" /> -->
+                                        
                                         <mark class="p-l-10 p-r-10">Test Act Central</mark>
                                     </div>
                                 </td>
@@ -296,9 +327,13 @@
                                     </ul>
                                 </td>
                             </tr>
-                        </tbody>
+                        </tbody> -->
+                         <tbody id="report-table-tbody">
+                                            
+                                        </tbody>
                     </table>
-                    <p class="rpt-count m-b-0">Total : 3 record(s)</p>
+                     <p class="rpt-count m-b-0">Total : <span id="total-record" ></span> record(s)</p>
+                </div>
                 </div>
             </div>
         </div>
@@ -308,4 +343,55 @@
 </div>
 </div>
 </div>
+<div id="template">
+    <table id="report-table">
+        <tr class="bg-lightdark row-one">
+            <td colspan="100%">
+                <div class="col-sm-12">Unit: <span class="unit-name"></span></div>
+            </td>
+        </tr>
+        <tr class="row-two">
+            <td colspan="100%">
+                <div class="col-sm-2 no-padding">
+                    <mark class="p-l-10 p-r-10 act-name"></mark>
+                </div>
+            </td>
+        </tr>
+        <tr class="row-three">
+            <td class="sno"></td>
+            <td class="compliance-task"></td>
+            <td class="frequency"></td>
+            <td class="due-date"></td>
+            <td class="compliance-task-status"></td>
+            <td class="user-name"></td>
+            <td class="activity-status"></td>
+            <td class="activity-date"></td>
+            <td class="uploaded-document"><a></a></td>
+            <td class="completion-date"></td>
+        </tr>
+        <tr class="row-four">
+            <td colspan="5">&nbsp;</td>
+            <td colspan="100%">
+                <ul class="tree">
+                    <li>
+                        <table width="100%">
+                            <tbody>
+                                <tr class="smallfont">
+                                   <td width="27%" class="user-name-new"></td>
+                                   <td width="19%" class="activity-status-new"></td>
+                                   <td width="20%" class="activity-date-new"></td>
+                                   <td width="20%" class="uploaded-document-new"><a></a></td>
+                                   <td width="0%" class="completion-date-new" >&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/domain-wise-report/domain_wise_report.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}

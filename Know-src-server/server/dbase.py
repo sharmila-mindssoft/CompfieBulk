@@ -707,12 +707,15 @@ class Database(object):
 
     def save_activity(self, user_id, form_id, action):
         created_on = get_date_time()
-        activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
+        q = "select user_category_id from tbl_users where user_id = %s"
+        row = self.select_one(q, [user_id])
+        user_cat_id = row.get("user_category_id")
+
         query = " INSERT INTO tbl_activity_log " + \
-            " (activity_log_id, user_id, form_id, action, created_on) " + \
+            " (user_category_id, user_id, form_id, action, created_on) " + \
             " VALUES (%s, %s, %s, %s, %s) "
         self.execute(query, (
-                activityId, user_id, form_id, action, created_on
+                user_cat_id, user_id, form_id, action, created_on
         ))
         return True
 

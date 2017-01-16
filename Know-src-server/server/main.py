@@ -150,7 +150,7 @@ class API(object):
         print s
         s = base64.b64encode(s)
         s = json.dumps(s)
-        print s
+        # print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -159,8 +159,8 @@ class API(object):
     ):
         request_data = None
         try:
-            print request
-            print request.data
+            # print request
+            # print request.data
 
             if not request.data:
                 raise ValueError("Request data is Null")
@@ -218,7 +218,7 @@ class API(object):
             response_data = unbound_method(self, request_data, _db)
 
             if response_data is None or type(response_data) is bool:
-                # print response_data
+                print response_data
                 _db.rollback()
                 raise fetch_error()
             elif type(response_data) != technomasters.ClientCreationFailed:
@@ -312,7 +312,7 @@ class API(object):
     @csrf.exempt
     @api_request(login.Request)
     def handle_mobile_login_request(self, request, db):
-        return controller.process_mobile_request(request, db, self._ip_addess)
+        return controller.process_mobile_login_request(request, db, self._ip_addess)
 
     @csrf.exempt
     @api_request(mobile.RequestFormat)

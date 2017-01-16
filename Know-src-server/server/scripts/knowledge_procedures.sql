@@ -4830,7 +4830,7 @@ BEGIN
     tbl_domain_countries as t1
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
     inner join tbl_statutory_levels as t4 on t3.domain_id = t4.domain_id
-    and t3.country_id = t4.country_id
+    and t1.country_id = t4.country_id
     inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
     and t2.country_id = t1.country_id
     and t2.user_id = userid
@@ -6434,7 +6434,7 @@ BEGIN
         order by created_on DESC limit pagecount_;
     end if;
 
-    
+
 
 END //
 
@@ -8134,4 +8134,35 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_get_country_domain_name`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_country_domain_name`(in
+    c_id int(11), d_id int(11))
+BEGIN
+    select country_name from tbl_countries where country_id = c_id;
+    select domain_name from tbl_domains where domain_id = d_id;
+
+END //
+
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_country_domain`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mappings_country_domain`(in
+    m_id int(11))
+BEGIN
+    select country_name, domain_name, statutory_mapping from tbl_statutory_mappings as t1
+    inner join tbl_countries as t2 on t1.country_id = t2.country_id
+    inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
+    where t1.statutory_mapping_id = m_id;
+
+END //
+
+DELIMITER ;
 

@@ -1080,11 +1080,6 @@ list-style-type:none; line-height:25px;
   width: auto;
   opacity: 100%;
 }
-
-.closure-sel a {
-    width: 90px !important;
-}
-
 @media only screen and (max-width: 767px){
   .dropdown-menu{
     right: 0;
@@ -1103,14 +1098,14 @@ list-style-type:none; line-height:25px;
   .mob-p-b-15{
     padding-bottom: 15px;
   }
-  .dropdown-menu{
+
+    .dropdown-menu{
     right: 0;
     left: auto;
     height: 115px;
     overflow-y: auto;
   }
-
-.navbar-right .dropdown-menu{
+  .navbar-right .dropdown-menu{
 height: auto;
 overflow:visible;
   }
@@ -1118,7 +1113,9 @@ overflow:visible;
     padding-bottom: 8em;
   }
 }
-
+/*.fa{
+   font-family: "Arimo",sans-serif;
+}*/
 .left{
   text-align: left !important;
 }
@@ -1132,8 +1129,20 @@ a{
 text-align: center;
 margin: 0 auto;
 }
-
 <<<<<<< HEAD
+.statlvl{
+padding: 8px;
+border-right: 1px solid #e8e8e8;
+/*width: 32% !important;*/
+}
+.multiselect:focus{
+  border:1px solid #aaa !important;
+  transition: all 300ms linear 0s;
+}
+.multiselect-container{
+  height: 145px !important;
+}
+
 /* for assign statutory checkbox style*/
 .gt input[type="checkbox"] {
 display: none !important;
@@ -1160,7 +1169,7 @@ cursor: pointer;
 .gt-cross input[type="radio"] {
 display: none !important;
 }
-.gt-cross input[type="radio"]+label {    
+.gt-cross input[type="radio"]+label {
 background: url('images/deleteboldinactive.png') no-repeat;
 height:17px;
 padding-left: 18px;
@@ -1174,7 +1183,7 @@ cursor: pointer;
 .gt-minus input[type="radio"] {
 display: none !important;
 }
-.gt-minus input[type="radio"]+label {    
+.gt-minus input[type="radio"]+label {
 background: url('images/iconminusinactive.png') no-repeat;
 height:17px;
 padding-left: 18px;
@@ -1188,7 +1197,7 @@ cursor: pointer;
 .gt-one input[type="checkbox"] {
 display: none !important;
 }
-.gt-one input[type="checkbox"]+label {    
+.gt-one input[type="checkbox"]+label {
     background: url('images/deletebold.png') no-repeat;
     height:17px;
     padding-left: 18px;
@@ -1200,7 +1209,7 @@ display: none !important;
     cursor: pointer;
 
 .width-100px{
-  width: 100px !important; 
+  width: 100px !important;
 }
 .l-h-30{
   line-height: 30px !important;

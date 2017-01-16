@@ -352,12 +352,18 @@ def check_duplicate_compliance_name(db, request_frame):
     else:
         return False
 
+def get_country_domain_name(db, country_id, domain_id):
+    rows = db.call_proc_with_multiresult_set("sp_get_country_domain_name", [country_id, domain_id], 2)
+    c_name = rows[0][0].get("country_name")
+    d_name = rows[1][0].get("domain_name")
+    return c_name, d_name
 
 def save_statutory_mapping(db, data, created_by):
     # Yet to submit : 0, Pending: 1, Approved: 2, Approve and Notify: 3, Reject: 4
     # tr_type 1: save, 2: submit
     country_id = data.country_id
     domain_id = data.domain_id
+    c_name, d_name = get_country_domain_name(db, country_id, domain_id)
     nature_id = data.statutory_nature_id
     compliances = data.compliances
     statutory_mapping = json.dumps(data.mappings)
@@ -400,8 +406,8 @@ def save_statutory_mapping(db, data, created_by):
             db, statutory_mapping_id, data.statutory_ids, created_by, True
         )
         names = ", ".join(names)
-        text = "New statutory mapping has been created %s for the following compliances %s" % (
-                str(statutory_mapping), names
+        text = "New statutory mapping has been created %s - %s - %s for the following compliances %s" % (
+                c_name, d_name, str(statutory_mapping), names
             )
         print text
 
@@ -645,6 +651,7 @@ def update_statutory_mapping(db, data, updated_by):
         raise process_error("E020")
     domain_id = data.domain_id
     country_id = int(is_exists["country_id"])
+    c_name, d_name = get_country_domain_name(db, country_id, domain_id)
 
     # industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
     nature_id = data.statutory_nature_id
@@ -652,8 +659,6 @@ def update_statutory_mapping(db, data, updated_by):
     compliances = data.compliances
     # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = json.dumps(data.mappings)
-    print "update statu mapping"
-    print statutory_mapping
     if data.tr_type == 0:
         is_approve = 0
     else:
@@ -680,7 +685,6 @@ def update_statutory_mapping(db, data, updated_by):
         db, statutory_mapping_id, country_id, domain_id, compliances, updated_by,
         is_approve
     )
-    print names
     save_statutory_industry(
         db, statutory_mapping_id, data.industry_ids, updated_by, False
     )
@@ -691,7 +695,7 @@ def update_statutory_mapping(db, data, updated_by):
         db, statutory_mapping_id, data.statutory_ids, updated_by, False
     )
 
-    text = "%s statutory mappings has been edited for following compliances %s" % (str(statutory_mapping), names)
+    text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), names)
     db.save_activity(updated_by, frmStatutoryMapping, text)
 
     link = "/knowledge/approve-statutory-mapping"
@@ -901,6 +905,12 @@ def change_compliance_status(db, mapping_id, is_active, updated_by):
 
 def change_statutory_mapping_status(db, data, updated_by):
     statutory_mapping_id = int(data.statutory_mapping_id)
+    map_info = db.call_proc("sp_tbl_statutory_mappings_country_domain", [statutory_mapping_id])
+    c_name = map_info[0].get("country_name")
+    d_name = map_info[0].get("domain_name")
+    mapping = map_info[0].get("statutory_mapping")
+
+    # mapping = ", ".join(mapping)
     is_active = int(data.is_active)
     columns = ["is_active", "updated_by", "is_approved"]
     values = [is_active, int(updated_by), 1]
@@ -912,13 +922,26 @@ def change_statutory_mapping_status(db, data, updated_by):
         status = "deactivated"
     else:
         status = "activated"
+    text = "%s - %s - %s statutory mapping has been %s" % (
+            c_name, d_name, str(mapping), status
+        )
+    print text
+
     action = "Statutory Mapping has been %s" % status
-    db.save_activity(updated_by, 10, action)
+    link = "/knowledge/approve-statutory-mapping"
+    save_messages(db, 3, "Statutory Mapping", action, link, updated_by)
+
+    db.save_activity(updated_by, 10, text)
     return True
 
 
 def change_approval_status(db, data, updated_by):
     statutory_mapping_id = int(data.statutory_mapping_id)
+    map_info = db.call_proc("sp_tbl_statutory_mappings_country_domain", [statutory_mapping_id])
+    c_name = map_info[0].get("country_name")
+    d_name = map_info[0].get("domain_name")
+    mapping = map_info[0].get("statutory_mapping")
+
     provision = data.statutory_provision
     approval_status = int(data.approval_status)
     rejected_reason = data.rejected_reason
@@ -951,24 +974,24 @@ def change_approval_status(db, data, updated_by):
         # Rejected
         columns.extend(["rejected_reason"])
         values.extend([rejected_reason])
-        notification_log_text = "Statutory Mapping: %s " + \
+        notification_log_text = "Statutory Mapping: %s - %s - %s " + \
             " has been Rejected and reason is %s"
         notification_log_text = notification_log_text % (
-            provision, rejected_reason
+            c_name, d_name, mapping, rejected_reason
         )
     else:
-        notification_log_text = "Statutory Mapping: %s " + \
+        notification_log_text = "Statutory Mapping: %s - %s - %s " + \
             " has been Approved"
-        notification_log_text = notification_log_text % (provision)
+        notification_log_text = notification_log_text % (c_name, d_name, mapping)
     values.append(statutory_mapping_id)
     db.update(tbl_name, columns, values, where)
     if approval_status == 3:
         save_statutory_notifications(
             db, statutory_mapping_id, notification_text
         )
-        notification_log_text = "Statutory Mapping: %s " + \
+        notification_log_text = "Statutory Mapping: %s - %s - %s " + \
             " has been Approved & Notified"
-        notification_log_text = notification_log_text % (provision)
+        notification_log_text = notification_log_text % (c_name, d_name, mapping)
 
     link = "/knowledge/statutory-mapping"
     if users["updated_by"] is None:
