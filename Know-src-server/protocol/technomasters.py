@@ -949,6 +949,20 @@ class GroupNameAlreadyExists(Response):
         }
 
 
+class GroupShortNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GroupShortNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class UpdateClientGroupSuccess(Response):
     def __init__(self):
         pass

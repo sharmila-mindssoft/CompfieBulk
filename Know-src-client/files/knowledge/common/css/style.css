@@ -1132,3 +1132,13 @@ a{
 text-align: center;
 margin: 0 auto;
 }
+
+.width-100px{
+  width: 100px !important; 
+}
+.l-h-30{
+  line-height: 30px !important;
+}
+.width-50px{
+  width: 50px !important;
+}
