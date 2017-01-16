@@ -50,20 +50,23 @@ function Auditpage() {
     Msg_pan.text(message);
     Msg_pan.show();
 };*/
-
+//To clear the messages
 Auditpage.prototype.clearMessage = function(){
     Msg_pan.text('');
     Msg_pan.hide();
 };
 
+// To display the loader until the action happens
 Auditpage.prototype.displayLoader = function(){
     Spin_icon.show();
 };
 
+// To Hide the Loader once done
 Auditpage.prototype.hideLoader = function() {
     Spin_icon.hide();
 };
 
+// Resets the filter fields
 Auditpage.prototype.resetFields = function(){
     $('.tbody-audittrail-list').find('tr').remove();
     $('.grid-table').hide();
@@ -74,6 +77,7 @@ Auditpage.prototype.resetFields = function(){
     this.clearMessage();
 };
 
+// To get the corresponding value
 Auditpage.prototype.getValue = function(field_name, f_id){
     if (field_name == "category") {
         cg_id = Category.val();
@@ -174,6 +178,7 @@ Auditpage.prototype.validateMandatory = function(){
     return is_valid;
 };
 
+// Binds the data from DB
 Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     $('.grid-table').show();
     $('.tbody-audittrail-list').find('tr').remove();
@@ -214,6 +219,7 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     a_page.hideLoader();
 };
 
+// To get the audit log data from DB - by passing user type, user name, form name and dates, country
 Auditpage.prototype.fetchData = function() {
     //this.displayLoader();
     var t_this = this;
@@ -258,6 +264,7 @@ Auditpage.prototype.fetchData = function() {
     );
 };
 
+// Bind the data in search filter from DB
 Auditpage.prototype.fetchFiltersData = function() {
     var t_this = this;
     mirror.getAuditTrailFilter(
@@ -278,6 +285,7 @@ Auditpage.prototype.fetchFiltersData = function() {
     );
 };
 
+// Set auto complete field values from DB
 Auditpage.prototype.setControlValues = function(e) {
     User.keyup(function(e) {
         var newUserList = [];
@@ -415,6 +423,7 @@ Auditpage.prototype.setControlValues = function(e) {
     });
 }
 
+// To push countries in countries dlist without duplication
 Auditpage.prototype.pushCountries = function(u_type, user_id){
     var a_page = this;
     var userCheck = false;
@@ -458,6 +467,7 @@ Auditpage.prototype.pushCountries = function(u_type, user_id){
     return ctry_list;
 };
 
+// To push forms inside form list without any duplication
 Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
     var a_page = this;
     var userCheck = false;
@@ -533,6 +543,8 @@ Auditpage.prototype.renderControl = function(){
     To_date.val(current_date());
     From_date.val(past_days(7));  // 7 days bafore to_date
 };
+
+// Pagination Functions - begins
 Auditpage.prototype.hidePageView = function() {
     $('#pagination-rpt').empty();
     $('#pagination-rpt').removeData('twbs-pagination');
@@ -576,6 +588,7 @@ Auditpage.prototype.renderPageControls = function(e) {
     t_this._perPage = parseInt(ItemsPerPage.val());
 
 };
+// Pagination Ends
 
 //callback for autocomplete success
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -607,8 +620,10 @@ initializeControlEvents = function(a_page){
 
 }
 
+// Instance Creation of the page class
 a_page = new Auditpage();
 
+// Form Initalize
 $(function () {
     loadItemsPerPage();
     initializeControlEvents(a_page);
