@@ -280,6 +280,7 @@ def save_client(db, request, session_user):
     divisions = request.division_units
     div_ids = []
     category_ids = []
+    res = None
 
     is_valid = validate_duplicate_data(db, request, session_user)
     print "is_valid"
@@ -290,8 +291,15 @@ def save_client(db, request, session_user):
             for division in divisions:
                 division_id = division.division_id
                 division_name = division.division_name
-                category_name = division.category_name
+                if(division_name == "---"):
+                    division_name = None
 
+                category_name = division.category_name
+                if(category_name == "---"):
+                    category_name = None
+
+                print "cg"
+                print category_name
                 if division_id is None:
                     print "inside div id is None"
                     if division_name is not None:

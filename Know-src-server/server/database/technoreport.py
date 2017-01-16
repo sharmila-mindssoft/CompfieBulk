@@ -1101,8 +1101,10 @@ def get_AssignedUserClientGroupsDetails(db, user_id):
     return (result[0], client_categories, result[3], result[4])
 
 def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
+    c_names = []
+
     if group_id is None:
-        args = [user_id, user_category_id, 0]
+        args = [user_id, user_category_id, '%']
     else:
         args = [user_id, user_category_id, group_id]
     print "inside args"
@@ -1125,7 +1127,6 @@ def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
             le_count = int(cl.get("le_count"))
             for country in result[1]:
                 print "inside 2 loop"
-                c_names = []
                 print client_id
                 if client_id == country.get("client_id"):
                     print country.get("client_id")
