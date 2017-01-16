@@ -254,17 +254,19 @@ def process_save_logindetails(db, request):
     username = request.username
     password = request.password
     # duplication username validation
-
-    encrypt_password = encrypt(password)
-    token = request.token
-    if save_login_details(db, token, username, encrypt_password):
-        return login.SaveRegistraionSuccess()
+    if check_username_duplicate(db, username) is False:
+        return login.UsernameAlreadyExists()
     else :
-        return login.InvalidSessionToken()
+        encrypt_password = encrypt(password)
+        token = request.token
+        if save_login_details(db, token, username, encrypt_password):
+            return login.SaveRegistraionSuccess()
+        else :
+            return login.InvalidSessionToken()
 
 def process_check_username(db, request):
     uname = request.username
-    print uname
+
     if check_username_duplicate(db, uname):
         return login.CheckUsernameSuccess()
     else :
