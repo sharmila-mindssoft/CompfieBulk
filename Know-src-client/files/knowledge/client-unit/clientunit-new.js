@@ -342,6 +342,11 @@ function onCountrySuccess(val) {
 }
 // Arrow key functionality
 function onArrowKey_Client(e, ac_item, multipleselect, callback) {
+    console.log(ac_item)
+    var ccount;
+    if(multipleselect.indexOf('unit') >=0){
+        ccount = multipleselect.split(",")[1];
+    }
     if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
         chosen = '';
     }
@@ -375,14 +380,16 @@ function onArrowKey_Client(e, ac_item, multipleselect, callback) {
             //$('.autocompleteview-' + ccount).css('display', 'none');
             activate_text_arrow(ac_id, ac_name, callback);
         } else {
-            $('.unitlocation' + ccount).val(ac_name);
-            $('.unitlocation-ids' + ccount).val(ac_id);
+            var ac_id = $('.' + ac_item + ' li:eq(' + chosen + ')').attr('id');
+            var ac_name = $('.' + ac_item + ' li:eq(' + chosen + ')').text();
+            console.log(ac_id,ac_name)
             for (var geography in geographyList) {
                 if (geographyList[geography].geography_id == parseInt(ac_id)) {
                     mappingname = geographyList[geography].mapping;
                 }
             }
-            $('.full-location-list' + ccount).html('<br>' + mappingname);
+            //activate_text_arrow(ac_id, ac_name, callback);
+            $('.full-location-list' + ccount).html(mappingname);
             $('.auto-complete-unit-location').css('display', 'none');
         }
 
@@ -1043,9 +1050,11 @@ function loadglevels(classval) {
             var level_id = value.l_id;
             var level_name = value.l_name;
             if (countryid == value.c_id)
+            {
                 clone.attr("value", level_id);
-            clone.text(level_name);
-            $('.' + lastClass).append(clone);
+                clone.text(level_name);
+                $('.' + lastClass).append(clone);
+            }
         });
         //$('.'+lastClass +'option:gt(0)').remove();
     }
@@ -1061,9 +1070,15 @@ function activate_unitlocaion(element, ccount, mappingname) {
 
     var checkname = $(element).text();
     var checkval = $(element).attr('id');
+    var parentname='';
     $('.unitlocation' + ccount).val(checkname);
     $('.unitlocation-ids' + ccount).val(checkval);
-    $('.full-location-list' + ccount).html(mappingname);
+    for (var geography in geographyList) {
+        if (geographyList[geography].geography_id == parseInt(checkval)) {
+            parentname = geographyList[geography].mapping;
+        }
+    }
+    $('.full-location-list' + ccount).html(parentname);
 }
 //autocomplete location
 function loadlocation(textval, classval, e) {
@@ -1073,7 +1088,7 @@ function loadlocation(textval, classval, e) {
     var countval = '-' + ccount[1] + '-' + ccount[2];
 
     var glevelval = $('.glevel' + countval).val();
-
+    //console.log("glevel:"+glevelval);
     $('.auto-complete-unit-location' + countval).css('display', 'block');
     var suggestions = [];
     $('.unitlocationlist-text' + countval).empty();
@@ -1086,6 +1101,7 @@ function loadlocation(textval, classval, e) {
                     var obj = $(".location-list-drop-down li");
                     var clone = obj.clone();
                     clone.attr("id", geographyList[glist].geography_id);
+                    //console.log("m:"+geographyList[glist].mapping)
                     clone.click(function() {
                         activate_unitlocaion(this, countval, geographyList[glist].mapping);
                     });
@@ -1096,7 +1112,9 @@ function loadlocation(textval, classval, e) {
         }
         //$('.unitlocationlist-text' + countval).append(str);
         //$('.unitlocation-ids'+countval).val('');
-        onArrowKey_Client(e, 'unitlocationlist-text' + countval, countval, 'unit');
+        onArrowKey_Client(e, 'ac-textbox', 'unit,'+countval, function(val) {
+            activate_unitlocaion(this, countval, val);
+        });
     }
 }
 
