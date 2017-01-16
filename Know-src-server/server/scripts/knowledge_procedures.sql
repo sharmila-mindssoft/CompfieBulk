@@ -345,16 +345,19 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_nature_checkduplicatenature`(
     in statutoryNatureName varchar(50),
-    in statutoryNatureId int(11)
+    in statutoryNatureId int(11),
+    in countryId int(11)
 )
 BEGIN
     if statutoryNatureId = 0 then
         SELECT count(1) AS cnt FROM tbl_statutory_natures
-        WHERE statutory_nature_name = statutoryNatureName;
+        WHERE statutory_nature_name = statutoryNatureName
+        AND country_id = countryId;
     else
         SELECT count(1) as cnt FROM tbl_statutory_natures
         WHERE statutory_nature_name = statutoryNatureName
-        AND statutory_nature_id != statutoryNatureId;
+        AND statutory_nature_id != statutoryNatureId and
+        country_id = countryId;
     END IF;
 END //
 
@@ -529,7 +532,7 @@ BEGIN
         date(t1.created_on) >= _from_date
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
-        AND t1.user_id LIKE _user_id
+        AND t1.user_category_id = _category_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
         ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
@@ -1538,6 +1541,7 @@ BEGIN
     where
     t9.client_id = t2.client_id and
     t8.country_id = t2.country_id and
+    t4.is_closed = 0 and
     t4.legal_entity_id = t2.legal_entity_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and
@@ -3014,7 +3018,7 @@ BEGIN
     select t4.country_id, t4.country_name, t3.business_group_id, t1.client_id
     from
     tbl_user_legalentity as t1
-    inner join tbl_legal_entities as t2 on t2.client_id = t1.client_id
+    inner join tbl_legal_entities as t2 on t2.legal_entity_id = t1.legal_entity_id
     left join tbl_business_groups as t3 on t3.business_group_id = t2.business_group_id
     inner join tbl_countries as t4 on t4.country_id = t2.country_id
     where
@@ -3174,7 +3178,7 @@ CREATE PROCEDURE `sp_userunits_list`( IN userid_ INT(11))
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
     IF @u_cat_id = 5 THEN
-        select count(distinct t1.unit_id) as total_units,
+        select count(distinct t2.unit_id) as total_units,
         t1.domain_id, t2.legal_entity_id, t2.client_id,
         tle.legal_entity_name as legal_entity_name,
         tbg.business_group_name as business_group_name,
@@ -3183,19 +3187,25 @@ BEGIN
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
             and tuu.user_category_id = 7
-        ) as assigned_units
+        ) as assigned_units,(
+            SELECT count(unit_id) FROM tbl_user_units tuu
+            WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
+            and tuu.user_category_id = 7
+        ) as unassigned_units
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-        inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
+        left join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
         inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
-        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
+        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id and
+        tle.is_closed=0
         inner join tbl_domains td on td.domain_id=t1.domain_id
         left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
-        group by t1.domain_id, t2.client_id;
+        group by t1.domain_id, t2.client_id, t2.legal_entity_id
+        order by td.domain_name;
 
 
     ELSE
-        select count(distinct t1.unit_id) as total_units,
+        select count(distinct uc.unit_id) as total_units,
         t1.domain_id, t2.legal_entity_id, t2.client_id,
         tle.legal_entity_name as legal_entity_name,
         tbg.business_group_name as business_group_name,
@@ -3203,18 +3213,23 @@ BEGIN
         tcg.group_name as client_name,(
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
-            and tuu.user_category_id = 8
-        ) as assigned_units
+            and tuu.user_category_id = 8 -- and user_id!=userid_
+        ) as assigned_units, (
+            SELECT count(unit_id) FROM tbl_user_units tuu
+            WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
+            and tuu.user_category_id = 7 -- and user_id=userid_
+        ) as unassigned_units
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
+        left join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id and
+        uc.legal_entity_id=t2.legal_entity_id and uc.domain_id=t1.domain_id and user_category_id=7
         inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
-        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
+        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id and
+        tle.is_closed=0
         inner join tbl_domains td on td.domain_id=t1.domain_id
         left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
-        group by t1.domain_id, t2.client_id;
+        group by t2.client_id,t1.domain_id, t2.legal_entity_id order by td.domain_name;
     END IF;
-
 END //
 
 DELIMITER ;
@@ -3272,7 +3287,7 @@ DROP PROCEDURE IF EXISTS `sp_userunits_assigned_details_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_userunits_assigned_details_list`(
-    IN u_id INT(11), le_id INT(11)
+    IN u_id INT(11), le_id INT(11), cl_id int(11), d_id int(11)
 )
 BEGIN
     select unit_id, (
@@ -3290,7 +3305,8 @@ BEGIN
     ) as geography_name FROM tbl_units tu
     WHERE legal_entity_id = le_id and unit_id in (
         SELECT unit_id FROM tbl_user_units
-        WHERE user_id=u_id and legal_entity_id= le_id
+        WHERE user_id=u_id and legal_entity_id= le_id and
+        client_id=cl_id and domain_id=d_id
     );
     SELECT unit_id, (
         SELECT domain_name FROM tbl_domains td
@@ -3300,7 +3316,8 @@ BEGIN
         WHERE ti.organisation_id = tui.organisation_id
     ) as organisation_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
-        SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id
+        SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id and
+        client_id=cl_id and domain_id=d_id
     );
 END //
 
@@ -3326,14 +3343,14 @@ BEGIN
         is_active, user_category_id FROM tbl_users WHERE
         user_category_id = 7 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
-        WHERE parent_user_id=session_user);
+        WHERE parent_user_id=session_user) and is_active=1 and is_disable=0;
     else
         SELECT user_id,
         concat(employee_code, "-", employee_name) as employee_name,
         is_active, user_category_id FROM tbl_users WHERE
         user_category_id = 8 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
-        WHERE parent_user_id=session_user);
+        WHERE parent_user_id=session_user) and is_active=1 and is_disable=0;
     end if;
 
 
@@ -3378,11 +3395,11 @@ BEGIN
         ) as geography_name
         FROM tbl_units tu
         INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
-        inner join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
+        left join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
         WHERE tu.client_id=clientid and tu.legal_entity_id = LegalEntityID
         and tui.domain_id=domainid and
         tu.unit_id not in (
-            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid
+            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid and domain_id=domainid
         )
         group by tu.unit_id
         order by unit_name ASC;
@@ -3392,15 +3409,15 @@ BEGIN
             WHERE ti.organisation_id = tui.organisation_id) as organisation_name
         FROM tbl_units tu
         INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
-        inner join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
+        left join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
         WHERE tu.client_id=clientid and tu.legal_entity_id = LegalEntityID and tui.domain_id=domainid and
         tu.unit_id not in (
-            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid
+            SELECT unit_id FROM tbl_user_units WHERE client_id=clientid and domain_id=domainid
         );
 
     ELSE
-        SELECT tu.unit_id, tu.unit_code, tu.unit_name,
-        tu.address, (
+        SELECT tu.unit_id, unit_code, unit_name,
+        address, (
             SELECT division_name FROM tbl_divisions td
             WHERE td.division_id=tu.division_id
         ) as division_name, (
@@ -3414,28 +3431,36 @@ BEGIN
             SELECT geography_name FROM tbl_geographies tg
             WHERE tg.geography_id = tu.geography_id
         ) as geography_name
-        from tbl_user_units uu inner join tbl_units as tu on
-        tu.unit_id = uu.unit_id
-        WHERE uu.client_id=clientid and uu.legal_entity_id = LegalEntityID
-        and uu.domain_id=domainid and user_id=userid
-        and uu.unit_id not in (select unit_id from tbl_user_units where user_id != userid and
-        user_category_id =8)
-        group by uu.unit_id
-        order by tu.unit_name ASC;
+        from tbl_user_units as tuu
+        right join tbl_units as tu
+        on tuu.unit_id = tu.unit_id and
+        tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
+        and user_category_id=8)
+        where
+        -- tuu.user_id = userid and
+        tuu.client_id=clientid and tuu.domain_id=domainid
+        group by tu.unit_id
+        order by unit_name ASC;
 
-        SELECT tu.unit_id, (
+
+        SELECT t1.unit_id, (
             SELECT domain_name FROM tbl_domains td
-            WHERE td.domain_id = tu.domain_id
+            WHERE td.domain_id = t1.domain_id
         ) as domain_name, (
             SELECT organisation_name FROM tbl_organisation ti
-            WHERE ti.organisation_id = tu.organisation_id
+            WHERE ti.organisation_id = t1.organisation_id
         ) as organisation_name
-        from tbl_user_units uu inner join tbl_units_organizations as tu on
-        tu.unit_id = uu.unit_id
-        WHERE uu.client_id=clientid and uu.legal_entity_id = LegalEntityID
-        and uu.domain_id=domainid and user_id= userid
-        and uu.unit_id not in (select unit_id from tbl_user_units where user_id != userid and
-        user_category_id =8) group by uu.unit_id;
+        from tbl_user_units as tuu
+        right join tbl_units_organizations as t1
+        on tuu.unit_id = t1.unit_id and
+        tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid and user_category_id=8)
+        where
+        -- tuu.user_id = userid and
+        tuu.client_id=clientid and tuu.domain_id=domainid
+
+        group by tuu.unit_id;
+
+
     END IF;
 
 END //
@@ -4804,6 +4829,8 @@ BEGIN
     select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
     tbl_domain_countries as t1
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
+    inner join tbl_statutory_levels as t4 on t3.domain_id = t4.domain_id
+    and t3.country_id = t4.country_id
     inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
     and t2.country_id = t1.country_id
     and t2.user_id = userid
@@ -4899,7 +4926,7 @@ BEGIN
     from tbl_statutory_mappings as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
-    where t3.user_id = userid and t1.is_approved like approvestatus
+    where t3.user_id = userid
     order by country_name, domain_name, t1.statutory_mapping
     limit fromcount, tocount;
 
@@ -5092,7 +5119,7 @@ BEGIN
         tbl_client_groups as tcg
         where
         tcg.client_id = tle.client_id and
-        tcg.is_approved = 1 and
+        -- tcg.is_approved = 1 and
         tcg.is_active = 1 and
         tle.is_closed != 1;
     end if;
@@ -5116,7 +5143,7 @@ BEGIN
         tbl_client_groups as tcg
         where
         tcg.client_id = tle.client_id and
-        tcg.is_approved = 1 and
+        -- tcg.is_approved = 1 and
         tcg.is_active = 1 and
         tle.is_closed != 1 and
         tle.client_id in (select distinct(client_id) from tbl_user_units
@@ -5528,7 +5555,7 @@ BEGIN
     if @u_cat_id = 5  THEN
         select t1.client_id, t3.legal_entity_id, t3.legal_entity_name, t4.business_group_id,
         t4.business_group_name from tbl_user_clients as t1,
-        tbl_legal_entities as t3, tbl_business_group as t4 where
+        tbl_legal_entities as t3, tbl_business_groups as t4 where
         t4.business_group_id = t3.business_group_id and
         t3.client_id  = t1.client_id and
         t1.user_category_id = @u_cat_id and t1.user_id = _user_id
@@ -5538,7 +5565,7 @@ BEGIN
         select t1.client_id,t2.legal_entity_id,t2.legal_entity_name,
         t3.business_group_id, t3.business_group_name
         from tbl_user_legalentity as t1, tbl_legal_entities as t2,
-        tbl_business_group as t3 where t3.business_group_id = t2.business_group_id and
+        tbl_business_groups as t3 where t3.business_group_id = t2.business_group_id and
         t2.legal_entity_id = t1.legal_entity_id and
         t2.client_id = t1.client_id and t1.user_id = _user_id
          order by t3.business_group_name asc;
@@ -5547,7 +5574,7 @@ BEGIN
         select t1.client_id,t2.legal_entity_id,t2.legal_entity_name,
         t3.business_group_id, t3.business_group_name
         from tbl_user_units as t1, tbl_legal_entities as t2,
-        tbl_business_group as t3 where t3.business_group_id = t2.business_group_id and
+        tbl_business_groups as t3 where t3.business_group_id = t2.business_group_id and
         t2.legal_entity_id = t1.legal_entity_id and
         t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id
         and t1.user_id = _user_id order by t3.business_group_name asc;
@@ -6131,7 +6158,7 @@ BEGIN
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
-        (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
+        COALESCE(t1.client_id,'') LIKE _g_id and
         t1.user_id = _u_id;
     end if;
     if _u_cg_id =  6 then
@@ -6156,7 +6183,7 @@ BEGIN
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_legalentity as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
-        (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
+        COALESCE(t1.client_id,'') LIKE _g_id and
         t1.user_id = _u_id;
     end if;
     if _u_cg_id = 7 or _u_cg_id = 8 then
@@ -6175,14 +6202,14 @@ BEGIN
 
         t3.reassinged_data = t1.unit_id and
         t2.client_id = t1.client_id and
-        (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
+        COALESCE(t1.client_id,'') LIKE _g_id and
         t1.user_id = _u_id and
         t1.user_category_id = _u_cg_id;
 
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_units as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
-        (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
+        COALESCE(t1.client_id,'') LIKE _g_id and
         t1.user_id = _u_id and t1.user_category_id = _u_cg_id;
     end if;
 
@@ -6238,7 +6265,7 @@ BEGIN
     if _is_cl = 0 then
         INSERT INTO tbl_messages
         SET
-        user_category_id = (select user_category_id from tbl_user_login_details
+        user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
         message_text = (select concat(legal_entity_name,' ','has been closed')
@@ -6255,10 +6282,12 @@ BEGIN
         link = 'knowledge/legal-entity-closure', created_by = _u_id, created_on = _cl_on;
     end if;
 
-    INSERT INTO tbl_message_users
-    SET
-    message_id = (select LAST_INSERT_ID()),
-    user_id = (select user_id from tbl_user_legalentity where legal_entity_id = _le_id);
+    IF(select count(*) from tbl_user_legalentity where legal_entity_id = _le_id) > 0 THEN
+        INSERT INTO tbl_message_users
+        SET
+        message_id = (select LAST_INSERT_ID()),
+        user_id = (select user_id from tbl_user_legalentity where legal_entity_id = _le_id);
+    END IF;
 
     INSERT INTO tbl_message_users (message_id, user_id)
     select LAST_INSERT_ID(), user_id
@@ -6382,14 +6411,30 @@ IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
 
-    SELECT m.message_id, m.message_heading, m.message_text, m.link,
-    (SELECT concat(employee_code, ' - ', employee_name)
-    from tbl_users where user_id = m.created_by) as created_by,
-    m.created_on
-    from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
-    AND mu.user_id = userid_
-    where m.user_category_id = @u_cat_id
-    order by created_on DESC limit pagecount_;
+    IF @u_cat_id = 1  THEN
+
+        SELECT m.message_id, m.message_heading, m.message_text, m.link,
+        'Compfie Admin' as created_by,
+        m.created_on
+        from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+        AND mu.user_id = userid_
+        where m.user_category_id = @u_cat_id
+        order by created_on DESC limit pagecount_;
+
+    end if;
+
+    IF @u_cat_id > 2  THEN
+        SELECT m.message_id, m.message_heading, m.message_text, m.link,
+        (SELECT concat(employee_code, ' - ', employee_name)
+        from tbl_users where user_id = m.created_by) as created_by,
+        m.created_on
+        from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+        AND mu.user_id = userid_
+        where m.user_category_id = @u_cat_id
+        order by created_on DESC limit pagecount_;
+    end if;
+
+    
 
 END //
 
@@ -6814,7 +6859,7 @@ BEGIN
         t5.user_id = t4.assigned_by and
         t4.reassigned_data = t1.unit_id and
         t3.domain_id like t1.domain_id and t3.unit_id = t2.unit_id and
-        t2.business_group_id like _bg_id and
+        COALESCE(t2.business_group_id,'') LIKE _bg_id and
         t2.unit_id = t1.unit_id and
         t1.domain_id = _d_id and
         t1.legal_entity_id = _le_id and
@@ -7531,21 +7576,22 @@ DROP PROCEDURE IF EXISTS `sp_tbl_users_replacement`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_users_replacement`(
-    IN cat_id INT(11), u_from_id INT(11), u_to_id INT(11), remarks INT(11),
+    IN cat_id INT(11), u_from_id INT(11), u_to_id INT(11), remarks VARCHAR(500),
     sessionuser INT(11)
 )
 BEGIN
-    UPDATE tbl_user_mapping set parent_userid = u_to_id
-        where parent_userid = u_from_id;
+    UPDATE tbl_user_mapping set parent_user_id = u_to_id
+        where parent_user_id = u_from_id;
 
-    INSERT INTO tbl_user_replacement_histor(
-        user_category_id, repalced_from, repalced_by, remarks,
+    INSERT INTO tbl_user_replacement_history(
+        user_category_id, replaced_from, replaced_by, remarks,
         created_by, created_on
     ) values (cat_id, u_from_id, u_to_id, remarks, sessionuser, current_ist_datetime());
 
 END //
 
 DELIMITER ;
+
 
 -- --------------------------------------------------------------------------------
 -- Configure File Server - gets list
@@ -7625,7 +7671,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _u_id),
+    where user_id = (select user_id from tbl_user_clients where client_id = _client_id)),
     message_heading = 'Client Unit',
     message_text = (select concat('Client unit has been created for',' ',group_name)
     from tbl_client_groups where client_id = _client_id),
@@ -7653,7 +7699,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _u_id),
+    where user_id = (select user_id from tbl_user_clients where client_id = _client_id)),
     message_heading = 'Client Unit',
     message_text = (select concat('Client unit has been updated for',' ',group_name)
     from tbl_client_groups where client_id = _client_id),
@@ -7681,7 +7727,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _created_by),
+    where user_id = _user_id),
     message_heading = 'Assign Client Unit',
     message_text = (select concat(unit_name,' ','unit has been assigned')
     from tbl_units where unit_id = _unit_id),
@@ -7709,7 +7755,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _created_by),
+    where user_id = _user_id),
     message_heading = 'Assign Legal Entity',
     message_text = (select concat(legal_entity_name,' ','has been assigned')
     from tbl_legal_entities where legal_entity_id = _le_id),
@@ -7736,7 +7782,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _u_id),
+    where user_id = (select max(created_by) from tbl_units where client_id = @_client_id)),
     message_heading = 'Client Unit Approval',
     message_text = concat('Client unit(s) has been approved for',' ',_le_name),
     link = _link, created_by = _u_id, created_on = _created_on;
@@ -7752,6 +7798,34 @@ END //
 
 DELIMITER ;
 
+
+-- --------------------------------------------------------------------------------
+-- Allocate Database Environemnt - Get Details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_getdata`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_getdata`()
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name
+    from
+    tbl_client_database as t1;
+END //
+
+DELIMITER;
+=======
 -- --------------------------------------------------------------------------------
 -- To Get data for IP Settings form
 -- --------------------------------------------------------------------------------
@@ -8012,6 +8086,8 @@ BEGIN
 END //
 
 DELIMITER ;
+
+=======
 
 DROP PROCEDURE IF EXISTS `sp_tbl_client_groups_createdb_info`;
 

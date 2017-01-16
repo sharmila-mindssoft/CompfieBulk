@@ -490,7 +490,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
 
 
 def verify_password(db, password, user_id):
-    columns = "count(*) as result"
+    columns = "count(0) as result"
     encrypted_password = encrypt(password)
     condition = "1"
     rows = None

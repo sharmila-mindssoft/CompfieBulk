@@ -231,7 +231,7 @@ function loadCompliances(data) {
             var clone = tableRow.clone();
             sno = sno + 1;
             var status = 'Active';
-            if (value.is_active == false) {
+            if (value.is_closed == true) {
                 status = 'Closed';
             }
             $('.sno', clone).text(sno);
@@ -275,7 +275,7 @@ function loadCompliances(data) {
         $(this).next().slideToggle('fast');
         $('.accordion-content').not($(this).next()).slideUp('fast');
     });
-
+    totalRecord = sno;
     if (is_null == true) {
       hidePagePan();
     }

@@ -980,8 +980,11 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  if(list_val[i][value].length != undefined){
+                  
+                  if(jQuery.type( list_val[i][value] ) == 'array'){
                     condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
+                  }else if(jQuery.type( condition_values[key] ) == 'array'){
+                    condition_result = ($.inArray(list_val[i][value], condition_values[key]) >= 0);
                   }else{
                     condition_result = (list_val[i][value] == condition_values[key]);
                   }
@@ -998,16 +1001,19 @@ function commonAutoComplete(
                     }
                 });
             }
+
             if(
                 ~list_val[i][field_name].toLowerCase().indexOf(
                     text_val.toLowerCase()
                 ) && validation_result
+
             )
                 suggestions.push([
                     list_val[i][id_name],
                     list_val[i][field_name]
                 ]);
         }
+
         var str = '';
         for (var i in suggestions) {
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
@@ -1053,7 +1059,7 @@ function onCommonArrowKey(e, ac_item, callback) {
 
 function commonAutoComplete1(
     e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
-    condition_fields, condition_values1, condition_values2
+    condition_fields, condition_values
 ){
     ac_div.show();
     id_element.val('');
@@ -1066,28 +1072,48 @@ function commonAutoComplete1(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  if(list_val[i][value].length != undefined){
-                    var cresult = false;
-                    var dresult = false;
-                    for(var j=0; j<list_val[i][value].length; j++){
-                      /*console.log(condition_values1);
-                      console.log(condition_values2);*/
-                      if($.inArray(list_val[i][value][j]["c_id"], condition_values1) >= 0){
-                        cresult = true;
+                  //alert(condition_values3);
+                  if(jQuery.type( list_val[i][value] ) == 'array'){
+                    if(value == 'country_domains'){
+                      var cresult = false;
+                      var dresult = false;
+                      for(var j=0; j<list_val[i][value].length; j++){
+                        if($.inArray(list_val[i][value][j]["c_id"], condition_values[key][0]) >= 0){
+                          cresult = true;
+                        }
+                        if($.inArray(list_val[i][value][j]["d_id"], condition_values[key][1]) >= 0){
+                          dresult = true;
+                        }
                       }
-                      if($.inArray(list_val[i][value][j]["d_id"], condition_values2) >= 0){
-                        dresult = true;
+                      if(cresult && dresult){
+                        condition_result = true;
+                      }else{
+                        condition_result = false;
                       }
-                    }
+                    }else if(value == 'p_user_ids'){
+                      var common_values = [];
+                      var array1 = condition_values[key];
+                      var array2 = list_val[i][value];
 
-                    if(cresult && dresult){
-                      condition_result = true;
+                      jQuery.grep(array2, function(el) {
+                        if (jQuery.inArray(el, array1) == 0) common_values.push(el);
+                      });
+
+                      if(common_values.length > 0){
+                        condition_result = true;
+                      }else{
+                        condition_result = false;
+                      }
                     }else{
-                      condition_result = false;
+                      condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                     }
-
+                    
                   }else{
-                    condition_result = (list_val[i][value] == condition_values[key]);
+                    if(value == 'user_id'){
+                      condition_result = (list_val[i][value] != condition_values[key]);
+                    }else{
+                      condition_result = (list_val[i][value] == condition_values[key]);
+                    }
                   }
                   validation_results.push(
                     condition_result

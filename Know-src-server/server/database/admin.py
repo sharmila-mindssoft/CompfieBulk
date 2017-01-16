@@ -1396,7 +1396,7 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
 
         # techno executive update
         q1 = "UPDATE tbl_user_legalentity SET user_id = %s, " + \
-            " assigned_by = %s, assigne_on = %s " + \
+            " assigned_by = %s, assigned_on = %s " + \
             " WHERE client_id = %s and legal_entity_id = %s"
 
         db.execute(q1, [d.techno_executive, session_user, get_date_time(), d.client_id, d.entity_id])
@@ -1414,7 +1414,7 @@ def save_reassign_techno_executive(db, user_from, user_to, data, remarks, sessio
         " assigned_on ) values (%s, %s, %s, %s, %s, %s, %s)"
 
     for d in data :
-        q1 = " UPDATE tbl_user_legal_entity SET user_id = %s, assigned_by = %s " + \
+        q1 = " UPDATE tbl_user_legalentity SET user_id = %s, assigned_by = %s, " + \
             " assigned_on = %s where client_id = %s and legal_entity_id = %s"
         db.execute(q1, [user_to, session_user, get_date_time(), d.client_id, d.entity_id])
 

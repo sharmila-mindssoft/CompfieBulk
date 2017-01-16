@@ -2,6 +2,15 @@ CREATE DATABASE  IF NOT EXISTS `compfie_knowledge_new`;
 USE `compfie_knowledge_new`;
 
 
+DROP TABLE IF EXISTS `tbl_client_replication_status`;
+CREATE TABLE `tbl_client_replication_status` (
+  `client_id` int(11) NOT NULL,
+  `is_new_data` tinyint(2) DEFAULT '1',
+  `is_new_domain` tinyint(2) DEFAULT '0',
+  `domain_id` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_audit_log`;
 CREATE TABLE `tbl_audit_log` (
   `audit_trail_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,

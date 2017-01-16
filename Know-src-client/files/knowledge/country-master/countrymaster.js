@@ -149,7 +149,7 @@ function showModalDialog(e, countryId, isActive){
 function validateAuthentication(){
   var password = CurrentPassword.val().trim();
   if (password.length == 0) {
-    displayMessage(msg.password_required);
+    displayMessage(message.password_required);
     CurrentPassword.focus();
     return false;
   } else {
@@ -315,6 +315,7 @@ function renderSearch() {
 $(function () {
   initialize();
   renderSearch();
+  $('.js-sorting-table').jssorting(); // Sorting table
 });
 $('#country-name').on('input', function (e) {
   this.value = isAlphabetic($(this));

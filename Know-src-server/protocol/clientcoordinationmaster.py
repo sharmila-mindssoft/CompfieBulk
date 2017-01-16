@@ -463,12 +463,12 @@ class GetLegalEntityInfoSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "le_id", "bg_name", "contract_from", "contract_to",
-            "file_space", "no_of_licence", "view_licence", "org_info"
+            "file_space", "no_of_licence", "no_of_view_licence", "org_info"
         ])
         return GetLegalEntityInfoSuccess(
             data.get("le_id"), data.get("bg_name"), data.get("contract_from"),
             data.get("contract_to"), data.get("file_space"),
-            data.get("no_of_licence"), data.get("org_info")
+            data.get("no_of_licence"), data.get("no_of_view_licence"), data.get("org_info")
         )
 
     def to_inner_structure(self):
@@ -479,7 +479,8 @@ class GetLegalEntityInfoSuccess(Response):
             "contract_to": self.contract_to,
             "file_space": self.file_space,
             "no_of_licence": self.total_licence,
-            "org_info": self.org_info
+            "org_info": self.org_info,
+            "no_of_view_licence": self.view_licence
         }
 
 def _init_Response_class_map():

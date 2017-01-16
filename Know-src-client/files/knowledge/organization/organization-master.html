@@ -18,13 +18,13 @@
         <div class="col-sm-8">
             <div class="card-box table-responsive">
                 <div class="col-sm-12 no-padding">
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Country</th>
-                                <th>Domain</th>
-                                <th>Organization</th>
+                                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                                <th>Domain <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                                <th>Organization <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
                                 <th class="text-center">Edit</th>
                                 <th class="text-center" width="15%">Status</th>
                             </tr>
@@ -139,7 +139,7 @@
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Organization
                                 <span class="mandatory">*</span></label>
                                 <div class="col-sm-6">
-                                    <input type="text" id="organizationname" name="example-input-small" class="form-control input-sm" placeholder="Organization Name" value="" tabindex="3">
+                                    <input type="text" id="organizationname" name="example-input-small" class="form-control input-sm" placeholder="Organization Name" value="" tabindex="3" maxlength="50">
                                     <input id="organizationid" type="hidden" >
                                 </div>
                             </div>
@@ -170,5 +170,6 @@
     </div>
 </div>
 <script type="text/javascript" src="/script/organization/organization.js"></script>
+<script src="/js/js-sorting.js"></script>
 {% endblock %}
 
