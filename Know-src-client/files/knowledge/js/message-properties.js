@@ -344,6 +344,7 @@ var message = {
   "delete_ip_setting_success": "IP Settings Deleted Successfully",
   "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
   "first_select_contract_from_and_to": "First Select Contract from and Contract to Date on corresponding legal entity",
+  "duplicate_legalentity": "Duplicate Legal Entity are not allowed",
 }
 
 function clearMessage() {
