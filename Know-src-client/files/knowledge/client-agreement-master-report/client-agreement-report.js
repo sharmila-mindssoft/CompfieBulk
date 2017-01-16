@@ -275,7 +275,7 @@ function loadCompliances(data) {
         $(this).next().slideToggle('fast');
         $('.accordion-content').not($(this).next()).slideUp('fast');
     });
-
+    totalRecord = sno;
     if (is_null == true) {
       hidePagePan();
     }

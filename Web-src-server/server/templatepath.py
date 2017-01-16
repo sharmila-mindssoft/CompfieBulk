@@ -53,7 +53,7 @@ CLIENT_TEMPLATE_PATHS = [
     # transactions ---------------------------------------------------------------------
     (
         "/statutory-settings",
-        "files/client/statutory-settings/statutorysettings.html",
+        "files/client/statutory-settings/statutory_settings.html",
         None, {}
     ),
     (
@@ -124,17 +124,17 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/domain-score-card",
-        "files/client/domain-score-card/domain-score-card.html",
+        "files/client/domain-score-card/domain_score_card.html",
         None, {}
     ),
     (
         "/legal-entity-wise-score-card",
-        "files/client/legal-entity-wise-score-card/legal-entity-wise-score-card.html",
+        "files/client/legal-entity-wise-score-card/legal_entity_wise_score_card.html",
         None, {}
     ),
     (
         "/work-flow-score-card",
-        "files/client/work-flow-score-card/work-flow-score-card.html",
+        "files/client/work-flow-score-card/work_flow_score_card.html",
         None, {}
     ),
     (

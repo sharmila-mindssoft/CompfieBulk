@@ -345,16 +345,19 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_nature_checkduplicatenature`(
     in statutoryNatureName varchar(50),
-    in statutoryNatureId int(11)
+    in statutoryNatureId int(11),
+    in countryId int(11)
 )
 BEGIN
     if statutoryNatureId = 0 then
         SELECT count(1) AS cnt FROM tbl_statutory_natures
-        WHERE statutory_nature_name = statutoryNatureName;
+        WHERE statutory_nature_name = statutoryNatureName
+        AND country_id = countryId;
     else
         SELECT count(1) as cnt FROM tbl_statutory_natures
         WHERE statutory_nature_name = statutoryNatureName
-        AND statutory_nature_id != statutoryNatureId;
+        AND statutory_nature_id != statutoryNatureId and
+        country_id = countryId;
     END IF;
 END //
 
@@ -529,7 +532,7 @@ BEGIN
         date(t1.created_on) >= _from_date
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
-        AND t1.user_id LIKE _user_id
+        AND t1.user_category_id = _category_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
         ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
@@ -1517,6 +1520,7 @@ BEGIN
     where
     t9.client_id = t2.client_id and
     t8.country_id = t2.country_id and
+    t4.is_closed = 0 and
     t4.legal_entity_id = t2.legal_entity_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and
@@ -3155,42 +3159,63 @@ BEGIN
     IF @u_cat_id = 5 THEN
         select count(distinct t1.unit_id) as total_units,
         t1.domain_id, t2.legal_entity_id, t2.client_id,
-        tle.legal_entity_name as legal_entity_name,
-        tbg.business_group_name as business_group_name,
-        td.domain_name as domain_name,
-        tcg.group_name as client_name,(
+        (
+            SELECT legal_entity_name from tbl_legal_entities as tle
+            WHERE tle.legal_entity_id = t2.legal_entity_id
+        ) as legal_entity_name,
+        (
+            SELECT business_group_name from tbl_business_groups as tbg
+            WHERE tbg.client_id = t2.client_id
+        ) as business_group_name,
+        (
+            SELECT domain_name from tbl_domains td
+            WHERE td.domain_id=t1.domain_id
+        ) as domain_name,
+        (
+            SELECT group_name FROM tbl_client_groups tcg
+            WHERE tcg.client_id=t2.client_id
+        ) as client_name,(
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
             and tuu.user_category_id = 7
         ) as assigned_units
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_legal_entities as le on le.legal_entity_id = t2.legal_entity_id and
+        le.is_closed = 0
         inner join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
-        inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
-        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
-        inner join tbl_domains td on td.domain_id=t1.domain_id
-        left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
         group by t1.domain_id, t2.client_id;
 
 
     ELSE
         select count(distinct t1.unit_id) as total_units,
-        t1.domain_id, t2.legal_entity_id, t2.client_id,
-        tle.legal_entity_name as legal_entity_name,
-        tbg.business_group_name as business_group_name,
-        td.domain_name as domain_name,
-        tcg.group_name as client_name,(
+        t1.domain_id, t2.legal_entity_id, t2.client_id, (
+            SELECT domain_name from tbl_domains td
+            WHERE td.domain_id=t1.domain_id
+        ) as domain_name,
+        (
+            SELECT group_name FROM tbl_client_groups tcg
+            WHERE tcg.client_id=t2.client_id
+        ) as client_name,
+        (
+            SELECT legal_entity_name from tbl_legal_entities as tle
+            WHERE tle.legal_entity_id = t2.legal_entity_id
+        ) as legal_entity_name,
+        (
+            SELECT business_group_name from tbl_business_groups as tbg
+            WHERE tbg.client_id = t2.client_id
+        ) as business_group_name,
+        (
             SELECT count(unit_id) FROM tbl_user_units tuu
             WHERE tuu.domain_id=t1.domain_id and tuu.client_id=t2.client_id
-            and tuu.user_category_id = 8
+            and  tuu.user_id != userid_ and tuu.user_category_id = 8
         ) as assigned_units
         from tbl_units_organizations as t1
         inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
-        inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
-        inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id
-        inner join tbl_domains td on td.domain_id=t1.domain_id
-        left join tbl_business_groups as tbg on tbg.client_id = t2.client_id
+        inner join tbl_legal_entities as le on le.legal_entity_id = t2.legal_entity_id and
+        le.is_closed = 0
+        inner join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id and
+        uc.unit_id = t2.unit_id
         group by t1.domain_id, t2.client_id;
     END IF;
 
@@ -4783,6 +4808,8 @@ BEGIN
     select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
     tbl_domain_countries as t1
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
+    inner join tbl_statutory_levels as t4 on t3.domain_id = t4.domain_id
+    and t3.country_id = t4.country_id
     inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
     and t2.country_id = t1.country_id
     and t2.user_id = userid
@@ -4878,7 +4905,7 @@ BEGIN
     from tbl_statutory_mappings as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
-    where t3.user_id = userid and t1.is_approved like approvestatus
+    where t3.user_id = userid
     order by country_name, domain_name, t1.statutory_mapping
     limit fromcount, tocount;
 
@@ -7621,7 +7648,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _u_id),
+    where user_id = (select user_id from tbl_user_clients where client_id = _client_id)),
     message_heading = 'Client Unit',
     message_text = (select concat('Client unit has been created for',' ',group_name)
     from tbl_client_groups where client_id = _client_id),
@@ -7649,7 +7676,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _u_id),
+    where user_id = (select user_id from tbl_user_clients where client_id = _client_id)),
     message_heading = 'Client Unit',
     message_text = (select concat('Client unit has been updated for',' ',group_name)
     from tbl_client_groups where client_id = _client_id),
@@ -7677,7 +7704,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _created_by),
+    where user_id = _user_id),
     message_heading = 'Assign Client Unit',
     message_text = (select concat(unit_name,' ','unit has been assigned')
     from tbl_units where unit_id = _unit_id),
@@ -7705,7 +7732,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _created_by),
+    where user_id = _user_id),
     message_heading = 'Assign Legal Entity',
     message_text = (select concat(legal_entity_name,' ','has been assigned')
     from tbl_legal_entities where legal_entity_id = _le_id),
@@ -7732,7 +7759,7 @@ BEGIN
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = _u_id),
+    where user_id = (select max(created_by) from tbl_units where client_id = @_client_id)),
     message_heading = 'Client Unit Approval',
     message_text = concat('Client unit(s) has been approved for',' ',_le_name),
     link = _link, created_by = _u_id, created_on = _created_on;
@@ -7748,6 +7775,34 @@ END //
 
 DELIMITER ;
 
+
+-- --------------------------------------------------------------------------------
+-- Allocate Database Environemnt - Get Details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_getdata`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_getdata`()
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name
+    from
+    tbl_client_database as t1;
+END //
+
+DELIMITER;
+=======
 -- --------------------------------------------------------------------------------
 -- To Get data for IP Settings form
 -- --------------------------------------------------------------------------------
@@ -8008,6 +8063,8 @@ BEGIN
 END //
 
 DELIMITER ;
+
+=======
 
 DROP PROCEDURE IF EXISTS `sp_tbl_client_groups_createdb_info`;
 

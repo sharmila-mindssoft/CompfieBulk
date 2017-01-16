@@ -150,6 +150,7 @@ class API(object):
         print s
         s = base64.b64encode(s)
         s = json.dumps(s)
+        print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -160,6 +161,9 @@ class API(object):
         try:
             print request
             print request.data
+
+            if not request.data:
+                raise ValueError("Request data is Null")
             print "-" * 10
             data = request.data.decode('base64')
             print data

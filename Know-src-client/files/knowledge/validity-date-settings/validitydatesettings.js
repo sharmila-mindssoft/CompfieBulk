@@ -9,7 +9,6 @@ values_to_save = []
 
 function initialize(){
   function onSuccess(data) {
-    console.log(data)
     COUNTRIES = data["countries"];
     DOMAINS = data["domains"];
     VALIDITY_DATES = data["validity_date_settings"];
@@ -49,7 +48,6 @@ function loadValidityDatesList(){
     if(domain_list.length > 0){
       var tableRow = $('#templates .table-dconfig-list .table-dconfig-countries-row');
       var clone = tableRow.clone();
-      console.log(country_names[parseInt(country_id)])
       $('.dconfig-country-name', clone).text(
         country_names[parseInt(country_id)]
       );
@@ -62,15 +60,18 @@ function loadValidityDatesList(){
         $('.dconfig-domain-name', clone1).text(domain_names[domain_id]);
         $('.dconfig-validity-days', clone1).addClass("val-"+country_id+"-"+domain_id);
         $('.validity-day-setting-id', clone1).addClass("id-"+country_id+"-"+domain_id);
+        $('.dconfig-validity-days', clone1).on('input', function (e) {
+          this.value = isNumbers($(this));
+        });
         $.each(VALIDITY_DATES, function (key, value){
           if(parseInt(value["country_id"]) == country_id &&
             parseInt(value["domain_id"]) == domain_id
           ){
-            console.log("val:"+value["validity_days_id"]);
             $('.validity-day-setting-id', clone1).val(value["validity_days_id"]);
             $('.dconfig-validity-days', clone1).val(value["validity_days"]);
           }
         });
+
         $('.tbody-validity-config-list').append(clone1);
       }
     }
@@ -113,22 +114,19 @@ function collect_and_validate_values(){
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
       domain_id = parseInt(domain_list[dcount])
       validity_days = $(".val-"+country_id+"-"+domain_id).val()
-      console.log("validity_days:"+validity_days)
       validity_days_id = $(".id-"+country_id+"-"+domain_id).val()
       if(
           validity_days != "" &&
           validity_days != "undefined" &&
           validity_days != null
       ){
-        if (!(parseInt(validity_days) > 365)){
-          console.log("check:"+parseInt(validity_days) > 365)
+        if ((parseInt(validity_days) > 366)){
           displayMessage(message.invalid_validity_days);
           return false;
           break;
         }
         if(validity_days_id){
           validity_days_id = parseInt(validity_days_id)
-          console.log("validity_days_id:"+validity_days_id)
         }
         value = mirror.get_validity_day_setting(
           validity_days_id, parseInt(country_id), parseInt(domain_id),
