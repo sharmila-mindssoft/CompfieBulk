@@ -442,7 +442,8 @@ def change_disable_status(db, request, session_user):
     remarks = request.remarks
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
-
+    elif is_user_idle(db, user_id) is False:
+        return admin.CannotDisableUserTransactionExists()
     elif update_disable_status(db, user_id, is_active, remarks, session_user):
         return admin.ChangeUserStatusSuccess()
 

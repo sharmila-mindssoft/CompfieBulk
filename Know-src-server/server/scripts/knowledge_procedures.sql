@@ -8168,3 +8168,20 @@ END //
 
 DELIMITER ;
 
+-- -------------
+-- get user mapped id
+-- --------------
+DROP PROCEDURE IF EXISTS `sp_get_user_mapped_data`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_user_mapped_data`(in
+    u_id int(11))
+BEGIN
+    select count(user_mapping_id) as cnt from tbl_user_mapping where parent_user_id = u_id
+    OR child_user_id = u_id;
+
+END //
+
+DELIMITER ;
+

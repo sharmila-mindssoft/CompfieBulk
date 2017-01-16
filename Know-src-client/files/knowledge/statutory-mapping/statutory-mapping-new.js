@@ -83,7 +83,7 @@ ListScreen = $('#statutorymapping-view');
 ViewScreen = $('#statutorymapping-add');
 
 listTemplate = $("#templates #list-template .items");
-var file_type = [
+var file_types = [
     "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
     "rar", "tar", "gz", "ppt",
 ]

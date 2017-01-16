@@ -41,7 +41,7 @@ __all__ = [
     "get_domain_user_data",
     "save_reassign_techno_manager", "save_reassign_techno_executive",
     "save_reassign_domain_manager", "save_reassign_domain_executive",
-    "save_user_replacement"
+    "save_user_replacement", "is_user_idle"
 ]
 
 
@@ -833,6 +833,14 @@ def update_disable_status(db, user_id, is_disable, remarks, session_user):
         action = "Enabled User \"%s\"" % employee_name
     db.save_activity(session_user, 4, action)
     return result
+
+def is_user_idle(db, user_id):
+    rows = db.call_proc("sp_get_user_mapped_data", [user_id], 1)
+    if rows :
+        if rows[0].get('cnt') > 0 :
+            return False
+    else :
+        return True
 
 #####################################################################
 # To Fetch Countries which are mapped to Domains

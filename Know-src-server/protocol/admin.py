@@ -989,6 +989,19 @@ class CannotDeactivateUserExists(Response):
         return {
         }
 
+class CannotDisableUserTransactionExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotDisableUserTransactionExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 class UpdateUserSuccess(Response):
     def __init__(self):
@@ -1458,7 +1471,7 @@ def _init_Response_class_map():
         SaveUserMappingsSuccess, SaveReassignUserAccountSuccess,
         SendRegistraionSuccess,
         GetTechnoUserDataSuccess, GetDomainUserDataSuccess,
-        UserReplacementSuccess
+        UserReplacementSuccess, CannotDisableUserTransactionExists
     ]
     class_map = {}
     for c in classes:

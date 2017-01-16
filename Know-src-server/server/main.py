@@ -147,7 +147,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        print s
+        # print s
         s = base64.b64encode(s)
         s = json.dumps(s)
         # print s
@@ -164,9 +164,9 @@ class API(object):
 
             if not request.data:
                 raise ValueError("Request data is Null")
-            print "-" * 10
+            # print "-" * 10
             data = request.data.decode('base64')
-            print data
+            # print data
             data = json.loads(data)
             request_data = request_data_type.parse_structure(
                 data

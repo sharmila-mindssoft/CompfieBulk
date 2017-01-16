@@ -526,12 +526,12 @@ function ViewPage() {
             displayMessage(msg.compliancefrequency_required);
             return false;
         }
-        else if (ReferenceLink.val().length > 0) {
-            isValid = isWebUrl(ReferenceLink);
-            if (isValid == false) {
-                displayMessage(msg.invalid_reference);
-                return false;
-            }
+        else if ((ReferenceLink.val().length > 0) && (isWebUrl(ReferenceLink) == false)) {
+            // isValid = isWebUrl(ReferenceLink);
+            // if (isValid == false) {
+            displayMessage(msg.invalid_reference);
+            return false;
+            // }
         }
         else {
 

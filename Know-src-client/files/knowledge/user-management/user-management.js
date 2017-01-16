@@ -349,7 +349,10 @@ function possibleFailures(error) {
         displayMessage(msg.invalid_userid);
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
-    } else {
+    } else if (error == 'CannotDisableUserTransactionExists') {
+        displayMessage(message.user_transaction_exists);
+    }
+    else {
         displayMessage(error);
     }
 }
