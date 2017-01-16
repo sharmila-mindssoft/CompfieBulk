@@ -1095,10 +1095,13 @@ function commonAutoComplete1(
                       var array1 = condition_values[key];
                       var array2 = list_val[i][value];
 
-                      jQuery.grep(array2, function(el) {
-                        if (jQuery.inArray(el, array1) == 0) common_values.push(el);
+                      jQuery.grep(array1, function(el) {
+                        //alert(el +' in '+ array1);
+                        if (jQuery.inArray(el, array2) == 0) common_values.push(el);
                       });
-
+                      //alert(common_values)
+                      //alert(array1 + '==' + array2)
+                      //alert(common_values.length)
                       if(common_values.length > 0){
                         condition_result = true;
                       }else{

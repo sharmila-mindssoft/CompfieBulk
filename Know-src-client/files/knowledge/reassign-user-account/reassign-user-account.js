@@ -19,6 +19,7 @@ var DE_PARANTS = {};
 var DM_PARANTS = {};
 var DE_GROUPS = {};
 var DM_GROUPS = {};
+var LE_COUNTRIES = {};
 
 var TechnoManagerName = $("#techno_manager_name");
 var TechnoManagerId = $("#techno_manager_id");
@@ -176,7 +177,7 @@ function loadTMList(){
 
             $('.tm-techno-executive-name', clone).keyup(function(e){
                 var condition_fields = ["country_domains", "p_user_ids"];
-                var condition_values = [[[value.c_id], value.d_ids], [$("#techno_manager_id_"+value.ct_id).val()]];
+                var condition_values = [[[value.c_id], value.d_ids], $("#techno_manager_id_"+value.ct_id).val()];
                 
                 var text_val = $(this).val();
                 selected_textbox = $(this);
@@ -461,14 +462,14 @@ function pageControls(){
                     onAutoCompleteSuccess(DMLegalEntityName, DMLegalEntityId, val)
                 }, condition_fields, condition_values);
         }
-        
-        
     })
 
     DMDomainName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var cn_id = LE_COUNTRIES[DMLegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids"];
+        var condition_values = [true, cn_id];
+
         commonAutoComplete(
             e, DMACDomain, DMDomainId, text_val,
             DOMAINS, "domain_name", "domain_id",
@@ -541,7 +542,6 @@ function pageControls(){
         if(DEGroupId.val() != ''){
             condition_fields.push("client_id");
             condition_values.push(DEGroupId.val());
-
             commonAutoComplete(
                 e, DEACLegalEntity, DELegalEntityId, text_val,
                 LEGAL_ENTITIES, "legal_entity_name", "legal_entity_id",
@@ -549,14 +549,14 @@ function pageControls(){
                     onAutoCompleteSuccess(DELegalEntityName, DELegalEntityId, val)
                 }, condition_fields, condition_values);
         }
-        
-        
     })
 
     DEDomainName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var cn_id = LE_COUNTRIES[DELegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids"];
+        var condition_values = [true, cn_id];
+    
         commonAutoComplete(
             e, DEACDomain, DEDomainId, text_val,
             DOMAINS, "domain_name", "domain_id",
@@ -1000,6 +1000,7 @@ function generateMap(){
     DM_PARANTS = {};
     DE_GROUPS = {};
     DM_GROUPS = {};
+    LE_COUNTRIES = {};
 
     $.each(TECHNO_USERS, function(key, value) {
         TE_PARANTS[value.user_id] = value.p_user_ids;
@@ -1013,6 +1014,10 @@ function generateMap(){
     $.each(DOMAIN_MANAGERS, function(key, value) {
         DM_PARANTS[value.user_id] = value.p_user_ids;
         DM_GROUPS[value.user_id] = value.grp_ids;
+    });
+
+    $.each(LEGAL_ENTITIES, function(key, value) {
+        LE_COUNTRIES[value.legal_entity_id] = value.country_id;
     });
 
 }
