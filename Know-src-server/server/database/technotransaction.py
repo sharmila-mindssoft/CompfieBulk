@@ -19,7 +19,6 @@ __all__ = [
     "resave_registraion_token", "get_LegalEntityClosureReportData", "save_legalentity_closure_data"
 ]
 
-
 def get_categories_for_user(db, user_id):
     result = db.call_proc("sp_categories_by_user", (user_id,))
     return return_categories(result)
@@ -552,7 +551,11 @@ def resave_registraion_token(db, client_id, email_id):
         return True
     else :
         return False
-
+######################################################################################
+# To send group admin registered email and save the notification to the user
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return the value of the notofication saved
+######################################################################################
 def send_groupadmin_registration_mail(db, request, user_id):
     group_mode = request.grp_mode
     email_id = request.email_id
@@ -579,7 +582,11 @@ def send_groupadmin_registration_mail(db, request, user_id):
         print "Error with group admin registration"
         print e
     return insert_result
-
+######################################################################################
+# To send email to registration link
+# Parameter(s) : Email Id, Link
+# Return Type : Return email success/failure value
+######################################################################################
 def notify_user(email_id, link):
     try:
         email().resend_registraion_link(email_id, link)
@@ -587,7 +594,11 @@ def notify_user(email_id, link):
         print "Error while sending email"
         print e
 
-
+######################################################################################
+# To send notification email of the units and statutories
+# Parameter(s) : email id, group name, legal entity name
+# Return Type : Return success/failure value of the email
+######################################################################################
 def notify_grp_admin_mail(mode, email_id, group_name, legal_entity_name):
     try:
         if mode == "unit" :
@@ -601,6 +612,11 @@ def notify_grp_admin_mail(mode, email_id, group_name, legal_entity_name):
 #
 # To get the legal entity list under the techno manager for closure prrocess
 #
+######################################################################################
+# To get legal entity closure report data
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of legal closed list with its status
+######################################################################################
 def get_LegalEntityClosureReportData(db, user_id):
     result = db.call_proc("sp_legalenity_closure_list", (user_id,))
     le_closure = []
@@ -613,6 +629,11 @@ def get_LegalEntityClosureReportData(db, user_id):
         ))
     return le_closure
 
+######################################################################################
+# To save legal entity closure data
+# Parameter(s) : Object of the database, user id, password, legal entity id, remarks
+# Return Type : Return the value of the save process
+######################################################################################
 def save_legalentity_closure_data(db, user_id, password, legal_entity_id, remarks, action_mode):
     current_time_stamp = get_current_date()
     print action_mode
@@ -628,6 +649,9 @@ def save_legalentity_closure_data(db, user_id, password, legal_entity_id, remark
         result = db.call_update_proc("sp_legalentity_closure_save", (
             user_id, legal_entity_id, 1, current_time_stamp, remarks
         ))
+
+    if result:
+        return_result = None
 
     print result, return_result
     if(return_result is None):
