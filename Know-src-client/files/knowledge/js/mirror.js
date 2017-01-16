@@ -108,7 +108,7 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-
+    
     function getEntityApprovalList(legal_entity_id, callback) {
         callerName = 'client_coordination_master';
         var request = [
@@ -118,7 +118,7 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-
+    
     function approveUnit(unit_approval_details, callback) {
         callerName = 'client_coordination_master';
         var request = [
@@ -128,7 +128,7 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-
+    
     function getClientGroupApprovalList(callback) {
         callerName = 'client_coordination_master';
         var request = [
