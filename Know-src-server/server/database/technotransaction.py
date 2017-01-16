@@ -449,12 +449,21 @@ def return_assigned_statutories_by_id(statutories):
         )
     return level_1_statutories, compliances
 
+######################################################################################
+# To get group admin registered email groups list
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of group admin registered email list
+######################################################################################
 def get_groupadmin_registration_grouplist(db, user_id):
     groupadmin_grouplist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_groupslist", (user_id,), 3)
     print "group admin group list"
     print groupadmin_grouplist
     return return_groupadmin_registration_grouplist(groupadmin_grouplist)
-
+######################################################################################
+# To convert databse result to list
+# Parameter(s) : DB Recordset
+# Return Type : Return list of group admin registered email groups list
+######################################################################################
 def return_groupadmin_registration_grouplist(groupslist):
     groupadmin_grouplist = []
     for groups in groupslist[1]:
@@ -475,7 +484,11 @@ def return_groupadmin_registration_grouplist(groupslist):
                 c_names, ug_name, email_id, user_id_search, emp_code_name
             ))
     return groupadmin_grouplist
-
+######################################################################################
+# To get group admin registered email units list
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of group admin registered email unit list
+######################################################################################
 def get_groupadmin_registration_unitlist(db, user_id):
     groupadmin_unitlist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_unitslist", (user_id,), 2)
     result = []
@@ -483,7 +496,11 @@ def get_groupadmin_registration_unitlist(db, user_id):
     print groupadmin_unitlist
     result = groupadmin_unitlist[1]
     return return_groupadmin_registration_unitlist(result)
-
+######################################################################################
+# To convert database records to list
+# Parameter(s) : Database recordset
+# Return Type : Return list of group admin registered email units list
+######################################################################################
 def return_groupadmin_registration_unitlist(unitslist):
     groupadmin_unitlist = []
     for units in unitslist:
@@ -500,7 +517,11 @@ def return_groupadmin_registration_unitlist(unitslist):
                 units["user_id"], units["emp_code_name"], units["statutory_count"]
             ))
     return groupadmin_unitlist
-
+######################################################################################
+# To resend the user registration for group admin registered email list
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of group admin registered email list
+######################################################################################
 def resave_registraion_token(db, client_id, email_id):
     def _del_olddata():
         condition = "client_id = %s and verification_type_id = %s"
@@ -595,15 +616,21 @@ def get_LegalEntityClosureReportData(db, user_id):
 def save_legalentity_closure_data(db, user_id, password, legal_entity_id, remarks, action_mode):
     current_time_stamp = get_current_date()
     print action_mode
+    return_result = None
     if action_mode == "close":
         print "save"
+        return_result = "Unable to Close the Legal Entity"
         result = db.call_update_proc("sp_legalentity_closure_save", (
             user_id, legal_entity_id, 0, current_time_stamp, remarks
         ))
     elif action_mode == "reactive":
+        return_result = "Unable to Reactivate the Legal Entity"
         result = db.call_update_proc("sp_legalentity_closure_save", (
             user_id, legal_entity_id, 1, current_time_stamp, remarks
         ))
 
-    print result
-    return result
+    print result, return_result
+    if(return_result is None):
+        return result
+    else:
+        return return_result
