@@ -2768,7 +2768,8 @@ class UserDetails(object):
         self, user_id, user_category_id, user_category_name, employee_name,
         employee_code,  email_id, user_group_id,
         contact_no, mobile_no, address, designation, country_ids,
-        domain_ids, is_active, is_disable, username
+        domain_ids, is_active, is_disable, username,
+        allow_enable, days_left
     ):
         self.user_id = user_id
         self.user_category_id = user_category_id
@@ -2786,6 +2787,8 @@ class UserDetails(object):
         self.is_active = is_active
         self.is_disable = is_disable
         self.username = username
+        self.allow_enable = allow_enable
+        self.days_left = days_left
 
     @staticmethod
     def parse_structure(data):
@@ -2797,7 +2800,8 @@ class UserDetails(object):
             "contact_no", "mobile_no",
             "address", "designation",
             "country_ids", "country_wise_domain",
-            "is_active", "is_disable", "username_id"
+            "is_active", "is_disable", "username_id",
+            "allow_enable", "days_left"
         ])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category-id")
@@ -2815,6 +2819,8 @@ class UserDetails(object):
         is_active = data.get("is_active")
         is_disable = data.get("is_disable")
         username = data.get("username_id")
+        allow_enable = data.get("allow_enable")
+        days_left = data.get("days_left")
         return UserDetails(
             user_id, user_category_id,
             user_category_name,
@@ -2822,7 +2828,8 @@ class UserDetails(object):
             email_id, user_group_id,
             contact_no, mobile_no, address, designation,
             country_ids, domain_ids,
-            is_active, is_disable, username
+            is_active, is_disable, username,
+            allow_enable, days_left
         )
 
     def to_structure(self):
@@ -2843,6 +2850,8 @@ class UserDetails(object):
             "is_active": self.is_active,
             "is_disable": self.is_disable,
             "username_id": self.username,
+            "allow_enable": self.allow_enable,
+            "days_left": self.days_left
         }
 
 #

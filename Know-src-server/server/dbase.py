@@ -693,6 +693,8 @@ class Database(object):
         condition_val = [value]
         return not self.is_already_exists(table, condition, condition_val)
 
+
+
     ########################################################
     # To generate a new Id for the given table and given
     # field

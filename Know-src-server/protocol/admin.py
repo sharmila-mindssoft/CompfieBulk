@@ -299,21 +299,24 @@ class ChangeUserStatus(Request):
         }
 
 class ChangeDisableStatus(Request):
-    def __init__(self, user_id, is_active):
+    def __init__(self, user_id, is_active, remarks):
         self.user_id = user_id
         self.is_active = is_active
+        self.remarks = remarks
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "is_disable"])
+        data = parse_dictionary(data, ["user_id", "is_disable", "remarks"])
         user_id = data.get("user_id")
         is_active = data.get("is_disable")
-        return ChangeDisableStatus(user_id, is_active)
+        remarks = data.get("remarks")
+        return ChangeDisableStatus(user_id, is_active, remarks)
 
     def to_inner_structure(self):
         return {
             "user_id": self.user_id,
             "is_disable": self.is_active,
+            "remarks": self.remarks
         }
 
 class GetValidityDateList(Request):

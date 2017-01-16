@@ -2297,7 +2297,7 @@ BEGIN
     T1.employee_name, T1.employee_code, T1.email_id,
     T1.user_group_id,
     T1.contact_no, T1.mobile_no, T1.address, T1.designation, T1.is_active, T1.is_disable,
-    T2.username
+    T2.username, IFNULL(DATEDIFF(current_ist_datetime(), T1.disabled_on), 0) as days_left
     FROM tbl_users T1
     LEFT JOIN tbl_user_login_details T2 ON T1.user_id = T2.user_id
     WHERE T1.user_category_id > 2
@@ -2474,11 +2474,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_disable_status`(
     IN userid INT(11), isdisable TINYINT(4), session_user INT(11),
-    updated_time TIMESTAMP
+    updated_time TIMESTAMP, remarks varchar(500)
 )
 BEGIN
     UPDATE tbl_users set is_disable = isdisable,
-        updated_by =  session_user and disabled_on = updated_time
+        updated_by =  session_user, disabled_on = updated_time,
+        disable_reason = remarks
         WHERE user_id = userid;
     SELECT @_isactive:= is_active from tbl_users WHERE user_id = userid;
     IF @_isactive = 1 and isdisable = 0 THEN
@@ -4826,7 +4827,7 @@ BEGIN
     and t2.user_id = userid order by country_name;
     -- 1
 
-    select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
+    select distinct t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
     tbl_domain_countries as t1
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
     inner join tbl_statutory_levels as t4 on t3.domain_id = t4.domain_id
