@@ -243,23 +243,14 @@ def process_update_country(db, request, user_id):
 def process_change_country_status(db, request, user_id):
     is_active = request.is_active
     country_id = int(request.country_id)
-    if is_active is False:
-        if is_transaction_exists(db, country_id):
-            if (
-                update_country_status(
-                    db, country_id, int(is_active), user_id
-                )
-            ):
-                return general.ChangeCountryStatusSuccess()
-            else:
-                return general.InvalidCountryId()
-        else:
-            return general.TransactionExists()
+    if (
+        update_country_status(
+            db, country_id, int(is_active), user_id
+        )
+    ):
+        return general.ChangeCountryStatusSuccess()
     else:
-        if(update_country_status(db, country_id, int(is_active), user_id)):
-            return general.ChangeCountryStatusSuccess()
-        else:
-            return general.InvalidCountryId()
+        return general.InvalidCountryId()
 
 
 ########################################################

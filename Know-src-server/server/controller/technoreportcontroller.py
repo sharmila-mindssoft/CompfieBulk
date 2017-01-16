@@ -472,8 +472,8 @@ def process_get_AssignedUserClientGroups(db, user_id):
 
     for d_list in result[3]:
         domain_user_list.append(technoreports.ReassignUserDomainList(
-            int(d_list.get("user_id")), int(d_list.get("client_id")), int(d_list.get("legal_entity_id")),
-            d_list.get("legal_entity_name"), int(d_list.get("business_group_id")),
+            int(d_list.get("user_id")), int(d_list.get("client_id")),
+            d_list.get("legal_entity_id"), d_list.get("legal_entity_name"), d_list.get("business_group_id"),
             d_list.get("business_group_name"), int(d_list.get("domain_id")), d_list.get("domain_name")
         ))
 
