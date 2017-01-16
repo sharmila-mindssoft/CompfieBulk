@@ -35,7 +35,11 @@ __all__ = [
 STATUTORY_PARENTS = {}
 GEOGRAPHY_PARENTS = {}
 
-
+#############################################################################
+# To get industries list
+# Parameter(s) : Object of database
+# Return Type : List of Object of Organization
+#############################################################################
 def get_industries(db):
     columns = [
         "country_id", "country_name",
@@ -46,6 +50,11 @@ def get_industries(db):
     result = db.call_proc("sp_industry_master_getindustries", (), columns)
     return return_industry(result)
 
+#############################################################################
+# To get industries by id
+# Parameter(s) : Object of database, industry id
+# Return Type : List of Object of Organization
+#############################################################################
 def get_industry_by_id(db, industry_id):
     if type(industry_id) is int:
         values_list = [industry_id]
@@ -89,7 +98,11 @@ def return_industry(data):
         ))
     return results
 
-
+######################################################################################
+# To get count of organziation by id
+# Parameter(s) : Object of database, industry id, industry name, country id, domain id
+# Return Type : Count of organization
+######################################################################################
 def check_duplicate_industry(db, country_id, domain_id, industry_name, industry_id):
     isDuplicate = False
 
@@ -105,7 +118,11 @@ def check_duplicate_industry(db, country_id, domain_id, industry_name, industry_
 
     return isDuplicate
 
-
+######################################################################################
+# To Save organziation
+# Parameter(s) : Object of database, industry id, industry name, country id, domain id
+# Return Type : Return value of the organization saved
+######################################################################################
 def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     # table_name = "tbl_industries"
     created_on = get_date_time()
@@ -119,7 +136,11 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
         db.save_activity(user_id, 7, action)
         return True
 
-
+######################################################################################
+# To Update organziation
+# Parameter(s) : Object of database, industry id, industry name, country id, domain id
+# Return Type : Return value of the organization updated
+######################################################################################
 def update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id):
     new_id = False
     oldData = get_industry_by_id(db, industry_id)
@@ -135,7 +156,11 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
     else:
         raise process_error("E002")
 
-
+######################################################################################
+# To Update organziation Status
+# Parameter(s) : Object of database, industry id, status, user id
+# Return Type : Return value of the organization status updated
+######################################################################################
 def update_industry_status(db, industry_id, is_active, user_id):
     oldData = get_industry_by_id(db, industry_id)
     if oldData is None:
@@ -154,7 +179,11 @@ def update_industry_status(db, industry_id, is_active, user_id):
     else:
         raise process_error("E003")
 
-
+######################################################################################
+# To Get Statutory Nature name by id
+# Parameter(s) : Object of database, nature id
+# Return Type : Return statutory nature name
+######################################################################################
 def get_nature_by_id(db, nature_id):
     if type(nature_id) is int:
         values_list = [nature_id]
@@ -166,7 +195,11 @@ def get_nature_by_id(db, nature_id):
         nature_name = r["statutory_nature_name"]
     return nature_name
 
-
+######################################################################################
+# To Get Statutory Nature
+# Parameter(s) : Object of database, nature id
+# Return Type : Return list of statutory nature
+######################################################################################
 def get_statutory_nature(db):
     columns = [
         "statutory_nature_id", "statutory_nature_name", "country_id", "country_name",
@@ -190,7 +223,11 @@ def return_statutory_nature(data):
         ))
     return results
 
-
+######################################################################################
+# To check dupliacte Statutory Nature
+# Parameter(s) : Object of database, nature id, nature name, country id
+# Return Type : Return count of the statutory nature list under the parameter
+######################################################################################
 def check_duplicate_statutory_nature(db, nature_name, country_id, nature_id):
     isDuplicate = False
     if nature_id is not None:
@@ -204,7 +241,11 @@ def check_duplicate_statutory_nature(db, nature_name, country_id, nature_id):
             isDuplicate = True
     return isDuplicate
 
-
+######################################################################################
+# To Save Statutory Nature
+# Parameter(s) : Object of database, country id, nature name, user id
+# Return Type : Return value of the saved staturtory nature
+######################################################################################
 def save_statutory_nature(db, nature_name, country_id, user_id):
     created_on = get_date_time()
     # columns = ["statutory_nature_name", "country_id", "created_by", "created_on"]
@@ -217,7 +258,11 @@ def save_statutory_nature(db, nature_name, country_id, user_id):
         db.save_activity(user_id, 8, action)
         return True
 
-
+######################################################################################
+# To Update Statutory Nature
+# Parameter(s) : Object of database, nature id, nature name, country id, user id
+# Return Type : Return updated value of statutory nature
+######################################################################################
 def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
     oldData = get_nature_by_id(db, nature_id)
     if oldData is None:
@@ -233,7 +278,11 @@ def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
     else:
         raise process_error("E005")
 
-
+######################################################################################
+# To update Statutory Nature status
+# Parameter(s) : Object of database, nature id, status, user id
+# Return Type : Return value of the updated statutory nature status
+######################################################################################
 def update_statutory_nature_status(db, nature_id, is_active, user_id):
     oldData = get_nature_by_id(db, nature_id)
     if oldData is None:
@@ -252,7 +301,11 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
     else:
         raise process_error("E006")
 
-
+######################################################################################
+# To Get Statutory Level
+# Parameter(s) : Object of database
+# Return Type : Return list of statutory levels
+######################################################################################
 def get_statutory_levels(db):
     result = db.call_proc("sp_get_statutory_level_master", ())
     print "sl"
