@@ -337,7 +337,7 @@ def return_statutory_levels(data):
 
 def delete_statutory_level(db, level_id):
     row = db.call_proc("sp_get_statutory_level_count", (level_id,))
-    if row[0] > 0:
+    if row[0]['cnt'] > 0:
         return True
     else:
         res = db.call_proc(
