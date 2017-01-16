@@ -317,7 +317,7 @@ class API(object):
             _group_db.commit()
             _group_db_cons.close()
             if session_user is None :
-                return False
+                return False, False
             else :
                 return session_user, client_id
         except Exception, e :

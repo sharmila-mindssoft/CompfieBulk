@@ -306,7 +306,6 @@ def update_service_provider_status(
 
     return result
 
-
 ##############################################################################
 # To Get list of all forms
 # Parameter(s) - Object of database
@@ -459,10 +458,7 @@ def save_user_privilege(
             db.insert(tblUserGroupForms, columns1, values1)
 
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
-    #db.save_activity(session_user, 3, action)
-    #db.save_activity(3, session_user, action, client_id, le_id, unit_id)
-    #self, category_id, user_id, form_id, action, client_id,
-    #    legal_entity_id, unit_id,
+    db.save_activity(session_user, 3, action)
     return result
 
 
