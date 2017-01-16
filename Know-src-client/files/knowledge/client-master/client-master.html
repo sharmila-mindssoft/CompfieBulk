@@ -16,7 +16,7 @@
         <div class="col-lg-10">
             <div class="panel panel-default panel-info">
                 <div class="panel-body">
-                    <div class="panel-group col-lg-12 no-padding tbody-clientgroup-list" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group col-lg-12 no-padding tbody-clientgroup-list m-b-0" id="accordion" role="tablist" aria-multiselectable="true">
 
                     </div>
                 </div>
@@ -28,7 +28,7 @@
 
 <div id="act-templates" class="default-display-none">
       <div class="panel panel-default bx-shadow-none p-head">
-        <div class="panel-heading p-10 acc-title" role="tab">
+        <div class="panel-heading p-5 acc-title" role="tab">
             <h4 class="panel-title">
               <div class="act-status" style="float:left; width:3%;">
                  
@@ -36,9 +36,10 @@
               <div class="panel-title">
                 <a role="button" data-toggle="collapse"
                     data-parent="#accordion" 
-                    aria-expanded="true" >
+                    aria-expanded="false" 
+                    class="collapsed">
                     <span></span>
-                <div class="controls pull-right m-t-m-5">
+                <div class="controls pull-right m-r-10">
                   <div class="col-sm-12 no-padding">
                   <i class="fa fa-pencil text-primary c-pointer edit-icon" data-toggle="tooltip" title=""></i>  
                   </div>
@@ -47,10 +48,10 @@
               </div>
             </h4>
         </div>
-        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+        <div class="panel-collapse collapse coll-title" role="tabpanel">
             <div class="panel-body no-padding">
                 <div class="dataTable_wrapper">
-                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table  class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th align="center" width="2%">#</th>
@@ -64,30 +65,41 @@
                                 <td align="center"></td>
                                 <td>
                                     <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                        <input class="form-control input-sm filter-text-box" placeholder="Country" type="text" id="search-country">
+                                        <input class="form-control input-sm filter-text-box js-filter" placeholder="Country" type="text" id="search-country">
                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                        <input class="form-control input-sm filter-text-box" placeholder="Legal Entity Name" type="text" id="search-legalentity">
+                                        <input class="form-control input-sm filter-text-box js-filter" placeholder="Legal Entity Name" type="text" id="search-legalentity">
                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                     </div>
                                 </td>
                                 <td class="text-center"></td>
                                 <td>
-                                    <div class="btn-group">
+                                   <!--  <div class="btn-group">
                                         <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                                             All
                                             <span class="caret"></span>
                                         </button>
-                                        <ul class="dropdown-menu">
+                                        <ul class="dropdown-menu" id="search-status">
                                             <li><a>All</a></li>
                                             <li><a>Pending</a></li>
                                             <li><a>Approved</a></li>
                                             <li><a>Rejected</a></li>
                                         </ul>
+                                    </div> -->
+                                     <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10 ">
+                                        <select class="form-control input-sm js-filter width-100px">
+                                            <option value="">All</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Approved">Approved</option>
+                                            <option value="Rejected">Rejected</option>
+                                            <option value="Closed">Closed</option>
+                                        </select>
+                                        
                                     </div>
+                                    
                                 </td>
                             </tr>
                         </thead>
@@ -129,21 +141,25 @@
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                            <div class="col-sm-6">
+                            <div class="cm-header col-sm-6">
                                 <div class="form-group">
-                                    <label class=" col-sm-4 control-label">Group <span class="mandatory">*</span></label>
+                                    <label class=" col-sm-5 control-label">Group <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="text" id="group-text" class="form-control input-sm" placeholder="Group Name" tabindex="1">
                                     </div>
                                 </div>
+                            </div>
+                            <div class="cm-header col-sm-6">
                                 <div class="form-group">
-                                    <label class=" col-sm-4 control-label">View Only Licence(s) <span class="mandatory">*</span></label>
+                                    <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" maxlength="3" placeholder="Total Number of Licence(s)" tabindex="3">
+                                        <input type="text" class="form-control input-sm" id="shortname" placeholder="Short Name" tabindex="2" maxlength="20">
                                     </div>
                                 </div>
-                                 <div class="form-group action-div">
-                                        <label class="col-sm-4 control-label">Action:</label>
+                            </div>
+                            <div class="cm-header col-sm-6 action-div">
+                                 <div class="form-group ">
+                                        <label class="col-sm-5 control-label">Action:</label>
                                         <div class="col-sm-6 actions">
                                             <select class="form-control input-sm">
                                                 <option value="1">Edit</option>
@@ -153,13 +169,15 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="cm-header col-sm-6">
                                 <div class="form-group">
-                                    <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
+                                    <label class=" col-sm-5 control-label">View Only Licence(s) <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="shortname" placeholder="Short Name" tabindex="2" maxlength="20">
+                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" maxlength="3" placeholder="0" tabindex="3">
                                     </div>
                                 </div>
+                            </div>
+                            <div class="cm-header col-sm-6">
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
@@ -171,8 +189,11 @@
                                         <i class="fa fa-pencil text-primary c-pointer" ></i><!--  onclick="chenge_edit(1)" -->
                                     </div>
                                 </div> 
-                                <div class="form-group remarks_text remarks-div">
-                                    <label class="col-sm-4 control-label">Remarks:</label>
+                            </div>
+                           
+                            <div class=" cm-header col-sm-6 remarks-div">
+                                <div class="form-group remarks_text ">
+                                    <label class="col-sm-5 control-label">Remarks:</label>
                                     <label class="col-sm-6 p-l-10">
                                         <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" type="text">
                                     </label>
@@ -202,7 +223,7 @@
                                 </div>
                                 <h4 class="page-title">Date Configuration</h4>
                             </div>
-                            <div class="card-box table-responsive">
+                            <div class="table-responsive">
                             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
@@ -286,6 +307,7 @@
         <input type="hidden" class="le-no">
         <input type="hidden" class="le-id">
         <div class="card-box p-10 letable">
+            <input type="hidden" class="edited" value="0">
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Country<span class="mandatory">*</span></label>
@@ -294,8 +316,8 @@
                         </select>
                     </div>
                 </div>
-                 </div>
-                   <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Business Group</label>
                     <div class="select_business_group">
@@ -310,7 +332,7 @@
                     </div>
                     <div class="input_business_group default-display-none">
                         <div class="col-sm-6 no-padding-right">
-                            <input class="form-control input-sm business-group-text" placeholder="Enter Business Group" type="text">
+                            <input class="form-control input-sm business-group-text" placeholder="Enter Business Group" type="text" maxlength="50">
                         </div>
                         <div class="col-sm-2 p-t-7">
                             <a class="waves-effect waves-light c-pointer icon-3x cancel-add-business-group" type="button" onclick="addOrSelectBusinessGroup('cancel', this, 0)"> <i class="fa fa-times text-primary"></i> </a>
@@ -318,8 +340,8 @@
                         </div>
                     </div>
                 </div>
-                 </div>
-                  <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Legal Entity<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
@@ -329,7 +351,7 @@
                         <i class="fa fa-pencil text-primary c-pointer pull-right"></i>
                     </label>
                 </div>
-                 </div>
+            </div>
             <div class="col-sm-4  clear">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Contract From<span class="mandatory">*</span></label>
@@ -337,7 +359,7 @@
                         <input class="form-control input-sm contract-from" readonly="readonly" placeholder="Select Contract From" tabindex="" type="text">
                     </div>
                 </div>
-                 </div>
+            </div>
 
             <div class="col-sm-4">
                 <div class="form-group">
@@ -346,8 +368,8 @@
                         <input class="form-control input-sm contract-to" type="text" readonly="readonly" placeholder="Select Contract To" tabindex="">
                     </div>
                 </div>
-                 </div>
-                    <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Total Licence(s)<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
@@ -371,7 +393,7 @@
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
                     <div class="col-sm-3 no-padding-right" id="file-space-div">
-                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex=""><abbr class="l-h-34"> GB</abbr>
+                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex=""><abbr class="l-h-30"> GB</abbr>
                     </div>
                     <div class="col-sm-4 pull-left"></div>
                 </div>
@@ -489,7 +511,7 @@
     <li></li>
 </div>
 <div class="text default-display-none">
-    <span class="l-h-34"></span>
+    <span class="l-h-30"></span>
 </div>
 <div class="logo-img default-display-none">
     <span>

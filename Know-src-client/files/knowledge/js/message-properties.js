@@ -136,6 +136,7 @@ var message = {
   'logo_invalid': 'Logo Invalid',
   'server_full': 'Server Full - Add a new server to create new clients',
   'groupname_exists': 'Group Name Already Exists',
+  'groupshortname_exists': 'Group Short Name Already Exists',
   'username_exists': 'Username Already Exists',
   'client_creation_failed': 'Client Creation Failed. Check your server connection details',
   'cannot_unselect_country': 'Unit(s) Exists. Cannot unselect country.',
@@ -347,6 +348,7 @@ var message = {
   "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
   "manager_required": "Manager Required",
   "replace_manager_required": "Replace Manager Required",
+  "first_select_contract_from_and_to": "First Select Contract from and Contract to Date on corresponding legal entity",
 }
 
 function clearMessage() {

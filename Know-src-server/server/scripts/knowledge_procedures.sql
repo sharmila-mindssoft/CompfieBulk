@@ -913,14 +913,11 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_le_domain_industry_delete`(
-    IN clientid INT(11)
+    IN legalentityid INT(11)
 )
 BEGIN
     DELETE FROM tbl_legal_entity_domains
-    WHERE legal_entity_id in (
-        select legal_entity_id from tbl_legal_entities
-        where client_id = clientid
-    );
+    WHERE legal_entity_id = legalentityid;
 END //
 
 DELIMITER ;
@@ -1026,6 +1023,30 @@ DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
+-- To Check for duplicate group short name
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_group_is_duplicate_groupshortname`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_client_group_is_duplicate_groupshortname`(
+    IN groupshortname VARCHAR(50), clientid INT(11)
+)
+BEGIN
+    IF clientid IS NULL THEN
+        SELECT count(client_id) as count FROM tbl_client_groups
+        WHERE short_name=groupshortname;
+    ELSE
+        SELECT count(client_id) as count FROM tbl_client_groups
+        WHERE short_name=groupshortname and client_id != clientid;
+    END IF;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
 -- To Check for dupliacte business group name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_businessgroup_is_duplicate_businessgroupname`;
@@ -1106,7 +1127,7 @@ BEGIN
         WHERE tbg.business_group_id=tle.business_group_id
     ) as business_group_name,
     legal_entity_name, contract_from, contract_to, logo,
-    file_space_limit, total_licence, is_closed
+    file_space_limit, total_licence, is_closed, is_approved
     FROM tbl_legal_entities tle WHERE client_id=clientid;
 END //
 
@@ -8111,3 +8132,6 @@ BEGIN
 END //
 
 DELIMITER;
+
+
+

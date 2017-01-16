@@ -1133,6 +1133,7 @@ text-align: center;
 margin: 0 auto;
 }
 
+<<<<<<< HEAD
 /* for assign statutory checkbox style*/
 .gt input[type="checkbox"] {
 display: none !important;
@@ -1197,4 +1198,13 @@ display: none !important;
     background: url('images/tick1boldinactive.png') no-repeat;
     height:17px;
     cursor: pointer;
+
+.width-100px{
+  width: 100px !important; 
+}
+.l-h-30{
+  line-height: 30px !important;
+}
+.width-50px{
+  width: 50px !important;
 }
