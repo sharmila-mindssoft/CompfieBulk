@@ -6236,10 +6236,20 @@ DELIMITER //
 CREATE PROCEDURE `sp_legalentity_closure_save`(
 in _u_id int(11), _le_id int(11), _is_cl tinyint(1), _cl_on timestamp, _rem varchar(500))
 BEGIN
-    update tbl_legal_entities
-    set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
-    closed_remarks = _rem where
-    legal_entity_id = _le_id;
+    if _is_cl = 1 then
+        if((select @val_days = DATEDIFF(NOW(), closed_on) from tbl_legal_entities
+        where legal_entity_id = _le_id) < 90)then
+            update tbl_legal_entities
+            set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
+            closed_remarks = _rem where
+            legal_entity_id = _le_id;
+        end if;
+    else
+        update tbl_legal_entities
+        set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
+        closed_remarks = _rem where
+        legal_entity_id = _le_id;
+    end if;
 
     if _is_cl = 0 then
         INSERT INTO tbl_messages
@@ -6567,7 +6577,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_check_level_in_geographies`(
     in levelId int(11))
 BEGIN
-    select count(*) from tbl_geographies where
+    select count(*) as cnt from tbl_geographies where
     level_id = levelId;
 
 END //
