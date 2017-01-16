@@ -28,13 +28,13 @@ var CurrentPassword = $('#current-password');
 
 
 // list filter control
-ApproveStatusUL = $('#ap-status-list');
-ApproveStatusLI = $('.ap-status-li');
-ApproveStatusText = $('#ap-status');
-FilterBox = $('.filter-box');
-Search_status_ui = $('.search-status-list');
-Search_status_li = $('.search-status-li');
-Search_status = $('#search-status');
+approveStatusUL = $('#ap-status-list');
+approveStatusLI = $('.ap-status-li');
+approveStatusText = $('#ap-status');
+filterBox = $('.filter-box');
+searchStatusUi = $('.search-status-list');
+searchStatusLi = $('.search-status-li');
+searchStatus = $('#search-status');
 // Tab 1
 Country = $('#country');
 Domain = $("#domain");
@@ -82,7 +82,11 @@ PasswordSubmitButton = $('#password-submit');
 ListScreen = $('#statutorymapping-view');
 ViewScreen = $('#statutorymapping-add');
 
-list_template = $("#templates #list-template .items");
+listTemplate = $("#templates #list-template .items");
+var file_types = [
+    "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
+    "rar", "tar", "gz", "ppt",
+]
 var msg = message;
 var fetch = mirror;
 
@@ -110,14 +114,14 @@ possibleFailure = function(err, extra_details) {
 //
 function RenderInput() {
 
-    this.country_id = null;
-    this.county_name = null;
-    this.domain_id = null;
-    this.domain_name = null;
-    this.org_ids = [];
-    this.org_names = [];
-    this.nature_id = null;
-    this.nature_name = null;
+    this.countryId = null;
+    this.countyName = null;
+    this.domainId = null;
+    this.domainName = null;
+    this.orgIds = [];
+    this.orgNames = [];
+    this.natureId = null;
+    this.natureName = null;
     this.last_selected = null;
     this.s_names = [];
     this.s_pids = [];
@@ -134,6 +138,11 @@ function RenderInput() {
     this.selected_sids = [];
     this.selected_iids = [];
     this.mapping_id = null;
+    this.is_file_uploaded = true;
+    this.uploaded_files = [];
+    this.uploaded_files_fcids = [];
+    this.form_data = new FormData();
+
 
     this.remveItemFromList = function(item, mainlist) {
         if (!mainlist)
@@ -154,14 +163,14 @@ function RenderInput() {
     this.resetField = function() {
         IS_EDIT = false;
         IS_SAVE = false;
-        this.country_id = null;
-        this.county_name = null;
-        this.domain_id = null;
-        this.domain_name = null;
-        this.org_ids = [];
-        this.org_names = [];
-        this.nature_id = null;
-        this.nature_name = null;
+        this.countryId = null;
+        this.countyName = null;
+        this.domainId = null;
+        this.domainName = null;
+        this.orgIds = [];
+        this.orgNames = [];
+        this.natureId = null;
+        this.natureName = null;
         this.last_selected = null;
         this.s_names = [];
         this.s_pids = [];
@@ -221,28 +230,28 @@ function RenderInput() {
             cObject.on('click', function(cObject) {
                 $('.countrylist').removeClass('active');
                 $('.countrylist i').removeClass('fa-check');
-                _renderinput.country_id = val.c_id;
-                _renderinput.country_name = val.c_name;
+                _renderinput.countryId = val.c_id;
+                _renderinput.countryName = val.c_name;
                 _renderinput.loadDomain(val.c_id);
                 _renderinput.loadNature(val.c_id);
-                _renderinput.domain_id = null;
-                _renderinput.org_ids = [];
-                _renderinput.org_names = [];
+                _renderinput.domainId = null;
+                _renderinput.orgIds = [];
+                _renderinput.orgNames = [];
                 _renderinput.selected_iids = [];
-                _renderinput.nature_id = null;
+                _renderinput.natureId = null;
                 Organisation.empty();
-                _renderinput.loadOrganisation(_renderinput.country_id, _renderinput.domain_id);
+                _renderinput.loadOrganisation(_renderinput.countryId, _renderinput.domainId);
                 $('#c'+val.c_id).addClass('active');
                 $('#c'+val.c_id + ' i').addClass("fa-check");
             });
             $('.name-holder', cObject).text(val.c_name);
             Country.append(cObject);
-            if(_renderinput.country_id == val.c_id)
+            if(_renderinput.countryId == val.c_id)
             {
                 $('#c'+val.c_id).addClass('active');
                 $('#c'+val.c_id + ' i').addClass("fa-check");
-                _renderinput.loadDomain(_renderinput.country_id);
-                _renderinput.loadNature(_renderinput.country_id);
+                _renderinput.loadDomain(_renderinput.countryId);
+                _renderinput.loadNature(_renderinput.countryId);
             }
 
         });
@@ -265,33 +274,33 @@ function RenderInput() {
 
                 $("#d"+val.d_id).addClass('active');
                 $("#d"+val.d_id + ' i').addClass('fa-check');
-                _renderinput.domain_id = val.d_id;
-                _renderinput.domain_name = val.d_name;
+                _renderinput.domainId = val.d_id;
+                _renderinput.domainName = val.d_name;
                 _renderinput.selected_iids = [];
                 _renderinput.loadOrganisation(val.c_id, val.d_id);
             });
             $('.name-holder', dObject).text(val.d_name);
             Domain.append(dObject);
-            if (_renderinput.domain_id == val.d_id){
+            if (_renderinput.domainId == val.d_id){
                 $("#d"+val.d_id).addClass('active');
                 $("#d"+val.d_id + ' i').addClass('fa-check');
-                _renderinput.loadOrganisation(c_id, _renderinput.domain_id);
+                _renderinput.loadOrganisation(c_id, _renderinput.domainId);
             }
 
         });
     };
 
     this.loadOrganisation = function(c_id, d_id) {
-        // this.org_ids = [];
-        // this.org_names = [];
+        // this.orgIds = [];
+        // this.orgNames = [];
         $('.organisationlist', Organisation).removeClass('active');
         $('.organisationlist i', Organisation).removeClass('fa-check');
         Organisation.empty();
         var first_li = true;
 
         // append select
-        _renderinput.org_ids = [];
-        _renderinput.org_names = [];
+        _renderinput.orgIds = [];
+        _renderinput.orgNames = [];
         $.each(ORGANISATION_INFO, function(ke, val) {
             if (val.is_active == false)
                 return;
@@ -300,15 +309,15 @@ function RenderInput() {
                 (parseInt(val.d_id) == parseInt(d_id))
             ){
                 if (first_li == true ) {
-                    orgObject = list_template.clone();
+                    orgObject = listTemplate.clone();
                     orgObject.addClass("organisationlist");
                     orgObject.attr('id', 'o-1');
                     $('.name-holder', orgObject).text('Select All');
                     Organisation.append(orgObject)
 
                     orgObject.on('click', function() {
-                        _renderinput.org_ids = [];
-                        _renderinput.org_names = [];
+                        _renderinput.orgIds = [];
+                        _renderinput.orgNames = [];
                         sts = $('#o-1').hasClass('active');
                         if (sts == true) {
                             $('.organisationlist').removeClass('active');
@@ -318,7 +327,7 @@ function RenderInput() {
                             $('.organisationlist').addClass('active');
                             $('.organisationlist i').addClass('fa-check');
                             $.each(ORGANISATION_INFO, function(k, v) {
-                                if ((v.c_id == _renderinput.country_id) && (v.d_id == _renderinput.domain_id)) {
+                                if ((v.c_id == _renderinput.countryId) && (v.d_id == _renderinput.domainId)) {
                                     _renderinput.selected_iids.push(v.org_id)
                                 }
                             });
@@ -326,7 +335,7 @@ function RenderInput() {
                     });
                 }
                 first_li = false;
-                orgObject = list_template.clone();
+                orgObject = listTemplate.clone();
                 orgObject.addClass("organisationlist");
                 orgObject.attr('id', 'o'+val.org_id);
 
@@ -352,8 +361,8 @@ function RenderInput() {
                     if (_renderinput.selected_iids.indexOf(val.org_id) > -1){
                         $('#o'+val.org_id).addClass('active');
                         $('#o'+val.org_id+ ' i').addClass('fa-check');
-                        _renderinput.org_ids.push(val.org_id);
-                        _renderinput.org_names.push(val.org_name);
+                        _renderinput.orgIds.push(val.org_id);
+                        _renderinput.orgNames.push(val.org_name);
                     }
                 }
 
@@ -377,17 +386,17 @@ function RenderInput() {
                 $(".naturelist i").removeClass('fa-check');
                 $('#n'+val.s_n_id).addClass('active');
                 $('#n'+val.s_n_id+' i').addClass('fa-check');
-                _renderinput.nature_id = val.s_n_id;
-                _renderinput.nature_name = val.s_n__name;
+                _renderinput.natureId = val.s_n_id;
+                _renderinput.natureName = val.s_n__name;
             });
             $('.name-holder', nObject).text(val.s_n_name);
             Nature.append(nObject);
 
-            if (_renderinput.nature_id == val.s_n_id){
+            if (_renderinput.natureId == val.s_n_id){
                 $('#n'+val.s_n_id).addClass('active');
                 $('#n'+val.s_n_id+' i').addClass('fa-check');
-                _renderinput.nature_id = val.s_n_id;
-                _renderinput.nature_name = val.s_n__name;
+                _renderinput.natureId = val.s_n_id;
+                _renderinput.natureName = val.s_n__name;
             }
 
         });
@@ -627,8 +636,8 @@ function RenderInput() {
         var data = []
         $.each(STATUTORY_INFO, function(k, v) {
             if (
-                (v.c_id == _renderinput.country_id) &&
-                (v.d_id == _renderinput.domain_id) &&
+                (v.c_id == _renderinput.countryId) &&
+                (v.d_id == _renderinput.domainId) &&
                 (v.l_position >= l_position)
             ){
                 if (p_id == v.p_id)
@@ -652,13 +661,13 @@ function RenderInput() {
     };
     this.loadStatuesLevels = function(loadFromLevel) {
         // $('#tbody-statutory-level').empty();
-        if ((this.country_id == null) || (this.domain_id == null)) {
+        if ((this.countryId == null) || (this.domainId == null)) {
             return;
         }
-        c_list = STATUTORY_LEVEL_INFO[this.country_id];
+        c_list = STATUTORY_LEVEL_INFO[this.countryId];
         if (!c_list)
             return
-        s_list = c_list[this.domain_id];
+        s_list = c_list[this.domainId];
         if (!s_list)
             return
         len = s_list.length;
@@ -1113,7 +1122,7 @@ function RenderInput() {
     this.renderGeosNames = function(p_id, l_position, parent_name) {
         var data = []
         $.each(GEOGRAPHY_INFO, function(k, v) {
-            if (v.c_id == _renderinput.country_id)
+            if (v.c_id == _renderinput.countryId)
             {
                 if (p_id == v.p_id)
                 {
@@ -1135,14 +1144,14 @@ function RenderInput() {
         _renderinput.loadGeosNames(data, l_position, parent_name);
     };
     this.loadGeosLevels = function(loadFromLevel) {
-        if (this.country_id == null) {
+        if (this.countryId == null) {
             return;
         }
         $.each(GEOGRAPHY_LEVEL_INFO, function(k, v) {
             if (loadFromLevel > v.l_id ) {
                 return;
             }
-            if (_renderinput.country_id != v.c_id) {
+            if (_renderinput.countryId != v.c_id) {
                 return;
             }
 
@@ -1246,8 +1255,6 @@ function RenderInput() {
 
         }
     };
-
-
 }
 
 //
@@ -1294,6 +1301,7 @@ function FetchBack() {
     };
 
     this.getMappedList = function(approv_status, rcount) {
+        displayLoader();
         fetch.getStatutoryMappings(approv_status, rcount,
             function(status, response){
                 if (status != null) {
@@ -1304,20 +1312,22 @@ function FetchBack() {
                     STATU_TOTALS = response.total_records;
                     _listPage.renderList(STATU_MAPPINGS, STATU_TOTALS);
                 }
+                hideLoader();
             }
         );
     };
 
     this.getMapDatabyId = function(mapping_id, compliance_id) {
+        displayLoader();
         fetch.getStatutoryMappingsEdit(mapping_id, compliance_id,
             function(status, response){
                 if (status != null) {
                     displayMessage(status);
                 }
                 else {
-                    _renderinput.country_id = response.c_id;
-                    _renderinput.domain_id = response.d_id;
-                    _renderinput.nature_id = response.s_n_id;
+                    _renderinput.countryId = response.c_id;
+                    _renderinput.domainId = response.d_id;
+                    _renderinput.natureId = response.s_n_id;
                     _renderinput.selected_iids = response.i_ids;
                     _renderinput.selected_geos = response.g_ids;
                     _renderinput.selected_geos_parent = [];
@@ -1359,12 +1369,14 @@ function FetchBack() {
                     showTab();
                     _listPage.hide();
                     _viewPage.show();
+                    hideLoader();
                 }
             }
         );
     }
 
     this.changeStatus = function(m_id, sts) {
+        displayLoader();
         fetch.changeStatutoryMappingStatus(m_id, sts, function(status, response) {
             if (status != null) {
                 possibleFailure(status);
@@ -1373,6 +1385,7 @@ function FetchBack() {
                 ap_status = $('.ap-status-li.active').attr('value');
                 _fetchback.getMappedList(ap_status, 0);
             }
+            hideLoader();
         });
     };
 
@@ -1412,7 +1425,7 @@ function FetchBack() {
             displayMessage("Select proper levels before add/edit");
             return false;
         }
-        d_id = _renderinput.domain_id;
+        d_id = _renderinput.domainId;
         p_ids = _renderinput.s_pids;
         p_names = _renderinput.s_names;
         if (p_ids.length == 0)
@@ -1459,6 +1472,7 @@ function FetchBack() {
     };
 
     this.saveMapping = function(data) {
+        displayLoader();
         fetch.saveStatutoryMapping(data, function(status, response) {
             if (status == null) {
                 // show list
@@ -1468,6 +1482,7 @@ function FetchBack() {
                 else {
                     displaySuccessMessage(msg.mapping_submit_success);
                 }
+
                 _viewPage.hide();
                 _listPage.show();
                 _renderinput.resetField();
@@ -1478,10 +1493,12 @@ function FetchBack() {
                 possibleFailure(status, response.compliance_name);
                 return false;
             }
+            hideLoader();
         });
     };
 
     this.updateMapping = function(data) {
+        displayLoader();
         fetch.updateStatutoryMapping(data, function(status, response) {
             if (status == null) {
                 if (IS_SAVE == true) {
@@ -1499,9 +1516,9 @@ function FetchBack() {
                 possibleFailure(status);
                 return false;
             }
+            hideLoader();
         });
     };
-
 
     this.validateAuthentication = function() {
         var password = CurrentPassword.val().trim();
@@ -1517,6 +1534,19 @@ function FetchBack() {
                 isAuthenticate = true;
                 Custombox.close();
             } else {
+                possibleFailure(error);
+            }
+        });
+    };
+
+    this.uploadFileProcess = function() {
+        displayLoader();
+        frmData = _renderinput.form_data;
+        fetch.uploadFormatFile(frmData, function(error, response){
+            if (error == null) {
+
+            }
+            else {
                 possibleFailure(error);
             }
         });
@@ -1577,13 +1607,13 @@ function ListPage() {
 
         var j = 1;
         $.each(data, function(k, v) {
-            org_names = v.i_names.join(' , ');
+            orgNames = v.i_names.join(' , ');
             s_names = v.s_maps.join(', ');
             crow = $('#templates .mapping-row').clone();
             $('.sno', crow).text(j);
             $('.c_name', crow).text(v.c_name);
             $('.d_name', crow).text(v.d_name);
-            $('.org_name', crow).text(org_names);
+            $('.org_name', crow).text(orgNames);
             $('.nature_name', crow).text(v.s_n_name);
             $('.s_name', crow).text(s_names);
             $('.map_edit', crow).attr('title', 'Click here to edit');
@@ -1689,26 +1719,20 @@ function ListPage() {
         });
         _listPage.renderList(filteredList, filteredList.length);
     };
-
 }
 //
 // Render View Pages
 //
 function ViewPage() {
     this.showFirstTab = function(){
-
-
-
-
-
         _renderinput.loadCounty();
     };
     this.validateFirstTab = function() {
-        if (_renderinput.country_id == null) {
+        if (_renderinput.countryId == null) {
             displayMessage(msg.country_required);
             return false;
         }
-        else if (_renderinput.domain_id == null) {
+        else if (_renderinput.domainId == null) {
             displayMessage(msg.domain_required);
             return false;
         }
@@ -1716,7 +1740,7 @@ function ViewPage() {
             displayMessage(msg.industry_required);
             return false;
         }
-        else if (_renderinput.nature_id == null) {
+        else if (_renderinput.natureId == null) {
             displayMessage(msg.statutorynature_required);
             return false;
         }
@@ -1802,8 +1826,6 @@ function ViewPage() {
             }
             return true;
         }
-
-
     };
     this.showFouthTab = function(){
 
@@ -1856,10 +1878,10 @@ function ViewPage() {
         if (_renderinput.mapping_id != null) {
             map_data["m_id"] = _renderinput.mapping_id;
         }
-        map_data["c_id"] = _renderinput.country_id;
-        map_data["d_id"] = _renderinput.domain_id;
+        map_data["c_id"] = _renderinput.countryId;
+        map_data["d_id"] = _renderinput.domainId;
         map_data["i_ids"] = _renderinput.selected_iids;
-        map_data["s_n_id"] = _renderinput.nature_id;
+        map_data["s_n_id"] = _renderinput.natureId;
         var s_ids = [];
         var mappings = [];
         $.each(_renderinput.mapped_statu, function(k, s) {
@@ -1973,7 +1995,6 @@ function showTab(){
         SaveButton.show();
         _viewPage.showFouthTab();
     }
-
 };
 _renderinput = new RenderInput();
 _fetchback = new FetchBack();
@@ -2283,6 +2304,12 @@ function pageControls() {
         info['is_active'] = true;
         info['frequency'] = $('#compliance_frequency option:selected').text();
         info['summary'] = _renderinput.summary;
+        fCId = info['temp_id'];
+        var file_data = _renderinput.uploaded_files[0];
+        var f_Name = _renderinput.uploaded_files[0].name;
+        _renderinput.form_data.append('file' + fCId, file_data, f_Name);
+        _renderinput.form_data.append('session_token', mirror.getSessionToken());
+
 
         is_duplidate = false
         if (Temp_id.val() != '') {
@@ -2365,18 +2392,18 @@ function pageControls() {
         }
     });
 
-    ApproveStatusUL.click(function(event) {
-        ApproveStatusLI.each(function(index, el) {
+    approveStatusUL.click(function(event) {
+        approveStatusLI.each(function(index, el) {
             $(el).removeClass('active');
         });
 
         $(event.target).parent().addClass('active');
-        ApproveStatusText.text($(event.target).text());
+        approveStatusText.text($(event.target).text());
         ap_status = $(event.target).parent().val();
         _fetchback.getMappedList(ap_status, 0);
-        Search_status.removeClass();
-        Search_status.addClass('fa');
-        Search_status.text('All');
+        searchStatus.removeClass();
+        searchStatus.addClass('fa');
+        searchStatus.text('All');
     });
 
     PasswordSubmitButton.click(function() {
@@ -2402,24 +2429,24 @@ function pageControls() {
         this.value = isNumbers($(this));
     });
 
-    FilterBox.keyup(function() {
+    filterBox.keyup(function() {
         _listPage.listFilter();
     });
 
-    Search_status_ui.click(function(event) {
-        Search_status_li.each(function(index, el) {
+    searchStatusUi.click(function(event) {
+        searchStatusLi.each(function(index, el) {
             $(el).removeClass('active');
         });
         $(event.target).parent().addClass('active');
 
         var currentClass = $(event.target).find('i').attr('class');
-        Search_status.removeClass();
+        searchStatus.removeClass();
         if (currentClass != undefined) {
-            Search_status.addClass(currentClass);
-            Search_status.text('');
+            searchStatus.addClass(currentClass);
+            searchStatus.text('');
         } else {
-            Search_status.addClass('fa');
-            Search_status.text('All');
+            searchStatus.addClass('fa');
+            searchStatus.text('All');
         }
         _listPage.listFilter();
     });
@@ -2460,6 +2487,43 @@ function pageControls() {
         });
     });
 
+    $('#upload_file').on('change', function(e){
+        var tFN = this.files[0].name;
+        var fN = tFN.substring(0, tFN.indexOf('.'));
+        var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
+        var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+        f_Name = fN + '-' + uniqueId + '.' + fE;
+        f_Size = this.files[0].size;
+        var max_limit = 1024 * 1024 * 50;
+        if (tFN.indexOf('.') !== -1) {
+            if (f_Size > max_limit) {
+              displayMessage(message.file_maxlimit_exceed);
+              $('#uploaded_fileview').hide();
+              $('#uploaded_filename').html('');
+              $('#upload_file').val('');
+            } else if (file_type.indexOf(fE.toLowerCase()) > -1) {
+              displayMessage(message.invalid_file_format);
+              $('#uploaded_fileview').hide();
+              $('#uploaded_filename').html('');
+              $('#upload_file').val('');
+            } else {
+              _renderinput.uploaded_files = e.target.files;
+              $('#uploaded_fileview').show();
+              $('#uploaded_filename').html(tFN + '   <img src=\'/knowledge/images/close-icon-black.png\' onclick=\'remove_temp_file()\' />');
+            }
+        } else {
+            displayMessage(message.invalid_file_format);
+            $('#uploaded_fileview').hide();
+            $('#uploaded_filename').html('');
+            $('#upload_file').val('');
+        }
+    });
+    function remove_temp_file(edit_id) {
+        _renderinput.form_data.delete('file' + edit_id);
+        $('#uploaded_fileview').hide();
+        $('#uploaded_filename').html('');
+        $('#upload_file').val('');
+    }
 }
 function initialize() {
     _listPage.show();
