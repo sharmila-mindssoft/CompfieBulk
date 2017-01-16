@@ -7276,7 +7276,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_statutory_level_count`(
 in levelId int(11))
 BEGIN
-    select count(*) from tbl_statutories where
+    select count(*) as cnt from tbl_statutories where
     level_id = levelId;
 END //
 
