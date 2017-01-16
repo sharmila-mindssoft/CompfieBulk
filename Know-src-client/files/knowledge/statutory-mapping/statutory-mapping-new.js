@@ -1659,10 +1659,10 @@ function pageControls() {
         info['frequency'] = $('#compliance_frequency option:selected').text();
         info['summary'] = _renderinput.summary;
         fCId = info['temp_id'];
-        var file_data = _renderinput.uploaded_files[0];
-        var f_Name = _renderinput.uploaded_files[0].name;
-        _renderinput.form_data.append('file' + fCId, file_data, f_Name);
-        _renderinput.form_data.append('session_token', mirror.getSessionToken());
+        // var file_data = _renderinput.uploaded_files[0];
+        // var f_Name = _renderinput.uploaded_files[0].name;
+        // _renderinput.form_data.append('file' + fCId, file_data, f_Name);
+        // _renderinput.form_data.append('session_token', mirror.getSessionToken());
 
 
         is_duplidate = false
