@@ -108,6 +108,11 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/unit-wise-report",
+        "files/client/unit-wise-report/unit_wise_report.html",
+        None, {}
+    ),
+    (
         "/service-provider-wise-compliance",
         "files/client/service-provider-wise-compliance/serviceproviderwisecompliance.html",
         None, {}
