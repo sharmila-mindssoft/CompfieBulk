@@ -407,7 +407,7 @@ function saveOrganization() {
             }            
         }
     }
-    console.log("save organization_details:"+organization_details.toSource());
+    console.log("save organization_details:"+JSON.stringify(organization_details));
 }
 
 $('.numeric').keypress(function(e) {
@@ -571,11 +571,11 @@ function saveClient() {
                         displayMessage(message.activationdate_required+ " for " + le_name);
                         break;
                     } else if (!(i in organization_details)) {
-                        console.log(i + "-> i not in " + organization_details.toSource());
+                        console.log(i + "-> i not in " + JSON.stringify(organization_details));
                         displayMessage(message.organization_required + " for " + le_name);
                         break;
                     } else if (!(j in organization_details[i])) {
-                        console.log(j + "->j not in " + organization_details[i].toSource());
+                        console.log(j + "->j not in " + JSON.stringify(organization_details[i]));
                         displayMessage(message.organization_required + " for " + le_name);
                         break;
                     } else if (Object.keys(organization_details[i][j]).length <= 0) {
