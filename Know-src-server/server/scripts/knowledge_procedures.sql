@@ -4809,7 +4809,7 @@ BEGIN
     tbl_domain_countries as t1
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
     inner join tbl_statutory_levels as t4 on t3.domain_id = t4.domain_id
-    and t3.country_id = t4.country_id
+    and t1.country_id = t4.country_id
     inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
     and t2.country_id = t1.country_id
     and t2.user_id = userid

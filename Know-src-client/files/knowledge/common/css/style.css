@@ -1098,7 +1098,7 @@ list-style-type:none; line-height:25px;
   .mob-p-b-15{
     padding-bottom: 15px;
   }
-  
+
     .dropdown-menu{
     right: 0;
     left: auto;
@@ -1132,7 +1132,7 @@ margin: 0 auto;
 .statlvl{
 padding: 8px;
 border-right: 1px solid #e8e8e8;
-width: 32% !important;
+/*width: 32% !important;*/
 }
 .multiselect:focus{
   border:1px solid #aaa !important;

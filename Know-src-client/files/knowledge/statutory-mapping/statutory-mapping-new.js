@@ -671,16 +671,16 @@ function RenderInput() {
         if (!s_list)
             return
         len = s_list.length;
-        wid = 100/len;
-        if (len > 3) {
-            main_wid = 400 * len + 10 ;
-            wid = "400px";
-            $("#tab2 #datatable-fixed-header").width(main_wid+'px');
-        }
-        else {
-            wid += "%";
-            $("#tab2 #datatable-fixed-header").width('100%');
-        }
+        // wid = 100/len;
+        // if (len > 3) {
+        main_wid = 400 * len + 10 ;
+        wid = "360px";
+        $("#tab2 #datatable-fixed-header").width(main_wid+'px');
+        // }
+        // else {
+        //     wid = "30%";
+        //     $("#tab2 #datatable-fixed-header").width('100%');
+        // }
 
         $.each(s_list, function(k, v) {
             if (loadFromLevel > v.l_position ) {
@@ -691,7 +691,7 @@ function RenderInput() {
             }
 
             slObject = $('#templates .statutory_levelvalue').clone();
-            slObject.width(wid);
+            slObject.width("400px");
 
             $('.filter-text-box', slObject).attr(
                 'id', 'sf'+ v.l_position
