@@ -162,7 +162,7 @@ function PageControls() {
 }
 
 clearElement = function(arr) {
-    if (arr.length > 0) {
+    if(arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -220,7 +220,7 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
     user.focus();
 }
 
-StatusReportConsolidated = function() {
+DomainWiseReport = function() {
     this._countries = [];
     this._entities = [];
     this._domains = [];
@@ -235,10 +235,10 @@ StatusReportConsolidated = function() {
     this._report_data = [];
 }
 
-StatusReportConsolidated.prototype.loadSearch = function() {
+DomainWiseReport.prototype.loadSearch = function() {
     reportView.hide();
-    country.val('');
-    legalEntity.val('');
+    country.empty();
+    legalEntity.empty();
     domain.val('');
     domainId.val('');
     unit.val('');
@@ -257,7 +257,7 @@ StatusReportConsolidated.prototype.loadSearch = function() {
     this.fetchSearchList();
 };
 
-StatusReportConsolidated.prototype.fetchSearchList = function() {
+DomainWiseReport.prototype.fetchSearchList = function() {
     t_this = this;
     var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"frequencies":[{"f_id":1,"f_name":"Periodical"},{"f_id":2,"f_name":"Review"},{"f_id":3,"f_name":"Flexi Review"},{"f_id":4,"f_name":"One Time"}],"user_type":[{"user_type_id":1,"user_type_name":"Assignee"},{"user_type_id":2,"user_type_name":"Concurrence"},{"user_type_id":3,"user_type_name":"Approval"}],"compliance_task_status":[{"comp_task_status_id":1,"comp_task_status":"Complied"},{"comp_task_status_id":2,"comp_task_status":"Delayed Compliances"},{"comp_task_status_id":3,"comp_task_status":"Inprogress"},{"comp_task_status_id":4,"comp_task_status":"Not Complied"}],"service_providers":[{"s_p_id":1,"s_p_name":"String","s_p_shrot":"short"}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
@@ -269,42 +269,42 @@ StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this._complianceTaskStatus = object.compliance_task_status;
     t_this._serviceProviders = object.service_providers;
 
-    //t_this.renderCountriesList(t_this._countries);
-    //t_this.renderLegalEntityList(t_this._entities);
+    t_this.renderCountriesList(t_this._countries);
+    t_this.renderLegalEntityList(t_this._entities);
     t_this.renderComplianceFrequencyList(t_this._frequencies);
     t_this.renderUserTypeList(t_this._userType);
     t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
 };
 
-StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
+DomainWiseReport.prototype.fetchDomainList = function(le_id) {
     t_this = this;
     var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":2,"is_active":true},{"d_id":3,"d_name":"Employee Law","le_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._domains = object.domains;
 };
 
-StatusReportConsolidated.prototype.fetchUnitList = function(dom_id) {
+DomainWiseReport.prototype.fetchUnitList = function(dom_id) {
     t_this = this;
     var jsondata = '{"units":[{"u_id":1,"u_name":"RG Madurai Unit","u_code":"RG1034","address":"12 RJ Complex, Main road, Madurai, 625022","d_id":1,"is_active":true},{"u_id":2,"u_name":"RG Dindugal Unit","u_code":"RG1035","address":"10 RG Complex, Main road, Dindugal, 623020","d_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._units = object.units;
 };
 
-StatusReportConsolidated.prototype.fetchActList = function(unit_id) {
+DomainWiseReport.prototype.fetchActList = function(unit_id) {
     t_this = this;
     var jsondata = '{"acts":[{"act_id":1,"act_name":"The Batteries Act","u_id":1,"is_active":true},{"act_id":2,"act_name":"Indian Partnership Act, 1932","u_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._acts = object.acts;
 };
 
-StatusReportConsolidated.prototype.fetchComplianceaskList = function(act_id) {
+DomainWiseReport.prototype.fetchComplianceaskList = function(act_id) {
     t_this = this;
     var jsondata = '{"compliance_task":[{"c_id":1,"c_task":"FORM I - Half yearly returns Submission","act_id":1,"is_active":true},{"c_id":2,"c_task":"FORM II - Registration","act_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._compliance_task = object.compliance_task;
 };
 
-StatusReportConsolidated.prototype.renderCountriesList = function(data) {
+DomainWiseReport.prototype.renderCountriesList = function(data) {
     t_this = this;
     country.empty();
     var countryName = [];
@@ -315,7 +315,7 @@ StatusReportConsolidated.prototype.renderCountriesList = function(data) {
     country.html(countryName);
 };
 
-StatusReportConsolidated.prototype.renderLegalEntityList = function(data) {
+DomainWiseReport.prototype.renderLegalEntityList = function(data) {
     t_this = this;
     legalEntity.empty();
     var legalEntityName = [];
@@ -326,7 +326,7 @@ StatusReportConsolidated.prototype.renderLegalEntityList = function(data) {
     legalEntity.html(legalEntityName);
 };
 
-StatusReportConsolidated.prototype.renderComplianceFrequencyList = function(data) {
+DomainWiseReport.prototype.renderComplianceFrequencyList = function(data) {
     t_this = this;
     complianceFrequency.empty();
     var complianceFrequencyList = '<option value="0">All</option>';
@@ -336,7 +336,7 @@ StatusReportConsolidated.prototype.renderComplianceFrequencyList = function(data
     complianceFrequency.html(complianceFrequencyList);
 };
 
-StatusReportConsolidated.prototype.renderUserTypeList = function(data) {
+DomainWiseReport.prototype.renderUserTypeList = function(data) {
     t_this = this;
     userType.empty();
     var userTypeList = '<option value="0">All</option>';
@@ -346,7 +346,7 @@ StatusReportConsolidated.prototype.renderUserTypeList = function(data) {
     userType.html(userTypeList);
 };
 
-StatusReportConsolidated.prototype.renderComplianceTaskStatusList = function(data) {
+DomainWiseReport.prototype.renderComplianceTaskStatusList = function(data) {
     t_this = this;
     complianceTaskStatus.empty();
     var complianceTaskStatusList = '<option value="0">All</option>';
@@ -356,7 +356,7 @@ StatusReportConsolidated.prototype.renderComplianceTaskStatusList = function(dat
     complianceTaskStatus.html(complianceTaskStatusList);
 };
 
-StatusReportConsolidated.prototype.validate = function() {
+DomainWiseReport.prototype.validate = function() {
     if (country) {
         if (isNotEmpty(country, message.country_required) == false)
             return false;
@@ -423,14 +423,14 @@ showAnimation = function(element) {
         });
 }
 
-StatusReportConsolidated.prototype.fetchReportValues = function() {
+DomainWiseReport.prototype.fetchReportValues = function() {
     t_this = this;
     var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._report_data = object.data_lists;
 };
 
-StatusReportConsolidated.prototype.showReportValues = function() {
+DomainWiseReport.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
@@ -443,7 +443,6 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     var actname = "";
     var complianceTask = "";
     $.each(data, function(k, v) {
-       // alert(k);
         if (unitname != v.u_name) {
             var cloneone = $('#template #report-table .row-one').clone();
             $('.unit-name', cloneone).text(v.u_name);
@@ -478,7 +477,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             } else {
                 $('.uploaded-document', clonethree).text('-');
             }
-
+            
             if (v.completion_date != "")
                 $('.completion-date', clonethree).text(v.completion_date);
             else
@@ -514,11 +513,11 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     totalRecord.html(j);
 };
 
-StatusReportConsolidated.prototype.exportReportValues = function() {
+DomainWiseReport.prototype.exportReportValues = function() {
     alert('export');
 };
 
-StatusReportConsolidated.prototype.possibleFailures = function(error) {
+DomainWiseReport.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
         this.displayMessage("Domain name exists");
     } else {
@@ -526,7 +525,7 @@ StatusReportConsolidated.prototype.possibleFailures = function(error) {
     }
 };
 
-REPORT = new StatusReportConsolidated();
+REPORT = new DomainWiseReport();
 
 $(document).ready(function() {
     PageControls();
