@@ -1361,9 +1361,9 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
     $(".domain", clone).addClass(domain_class)
     $(".domain", clone).change(function() {        
         //console.log("before load domains organization_details--"+organization_details.toSource());
-        organization_details[le_count][domain_count] = {};
+        //organization_details[le_count][domain_count] = {};
         // saveOrganization();
-        // //loadOrganization_details(le_count, domain_count);                
+        //loadOrganization_details(le_count, domain_count);                
         //console.log("load domains organization_details--"+organization_details.toSource());
 
         generateDateConfigurationList();
