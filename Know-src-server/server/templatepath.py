@@ -290,7 +290,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/client-agreement-master-report",
+        "/knowledge/client-agreement-report",
         "files/knowledge/client-agreement-master-report/client-agreement-master-report.html",
         None, {}
     ),

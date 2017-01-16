@@ -619,6 +619,7 @@ api_params = {
     'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
 
 
+
 }
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')
@@ -677,3 +678,5 @@ api_params["org_id"] = api_params.get("industry_id")
 api_params["org_name"] = api_params.get("industry_name")
 api_params["rcount"] = api_params.get("total_records")
 api_params["count"] = api_params.get("total_records")
+api_params["days_left"] = api_params.get("total_records")
+api_params["allow_enable"] = api_params.get("is_active")
