@@ -442,7 +442,9 @@ def get_geograhpy_levels_for_user(db, user_id):
 
 def delete_grography_level(db, level_id):
     q = db.call_proc("sp_check_level_in_geographies", (level_id,))
-    if q[0] > 0:
+    print "count"
+    print q[0]['cnt']
+    if q[0]['cnt'] > 0:
         return True
     else:
         res = db.call_proc("sp_delete_geographylevel", (level_id,))
@@ -459,6 +461,8 @@ def save_geography_levels(db, country_id, levels, user_id):
     for n in newlist:
         if n.is_remove is True:
             result = delete_grography_level(db, n.level_id)
+            print "del result"
+            print result
             if result :
                 d_l_id = n.level_position
                 break
