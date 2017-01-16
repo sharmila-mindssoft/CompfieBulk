@@ -260,7 +260,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 function pageControls() {
     NextButton.click(function() {
-
+        $('.tbody-compliance-list').empty();
         CURRENT_TAB += 1;
         showTab();
     });
@@ -704,19 +704,19 @@ function loadSingleUnitCompliances() {
 
         $('.compliance-ck-box-1', clone2).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-1', clone2).attr('id', 'tick' + statutoriesCount);
-        $('.compliance-ck-box-1', clone2).val(1);
+        //$('.compliance-ck-box-1', clone2).val(1);
         $('.compliance-ck-box-1', clone2).addClass('statutoryclass' + count);
         $('.compliance-label-1', clone2).attr('for', 'tick' + statutoriesCount);
 
         $('.compliance-ck-box-2', clone2).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-2', clone2).attr('id', 'untick' + statutoriesCount);
-        $('.compliance-ck-box-2', clone2).val(2);
+        //$('.compliance-ck-box-2', clone2).val(2);
         $('.compliance-ck-box-2', clone2).addClass('statutoryclass' + count);
         $('.compliance-label-2', clone2).attr('for', 'untick' + statutoriesCount);
 
         $('.compliance-ck-box-3', clone2).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-3', clone2).attr('id', 'minus' + statutoriesCount);
-        $('.compliance-ck-box-3', clone2).val(3);
+        //$('.compliance-ck-box-3', clone2).val(3);
         $('.compliance-ck-box-3', clone2).addClass('statutoryclass' + count);
         $('.compliance-label-3', clone2).attr('for', 'minus' + statutoriesCount);
 
@@ -808,9 +808,6 @@ function loadMultipleUnitCompliances() {
                 }
                 actstatus(this);
             });
-
-            
-
         count = actCount;
         LastAct = value.level_1_s_name;
         LastSubAct = value.level_1_s_name;
@@ -836,7 +833,7 @@ function loadMultipleUnitCompliances() {
             $('.org-name', clone2).attr('title', 'Organizations: ' + value.org_names);
             $('.compliancedescription', clone2).text(value.descrip);
             $('.applicablelocation', clone2).attr('id', 'appl'+sno);
-            //$('.applicablelocation', clone2).text(ACTIVE_UNITS.length +'/'+ACTIVE_UNITS.length);
+            $('.applicablelocation', clone2).text(ACTIVE_UNITS.length +'/'+ACTIVE_UNITS.length);
 
             $('.saved', clone2).attr('id', 'save'+sno);
             if(value.comp_status > 0 && value.s_s == 1){
@@ -891,25 +888,18 @@ function loadMultipleUnitCompliances() {
 
         $('.compliance-ck-box-1', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-1', clone4).attr('id', 'tick' + statutoriesCount);
-        $('.compliance-ck-box-1', clone4).val(1);
-        $('.compliance-ck-box-1', clone4).addClass('statutoryclass' + count);
-        $('.compliance-ck-box-1', clone4).addClass('sub-tick-' + (sno-1));
+        $('.compliance-ck-box-1', clone4).addClass('statutoryclass' + count + ' sub-tick-' + (sno-1));
         $('.compliance-label-1', clone4).attr('for', 'tick' + statutoriesCount);
 
         $('.compliance-ck-box-2', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-2', clone4).attr('id', 'untick' + statutoriesCount);
-        $('.compliance-ck-box-2', clone4).val(2);
-        $('.compliance-ck-box-2', clone4).addClass('statutoryclass' + count);
-        $('.compliance-ck-box-2', clone4).addClass('sub-untick-' + (sno-1));
+        $('.compliance-ck-box-2', clone4).addClass('statutoryclass' + count + ' sub-untick-' + (sno-1));
         $('.compliance-label-2', clone4).attr('for', 'untick' + statutoriesCount);
 
         $('.compliance-ck-box-3', clone4).attr('name', 'statutory' + statutoriesCount);
         $('.compliance-ck-box-3', clone4).attr('id', 'minus' + statutoriesCount);
-        $('.compliance-ck-box-3', clone4).val(3);
-        $('.compliance-ck-box-3', clone4).addClass('statutoryclass' + count);
-        $('.compliance-ck-box-3', clone4).addClass('sub-minus-' + (sno-1));
+        $('.compliance-ck-box-3', clone4).addClass('statutoryclass' + count + ' sub-minus-' + (sno-1));
         $('.compliance-label-3', clone4).attr('for', 'minus' + statutoriesCount);
-
 
         $('.comp', clone2).on('click', function () {
             compliancestatusMulti(this);

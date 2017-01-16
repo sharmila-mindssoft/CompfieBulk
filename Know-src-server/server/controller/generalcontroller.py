@@ -14,6 +14,7 @@ from server.database.general import (
     verify_password,
     get_messages,
     get_statutory_notifications,
+    update_statutory_notification_status,
     get_audit_trail_filters
 )
 
