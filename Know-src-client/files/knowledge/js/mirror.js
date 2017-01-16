@@ -95,6 +95,206 @@ function initMirror() {
             return null;
     }
 
+    function getDatabaseServerList(callback){
+      callerName = 'console_admin';
+      var request = [
+        'GetDatabaseServerList',
+        {
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function saveDBServer(
+      db_server_id, db_server_name, ip, port, username, password, callback
+    ){
+      callerName = "console_admin"
+      var request = [
+        "SaveDBServer",
+        {
+          "db_server_id": db_server_id,
+          "db_server_name": db_server_name,
+          "ip": ip,
+          "port": port,
+          "username": username,
+          "password": password
+        }
+      ];
+      apiRequest(callerName, request, callback)
+    }
+    function getClientServerList(callback){
+      callerName = 'console_admin';
+      var request = [
+        'GetClientServerList',
+        {
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function saveClientServer(
+      client_server_id, client_server_name, ip, port, callback
+    ){
+      callerName = "console_admin";
+      var request = [
+        "SaveClientServer",
+        {
+          "client_server_id": client_server_id,
+          "client_server_name": client_server_name,
+          "ip": ip,
+          "port": port
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function getFileServerList(callback){
+      callerName = 'console_admin';
+      var request = [
+        'GetFileServerList',
+        {
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function fileServerEntry(
+      file_server_id, file_server_name, ip, port, callback
+    ){
+      callerName = "console_admin";
+      var request = [
+        "SaveFileServer",
+        {
+          "file_server_id": file_server_id,
+          "file_server_name": file_server_name,
+          "ip": ip,
+          "port": port
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function getAllocatedDBEnv(callback){
+        callerName = "console_admin";
+        var request = [
+          "GetAllocatedDBEnv",
+          {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    function saveDBEnv(client_db_id, client_id, le_id, machine_id, db_server_id, le_db_server_id, file_server_id, cl_ids, le_ids, callback){
+        callerName = "console_admin";
+        var request = [
+            "SaveAllocatedDBEnv",
+            {
+              "client_database_id": client_db_id,
+              "client_id": client_id,
+              "legal_entity_id": le_id,
+              "machine_id": machine_id,
+              "db_server_id": db_server_id,
+              "le_db_server_id": le_db_server_id,
+              "file_server_id": file_server_id,
+              "console_cl_ids": cl_ids,
+              "console_le_ids": le_ids
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    function getFileStorage(callback){
+        callerName = "console_admin";
+        var request = [
+          "GetFileStorage",
+          {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    function saveFileStorage(client_id, le_id, machine_id, callback){
+        callerName = "console_admin";
+        var request = [
+            "SaveFileStorage",
+            {
+              "client_id": client_id,
+              "legal_entity_id": le_id,
+              "machine_id": machine_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    function getAutoDeletionList(callback){
+        callerName = "console_admin";
+        var request = [
+          "GetAutoDeletionList",
+          {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    
+    function saveAutoDeletion(auto_deletion_details, callback){
+        callerName = "console_admin";
+        var request = [
+          "SaveAutoDeletion",
+          {
+            "auto_deletion_details": auto_deletion_details
+          }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    
+    
+    function getUnassignedUnitsList(callback){
+      callerName = "techno";
+      var request = [
+        "GetUnassignedUnits",
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function getAssignedUnitsList(domain_id, client_id, legal_entity_id, callback){
+      callerName = "techno";
+      var request = [
+        "GetAssignedUnits",
+        {
+          "domain_id": domain_id,
+          "client_id": client_id,
+          "legal_entity_id": legal_entity_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function getAssignedUnitDetails(legal_entity_id, domain_manager_id, client_id, domain_id, callback){
+      callerName = "techno";
+      var request = [
+        "GetAssignedUnitDetails",
+        {
+          "legal_entity_id": legal_entity_id,
+          "user_id": domain_manager_id,
+          "client_id": client_id,
+          "domain_id": domain_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function getAssignUnitFormData(domain_id, client_id, legal_entity_id, callback){
+      callerName = "techno";
+      var request = [
+        "GetAssignUnitFormData",
+        {
+          "domain_id": domain_id,
+          "client_id": client_id,
+          "legal_entity_id": legal_entity_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function saveAssignedUnits(client_id, user_id, active_units, callback){
+        callerName = "techno";
+        var request = [
+          "SaveAsssignedUnits",
+          {
+            "user_id": user_id,
+            "active_units": active_units,
+            "client_id": client_id
+          }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    
     function getUserMenu() {
         var info = getUserInfo();
         if (info != null) {
@@ -1756,14 +1956,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getDatabaseServerList(callback) {
-        callerName = 'console_admin';
-        var request = [
-            'GetDatabaseServerList', {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
+    
     function saveDBServer(
         db_server_id, db_server_name, ip, port, username, password, callback
     ) {
@@ -1836,53 +2029,8 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function saveDBEnv(client_db_id, client_id, le_id, machine_id, db_server_id, le_db_server_id, file_server_id, cl_ids, le_ids, callback) {
-        callerName = "console_admin";
-        var request = [
-            "SaveAllocatedDBEnv", {
-                "client_database_id": client_db_id,
-                "client_id": client_id,
-                "legal_entity_id": le_id,
-                "machine_id": machine_id,
-                "db_server_id": db_server_id,
-                "le_db_server_id": le_db_server_id,
-                "file_server_id": file_server_id,
-                "console_cl_ids": cl_ids,
-                "console_le_ids": le_ids
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
 
-    function getFileStorage(callback) {
-        callerName = "console_admin";
-        var request = [
-            "GetFileStorage",
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
 
-    function saveFileStorage(client_id, le_id, machine_id, callback) {
-        callerName = "console_admin";
-        var request = [
-            "SaveFileStorage", {
-                "client_id": client_id,
-                "legal_entity_id": le_id,
-                "machine_id": machine_id
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getAutoDeletionList(callback) {
-        callerName = "console_admin";
-        var request = [
-            "GetAutoDeletionList",
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
 
     function getDeletionDetails(client_id, entity_id, unit_id, deletion_period) {
         return {
@@ -1893,15 +2041,6 @@ function initMirror() {
         }
     }
 
-    function saveAutoDeletion(auto_deletion_details, callback) {
-        callerName = "console_admin";
-        var request = [
-            "SaveAutoDeletion", {
-                "auto_deletion_details": auto_deletion_details
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
 
     function getUserMappings(callback) {
         callerName = "admin";
@@ -1925,61 +2064,8 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getUnassignedUnitsList(callback) {
-        callerName = "techno";
-        var request = [
-            "GetUnassignedUnits",
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
 
-    function getAssignedUnitsList(domain_id, client_id, legal_entity_id, callback) {
-        callerName = "techno";
-        var request = [
-            "GetAssignedUnits", {
-                "domain_id": domain_id,
-                "client_id": client_id,
-                "legal_entity_id": legal_entity_id
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
 
-    function getAssignedUnitDetails(legal_entity_id, domain_manager_id, callback) {
-        callerName = "techno";
-        var request = [
-            "GetAssignedUnitDetails", {
-                "legal_entity_id": legal_entity_id,
-                "user_id": domain_manager_id
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getAssignUnitFormData(domain_id, client_id, legal_entity_id, callback) {
-        callerName = "techno";
-        var request = [
-            "GetAssignUnitFormData", {
-                "domain_id": domain_id,
-                "client_id": client_id,
-                "legal_entity_id": legal_entity_id
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function saveAssignedUnits(client_id, user_id, active_units, callback) {
-        callerName = "techno";
-        var request = [
-            "SaveAsssignedUnits", {
-                "user_id": user_id,
-                "active_units": active_units,
-                "client_id": client_id
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
 
     function getReassignUserAccountFormdata(callback) {
         callerName = "admin";

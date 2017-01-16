@@ -232,7 +232,7 @@ def update_legal_entities(db, request, group_id, session_user):
     columns = [
         "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence", 'updated_by', "updated_on"
+        "file_space_limit", "total_licence", 'updated_by', "updated_on", "is_approved"
     ]
     insert_columns = [
         "client_id", "country_id", "business_group_id",
@@ -250,7 +250,7 @@ def update_legal_entities(db, request, group_id, session_user):
             if is_logo_in_image_format(entity.new_logo):
                 file_name = save_client_logo(entity.new_logo)
                 file_size = entity.new_logo.file_size
-                columns.append("logo_size")
+                # columns.append("logo_size")
                 insert_columns.append("logo_size")
             else:
                 raise process_error("E067")
@@ -280,10 +280,10 @@ def update_legal_entities(db, request, group_id, session_user):
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
-                session_user, current_time_stamp
+                session_user, current_time_stamp, 0
             ]
-            if(entity.new_logo is not None):
-               value_list.append(file_size)
+            # if(entity.new_logo is not None):
+            #     value_list.append(file_size)
 
             values.append(tuple(value_list))
 
@@ -456,9 +456,6 @@ def save_organization(
     db, group_id, request, legal_entity_name_id_map, session_user
 ):
     current_time_stamp = get_date_time()
-    db.call_update_proc(
-        "sp_le_domain_industry_delete", (group_id, )
-    )
     columns = [
         "legal_entity_id", "domain_id", "organisation_id",
         "activation_date", "count", "created_by", "created_on"
@@ -471,6 +468,9 @@ def save_organization(
     for entity in entity_details:
         legal_entity_name = entity.legal_entity_name
         domain_details = entity.domain_details
+        db.call_update_proc(
+            "sp_le_domain_industry_delete", (legal_entity_name_id_map[legal_entity_name], )
+        )
         for domain in domain_details:
             domain_id = domain.domain_id
             organization = domain.organization
@@ -499,6 +499,23 @@ def is_duplicate_group_name(db, group_name, client_id=None):
     count_rows = db.call_proc(
         "sp_client_group_is_duplicate_groupname",
         (group_name, client_id)
+    )
+    if count_rows[0]["count"] > 0:
+        return True
+    else:
+        return False
+
+
+##########################################################################
+#  To Check whether the group name already exists
+#  Parameters : Object of database, group name, client id (Optional)
+#  Return Type : Boolean - Returns true if group name already exists
+#   returns False if there is no duplicates
+##########################################################################
+def is_duplicate_group_short_name(db, group_short_name, client_id=None):
+    count_rows = db.call_proc(
+        "sp_client_group_is_duplicate_groupshortname",
+        (group_short_name, client_id)
     )
     if count_rows[0]["count"] > 0:
         return True
@@ -650,7 +667,8 @@ def return_legal_entities(legal_entities, domains):
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
                 domain_details=domains[legal_entity["legal_entity_id"]],
-                is_closed=bool(legal_entity["is_closed"])
+                is_closed=bool(legal_entity["is_closed"]),
+                is_approved=int(legal_entity["is_approved"])
             )
         )
     return results
@@ -663,6 +681,7 @@ def return_legal_entities(legal_entities, domains):
 #  Return Type : Dictionary
 ##########################################################################
 def return_organization_by_legalentity_domain(organizations):
+
     organization_map = {}
     domain_map = {}
     for row in organizations:
@@ -683,7 +702,7 @@ def return_organization_by_legalentity_domain(organizations):
         organization_map[
             legal_entity_id][domain_id][str(industry_id)] = no_of_units
 
-        if domain_id in [x.domain_id for x in domain_map[legal_entity_id]] :
+        if domain_id in [x.domain_id for x in domain_map[legal_entity_id]]:
             continue
         domain_map[legal_entity_id].append(
             core.EntityDomainDetails(
@@ -2091,22 +2110,41 @@ def get_unassigned_units_list(db, session_user):
 #  Return Type : Returns List of object of UnassignedUnit
 ###############################################################################
 def return_unassigned_units(data):
-    fn = technomasters.UnassignedUnit
-    result = [
-        fn(
-            domain_name=datum["domain_name"],
-            group_name=datum["client_name"],
-            legal_entity_name = datum["legal_entity_name"],
-            business_group_name = datum["business_group_name"],
-            unassigned_units="%s / %s" % (
-                datum["total_units"] - datum["assigned_units"],
-                datum["total_units"]
-            ),
-            domain_id=datum["domain_id"],
-            client_id=datum["client_id"],
-            legal_entity_id = datum["legal_entity_id"]
-        ) for datum in data
-    ]
+    print "inside"
+    assigned_total = 0
+    result = []
+    for datum in data:
+        if (datum["assigned_units"] > 0 or datum["total_units"] > 0 or datum["unassigned_units"] > 0):
+            print "units"
+            print datum["assigned_units"]
+            if datum["total_units"] == 0:
+                if datum["unassigned_units"] == 0:
+                    assigned_total = "%s / %s" % (
+                        datum["unassigned_units"] + datum["assigned_units"],
+                        datum["assigned_units"]
+                    )
+                else:
+                    assigned_total = "%s / %s" % (
+                        datum["unassigned_units"] - datum["assigned_units"],
+                        datum["unassigned_units"]
+                    )
+            else:
+                assigned_total = "%s / %s" % (
+                    datum["total_units"] - datum["assigned_units"],
+                    datum["total_units"]
+                )
+
+            result.append(technomasters.UnassignedUnit(
+                domain_name=datum["domain_name"],
+                group_name=datum["client_name"],
+                legal_entity_name=datum["legal_entity_name"],
+                business_group_name=datum["business_group_name"],
+                unassigned_units=assigned_total,
+                domain_id=datum["domain_id"],
+                client_id=datum["client_id"],
+                legal_entity_id=datum["legal_entity_id"]
+            ))
+
     return result
 
 
@@ -2143,7 +2181,8 @@ def return_assigned_units(data):
             legal_entity_id=datum["legal_entity_id"],
             legal_entity_name=datum["legal_entity_name"],
             unit_count=datum["no_of_units"],
-            user_category_id = datum["user_category_id"]
+            user_category_id=datum["user_category_id"],
+            client_id=datum["client_id"], domain_id=datum["domain_id"]
         ) for datum in data
     ]
     return result
@@ -2157,12 +2196,16 @@ def return_assigned_units(data):
 def get_assigned_unit_details_list(db, request):
     legal_entity_id = request.legal_entity_id
     user_id = request.user_id
+    client_id = request.client_id
+    domain_id = request.domain_id
+    print "args"
+    print legal_entity_id, user_id
     #
     # To get details of assigned units under a domain manager and legal entity
     #  Parameters - Domain manager id, legal entity id
     #
     units, industry_details = db.call_proc_with_multiresult_set(
-        "sp_userunits_assigned_details_list", (user_id, legal_entity_id), 2
+        "sp_userunits_assigned_details_list", (user_id, legal_entity_id, client_id, domain_id), 2
     )
     unit_industry_name_map = generate_unit_domain_industry_map(
         industry_details)

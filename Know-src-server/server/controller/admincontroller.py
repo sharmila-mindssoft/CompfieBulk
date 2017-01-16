@@ -560,8 +560,8 @@ def process_reassign_domain_executive(db, request, session_user):
         return admin.SaveReassignUserAccountSuccess()
 
 def process_user_replacement(db, request, session_user):
-    user_type = request.user_type,
-    user_from = request.user_from,
+    user_type = request.user_type
+    user_from = request.user_from
     user_to = request.user_to
     remarks = request.remarks
     result = save_user_replacement(db, user_type, user_from, user_to, remarks, session_user)

@@ -172,7 +172,7 @@ api_params = {
     'file_content': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
 
     'validity_days_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
-    'validity_days': {'type': 'INT', 'length': 365, 'validation_method': None, 'is_optional': True},
+    'validity_days': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "validity_date_settings": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ValidityDates"},
     "country_domain_mappings": {},
 

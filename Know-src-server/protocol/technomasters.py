@@ -715,21 +715,27 @@ class GetAssignedUnits(Request):
 
 
 class GetAssignedUnitDetails(Request):
-    def __init__(self, legal_entity_id, user_id):
+    def __init__(self, legal_entity_id, user_id, client_id, domain_id):
         self.legal_entity_id = legal_entity_id
         self.user_id = user_id
+        self.client_id = client_id
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["legal_entity_id", "user_id"])
+        data = parse_dictionary(data, ["legal_entity_id", "user_id", "client_id", "domain_id"])
         legal_entity_id = data.get("legal_entity_id")
         user_id = data.get("user_id")
-        return GetAssignedUnitDetails(legal_entity_id, user_id)
+        client_id = data.get("client_id")
+        domain_id = data.get("domain_id")
+        return GetAssignedUnitDetails(legal_entity_id, user_id, client_id, domain_id)
 
     def to_inner_structure(self):
         return {
             "legal_entity_id": self.legal_entity_id,
-            "user_id": self.user_id
+            "user_id": self.user_id,
+            "client_id": self.client_id,
+            "domain_id": self.domain_id
         }
 
 
@@ -943,6 +949,20 @@ class GroupNameAlreadyExists(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return GroupNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class GroupShortNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GroupShortNameAlreadyExists()
 
     def to_inner_structure(self):
         return {
@@ -1883,7 +1903,7 @@ class UnassignedUnit(object):
 class AssignedUnit(object):
     def __init__(
         self, user_id, employee_name, business_group_name,
-        legal_entity_id, legal_entity_name, unit_count, user_category_id
+        legal_entity_id, legal_entity_name, unit_count, user_category_id, client_id, domain_id
     ):
         self.user_id = user_id
         self.employee_name = employee_name
@@ -1892,6 +1912,8 @@ class AssignedUnit(object):
         self.legal_entity_name = legal_entity_name
         self.unit_count = unit_count
         self.user_category_id = user_category_id
+        self.client_id = client_id
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_structure(data):
@@ -1899,7 +1921,7 @@ class AssignedUnit(object):
             data, [
                 "user_id", "employee_name", "business_group_name",
                 "legal_entity_id", "legal_entity_name", "unit_count",
-                "user_category_id"
+                "user_category_id", "client_id", "domain_id"
             ]
         )
         user_id = data.get("user_id")
@@ -1909,10 +1931,12 @@ class AssignedUnit(object):
         legal_entity_name = data.get("legal_entity_name")
         unit_count = data.get("unit_count")
         user_category_id = data.get("user_category_id")
+        client_id = data.get("client_id")
+        domain_id = data.get("domain_id")
         return AssignedUnit(
             user_id, employee_name, business_group_name,
             legal_entity_id, legal_entity_name, unit_count,
-            user_category_id
+            user_category_id, client_id, domain_id
         )
 
     def to_structure(self):
@@ -1923,7 +1947,9 @@ class AssignedUnit(object):
             "legal_entity_id": self.legal_entity_id,
             "legal_entity_name": self.legal_entity_name,
             "unit_count": self.unit_count,
-            "user_category_id": self.user_category_id
+            "user_category_id": self.user_category_id,
+            "client_id": self.client_id,
+            "domain_id": self.domain_id
         }
 
 

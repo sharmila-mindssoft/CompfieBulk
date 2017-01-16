@@ -52,7 +52,7 @@ log.setLevel(logging.ERROR)
 
 csrf = CsrfProtect()
 app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
-app.config["WTF_CSRF_TIME_LIMIT"] = 500
+app.config["WTF_CSRF_TIME_LIMIT"] = 5000
 # app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
 csrf.init_app(app)
 
@@ -408,7 +408,7 @@ CSS_PATH = os.path.join(COMMON_PATH, "css")
 IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
-LOGO_PATH = os.path.join(ROOT_PATH, "Src-server", "server", "clientlogo")
+LOGO_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "clientlogo")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),

@@ -1308,7 +1308,7 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
 class ClientAgreementList(object):
     def __init__(
         self, legal_entity_id, domain_id, legal_entity_name, total_licence, used_licence, file_space, used_file_space,
-        contract_from, contract_to, group_name, group_admin_email, is_active, domain_count,
+        contract_from, contract_to, group_name, group_admin_email, is_closed, domain_count,
         d_name, domain_total_unit, activation_date, domain_used_unit, legal_entity_admin_contactno,
         legal_entity_admin_email, business_group_name
     ):
@@ -1323,7 +1323,7 @@ class ClientAgreementList(object):
         self.contract_to = contract_to
         self.group_name = group_name
         self.group_admin_email = group_admin_email
-        self.is_active = is_active
+        self.is_closed = is_closed
         self.domain_count = domain_count
         self.d_name = d_name
         self.domain_total_unit = domain_total_unit
@@ -1348,7 +1348,7 @@ class ClientAgreementList(object):
             "contract_to",
             "group_name",
             "group_admin_email",
-            "is_active",
+            "is_closed",
             "domain_count",
             "d_name",
             "domain_total_unit",
@@ -1371,7 +1371,7 @@ class ClientAgreementList(object):
         contract_to = data.get("contract_to"),
         group_name = data.get("group_name"),
         group_admin_email = data.get("group_admin_email"),
-        is_active = data.get("is_active"),
+        is_closed = data.get("is_closed"),
         domain_count = data.get("domain_count"),
         d_name = data.get("d_name"),
         domain_total_unit = data.get("domain_total_unit"),
@@ -1384,7 +1384,7 @@ class ClientAgreementList(object):
         return ClientAgreementList(
             legal_entity_id, domain_id, legal_entity_name, total_licence, used_licence, file_space,
             used_file_space,
-            contract_from, contract_to, group_name, group_admin_email, is_active, domain_count,
+            contract_from, contract_to, group_name, group_admin_email, is_closed, domain_count,
             d_name, domain_total_unit, activation_date, domain_used_unit, legal_entity_admin_contactno,
             legal_entity_admin_email, business_group_name
         )
@@ -1402,7 +1402,7 @@ class ClientAgreementList(object):
             "contract_to": self.contract_to,
             "group_name": self.group_name,
             "group_admin_email": self.group_admin_email,
-            "is_active": self.is_active,
+            "is_closed": self.is_closed,
             "domain_count": self.domain_count,
             "d_name": self.d_name,
             "domain_total_unit": self.domain_total_unit,

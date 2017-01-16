@@ -65,7 +65,6 @@ function initialize()
 }
 
 $('.btn-show').click(function () {
-  alert("show");
   var category_val = $('#usercategory').val();
   var user_id = $('#manager-id').val();
   var group_id_none = $('#group-id').val();
@@ -78,7 +77,6 @@ $('.btn-show').click(function () {
   		group_id_none = 0;
   	}
   	function onSuccess(data) {
-      console.log("success")
       console.log(data);
       $('.details').show();
 	    $('#compliance_animation')
@@ -92,7 +90,7 @@ $('.btn-show').click(function () {
       		$('.domain-user').hide();
       		$('.tbody-reassignuserrpt-techno-manager-list').find('tr').remove();
       		userGroupAssignedList = data.reassign_user_list;
-      		totalRecord = userGroupAssignedList.length;
+      		totalRecord = getTechnoRecordLength();
 			processPaging();
 		}else if(categoryName == "Techno Executive"){
 			$('.techno-manager').hide();
@@ -100,7 +98,7 @@ $('.btn-show').click(function () {
       		$('.domain-user').hide();
       		$('.tbody-reassignuserrpt-techno-exec-list').find('tr').remove();
       		userGroupAssignedList = data.reassign_user_list;
-      		totalRecord = userGroupAssignedList.length;
+      		totalRecord = getTechnoRecordLength();
 			processPaging();
 		}else if(categoryName == "Domain Manager"){
 			$('.techno-manager').hide();
@@ -171,6 +169,43 @@ $('.btn-show').click(function () {
   }
 });
 
+function getTechnoRecordLength(){
+	var arr_clients = [];
+	var recordCOunt = 0;
+
+	/*for(var i=0;i<userClientGroups.length;i++)
+	{
+		client_occur_cnt = 0;
+		element = userClientGroups[i].client_id
+		arr_clients = userClientGroups.reduce(function(arr, e, i) {
+		    if (e.client_id === element)
+		        arr.push(i);
+		    return arr;
+		}, []);
+	}*/
+	console.log("1:"+userGroupAssignedList.length)
+	for(var i=0;i<userGroupAssignedList.length;i++){
+		recordCOunt = 0;
+		if(i==0){
+			console.log("cl:"+userGroupAssignedList[i].client_id)
+			arr_clients.push(userGroupAssignedList[i].client_id);
+		}
+		else{
+			for(var j=0;j<userGroupAssignedList.length;j++){
+				if(arr_clients[j] == userGroupAssignedList[i].client_id){
+					recordCOunt++;
+				}
+			}
+			if(recordCOunt == 0){
+				console.log("cl:"+userGroupAssignedList[i].client_id);
+				arr_clients.push(userGroupAssignedList[i].client_id);
+			}
+		}
+	}
+	console.log("2:"+arr_clients.length);
+	return arr_clients.length;
+}
+
 function getAllIndexes(arr, val) {
     var indexes = [], i = -1;
     while ((i = arr.indexOf(val, i+1)) != -1){
@@ -199,14 +234,11 @@ function loaduserGroupAssignedList(tbodyClass, data)
 			var arr_clients = [];
 			element = $('#group-id').val();
 			arr_clients = data.reduce(function(arr, e, i) {
-				console.log("e:"+e.client_id)
 			    if (e.client_id === element)
 			        arr.push(i);
-			    console.log(arr)
 			    return arr;
 			}, []);
 
-			console.log("arr len:"+arr_clients.length);
 			if(arr_clients.length > 0)
 			{
 				if(client_occur_cnt == 0)
@@ -237,17 +269,13 @@ function loaduserGroupAssignedList(tbodyClass, data)
 		{
 			client_occur_cnt = 0;
 			element = userClientGroups[i].client_id
-			console.log("element:"+element)
 			var arr_clients = []
 			arr_clients = data.reduce(function(arr, e, i) {
-				console.log("e:"+e.client_id)
 			    if (e.client_id === element)
 			        arr.push(i);
-			    console.log(arr)
 			    return arr;
 			}, []);
 
-			console.log("arr len:"+arr_clients.length);
 			if(arr_clients.length > 0)
 			{
 				for(var k=0;k<arr_clients.length;k++)
@@ -271,9 +299,15 @@ function loaduserGroupAssignedList(tbodyClass, data)
 
 }
 
+function tree_open_close(e) {
+	console.log("click:"+e.className)
+	id = e.className.split("-")[3];
+	console.log("id:"+id)
+    $('.tree' + id).toggle("slow");
+}
+
 function bindReassignedTechUserData(data, j, tbodyClass, rowClass)
 {
-	console.log("j:"+j)
 	val = data;
 	var tableRow;
 	if($('#usercategory option:selected').text() == "Techno Manager")
@@ -290,7 +324,10 @@ function bindReassignedTechUserData(data, j, tbodyClass, rowClass)
 	var clone = tableRow.clone();
 	$('.sno', clone).text(j);
 	$('.country-name', clone).text(val.c_names);
-	$('.group-name', clone).text(val.group_name);
+	$('.group-name', clone).html(val.group_name);
+	$('.group-name', clone).addClass("-"+val.client_id);
+	$('.group-name', clone).on('click', function() { tree_open_close(this); });
+
 	$('.no-of-le', clone).text(val.le_count);
 	$('.assigned-date', clone).text(val.unit_email_date);
 	$('.assigned', clone).text(val.emp_code_name);
@@ -303,7 +340,8 @@ function bindReassignTechSubData(data, tbodyClass)
 {
 	val = data;
 	var tableSubRow = $('#templates .tree-data');
-	var clone = tableSubRow.clone();
+	var clone = tableSubRow.clone().addClass('tree' + val.client_id);
+
 	$('.empty', clone).text();
 	$('.assigned-date', clone).text(val.unit_email_date);
 	//$('.assigned-date', clone).text("01/06/2016");
@@ -335,14 +373,11 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 			var arr_clients = [];
 			element = $('#group-id').val();
 			arr_clients = data.reduce(function(arr, e, i) {
-				console.log("e:"+e.client_id)
 			    if (e.client_id === element)
 			        arr.push(i);
-			    console.log(arr)
 			    return arr;
 			}, []);
 
-			console.log("arr len:"+arr_clients.length);
 			if(arr_clients.length > 0)
 			{
 				if(client_occur_cnt == 0)
@@ -373,17 +408,13 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 		{
 			client_occur_cnt = 0;
 			element = userClientGroups[i].client_id
-			console.log("element:"+element)
 			var arr_clients = []
 			arr_clients = data.reduce(function(arr, e, i) {
-				console.log("e:"+e.client_id)
 			    if (e.client_id === element)
 			        arr.push(i);
-			    console.log(arr)
 			    return arr;
 			}, []);
 
-			console.log("arr len:"+arr_clients.length);
 			if(arr_clients.length > 0)
 			{
 				for(var k=0;k<arr_clients.length;k++)
@@ -409,7 +440,6 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 
 function bindReassignedTechexecData(data, j, tbodyClass, rowClass)
 {
-	console.log("j:"+j)
 	val = data;
 	var tableRow;
 	if($('#usercategory option:selected').text() == "Techno Executive")
@@ -482,17 +512,13 @@ function loaddomainexecGroupAssignedList(tbodyClass, data)
 	{
 		client_occur_cnt = 0;
 		element = userGroupAssignedList[i].unit_id;
-		console.log("element:"+element)
 		var arr_clients = []
 		arr_clients = data.reduce(function(arr, e, i) {
-			console.log("e:"+e.unit_id)
 		    if (e.unit_id === element)
 		        arr.push(i);
-		    console.log(arr)
 		    return arr;
 		}, []);
 
-		console.log("arr len:"+arr_clients.length);
 		if(arr_clients.length > 0)
 		{
 			for(var k=0;k<arr_clients.length;k++)
@@ -516,7 +542,6 @@ function loaddomainexecGroupAssignedList(tbodyClass, data)
 
 function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 {
-	console.log("j:"+j)
 	val = data;
 	var tableRow;
 	if($('#usercategory option:selected').text() == "Domain Manager" ||
@@ -549,7 +574,6 @@ function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 
 //Status Title
 function showTitle(e, address, postal_code){
-	console.log("hiover")
   var titleText = address+","+postal_code;
     e.title = titleText;
 
@@ -622,7 +646,7 @@ function processPaging(tbodyClass){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = userGroupAssignedList.length;
+  //totalRecord = userGroupAssignedList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
     tbodyClass.empty();
@@ -654,7 +678,6 @@ function pageData(on_current_page){
   data = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
-  console.log(totalRecord,_page_limit)
   var showFrom = sno + 1;
   var is_null = true;
   for(i=sno;i<userGroupAssignedList.length;i++)
@@ -711,7 +734,6 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 UserVal.keyup(function (e) {
   var text_val = $(this).val();
   var user_list = []
-  console.log("usercategory:"+$('#usercategory').val());
   for(var i=0;i<userList.length;i++)
   {
 	if($('#usercategory').val() == userList[i].user_category_id)
@@ -742,9 +764,7 @@ $('#groupsval').keyup(function (e) {
       {
       	for(var j=0;j<userClientGroups.length;j++)
       	{
-      		console.log("client list")
       		if(jQuery.inArray(userList[i].client_ids, userClientGroups[j].client_id)){
-      			console.log("true")
       			group_list.push({
 		          "client_id": userClientGroups[j].client_id,
 		          "group_name": userClientGroups[j].group_name,
@@ -754,7 +774,6 @@ $('#groupsval').keyup(function (e) {
       	}
       }
     }
-    console.log(group_list.length)
     commonAutoComplete(
       e, ACGroup, Group, text_val,
       group_list, "group_name", "client_id", function (val) {
@@ -783,7 +802,6 @@ $('#businessgroupsval').keyup(function (e) {
         });
       }
     }
-    console.log(bg_grp.length)
     commonAutoComplete(
       e, ACBusinessGroup, BusinessGroup, text_val,
       bg_grp, "business_group_name", "business_group_id", function (val) {
@@ -839,12 +857,10 @@ $('#legalentityval').keyup(function (e) {
 
  //load unit wwith condition form list in autocomplete text box
 $('#domainval').keyup(function (e) {
-  console.log("inside domains")
   var client_id = $('#group-id').val();
   var bgrp_id = $('#businessgroupid').val();
   var le_id = $('#legalentityid').val();
   var user_id = $('#manager-id').val();
-  console.log("user:"+user_id)
   var domain_list = [];
   var condition_fields = [];
 	var condition_values = [];
@@ -864,7 +880,6 @@ $('#domainval').keyup(function (e) {
             break;
         }
 	}
-	console.log("len:"+domain_list.length)
     var text_val = $(this).val();
     commonAutoComplete(
     e, ACDomain, Domain, text_val,
@@ -922,7 +937,6 @@ function resetAllfilter()
 function resetfilter(evt)
 {
   //alert("jhjh");'
-  console.log(evt);
   if(evt == 'category')
   {
   	UserVal.val('');
@@ -982,6 +996,9 @@ $(function () {
   $('.grid-table-rpt').hide();
   initialize();
   loadItemsPerPage();
+  $('.tree-open-close').click(function() {
+	    $('.tree-data').toggle("slow");
+	});
 });
 $('#usercategory').on('change', function(e){
 	$('.user_category_name').text($('#usercategory option:selected').text())
