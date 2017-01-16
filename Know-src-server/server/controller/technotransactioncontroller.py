@@ -164,5 +164,7 @@ def process_Save_LegalEntityClosureData(db, request_frame, session_user):
             print result
             if result is True:
                 return technotransactions.SaveLegalEntityClosureSuccess()
+            else:
+                return technotransactions.SaveLegalEntityClosureFailure()
         else:
             return technomasters.InvalidPassword()
