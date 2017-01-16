@@ -522,7 +522,7 @@ def save_user_group(
     if ug_id:
         if user_group_forms(db, ug_id, form_ids) is True :
             action = "Created User Group \"%s\"" % user_group_name
-            db.save_activity(0, 3, action)
+            db.save_activity(session_user, 3, action)
             return True
         else:
             return False
@@ -551,7 +551,7 @@ def update_user_group(
     if result:
         if user_group_forms(db, user_group_id, form_ids) is True :
             action = "Updated User Group \"%s\"" % user_group_name
-            db.save_activity(0, 3, action)
+            db.save_activity(session_user, 3, action)
             return True
         else:
             return False
@@ -578,7 +578,7 @@ def update_user_group_status(db, user_group_id, ug_name, is_active, session_user
         "Deactivated" if is_active == 0 else "Activated",
         ug_name
     )
-    db.save_activity(0, 3, action)
+    db.save_activity(session_user, 3, action)
     return result
 
 
@@ -680,7 +680,7 @@ def save_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Created User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     name = "%s - %s" % (employee_code, employee_name)
     save_registraion_token(db, user_id, name, email_id)
 
@@ -769,7 +769,7 @@ def update_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     return True
 
 
@@ -806,7 +806,7 @@ def update_user_status(db, user_id, is_active, session_user):
         action = "Activated User \"%s\"" % employee_name
     else:
         action = "Dectivated User \"%s\"" % employee_name
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     return result
 
 
@@ -816,10 +816,10 @@ def update_user_status(db, user_id, is_active, session_user):
 # Return Type : Returns True on Successfull update, Other wise raises process
 #               error
 ###############################################################################
-def update_disable_status(db, user_id, is_disable, session_user):
+def update_disable_status(db, user_id, is_disable, remarks, session_user):
     result = db.call_update_proc(
         "sp_users_disable_status",
-        (user_id, is_disable, session_user, get_date_time())
+        (user_id, is_disable, session_user, get_date_time(), remarks)
     )
     if result is False:
         raise process_error("E039")
@@ -831,7 +831,7 @@ def update_disable_status(db, user_id, is_disable, session_user):
         action = "Disabled User \"%s\"" % employee_name
     else:
         action = "Enabled User \"%s\"" % employee_name
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     return result
 
 #####################################################################

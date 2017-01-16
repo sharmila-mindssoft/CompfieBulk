@@ -693,6 +693,8 @@ class Database(object):
         condition_val = [value]
         return not self.is_already_exists(table, condition, condition_val)
 
+
+
     ########################################################
     # To generate a new Id for the given table and given
     # field
@@ -707,7 +709,9 @@ class Database(object):
 
     def save_activity(self, user_id, form_id, action):
         created_on = get_date_time()
-        q = "select user_category_id from tbl_users where user_id = %s"
+        print user_id
+
+        q = "select user_category_id from tbl_user_login_details where user_id = %s"
         row = self.select_one(q, [user_id])
         user_cat_id = row.get("user_category_id")
 

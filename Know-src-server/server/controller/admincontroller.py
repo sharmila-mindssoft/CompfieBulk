@@ -12,6 +12,7 @@ from server.database.admin import *
 from server.database.technomaster import (
     get_groups, get_business_groups_for_user
 )
+from server.constants import USER_ENABLE_CUTOFF
 
 __all__ = [
     "process_admin_request", "get_user_groups"
@@ -322,6 +323,13 @@ def get_users(db, request_frame, session_user):
         is_active = True if user_row["is_active"] == 1 else False
         is_disable = True if user_row["is_disable"] == 1 else False
         username = user_row["username"]
+        days_left = user_row["days_left"]
+
+        if days_left > USER_ENABLE_CUTOFF :
+            allow_enable = False
+        else :
+            allow_enable = True
+
         user_list.append(
             core.UserDetails(
                 user_id, user_cat_id,
@@ -332,7 +340,7 @@ def get_users(db, request_frame, session_user):
                 address, designation,
                 country_ids, domain_ids,
                 is_active, is_disable,
-                username
+                username, allow_enable, days_left
             )
         )
 
@@ -432,10 +440,11 @@ def change_user_status(db, request, session_user):
 def change_disable_status(db, request, session_user):
     user_id = request.user_id
     is_active = int(request.is_active)
+    remarks = request.remarks
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
 
-    elif update_disable_status(db, user_id, is_active, session_user):
+    elif update_disable_status(db, user_id, is_active, remarks, session_user):
         return admin.ChangeUserStatusSuccess()
 
 ################################################################
