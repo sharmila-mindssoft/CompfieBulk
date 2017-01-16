@@ -71,6 +71,7 @@ var Search_status_li = $('.search-status-li');
 
 var countryUnitList = $('.add-country-unit-list');
 
+// Initialized to get the filter records from DB
 function initialize() {
     function onSuccess(data) {
         clientUnitAdd.hide();
@@ -108,7 +109,6 @@ function initialize() {
         }
     });
 }
-
 //Load Get Client List -----------------------------------------------------------------------------------------
 function loadClientsList(data) {
     $('.tbody-clientunit-list').find('tr').remove();
@@ -148,7 +148,7 @@ function loadClientsList(data) {
         $('.tbody-clientunit-list').append(clone);
     });
 }
-
+// Get the group name by its client id
 function getGroupName(groupId) {
     var groupName;
     $.each(groupList, function(key, value) {
@@ -158,7 +158,7 @@ function getGroupName(groupId) {
     });
     return groupName;
 }
-
+// Get the business group name by its business group id
 function getBusinessGroupName(businessGroupId) {
     var businessgroupName;
     $.each(businessGroupList, function(key, value) {
@@ -168,7 +168,7 @@ function getBusinessGroupName(businessGroupId) {
     });
     return businessgroupName;
 }
-
+// To get Legal entity name from its list by its ID
 function getLegalEntityName(legalentityId) {
     var legalEntityName;
     $.each(legalEntitiesList, function(key, value) {
@@ -178,7 +178,7 @@ function getLegalEntityName(legalentityId) {
     });
     return legalEntityName;
 }
-
+// To get Country name from its its list by its ID
 function getCountryName(countryId) {
     var countryName;
     $.each(countryFulList, function(key, value) {
@@ -188,6 +188,7 @@ function getCountryName(countryId) {
     });
     return countryName;
 }
+// To get division name from its list by its ID
 function getDivisionName(divisionId) {
     var division_name;
     for (var i = 0; i < divisionList.length; i++) {
@@ -198,7 +199,7 @@ function getDivisionName(divisionId) {
     }
     return division_name;
 }
-//Add Button  -------------------------------------------------------------------------------------------------
+//Add Button EVent-------------------------------------------------------------------------------------------------
 $('#btn-clientunit-add').click(function() {
     isUpdate = false;
     units_count = [];
@@ -271,6 +272,7 @@ function loadClientGroups(groupsList) {
         clientSelect.append(clone);
     }
 }
+// On change of client group will reset other filters
 $("#group-select").on("change", function(){
     if($(this).val() == ""){
         $("#businessgroup-select option:gt(0)").remove();
@@ -293,7 +295,6 @@ $("#group-select").on("change", function(){
     }
 
 });
-
 //Load Business Groups  ---------------------------------------------------------------------------------------------
 function loadBusinessGroups() {
     var groupId = clientSelect.val();
@@ -309,7 +310,7 @@ function loadBusinessGroups() {
         }
     }
 }
-
+// On change of business group will reset the child filters
 $("#businessgroup-select").on("change", function(){
     $('#country-name').val('');
     $('#entity-select').empty();
@@ -319,7 +320,6 @@ $("#businessgroup-select").on("change", function(){
     clone_le.text("Select");
     leSelect.append(clone_le);
 });
-
 //load country list in autocomplete text box
 $('#country-name').keyup(function(e) {
     var textval = $(this).val();
@@ -327,7 +327,6 @@ $('#country-name').keyup(function(e) {
         onCountrySuccess(val);
     });
 });
-
 //store the selected country name and id
 function onCountrySuccess(val) {
     ctrySelect_name.val(val[1]);
@@ -341,7 +340,7 @@ function onCountrySuccess(val) {
     leSelect.append(clone_le);
     loadLegalEntity();
 }
-
+// Arrow key functionality
 function onArrowKey_Client(e, ac_item, multipleselect, callback) {
     if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
         chosen = '';
@@ -390,7 +389,7 @@ function onArrowKey_Client(e, ac_item, multipleselect, callback) {
         return false;
     }
 }
-
+// Loads the countries in the list
 function loadauto_countrytext(e, textval, callback) {
     $('#country-id').val('');
     $('#ac-country').show();
@@ -458,7 +457,6 @@ function loadauto_countrytext(e, textval, callback) {
     }
     onArrowKey_Client(e, 'ac-textbox', 'country', callback);
 }
-
 //Load country for edit
 function LoadCountry(country_id) {
     for (i in countryFulList) {
@@ -511,7 +509,7 @@ function loadLegalEntity() {
     }
 
 }
-
+// Add new unit under a division/ category
 function addcountryrow() {
     clearMessage();
     var groupId = clientSelect.val();
@@ -536,7 +534,6 @@ function addcountryrow() {
     }
 
 }
-
 //Add Country Wise List ----------------------------------------------------------------------------------------
 function addcountryrownew() {
     countryUnitList.show();
@@ -657,13 +654,13 @@ function addcountryrownew() {
     if ($("#client-unit-id").val() == "") {
         loadDomains();
         //industrytype('industry-' + division_cnt + '-' + 1, []);
-        $('.orgtypeselected-' + division_cnt+'-'+1).parent('span').hide();
+        $('.orgtypeselected-' + division_cnt + '-' + 1).multiselect('rebuild');
+        //$('.orgtypeselected-' + division_cnt+'-'+1).parent('span').hide();
     }
     else{
         loadDomains();
         industrytype('industry-' + division_cnt + '-' + 1, []);
     }
-
 
     if ($('.unitcode-checkbox').is(':checked')) {
         $('.unit-code-' + division_cnt + '-' + 1).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
@@ -740,7 +737,7 @@ function log_units_count(e,classval) {
         units_count.push(domain_id + '-' + org_id + '-' + 1);
     }
 }
-
+// Get the unit count under a domain and organization
 function getOrgCount(domain_id, org_id) {
     var entityval;
     if ($('#client-unit-id').val() != '') {
@@ -754,7 +751,7 @@ function getOrgCount(domain_id, org_id) {
         }
     }
 }
-
+// Checks the stored unit count under a domain and organization - to prompt user
 function check_previous_orgn(evt) {
 
     if (check_org == true) {
@@ -781,7 +778,7 @@ function check_previous_orgn(evt) {
         addNewUnitRow(evt);
     }
 }
-
+// To add new unit rows under division category
 function addNewUnitRow(str) {
     var lastIndexOf_hyphen = str.lastIndexOf('-');
     var countval = str.substring((lastIndexOf_hyphen + 1), (lastIndexOf_hyphen + 2));
@@ -857,9 +854,10 @@ function addNewUnitRow(str) {
         industrytype('industry-' + division_cnt + '-' + unitval, []);
     });
     loadDomains();
+    $('.orgtypeselected-' + division_cnt + '-' + 1).multiselect('rebuild');
     //industrytype('industry-' + division_cnt + '-' + unitval, []);
 }
-
+// To pad unit codes
 function intTo5digitsString(nb) {
     if (nb > 0 && nb < 10)
         return '0000' + nb;
@@ -870,7 +868,7 @@ function intTo5digitsString(nb) {
     else if (nb >= 1000 && nb < 10000)
         return '0' + nb;
 }
-
+// Unit code auto generation
 function autoGenerateUnitCode() {
     var client_id = $('#group-select').val();
     if (client_id == '' || client_id == null || client_id == "Select") {
@@ -891,7 +889,7 @@ function autoGenerateUnitCode() {
         }
     });
 }
-
+// Unit code auto generation
 function unitcodeautogenerate(auto_generate_initial_value) {
     unitcodeautogenerateids = null;
     if ($('.labelgroup').text().trim() == '') {
@@ -992,7 +990,7 @@ function loadDivision(classval) {
         }
     });
 }
-
+// To add/ cancel new division
 function divisionExistingChecking(str) {
     var countval = '-' + division_cnt + '-' + 1;
     if (str == 'New') {
@@ -1225,7 +1223,7 @@ function loadDomains() {
     }
     d_ctrl.multiselect('rebuild');
 }
-//industry
+//load industry under domain
 function industrytype(classval, selected_arr) {
     //alert(selected_arr);
     //selected_arr
@@ -1317,7 +1315,7 @@ function getOrganizationName(org_ids) {
     }
     return orgn_names;
 }
-
+// Arrow key for domain and organization
 function onArrowKeyUnit(e, ac_item, count) {
     if (e.keyCode == 13) {
         chosen_unit = '';
@@ -1379,9 +1377,7 @@ function onArrowKeyUnit(e, ac_item, count) {
         return false;
     }
 }
-
 //Submit Record -----------------------------------------------------------------------------------------
-
 $('#btn-clientunit-submit').click(function() {
     clearMessage();
     var clientunitIdValue = $('#client-unit-id').val();
@@ -1861,7 +1857,7 @@ $('#btn-clientunit-submit').click(function() {
 
     //main loop -- end
 });
-
+// Reset all filter in main search area
 function resetallfilter() {
     var obj_client = $(".client-drop-down option");
     var clone_client = obj_client.clone();
@@ -1888,7 +1884,7 @@ function resetallfilter() {
     clone_divi.text("Select");
     $('#division-select').append(clone_divi);
 }
-
+// To process the filter search
 function processSearch() {
     c_name = FilterCountry.val().toLowerCase();
     g_name = FilterGroup.val().toLowerCase();
@@ -1923,7 +1919,7 @@ function processSearch() {
 
     loadClientsList(searchList);
 }
-
+// Set class for status field
 function renderControls() {
     //status of the list
     Search_status_ul.click(function(event) {
@@ -1944,7 +1940,7 @@ function renderControls() {
         processSearch();
     });
 }
-
+// Form Initialization
 $(function() {
     initialize();
     renderControls();
