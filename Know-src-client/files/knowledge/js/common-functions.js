@@ -1090,7 +1090,7 @@ function commonAutoComplete1(
                       }else{
                         condition_result = false;
                       }
-                    }else if(value == 'p_user_ids'){
+                    }else if(value == 'p_user_ids' && jQuery.type( condition_values[key] ) == 'array'){
                       var common_values = [];
                       var array1 = condition_values[key];
                       var array2 = list_val[i][value];

@@ -176,7 +176,7 @@ function loadTMList(){
 
             $('.tm-techno-executive-name', clone).keyup(function(e){
                 var condition_fields = ["country_domains", "p_user_ids"];
-                var condition_values = [[[value.c_id], value.d_ids], $("#techno_manager_id_"+value.ct_id).val()];
+                var condition_values = [[[value.c_id], value.d_ids], [$("#techno_manager_id_"+value.ct_id).val()]];
                 
                 var text_val = $(this).val();
                 selected_textbox = $(this);

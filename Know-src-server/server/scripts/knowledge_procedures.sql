@@ -7824,8 +7824,8 @@ BEGIN
     tbl_client_database as t1;
 END //
 
-DELIMITER;
-=======
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To Get data for IP Settings form
 -- --------------------------------------------------------------------------------
@@ -8087,8 +8087,6 @@ END //
 
 DELIMITER ;
 
-=======
-
 DROP PROCEDURE IF EXISTS `sp_tbl_client_groups_createdb_info`;
 
 DELIMITER //
@@ -8133,7 +8131,7 @@ BEGIN
     tbl_client_database as t1;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 
 
