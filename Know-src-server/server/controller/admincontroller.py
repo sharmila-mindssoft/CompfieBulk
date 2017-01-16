@@ -325,10 +325,9 @@ def get_users(db, request_frame, session_user):
         username = user_row["username"]
         days_left = user_row["days_left"]
 
-        if days_left > USER_ENABLE_CUTOFF :
+        allow_enable = True
+        if is_disable is True and days_left > USER_ENABLE_CUTOFF :
             allow_enable = False
-        else :
-            allow_enable = True
 
         user_list.append(
             core.UserDetails(
@@ -340,7 +339,7 @@ def get_users(db, request_frame, session_user):
                 address, designation,
                 country_ids, domain_ids,
                 is_active, is_disable,
-                username, allow_enable, days_left
+                username, allow_enable, days_left, user_row["disable_reason"]
             )
         )
 

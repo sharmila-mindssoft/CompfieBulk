@@ -2297,7 +2297,8 @@ BEGIN
     T1.employee_name, T1.employee_code, T1.email_id,
     T1.user_group_id,
     T1.contact_no, T1.mobile_no, T1.address, T1.designation, T1.is_active, T1.is_disable,
-    T2.username, IFNULL(DATEDIFF(current_ist_datetime(), T1.disabled_on), 0) as days_left
+    T2.username, IFNULL(DATEDIFF(current_ist_datetime(), T1.disabled_on), 0) as days_left,
+    T1.disable_reason
     FROM tbl_users T1
     LEFT JOIN tbl_user_login_details T2 ON T1.user_id = T2.user_id
     WHERE T1.user_category_id > 2
