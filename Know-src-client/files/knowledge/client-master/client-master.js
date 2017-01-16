@@ -13,6 +13,7 @@ var domain_name_map = {};
 var business_group_name_map = {};
 var industries_temp = [];
 var domain_temp = [];
+var le_name_duplicate_check_temp = [];
 
 var COUNTRIES = '';
 var DOMAINS = '';
@@ -71,6 +72,7 @@ function initialize(type_of_initialization) {
                 industry_id_map[value.industry_name] = parseInt(value.industry_id)
                 industry_name_map[parseInt(value.industry_id)] = value.industry_name
             });
+            $("#group-text").focus();
             $(".edit-date-config").hide();
             $(".portlet-title").html("Add Client");
             $(".cm-header").removeClass("col-sm-4");
@@ -425,6 +427,7 @@ $('.numeric').keypress(function(e) {
 });
 
 function saveClient() {
+    le_name_duplicate_check_temp = [];
     var group_id = edit_id;
     var group_name = $('#group-text').val();
     var username = $("#username").val();
@@ -502,6 +505,9 @@ function saveClient() {
                 break;
             } else if (le_name == '') {
                 displayMessage(message.legalentity_required);
+                break;
+            } else if(jQuery.inArray(le_name, le_name_duplicate_check_temp) !== -1){
+                displayMessage(message.duplicate_legalentity+":"+ le_name);
                 break;
             } else if (le_name.length > 50) {
                 displayMessage(message.le_50);
@@ -604,6 +610,7 @@ function saveClient() {
                 if(logo == '' || logo == null){
                     logo = null;
                 }
+                le_name_duplicate_check_temp.push(le_name);
                 legal_entities.push(
                     mirror.getLegalEntityRow(
                         parseInt(country_id), parseInt(business_group_id), business_group_name,
@@ -626,6 +633,7 @@ function saveClient() {
                         }
                         
                     }
+                    le_name_duplicate_check_temp.push(le_name);
                     legal_entities.push(
                         mirror.getLegalEntityUpdateRow(
                             parseInt(country_id), parseInt(business_group_id),
