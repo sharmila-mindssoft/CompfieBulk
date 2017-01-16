@@ -815,7 +815,7 @@ button.ui-button::-moz-focus-inner {
 	padding: 1em 1.4em;
 	background: none;
 }
-.ui-tooltip {
+/*.ui-tooltip {
 	padding: 8px;
 	position: absolute;
 	z-index: 9999;
@@ -825,7 +825,7 @@ button.ui-button::-moz-focus-inner {
 }
 body .ui-tooltip {
 	border-width: 2px;
-}
+}*/
 
 /* Component containers
 ----------------------------------*/
@@ -1224,8 +1224,7 @@ body .ui-tooltip {
 	border-radius: 8px;
 }
 
-.ui-tooltip, .arrow:after {
-	/*background: #F1E9F6;*/
+/*.ui-tooltip, .arrow:after {
 	background: #F1E9F6;
 }
 .ui-tooltip {
@@ -1238,7 +1237,7 @@ body .ui-tooltip {
 	-webkit-box-shadow: 0px 0px 18px -6px #333;
 	-moz-box-shadow: 0px 0px 18px -6px #333;
 	box-shadow: 0px 0px 18px -6px #333;
-}
+}*/
 .arrow {
 	width: 50px;
 	height: 14px;
