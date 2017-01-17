@@ -2538,6 +2538,48 @@ END //
 
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS `sp_groupname_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_groupname_by_id`(
+    IN ctid INT(11)
+)
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups WHERE client_id = ctid;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_legalentityname_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_legalentityname_by_id`(
+    IN leid INT(11)
+)
+BEGIN
+    SELECT legal_entity_id, legal_entity_name FROM tbl_legal_entities WHERE
+    legal_entity_id = leid;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_unitname_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_unitname_by_id`(
+    IN uid INT(11)
+)
+BEGIN
+    SELECT unit_id, unit_name FROM tbl_units WHERE
+    unit_id = uid;
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To Delete user countries
 -- --------------------------------------------------------------------------------

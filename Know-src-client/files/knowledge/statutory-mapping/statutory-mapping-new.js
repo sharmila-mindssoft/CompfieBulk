@@ -85,7 +85,7 @@ ViewScreen = $('#statutorymapping-add');
 listTemplate = $("#templates #list-template .items");
 var file_type = [
     "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
-    "rar", "tar", "gz", "ppt",
+    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf"
 ]
 var msg = message;
 var fetch = mirror;
@@ -1241,6 +1241,7 @@ function RenderInput() {
 
             }
             else {
+                $('.recurr-summary').text('');
                 RecurringPan.show();
                 if (freq_val == 2){
                     txt = "Periodical";
