@@ -757,7 +757,7 @@ function loadSingleUnitCompliances() {
     }else{
         SubmitButton.show();
         SaveButton.show();
-        $(".total_count").text(totalRecord);
+        $(".total_count").text('Showing 1 to ' + (sno-1) + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
     hideLoader();
@@ -929,7 +929,7 @@ function loadMultipleUnitCompliances() {
     }else{
         SubmitButton.show();
         SaveButton.show();
-        $(".total_count").text(totalRecord);
+        $(".total_count").text('Showing 1 to ' + (sno-1) + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
     hideLoader();
