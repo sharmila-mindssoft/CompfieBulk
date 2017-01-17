@@ -1189,7 +1189,7 @@ class Level1StatutoryList(object):
         return Level1StatutoryList(level_1_statutory_id, level_1_statutory_name, country_id, domain_id)
 
     def to_structure(self):
-        data =  {
+        data = {
             "level_1_statutory_id": self.level_1_statutory_id,
             "level_1_statutory_name": self.level_1_statutory_name,
             "country_id": self.country_id,
@@ -1253,7 +1253,7 @@ class Compliance(object):
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id,
         duration, is_active,
-        frequency, summary, reference
+        frequency, summary, reference, is_file_removed
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1272,6 +1272,7 @@ class Compliance(object):
         self.frequency = frequency
         self.summary = summary
         self.reference = reference
+        self.is_file_removed = is_file_removed
 
     @staticmethod
     def parse_structure(data):
@@ -1284,7 +1285,7 @@ class Compliance(object):
             "r_every", "d_type_id",
             "duration", "is_active",
             "frequency", "summary",
-            "reference"
+            "reference", "is_file_removed"
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_provision")
@@ -1303,6 +1304,7 @@ class Compliance(object):
         frequency = data.get("frequency")
         summary = data.get("summary")
         reference = data.get("reference")
+        is_file_removed = data.get("is_file_removed")
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -1311,7 +1313,7 @@ class Compliance(object):
             statutory_dates, repeats_type_id,
             repeats_every, duration_type_id,
             duration, is_active,
-            frequency, summary, reference
+            frequency, summary, reference, is_file_removed
         )
 
     def to_structure(self):
@@ -1332,7 +1334,8 @@ class Compliance(object):
             "is_active": self.is_active,
             "frequency": self.frequency,
             "summary": self.summary,
-            "reference": self.reference
+            "reference": self.reference,
+            "is_file_removed": self.is_file_removed
         }
 
 #
@@ -2769,7 +2772,7 @@ class UserDetails(object):
         employee_code,  email_id, user_group_id,
         contact_no, mobile_no, address, designation, country_ids,
         domain_ids, is_active, is_disable, username,
-        allow_enable, days_left
+        allow_enable, days_left, d_reason
     ):
         self.user_id = user_id
         self.user_category_id = user_category_id
@@ -2789,6 +2792,7 @@ class UserDetails(object):
         self.username = username
         self.allow_enable = allow_enable
         self.days_left = days_left
+        self.d_reason = d_reason
 
     @staticmethod
     def parse_structure(data):
@@ -2801,7 +2805,8 @@ class UserDetails(object):
             "address", "designation",
             "country_ids", "country_wise_domain",
             "is_active", "is_disable", "username_id",
-            "allow_enable", "days_left"
+            "allow_enable", "days_left",
+            "d_reason"
         ])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category-id")
@@ -2821,6 +2826,7 @@ class UserDetails(object):
         username = data.get("username_id")
         allow_enable = data.get("allow_enable")
         days_left = data.get("days_left")
+        d_reason = data.get("d_reason")
         return UserDetails(
             user_id, user_category_id,
             user_category_name,
@@ -2829,7 +2835,7 @@ class UserDetails(object):
             contact_no, mobile_no, address, designation,
             country_ids, domain_ids,
             is_active, is_disable, username,
-            allow_enable, days_left
+            allow_enable, days_left, d_reason
         )
 
     def to_structure(self):
@@ -2851,7 +2857,8 @@ class UserDetails(object):
             "is_disable": self.is_disable,
             "username_id": self.username,
             "allow_enable": self.allow_enable,
-            "days_left": self.days_left
+            "days_left": self.days_left,
+            "d_reason": self.d_reason
         }
 
 #

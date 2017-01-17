@@ -108,6 +108,7 @@ possibleFailure = function(err, extra_details) {
     else {
         displayMessage(err);
     }
+    hideLoader();
 };
 //
 // render list, select and multiselect box with data
@@ -140,9 +141,10 @@ function RenderInput() {
     this.mapping_id = null;
     this.is_file_uploaded = true;
     this.uploaded_files = [];
-    this.uploaded_files_fcids = [];
+    this.uploaded_files_fcids = {};
     this.form_data = new FormData();
-
+    this.file_removed = false;
+    this.f_f_list = [];
 
     this.remveItemFromList = function(item, mainlist) {
         if (!mainlist)
@@ -945,14 +947,11 @@ function RenderInput() {
                         }
                         return false;
                     }
-
                 });
                 $('.date-select', date_pan).val(v['statutory_date']);
                 $('.date-list').append(date_pan);
                 _renderinput.loadedDateEvent(k);
-
             });
-
 
         }
 
@@ -962,6 +961,15 @@ function RenderInput() {
         }
         else {
             Temp_id.val(data.comp_id);
+        }
+
+        // display file name
+        console.log(data.f_f_list);
+        _renderinput.f_f_list = data.f_f_list;
+        if (data.f_f_list.length > 0) {
+            var tFN  = data.f_f_list[0]['file_name'];
+            $('#uploaded_fileview').show();
+            $('#uploaded_filename').html(tFN + '   <img src=\'/knowledge/images/close-icon-black.png\' onclick=\'remove_temp_file()\' />');
         }
 
     };
@@ -986,6 +994,7 @@ function RenderInput() {
         $('#upload_file').val('');
         MultiselectDate.attr('checked', false);
         this.hideFrequencyAll();
+        $('#uploaded_fileview').hide();
     };
     this.renderComplianceGrid = function() {
 
@@ -1500,7 +1509,7 @@ function pageControls() {
         info['c_task'] = ComplianceTask.val().trim();
         info['description'] = Description.val().trim();
         info['doc_name'] = Document.val().trim();
-        info['f_f_list'] = null;
+
         info['p_consequences'] = Penal.val().trim();
         info['reference'] = ReferenceLink.val().trim();
         info['f_id'] = parseInt(Frequency.val());
@@ -1659,12 +1668,27 @@ function pageControls() {
         info['frequency'] = $('#compliance_frequency option:selected').text();
         info['summary'] = _renderinput.summary;
         fCId = info['temp_id'];
-        // var file_data = _renderinput.uploaded_files[0];
-        // var f_Name = _renderinput.uploaded_files[0].name;
-        // _renderinput.form_data.append('file' + fCId, file_data, f_Name);
-        // _renderinput.form_data.append('session_token', mirror.getSessionToken());
+        info['f_f_list'] = _renderinput.f_f_list;
+        info['is_file_removed'] = _renderinput.file_removed;
+        if (_renderinput.uploaded_files.length > 0) {
+            f_list = {};
+            var file_data = _renderinput.uploaded_files[0];
+            var f_Name = _renderinput.uploaded_files[0].name;
+            _renderinput.form_data.append('file' + fCId, file_data);
+            // _renderinput.form_data.append('session_token', mirror.getSessionToken());
+            _renderinput.uploaded_files_fcids[fCId] = true;
+            f_list['file_size'] = file_data.size;
+            f_list['file_name'] = f_Name;
+            f_list['file_content'] = null;
+            info['f_f_list'] = [f_list];
+            console.log(f_list);
+        }
+        else {
+            _renderinput.uploaded_files_fcids[fCId] = false;
+        }
 
-
+        console.log(_renderinput.form_data);
+        console.log(_renderinput.uploaded_files_fcids);
         is_duplidate = false
         if (Temp_id.val() != '') {
             $.each(_renderinput.mapped_compliances, function(k, v) {
@@ -1843,8 +1867,10 @@ function pageControls() {
 
     $('#upload_file').on('change', function(e){
         var tFN = this.files[0].name;
+        console.log(tFN);
         var fN = tFN.substring(0, tFN.indexOf('.'));
         var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
+        console.log(fN, fE);
         var uniqueId = Math.floor(Math.random() * 90000) + 10000;
         f_Name = fN + '-' + uniqueId + '.' + fE;
         f_Size = this.files[0].size;
@@ -1855,13 +1881,14 @@ function pageControls() {
               $('#uploaded_fileview').hide();
               $('#uploaded_filename').html('');
               $('#upload_file').val('');
-            } else if (file_type.indexOf(fE.toLowerCase()) > -1) {
+            } else if (file_type.indexOf(fE.toLowerCase()) < 0) {
               displayMessage(message.invalid_file_format);
               $('#uploaded_fileview').hide();
               $('#uploaded_filename').html('');
               $('#upload_file').val('');
             } else {
               _renderinput.uploaded_files = e.target.files;
+              _renderinput.file_removed = false;
               $('#uploaded_fileview').show();
               $('#uploaded_filename').html(tFN + '   <img src=\'/knowledge/images/close-icon-black.png\' onclick=\'remove_temp_file()\' />');
             }
@@ -1872,12 +1899,19 @@ function pageControls() {
             $('#upload_file').val('');
         }
     });
-    function remove_temp_file(edit_id) {
-        _renderinput.form_data.delete('file' + edit_id);
-        $('#uploaded_fileview').hide();
-        $('#uploaded_filename').html('');
-        $('#upload_file').val('');
-    }
+
+}
+function remove_temp_file(edit_id) {
+    _renderinput.form_data.delete('file' + edit_id);
+    $.each(_renderinput.uploaded_files_fcids, function(k, v){
+        if (k == edit_id) {
+            delete k;
+        }
+    });
+    _renderinput.file_removed = true;
+    $('#uploaded_fileview').hide();
+    $('#uploaded_filename').html('');
+    $('#upload_file').val('');
 }
 function initialize() {
     _listPage.show();

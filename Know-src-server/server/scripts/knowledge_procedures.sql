@@ -1779,6 +1779,13 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
     IN session_user INT(11)
 )
 BEGIN
+    select distinct t1.client_id, t1.group_name, t1.short_name
+    from tbl_client_groups as t1
+    inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
+    where t2.is_approved = 0;
+
+    select distinct country_id, client_id from tbl_legal_entities
+    where is_approved = 0;
 
     SELECT t1.client_id, t1.group_name, t1.short_name, t1.email_id,
         t2.legal_entity_id, t2.legal_entity_name, t3.country_name
@@ -2297,7 +2304,8 @@ BEGIN
     T1.employee_name, T1.employee_code, T1.email_id,
     T1.user_group_id,
     T1.contact_no, T1.mobile_no, T1.address, T1.designation, T1.is_active, T1.is_disable,
-    T2.username, IFNULL(DATEDIFF(current_ist_datetime(), T1.disabled_on), 0) as days_left
+    T2.username, IFNULL(DATEDIFF(current_ist_datetime(), T1.disabled_on), 0) as days_left,
+    T1.disable_reason
     FROM tbl_users T1
     LEFT JOIN tbl_user_login_details T2 ON T1.user_id = T2.user_id
     WHERE T1.user_category_id > 2
@@ -8208,4 +8216,20 @@ END //
 
 DELIMITER ;
 
+-- -------------
+-- get user mapped id
+-- --------------
+DROP PROCEDURE IF EXISTS `sp_get_user_mapped_data`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_user_mapped_data`(in
+    u_id int(11))
+BEGIN
+    select count(user_mapping_id) as cnt from tbl_user_mapping where parent_user_id = u_id
+    OR child_user_id = u_id;
+
+END //
+
+DELIMITER ;
 

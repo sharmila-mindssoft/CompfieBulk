@@ -212,22 +212,37 @@ function FetchBack() {
         );
     };
 
+    this.mapping_success_callback = function() {
+        // show list
+        if (IS_SAVE == true) {
+            displaySuccessMessage(msg.mapping_success);
+        }
+        else {
+            displaySuccessMessage(msg.mapping_submit_success);
+        }
+
+        _viewPage.hide();
+        _listPage.show();
+        _renderinput.resetField();
+    };
+
     this.saveMapping = function(data) {
         displayLoader();
+
         fetch.saveStatutoryMapping(data, function(status, response) {
             if (status == null) {
-                // show list
-                if (IS_SAVE == true) {
-                    displaySuccessMessage(msg.mapping_success);
+                is_upload = false;
+                $.each(_renderinput.uploaded_files_fcids, function(key, value) {
+                    if (value == true) {
+                        is_upload = true
+                    }
+                });
+                if(is_upload) {
+                    _fetchback.uploadFileProcess();
                 }
                 else {
-                    displaySuccessMessage(msg.mapping_submit_success);
+                    _fetchback.mapping_success_callback();
                 }
-
-                _viewPage.hide();
-                _listPage.show();
-                _renderinput.resetField();
-
             }
             else {
 
@@ -242,15 +257,18 @@ function FetchBack() {
         displayLoader();
         fetch.updateStatutoryMapping(data, function(status, response) {
             if (status == null) {
-                if (IS_SAVE == true) {
-                    displaySuccessMessage(msg.mapping_success);
+                is_upload = false;
+                $.each(_renderinput.uploaded_files_fcids, function(key, value) {
+                    if (value == true) {
+                        is_upload = true
+                    }
+                });
+                if(is_upload) {
+                    _fetchback.uploadFileProcess();
                 }
                 else {
-                    displaySuccessMessage(msg.mapping_submit_success);
+                    _fetchback.mapping_success_callback();
                 }
-                _viewPage.hide();
-                _listPage.show();
-                _renderinput.resetField();
             }
             else {
 
@@ -285,7 +303,7 @@ function FetchBack() {
         frmData = _renderinput.form_data;
         fetch.uploadFormatFile(frmData, function(error, response){
             if (error == null) {
-
+                _fetchback.mapping_success_callback();
             }
             else {
                 possibleFailure(error);
@@ -526,12 +544,12 @@ function ViewPage() {
             displayMessage(msg.compliancefrequency_required);
             return false;
         }
-        else if (ReferenceLink.val().length > 0) {
-            isValid = isWebUrl(ReferenceLink);
-            if (isValid == false) {
-                displayMessage(msg.invalid_reference);
-                return false;
-            }
+        else if ((ReferenceLink.val().length > 0) && (isWebUrl(ReferenceLink) == false)) {
+            // isValid = isWebUrl(ReferenceLink);
+            // if (isValid == false) {
+            displayMessage(msg.invalid_reference);
+            return false;
+            // }
         }
         else {
 

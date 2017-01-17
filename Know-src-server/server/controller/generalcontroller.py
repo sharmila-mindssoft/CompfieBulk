@@ -1,3 +1,4 @@
+from werkzeug import secure_filename
 import os
 from protocol import core, login, general, possiblefailure
 from server.constants import (
@@ -331,10 +332,14 @@ def process_uploaded_file(info, f_type, client_id=None):
     res = None
     for k in info_keys:
         try:
-            file_info = info[k][0]
-            file_name = file_info.file_name()
-            file_content = file_info.body()
+            print k
+            file_info = info[k]
+            file_name = file_info.filename
+            print file_name
+            file_content = file_info.read()
+            print len(file_content)
             f_name = file_name.split('.')
+            print f_name
             if len(f_name) == 1:
                 res = possiblefailure.InvalidFile()
                 is_valid = False
@@ -350,17 +355,11 @@ def process_uploaded_file(info, f_type, client_id=None):
                     res = possiblefailure.FileMaxLimitExceed()
                     is_valid = False
 
-        except Exception, e:
-            print e
-    if is_valid:
-        lst = []
-        for k in info_keys:
-            try:
-                file_info = info[k][0]
-                file_name = file_info.file_name()
-                file_content = file_info.body()
+            if is_valid :
+                lst = []
                 if f_type == "knowledge":
                     file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+                    print file_path
                 else:
                     client_dir = "%s/%s" % (CLIENT_DOCS_BASE_PATH, client_id)
                     file_path = "%s/%s" % (client_dir, file_name)
@@ -373,12 +372,11 @@ def process_uploaded_file(info, f_type, client_id=None):
                         None
                     )
                     lst.append(file_response)
-            except Exception, e:
-                print e
-        res = general.FileUploadSuccess(lst)
-    else:
-        print "is_valid ", is_valid
-    return res
+                res = general.FileUploadSuccess(lst)
+
+            return res
+        except Exception, e:
+            print e
 
 ########################################################
 # To Handle the verify password request
