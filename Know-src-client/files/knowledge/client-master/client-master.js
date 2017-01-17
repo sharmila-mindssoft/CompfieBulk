@@ -1740,7 +1740,7 @@ function changeClientStatus() {
 
 $(document).ready(function() {
     initialize("list");
-     $('div[data-toggle="tooltip"]').tooltip();
+    $('div[data-toggle="tooltip"]').tooltip();
 });
 
 $('#shortname').on('input', function (e) {

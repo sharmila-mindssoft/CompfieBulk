@@ -350,6 +350,7 @@ var message = {
   "replace_manager_required": "Replace Manager Required",
   "first_select_contract_from_and_to": "First Select Contract from and Contract to Date on corresponding legal entity",
   "duplicate_legalentity": "Duplicate Legal Entity are not allowed",
+  'invalid_reset_token': 'Invalid Reset Token',
 }
 
 function clearMessage() {
