@@ -389,17 +389,17 @@ class API(object):
             else:
                 return True
 
-        print request
+        # print request
 
-        print request.data
-        print request.files
-        print len(request.files)
-        print request.files['file32']
-        print type(request.files['file32'])
-        f = request.files.keys()
-        print f
+        # print request.data
+        # print request.files
+        # print len(request.files)
+        # print request.files['file32']
+        # print type(request.files['file32'])
+        # f = request.files.keys()
+        # print f
 
-        print "knowledge format"
+        # print "knowledge format"
         # if (validate_session_from_body(request.data)):
         info = request.files
         response_data = controller.process_uploaded_file(info, "knowledge")
