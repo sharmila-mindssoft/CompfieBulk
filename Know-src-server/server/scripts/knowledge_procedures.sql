@@ -7798,6 +7798,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
 in _u_id int(11), _link text, _le_name varchar(50), _created_on timestamp)
 BEGIN
+    select @_client_id:=client_id from tbl_legal_entities where
+    legal_entity_name = _le_name;
+
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
@@ -7805,9 +7808,6 @@ BEGIN
     message_heading = 'Client Unit Approval',
     message_text = concat('Client unit(s) has been approved for',' ',_le_name),
     link = _link, created_by = _u_id, created_on = _created_on;
-
-    select @_client_id:=client_id from tbl_legal_entities where
-    legal_entity_name = _le_name;
 
     INSERT INTO tbl_message_users
     SET
