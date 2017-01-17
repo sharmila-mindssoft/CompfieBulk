@@ -618,7 +618,7 @@ api_params = {
     "console_cl_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
-
+    'group_info': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'clientcoordinationmaster', 'class_name': 'GroupInfo'},
 
 }
 api_params['domain_id'] = api_params.get('d_id')

@@ -191,12 +191,27 @@ def get_client_groups_approval_list(db, session_user):
     # Arguments : None
     # Results : List of Client groups with no of legal entities
     #
-    data = db.call_proc(
-        "sp_client_groups_approval_list", (session_user,)
+    data = db.call_proc_with_multiresult_set(
+        "sp_client_groups_approval_list", [session_user], 3
     )
-    return return_client_groups_approval_list(data)
+    print data
+    group = return_client_groups(data[0], data[1])
+    le_info = return_client_groups_approval_list(data[2])
+    return group, le_info
 
+def return_client_groups(data, c_info):
+    groups = []
+    for d in data :
+        c_ids = []
+        for c in c_info :
+            if d["client_id"] == c["client_id"] :
+                c_ids.append(c["country_id"])
 
+        groups.append(clientcoordinationmaster.GroupInfo(
+            d["client_id"], d["group_name"], d["short_name"],
+            c_ids
+        ))
+    return groups
 def return_client_groups_approval_list(groups):
     fn = clientcoordinationmaster.ClientGroupApproval
     result = [

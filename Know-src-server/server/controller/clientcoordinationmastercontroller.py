@@ -108,9 +108,9 @@ def process_approve_unit(db, request, session_user):
 
 def process_client_group_approval_list(db, request, session_user):
     countries = get_user_countries(db, session_user)
-    client_groups = get_client_groups_approval_list(db, session_user)
+    groups, legal_entities = get_client_groups_approval_list(db, session_user)
     return clientcoordinationmaster.GetClientGroupApprovalListSuccess(
-        countries=countries, group_approval_list=client_groups
+        countries=countries, groups=groups, group_approval_list=legal_entities
     )
 
 
